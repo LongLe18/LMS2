@@ -1,0 +1,31 @@
+const express = require('express');
+const router = express.Router();
+const { tryCatch } = require('../middlewares/tryCatch');
+const questionController = require('../controllers/QuestionController');
+const { authToken, authRole } = require('../middlewares/auth');
+const { upload } = require('../middlewares/upload2');
+
+router.post(
+    '/create', authToken, authRole([2], 6), 
+    upload.fields([
+        { name: 'noi_dung', maxCount: 1 },
+        { name: 'loi_giai', maxCount: 1 },
+    ]),
+    tryCatch(questionController.postCreate)
+);
+//router.get('/:id/edit', authToken, authRole([2], 6), tryCatch(questionController.getUpdate));
+router.put(
+    '/:id', authToken, authRole([2], 6), 
+    upload.fields([
+        { name: 'noi_dung', maxCount: 1 },
+        { name: 'loi_giai', maxCount: 1 },
+    ]),
+    tryCatch(questionController.putUpdate)
+    );
+router.get('/getByExam', authToken, authRole([2], 7), tryCatch(questionController.getByExam));
+router.delete('/:id/force', authToken, authRole([2], 6), tryCatch(questionController.forceDelete));
+router.get('/all_admin', authToken, authRole([2], 7), tryCatch(questionController.getAll_admin));
+router.get('/:id', authToken, authRole([2], 7), tryCatch(questionController.getById));
+router.get('/', authToken, authRole([2], 7), tryCatch(questionController.getAll));
+
+module.exports = router;
