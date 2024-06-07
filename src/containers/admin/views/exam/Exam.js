@@ -1,0 +1,594 @@
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
+import config from '../../../../configs/index';
+import Hashids from 'hashids';
+import defaultImage from 'assets/img/default.jpg';
+import moment from 'moment';
+import './css/addmodal.scss';
+// antd
+import { Row, Col, Button, Tabs, Table, Avatar, Modal, Form, Input, Select, Upload, message, notification, Tooltip } from 'antd';
+import { PlusOutlined, UploadOutlined, EyeOutlined, LockOutlined, UnlockOutlined, RedoOutlined } from '@ant-design/icons';
+
+// component
+import AppFilter from 'components/common/AppFilter';
+// hooks
+import useDebounce from 'hooks/useDebounce';
+
+// redux
+import { useSelector, useDispatch } from "react-redux";
+import * as examActions from '../../../../redux/actions/exam';
+import * as courseActions from '../../../../redux/actions/course';
+import * as moduleActions from '../../../../redux/actions/part';
+import * as thematicActions from '../../../../redux/actions/thematic';
+import * as typeExamActions from '../../../../redux/actions/typeExam';
+import * as programmeActions from '../../../../redux/actions/programme';
+
+const { TabPane } = Tabs;
+const { Dragger } = Upload;
+const { Option } = Select;
+
+const ExamAdminPage = () => {
+    const data = [];
+    const hashids = new Hashids();
+
+    const [form] = Form.useForm();
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    // const [selected, setSelected] = useState([]);
+
+    const dispatch = useDispatch();
+
+    const programmes = useSelector(state => state.programme.list.result);
+    const exams = useSelector(state => state.exam.list.result);
+    const error = useSelector(state => state.exam.list.error);
+
+    const typeExams = useSelector(state => state.typeExam.list.result);
+    const courses = useSelector(state => state.course.list.result);
+    const modules = useSelector(state => state.part.list.result);
+    const thematics = useSelector(state => state.thematic.listbyId.result);
+
+    const [filter, setFilter] = useState({
+        khoa_hoc_id: '',
+        mo_dun_id: '',
+        chuyen_de_id: '',
+        trang_thai: '',
+        search: '',
+        start: '',
+        end: '',
+        typeId: '',
+        publish: '',
+    });
+    const searchValue = useDebounce(filter.search, 250);
+
+    useEffect(() => {
+        dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, idThematic: filter.chuyen_de_id, status: '', search: filter.search, 
+            start: filter.start, end: filter.end, idType: filter.typeId, publish: 1 }));
+        dispatch(typeExamActions.getTypes());
+        dispatch(courseActions.getCourses({ idkct: '', status: '', search: '' }));
+        dispatch(programmeActions.getProgrammes({ status: '' }));
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+    const [state, setState] = useState({
+        fileImg: '',
+        showCourse: false,
+        showModule: false,
+        showThematic: false,
+        onlineExam: false,
+    });
+    const [tabs, setTabs] = useState(1);
+
+    if (exams.status === 'success') {
+        exams.data.map((exam, index) => {
+          data.push({...exam, key: index})
+          return null
+        }) 
+    };
+
+    const showModal = () => {
+        setIsModalVisible(true);
+    };
+
+    const handleOk = () => {
+        setIsModalVisible(false);
+    };
+    
+    const handleCancel = () => {
+        setIsModalVisible(false);
+    };
+
+    const column1 = [
+        {
+            title: 'Ảnh đại diện',
+            dataIndex: 'anh_dai_dien',
+            key: 'anh_dai_dien',
+            responsive: ['lg'],
+            render: (src) => (
+              <Avatar src={src !== null ? config.API_URL + src : defaultImage} size={50} shape='circle' />
+            )
+        },
+        {
+          title: 'Tên đề thi',
+          dataIndex: 'ten_de_thi',
+          key: 'ten_de_thi',
+          responsive: ['md'],
+          sorter: (a, b) => a.ten_de_thi.localeCompare(b.ten_de_thi),
+        },
+        {
+            title: 'Loại đề thi',
+            dataIndex: 'mo_ta',
+            key: 'mo_ta',
+            responsive: ['md'],
+        },
+        {
+            title: 'Khóa học',
+            dataIndex: 'ten_khoa_hoc',
+            key: 'ten_khoa_hoc',
+            responsive: ['md'],
+            width: 300,
+        },
+        {
+          title: 'Mô đun',
+          dataIndex: 'ten_mo_dun',
+          key: 'ten_mo_dun',
+          responsive: ['md'],
+        },
+        {
+          title: 'Chuyên đề',
+          dataIndex: 'ten_chuyen_de',
+          key: 'ten_chuyen_de',
+          responsive: ['md'],
+        },
+        {
+          title: 'Thời gian',
+          dataIndex: 'thoi_gian',
+          key: 'thoi_gian',
+          responsive: ['md'],
+          render: (thoi_gian, de_thi) => (
+            <>
+              <span>Thời gian thi: {thoi_gian} phút</span>
+              <br/>
+              <span>Số câu hỏi: {de_thi.so_cau_hoi}</span>
+            </>
+          )
+        },     
+        {
+          title: 'Ngày tạo',
+          dataIndex: 'ngay_tao',
+          key: 'ngay_tao',
+          responsive: ['md'],
+          render: (date) => (
+            moment(date).utc(7).format(config.DATE_FORMAT)
+          ),
+          sorter: (a, b) => moment(a.ngay_tao).unix() - moment(b.ngay_tao).unix()
+        },
+        {
+          title: 'Tùy chọn',
+          key: 'de_thi_id',
+          dataIndex: 'de_thi_id',
+          width: 50,
+          // Redirect view for edit
+          render: (de_thi_id, de_thi) => (
+            <Col>
+              <Link to={ de_thi.loai_de_thi_id === 4 ? `/admin/onlineExam/detail/${de_thi.de_thi_id}`  : `/admin/exam/detail/${de_thi.de_thi_id}` } type="button" className="ant-btn ant-btn-round ant-btn-primary" 
+                style={{display: de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}}
+                >Xem
+              </Link>
+              {de_thi.trang_thai === 0 ?
+                  <Tooltip title={`Mở khóa đề thi`} color="#2db7f5" placement="bottom">
+                      <Button shape="round" type="primary" 
+                      onClick={() => changeStatus(de_thi_id, de_thi.trang_thai)} style={{display: !de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}} icon={<UnlockOutlined />}>
+                    </Button> 
+                  </Tooltip> 
+              : 
+                <Tooltip title={`Khóa đề thi`} color="#2db7f5" placement="bottom">
+                  <Button shape="round" type="danger" 
+                    onClick={() => changeStatus(de_thi_id, de_thi.trang_thai)} style={{display: !de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}} icon={<LockOutlined />}>
+                  </Button> 
+                </Tooltip> 
+              }
+              <Tooltip title={`Xem lại đề`} color="#2db7f5" placement="bottom">
+                <Button shape="round" type="primary" 
+                  onClick={() => window.open(`/luyen-tap/xem-lai/${hashids.encode(de_thi_id)}`, "_blank")} style={{display: !de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}} icon={<EyeOutlined />}>
+                </Button> 
+              </Tooltip>
+              <Tooltip title={`Sử dụng lại đề`} color="#2db7f5" placement="bottom">
+                <Button shape='round' type='primary' onClick={() => reuseExam(de_thi_id)} style={{backgroundColor: 'green', borderColor: 'green', display: !de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}} icon={<RedoOutlined />}></Button>
+              </Tooltip>
+              <Button shape="round" type="danger" onClick={() => DeleteExam(de_thi_id)} style={{marginBottom: '5px'}}>Xóa</Button> 
+            </Col>
+          ),
+        },
+    ];
+
+    // props for upload image
+    const propsImage = {
+        name: 'file',
+        action: '#',
+  
+        beforeUpload: file => {
+          const isPNG = file.type === 'image/png' || file.type === 'image/jpeg';
+          if (!isPNG) {
+            message.error(`${file.name} có định dạng không phải là png/jpg`);
+          }
+          return isPNG || Upload.LIST_IGNORE;
+        },
+  
+        onChange(info) {
+          setState({ ...state, fileImg: info.file.originFileObj });
+        },
+  
+        async customRequest(options) {
+          const { onSuccess } = options;
+    
+          setTimeout(() => {
+            onSuccess("ok");
+          }, 0);
+        },
+  
+        onRemove(e) {
+          console.log(e);
+          setState({ ...state, fileImg: '' });
+        },
+    };
+
+    const renderProgramme = () => {
+      let options = [];
+      if (programmes.status === 'success') {
+        if (state.onlineExam) {
+          options = programmes.data
+            .filter(programme => programme.loai_kct === 1)
+            .map((programme) => (
+              <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
+            ))
+        } else {
+          options = programmes.data
+            .filter(programme => programme.loai_kct !== 1)
+            .map((programme) => (
+                <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
+            ))
+        }
+      }
+      return (
+        <Select
+            showSearch={false}
+            placeholder="Chọn khung chương trình"
+            onChange={(kct_id) => dispatch(courseActions.getCourses({ idkct: kct_id, status: '', search: '' }))}
+        >
+          {options}
+        </Select>
+      );
+    };
+
+    const renderTypeExams = () => {
+        let options = [];
+        if (typeExams.status === 'success') {
+          options = typeExams.data.map((type) => (
+            <Option key={type.loai_de_thi_id} value={type.loai_de_thi_id} >{type.mo_ta}</Option>
+          ))
+        }
+        return (
+          <Select
+            showSearch={false}
+            placeholder="Chọn loại đề thi"
+            onChange={(typeId) => {
+                if (typeId === 1) {setState({...state, showThematic: true, showCourse: true, showModule: true, onlineExam: false})}
+                else if (typeId === 2) {setState({...state, showThematic: false, showCourse: true, showModule: true, onlineExam: false})}
+                else if (typeId === 3) {setState({...state, showThematic: false, showCourse: true, showModule: false, onlineExam: false})}
+                else {setState({...state, showThematic: false, showCourse: true, showModule: false, onlineExam: true})}
+            }}
+          >
+            {options}
+          </Select>
+        );
+    };
+
+    const renderCourse = () => {
+        let options = [];
+        if (courses.status === 'success') {
+          options = courses.data.map((type) => (
+            <Option key={type.khoa_hoc_id} value={type.khoa_hoc_id} >{type.ten_khoa_hoc}</Option>
+          ))
+        }
+        return (
+          <Select
+            showSearch={false}
+            placeholder="Chọn khóa học"
+            onChange={(khoa_hoc_id) => {
+                dispatch(moduleActions.getModulesByIdCourse({ idCourse: khoa_hoc_id }))
+            }}
+          >
+            {options}
+          </Select>
+        );
+    };
+
+    const renderModule = () => {
+        let options = [];
+        if (modules.status === 'success') {
+          options = modules.data.map((type) => (
+            <Option key={type.mo_dun_id} value={type.mo_dun_id} >{type.ten_mo_dun}</Option>
+          ))
+        }
+        return (
+          <Select
+            showSearch={false}
+            placeholder="Chọn mô đun"
+            onChange={(mo_dun_id) => {
+                dispatch(thematicActions.getThematicsByIdModule({ idModule: mo_dun_id }))
+            }}
+          >
+            {options}
+          </Select>
+        );
+    };
+
+    const renderThematic = () => {
+        let options = [];
+        if (thematics.status === 'success') {
+          options = thematics.data.thematics.map((thematic) => (
+            <Option key={thematic.chuyen_de_id} value={thematic.chuyen_de_id} >{thematic.ten_chuyen_de}</Option>
+          ))
+        }
+        return (
+          <Select
+            showSearch={false}
+            placeholder="Chọn mô đun"
+          >
+            {options}
+          </Select>
+        );
+    };
+
+    const renderAddModal = () => {
+        return (
+            <>
+                <h2 className="form-title">Tạo đề thi</h2>
+                <Form form={form} className="login-form app-form" name="login-form" onFinish={createExam}
+                    labelCol={{
+                        span: 6,
+                    }} >
+                    <Form.Item label='Mã đề thi' name="de_thi_ma" rules={[{ required: true, message: 'Mã đề thi là bắt buộc'}]}>
+                        <Input size="normal" placeholder="Tên đề thi" />
+                    </Form.Item>
+                    <Form.Item label='Tên đề thi' name="ten_de_thi" rules={[{ required: true, message: 'Tên đề thi là bắt buộc'}]}>
+                        <Input size="normal" placeholder="Tên đề thi" />
+                    </Form.Item>
+                    <Form.Item label="Loại đề thi" name="loai_de_thi_id" rules={[{ required: true, message: 'Loại đề thi là bắt buộc'}]}>
+                        {renderTypeExams()}
+                    </Form.Item>
+                    <Form.Item label="Khung" name="khung_ct" rules={[{ required: state.showCourse, message: 'Loại đề thi là bắt buộc'}]}
+                    style={{display: state.showCourse ? '' : 'none'}}>
+                        {renderProgramme()}
+                    </Form.Item>
+                    <Form.Item label="Khóa học" name="khoa_hoc_id" rules={[{ required: state.showCourse, message: 'Khóa học là bắt buộc' }]}
+                        style={{display: state.showCourse ? '' : 'none'}}>
+                        {renderCourse()}
+                    </Form.Item>
+                    <Form.Item label="Mô đun" name="mo_dun_id" rules={[{ required: state.showModule, message: 'Mô đun là bắt buộc' }]}
+                        style={{display: state.showModule ? '' : 'none'}}>
+                        {renderModule()}
+                    </Form.Item>
+                    <Form.Item label="Chuyên đề" name="chuyen_de_id" rules={[{ required: state.showThematic, message: 'Chuyên đề là bắt buộc' }]}
+                        style={{display: state.showThematic ? '' : 'none'}}>
+                        {renderThematic()}
+                    </Form.Item>
+                    <Form.Item className="input-col" label="Hình đại diện" name="anh_dai_dien" rules={[]}>
+                        <Dragger {...propsImage} maxCount={1}
+                            listType="picture"
+                            className="upload-list-inline"
+                        >
+                            <p className="ant-upload-drag-icon">
+                            <UploadOutlined />
+                            </p>
+                            <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
+                        </Dragger>
+                    </Form.Item>
+                    <Form.Item className="button-col" style={{marginBottom: 0}}>
+                        <Button shape="round" type="primary" htmlType="submit" >Tạo đề thi</Button>
+                    </Form.Item>
+                </Form>
+            </>
+        )
+    };
+
+    const onFilterChange = (field, value) => {
+        if (field === 'ngay') {
+          setFilter((state) => ({ ...state, start: value[0] }));  
+          setFilter((state) => ({ ...state, end: value[1] }));  
+        }
+        else {
+          setFilter((state) => ({ ...state, [field]: value }));  
+        }
+    };
+
+    useEffect(() => {
+        dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, idThematic: filter.chuyen_de_id, status: filter.trang_thai, search: filter.search, 
+          start: filter.start, end: filter.end, idType: filter.typeId, publish: tabs}));
+    }, [filter.khoa_hoc_id, filter.mo_dun_id, filter.chuyen_de_id, filter.trang_thai, filter.start, filter.end, filter.typeId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+      dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, idThematic: filter.chuyen_de_id, status: filter.trang_thai, search: filter.search, 
+        start: filter.start, end: filter.end, idType: filter.typeId, publish: tabs}));
+    }, [searchValue]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    const createExam = (values) => {
+        const callback = (res) => {
+            if (res.statusText === 'OK' && res.status === 200) {
+                form.resetFields();
+                dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, idThematic: filter.chuyen_de_id, status: filter.trang_thai, search: filter.search, 
+                    start: filter.start, end: filter.end, idType: filter.typeId, publish: tabs}));
+                notification.success({
+                    message: 'Thành công',
+                    description: 'Thêm đề thi mới thành công',
+                });
+                setIsModalVisible(false);
+            } else {
+                notification.error({
+                    message: 'Thông báo',
+                    description: 'Thêm đề thi mới thất bại. Xin vui lòng kiểm tra lại tiêu chí đề',
+                })
+            }
+        };
+        const formData = new FormData();
+        formData.append('ten_de_thi', values.ten_de_thi);
+        formData.append('mo_ta', values.mo_ta !== undefined ? values.mo_ta : '' );
+        formData.append('loai_de_thi_id', values.loai_de_thi_id);
+        if (values.de_thi_ma !== undefined) {
+          formData.append('de_thi_ma', values.de_thi_ma !== undefined ? values.de_thi_ma : '');
+        }
+
+        if (state.showModule && state.showCourse && state.showThematic) {
+          formData.append('khoa_hoc_id', values.khoa_hoc_id);
+          formData.append('mo_dun_id', values.mo_dun_id);
+          formData.append('chuyen_de_id', values.chuyen_de_id);
+        }
+        else if (state.showModule && state.showCourse) {
+          formData.append('khoa_hoc_id', values.khoa_hoc_id);
+          formData.append('mo_dun_id', values.mo_dun_id);
+        }
+        else if (state.showCourse) formData.append('khoa_hoc_id', values.khoa_hoc_id);
+        
+        if (state.fileImg !== '')
+            formData.append('anh_dai_dien', state.fileImg !== undefined ? state.fileImg : '');
+        
+        dispatch(examActions.createExam(formData, callback));
+    }
+
+    const DeleteExam = (id) => {
+        const result = window.confirm('Bạn có chắc chắn muốn xóa đề thi này?');
+        if (result) {
+            const callback = (res) => {
+                if (res.statusText === 'OK' && res.status === 200) {
+                    dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, idThematic: filter.chuyen_de_id, status: filter.trang_thai, search: filter.search, 
+                      start: filter.start, end: filter.end, idType: filter.typeId, publish: tabs }));
+                    notification.success({
+                        message: 'Thành công',
+                        description: 'Xóa đề thi thành công',
+                    })
+                } else {
+                    notification.error({
+                        message: 'Thông báo',
+                        description: 'Xóa đề thi thất bại',
+                    })
+                };
+            }
+            dispatch(examActions.deleteExam({ idExam: id }, callback))
+        }
+    };
+
+    const changeStatus = (id, trang_thai) => {
+      const result = window.confirm('Bạn có chắc chắn muốn sử dụng/hủy sử dụng đề thi này không?');
+      if (result) {
+          const callback = (res) => {
+              if (res.status === 'success') {
+                  dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, idThematic: filter.chuyen_de_id, status: filter.trang_thai, search: filter.search, 
+                    start: filter.start, end: filter.end, idType: filter.typeId, publish: tabs }));
+                  notification.success({
+                      message: 'Thành công',
+                      description: trang_thai === 1 ? 'Khóa đề thi thành công' : 'Sử dụng đề thi thành công',
+                  })
+              } else {
+                  notification.error({
+                      message: 'Thông báo',
+                      description: trang_thai === 1 ? 'Khóa đề thi thất bại' : 'Sử dụng đề thi thất bại',
+                  })
+              };
+          }
+          dispatch(examActions.getUsing({ id: id }, callback))
+      }
+    };
+
+    const reuseExam = (id) => {
+      const callback = (res) => {
+        if (res.status === 200 && res.statusText === 'OK') {
+          dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, idThematic: filter.chuyen_de_id, status: filter.trang_thai, search: filter.search, 
+            start: filter.start, end: filter.end, idType: filter.typeId, publish: filter.publish}));
+          notification.success({
+            message: 'Thành công',
+            description: 'Sử dụng đề thi thành công',
+          })
+        }
+      };
+
+      const ask = window.confirm('Bạn chắc chắn muốn sử dụng lại đề này ?')
+      if (ask) {
+        dispatch(examActions.reuseExam({ idExam: id }, callback))
+      }
+    }
+
+    const changeTab = (value) => {
+      setTabs(value)
+      dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, idThematic: filter.chuyen_de_id, status: '', search: filter.search, 
+            start: filter.start, end: filter.end, idType: filter.typeId, publish: value }));
+    }
+
+    return (
+        <>
+            <div className="content">
+                <Helmet>
+                    <title>Quản lý đề thi</title>
+                </Helmet>
+                <Row className="app-main">
+                    <Col xl={24} className="body-content">
+                        <Row>
+                            <Col xl={24} sm={24} xs={24}>
+                                {courses.status === "success" &&
+                                    <AppFilter
+                                    title="Quản lý đề thi"
+                                    isShowCourse={true}
+                                    isTypeExam={true}
+                                    isShowStatus={true}
+                                    isShowSearchBox={true}
+                                    isShowDatePicker={true}
+                                    isRangeDatePicker={true}
+                                    courses={courses.data}
+                                    onFilterChange={(field, value) => onFilterChange(field, value)}
+                                />
+                                }
+                            </Col>
+                        </Row>
+
+                        <Row className="select-action-group" gutter={[8, 8]}>
+                            <Col xl={12} sm={12} xs={24}>
+                            </Col>
+                            <Col xl={12} sm={12} xs={24} className="right-actions">
+                              {/* {renderTypeExams2()} */}
+                              <br/>
+                              <Button onClick={() => showModal()} shape="round" type="primary" icon={<PlusOutlined />} className=" btn-action">
+                                  Thêm mới đề thi
+                              </Button> 
+                              <Modal visible={isModalVisible}  mask={true} centered={true} className="cra-exam-modal" wrapClassName="cra-exam-modal-container"                                   
+                                  onOk={handleOk} 
+                                  onCancel={handleCancel}
+                                  maskStyle={{ background: 'rgba(0, 0, 0, 0.8)' }}
+                                  maskClosable={false}
+                                  footer={null}>
+                                  {renderAddModal()}
+                              </Modal>
+                            </Col>
+                        </Row>
+
+                    </Col>
+                </Row>
+                <Tabs defaultActiveKey="1" type="card" onChange={changeTab}>
+                    <TabPane tab="Đề đã xuất bản" key="1">
+                    {exams.status === 'success' && 
+                        <Table className="table-striped-rows" columns={column1} dataSource={data} />
+                    }
+                    </TabPane>
+                    <TabPane tab="Đề chưa xuất bản" key="0">
+                    {exams.status === 'success' && 
+                        <Table className="table-striped-rows" columns={column1} dataSource={data} />
+                    }
+                    </TabPane>
+                    {error && notification.error({
+                        message: 'Thông báo',
+                        description: 'Lấy dữ liệu đề thi thất bại',
+                    })}
+                </Tabs>
+            </div>
+        </>
+    )
+}
+
+export default ExamAdminPage;

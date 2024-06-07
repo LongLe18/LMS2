@@ -1,0 +1,55 @@
+.statisic {
+  padding: 35px 0px 5px 0px;
+  position: relative;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.statisic .statisic-box {
+}
+
+.statisic .statisic-number {
+  text-align: center;
+  /* color: #fff; */
+  font-size: 3.4em;
+  text-transform: uppercase;
+  font-weight: bold;
+  margin-bottom: 0;
+  line-height: 1.2;
+}
+
+.statisic .statisic-description {
+  text-align: center;
+  color: #3c3c3c;
+  font-size: 22px;
+}
+
+.icon-box-img {
+  text-align: center;
+}
+.box-icon {
+  width: 110px;
+  margin-bottom: 5px;
+}
+
+/*tablet pro*/
+
+@media only screen and (max-width: 1080px) {
+}
+
+/*tablet*/
+
+@media only screen and (max-width: 680px) {
+}
+
+/*mobile*/
+
+@media only screen and (max-width: 480px) {
+  .statisic .statisic-number {
+    font-size: 2em;
+  }
+
+  .statisic .statisic-description {
+    font-size: 1em;
+  }
+}

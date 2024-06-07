@@ -1,0 +1,41 @@
+import React from "react";
+import { Route, Switch, useLocation } from "react-router-dom";
+import routes from "./routes";
+
+import LandingPageHeader from '../../../components/parts/Headers/LandingPageHeader';
+import Contract from 'components/parts/Contract/contract';
+import Footer from "components/parts/Footers/Footer";
+
+function IeltsLayout(props){
+
+    const mainPanel = React.useRef();
+    const location = useLocation();
+
+    React.useEffect(() => {
+        mainPanel.current.scrollTop = 0;
+        document.scrollingElement.scrollTop = 0;
+        document.getElementById('fb-root').classList.add('show');
+    }, [location]);
+
+    return(
+        <div ref={mainPanel}>
+            <LandingPageHeader {...props}/>
+            <Contract {...props} />
+            
+            <Switch>    
+            {routes.map((prop, key) => {
+                return (
+                <Route
+                    path={prop.path}
+                    render={prop.render}
+                    key={key}
+                />
+                );
+            })}
+            </Switch>
+            <Footer />
+        </div>
+    )
+}
+
+export default IeltsLayout;
