@@ -3,7 +3,7 @@ const config = {
     //database
     database: {
         username: 'root',
-        password: 'rootadmin',
+        password: 'root',
         database: 'tracnghiemtructuyen',
         port: 3306,
         host: 'localhost',

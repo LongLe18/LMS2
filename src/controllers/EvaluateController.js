@@ -1,4 +1,4 @@
-const { Evaluate, OnlineCriteria } = require('../models');
+const { Evaluate, StudentExam, Exam} = require('../models');
 const sequelize = require('../utils/db');
 const fs = require('fs');
 const e = require('cors');
@@ -187,39 +187,70 @@ const deleteById = async (req, res) => {
 }
 
 const download = async (req, res) => {
-    // Load the docx file as binary content
-    const content = fs.readFileSync(path.resolve(__dirname, '../public','formMau.doc'), 'binary');
-    
-    const zip = new PizZip(content);
-    const doc = new Docxtemplater(zip);
-
-    // Insert data into the document
-    const data = {
-        X1: 'X1/15 or X1/10',
-        X2: 'X2/5 or X2/4',
-        X3: 'X3/3 or X3/2',
-    };
-
-    doc.setData(data);
-
     try {
-        // Render the document
-        doc.render();
-    } catch (error) {
-        console.error(JSON.stringify({ error: error }, null, 2));
-        throw error;
+        const studentExam = await StudentExam.findOne({
+            include: [
+                {
+                    model: Exam,
+                    attributes: ['ten_de_thi'],
+                },
+                {
+                    model: Exam,
+                    attributes: ['ten_de_thi'],
+                },
+            ],
+            where: {
+                dthv_id: req.params.id,
+            },
+        });
+
+        console.log(process.cwd());
+        const content = fs.readFileSync(
+            path.resolve(process.cwd(), 'src/public/templates/form_export.docx'),
+            'binary'
+        );
+
+        const zip = new PizZip(content);
+
+        const doc = new Docxtemplater(zip, {
+            paragraphLoop: true,
+            linebreaks: true,
+        });
+
+        doc.render({
+            mon_thi: studentExam?.de_thi?.ten_de_thi,
+            phan_1: 'Doe',
+            phan_2: '0652455478',
+            phan_3: 'New Website',
+            phan_4: 'New Website',
+            diem_tong_hop: 'New Website',
+            nhan_xet_1: 'New Website',
+        });
+
+        const buf = doc.getZip().generate({
+            type: 'nodebuffer',
+            // compression: DEFLATE adds a compression step.
+            // For a 50MB output document, expect 500ms additional CPU time
+            compression: 'DEFLATE',
+        });
+
+        res.set({
+            'Content-Type':
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'Content-Disposition': 'attachment; filename="report.docx"', // Replace 'example.doc' with your desired file name
+            'Content-Length': buf.length,
+        });
+
+        // Send the buffer as response
+        res.send(buf);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({
+            status: 'error',
+            data: null,
+            message: err,
+        });
     }
-
-    const buf = doc.getZip().generate({ type: 'nodebuffer' });
-
-    const filePath = path.join(__dirname, '../public', 'formMau.docx');
-    fs.writeFileSync(filePath, buf);
-
-    res.download(filePath, 'output.docx', (err) => {
-        if (err) {
-            console.error('File download error:', err);
-        }
-    });
 }
 
 module.exports = {
