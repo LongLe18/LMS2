@@ -289,7 +289,7 @@ const ExamOnlineDetail = () => {
     const downloadReport = async () => {
         try {
             const response = await axios({
-                url: `${config.API_URL}/evaluate/download`, 
+                url: `${config.API_URL}/evaluate/${params.idExamUser}/export-report`, 
                 method: 'GET',
                 responseType: 'blob', 
                 headers: {
@@ -1077,14 +1077,20 @@ const ExamOnlineDetail = () => {
                                             // Kiểm tra số câu đúng của từng phần và lấy ra đánh giá tương ứng
                                             const evaluation = evaluationsTemp?.map((item) => {
                                                 let evaluation = '';
-                                                if (item.cau_bat_dau <= number.reduce((partialSum, a) => partialSum + a, 0) && number.reduce((partialSum, a) => partialSum + a, 0) <= item.cau_ket_thuc) {
-                                                    evaluation = item?.danh_gia;
+                                                if (number.reduce((partialSum, a) => partialSum + a, 0) === 0) {
+                                                    if (item.cau_bat_dau <= number.reduce((partialSum, a) => partialSum + a, 0) + 1 && number.reduce((partialSum, a) => partialSum + a, 0) + 1 <= item.cau_ket_thuc) {
+                                                        evaluation = item?.danh_gia;
+                                                    }
+                                                } else {
+                                                    if (item.cau_bat_dau <= number.reduce((partialSum, a) => partialSum + a, 0) && number.reduce((partialSum, a) => partialSum + a, 0) <= item.cau_ket_thuc) {
+                                                        evaluation = item?.danh_gia;
+                                                    }
                                                 }
                                                 return evaluation;
                                             });
                                             return (
                                                 <Timeline.Item key={index + 1} style={{paddingBottom: index + 1 === exam.data.so_phan ? 0 : 20, fontWeight: 600}}>
-                                                    <div style={{whiteSpace: 'pre-line'}}>Nhận xét đánh phần {index + 1}: <br/>{evaluation.filter((item) => item !== '')[0].split('-').filter((item) => item !== '').join('\n')}</div>
+                                                    <div style={{whiteSpace: 'pre-line'}}>Nhận xét đánh phần {index + 1}: <br/>{evaluation.filter((item) => item !== '')[0]?.split('-').filter((item) => item !== '').join('\n')}</div>
                                                 </Timeline.Item>
                                             )
                                         })}

@@ -11,6 +11,7 @@ import PerfectScrollbar from "perfect-scrollbar";
 import Hashids from 'hashids';
 import AutoLaTeX from 'react-autolatex';
 import moment from "moment";
+import './header.css';
 
 // reactstrap components
 import { Container, Row, Col } from "reactstrap";
@@ -24,6 +25,8 @@ import { DownOutlined, BellOutlined, UserOutlined, LockOutlined, EyeTwoTone,
 import { useDispatch, useSelector } from "react-redux";
 import SocialLogin from 'components/common/SocialLogin';
 import ReCAPTCHA from "react-google-recaptcha";
+
+import useScrollToTop from 'hooks/useScrollToTop';
 
 import * as userAction from '../../../redux/actions/user';
 import * as menuAction from '../../../redux/actions/menu';
@@ -317,7 +320,7 @@ function IndexHeader(props) {
   };
 
   return (
-    <div ref={sidebar}>
+    <div ref={sidebar} className="header-page">
       <Container>
         <Row className="header-logo">
           <NavLink to="/luyen-tap/kinh-doanh-khoa-hoc">
@@ -329,7 +332,7 @@ function IndexHeader(props) {
         </Row>
       </Container>
       <div id="wide-nav" className="header-bottom wide-nav nav-dark hide-for-medium">
-        <div className="flex-row container" style={{height: "43px", justifyContent: 'center'}}>
+        <div className="flex-row container" style={{maxHeight: '110px', justifyContent: 'center'}}>
           <div className="flex-col hide-for-medium flex-left" style={{marginRight: 0}}>
             <ul className="nav header-nav header-bottom-nav nav-left  nav-divided nav-size-medium nav-spacing-medium nav-uppercase">
               {(dataMenus) && dataMenus.map(({ menu_id, ten_menu, gia_tri, loai_menu_id, khoa_hoc, loai_kct }) => {
