@@ -1,5 +1,5 @@
 .app-footer {
-  background-color: rgb(165, 31, 36);
+  background-color: #3da844;
   background-position: bottom;
   background-repeat: no-repeat;
   background-size: cover;
@@ -30,7 +30,7 @@
 /* .app-footer .main-footer .footer-info .footer-title::after{
   content: '';
   width: 25px;
-  border-bottom: 1px solid #a51f24;
+  border-bottom: 1px solid #3da844;
   position: absolute;
   display: block;
 } */
@@ -100,7 +100,7 @@
   padding: 8px;
   border-top: 1px solid #505050;
   font-size: 15px;
-  background-color: #800000;
+  background-color: #2e7e33;
 }
 
 .app-footer .copy-right p {

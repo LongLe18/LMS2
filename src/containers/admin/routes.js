@@ -35,6 +35,7 @@ import StatisticCourse from './views/statistic/course.js';
 import StatisticTeacher from './views/statistic/teacher.js';
 import StatisticStudent from './views/statistic/student.js';
 import ReplyPage from './views/reply/reply.js'; 
+import EvaluationPage from './views/exam/Evaluatation.js';
 // system
 import BankInfoPage from './views/system/bank.js';
 import FooterPage from './views/system/footer.js';
@@ -219,7 +220,13 @@ var routes = [
       name: "Đề mẫu",
       icon: <FileTextOutlined />,
       render: (props) => <ExamAdminPage {...props}/>
-    }, 
+    }, {
+      parent: "question",
+      path: "/admin/question/evaluation",
+      name: "Đánh giá",
+      icon: <FileTextOutlined />,
+      render: (props) => <EvaluationPage {...props}/>
+    }
     // {
     //   parent: "question",
     //   path: "/admin/generation/exam",

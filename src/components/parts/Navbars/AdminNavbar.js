@@ -218,7 +218,7 @@ function Header(props) {
         <NavLink to="/admin/dashboard">
             <img alt="..."  style={{width:'90%'}}
             className="img-no-padding img-responsive"
-            src={require("assets/rank/banner.jpg").default}
+            src={require("assets/rank/banner.png").default}
             />
         </NavLink>
         <NavbarToggler onClick={toggle}>

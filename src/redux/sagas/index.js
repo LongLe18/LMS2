@@ -334,6 +334,14 @@ import {
     loadEditContact,
 } from './contact';
 
+import {
+    loadEvaluations,
+    loadAddEvaluation,
+    loadDeleteEvaluation,
+    loadEditEvaluation,
+    loadEvaluation,
+} from './evaluate';
+
 export default function* rootSaga() {
     yield all([
         // major
@@ -619,5 +627,11 @@ export default function* rootSaga() {
         loadContacts(),
         loadDeleteContact(),
         loadEditContact(),
+        // đánh giá
+        loadEvaluations(),
+        loadAddEvaluation(),
+        loadDeleteEvaluation(),
+        loadEditEvaluation(),
+        loadEvaluation(),
     ]);
 }

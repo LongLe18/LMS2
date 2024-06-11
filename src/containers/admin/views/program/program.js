@@ -223,115 +223,113 @@ const ProgramPage = () => {
     };
 
     return (
-        <>
-            <div className='content'>
-                <Row className="app-main">
-                    <Col xl={24} className="body-content">
-                        <Row>
-                            <Col xl={24} sm={24} xs={24}>
-                                <AppFilter
-                                title="Danh sách khung chương trình"
-                                isShowCourse={false}
-                                isShowModule={false}
-                                isShowThematic={false}
-                                isShowStatus={false}
-                                isShowSearchBox={false}
-                                isShowDatePicker={false}
-                                isRangeDatePicker={false}
-                                courses={programs.data}
-                                onFilterChange={(field, value) => onFilterChange(field, value)}
-                                />
-                            </Col>
-                        </Row>
-                    </Col>
-                </Row>
-                {data.length > 0 && 
-                    <Table className="table-striped-rows" columns={columns} dataSource={data} />
-                }
-                {error && notification.error({
-                    message: 'Thông báo',
-                    description: 'Lấy dữ liệu khung chương trình thất bại',
-                })}
-                <Row>
-                    <Col xl={24} sm={24} xs={24} className="cate-form-block">
-                        {loadingProgram && <LoadingCustom/>}
-                        {(state.isEdit && program.status === 'success' && program) ?
-                            <h5>Sửa thông tin khung chương tình</h5> 
-                            : 
-                            <h5>Thêm mới khung chương trình</h5>
-                        }  
-                        <Form layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={createProgram}>
-                            <Form.Item
-                                className="input-col"
-                                label="Tên khung chương trình"
-                                name="ten_khung_ct"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Tên khung chương trình là trường bắt buộc.',
-                                    },
-                                ]}
-                                >
-                                    <Input placeholder=""/>
-                            </Form.Item>
-                            <Form.Item
-                              name="loai_kct"
-                              label="Loại khung chương trình"
-                              initialValue={0}
-                              rules={[
+        <div className='content'>
+            <Row className="app-main">
+                <Col xl={24} className="body-content">
+                    <Row>
+                        <Col xl={24} sm={24} xs={24}>
+                            <AppFilter
+                            title="Danh sách khung chương trình"
+                            isShowCourse={false}
+                            isShowModule={false}
+                            isShowThematic={false}
+                            isShowStatus={false}
+                            isShowSearchBox={false}
+                            isShowDatePicker={false}
+                            isRangeDatePicker={false}
+                            courses={programs.data}
+                            onFilterChange={(field, value) => onFilterChange(field, value)}
+                            />
+                        </Col>
+                    </Row>
+                </Col>
+            </Row>
+            {data.length > 0 && 
+                <Table className="table-striped-rows" columns={columns} dataSource={data} />
+            }
+            {error && notification.error({
+                message: 'Thông báo',
+                description: 'Lấy dữ liệu khung chương trình thất bại',
+            })}
+            <Row>
+                <Col xl={24} sm={24} xs={24} className="cate-form-block">
+                    {loadingProgram && <LoadingCustom/>}
+                    {(state.isEdit && program.status === 'success' && program) ?
+                        <h5>Sửa thông tin khung chương tình</h5> 
+                        : 
+                        <h5>Thêm mới khung chương trình</h5>
+                    }  
+                    <Form layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={createProgram}>
+                        <Form.Item
+                            className="input-col"
+                            label="Tên khung chương trình"
+                            name="ten_khung_ct"
+                            rules={[
                                 {
-                                  required: true,
-                                  message: 'Loại khung chương trình là trường bắt buộc.',
+                                    required: true,
+                                    message: 'Tên khung chương trình là trường bắt buộc.',
                                 },
-                              ]}
+                            ]}
                             >
-                                <Radio.Group>
-                                  <Radio className="option-payment" value={0}>
-                                    Ôn luyện
-                                  </Radio>
-                                  <Radio className="option-payment" value={1}>
-                                    Thi thử Online
-                                  </Radio>
-                                </Radio.Group>
-                            </Form.Item>
-                            <Form.Item
-                                className="input-col"
-                                label="Mô tả"
-                                name="mo_ta"
-                                rules={[]}
-                                >
-                                    <TextArea placeholder=""/>
-                            </Form.Item>
-                            <Form.Item className="input-col" label="Hình đại diện" name="anh_dai_dien" rules={[]}>
-                                <Dragger {...propsImage} maxCount={1}
-                                    listType="picture"
-                                    className="upload-list-inline"
-                                >
-                                    <p className="ant-upload-drag-icon">
-                                        <UploadOutlined />
-                                    </p>
-                                    <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
-                              </Dragger>
-                            </Form.Item>
-                            <br/>
-                            <br/>
-                            <Form.Item className="button-col">
-                                <Space>
-                                    <Button shape="round" type="primary" htmlType="submit" >
-                                        {(state.isEdit && program.status === 'success' && program) ? 'Cập nhật' : 'Thêm mới'}   
+                                <Input placeholder=""/>
+                        </Form.Item>
+                        <Form.Item
+                            name="loai_kct"
+                            label="Loại khung chương trình"
+                            initialValue={0}
+                            rules={[
+                            {
+                                required: true,
+                                message: 'Loại khung chương trình là trường bắt buộc.',
+                            },
+                            ]}
+                        >
+                            <Radio.Group>
+                                <Radio className="option-payment" value={0}>
+                                Ôn luyện
+                                </Radio>
+                                <Radio className="option-payment" value={1}>
+                                Thi thử Online
+                                </Radio>
+                            </Radio.Group>
+                        </Form.Item>
+                        <Form.Item
+                            className="input-col"
+                            label="Mô tả"
+                            name="mo_ta"
+                            rules={[]}
+                            >
+                                <TextArea placeholder=""/>
+                        </Form.Item>
+                        <Form.Item className="input-col" label="Hình đại diện" name="anh_dai_dien" rules={[]}>
+                            <Dragger {...propsImage} maxCount={1}
+                                listType="picture"
+                                className="upload-list-inline"
+                            >
+                                <p className="ant-upload-drag-icon">
+                                    <UploadOutlined />
+                                </p>
+                                <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
+                            </Dragger>
+                        </Form.Item>
+                        <br/>
+                        <br/>
+                        <Form.Item className="button-col">
+                            <Space>
+                                <Button shape="round" type="primary" htmlType="submit" >
+                                    {(state.isEdit && program.status === 'success' && program) ? 'Cập nhật' : 'Thêm mới'}   
+                                </Button>
+                                {(state.isEdit && program.status === 'success' && program) 
+                                ?  <Button shape="round" type="danger" onClick={() => cancelEdit()} > 
+                                        Hủy bỏ
                                     </Button>
-                                    {(state.isEdit && program.status === 'success' && program) 
-                                    ?  <Button shape="round" type="danger" onClick={() => cancelEdit()} > 
-                                            Hủy bỏ
-                                        </Button>
-                                    : ''}    
-                                </Space>    
-                            </Form.Item>
-                        </Form>
-                    </Col>   
-                </Row>
-            </div>
-        </>
+                                : ''}    
+                            </Space>    
+                        </Form.Item>
+                    </Form>
+                </Col>   
+            </Row>
+        </div>
     )
 }
 

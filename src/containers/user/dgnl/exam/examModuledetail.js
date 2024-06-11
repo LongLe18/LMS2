@@ -227,7 +227,7 @@ const ExamModuleViewPage = (props) => {
             {(module.status === 'success' && criteria.status === 'success' && examUser.status === 'success' && exam.status === 'success') &&
                 <Content className="app-content">                
                     <div className="header-exam">
-                        <h1>{params.idCourse === 'YK' ? 'CUỘC THI TÀI NĂNG TIẾNG ANH 2023' : 'ĐỀ THI ĐÁNH GIÁ NĂNG LỰC ĐẠI HỌC QUỐC GIA HÀ NỘI'}</h1>
+                        <h1>ĐỀ THI ĐÁNH GIÁ NĂNG LỰC ĐẠI HỌC QUỐC GIA HÀ NỘI</h1>
                         <h3 className='m-0'>{module.data.ten_mo_dun}</h3>
                         <h5 className='m-0'>{exam.data.ten_de_thi}</h5>
                         <AuthModal />

@@ -23,6 +23,7 @@ import * as notification from './notification';
 import * as comment from './comment';
 import * as footer from './footer';
 import * as contact from './contact';
+import * as evaluate from './evaluate';
 
 export { 
     advertise,
@@ -50,4 +51,5 @@ export {
     comment,
     footer,
     contact,
+    evaluate,
 }

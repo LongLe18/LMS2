@@ -9,7 +9,6 @@ import Loadable from "components/parts/loading/Loadable";
 // import NotFound from "components/common/NotFound";
 
 const UserLayout = Loadable(lazy(() => import("containers/user/dgnl/User")));
-const IeltsLayout = Loadable(lazy(() => import("containers/user/ielts/Ielts")));
 const Dashboard = Loadable(lazy(() => import("containers/admin/Admin")));
 const AuthLayout = Loadable(lazy(() => import("containers/auth/Auth")));
 const TeacherPage = Loadable(lazy(() => import("containers/teacher/Teacher")));
@@ -37,13 +36,6 @@ export const ROUTES = [
         exact: true,
         hidden: true,
         component: UserLayout
-    },
-    {
-        id: 'practice',
-        path: '/ielts',
-        exact: true,
-        hidden: true,
-        component: IeltsLayout
     },
     {
         id: 'teacher',

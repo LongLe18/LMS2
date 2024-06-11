@@ -75,92 +75,63 @@ const ExamModulePage = (props) => {
 
     const renderExams = () => {
         const listExams = examCourse.data.map((item, index) => {
-            if (idCourse === 'YK') {
-                if (index < 3) {
-                    return (
-                        <Col xl={8} sm={8} xs={24} className="list-exam-row" key={index}>
-                            <Card bordered hoverable className="list-exam-box" onClick={() => {
-                                if (userToken) history.push(`/luyen-tap/mo-dun/xem/${idModule}/${hashids.encode(item.de_thi_id)}/${idCourse}`);
-                                else {document.getElementsByClassName('singin')[0].click()}
-                            }}>
-                                <div className="box-image">
-                                    <Image preview={false} src={config.API_URL + item.anh_dai_dien} />
-                                </div>
-                                <div className="box-text">
-                                    <h5 className="list-exam-title-archive">{item.ten_de_thi}</h5>
-                                    <Progress percent={100} showInfo={false} strokeColor={"#faad14"} />
-                                    <div className="list-author-archive">
-                                        <div className="author">
-                                            <UserOutlined /> <span> Trung tâm đào tạo CT & T</span>
-                                        </div>
-                                        <div className="date">
-                                            <CalendarOutlined /> {formatedDate(item.ngay_tao)}
-                                        </div>
+            if (index < 0) {
+                return (
+                    <Col xl={8} sm={8} xs={24} className="list-exam-row" key={index}>
+                        <Card bordered hoverable className="list-exam-box" onClick={() => {
+                            if (userToken) history.push(`/luyen-tap/mo-dun/xem/${idModule}/${hashids.encode(item.de_thi_id)}/${idCourse}`);
+                            else {document.getElementsByClassName('singin')[0].click()}
+                        }}>
+                            <div className="box-image">
+                                <Image preview={false} src={config.API_URL + item.anh_dai_dien} />
+                            </div>
+                            <div className="box-text">
+                                <h5 className="list-exam-title-archive">{item.ten_de_thi}</h5>
+                                <Progress percent={100} showInfo={false} strokeColor={"#faad14"} />
+                                <div className="list-author-archive">
+                                    <div className="author">
+                                        <UserOutlined /> <span> Trung tâm đào tạo CT & T</span>
+                                    </div>
+                                    <div className="date">
+                                        <CalendarOutlined /> {formatedDate(item.ngay_tao)}
                                     </div>
                                 </div>
-                            </Card>
-                        </Col>
-                    )
-                } else return 0;
+                            </div>
+                        </Card>
+                    </Col>
+                )
             } else {
-                if (index < 0) {
-                    return (
-                        <Col xl={8} sm={8} xs={24} className="list-exam-row" key={index}>
-                            <Card bordered hoverable className="list-exam-box" onClick={() => {
-                                if (userToken) history.push(`/luyen-tap/mo-dun/xem/${idModule}/${hashids.encode(item.de_thi_id)}/${idCourse}`);
-                                else {document.getElementsByClassName('singin')[0].click()}
+                return (
+                    <Col xl={8} sm={8} xs={24} className="list-exam-row" key={index}>
+                        <Card bordered hoverable className="list-exam-box" 
+                            onClick={() => {
+                                if (existCourse) {
+                                    history.push(`/luyen-tap/mo-dun/xem/${idModule}/${hashids.encode(item.de_thi_id)}/${idCourse}`);
+                                } else {
+                                    notification.error({
+                                        message: 'Thông báo',
+                                        description: 'Bạn chưa đăng ký khóa học này, vui lòng đăng ký để vào học'
+                                    });
+                                }
                             }}>
-                                <div className="box-image">
-                                    <Image preview={false} src={config.API_URL + item.anh_dai_dien} />
-                                </div>
-                                <div className="box-text">
-                                    <h5 className="list-exam-title-archive">{item.ten_de_thi}</h5>
-                                    <Progress percent={100} showInfo={false} strokeColor={"#faad14"} />
-                                    <div className="list-author-archive">
-                                        <div className="author">
-                                            <UserOutlined /> <span> Trung tâm đào tạo CT & T</span>
-                                        </div>
-                                        <div className="date">
-                                            <CalendarOutlined /> {formatedDate(item.ngay_tao)}
-                                        </div>
+                            <div className="box-image">
+                                <Image preview={false} src={config.API_URL + item.anh_dai_dien} />
+                            </div>
+                            <div className="box-text">
+                                <h5 className="list-exam-title-archive">{item.ten_de_thi}</h5>
+                                <Progress percent={100} showInfo={false} strokeColor={"#faad14"} />
+                                <div className="list-author-archive">
+                                    <div className="author">
+                                        <UserOutlined /> <span> Trung tâm đào tạo CT & T</span>
+                                    </div>
+                                    <div className="date">
+                                        <CalendarOutlined /> {formatedDate(item.ngay_tao)}
                                     </div>
                                 </div>
-                            </Card>
-                        </Col>
-                    )
-                } else {
-                    return (
-                        <Col xl={8} sm={8} xs={24} className="list-exam-row" key={index}>
-                            <Card bordered hoverable className="list-exam-box" 
-                                onClick={() => {
-                                    if (existCourse) {
-                                        history.push(`/luyen-tap/mo-dun/xem/${idModule}/${hashids.encode(item.de_thi_id)}/${idCourse}`);
-                                    } else {
-                                        notification.error({
-                                            message: 'Thông báo',
-                                            description: 'Bạn chưa đăng ký khóa học này, vui lòng đăng ký để vào học'
-                                        });
-                                    }
-                                }}>
-                                <div className="box-image">
-                                    <Image preview={false} src={config.API_URL + item.anh_dai_dien} />
-                                </div>
-                                <div className="box-text">
-                                    <h5 className="list-exam-title-archive">{item.ten_de_thi}</h5>
-                                    <Progress percent={100} showInfo={false} strokeColor={"#faad14"} />
-                                    <div className="list-author-archive">
-                                        <div className="author">
-                                            <UserOutlined /> <span> Trung tâm đào tạo CT & T</span>
-                                        </div>
-                                        <div className="date">
-                                            <CalendarOutlined /> {formatedDate(item.ngay_tao)}
-                                        </div>
-                                    </div>
-                                </div>
-                            </Card>
-                        </Col>
-                    )
-                }
+                            </div>
+                        </Card>
+                    </Col>
+                )
             }
         });
         
@@ -193,22 +164,14 @@ const ExamModulePage = (props) => {
                                 <Row gutter={[20]}>
                                 <Col xl={34} sm={24} xs={24} className="news-left">
                                     <div className="info-course">
-                                    <div className="info">
-                                        <h1 className="archive-title">Danh sách đề thi</h1>
-                                        {idCourse === 'YK' ? 
+                                        <div className="info">
+                                            <h1 className="archive-title">Danh sách đề thi</h1>
                                             <>
+                                                <p>Giáo viên: Thầy Cô của Trung tâm đào tạo CT & T</p>
+                                                <p>Số lượng đề thi: {examCourse.data.length}</p>
                                                 <p>Kiểm tra thiết bị trước khi làm bài</p>
-                                                <p>Yêu cầu thi sinh làm bài thi trên máy tính, không làm trên điện thoại</p>
-                                                <p>Mỗi thí sinh được làm bài thi 03 lần</p>
                                             </>
-                                        :
-                                            <>
-                                            <p>Giáo viên: Thầy Cô của Trung tâm đào tạo CT & T</p>
-                                            <p>Số lượng đề thi: {examCourse.data.length}</p>
-                                            <p>Kiểm tra thiết bị trước khi làm bài</p>
-                                            </>
-                                        }
-                                    </div>
+                                        </div>
                                     </div>
                                     {renderExams()}
                                 </Col>

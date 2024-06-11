@@ -323,7 +323,7 @@ function IndexHeader(props) {
           <NavLink to="/luyen-tap/kinh-doanh-khoa-hoc">
             <img alt="..."  style={{maxHeight: '155px', width: '1140px'}}
             className="img-no-padding img-responsive"
-            src={window.location.href.split('/').includes('YK') ?  require("assets/img/landingpage/header.png").default: require("assets/rank/banner.jpg").default}
+            src={require("assets/rank/banner.png").default}
             />
           </NavLink>
         </Row>
@@ -458,7 +458,7 @@ function IndexHeader(props) {
                 href="https://luyenthiquocgia.edu.vn/"
                 className="simple-text logo-mini"
               >
-                <Avatar src={require("assets/rank/logo-login.png").default} alt="react-logo" size={40} />
+                <Avatar src={require("assets/rank/Logo.png").default} alt="react-logo" size={40} />
               </a>
             </div>
             <div className="nav__mobile-close"><Button icon={<CloseOutlined />} onClick={() => onCollapse(!collapsed)}></Button></div>

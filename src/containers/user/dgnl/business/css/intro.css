@@ -213,7 +213,7 @@ li {
 }
 
 .woocommerce-tabs .tabs li.active a {
-    background: #a51f24;
+    background: #3da844;
 }
 
 .woocommerce-tabs .tabs li a {
@@ -281,7 +281,7 @@ li {
 }
 
 .has-border {
-    border: 2px solid #a51f24;
+    border: 2px solid #3da844;
     padding: 15px 30px 30px;
 }
 

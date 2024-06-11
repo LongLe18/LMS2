@@ -25,6 +25,7 @@ import notification from './notification';
 import comment from './comment';
 import footer from './footer';
 import contact from './contact';
+import evaluate from './evaluate';
 
 export default combineReducers({ 
     programme,
@@ -52,4 +53,5 @@ export default combineReducers({
     comment,
     footer,
     contact,
+    evaluate,
 });

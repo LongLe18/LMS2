@@ -1,4 +1,4 @@
-const ENV = 'prod';
+const ENV = 'dev';
 const BASE_URL = ''
 const API_URL_DEV = 'http://localhost:3001';
 const API_URL_PROD = 'https://luyenthiquocgia.edu.vn:3000';

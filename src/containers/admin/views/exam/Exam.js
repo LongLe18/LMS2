@@ -533,7 +533,7 @@ const ExamAdminPage = () => {
                         <Row>
                             <Col xl={24} sm={24} xs={24}>
                                 {courses.status === "success" &&
-                                    <AppFilter
+                                  <AppFilter
                                     title="Quản lý đề thi"
                                     isShowCourse={true}
                                     isTypeExam={true}
@@ -573,12 +573,12 @@ const ExamAdminPage = () => {
                 <Tabs defaultActiveKey="1" type="card" onChange={changeTab}>
                     <TabPane tab="Đề đã xuất bản" key="1">
                     {exams.status === 'success' && 
-                        <Table className="table-striped-rows" columns={column1} dataSource={data} />
+                      <Table className="table-striped-rows" columns={column1} dataSource={data} />
                     }
                     </TabPane>
                     <TabPane tab="Đề chưa xuất bản" key="0">
                     {exams.status === 'success' && 
-                        <Table className="table-striped-rows" columns={column1} dataSource={data} />
+                      <Table className="table-striped-rows" columns={column1} dataSource={data} />
                     }
                     </TabPane>
                     {error && notification.error({

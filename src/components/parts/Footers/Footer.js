@@ -24,10 +24,8 @@ const Footer = () => {
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (        
-        <div className='app-footer' style={{textAlign: window.location.href.split('/').includes('YK') ? 'center' : ''}}>
-            {window.location.href.split('/').includes('YK') 
-            ? <img src={require('assets/img/landingpage/cover-ETC-2.png').default} alt="footer" /> 
-            :
+        <div className='app-footer'>
+            
             <div className="main-footer wraper">
                 <div className="footer-container">
                     <Row gutter={[10, 10]}>
@@ -107,7 +105,6 @@ const Footer = () => {
                     </Row>
                 </div>
             </div>
-            }
             {/* Copy right */}
             <div className="copy-right">
                 <p className="text-center">

@@ -9,6 +9,7 @@ import config from '../../../../configs/index';
 import defaultImage from 'assets/img/default.jpg';
 import { diff } from 'helpers/common.helper';
 import { createRoot } from 'react-dom/client';
+import axios from 'axios';
 
 // hook
 import useDebounce from 'hooks/useDebounce';
@@ -19,17 +20,14 @@ import AppBreadCrumb from "components/parts/breadcrumb/AppBreadCrumb";
 import NoRecord from 'components/common/NoRecord';
 import LoadingCustom from "components/parts/loading/Loading"
 import { Layout, Row, Col, Modal, Button, notification, Input, Alert, Upload, message, List, Comment, Space, Timeline } from 'antd';
-import { InfoCircleOutlined, CommentOutlined, UploadOutlined } from '@ant-design/icons';
+import { InfoCircleOutlined, CommentOutlined, UploadOutlined, DownloadOutlined, FileOutlined } from '@ant-design/icons';
 import TextEditorWidget2 from 'components/common/TextEditor/TextEditor2';
-
-// icon
-import Icon from '@ant-design/icons';
-import docIcon from 'assets/img/exam/doc-icon.png';
 
 // redux
 import { useSelector, useDispatch } from 'react-redux';
 import * as examActions from '../../../../redux/actions/exam';
 import * as answerActions from '../../../../redux/actions/answer';
+import * as evaluationActions from '../../../../redux/actions/evaluate';
 import * as commentAction from '../../../../redux/actions/comment';
 import * as notificationAction from '../../../../redux/actions/notification';
 
@@ -69,6 +67,7 @@ const ExamOnlineDetail = () => {
     const error = useSelector(state => state.exam.item.error);
     const examUser = useSelector(state => state.exam.examUser.result);
     const comments = useSelector(state => state.comment.list.result);
+    const evaluations = useSelector(state => state.evaluate.list.result);
 
     let answers = [];
     let breadcrumbs = [];
@@ -217,6 +216,7 @@ const ExamOnlineDetail = () => {
             }
         ));
         dispatch(commentAction.getCOMMENTs({ idCourse: '', idModule: '', type: 1 }));
+        dispatch(evaluationActions.getEVALUATEs({ id: hashids.decode(params.idExam), pageIndex: 0, pageSize: 100 }));
     }, [params.idExam, params.idExamUser]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useMemo(() => {
@@ -283,6 +283,31 @@ const ExamOnlineDetail = () => {
 
     if (exam.status === 'success') {
         breadcrumbs.push({ title: 'Đề thi', link: `#` }, { title: exam.data.ten_de_thi, link: `/luyen-tap/xem/${params.idExam}/${params.idCourse}` });
+    }
+
+    // Tải báo cáo
+    const downloadReport = async () => {
+        try {
+            const response = await axios({
+                url: `${config.API_URL}/evaluate/download`, 
+                method: 'GET',
+                responseType: 'blob', 
+                headers: {
+                    Authorization: `Bearer ${userToken}`,
+                }
+            });
+
+            // Create a URL for the file
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'file.docx'); // Replace with your file name and extension
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode.removeChild(link);
+        } catch (error) {
+            console.error('Download error:', error);
+        }
     }
 
     // bình luận
@@ -1018,11 +1043,62 @@ const ExamOnlineDetail = () => {
                                         })}
                                     </Timeline>
                                 </div>
+                                <div className="body-evaluation">
+                                    <h5 style={{fontWeight: 700, textAlign: 'center'}}>Kết quả đánh giá</h5>
+                                    <Timeline>
+                                        {Array.from({ length: exam.data.so_phan }).map((_, index) => {
+                                            const startIndex = (index + 1 - 1) * exam.data[`so_cau_hoi_phan_${index + 1}`];
+                                            const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${index + 1}`];
+                                            const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
+                                            // số câu đúng của từng phần
+                                            const number = partQuestions.map((question, index) => {
+                                                let number = 0;
+                                                if (!isDoing && examUser.status === 'success') {
+                                                    if (examUser.data.dap_an_da_chons) {
+                                                        let currentSubmitAnswer = examUser.data.dap_an_da_chons.find((item) => item.cau_hoi_id === question.cau_hoi.cau_hoi_id);
+                                                        if (question.cau_hoi.dap_an_dungs && currentSubmitAnswer !== undefined) {
+                                                            if (question.cau_hoi.loai_cau_hoi === 1 || question.cau_hoi.loai_cau_hoi === 2) { // Câu trắc nghiệm
+                                                                let answerRight = convertAnswer(question.cau_hoi.dap_an_dungs);
+                                                                if (currentSubmitAnswer && answerRight === currentSubmitAnswer.ket_qua_chon) {
+                                                                    number = number + 1;
+                                                                } 
+                                                            } else { // Câu tự luận
+                                                                if (currentSubmitAnswer && question.cau_hoi.dap_ans[0].noi_dung_dap_an === (currentSubmitAnswer?.noi_dung_tra_loi)?.toLowerCase()) {
+                                                                    number = number + 1;
+                                                                } 
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                                return number;
+                                            });
+                                            // Đánh giá của phần tương ứng
+                                            const evaluationsTemp = evaluations?.data.filter((item) => item.phan_thi === index + 1);
+                                            // Kiểm tra số câu đúng của từng phần và lấy ra đánh giá tương ứng
+                                            const evaluation = evaluationsTemp?.map((item) => {
+                                                let evaluation = '';
+                                                if (item.cau_bat_dau <= number.reduce((partialSum, a) => partialSum + a, 0) && number.reduce((partialSum, a) => partialSum + a, 0) <= item.cau_ket_thuc) {
+                                                    evaluation = item?.danh_gia;
+                                                }
+                                                return evaluation;
+                                            });
+                                            return (
+                                                <Timeline.Item key={index + 1} style={{paddingBottom: index + 1 === exam.data.so_phan ? 0 : 20, fontWeight: 600}}>
+                                                    <div style={{whiteSpace: 'pre-line'}}>Nhận xét đánh phần {index + 1}: <br/>{evaluation.filter((item) => item !== '')[0].split('-').filter((item) => item !== '').join('\n')}</div>
+                                                </Timeline.Item>
+                                            )
+                                        })}
+                                    </Timeline>
+                                </div>
                             </div>
                             <div className="block-action">
                                 <Button type="default" size="large" className="dowload-exam-button" onClick={() => doExamAgain()}>
-                                    <Icon component={() => <img className="dowload-exam-right-icon" src={docIcon} alt="..." />} />
+                                    <FileOutlined />
                                     Làm lại bài thi
+                                </Button>
+                                <Button type="default" size="large" className="dowload-exam-button" onClick={() => downloadReport()}>
+                                    <DownloadOutlined />
+                                    Tải báo cáo
                                 </Button>
                             </div>
                         </div>

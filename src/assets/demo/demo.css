@@ -864,7 +864,7 @@ body, html {
 .header-bottom {
   max-height: 43px;
   width: 100%;
-  background-color: #a51f24;
+  background-color: #3da844;
   display: inline-block;
   background-image: none;
   z-index: 9;
@@ -977,7 +977,7 @@ span.widget-title{
   font-weight: bold;
   text-align: center;
   display: block;
-  background: #a51f24;
+  background: #3da844;
   line-height: 33px;
   border-top-left-radius: 4px;
   color: white;
@@ -1021,7 +1021,7 @@ span.widget-title{
   font-size: 14px;
   display: block;
   font-weight: bold;
-  color: #a51f24;
+  color: #3da844;
 }
 
 .widget>ul {
@@ -1122,7 +1122,7 @@ span.widget-title{
   bottom: 0;
   width: 320px;
   max-width: 100%;
-  background-color: #a51f24;
+  background-color: #3da844;
   transform: translateX(-100%);
   transition: transform linear 0.2s;
 }
