@@ -43,6 +43,7 @@ const Contact = require('./Contact');
 const Token = require('./Token');
 const CourseStudent = require('./CourseStudent');
 const Province = require('./Province');
+const Evaluate = require('./Evaluate');
 
 //khoa ngoai khoahoc
 Program.hasMany(Course, { foreignKey: 'kct_id' });
@@ -157,7 +158,8 @@ Student.hasMany(Comment, { foreignKey: 'hoc_vien_id' });
 //khoa hoc binh luan phu
 SideComment.belongsTo(Comment, { foreignKey: 'binh_luan_id'});
 Comment.hasMany(Comment, { foreignKey: 'binh_luan_id'});
-
+// Khoá ngoại Đánh giá
+Evaluate.belongsTo(Exam, { foreignKey: 'de_thi_id' });
 
 module.exports = {
     Course,
@@ -204,5 +206,6 @@ module.exports = {
     Footer,
     Token,
     CourseStudent,
-    Province
+    Province,
+    Evaluate,
 };

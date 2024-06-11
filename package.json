@@ -14,6 +14,7 @@
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "dateformat": "^2.2.0",
+    "docxtemplater": "^3.47.4",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "express-session": "^1.17.3",
@@ -25,6 +26,7 @@
     "nodemailer": "^6.7.5",
     "passport": "^0.6.0",
     "passport-google-oauth20": "^2.0.0",
+    "pizzip": "^3.1.7",
     "sequelize": "^6.20.1"
   },
   "devDependencies": {
