@@ -38,12 +38,11 @@ const detailedInvoiceRouter = require('./detailedinvoice');
 const commentRouter = require('./comment');
 const sideCommentRouter = require('./sidecomment');
 const notificationRouter = require('./notification');
-const accountBankRouter = require('./accountbank');
+const accountBankRouter=require('./accountbank');
 const footerRouter = require('./footer');
 const contactRouter = require('./contact');
 const courseStudentRouter = require('./coursestudent');
 const provinceRouter = require('./province');
-const evaluateRouter = require('./evaluate');
 
 function route(app) {
     app.use('/auth', authenRouter);
@@ -91,7 +90,6 @@ function route(app) {
     app.use('/contact', contactRouter);
     app.use('/course_student', courseStudentRouter);
     app.use('/province', provinceRouter);
-    app.use('/evaluate', evaluateRouter);
 }
 
 module.exports = route;

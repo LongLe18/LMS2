@@ -1,3 +1,8 @@
+const PizZip = require('pizzip');
+const Docxtemplater = require('docxtemplater');
+const path = require('path');
+const fs = require('fs');
+
 const {
     Exam,
     StudentExam,
@@ -7,6 +12,7 @@ const {
     ThematicCriteria,
     ModunCriteria,
     SyntheticCriteria,
+    OnlineCriteria,
 } = require('../models');
 const sequelize = require('../utils/db');
 
@@ -70,22 +76,23 @@ const getAll = async (req, res) => {
 
 const getUser = async (req, res) => {
     let filter;
-    let so_ngay='30';
-    if(req.query.so_ngay){
-        so_ngay=req.query.so_ngay;
+    let so_ngay = '30';
+    if (req.query.so_ngay) {
+        so_ngay = req.query.so_ngay;
     }
-    filter=`AND DATEDIFF(NOW(),de_thi_hoc_vien.ngay_tao)<=${so_ngay}`;
-    const exams=await sequelize.query(
+    filter = `AND DATEDIFF(NOW(),de_thi_hoc_vien.ngay_tao)<=${so_ngay}`;
+    const exams = await sequelize.query(
         `SELECT de_thi.ten_de_thi, de_thi.anh_dai_dien, de_thi_hoc_vien.* FROM de_thi JOIN de_thi_hoc_vien 
         ON de_thi.de_thi_id=de_thi_hoc_vien.de_thi_id WHERE de_thi_hoc_vien.hoc_vien_id=${req.userId} ${filter} 
         AND de_thi_hoc_vien.thoi_diem_ket_thuc IS NOT NULL ORDER BY de_thi_hoc_vien.ngay_tao DESC LIMIT 30`,
-        { type: sequelize.QueryTypes.SELECT});
+        { type: sequelize.QueryTypes.SELECT }
+    );
     res.status(200).send({
         status: 'success',
         data: exams,
         message: null,
     });
-}
+};
 
 const getById = async (req, res) => {
     let studentExam = await StudentExam.findOne({
@@ -111,7 +118,7 @@ const getById = async (req, res) => {
 const postCreate = async (req, res) => {
     const studentExam = await StudentExam.create({
         ...req.body,
-        hoc_vien_id: req.userId
+        hoc_vien_id: req.userId,
     });
     res.status(200).send({
         status: 'success',
@@ -142,7 +149,8 @@ const putUpdate = async (req, res) => {
     let result;
     for (const selectedAnswer of selectedAnswers) {
         result = false;
-        if (selectedAnswer.cau_hoi.loai_cau_hoi === 1) { // Câu trắc nghiệm
+        if (selectedAnswer.cau_hoi.loai_cau_hoi === 1) {
+            // Câu trắc nghiệm
             ket_qua_chons = selectedAnswer.ket_qua_chon.toString().split('');
             dap_ans = selectedAnswer.cau_hoi.dap_ans;
             if (
@@ -152,19 +160,26 @@ const putUpdate = async (req, res) => {
                 )
             )
                 result = true;
-        } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 2) { // Câu trắc nghiệm đúng sai
+        } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 2) {
+            // Câu trắc nghiệm đúng sai
             const ket_qua_chons = [...selectedAnswer.ket_qua_chon.toString()];
             const dap_ans = selectedAnswer.cau_hoi.dap_ans;
             const bangDiem = {
-                0: 0, 
-                1: selectedAnswer.cau_hoi.diem / 10, 
-                2: selectedAnswer.cau_hoi.diem / 4, 
-                3: selectedAnswer.cau_hoi.diem / 2, 
+                0: 0,
+                1: selectedAnswer.cau_hoi.diem / 10,
+                2: selectedAnswer.cau_hoi.diem / 4,
+                3: selectedAnswer.cau_hoi.diem / 2,
             };
-            let so_cau_dung = ket_qua_chons.reduce((acc, ket_qua_chon, index) => acc + (ket_qua_chon === '1' === dap_ans[index].dap_an_dung), 0);  
+            let so_cau_dung = ket_qua_chons.reduce(
+                (acc, ket_qua_chon, index) =>
+                    acc +
+                    ((ket_qua_chon === '1') === dap_ans[index].dap_an_dung),
+                0
+            );
             ket_qua_diem += parseFloat(bangDiem[so_cau_dung] || 0);
             if (so_cau_dung === 4) result = true;
-        } else { // câu tự luận
+        } else {
+            // câu tự luận
             if (
                 selectedAnswer.noi_dung_tra_loi ==
                 selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an
@@ -176,15 +191,17 @@ const putUpdate = async (req, res) => {
             so_cau_tra_loi_dung++;
         }
     }
-    let exam=await sequelize.query(`
+    let exam = await sequelize.query(
+        `
         SELECT de_thi.* FROM de_thi JOIN de_thi_hoc_vien ON de_thi.de_thi_id=de_thi_hoc_vien.de_thi_id 
         WHERE de_thi_hoc_vien.dthv_id=:dthv_id`,
         {
-            replacements:{
-                dthv_id: req.params.id
+            replacements: {
+                dthv_id: req.params.id,
             },
-            type: sequelize.QueryTypes.SELECT
-        });
+            type: sequelize.QueryTypes.SELECT,
+        }
+    );
     let criteria;
     if (exam[0]) {
         exam = exam[0];
@@ -269,6 +286,143 @@ const clearAll = async (req, res) => {
     });
 };
 
+const exportReport = async (req, res) => {
+    try {
+        const studentExam = await StudentExam.findOne({
+            include: [
+                {
+                    model: Exam,
+                    attributes: ['ten_de_thi'],
+                },
+                {
+                    model: Exam,
+                    attributes: ['ten_de_thi'],
+                },
+            ],
+            where: {
+                dthv_id: req.params.id,
+            },
+        });
+
+        const content = fs.readFileSync(
+            path.resolve(process.cwd(), 'public/templates/form_export.docx'),
+            'binary'
+        );
+
+        const zip = new PizZip(content);
+
+        const doc = new Docxtemplater(zip, {
+            paragraphLoop: true,
+            linebreaks: true,
+        });
+
+        const selectedAnswers = await SelectedAnswer.findAll({
+            include: {
+                model: Question,
+                attributes: ['loai_cau_hoi', 'diem'],
+                include: {
+                    model: Answer,
+                    attributes: ['noi_dung_dap_an', 'dap_an_dung'],
+                },
+            },
+            where: {
+                dthv_id: req.params.id,
+            },
+        });
+        let ket_qua_diem = [];
+        let ket_qua_chons;
+        let dap_ans;
+        let result;
+        for (const selectedAnswer of selectedAnswers) {
+            result = false;
+            if (selectedAnswer.cau_hoi.loai_cau_hoi === 1) {
+                // Câu trắc nghiệm
+                ket_qua_chons = selectedAnswer.ket_qua_chon.toString().split('');
+                dap_ans = selectedAnswer.cau_hoi.dap_ans;
+                if (
+                    ket_qua_chons.every(
+                        (ket_qua_chon, index) =>
+                            ket_qua_chon == dap_ans[index].dap_an_dung
+                    )
+                )
+                    result = true;
+            } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 2) {
+                // Câu trắc nghiệm đúng sai
+                const ket_qua_chons = [...selectedAnswer.ket_qua_chon.toString()];
+                const dap_ans = selectedAnswer.cau_hoi.dap_ans;
+                const bangDiem = {
+                    0: 0,
+                    1: selectedAnswer.cau_hoi.diem / 10,
+                    2: selectedAnswer.cau_hoi.diem / 4,
+                    3: selectedAnswer.cau_hoi.diem / 2,
+                };
+                let so_cau_dung = ket_qua_chons.reduce(
+                    (acc, ket_qua_chon, index) =>
+                        acc +
+                        ((ket_qua_chon === '1') === dap_ans[index].dap_an_dung),
+                    0
+                );
+                if(so_cau_dung){
+                    ket_qua_diem.push(bangDiem[so_cau_dung]);
+                    continue;
+                }
+                if (so_cau_dung === 4) result = true;
+            } else {
+                // câu tự luận
+                if (
+                    selectedAnswer.noi_dung_tra_loi ==
+                    selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an
+                )
+                    result = true;
+            }
+            if (result) {
+                ket_qua_diem.push(selectedAnswer.cau_hoi.diem);
+            } else {
+                ket_qua_diem.push(0);
+            }
+        }
+
+        const phan_1 = ket_qua_diem.slice(0, 50).reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+        const phan_2 = ket_qua_diem.slice(50, 100).reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+        const phan_3 = ket_qua_diem.slice(100, 150).reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+        const diem_tong_hop = phan_1 + phan_2 + phan_3;
+
+        doc.render({
+            mon_thi: studentExam?.de_thi?.ten_de_thi,
+            phan_1: phan_1?.toString(),
+            phan_2: phan_2?.toString(),
+            phan_3: phan_3?.toString(),
+            phan_4: '',
+            diem_tong_hop: diem_tong_hop.toString(),
+            nhan_xet_1: 'New Website',
+        });
+
+        const buf = doc.getZip().generate({
+            type: 'nodebuffer',
+            // compression: DEFLATE adds a compression step.
+            // For a 50MB output document, expect 500ms additional CPU time
+            compression: 'DEFLATE',
+        });
+
+        res.set({
+            'Content-Type':
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'Content-Disposition': 'attachment; filename="report.docx"', // Replace 'example.doc' with your desired file name
+            'Content-Length': buf.length,
+        });
+
+        // Send the buffer as response
+        res.send(buf);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({
+            status: 'error',
+            data: null,
+            message: err,
+        });
+    }
+};
+
 module.exports = {
     getAll,
     getById,
@@ -277,4 +431,5 @@ module.exports = {
     getUser,
     forceDelete,
     clearAll,
+    exportReport,
 };

@@ -1,20 +1,5 @@
-const ENV = 'dev';
+const ENV = 'prod';
 const config = {
-    //database
-    database: {
-        username: 'root',
-        password: 'root',
-        database: 'tracnghiemtructuyen',
-        port: 3306,
-        host: 'localhost',
-        dialect: 'mysql',
-        pool: {
-            max: 5,
-            min: 0,
-            acquire: 30000,
-            idle: 10000,
-        },
-    },
     //direct url when error
     err:{
         url: 'https://luyenthiquocgia.edu.vn/'

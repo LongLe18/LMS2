@@ -125,20 +125,26 @@ const putUpdate = async (req, res) => {
 };
 
 const forceDelete = async (req, res) => {
+   try{
     const question = await Question.findOne({
         where: {
             cau_hoi_id: req.params.id,
         },
     });
-    if (question.noi_dung && fs.existsSync(`src/public${question.noi_dung}`))
-        fs.unlinkSync(`src/public${question.noi_dung}`);
-    if (question.loi_giai && fs.existsSync(`src/public${question.loi_giai}`))
-        fs.unlinkSync(`src/public${question.loi_giai}`);
+
+    const media = /\\begin{center}\n\\includegraphics\[scale = 0.5]{\s*([\s\S]*?)\s*}\n\\end{center}/g.exec(question.loi_giai);
+    if(media!==null && fs.existsSync(`public/${media[1]}`)){
+        fs.unlinkSync(`public/${media}`);
+    }
+
     await Question.destroy({
         where: {
             cau_hoi_id: req.params.id,
         },
     });
+   }catch(err){
+    console.log(err)
+   }
     res.status(200).send({
         status: 'success',
         data: null,

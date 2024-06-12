@@ -230,14 +230,6 @@ const deleteByIdQuestion = async (req, res) => {
 }
 
 const forceDelete = async (req, res) => {
-    const answer = await Answer.findOne({
-        where: {
-            dap_an_id: req.params.id,
-        },
-        raw: true,
-    });
-    if (answer.noi_dung_dap_an&&fs.existsSync(`src/public${answer.noi_dung_dap_an}`))
-        fs.unlinkSync(`src/public${answer.noi_dung_dap_an}`);
     await Answer.destroy({
         where: {
             dap_an_id: req.params.id,

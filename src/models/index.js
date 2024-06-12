@@ -43,123 +43,121 @@ const Contact = require('./Contact');
 const Token = require('./Token');
 const CourseStudent = require('./CourseStudent');
 const Province = require('./Province');
-const Evaluate = require('./Evaluate');
 
 //khoa ngoai khoahoc
-Program.hasMany(Course, { foreignKey: 'kct_id' });
-Course.belongsTo(Program, { foreignKey: 'kct_id' });
+Program.hasMany(Course, { foreignKey: 'kct_id', constraints: false });
+Course.belongsTo(Program, { foreignKey: 'kct_id', constraints: false });
 //khoa ngoai modun
-Course.hasMany(Modun, { foreignKey: 'khoa_hoc_id' });
-Modun.belongsTo(Course, { foreignKey: 'khoa_hoc_id' });
+Course.hasMany(Modun, { foreignKey: 'khoa_hoc_id', constraints: false });
+Modun.belongsTo(Course, { foreignKey: 'khoa_hoc_id', constraints: false });
 //khoa ngoai chuyende
-Modun.hasMany(Thematic, { foreignKey: 'mo_dun_id' });
-Thematic.belongsTo(Modun, { foreignKey: 'mo_dun_id' });
-Grade.hasMany(Thematic, { foreignKey: 'lop_id' });
-Thematic.belongsTo(Grade, { foreignKey: 'lop_id' });
+Modun.hasMany(Thematic, { foreignKey: 'mo_dun_id', constraints: false });
+Thematic.belongsTo(Modun, { foreignKey: 'mo_dun_id', constraints: false });
+Grade.hasMany(Thematic, { foreignKey: 'lop_id', constraints: false });
+Thematic.belongsTo(Grade, { foreignKey: 'lop_id', constraints: false });
 //khoa ngoai baigiang
-Thematic.hasMany(Lesson, { foreignKey: 'chuyen_de_id' });
-Lesson.belongsTo(Thematic, { foreignKey: 'chuyen_de_id' });
+Thematic.hasMany(Lesson, { foreignKey: 'chuyen_de_id' , constraints: false});
+Lesson.belongsTo(Thematic, { foreignKey: 'chuyen_de_id' , constraints: false});
 //khoa ngoai giao vien
-Majoring.hasMany(Teacher, { foreignKey: 'chuyen_nganh_id' });
-Teacher.belongsTo(Majoring, { foreignKey: 'chuyen_nganh_id' });
-Modun.belongsTo(Teacher, { foreignKey: 'giao_vien_id' });
-Teacher.hasMany(Modun, { foreignKey: 'giao_vien_id' });
+Majoring.hasMany(Teacher, { foreignKey: 'chuyen_nganh_id' , constraints: false});
+Teacher.belongsTo(Majoring, { foreignKey: 'chuyen_nganh_id' , constraints: false});
+Modun.belongsTo(Teacher, { foreignKey: 'giao_vien_id' , constraints: false});
+Teacher.hasMany(Modun, { foreignKey: 'giao_vien_id' , constraints: false});
 //khoa ngoai cauhoi
-Question.belongsTo(Exceprt, { foreignKey: 'trich_doan_id' });
-Exceprt.hasMany(Question, { foreignKey: 'trich_doan_id' });
-Question.belongsTo(Thematic, { foreignKey: 'chuyen_de_id' });
-Thematic.hasMany(Question, { foreignKey: 'chuyen_de_id' });
-Question.belongsTo(Modun, { foreignKey: 'mo_dun_id' });
-Modun.hasMany(Question, { foreignKey: 'mo_dun_id' });
+Question.belongsTo(Exceprt, { foreignKey: 'trich_doan_id' , constraints: false});
+Exceprt.hasMany(Question, { foreignKey: 'trich_doan_id' , constraints: false});
+Question.belongsTo(Thematic, { foreignKey: 'chuyen_de_id' , constraints: false});
+Thematic.hasMany(Question, { foreignKey: 'chuyen_de_id' , constraints: false});
+Question.belongsTo(Modun, { foreignKey: 'mo_dun_id' , constraints: false});
+Modun.hasMany(Question, { foreignKey: 'mo_dun_id' , constraints: false});
 //khoa ngoai dapan
-Answer.belongsTo(Question, { foreignKey: 'cau_hoi_id' });
-Question.hasMany(Answer, { foreignKey: 'cau_hoi_id' });
+Answer.belongsTo(Question, { foreignKey: 'cau_hoi_id' , constraints: false});
+Question.hasMany(Answer, { foreignKey: 'cau_hoi_id' , constraints: false});
 //khoa ngoai dapandachon
-SelectedAnswer.belongsTo(StudentExam, { foreignKey: 'dthv_id' });
-StudentExam.hasMany(SelectedAnswer, { foreignKey: 'dthv_id' });
-SelectedAnswer.belongsTo(Question, { foreignKey: 'cau_hoi_id' });
-Question.hasMany(SelectedAnswer, { foreignKey: 'cau_hoi_id' });
+SelectedAnswer.belongsTo(StudentExam, { foreignKey: 'dthv_id' , constraints: false});
+StudentExam.hasMany(SelectedAnswer, { foreignKey: 'dthv_id' , constraints: false});
+SelectedAnswer.belongsTo(Question, { foreignKey: 'cau_hoi_id' , constraints: false});
+Question.hasMany(SelectedAnswer, { foreignKey: 'cau_hoi_id' , constraints: false});
 //khoa ngoai dethi
-Exam.belongsTo(ExamType, { foreignKey: 'loai_de_thi_id' });
-ExamType.hasMany(Exam, { foreignKey: 'loai_de_thi_id' });
-Exam.belongsTo(Course, { foreignKey: 'khoa_hoc_id' });
-Course.hasMany(Exam, { foreignKey: 'khoa_hoc_id' });
-Exam.belongsTo(Modun, { foreignKey: 'mo_dun_id' });
-Modun.hasMany(Exam, { foreignKey: 'mo_dun_id' });
-Exam.belongsTo(Thematic, { foreignKey: 'chuyen_de_id' });
-Thematic.hasMany(Exam, { foreignKey: 'chuyen_de_id' });
+Exam.belongsTo(ExamType, { foreignKey: 'loai_de_thi_id' , constraints: false});
+ExamType.hasMany(Exam, { foreignKey: 'loai_de_thi_id' , constraints: false});
+Exam.belongsTo(Course, { foreignKey: 'khoa_hoc_id' , constraints: false});
+Course.hasMany(Exam, { foreignKey: 'khoa_hoc_id' , constraints: false});
+Exam.belongsTo(Modun, { foreignKey: 'mo_dun_id' , constraints: false});
+Modun.hasMany(Exam, { foreignKey: 'mo_dun_id' , constraints: false});
+Exam.belongsTo(Thematic, { foreignKey: 'chuyen_de_id' , constraints: false});
+Thematic.hasMany(Exam, { foreignKey: 'chuyen_de_id' , constraints: false});
 //khoa ngoai dethihocvien
-StudentExam.belongsTo(Student, { foreignKey: 'hoc_vien_id' });
-Student.hasMany(StudentExam, { foreignKey: 'hoc_vien_id' });
-StudentExam.belongsTo(Exam, { foreignKey: 'de_thi_id' });
-Exam.hasMany(StudentExam, { foreignKey: 'de_thi_id' });
+StudentExam.belongsTo(Student, { foreignKey: 'hoc_vien_id' , constraints: false});
+Student.hasMany(StudentExam, { foreignKey: 'hoc_vien_id' , constraints: false});
+StudentExam.belongsTo(Exam, { foreignKey: 'de_thi_id' , constraints: false});
+Exam.hasMany(StudentExam, { foreignKey: 'de_thi_id' , constraints: false});
 //khoa ngoai tieuchidetonghop
-SyntheticCriteria.belongsTo(Course, { foreignKey: 'khoa_hoc_id' });
-Course.hasMany(SyntheticCriteria, { foreignKey: 'khoa_hoc_id' });
+SyntheticCriteria.belongsTo(Course, { foreignKey: 'khoa_hoc_id' , constraints: false});
+Course.hasMany(SyntheticCriteria, { foreignKey: 'khoa_hoc_id' , constraints: false});
 //khoa ngoai tieuchidetonghop
-OnlineCriteria.belongsTo(Course, { foreignKey: 'khoa_hoc_id' });
-Course.hasMany(OnlineCriteria, { foreignKey: 'khoa_hoc_id' });
+OnlineCriteria.belongsTo(Course, { foreignKey: 'khoa_hoc_id' , constraints: false});
+Course.hasMany(OnlineCriteria, { foreignKey: 'khoa_hoc_id' , constraints: false});
 //khoa ngoai tieuchidemodun
-ModunCriteria.belongsTo(Modun, { foreignKey: 'mo_dun_id' });
-Modun.hasMany(ModunCriteria, { foreignKey: 'mo_dun_id' });
+ModunCriteria.belongsTo(Modun, { foreignKey: 'mo_dun_id' , constraints: false});
+Modun.hasMany(ModunCriteria, { foreignKey: 'mo_dun_id' , constraints: false});
 //khoa ngoai tieuchidechuyende
-ThematicCriteria.belongsTo(Modun, { foreignKey: 'mo_dun_id' });
-Modun.hasMany(ThematicCriteria, { foreignKey: 'mo_dun_id' });
+ThematicCriteria.belongsTo(Modun, { foreignKey: 'mo_dun_id' , constraints: false});
+Modun.hasMany(ThematicCriteria, { foreignKey: 'mo_dun_id' , constraints: false});
 //khoa ngoai cauhoidethi
-ExamQuestion.belongsTo(Exam, { foreignKey: 'de_thi_id' });
-Exam.hasMany(ExamQuestion, { foreignKey: 'de_thi_id' });
-ExamQuestion.belongsTo(Question, { foreignKey: 'cau_hoi_id' });
-Question.hasMany(ExamQuestion, { foreignKey: 'cau_hoi_id' });
+ExamQuestion.belongsTo(Exam, { foreignKey: 'de_thi_id' , constraints: false});
+Exam.hasMany(ExamQuestion, { foreignKey: 'de_thi_id' , constraints: false});
+ExamQuestion.belongsTo(Question, { foreignKey: 'cau_hoi_id' , constraints: false});
+Question.hasMany(ExamQuestion, { foreignKey: 'cau_hoi_id' , constraints: false});
 //khoangoai quangcaokhoahoc
-CourseAd.belongsTo(Course, { foreignKey: 'khoa_hoc_id' });
-Course.hasMany(CourseAd, { foreignKey: 'khoa_hoc_id' });
+CourseAd.belongsTo(Course, { foreignKey: 'khoa_hoc_id' , constraints: false});
+Course.hasMany(CourseAd, { foreignKey: 'khoa_hoc_id' , constraints: false});
 //khoa ngoai quangcaotailieu
-DocumentAd.belongsTo(Document, { foreignKey: 'tai_lieu_id' });
-Document.hasMany(DocumentAd, { foreignKey: 'tai_lieu_id' });
+DocumentAd.belongsTo(Document, { foreignKey: 'tai_lieu_id' , constraints: false});
+Document.hasMany(DocumentAd, { foreignKey: 'tai_lieu_id' , constraints: false});
 //khoa ngoai quangcaogiaovienkhoahoc
-TeacherCourseAd.belongsTo(Teacher, { foreignKey: 'giao_vien_id' });
-Teacher.hasMany(TeacherCourseAd, { foreignKey: 'giao_vien_id' });
-TeacherCourseAd.belongsTo(Course, { foreignKey: 'khoa_hoc_id' });
-Course.hasMany(TeacherCourseAd, { foreignKey: 'khoa_hoc_id' });
+TeacherCourseAd.belongsTo(Teacher, { foreignKey: 'giao_vien_id' , constraints: false});
+Teacher.hasMany(TeacherCourseAd, { foreignKey: 'giao_vien_id' , constraints: false});
+TeacherCourseAd.belongsTo(Course, { foreignKey: 'khoa_hoc_id' , constraints: false});
+Course.hasMany(TeacherCourseAd, { foreignKey: 'khoa_hoc_id' , constraints: false});
 //khoa ngoai tailieu
-Document.belongsTo(DocumentType, { foreignKey: 'loai_tai_lieu_id' });
-DocumentType.hasMany(Document, { foreignKey: 'loai_tai_lieu_id' });
+Document.belongsTo(DocumentType, { foreignKey: 'loai_tai_lieu_id' , constraints: false});
+DocumentType.hasMany(Document, { foreignKey: 'loai_tai_lieu_id' , constraints: false});
 //khoa ngoai menu
-Menu.belongsTo(MenuType, { foreignKey: 'loai_menu_id' });
-MenuType.hasMany(Menu, { foreignKey: 'loai_menu_id' });
+Menu.belongsTo(MenuType, { foreignKey: 'loai_menu_id' , constraints: false});
+MenuType.hasMany(Menu, { foreignKey: 'loai_menu_id' , constraints: false});
 //khoa ngoai motakhoahoc
 
 //khoa ngoai chietkhaudaily
-DealerDiscount.belongsTo(Teacher, { foreignKey: 'giao_vien_id' });
-Teacher.hasMany(DealerDiscount, { foreignKey: 'giao_vien_id' })
-DealerDiscount.belongsTo(Course, { foreignKey: 'khoa_hoc_id' });
-Course.hasMany(DealerDiscount, { foreignKey: 'khoa_hoc_id' });
+DealerDiscount.belongsTo(Teacher, { foreignKey: 'giao_vien_id' , constraints: false});
+Teacher.hasMany(DealerDiscount, { foreignKey: 'giao_vien_id' , constraints: false})
+DealerDiscount.belongsTo(Course, { foreignKey: 'khoa_hoc_id' , constraints: false});
+Course.hasMany(DealerDiscount, { foreignKey: 'khoa_hoc_id' , constraints: false});
 //khoa ngoai chietkhauchitiet
-DetailedDiscount.belongsTo(DealerDiscount, { foreignKey:'chiet_khau_id'});
-DealerDiscount.hasMany(DetailedDiscount, { foreignKey: 'chiet_khau_id' });
+DetailedDiscount.belongsTo(DealerDiscount, { foreignKey:'chiet_khau_id', constraints: false});
+DealerDiscount.hasMany(DetailedDiscount, { foreignKey: 'chiet_khau_id' , constraints: false});
 //khoa ngoai hoadonchitiet
-DetailedInvoice.belongsTo(Invoice, { foreignKey: 'hoa_don_id'});
-Invoice.hasMany(DetailedInvoice, { foreignKey: 'hoa_don_id' });
+DetailedInvoice.belongsTo(Invoice, { foreignKey: 'hoa_don_id', constraints: false});
+Invoice.hasMany(DetailedInvoice, { foreignKey: 'hoa_don_id' , constraints: false});
 //khoa ngoai hoadon
-Invoice.belongsTo(Student, { foreignKey:'hoc_vien_id'});
-Student.hasMany(Invoice, { foreignKey: 'hoc_vien_id' });
-Invoice.belongsTo(Staff, { foreignKey:'nhan_vien_id'});
-Staff.hasMany(Invoice, { foreignKey: 'nhan_vien_id' });
+Invoice.belongsTo(Student, { foreignKey:'hoc_vien_id', constraints: false});
+Student.hasMany(Invoice, { foreignKey: 'hoc_vien_id' , constraints: false});
+Invoice.belongsTo(Staff, { foreignKey:'nhan_vien_id', constraints: false});
+Staff.hasMany(Invoice, { foreignKey: 'nhan_vien_id' , constraints: false});
 //khoa ngoai magiamgia
-DiscountCode.belongsTo(Course, { foreignKey: 'khoa_hoc_id' });
-Course.hasMany(DiscountCode, { foreignKey: 'khoa_hoc_id' });
+DiscountCode.belongsTo(Course, { foreignKey: 'khoa_hoc_id' , constraints: false});
+Course.hasMany(DiscountCode, { foreignKey: 'khoa_hoc_id' , constraints: false});
 //khoa ngoai binh luan
-Comment.belongsTo(Course, { foreignKey: 'khoa_hoc_id'});
-Course.hasMany(Comment, { foreignKey: 'khoa_hoc_id'});
-Comment.belongsTo(Modun, { foreignKey: 'mo_dun_id' });
-Modun.hasMany(Comment, { foreignKey: 'mo_dun_id' });
-Comment.belongsTo(Student, { foreignKey: 'hoc_vien_id' });
-Student.hasMany(Comment, { foreignKey: 'hoc_vien_id' });
+Comment.belongsTo(Course, { foreignKey: 'khoa_hoc_id', constraints: false});
+Course.hasMany(Comment, { foreignKey: 'khoa_hoc_id', constraints: false});
+Comment.belongsTo(Modun, { foreignKey: 'mo_dun_id' , constraints: false});
+Modun.hasMany(Comment, { foreignKey: 'mo_dun_id' , constraints: false});
+Comment.belongsTo(Student, { foreignKey: 'hoc_vien_id' , constraints: false});
+Student.hasMany(Comment, { foreignKey: 'hoc_vien_id' , constraints: false});
 //khoa hoc binh luan phu
-SideComment.belongsTo(Comment, { foreignKey: 'binh_luan_id'});
-Comment.hasMany(Comment, { foreignKey: 'binh_luan_id'});
-// Khoá ngoại Đánh giá
-Evaluate.belongsTo(Exam, { foreignKey: 'de_thi_id' });
+SideComment.belongsTo(Comment, { foreignKey: 'binh_luan_id', constraints: false});
+Comment.hasMany(Comment, { foreignKey: 'binh_luan_id', constraints: false});
+
 
 module.exports = {
     Course,
@@ -206,6 +204,5 @@ module.exports = {
     Footer,
     Token,
     CourseStudent,
-    Province,
-    Evaluate,
+    Province
 };
