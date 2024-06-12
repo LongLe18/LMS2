@@ -337,7 +337,9 @@ const exportReport = async (req, res) => {
             result = false;
             if (selectedAnswer.cau_hoi.loai_cau_hoi === 1) {
                 // Câu trắc nghiệm
-                ket_qua_chons = selectedAnswer.ket_qua_chon.toString().split('');
+                ket_qua_chons = selectedAnswer.ket_qua_chon
+                    .toString()
+                    .split('');
                 dap_ans = selectedAnswer.cau_hoi.dap_ans;
                 if (
                     ket_qua_chons.every(
@@ -348,7 +350,9 @@ const exportReport = async (req, res) => {
                     result = true;
             } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 2) {
                 // Câu trắc nghiệm đúng sai
-                const ket_qua_chons = [...selectedAnswer.ket_qua_chon.toString()];
+                const ket_qua_chons = [
+                    ...selectedAnswer.ket_qua_chon.toString(),
+                ];
                 const dap_ans = selectedAnswer.cau_hoi.dap_ans;
                 const bangDiem = {
                     0: 0,
@@ -362,7 +366,7 @@ const exportReport = async (req, res) => {
                         ((ket_qua_chon === '1') === dap_ans[index].dap_an_dung),
                     0
                 );
-                if(so_cau_dung){
+                if (so_cau_dung) {
                     ket_qua_diem.push(bangDiem[so_cau_dung]);
                     continue;
                 }
@@ -382,17 +386,87 @@ const exportReport = async (req, res) => {
             }
         }
 
-        const phan_1 = ket_qua_diem.slice(0, 50).reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-        const phan_2 = ket_qua_diem.slice(50, 100).reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-        const phan_3 = ket_qua_diem.slice(100, 150).reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-        const diem_tong_hop = phan_1 + phan_2 + phan_3;
+        const criteria = await OnlineCriteria.findOne({
+            where: {
+                khoa_hoc_id: exam.khoa_hoc_id,
+            },
+        });
+
+        const phan_1 =
+            criteria.so_phan >= 1
+                ? ket_qua_diem
+                      .slice(0, criteria.so_cau_hoi_phan_1)
+                      .reduce(
+                          (accumulator, currentValue) =>
+                              accumulator + currentValue,
+                          0
+                      )
+                : '';
+        const phan_2 =
+            criteria.so_phan >= 2
+                ? ket_qua_diem
+                      .slice(
+                          criteria.so_cau_hoi_phan_1,
+                          criteria.so_cau_hoi_phan_1 +
+                              criteria.so_cau_hoi_phan_2
+                      )
+                      .reduce(
+                          (accumulator, currentValue) =>
+                              accumulator + currentValue,
+                          0
+                      )
+                : '';
+        const phan_3 =
+            criteria.so_phan >= 3
+                ? ket_qua_diem
+                      .slice(
+                          criteria.so_cau_hoi_phan_1 +
+                              criteria.so_cau_hoi_phan_2,
+                          criteria.so_cau_hoi_phan_1 +
+                              criteria.so_cau_hoi_phan_2 +
+                              criteria.so_cau_hoi_phan_3
+                      )
+                      .reduce(
+                          (accumulator, currentValue) =>
+                              accumulator + currentValue,
+                          0
+                      )
+                : '';
+        const phan_4 =
+            criteria.so_phan >= 4
+                ? ket_qua_diem
+                      .slice(
+                          criteria.so_cau_hoi_phan_1 +
+                              criteria.so_cau_hoi_phan_2 +
+                              criteria.so_cau_hoi_phan_3,
+                          criteria.so_cau_hoi_phan_1 +
+                              criteria.so_cau_hoi_phan_2 +
+                              criteria.so_cau_hoi_phan_3 +
+                              criteria.so_cau_hoi_phan_4
+                      )
+                      .reduce(
+                          (accumulator, currentValue) =>
+                              accumulator + currentValue,
+                          0
+                      )
+                : '';
+        const diem_tong_hop =
+            phan_1 === ''
+                ? 0
+                : phan_1 + phan_2 === ''
+                ? 0
+                : phan_2 + phan_3 === ''
+                ? 0
+                : phan_3 + phan_4 === ''
+                ? 0
+                : phan_4;
 
         doc.render({
             mon_thi: studentExam?.de_thi?.ten_de_thi,
             phan_1: phan_1?.toString(),
             phan_2: phan_2?.toString(),
             phan_3: phan_3?.toString(),
-            phan_4: '',
+            phan_4: phan_4?.toString(),
             diem_tong_hop: diem_tong_hop.toString(),
             nhan_xet_1: 'New Website',
         });
