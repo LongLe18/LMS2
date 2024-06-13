@@ -233,29 +233,35 @@ const download = async (req, res) => {
 
         doc.render({
             mon_thi: evaluate?.de_thi?.ten_de_thi,
-            phan_1: criteria.so_cau_hoi_phan_1
-                ? `X1/${criteria.so_cau_hoi_phan_1}`
+            phan_1:
+                criteria.so_cau_hoi_phan_1 && criteria.yeu_cau_phan_1
+                    ? `${criteria.yeu_cau_phan_1}/${criteria.so_cau_hoi_phan_1}`
+                    : '',
+            phan_2:
+                criteria.so_cau_hoi_phan_2 && criteria.yeu_cau_phan_2
+                    ? `${criteria.yeu_cau_phan_2}/${criteria.so_cau_hoi_phan_2}`
+                    : '',
+            phan_3:
+                criteria.so_cau_hoi_phan_3 && criteria.yeu_cau_phan_3
+                    ? `${criteria.yeu_cau_phan_3}/${criteria.so_cau_hoi_phan_3}`
+                    : '',
+            phan_4:
+                criteria.so_cau_hoi_phan_4 && criteria.yeu_cau_phan_4
+                    ? `${criteria.yeu_cau_phan_4}/${criteria.so_cau_hoi_phan_4}`
+                    : '',
+            diem_tong_hop: criteria.so_cau_hoi
+                ? `${
+                      criteria.yeu_cau_phan_1
+                          ? criteria.yeu_cau_phan_1
+                          : 0 + criteria.yeu_cau_phan_2
+                          ? criteria.yeu_cau_phan_2
+                          : 0 + criteria.yeu_cau_phan_3
+                          ? criteria.yeu_cau_phan_3
+                          : 0 + criteria.yeu_cau_phan_4
+                          ? criteria.yeu_cau_phan_4
+                          : 0
+                  }/${criteria.so_cau_hoi}`
                 : '',
-            phan_2: criteria.so_cau_hoi_phan_2
-                ? `X2/${criteria.so_cau_hoi_phan_2}`
-                : '',
-            phan_3: criteria.so_cau_hoi_phan_3
-                ? `X3/${criteria.so_cau_hoi_phan_3}`
-                : '',
-            phan_4: criteria.so_cau_hoi_phan_4
-                ? `X4/${criteria.so_cau_hoi_phan_4}`
-                : '',
-            diem_tong_hop: `X/${
-                criteria.so_cau_hoi_phan_1
-                    ? criteria.so_cau_hoi_phan_1
-                    : 0 + criteria.so_cau_hoi_phan_2
-                    ? criteria.so_cau_hoi_phan_2
-                    : 0 + criteria.so_cau_hoi_phan_3
-                    ? criteria.so_cau_hoi_phan_3
-                    : 0 + criteria.so_cau_hoi_phan_4
-                    ? criteria.so_cau_hoi_phan_4
-                    : 0
-            }`,
             nhan_xet_1: evaluate.danh_gia,
         });
 
