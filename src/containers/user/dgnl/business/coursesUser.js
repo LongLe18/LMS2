@@ -18,7 +18,7 @@ import useFetch from "hooks/useFetch";
 
 // component
 import { Layout, Row, Col, Button, notification } from 'antd';
-import Statisic from 'components/parts/statisic/Statisic';
+import CarouselCustom from 'components/parts/Carousel/Carousel';
 import NoRecord from "components/common/NoRecord";
 
 // redux
@@ -91,6 +91,7 @@ const CoursesUser = (props) => {
         return (
             <div className="list-course-cate">
                 <div className="wraper wraper-list-course-cate-index">
+                    <CarouselCustom />
                     {(courseOfUser.length > 0) ? (
                         <>
                             <h2 className="section-title section-title-center">
@@ -210,7 +211,6 @@ const CoursesUser = (props) => {
                     <title>Danh sách khóa học của bạn</title>
                 </Helmet>
                 <Content className="app-content ">
-                    <Statisic />
                     {renderCourses()}
                 </Content>
             </Layout>

@@ -333,7 +333,7 @@ const IntroCoursePage = () => {
                                             <strong>Đăng ký học ngay</strong>
                                             <span>Gọi điện xác nhận đăng ký học</span>
                                         </Link> */}
-                                        <Link to='#' className='devvn_buy_now' onClick={() => {window.location.href = 'https://luyenthiquocgia.edu.vn/lien-he/'}}>
+                                        <Link to='#' className='devvn_buy_now' onClick={() => {window.location.href = '/luyen-tap/kinh-doanh-khoa-hoc'}}>
                                             <strong>LIÊN HỆ ĐỂ NHẬN THÔNG TIN CHI TIẾT</strong>
                                             <span>Liên hệ qua zalo, số điện thoại để được tư vấn</span>
                                         </Link>

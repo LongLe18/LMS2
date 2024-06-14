@@ -1,4 +1,4 @@
-# [LMS Hà Nội](https://luyenthiquocgia.edu.vn/wp-admin) ![version](https://img.shields.io/badge/version-1.0.0-blue.svg) 
+# [LMS Hà Nội](https://enno.edu.vn/wp-admin) ![version](https://img.shields.io/badge/version-1.0.0-blue.svg) 
 
 
 ## Quick start

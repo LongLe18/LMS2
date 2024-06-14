@@ -14,11 +14,11 @@ import jwt_decode from 'jwt-decode';
 
 // component
 import { Layout, Row, Col, Button, notification, Form, Input, Modal } from 'antd';
-import Statisic from 'components/parts/statisic/Statisic';
 import NoRecord from 'components/common/NoRecord';
 import { UserOutlined, LockOutlined, EyeTwoTone, EyeInvisibleOutlined } from '@ant-design/icons';
 import SocialLogin from 'components/common/SocialLogin';
 import ReCAPTCHA from "react-google-recaptcha";
+import CarouselCustom from 'components/parts/Carousel/Carousel';
 
 // redux
 import { useSelector, useDispatch } from 'react-redux';
@@ -236,7 +236,9 @@ const BusinessProgramePage = (props) => {
         if (courses.status === 'success' && courses.data.length === 0) return <NoRecord />
         return (
             <div className="list-course-cate">
+
                 <div className="wraper wraper-list-course-cate-index">
+                    <CarouselCustom />
                     <h2 className="section-title section-title-center">
                     <b></b>
                         {(courses.status === 'success' && data.length > 0) && <span className="section-title-main">{data[0].ten_khung_ct}</span>}
@@ -306,7 +308,6 @@ const BusinessProgramePage = (props) => {
                 <title>Danh sách khóa học theo khung chương trình</title>
             </Helmet>
             <Content className="app-content ">
-                <Statisic />
                 {renderCoursesCate()}
             </Content>
             <Modal

@@ -37,7 +37,7 @@ const FooterBusiness = (props) => {
     
     return (
         <footer className="footer list-course-cate">
-            <div className="wraper wraper-list-course-cate-index">
+            <div className="wraper wraper-list-course-cate-index" style={{borderRadius: 6}}>
                 {props.course ? 
                 <>
                     <h2 className="section-title section-title-center">

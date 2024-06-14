@@ -321,20 +321,26 @@ function IndexHeader(props) {
 
   return (
     <div ref={sidebar} className="header-page">
-      <Container>
+      {/* <Container>
         <Row className="header-logo">
           <NavLink to="/luyen-tap/kinh-doanh-khoa-hoc">
-            <img alt="..."  style={{maxHeight: '155px', width: '1140px'}}
+            <img alt="..."  style={{maxHeight: '155px', width: '100%'}}
             className="img-no-padding img-responsive"
-            src={require("assets/rank/banner.png").default}
+            src={require("assets/rank/banner-2.png").default}
             />
           </NavLink>
         </Row>
-      </Container>
+      </Container> */}
       <div id="wide-nav" className="header-bottom wide-nav nav-dark hide-for-medium">
-        <div className="flex-row container" style={{maxHeight: '110px', justifyContent: 'center'}}>
+        <NavLink to="/luyen-tap/kinh-doanh-khoa-hoc">
+          <img alt="..."  style={{maxHeight: '60px'}} className="img-no-padding img-responsive"
+            src={require("assets/rank/enno.png").default}
+          />
+        </NavLink>
+       
+        <div className="flex-row container">
           <div className="flex-col hide-for-medium flex-left" style={{marginRight: 0}}>
-            <ul className="nav header-nav header-bottom-nav nav-left  nav-divided nav-size-medium nav-spacing-medium nav-uppercase">
+            <ul className="nav header-nav header-bottom-nav nav-left  nav-divided nav-size-medium nav-spacing-medium nav-uppercase" style={{alignItems: 'center'}}>
               {(dataMenus) && dataMenus.map(({ menu_id, ten_menu, gia_tri, loai_menu_id, khoa_hoc, loai_kct }) => {
                 if (loai_menu_id === 1) { // liên kết
                   return (
@@ -388,16 +394,16 @@ function IndexHeader(props) {
                   )
               })}
               {!state.isLogin ?
-                <li><NavLink to="#" onClick={() => showModal()}>Đăng nhập</NavLink></li>
+                <li><Button type="primary" onClick={() => showModal()} style={{borderRadius: 6}}>Đăng nhập</Button></li>
               : 
                 <>
                 <li>
                   <Dropdown style={{listStyle: 'none'}} overlay={menu} arrow={{ pointAtCenter: true }} placement="bottom">
-                    <a onClick={(e) => e.preventDefault()}>
+                    <a onClick={(e) => e.preventDefault()} className="logined">
                         {(localStorage.getItem('userToken') !== null && jwt_decode(localStorage.getItem('userToken')).role === 2) 
                         ? (state.info[0].ho_ten).split(' ')[(state.info[0].ho_ten).split(' ').length - 1] 
                         : (state.info.ho_ten).split(' ')[(state.info.ho_ten).split(' ').length - 1] }
-                        <DownOutlined />
+                      <DownOutlined />
                     </a>
                   </Dropdown>
                 </li>
@@ -419,7 +425,7 @@ function IndexHeader(props) {
         <div className="navbar-wrapper navbar-mobile">
           
           <div className="navbar-toggle" style={{display: 'block'}}>
-            <button style={{color: 'white'}}
+            <button style={{color: '#4c891f'}}
               type="button"
               ref={sidebarToggle}
               className="navbar-toggler"
@@ -429,7 +435,7 @@ function IndexHeader(props) {
             </button>
           </div>
           {!state.isLogin ?
-              <li><NavLink to="#" onClick={() => showModal()}>Đăng nhập</NavLink></li>
+              <li><Button type="primary" onClick={() => showModal()} style={{borderRadius: 6}}>Đăng nhập</Button></li>
             : 
             <>
               <li>
@@ -458,7 +464,7 @@ function IndexHeader(props) {
           <nav className="nav__mobile" style={{transform: collapsed ? 'translateX(0)' : 'translateX(-100%)'}}>
             <div className="nav__mobile-logo">
               <a
-                href="https://luyenthiquocgia.edu.vn/"
+                href="/luyen-tap/kinh-doanh-khoa-hoc"
                 className="simple-text logo-mini"
               >
                 <Avatar src={require("assets/rank/Logo.png").default} alt="react-logo" size={40} />
@@ -469,11 +475,11 @@ function IndexHeader(props) {
               {(dataMenus) && dataMenus.map(({ menu_id, ten_menu, gia_tri, loai_menu_id, khoa_hoc, loai_kct }) => {
                 if (loai_menu_id === 1) { // liên kết
                   return (
-                    <li key={menu_id}><a className="nav__mobile-link" href={gia_tri}>{ten_menu}</a></li>
+                    <li key={menu_id}><a className="nav__mobile-link" style={{width: '100%'}} href={gia_tri}>{ten_menu}</a></li>
                   )
                 } else if (loai_menu_id === 4) { // khóa học
                   return (
-                    <li key={menu_id}><a className="nav__mobile-link" href={ config.BASE_URL + "/luyen-tap/luyen-tap/" + hashids.encode(gia_tri)}>{ten_menu}</a></li>
+                    <li key={menu_id}><a className="nav__mobile-link" style={{width: '100%'}} href={ config.BASE_URL + "/luyen-tap/luyen-tap/" + hashids.encode(gia_tri)}>{ten_menu}</a></li>
                   )
                 } else if (loai_menu_id === 2) { // mua bán
                   return (
@@ -487,7 +493,7 @@ function IndexHeader(props) {
                         />
                       }>
                         {/* Note: Chỉ điều hướng vơi menu Khóa học */}
-                        <a className="nav__mobile-link" onClick={(e) => window.location.href = config.BASE_URL + '/luyen-tap/kinh-doanh-khoa-hoc'}> 
+                        <a className="nav__mobile-link" style={{width: '100%'}} onClick={(e) => window.location.href = config.BASE_URL + '/luyen-tap/kinh-doanh-khoa-hoc'}> 
                             {ten_menu}
                             <DownOutlined />
                         </a>
@@ -506,7 +512,7 @@ function IndexHeader(props) {
                         />
                       }>
                         {/* Note: Chỉ điều hướng vơi menu Khóa học */}
-                        <a className="nav__mobile-link" onClick={(e) => e.preventDefault()}> 
+                        <a className="nav__mobile-link" style={{width: '100%'}} onClick={(e) => e.preventDefault()}> 
                             {ten_menu}
                             <DownOutlined />
                         </a>
@@ -515,7 +521,7 @@ function IndexHeader(props) {
                   )
                 } else if (loai_menu_id === 3) // Khung chương trình
                   return (
-                    <li key={menu_id}><a className="nav__mobile-link" href={config.BASE_URL + `/luyen-tap/chuong-trinh/${gia_tri}`}>{ten_menu}</a></li>
+                    <li key={menu_id}><a className="nav__mobile-link" style={{width: '100%'}} href={config.BASE_URL + `/luyen-tap/chuong-trinh/${gia_tri}`}>{ten_menu}</a></li>
                   )
               })}
             </ul>   

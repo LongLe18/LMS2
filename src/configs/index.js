@@ -1,7 +1,7 @@
-const ENV = 'dev';
+const ENV = 'prod';
 const BASE_URL = ''
-const API_URL_DEV = 'http://localhost:3001';
-const API_URL_PROD = 'https://luyenthiquocgia.edu.vn:3000';
+const API_URL_DEV = 'http://localhost:8080';
+const API_URL_PROD = 'http://103.127.207.97:3001';
 const DATE_FORMAT = 'HH:mm DD/MM/YYYY';
 const DATE_FORMAT_SHORT = 'DD/MM/YYYY';
 const SHOW_DATE_FORMAT = 'D MMMM YYYY, HH:mm';
@@ -29,8 +29,8 @@ const config = {
   ENV,
   BASE_URL,
   API_URL: ENV === 'dev' ? API_URL_DEV : API_URL_PROD,
-  RULE_SET_APP: ENV === 'dev' ? 'https://luyenthiquocgia.edu.vn:3000' : 'https://luyenthiquocgia.edu.vn:3000',
-  UPLOAD_API_URL: 'https://luyenthiquocgia.edu.vn:3000',
+  RULE_SET_APP: ENV === 'dev' ? 'http://103.127.207.97:3001' : 'http://103.127.207.97:3001',
+  UPLOAD_API_URL: 'http://103.127.207.97:3001',
   DATE_FORMAT,
   SHOW_DATE_FORMAT,
   DATE_FORMAT_SHORT,

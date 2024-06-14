@@ -8,6 +8,7 @@
 
 .list-course-cate {
   margin-bottom: 10px;
+  background: #EBEBEB;
 }
 .list-course-cate .list-post-items {
   margin-top: 25px;
@@ -122,7 +123,13 @@
   white-space: normal;
 }
 
+.ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  border-radius: 6px;
+}
 /*tablet pro*/
+.wraper-list-course-cate-index {
+  background-color: #fff;
+}
 
 @media only screen and (max-width: 1080px) {
   .wraper-list-course-cate-index {

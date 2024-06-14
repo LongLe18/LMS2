@@ -12,7 +12,7 @@ gulp.task("licenses", async function () {
 * LMS - v1.0.0
 =========================================================
 
-* Product Page: https://luyenthiquocgia.edu.vn/
+* Product Page: https://enno.edu.vn/
 
 =========================================================
 
@@ -30,7 +30,7 @@ gulp.task("licenses", async function () {
 * LMS - v1.0.0
 =========================================================
 
-* Product Page: https://luyenthiquocgia.edu.vn/
+* Product Page: https://enno.edu.vn/
 
 =========================================================
 
@@ -48,7 +48,7 @@ gulp.task("licenses", async function () {
 * LMS - v1.0.0
 =========================================================
 
-* Product Page: https://luyenthiquocgia.edu.vn/
+* Product Page: https://enno.edu.vn/
 
 =========================================================
 

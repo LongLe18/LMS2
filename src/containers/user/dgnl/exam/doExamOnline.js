@@ -107,6 +107,7 @@ const ExamOnlineDetail = () => {
 
     useEffect(() => {
         const callback = (res) => {
+            console.log(res);
             const subCallBack = (subres) => {
                 ///// Xử lý trường hợp Khi đã nộp bài
                 // Nếu có thời gian làm bài => đã nộp bài
@@ -289,7 +290,7 @@ const ExamOnlineDetail = () => {
     const downloadReport = async () => {
         try {
             const response = await axios({
-                url: `${config.API_URL}/evaluate/${params.idExamUser}/export-report`, 
+                url: `${config.API_URL}/evaluate/${hashids.decode(params.idExam)}/export-report`, 
                 method: 'GET',
                 responseType: 'blob', 
                 headers: {

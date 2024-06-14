@@ -862,15 +862,20 @@ body, html {
 }
 
 .header-bottom {
-  max-height: 43px;
+  max-height: 60px;
   width: 100%;
-  background-color: #3da844;
+  background-color: #f9f9f9;
   display: inline-block;
   background-image: none;
   z-index: 9;
   position: relative;
   display: flex;
   align-items: center;
+  box-shadow: 5px 10px #888888;
+  a {
+    width: 20%;
+    text-align: center;
+  }
 }
 
 .flex-row {
@@ -915,7 +920,7 @@ body, html {
 
 .header-bottom-nav li a {
   font-family: "Roboto", sans-serif !important;
-  color: #ffffff !important;
+  color: #000000B2 !important;
   font-weight: 600 !important;
   text-transform: uppercase;
 }

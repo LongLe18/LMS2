@@ -11,7 +11,7 @@ import defaultImage from 'assets/img/default.jpg';
 import config from '../../../../configs/index';
 // component
 import { Layout, Row, Col, Card } from 'antd';
-import Statisic from 'components/parts/statisic/Statisic';
+import CarouselCustom from 'components/parts/Carousel/Carousel';
 import NoRecord from 'components/common/NoRecord';
 
 // redux
@@ -46,6 +46,7 @@ const BusinessPage = () => {
         return (
             <div className="list-course-cate">
                 <div className="wraper wraper-list-course-cate-index">
+                    <CarouselCustom />
                     <h2 className="section-title section-title-center">
                     <b></b>
                         {(courses.status === 'success' && data.length > 0) && <span className="section-title-main">{data[0].ten_khung_ct}</span>}
@@ -82,7 +83,6 @@ const BusinessPage = () => {
                 <title>Danh sách khóa học theo khung chương trình</title>
             </Helmet>
             <Content className="app-content ">
-                <Statisic />
                 {renderCoursesCate()}
             </Content>
         </Layout>

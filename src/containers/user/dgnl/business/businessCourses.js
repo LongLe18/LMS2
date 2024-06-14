@@ -13,7 +13,7 @@ import moment from "moment";
 
 // component
 import { Layout, Row, Col, Button, Input, Select, Form } from 'antd';
-import Statisic from 'components/parts/statisic/Statisic';
+import CarouselCustom from 'components/parts/Carousel/Carousel';
 
 // redux
 import { useSelector, useDispatch } from 'react-redux';
@@ -52,7 +52,7 @@ const CoursesPage = (props) => {
             ))
         }
         return (
-            <Select 
+            <Select
                 showSearch={false}
                 placeholder="Chọn khung chương trình"
                 maxTagCount="responsive"
@@ -133,10 +133,11 @@ const CoursesPage = (props) => {
             <>      
                 <div className="list-course-cate">        
                     <div className="wraper wraper-list-course-cate-index">
+                        <CarouselCustom />
                         <Row>
                             <Col span={24} className="filter-todo">
                                 <Form layout="vertical" form={form} autoComplete="off" onFinish={search}>
-                                    <Row justify="center">
+                                    <Row justify="center" gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                                         
                                         <Col xl={6} md={6} xs={24}>
                                             <Form.Item 
@@ -165,7 +166,7 @@ const CoursesPage = (props) => {
                                             </Form.Item>  
                                         </Col>
                                         <Col xl={2} md={6} xs={24} style={{textAlign: 'center'}}>
-                                            <Button type="primary" htmlType="submit">Tìm kiếm</Button>
+                                            <Button type="primary" htmlType="submit" style={{borderRadius: 6}}>Tìm kiếm</Button>
                                         </Col>
                                     </Row>
                                 </Form>
@@ -306,7 +307,6 @@ const CoursesPage = (props) => {
                     <title>Danh sách khóa học</title>
                 </Helmet>
                 <Content className="app-content ">
-                    <Statisic />
                     {renderCourses()}
                 </Content>
             </Layout>
