@@ -159,7 +159,8 @@ Student.hasMany(Comment, { foreignKey: 'hoc_vien_id' , constraints: false});
 SideComment.belongsTo(Comment, { foreignKey: 'binh_luan_id', constraints: false});
 Comment.hasMany(Comment, { foreignKey: 'binh_luan_id', constraints: false});
 
-Evaluate.belongsTo(Exam, { foreignKey: 'de_thi_id' });
+Evaluate.hasMany(Exam, { foreignKey: 'de_thi_id', constraints: false});
+Exam.belongsTo(Evaluate, { foreignKey: 'de_thi_id', constraints: false});
 
 module.exports = {
     Course,

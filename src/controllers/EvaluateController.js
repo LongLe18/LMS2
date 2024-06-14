@@ -203,13 +203,20 @@ const deleteById = async (req, res) => {
 
 const download = async (req, res) => {
     try {
-        const evaluate = await Evaluate.findOne({
-            include: {
-                model: Exam,
-                attributes: ['ten_de_thi', 'khoa_hoc_id'],
-            },
+        const exam = await Exam.findOne({
             where: {
-                danh_gia_id: req.params.id,
+                de_thi_id: req.params.id,
+            },
+        });
+        const evaluate = await Evaluate.findAll({
+            where: {
+                de_thi_id: req.params.id,
+            },
+            order: [['phan_thi', 'ASC']],
+        });
+        const criteria = await OnlineCriteria.findOne({
+            where: {
+                khoa_hoc_id: exam.khoa_hoc_id,
             },
         });
 
@@ -225,14 +232,8 @@ const download = async (req, res) => {
             linebreaks: true,
         });
 
-        const criteria = await OnlineCriteria.findOne({
-            where: {
-                khoa_hoc_id: evaluate.de_thi.khoa_hoc_id,
-            },
-        });
-
         doc.render({
-            mon_thi: evaluate?.de_thi?.ten_de_thi,
+            mon_thi: exam?.ten_de_thi,
             phan_1:
                 criteria.so_cau_hoi_phan_1 && criteria.yeu_cau_phan_1
                     ? `${criteria.yeu_cau_phan_1}/${criteria.so_cau_hoi_phan_1}`
@@ -262,7 +263,10 @@ const download = async (req, res) => {
                           : 0
                   }/${criteria.so_cau_hoi}`
                 : '',
-            nhan_xet_1: evaluate.danh_gia,
+            nhan_xet_1: evaluate[0] ? evaluate[0].danh_gia : '',
+            nhan_xet_2: evaluate[1] ? evaluate[1].danh_gia : '',
+            nhan_xet_3: evaluate[2] ? evaluate[2].danh_gia : '',
+            nhan_xet_4: evaluate[3] ? evaluate[3].danh_gia : '',
         });
 
         const buf = doc.getZip().generate({
