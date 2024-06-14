@@ -8,9 +8,6 @@ const session = require('express-session');
 var https = require('https');
 var http = require('http');
 var fs = require('fs');
-const { api } = require('./config');
-const port = api.port;
-const portHttps = api.portHttps;
 
 require('dotenv').config();
 
@@ -19,14 +16,6 @@ require('dotenv').config();
 //     key: fs.readFileSync('ssl/ltqg_key.pem'),
 //     ca: fs.readFileSync('ssl/ltqg_csr.pem'),
 //     cert: fs.readFileSync('ssl/ltqg_cert.pem')
-// };
-
-// const corsOptions = {
-//     origin: '*',
-//     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-//     preflightContinue: false,
-//     optionsSuccessStatus: 204,
-//     exposedHeaders: 'Content-Range',
 // };
 
 app.use(cors());
@@ -45,12 +34,12 @@ app.use(express.json());
 
 route(app);
 
-app.listen(port, () =>
-    console.log(`Server listening at http://localhost:${port}`)
-);
+// app.listen(process.env.port || 3000, () =>
+//     console.log(`Server listening at http://localhost:${rocess.env.port || 3000}`)
+// );
 
 // Create an HTTP service.
-// http.createServer(app).listen(port);
+http.createServer(app).listen(process.env.port || 3000);
 // Create an HTTPS service identical to the HTTP service.
 // https.createServer(options, app).listen(portHttps,()=>{
 //     console.log(`Server is running at port ${portHttps}`)
