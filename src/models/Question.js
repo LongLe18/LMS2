@@ -36,9 +36,6 @@ const cauhoi = sequelize.define(
         mo_dun_id: {
             type: DataTypes.INTEGER,
         },
-        phan: {
-            type: DataTypes.INTEGER,
-        },
         nguoi_tao: {
             type: DataTypes.STRING,
         },
