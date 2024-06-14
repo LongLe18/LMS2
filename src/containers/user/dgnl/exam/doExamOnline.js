@@ -290,7 +290,7 @@ const ExamOnlineDetail = () => {
     const downloadReport = async () => {
         try {
             const response = await axios({
-                url: `${config.API_URL}/evaluate/${hashids.decode(params.idExam)}/export-report`, 
+                url: `${config.API_URL}/evaluate/${params.idExamUser}/export-report`, 
                 method: 'GET',
                 responseType: 'blob', 
                 headers: {
