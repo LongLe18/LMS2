@@ -1,4 +1,13 @@
-const { Evaluate, OnlineCriteria, Exam } = require('../models');
+const {
+    Evaluate,
+    OnlineCriteria,
+    Exam,
+    StudentExam,
+    SelectedAnswer,
+    Question,
+    Answer,
+} = require('../models');
+const { Op } = require('sequelize')
 const sequelize = require('../utils/db');
 const fs = require('fs');
 const e = require('cors');
@@ -203,20 +212,206 @@ const deleteById = async (req, res) => {
 
 const download = async (req, res) => {
     try {
-        const exam = await Exam.findOne({
+        const studentExam = await StudentExam.findOne({
+            include: [
+                {
+                    model: Exam,
+                    attributes: ['ten_de_thi', 'khoa_hoc_id'],
+                },
+            ],
             where: {
-                de_thi_id: req.params.id,
+                dthv_id: req.params.id,
             },
-        });
-        const evaluate = await Evaluate.findAll({
-            where: {
-                de_thi_id: req.params.id,
-            },
-            order: [['phan_thi', 'ASC']],
         });
         const criteria = await OnlineCriteria.findOne({
             where: {
-                khoa_hoc_id: exam.khoa_hoc_id,
+                khoa_hoc_id: studentExam.de_thi.khoa_hoc_id,
+            },
+        });
+        const selectedAnswers = await SelectedAnswer.findAll({
+            include: {
+                model: Question,
+                attributes: ['loai_cau_hoi', 'diem'],
+                include: {
+                    model: Answer,
+                    attributes: ['noi_dung_dap_an', 'dap_an_dung'],
+                },
+            },
+            where: {
+                dthv_id: req.params.id,
+            },
+        });
+        let ket_qua_diem = [];
+        let ket_qua_chons;
+        let dap_ans;
+        let result;
+        for (const selectedAnswer of selectedAnswers) {
+            result = false;
+
+            if (
+                selectedAnswer.cau_hoi &&
+                selectedAnswer.cau_hoi.loai_cau_hoi === 1
+            ) {
+                // Câu trắc nghiệm
+                ket_qua_chons = selectedAnswer.ket_qua_chon
+                    .toString()
+                    .split('');
+                dap_ans = selectedAnswer.cau_hoi.dap_ans;
+                if (
+                    ket_qua_chons.every(
+                        (ket_qua_chon, index) =>
+                            ket_qua_chon == dap_ans[index].dap_an_dung
+                    )
+                )
+                    result = true;
+            } else if (
+                selectedAnswer.cau_hoi &&
+                selectedAnswer.cau_hoi.loai_cau_hoi === 2
+            ) {
+                // Câu trắc nghiệm đúng sai
+                const ket_qua_chons = [
+                    ...selectedAnswer.ket_qua_chon.toString(),
+                ];
+                const dap_ans = selectedAnswer.cau_hoi.dap_ans;
+                const bangDiem = {
+                    0: 0,
+                    1: selectedAnswer.cau_hoi.diem / 10,
+                    2: selectedAnswer.cau_hoi.diem / 4,
+                    3: selectedAnswer.cau_hoi.diem / 2,
+                };
+                let so_cau_dung = ket_qua_chons.reduce(
+                    (acc, ket_qua_chon, index) =>
+                        acc +
+                        ((ket_qua_chon === '1') === dap_ans[index].dap_an_dung),
+                    0
+                );
+                // if (so_cau_dung) {
+                //     ket_qua_diem.push(1);
+                //     continue;
+                // }
+                if (so_cau_dung === 4) result = true;
+            } else {
+                // câu tự luận
+                if (
+                    selectedAnswer.cau_hoi &&
+                    selectedAnswer.noi_dung_tra_loi ==
+                        selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an
+                )
+                    result = true;
+            }
+            if (result) {
+                ket_qua_diem.push(1);
+            } else {
+                ket_qua_diem.push(0);
+            }
+        }
+
+        const phan_1 =
+            criteria && criteria.so_phan >= 1
+                ? ket_qua_diem
+                      .slice(0, criteria.so_cau_hoi_phan_1)
+                      .reduce(
+                          (accumulator, currentValue) =>
+                              accumulator + currentValue,
+                          0
+                      )
+                : 0;
+        const phan_2 =
+            criteria && criteria.so_phan >= 2
+                ? ket_qua_diem
+                      .slice(
+                          criteria.so_cau_hoi_phan_1,
+                          criteria.so_cau_hoi_phan_1 +
+                              criteria.so_cau_hoi_phan_2
+                      )
+                      .reduce(
+                          (accumulator, currentValue) =>
+                              accumulator + currentValue,
+                          0
+                      )
+                : 0;
+        const phan_3 =
+            criteria && criteria.so_phan >= 3
+                ? ket_qua_diem
+                      .slice(
+                          criteria.so_cau_hoi_phan_1 +
+                              criteria.so_cau_hoi_phan_2,
+                          criteria.so_cau_hoi_phan_1 +
+                              criteria.so_cau_hoi_phan_2 +
+                              criteria.so_cau_hoi_phan_3
+                      )
+                      .reduce(
+                          (accumulator, currentValue) =>
+                              accumulator + currentValue,
+                          0
+                      )
+                : 0;
+        const phan_4 =
+            criteria && criteria.so_phan >= 4
+                ? ket_qua_diem
+                      .slice(
+                          criteria.so_cau_hoi_phan_1 +
+                              criteria.so_cau_hoi_phan_2 +
+                              criteria.so_cau_hoi_phan_3,
+                          criteria.so_cau_hoi_phan_1 +
+                              criteria.so_cau_hoi_phan_2 +
+                              criteria.so_cau_hoi_phan_3 +
+                              criteria.so_cau_hoi_phan_4
+                      )
+                      .reduce(
+                          (accumulator, currentValue) =>
+                              accumulator + currentValue,
+                          0
+                      )
+                : 0;
+        const diem_tong_hop = phan_1 + phan_2 + phan_3 + phan_4;
+                      console.log(phan_1)
+        let evaluate_1 = await Evaluate.findOne({
+            where: {
+                de_thi_id: studentExam.de_thi_id,
+                phan_thi: 1,
+                cau_bat_dau: {
+                    [Op.lte]: phan_1,
+                },
+                cau_ket_thuc: {
+                    [Op.gte]: phan_1,
+                },
+            },
+        });
+        let evaluate_2 = await Evaluate.findOne({
+            where: {
+                de_thi_id: studentExam.de_thi_id,
+                phan_thi: 2,
+                cau_bat_dau: {
+                    [Op.lte]: phan_2,
+                },
+                cau_ket_thuc: {
+                    [Op.gte]: phan_2,
+                },
+            },
+        });
+        let evaluate_3 = await Evaluate.findOne({
+            where: {
+                de_thi_id: studentExam.de_thi_id,
+                phan_thi: 3,
+                cau_bat_dau: {
+                    [Op.lte]: phan_3,
+                },
+                cau_ket_thuc: {
+                    [Op.gte]: phan_3,
+                },
+            },
+        });
+        let evaluate_4 = await Evaluate.findOne({
+            where: {
+                de_thi_id: studentExam.de_thi_id,
+                phan_thi: 4,
+                cau_bat_dau: {
+                    [Op.lte]: phan_4,
+                },
+                cau_ket_thuc: {
+                    [Op.gte]: phan_4,
+                },
             },
         });
 
@@ -233,40 +428,26 @@ const download = async (req, res) => {
         });
 
         doc.render({
-            mon_thi: exam?.ten_de_thi,
-            phan_1:
-                criteria.so_cau_hoi_phan_1 && criteria.yeu_cau_phan_1
-                    ? `${criteria.yeu_cau_phan_1}/${criteria.so_cau_hoi_phan_1}`
-                    : '',
-            phan_2:
-                criteria.so_cau_hoi_phan_2 && criteria.yeu_cau_phan_2
-                    ? `${criteria.yeu_cau_phan_2}/${criteria.so_cau_hoi_phan_2}`
-                    : '',
-            phan_3:
-                criteria.so_cau_hoi_phan_3 && criteria.yeu_cau_phan_3
-                    ? `${criteria.yeu_cau_phan_3}/${criteria.so_cau_hoi_phan_3}`
-                    : '',
-            phan_4:
-                criteria.so_cau_hoi_phan_4 && criteria.yeu_cau_phan_4
-                    ? `${criteria.yeu_cau_phan_4}/${criteria.so_cau_hoi_phan_4}`
-                    : '',
-            diem_tong_hop: criteria.so_cau_hoi
-                ? `${
-                      criteria.yeu_cau_phan_1
-                          ? criteria.yeu_cau_phan_1
-                          : 0 + criteria.yeu_cau_phan_2
-                          ? criteria.yeu_cau_phan_2
-                          : 0 + criteria.yeu_cau_phan_3
-                          ? criteria.yeu_cau_phan_3
-                          : 0 + criteria.yeu_cau_phan_4
-                          ? criteria.yeu_cau_phan_4
-                          : 0
-                  }/${criteria.so_cau_hoi}`
+            mon_thi: studentExam?.de_thi?.ten_de_thi,
+            phan_1: criteria.so_cau_hoi_phan_1
+                ? `${phan_1}/${criteria.so_cau_hoi_phan_1}`
                 : '',
-            nhan_xet_1: evaluate[0] ? evaluate[0].danh_gia : '',
-            nhan_xet_2: evaluate[1] ? evaluate[1].danh_gia : '',
-            nhan_xet_3: evaluate[2] ? evaluate[2].danh_gia : '',
-            nhan_xet_4: evaluate[3] ? evaluate[3].danh_gia : '',
+            phan_2: criteria.so_cau_hoi_phan_2
+                ? `${phan_2}/${criteria.so_cau_hoi_phan_2}`
+                : '',
+            phan_3: criteria.so_cau_hoi_phan_3
+                ? `${phan_3}/${criteria.so_cau_hoi_phan_3}`
+                : '',
+            phan_4: criteria.so_cau_hoi_phan_4
+                ? `${phan_4}/${criteria.so_cau_hoi_phan_4}`
+                : '',
+            diem_tong_hop: criteria.so_cau_hoi
+                ? `${diem_tong_hop}/${criteria.so_cau_hoi}`
+                : '',
+            nhan_xet_1: evaluate_1 ? evaluate_1.danh_gia : '',
+            nhan_xet_2: evaluate_2 ? evaluate_2.danh_gia : '',
+            nhan_xet_3: evaluate_3 ? evaluate_3.danh_gia : '',
+            nhan_xet_4: evaluate_4 ? evaluate_4.danh_gia : '',
         });
 
         const buf = doc.getZip().generate({
