@@ -7,11 +7,13 @@ const { upload } = require('../middlewares/upload2');
 
 router.post(
     '/create', authToken, authRole([2], 6), 
+    upload.single('noi_dung'),
     tryCatch(excerptController.postCreate)
 );
 router.get('/:id/edit', authToken, authRole([2], 6), tryCatch(excerptController.getUpdate));
 router.put(
     '/:id', authToken, authRole([2], 6), 
+    upload.single('noi_dung'),
     tryCatch(excerptController.putUpdate)
 );
 router.delete('/:id/force', authToken, authRole([2], 6), tryCatch(excerptController.forceDelete));

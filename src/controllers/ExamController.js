@@ -8,25 +8,23 @@ const {
     ModunCriteria,
     ThematicCriteria,
     StudentExam,
-    OnlineCriteria,
+    OnlineCriteria
 } = require('../models');
 const { Op } = require('sequelize');
 const sequelize = require('../utils/db');
 const fs = require('fs');
-const { parse, extname } = require('path');
-const path = require('path');
+const { parse } = require('path');
 
 const getExamOnline = async (req, res) => {
     let khoa_hoc_id = 1;
-    let limit = 100;
+    let limit=100;
     if (req.query.khoa_hoc_id) {
         khoa_hoc_id = 'de_thi.khoa_hoc_id=:khoa_hoc_id';
+    };
+    if(req.query.limit){
+      limit=req.query.limit;
     }
-    if (req.query.limit) {
-        limit = req.query.limit;
-    }
-    const exams = await sequelize.query(
-        `
+    const exams=await sequelize.query(`
         SELECT * FROM ((SELECT de_thi.de_thi_id, de_thi.ten_de_thi, de_thi.anh_dai_dien, tieu_chi_de_thi_online.so_cau_hoi, tieu_chi_de_thi_online.thoi_gian, de_thi.ngay_tao
         FROM de_thi JOIN tieu_chi_de_thi_online ON de_thi.khoa_hoc_id=tieu_chi_de_thi_online.khoa_hoc_id WHERE de_thi.ten_de_thi 
         IS NOT NULL AND de_thi.khoa_hoc_id=:khoa_hoc_id AND trang_thai=true AND de_thi.loai_de_thi_id=4 ORDER BY de_thi.ten_de_thi ASC) UNION 
@@ -36,11 +34,10 @@ const getExamOnline = async (req, res) => {
         {
             replacements: {
                 khoa_hoc_id: parseInt(req.query.khoa_hoc_id),
-                limit: parseInt(limit),
+                limit: parseInt(limit)
             },
-            type: sequelize.QueryTypes.SELECT,
-        }
-    );
+            type: sequelize.QueryTypes.SELECT
+        });
     res.status(200).send({
         status: 'success',
         data: exams,
@@ -50,15 +47,14 @@ const getExamOnline = async (req, res) => {
 
 const getSynthetic = async (req, res) => {
     let khoa_hoc_id = 1;
-    let limit = 100;
+    let limit=100;
     if (req.query.khoa_hoc_id) {
         khoa_hoc_id = 'de_thi.khoa_hoc_id=:khoa_hoc_id';
+    };
+    if(req.query.limit){
+      limit=req.query.limit;
     }
-    if (req.query.limit) {
-        limit = req.query.limit;
-    }
-    const exams = await sequelize.query(
-        `
+    const exams=await sequelize.query(`
         SELECT * FROM ((SELECT de_thi.de_thi_id, de_thi.ten_de_thi, de_thi.anh_dai_dien, tieu_chi_de_tong_hop.so_cau_hoi, tieu_chi_de_tong_hop.thoi_gian, de_thi.ngay_tao
         FROM de_thi JOIN tieu_chi_de_tong_hop ON de_thi.khoa_hoc_id=tieu_chi_de_tong_hop.khoa_hoc_id WHERE de_thi.ten_de_thi 
         IS NOT NULL AND de_thi.khoa_hoc_id=:khoa_hoc_id AND trang_thai=true AND de_thi.loai_de_thi_id=3 ORDER BY de_thi.ten_de_thi ASC) UNION 
@@ -68,11 +64,10 @@ const getSynthetic = async (req, res) => {
         {
             replacements: {
                 khoa_hoc_id: parseInt(req.query.khoa_hoc_id),
-                limit: parseInt(limit),
+                limit: parseInt(limit)
             },
-            type: sequelize.QueryTypes.SELECT,
-        }
-    );
+            type: sequelize.QueryTypes.SELECT
+        });
     res.status(200).send({
         status: 'success',
         data: exams,
@@ -81,11 +76,10 @@ const getSynthetic = async (req, res) => {
 };
 
 const getSyntheticNew = async (req, res) => {
-    const exams = await sequelize.query(
-        `
+    const exams = await sequelize.query(`
         SELECT * FROM de_thi WHERE de_thi.loai_de_thi_id=3 ORDER BY de_thi.ngay_tao LIMIT 10`,
         {
-            type: sequelize.QueryTypes.SELECT,
+        type: sequelize.QueryTypes.SELECT
         }
     );
     res.status(200).send({
@@ -93,7 +87,7 @@ const getSyntheticNew = async (req, res) => {
         data: exams,
         message: null,
     });
-};
+}
 
 const getOneExam = async (req, res) => {
     let filter = {};
@@ -132,7 +126,7 @@ const getOneExam = async (req, res) => {
         });
     }
     if (criteria) {
-        if (examUseds.length >= criteria.so_lan_thi) {
+        if ((examUseds.length >= criteria.so_lan_thi)) {
             res.status(404).send({
                 status: 'fail',
                 data: null,
@@ -188,25 +182,25 @@ const getOneExam = async (req, res) => {
 
 const getAll_admin = async (req, res) => {
     let search = 1;
-    let trang_thai = 1;
-    let loai_de_thi_id = 1;
-    let xuat_ban = 1;
-    let khoa_hoc_id = 1;
-    let mo_dun_id = 1;
-    let chuyen_de_id = 1;
-    let ngay_tao = 1;
+    let trang_thai=1;
+    let loai_de_thi_id=1;
+    let xuat_ban=1;
+    let khoa_hoc_id= 1;
+    let mo_dun_id= 1;
+    let chuyen_de_id= 1;
+    let ngay_tao=1;
     let offset = 0;
     let limit = 200;
-    if (req.query.offset) {
-        offset = req.query.offset;
+    if(req.query.offset){
+        offset=req.query.offset;
     }
-    if (req.query.limit) {
-        limit = req.query.limit;
+    if(req.query.limit){
+        limit=req.query.limit;
     }
     if (req.query.search) {
         search = 'de_thi.ten_de_thi LIKE :search';
     }
-    if (req.query.ngay_bat_dau && req.query.ngay_ket_thuc) {
+    if (req.query.ngay_bat_dau&&req.query.ngay_ket_thuc) {
         ngay_tao = 'de_thi.ngay_tao BETWEEN :ngay_bat_dau AND :ngay_ket_thuc';
     }
     if (req.query.trang_thai) {
@@ -227,9 +221,8 @@ const getAll_admin = async (req, res) => {
     if (req.query.chuyen_de_id) {
         chuyen_de_id = 'de_thi.chuyen_de_id=:chuyen_de_id';
     }
-    let filter = `${search} AND ${trang_thai} AND ${loai_de_thi_id} AND ${xuat_ban} AND ${khoa_hoc_id} AND ${mo_dun_id} AND ${chuyen_de_id} AND ${ngay_tao}`;
-    const exams = await sequelize.query(
-        `
+    let filter =`${search} AND ${trang_thai} AND ${loai_de_thi_id} AND ${xuat_ban} AND ${khoa_hoc_id} AND ${mo_dun_id} AND ${chuyen_de_id} AND ${ngay_tao}`;
+    const exams=await sequelize.query(`
         SELECT * FROM ((SELECT de_thi.de_thi_id, de_thi.anh_dai_dien, de_thi.ten_de_thi, de_thi.trang_thai, de_thi.ngay_tao, loai_de_thi.mo_ta, loai_de_thi.loai_de_thi_id, 
         khoa_hoc.ten_khoa_hoc, mo_dun.ten_mo_dun, chuyen_de.ten_chuyen_de, de_thi.xuat_ban, tieu_chi_de_chuyen_de.so_cau_hoi, 
         tieu_chi_de_chuyen_de.thoi_gian FROM de_thi LEFT JOIN khoa_hoc ON de_thi.khoa_hoc_id=khoa_hoc.khoa_hoc_id LEFT JOIN 
@@ -262,11 +255,10 @@ const getAll_admin = async (req, res) => {
                 mo_dun_id: parseInt(req.query.mo_dun_id),
                 chuyen_de_id: parseInt(req.query.chuyen_de_id),
                 limit: parseInt(limit),
-                offset: parseInt(offset),
+                offset: parseInt(offset)
             },
-            type: sequelize.QueryTypes.SELECT,
-        }
-    );
+            type: sequelize.QueryTypes.SELECT
+        });
     res.status(200).send({
         status: 'success',
         data: exams,
@@ -329,12 +321,9 @@ const getById = async (req, res) => {
             exam.dataValues.thoi_gian = criteria.thoi_gian;
             exam.dataValues.so_phan = criteria.so_phan;
             for (let i = 0; i < criteria.so_phan; i++) {
-                exam.dataValues[`so_cau_hoi_phan_${i + 1}`] =
-                    criteria[`so_cau_hoi_phan_${i + 1}`];
-                exam.dataValues[`yeu_cau_phan_${i + 1}`] =
-                    criteria[`yeu_cau_phan_${i + 1}`];
-                exam.dataValues[`thoi_gian_phan_${i + 1}`] =
-                    criteria[`thoi_gian_phan_${i + 1}`];
+                exam.dataValues[`so_cau_hoi_phan_${i + 1}`] = criteria[`so_cau_hoi_phan_${i + 1}`];
+                exam.dataValues[`yeu_cau_phan_${i + 1}`] = criteria[`yeu_cau_phan_${i + 1}`];
+                exam.dataValues[`thoi_gian_phan_${i + 1}`] = criteria[`thoi_gian_phan_${i + 1}`];
             }
         } else {
             res.status(404).send({
@@ -396,9 +385,9 @@ const getById = async (req, res) => {
 
 const postCreate = async (req, res) => {
     try {
-        let exam;
-        if (req.body.de_thi_ma) {
-            exam = await Exam.findOne({
+        let exam ;
+        if(req.body.de_thi_ma){
+            exam= await Exam.findOne({
                 where: {
                     de_thi_ma: req.body.de_thi_ma,
                 },
@@ -412,48 +401,48 @@ const postCreate = async (req, res) => {
                 return;
             }
             let criteria;
-            if (req.body.loai_de_thi_id == '1') {
+            if(req.body.loai_de_thi_id=="1"){
                 criteria = await ThematicCriteria.findOne({
-                    where: {
-                        mo_dun_id: req.body.mo_dun_id,
-                    },
+                    where:{
+                        mo_dun_id: req.body.mo_dun_id
+                    }
                 });
-            } else if (req.body.loai_de_thi_id == '2') {
+            }else if(req.body.loai_de_thi_id=="2"){
                 criteria = await ModunCriteria.findOne({
-                    where: {
-                        mo_dun_id: req.body.mo_dun_id,
-                    },
-                });
-            } else if (req.body.loai_de_thi_id === '3') {
+                    where:{
+                        mo_dun_id: req.body.mo_dun_id
+                    }
+                })
+            }else if(req.body.loai_de_thi_id === "3"){
                 criteria = await SyntheticCriteria.findOne({
-                    where: {
+                    where:{
                         khoa_hoc_id: req.body.khoa_hoc_id,
-                    },
-                });
-            } else if (req.body.loai_de_thi_id === '4') {
+                    }
+                })
+            } else if (req.body.loai_de_thi_id === "4") {
                 criteria = await OnlineCriteria.findOne({
-                    where: {
+                    where:{
                         khoa_hoc_id: req.body.khoa_hoc_id,
-                    },
-                });
-            } else {
+                    }
+                })
+            } else{
                 res.status(404).send({
                     status: 'error',
                     data: null,
                     message: null,
                 });
             }
-            if (!criteria) {
+            if(!criteria){
                 res.status(404).send({
                     status: 'fail',
                     data: '100',
                     message: 'Chưa có tiêu chí đề thi',
                 });
-            } else {
+            } 
+            else {
                 await Exam.create({
                     ...req.body,
-                });
-                
+                }); 
                 res.status(200).send({
                     status: 'success',
                     data: exam,
@@ -466,7 +455,7 @@ const postCreate = async (req, res) => {
                 data: null,
                 message: 'Chưa nhập mã đề thi',
             });
-        }
+        } 
     } catch (error) {
         res.status(404).send({
             status: 'error',
@@ -610,45 +599,18 @@ const stateChange = async (req, res) => {
 };
 
 const forceDelete = async (req, res) => {
-   try{
     const exam = await Exam.findOne({
         where: {
             de_thi_id: req.params.id,
         },
     });
-    if (exam && exam.anh_dai_dien && fs.existsSync(`src/public${exam.anh_dai_dien}`))
+    if (exam.anh_dai_dien && fs.existsSync(`src/public${exam.anh_dai_dien}`))
         fs.unlinkSync(`src/public${exam.anh_dai_dien}`);
-    if(fs.existsSync(`public/Picture/word/media/${req.params.id}`)){
-        fs.rmSync(`public/Picture/word/media/${req.params.id}`, { recursive: true, force: true });
-    }
-    await Exceprt.destroy({
-        where: {
-            de_thi_id: req.params.id,
-        },
-    })
-    await Question.destroy({
-        where: {
-            de_thi_id: req.params.id,
-        },
-    })
-    await Answer.destroy({
-        where: {
-            de_thi_id: req.params.id,
-        },
-    })
     await Exam.destroy({
         where: {
             de_thi_id: req.params.id,
         },
     });
-    await ExamQuestion.destroy({
-        where: {
-            de_thi_id: req.params.id,
-        },
-    });
-   }catch(err){
-    console.log(err)
-   }
     res.status(200).send({
         status: 'success',
         data: null,
@@ -700,11 +662,11 @@ const reuse = async (req, res) => {
         },
         attributes: ['cau_hoi_id'],
     });
-    let examQuestionNews = [];
+    let examQuestionNews=[]
     for (const examQuestionOld of examQuestionOlds) {
         examQuestionNews.push({
             de_thi_id: examNew.de_thi_id,
-            cau_hoi_id: examQuestionOld.cau_hoi_id,
+            cau_hoi_id: examQuestionOld.cau_hoi_id
         });
     }
     await ExamQuestion.bulkCreate(examQuestionNews);
@@ -715,75 +677,63 @@ const reuse = async (req, res) => {
     });
 };
 
-const studentStatistic = async (req, res) => {
-    let limit = 100;
-    let search = 1;
-    let ngay_thi = 1;
-    let tinh = 1;
-    if (req.query.limit) {
-        limit = req.query.limit;
+const studentStatistic=async (req, res) => {
+    let limit=100;
+    let search=1;
+    let ngay_thi=1;
+    let tinh=1;
+    if(req.query.limit){
+        limit=req.query.limit;
     }
-    if (req.query.index) {
-        index = req.query.index;
+    if(req.query.index){
+        index=req.query.index;
     }
-    if (req.query.ngay_bat_dau && req.query.ngay_ket_thuc) {
+    if (req.query.ngay_bat_dau&&req.query.ngay_ket_thuc) {
         ngay_thi = `de_thi_hoc_vien.thoi_diem_bat_dau BETWEEN :ngay_bat_dau AND :ngay_ket_thuc`;
     }
     if (req.query.search) {
         search = 'hoc_vien.ho_ten LIKE :search';
     }
-    if (req.query.tinh) {
-        tinh = 'hoc_vien.ttp_id LIKE :tinh';
+    if(req.query.tinh){
+        tinh= 'hoc_vien.ttp_id LIKE :tinh'
     }
-    let filter = `AND ${ngay_thi} AND ${search} AND ${tinh}`;
-    const total = await sequelize.query(
-        `
+    let filter=`AND ${ngay_thi} AND ${search} AND ${tinh}`;
+    const total=await sequelize.query(`
         SELECT COUNT(*) AS total FROM de_thi_hoc_vien WHERE de_thi_hoc_vien.thoi_diem_ket_thuc IS NOT NULL AND 
-        de_thi_hoc_vien.de_thi_id=:de_thi_id`,
+        de_thi_hoc_vien.de_thi_id=:de_thi_id`, 
         {
             replacements: {
                 de_thi_id: parseInt(req.params.id),
             },
-            type: sequelize.QueryTypes.SELECT,
-        }
-    );
-    const students = await sequelize.query(
-        `
+            type: sequelize.QueryTypes.SELECT
+        })
+    const students=await sequelize.query(`
         SELECT hoc_vien.ho_ten, hoc_vien.sdt, tinh_thanhpho.ten as tinh, hoc_vien.truong_hoc,
         de_thi_hoc_vien.so_cau_tra_loi_dung, de_thi_hoc_vien.so_cau_tra_loi_sai, de_thi_hoc_vien.diem_cac_phan,
         (de_thi_hoc_vien.ket_qua_diem/de_thi.tong_diem)*10 AS diem_so, de_thi_hoc_vien.thoi_diem_bat_dau as ngay_thi
         FROM hoc_vien LEFT JOIN tinh_thanhpho ON hoc_vien.ttp_id=tinh_thanhpho.ttp_id JOIN de_thi_hoc_vien ON 
         de_thi_hoc_vien.hoc_vien_id=hoc_vien.hoc_vien_id JOIN de_thi ON de_thi_hoc_vien.de_thi_id=de_thi.de_thi_id
         WHERE de_thi_hoc_vien.thoi_diem_ket_thuc IS NOT NULL AND 
-        de_thi_hoc_vien.de_thi_id=:de_thi_id ${filter} ORDER BY diem_so desc LIMIT :limit OFFSET :offset`,
+        de_thi_hoc_vien.de_thi_id=:de_thi_id ${filter} ORDER BY diem_so desc LIMIT :limit OFFSET :offset`, 
         {
             replacements: {
                 de_thi_id: parseInt(req.params.id),
                 limit: parseInt(req.query.limit),
-                offset: (parseInt(req.query.index) - 1) * parseInt(limit),
+                offset: (parseInt(req.query.index)-1)*parseInt(limit),
                 ngay_bat_dau: req.query.ngay_bat_dau,
                 ngay_ket_thuc: req.query.ngay_ket_thuc,
                 search: `%${decodeURI(req.query.search)}%`,
                 tinh: `%${decodeURI(req.query.tinh)}%`,
             },
-            type: sequelize.QueryTypes.SELECT,
-        }
-    );
+            type: sequelize.QueryTypes.SELECT
+        });
     res.status(200).send({
         status: 'success',
         data: students,
         total: total[0].total,
         message: null,
     });
-};
-
-const uploadWordMedia = async (req, res) => {
-    res.status(200).send({
-        status: 'success',
-        data: null,
-        message: 'Upload file thành công',
-    });
-};
+}
 
 module.exports = {
     getExamOnline,
@@ -800,6 +750,5 @@ module.exports = {
     clearAll,
     reuse,
     getSyntheticNew,
-    studentStatistic,
-    uploadWordMedia,
+    studentStatistic
 };

@@ -129,8 +129,7 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+src/config/
+
 # public folder
-public/upload/
-public/Picture/
-public/temp/
-public/ThiTN/
+src/public/

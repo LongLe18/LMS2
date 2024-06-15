@@ -112,18 +112,18 @@ const postLoginv2=async (req, res) => {
 //[POST] login
 const postLogin = async (req, res) => {
     if (req.query.loai_tai_khoan == 1) {
-        // const { token } = req.body;
-        // if (token === undefined || token === '') {
-        //     res.status(200).send({
-        //         status: 'fail',
-        //         data: null,
-        //         message: 'Captcha is incorrect',
-        //     });
-        //     return;
-        // }
-        // await axios.post(
-        //     `https://www.google.com/recaptcha/api/siteverify?secret=${captcha.secretKey}&response=${token}`
-        // );
+        const { token } = req.body;
+        if (token === undefined || token === '') {
+            res.status(200).send({
+                status: 'fail',
+                data: null,
+                message: 'Captcha is incorrect',
+            });
+            return;
+        }
+        await axios.post(
+            `https://www.google.com/recaptcha/api/siteverify?secret=${captcha.secretKey}&response=${token}`
+        );
         if (res.status(200)) {
             let student = await Student.findOne({
                 where: {

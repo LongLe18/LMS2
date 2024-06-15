@@ -3,14 +3,14 @@ const bcrypt = require('bcrypt');
 require('dotenv').config();
 
 const generateToken = (data, expiresIn) => {
-    const token = jwt.sign(data, process.env.AUTH_TOKEN_SECRET, {
+    const token = jwt.sign(data, process.env.ACCESS_TOKEN_SECRET, {
         expiresIn: expiresIn,
     });
     return token;
 };
 
 const verifyToken = (token) => {
-    const data = jwt.verify(token, process.env.AUTH_TOKEN_SECRET);
+    const data = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
     return data;
 };
 
@@ -20,7 +20,7 @@ const generateRefreshToken = (data) => {
 };
 
 const hashPassword = (password) => {
-    return bcrypt.hashSync(password, bcrypt.genSaltSync(process.env.SALT_ROUNDS));
+    return bcrypt.hashSync(password, bcrypt.genSaltSync(8));
 };
 
 const comparePassword = (hashPassword, password) => {

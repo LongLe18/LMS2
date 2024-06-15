@@ -6,12 +6,20 @@ const { authToken, authRole } = require('../middlewares/auth');
 const { upload } = require('../middlewares/upload2');
 
 router.post(
-    '/create', authToken, authRole([2], 6),
+    '/create', authToken, authRole([2], 6), 
+    upload.fields([
+        { name: 'noi_dung', maxCount: 1 },
+        { name: 'loi_giai', maxCount: 1 },
+    ]),
     tryCatch(questionController.postCreate)
 );
 //router.get('/:id/edit', authToken, authRole([2], 6), tryCatch(questionController.getUpdate));
 router.put(
     '/:id', authToken, authRole([2], 6), 
+    upload.fields([
+        { name: 'noi_dung', maxCount: 1 },
+        { name: 'loi_giai', maxCount: 1 },
+    ]),
     tryCatch(questionController.putUpdate)
     );
 router.get('/getByExam', authToken, authRole([2], 7), tryCatch(questionController.getByExam));

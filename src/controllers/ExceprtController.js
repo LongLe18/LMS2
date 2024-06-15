@@ -83,12 +83,8 @@ const forceDelete = async (req, res) => {
             trich_doan_id: req.params.id,
         },
     });
-
-    const media = /\\begin{center}\n\\includegraphics\[scale = 0.5]{\s*([\s\S]*?)\s*}\n\\end{center}/g.exec(exceprt.noi_dung);
-    if(media!==null && fs.existsSync(`public/${media[1]}`)){
-        fs.unlinkSync(`public/${media}`);
-    }
-
+    if (exceprt.noi_dung && fs.existsSync(`src/public${exceprt.noi_dung}`))
+        fs.unlinkSync(`src/public${exceprt.noi_dung}`);
     await Exceprt.destroy({
         where: {
             trich_doan_id: req.params.id,

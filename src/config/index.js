@@ -8,13 +8,6 @@ const config = {
         siteKey: '6LcGtKAiAAAAAMOQJnfqBfk-yJ99Laqe-3QWC_Nb',
         secretKey: '6LcGtKAiAAAAAJdAxE0msKc43zLwG5X4sbsaQRMR',
     },
-    //config api
-    api: {
-        port: 3001,
-        portHttps: 3000,
-        login_url: ENV === 'dev' ? 'http://localhost:3002/auth/hocvien' : 'https://dgnl.luyenthiquocgia.edu.vn/auth/hocvien',
-        be_url: ENV === 'dev' ? 'http://localhost:3001' : 'https://luyenthiquocgia.edu.vn:3000',
-    },
     oauth: {
         REDIRECT_DOMAIN: ENV === 'dev' ? 'http://localhost:3002' : 'https://dgnl.luyenthiquocgia.edu.vn',
         USER: 'viettrieu.mta@gmail.com',
