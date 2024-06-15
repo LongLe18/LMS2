@@ -262,8 +262,10 @@ const download = async (req, res) => {
                         (ket_qua_chon, index) =>
                             ket_qua_chon == dap_ans[index].dap_an_dung
                     )
-                )
+                ){
+                    console.log('tính loại trắc nghiệm')
                     result = true;
+                }
             } else if (
                 selectedAnswer.cau_hoi &&
                 selectedAnswer.cau_hoi.loai_cau_hoi === 2
@@ -296,8 +298,10 @@ const download = async (req, res) => {
                     selectedAnswer.cau_hoi &&
                     selectedAnswer.noi_dung_tra_loi.toLowerCase() ==
                         selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an.toLowerCase()
-                )
+                ){
+                    console.log('tính loại tự luận')
                     result = true;
+                }
             }
             if (result) {
                 ket_qua_diem.push(1);
