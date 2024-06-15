@@ -142,7 +142,7 @@ const putUpdate = async (req, res) => {
     let result;
     for (const selectedAnswer of selectedAnswers) {
         result = false;
-        if (selectedAnswer.cau_hoi.loai_cau_hoi === 1) { // Câu trắc nghiệm
+        if (selectedAnswer.cau_hoi.loai_cau_hoi === 0) { // Câu trắc nghiệm
             ket_qua_chons = selectedAnswer.ket_qua_chon.toString().split('');
             dap_ans = selectedAnswer.cau_hoi.dap_ans;
             if (
@@ -166,6 +166,8 @@ const putUpdate = async (req, res) => {
             if (so_cau_dung === 4) result = true;
         } else { // câu tự luận
             if (
+                selectedAnswer.cau_hoi &&
+                selectedAnswer.cau_hoi.loai_cau_hoi === 1 &&
                 selectedAnswer.noi_dung_tra_loi.toLowerCase() ==
                 selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an.toLowerCase()
             )

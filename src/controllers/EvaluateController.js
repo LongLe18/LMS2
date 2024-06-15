@@ -263,7 +263,6 @@ const download = async (req, res) => {
                             ket_qua_chon == dap_ans[index].dap_an_dung
                     )
                 ){
-                    console.log('tính loại trắc nghiệm')
                     result = true;
                 }
             } else if (
@@ -296,10 +295,10 @@ const download = async (req, res) => {
                 // câu tự luận
                 if (
                     selectedAnswer.cau_hoi &&
+                    selectedAnswer.cau_hoi.loai_cau_hoi === 0 &&
                     selectedAnswer.noi_dung_tra_loi.toLowerCase() ==
                         selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an.toLowerCase()
                 ){
-                    console.log('tính loại tự luận')
                     result = true;
                 }
             }
