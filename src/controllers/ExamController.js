@@ -532,7 +532,7 @@ const publish = async (req, res) => {
         let questions = await sequelize.query(
             `
             SELECT cau_hoi.diem FROM cau_hoi JOIN cau_hoi_de_thi ON 
-            cau_hoi.cau_hoi_id=cau_hoi_de_thi.cau_hoi_id WHERE de_thi_id = :de_thi_id
+            cau_hoi.cau_hoi_id=cau_hoi_de_thi.cau_hoi_id WHERE de_thi.de_thi_id = :de_thi_id
             `,
             {
                 replacements: { de_thi_id: req.params.id },
