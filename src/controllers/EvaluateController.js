@@ -294,8 +294,8 @@ const download = async (req, res) => {
                 // câu tự luận
                 if (
                     selectedAnswer.cau_hoi &&
-                    selectedAnswer.noi_dung_tra_loi ==
-                        selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an
+                    selectedAnswer.noi_dung_tra_loi.toLowerCase() ==
+                        selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an.toLowerCase()
                 )
                     result = true;
             }

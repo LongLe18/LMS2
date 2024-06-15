@@ -166,8 +166,8 @@ const putUpdate = async (req, res) => {
             if (so_cau_dung === 4) result = true;
         } else { // câu tự luận
             if (
-                selectedAnswer.noi_dung_tra_loi ==
-                selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an
+                selectedAnswer.noi_dung_tra_loi.toLowerCase() ==
+                selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an.toLowerCase()
             )
                 result = true;
         }
@@ -201,6 +201,12 @@ const putUpdate = async (req, res) => {
                 },
             });
         } else if (exam.loai_de_thi_id == 3) {
+            criteria = await SyntheticCriteria.findOne({
+                where: {
+                    khoa_hoc_id: exam.khoa_hoc_id,
+                },
+            });
+        }else if (exam.loai_de_thi_id == 4) {
             criteria = await SyntheticCriteria.findOne({
                 where: {
                     khoa_hoc_id: exam.khoa_hoc_id,
