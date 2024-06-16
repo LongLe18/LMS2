@@ -294,6 +294,7 @@ const download = async (req, res) => {
                 // câu tự luận
                 if (
                     selectedAnswer.cau_hoi &&
+                    selectedAnswer.cau_hoi.loai_cau_hoi === 0 &&
                     selectedAnswer.noi_dung_tra_loi ==
                         selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an
                 )

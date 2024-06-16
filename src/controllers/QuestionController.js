@@ -77,8 +77,10 @@ const getById = async (req, res) => {
 };
 
 const postCreate = async (req, res) => {
+    const {cot_tren_hang, ...rest} = req.body
+    console.log(req.body)
     const question = await Question.create({
-        ...req.body,
+        ...rest,
     });
     res.status(200).send({
         status: 'success',
