@@ -134,13 +134,13 @@ const CoursesUser = (props) => {
                                                         {cate.loai_kct === 1
                                                         ?
                                                             <div>
-                                                                <Button type="primary" className="mt-2 mb-2" onClick={() => requestExamOnline(cate.khoa_hoc_id)} >
+                                                                <Button type="primary" className="mt-2 mb-2" style={{borderRadius: 6}}  onClick={() => requestExamOnline(cate.khoa_hoc_id)} >
                                                                     Bắt đầu thi
                                                                 </Button>
                                                             </div>
                                                         :
                                                             <Link to={`/luyen-tap/luyen-tap/${hashids.encode(cate.khoa_hoc_id)}`}>
-                                                                <Button type="primary">
+                                                                <Button type="primary" style={{borderRadius: 6}}>
                                                                     Bắt đầu học
                                                                 </Button>
                                                             </Link>

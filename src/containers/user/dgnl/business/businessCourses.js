@@ -12,7 +12,14 @@ import config from '../../../../configs/index';
 import moment from "moment";
 
 // component
-import { Layout, Row, Col, Button, Input, Select, Form } from 'antd';
+import { Layout, Row, Col, Button, Input, Select, Form, Menu } from 'antd';
+import {
+    AppstoreOutlined,
+    ContainerOutlined,
+    DesktopOutlined,
+    MailOutlined,
+    PieChartOutlined,
+  } from '@ant-design/icons';
 import CarouselCustom from 'components/parts/Carousel/Carousel';
 
 // redux
@@ -128,6 +135,32 @@ const CoursesPage = (props) => {
         }
     };
 
+    function getItem(label, key, icon, children, type) {
+        return {
+          key,
+          icon,
+          children,
+          label,
+          type,
+        };
+    }
+    const items = [
+        getItem('Option 1', '1', <PieChartOutlined />),
+        getItem('Option 2', '2', <DesktopOutlined />),
+        getItem('Option 3', '3', <ContainerOutlined />),
+        getItem('Navigation One', 'sub1', <MailOutlined />, [
+            getItem('Option 5', '5'),
+            getItem('Option 6', '6'),
+            getItem('Option 7', '7'),
+            getItem('Option 8', '8'),
+        ]),
+        getItem('Navigation Two', 'sub2', <AppstoreOutlined />, [
+            getItem('Option 9', '9'),
+            getItem('Option 10', '10'),
+            getItem('Submenu', 'sub3', null, [getItem('Option 11', '11'), getItem('Option 12', '12')]),
+        ]),
+    ];
+
     const renderCourses = () => {
         return (
             <>      
@@ -138,7 +171,6 @@ const CoursesPage = (props) => {
                             <Col span={24} className="filter-todo">
                                 <Form layout="vertical" form={form} autoComplete="off" onFinish={search}>
                                     <Row justify="center" gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                                        
                                         <Col xl={6} md={6} xs={24}>
                                             <Form.Item 
                                                 initialValue={''}
@@ -173,126 +205,138 @@ const CoursesPage = (props) => {
                             </Col>
                         </Row>
                         <br/>
-                        {dataSearch.length > 0 && (
-                        <>
-                            <h2 className="section-title section-title-center">
-                                <b></b>
-                                <span className="section-title-main">KẾT QUẢ TÌM KIẾM</span>
-                                <b></b>
-                            </h2>
-                            <Row gutter={[16, 16]} className="list-cate-items">
-                                {dataSearch.map((cate, index) => {
-                                    return (
-                                        <Col xl={6} sm={12} xs={12} className="course-cate-row" key={cate.khoa_hoc_id}>
-                                            <div className="course-cate-box">
-                                                <div className="image-box">
-                                                    <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>
-                                                        <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
-                                                    </Link>
-                                                </div>
-                                                <div className="box-text">
-                                                    <h3 className="course-cate-title">
-                                                        <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>{cate.ten_khoa_hoc}</Link>
-                                                    </h3>
-                                                    <p className="course-cate-description">
-                                                        Ngày bắt đầu: {moment(cate.ngay_bat_dau).format(config.DATE_FORMAT_SHORT)}
-                                                        <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`} >
-                                                            <Button type="primary" style={{margin: '12px 0 12px 0'}}>
-                                                                Xem chi tiết
-                                                            </Button>
-                                                        </Link>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </Col>
-                                    )
-                                })}
-                            </Row>
-                        </>
-                        )}
-                        
-                        <h2 className="section-title section-title-center">
-                            <b></b>
-                            <span className="section-title-main">KHÓA HỌC MỚI NHẤT</span>
-                            <b></b>
-                        </h2>
-                        {dataInit.length > 0 && (
-                        <Row gutter={[16, 16]} className="list-cate-items">
-                            {dataInit.map((cate, index) => {
-                                if (index < 4) 
-                                {
-                                    return (
-                                        <Col xl={6} sm={12} xs={12} className="course-cate-row" key={cate.khoa_hoc_id}>
-                                            <div className="course-cate-box">
-                                                <div className="image-box">
-                                                    <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>
-                                                        <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
-                                                    </Link>
-                                                </div>
-                                                <div className="box-text">
-                                                    <h3 className="course-cate-title">
-                                                        <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>{cate.ten_khoa_hoc}</Link>
-                                                    </h3>
-                                                    <p className="course-cate-description">
-                                                        <span>Ngày bắt đầu: {moment(cate.ngay_bat_dau).format(config.DATE_FORMAT_SHORT)}</span>
-                                                        <span>Ngày kết thúc: {moment(cate.ngay_ket_thuc).format(config.DATE_FORMAT_SHORT)}</span>
-                                                        <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>
-                                                            <Button type="primary" style={{margin: '12px 0 12px 0'}}>
-                                                                Xem chi tiết
-                                                            </Button>
-                                                        </Link>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </Col>
-                                    )
-                                } else return null;
-                            })}
-                        </Row>
-                        )}
-
-                        {(courses.status === 'success' && programmes.status === 'success' && programmes.data.length > 0) && programmes.data.map((item, index) => {
-                                return (
-                                    
-                                    <div key={index}>
-                                        <h2 className="section-title section-title-center" >
+                        <Row gutter={16}>
+                            <Col Col xl={4} md={4} xs={4}>
+                                <Menu style={{borderRadius: 6}}
+                                    defaultSelectedKeys={['1']}
+                                    defaultOpenKeys={['sub1']}
+                                    mode="inline"
+                                    theme="light"
+                                    items={items}
+                                />
+                            </Col>
+                            <Col Col xl={20} md={20} xs={20}>
+                                {dataSearch.length > 0 && (
+                                    <>
+                                        <h2 className="section-title section-title-center">
                                             <b></b>
-                                            {courses.data.length > 0 && <span className="section-title-main">{item.ten_khung_ct}</span>}
+                                            <span className="section-title-main">KẾT QUẢ TÌM KIẾM</span>
                                             <b></b>
                                         </h2>
-                                        <Row gutter={[16, 16]} className="list-cate-items" >
-                                        {programmes.data.length > 0 ? courses.data.filter(course => course.kct_id === item.kct_id).map((item2, index2) => {
-                                            return (
-                                                <Col xl={6} sm={12} xs={12} className="course-cate-row" key={index2}>
-                                                    <div className="course-cate-box">
-                                                        <div className="image-box">
-                                                            <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${item2.khoa_hoc_id}`}>
-                                                                <img src={ item2.anh_dai_dien ? config.API_URL + `${item2.anh_dai_dien}` : defaultImage} alt={item2.ten_khoa_hoc} />
-                                                            </Link>
-                                                        </div>
-                                                        <div className="box-text">
-                                                            <h3 className="course-cate-title">
-                                                                <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${item2.khoa_hoc_id}`}>{item2.ten_khoa_hoc}</Link>
-                                                            </h3>
-                                                            <p className="course-cate-description">
-                                                                <span>Ngày bắt đầu: {moment(item2.ngay_bat_dau).format(config.DATE_FORMAT_SHORT)}</span>
-                                                                <span>Ngày kết thúc: {moment(item2.ngay_ket_thuc).format(config.DATE_FORMAT_SHORT)}</span>
-                                                                <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${item2.khoa_hoc_id}`}>
-                                                                    <Button type="primary" style={{margin: '12px 0 12px 0'}}>
-                                                                        Xem chi tiết
-                                                                    </Button>
+                                        <Row gutter={[16, 16]} className="list-cate-items">
+                                            {dataSearch.map((cate, index) => {
+                                                return (
+                                                    <Col xl={5} sm={12} xs={12} className="course-cate-row" key={cate.khoa_hoc_id}>
+                                                        <div className="course-cate-box">
+                                                            <div className="image-box">
+                                                                <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>
+                                                                    <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
                                                                 </Link>
-                                                            </p>
+                                                            </div>
+                                                            <div className="box-text">
+                                                                <h3 className="course-cate-title">
+                                                                    <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>{cate.ten_khoa_hoc}</Link>
+                                                                </h3>
+                                                                <p className="course-cate-description">
+                                                                    Ngày bắt đầu: {moment(cate.ngay_bat_dau).format(config.DATE_FORMAT_SHORT)}
+                                                                    <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`} >
+                                                                        <Button type="primary" style={{margin: '12px 0 12px 0', fontSize: 12, borderRadius: 4}}>
+                                                                            Chi tiết
+                                                                        </Button>
+                                                                    </Link>
+                                                                </p>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </Col>
-                                            )           
-                                        }) : null}
+                                                    </Col>
+                                                )
+                                            })}
                                         </Row>
-                                    </div>
-                                )
-                            })
-                        }
+                                    </>
+                                )}
+                            
+                                <h2 className="section-title section-title-center">
+                                    <b></b>
+                                    <span className="section-title-main">KHÓA HỌC MỚI NHẤT</span>
+                                    <b></b>
+                                </h2>
+                                {dataInit.length > 0 && (
+                                    <Row gutter={[16, 16]} className="list-cate-items">
+                                        {dataInit.map((cate, index) => {
+                                            if (index < 4) 
+                                            {
+                                                return (
+                                                    <Col xl={5} sm={12} xs={12} className="course-cate-row" key={cate.khoa_hoc_id}>
+                                                        <div className="course-cate-box">
+                                                            <div className="image-box">
+                                                                <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>
+                                                                    <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
+                                                                </Link>
+                                                            </div>
+                                                            <div className="box-text">
+                                                                <h3 className="course-cate-title">
+                                                                    <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>{cate.ten_khoa_hoc}</Link>
+                                                                </h3>
+                                                                <p className="course-cate-description">
+                                                                    <span>Ngày bắt đầu: {moment(cate.ngay_bat_dau).format(config.DATE_FORMAT_SHORT)}</span>
+                                                                    <span>Ngày kết thúc: {moment(cate.ngay_ket_thuc).format(config.DATE_FORMAT_SHORT)}</span>
+                                                                    <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>
+                                                                        <Button type="primary" style={{margin: '12px 0 12px 0', fontSize: 12, borderRadius: 4}}>
+                                                                            Chi tiết
+                                                                        </Button>
+                                                                    </Link>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </Col>
+                                                )
+                                            } else return null;
+                                        })}
+                                    </Row>
+                                )}
+
+                                {(courses.status === 'success' && programmes.status === 'success' && programmes.data.length > 0) && programmes.data.map((item, index) => {
+                                        return (
+                                            <div key={index}>
+                                                <h2 className="section-title section-title-center" >
+                                                    <b></b>
+                                                    {courses.data.length > 0 && <span className="section-title-main">{item.ten_khung_ct}</span>}
+                                                    <b></b>
+                                                </h2>
+                                                <Row gutter={[16, 16]} className="list-cate-items" >
+                                                {programmes.data.length > 0 ? courses.data.filter(course => course.kct_id === item.kct_id).map((item2, index2) => {
+                                                    return (
+                                                        <Col xl={5} sm={12} xs={12} className="course-cate-row" key={index2}>
+                                                            <div className="course-cate-box">
+                                                                <div className="image-box">
+                                                                    <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${item2.khoa_hoc_id}`}>
+                                                                        <img src={ item2.anh_dai_dien ? config.API_URL + `${item2.anh_dai_dien}` : defaultImage} alt={item2.ten_khoa_hoc} />
+                                                                    </Link>
+                                                                </div>
+                                                                <div className="box-text">
+                                                                    <h3 className="course-cate-title">
+                                                                        <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${item2.khoa_hoc_id}`}>{item2.ten_khoa_hoc}</Link>
+                                                                    </h3>
+                                                                    <p className="course-cate-description">
+                                                                        <span>Ngày bắt đầu: {moment(item2.ngay_bat_dau).format(config.DATE_FORMAT_SHORT)}</span>
+                                                                        <span>Ngày kết thúc: {moment(item2.ngay_ket_thuc).format(config.DATE_FORMAT_SHORT)}</span>
+                                                                        <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${item2.khoa_hoc_id}`}>
+                                                                            <Button type="primary" style={{margin: '12px 0 12px 0', fontSize: 12, borderRadius: 4}}>
+                                                                                Chi tiết
+                                                                            </Button>
+                                                                        </Link>
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </Col>
+                                                    )           
+                                                }) : null}
+                                                </Row>
+                                            </div>
+                                        )
+                                    })
+                                }
+                            </Col>
+                        </Row>
                     </div>
                 </div>
                 

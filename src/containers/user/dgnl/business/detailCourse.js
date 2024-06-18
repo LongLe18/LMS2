@@ -262,7 +262,7 @@ const IntroCoursePage = () => {
 
     const renderIntro = () => {
         return (
-            <Row className='wraper wraper-list-course-cate-index' style={{marginTop: '10px'}}>
+            <Row className='wraper wraper-list-course-cate-index' style={{marginTop: '30px'}}>
                 <Col span={18} className="list-course-content">
                     <div className='product-main'>
                         <Row className='product__mobile'>
@@ -339,13 +339,13 @@ const IntroCoursePage = () => {
                                         </Link>
                                         {course.data.loai_kct === 1 ?   
                                             <Button onClick={() => requestExamOnline(idCourse)} className='devvn_buy_now'>
-                                                <strong style={{fontWeight: 400}}>Học thử</strong>
-                                                <span>Bạn có muốn học thử khóa học?</span>
+                                                <strong style={{fontWeight: 400}}>Thi thử</strong>
+                                                <span>Bạn có muốn thi thử khóa học?</span>
                                             </Button>
                                         :
                                             <Link to={`/luyen-tap/luyen-tap/${hashids.encode(idCourse)}`} className='devvn_buy_now'>
-                                                <strong>Học thử</strong>
-                                                <span>Bạn có muốn học thử khóa học?</span>
+                                                <strong>Thi thử</strong>
+                                                <span>Bạn có muốn thi thử khóa học?</span>
                                             </Link>
                                         }
                                     </>
@@ -448,7 +448,7 @@ const IntroCoursePage = () => {
                             </h4>
                             <div className="info-item">
                                 Để có thông tin và tư vấn chi tiết về học phí đối với mỗi khóa học các bậc phụ huynh và các em học sinh hãy gọi theo số Hotline: 
-                                <a href="tel:0243754649">0968 958 680</a> hoặc <Link to="#">Click vào đây để nhận được tư vấn trực tiếp</Link>
+                                <br/><a href="tel:0243754649">XXXX XXX XXX</a> hoặc <Link to="#">Click vào đây để nhận được tư vấn trực tiếp</Link>
                             </div>
                         </div>   
                     </div>

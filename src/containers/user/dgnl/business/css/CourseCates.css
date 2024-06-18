@@ -1,5 +1,13 @@
 .list-cate-items {
   margin-top: 30px;
+  margin-left: 12px !important;
+  margin-right: 12px !important;
+
+  .course-cate-box {
+    background-color: #FAFAFA;
+    box-shadow: 0px 4px 8px rgba(38, 38, 38, 0.2);
+    border-radius: 4px;
+  }
 }
 
 .list-cate-items .box-text {
@@ -48,13 +56,13 @@
 }
 
 .list-course-cate .course-cate-title a {
-  font-size: 14px;
   font-weight: bold;
   color: #000;
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+  font-size: 13px;
 }
 
 .list-course-cate .course-cate-title a:hover {
@@ -67,14 +75,15 @@
   text-overflow: ellipsis;
   display: flex;
   flex-direction: column;
-  font-weight: bold;
+  color: #8d8989;
+  font-size: 12px;
 }
 
 .list-course-cate .image-box {
   width: 100%;
-  height: 300px;
+  height: 150px;
   overflow: hidden;
-  border-radius: 15px;
+  border-radius: 4px;
 }
 
 .list-course-cate .image-box img {
@@ -120,7 +129,9 @@
   border: none;
   padding: 0px;
   font-weight: 700;
+  background-color: transparent;
   white-space: normal;
+  width: 100%;
 }
 
 .ant-select:not(.ant-select-customize-input) .ant-select-selector {
@@ -128,7 +139,7 @@
 }
 /*tablet pro*/
 .wraper-list-course-cate-index {
-  background-color: #fff;
+  background-color: #EBEBEB;
 }
 
 @media only screen and (max-width: 1080px) {

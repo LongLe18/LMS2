@@ -50,8 +50,9 @@ a.devvn_buy_now, button.devvn_buy_now {
     text-transform: uppercase;
     color: #fff!important;
     text-align: center;
-    background: -webkit-linear-gradient(top,#f59000,#fd6e1d) !important;
-    border-color: #f59000 !important;
+    background: -webkit-linear-gradient(top,rgba(14,164,65,1),rgba(19,136,29,0.861782212885154)) !important;
+    /* background: linear-gradient(90deg, rgba(14,164,65,1) 35%, rgba(19,136,29,0.861782212885154) 100%); */
+    border-color: rgba(14,164,65,1) !important;
     margin: 0 0 20px;
     text-decoration: none;
     border-bottom: 0!important;
@@ -193,7 +194,7 @@ ul {
 }
 
 li {
-    margin-bottom: 0.6em;
+    /* margin-bottom: 0.6em; */
 }
 
 /* Product footer */
