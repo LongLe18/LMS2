@@ -321,7 +321,7 @@ function IndexHeader(props) {
 
   return (
     <div ref={sidebar} className="header-page">
-      {/* <Container>
+      <Container>
         <Row className="header-logo">
           <NavLink to="/luyen-tap/kinh-doanh-khoa-hoc">
             <img alt="..."  style={{maxHeight: '155px', width: '100%'}}
@@ -330,7 +330,7 @@ function IndexHeader(props) {
             />
           </NavLink>
         </Row>
-      </Container> */}
+      </Container>
       <div id="wide-nav" className="header-bottom wide-nav nav-dark hide-for-medium">
         <NavLink to="/luyen-tap/kinh-doanh-khoa-hoc">
           <img alt="..."  style={{maxHeight: '60px'}} className="img-no-padding img-responsive"
