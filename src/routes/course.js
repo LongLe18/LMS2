@@ -39,6 +39,7 @@ router.get('/filter',tryCatch(courseController.getByFilter));
 router.get('/student/list/:id', authToken, authRole([2], 7), tryCatch(courseController.getStudents));
 router.post('/add/student/:id', authToken, authRole([2], 6), tryCatch(courseController.addStudent));
 router.get('/add/student/list/:id', authToken, authRole([2], 6), tryCatch(courseController.getAddStudents));
+router.get('/by-program', tryCatch(courseController.getAllByProgram));
 router.get('/:id', tryCatch(courseController.getById));
 router.get('/', tryCatch(courseController.getAll));
 

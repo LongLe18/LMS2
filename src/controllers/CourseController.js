@@ -60,6 +60,22 @@ const getAll = async (req, res) => {
     });
 };
 
+const getAllByProgram = async (req, res)=>{
+    const courses = await Program.findAll({
+        include: [
+            {
+                model: Course,
+                attributes: ['khoa_hoc_id', 'ten_khoa_hoc'],
+            },
+        ],
+    });
+    res.status(200).send({
+        status:'success',
+        data: courses,
+        message: null,
+    });
+}
+
 //lay danh sach hoc vien chua duoc them vao khoa hoc
 const getAddStudents= async (req, res) => {
     let ten_hoc_vien = 1;
@@ -640,6 +656,7 @@ module.exports = {
     getById,
     getOfNews,
     getByFilter,
+    getAllByProgram,
     postCreate,
     getUpdate,
     getByUser,
