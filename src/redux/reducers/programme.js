@@ -10,6 +10,11 @@ const initState = {
         loading: false,
         result: {},
         error: null,
+    },
+    courses: {
+        loading: false,
+        result: {},
+        error: null,
     }
 }
 
@@ -110,6 +115,22 @@ export default function programmeReducer(state = initState, action) {
             return {
                 ...state,
                 item: { ...state.item, loading: false, error: action.error },
+            };
+        // lấy tất nhóm khoa học theo khung chương trình
+        case programmeActions.GET_PROGRAMME_COURSES:
+            return {
+                ...state,
+                courses: { ...state.courses, loading: true },
+            };
+        case programmeActions.GET_PROGRAMME_COURSES_SUCCESS:
+            return {
+                ...state,
+                courses: { ...state.courses, loading: false, result: action.result },
+            };
+        case programmeActions.GET_PROGRAMME_COURSES_FAILED:
+            return {
+                ...state,
+                courses: { ...state.courses, loading: false, error: action.error },
             };
         default:
             return state;

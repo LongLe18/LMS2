@@ -15,6 +15,7 @@ import {
     loadAddProgramme,
     loadDeleteProgramme,
     loadEditProgramme,
+    loadProgrammeCourses,
 } from './programme';
 
 import {
@@ -117,6 +118,7 @@ import {
     loadExamUser,
     loadExamsUser,
     loadReuseExam,
+    loadExamCourseOnline,
 } from './exam';
 
 import { 
@@ -357,6 +359,7 @@ export default function* rootSaga() {
         loadAddProgramme(),
         loadDeleteProgramme(),
         loadEditProgramme(),
+        loadProgrammeCourses(),
         // course
         loadCourse(),
         loadCourses(),
@@ -446,6 +449,7 @@ export default function* rootSaga() {
         loadExamUser(),
         loadExamsUser(),
         loadReuseExam(),
+        loadExamCourseOnline(),
         // type Exam
         loadAddTypeExam(),
         loadDeleteTypeExam(),

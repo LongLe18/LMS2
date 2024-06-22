@@ -95,6 +95,25 @@ function* deleteProgramme(payload) {
     }
 }
 
+// lấy tất nhóm khoa học theo khung chương trình
+function* fetchProgrammeCourses(payload) {
+    try {
+        let endpoint = `${config.API_URL}/course/by-program`;
+        const response = yield call(getApiAuth, endpoint);
+        const result = yield response.data;
+        yield put({ type: actions.programme.GET_PROGRAMME_COURSES_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.programme.GET_PROGRAMME_COURSES_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        notification.error({
+            message: get(error, 'response.data.error', 'Tải dữ liệu menu thất bại ' + messageError),
+        });
+    }
+}
+
 export function* loadProgrammes() {
     yield takeEvery(actions.programme.GET_PROGRAMMES, fetchProgrammes);
 }
@@ -113,4 +132,8 @@ export function* loadEditProgramme() {
 
 export function* loadDeleteProgramme() {
     yield takeEvery(actions.programme.DELETE_PROGRAMME, deleteProgramme);
+}
+
+export function* loadProgrammeCourses() {
+    yield takeEvery(actions.programme.GET_PROGRAMME_COURSES, fetchProgrammeCourses);
 }

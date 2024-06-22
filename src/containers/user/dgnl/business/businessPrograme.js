@@ -13,12 +13,13 @@ import Hashids from 'hashids';
 import jwt_decode from 'jwt-decode';
 
 // component
-import { Layout, Row, Col, Button, notification, Form, Input, Modal } from 'antd';
+import { Layout, Row, Col, Button, notification, Form, Input, Modal, Menu } from 'antd';
 import NoRecord from 'components/common/NoRecord';
 import { UserOutlined, LockOutlined, EyeTwoTone, EyeInvisibleOutlined } from '@ant-design/icons';
 import SocialLogin from 'components/common/SocialLogin';
 import ReCAPTCHA from "react-google-recaptcha";
 import CarouselCustom from 'components/parts/Carousel/Carousel';
+import moment from "moment";
 
 // redux
 import { useSelector, useDispatch } from 'react-redux';
@@ -31,9 +32,9 @@ const { Content } = Layout;
 const BusinessProgramePage = (props) => {
     const [form] = Form.useForm();
     const captchaRef = useRef(null);
-    let history = useHistory();
+    // let history = useHistory();
     const idKCT = useParams().idKCT;
-    const hashids = new Hashids();
+    // const hashids = new Hashids();
     const data = [];
 
     const [visiable, setVisible] = useState(false);
@@ -41,7 +42,8 @@ const BusinessProgramePage = (props) => {
 
     const dispatch = useDispatch();
     const courses = useSelector(state => state.course.list.result);
-    const userToken = localStorage.getItem('userToken');
+    const programmeCourses = useSelector(state => state.programme.courses.result);
+    // const userToken = localStorage.getItem('userToken');
 
     useEffect(() => {
         const callback = (response) => {
@@ -52,6 +54,7 @@ const BusinessProgramePage = (props) => {
 
         dispatch(courseAction.getCourses({ idkct: idKCT, status: 1, search: '' }));
         dispatch(programmeAction.getProgramme({ id: idKCT }, callback));
+        dispatch(programmeAction.getProgrammeCourses());
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     if (courses.status === 'success') {
@@ -71,9 +74,9 @@ const BusinessProgramePage = (props) => {
         setVisible(false);
     };
     
-    const showModal = () => {
-        setVisible(true);
-    };
+    // const showModal = () => {
+    //     setVisible(true);
+    // };
 
     const renderLogin = () => {
         return (
@@ -172,64 +175,88 @@ const BusinessProgramePage = (props) => {
         dispatch(userActions.loginUser({ type: 1, login: values }, callback));
     };
 
-    const requestExamOnline = (idCourse) => {
-        if (userToken === undefined || userToken === null) {
-            showModal();
-            return;
-        }
-        axios.get(config.API_URL + `/student/list/course`, { headers: {Authorization: `Bearer ${localStorage.getItem('userToken')}`,} 
-        })
-            .then(
-                res => {
-                    if (res.status === 200 && res.statusText === 'OK') {
-                        let exist = false;
-                        res.data.data.map(course => {
-                            if (course.khoa_hoc_id === idCourse) {
-                                exist = true;
-                            }
-                            return null;
-                        })
-                        if (exist) {
-                            axios.get(config.API_URL + `/exam/onlineExam?khoa_hoc_id=${idCourse}`, { headers: {Authorization: `Bearer ${localStorage.getItem('userToken')}`,} })
-                                .then(
-                                    res => {
-                                        if (res.status === 200 && res.statusText === 'OK') {
-                                            let data = res.data.data;
-                                            if (data.length > 0) {
-                                                const randomIndex = Math.floor(Math.random() * data.length);
-                                                const randomlySelectedElement = data[randomIndex];
-                                                history.push(`/luyen-tap/xem/${hashids.encode(randomlySelectedElement.de_thi_id)}/${hashids.encode(idCourse)}`)
-                                            }
-                                            else {
-                                                notification.warning({
-                                                    message: 'Cảnh báo',
-                                                    description: 'Khóa học này hiện chưa có đề thi. Xin vui lòng thử lại sau',
-                                                })
-                                            }
-                                        } else {
-                                            notification.error({
-                                                message: 'Lỗi',
-                                                description: 'Có lỗi xảy ra khi lấy dữ liệu',
-                                            })
-                                        }
-                                    }
-                                )
-                                .catch(error => notification.error({ message: error.message }));
-                        } else {
-                            notification.error({
-                                message: 'Thông báo',
-                                description: 'Bạn chưa đăng ký khóa học này, vui lòng đăng ký để vào học',
-                            });
-                        }
-                    } else {
-                        notification.error({
-                            message: 'Lỗi',
-                            description: 'Có lỗi xảy ra khi lấy dữ liệu',
-                        })
-                    }
-                }
-            )
-            .catch(error => notification.error({ message: error.message }));
+    // const requestExamOnline = (idCourse) => {
+    //     if (userToken === undefined || userToken === null) {
+    //         showModal();
+    //         return;
+    //     }
+    //     axios.get(config.API_URL + `/student/list/course`, { headers: {Authorization: `Bearer ${localStorage.getItem('userToken')}`,} 
+    //     })
+    //         .then(
+    //             res => {
+    //                 if (res.status === 200 && res.statusText === 'OK') {
+    //                     let exist = false;
+    //                     res.data.data.map(course => {
+    //                         if (course.khoa_hoc_id === idCourse) {
+    //                             exist = true;
+    //                         }
+    //                         return null;
+    //                     })
+    //                     if (exist) {
+    //                         axios.get(config.API_URL + `/exam/onlineExam?khoa_hoc_id=${idCourse}`, { headers: {Authorization: `Bearer ${localStorage.getItem('userToken')}`,} })
+    //                             .then(
+    //                                 res => {
+    //                                     if (res.status === 200 && res.statusText === 'OK') {
+    //                                         let data = res.data.data;
+    //                                         if (data.length > 0) {
+    //                                             const randomIndex = Math.floor(Math.random() * data.length);
+    //                                             const randomlySelectedElement = data[randomIndex];
+    //                                             history.push(`/luyen-tap/xem/${hashids.encode(randomlySelectedElement.de_thi_id)}/${hashids.encode(idCourse)}`)
+    //                                         }
+    //                                         else {
+    //                                             notification.warning({
+    //                                                 message: 'Cảnh báo',
+    //                                                 description: 'Khóa học này hiện chưa có đề thi. Xin vui lòng thử lại sau',
+    //                                             })
+    //                                         }
+    //                                     } else {
+    //                                         notification.error({
+    //                                             message: 'Lỗi',
+    //                                             description: 'Có lỗi xảy ra khi lấy dữ liệu',
+    //                                         })
+    //                                     }
+    //                                 }
+    //                             )
+    //                             .catch(error => notification.error({ message: error.message }));
+    //                     } else {
+    //                         notification.error({
+    //                             message: 'Thông báo',
+    //                             description: 'Bạn chưa đăng ký khóa học này, vui lòng đăng ký để vào học',
+    //                         });
+    //                     }
+    //                 } else {
+    //                     notification.error({
+    //                         message: 'Lỗi',
+    //                         description: 'Có lỗi xảy ra khi lấy dữ liệu',
+    //                     })
+    //                 }
+    //             }
+    //         )
+    //         .catch(error => notification.error({ message: error.message }));
+    // }
+
+    function getItem(label, key, children, type) {
+        return {
+          key,
+          children,
+          label,
+          type,
+        };
+    }
+    
+    // menu khóa học
+    const items = [];
+    if (programmeCourses.status === 'success') {
+        programmeCourses?.data.forEach((item, index) => {
+            let children = [];
+            if (item.khoa_hocs && item.khoa_hocs.length > 0) {
+                item.khoa_hocs.forEach((item2, index2) => {
+                    
+                    children.push(getItem(item2.ten_khoa_hoc, item2.khoa_hoc_id, null, 'item'));
+                });
+            }
+            items.push(getItem(item.ten_khung_ct, item.kct_id, children, 'item'));
+        });
     }
 
     const renderCoursesCate = () => {
@@ -239,64 +266,119 @@ const BusinessProgramePage = (props) => {
 
                 <div className="wraper wraper-list-course-cate-index">
                     <CarouselCustom />
-                    <h2 className="section-title section-title-center">
-                    <b></b>
-                        {(courses.status === 'success' && data.length > 0) && <span className="section-title-main">{data[0].ten_khung_ct}</span>}
-                        <b></b>
-                    </h2>
-                    {data.length > 0 && (
-                    <Row gutter={[16, 16]} className="list-cate-items">
-                        {data.map((cate, index) => {
-                            return (
-                                <Col xl={6} sm={12} xs={12} className="course-cate-row" key={cate.key}>
-                                    <div className="course-cate-box">
-                                        <div className="image-box">
-                                            {typeProgramme === 1 
-                                            ?
-                                                <Button className='btn-enter-online-course' onClick={() => requestExamOnline(cate.khoa_hoc_id)}>
-                                                    <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
-                                                </Button>
-                                            :       
-                                                <Link to={`/luyen-tap/luyen-tap/${hashids.encode(cate.khoa_hoc_id)}`}>
-                                                    <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
-                                                </Link>
-                                            }
-                                        </div>
-                                        <div className="box-text pb-1">
-                                            {typeProgramme === 1 
-                                            ?
-                                                <Button className='btn-enter-online-course' onClick={() => requestExamOnline(cate.khoa_hoc_id)}>
-                                                    {cate.ten_khoa_hoc}
-                                                </Button>
-                                            :
-                                                <h3 className="course-cate-title">
-                                                    <Link to={`/luyen-tap/luyen-tap/${hashids.encode(cate.khoa_hoc_id)}`}>{cate.ten_khoa_hoc}</Link>
-                                                </h3>
-                                            }
-                                            
-                                            <p className="course-cate-description">
-                                                {typeProgramme === 1 
-                                                ?
-                                                    <div>
-                                                        <Button type="primary" onClick={() => requestExamOnline(cate.khoa_hoc_id)} >
-                                                            Xem chi tiết
+                    <Row gutter={16}>
+                        <Col Col xl={4} md={4} xs={4}>
+                            {(programmeCourses.status === 'success' && items.length > 0) &&
+                                <Menu style={{borderRadius: 6}}
+                                    mode="inline"
+                                    theme="light"
+                                    defaultSelectedKeys={['1']}
+                                >
+                                    {items.map((item, index) => {
+                                        return (
+                                            <Menu.SubMenu title={item.label}>
+                                                {item.children?.map((child, index) => {
+                                                    return (
+                                                        <Menu.Item key={child.key}>
+                                                            <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${child.key}`}>{child.label}</Link>
+                                                        </Menu.Item>
+                                                    )
+                                                })}
+                                            </Menu.SubMenu>
+                                        )
+                                    })}
+                                </Menu>
+                            }
+                        </Col>
+                        <Col Col xl={20} md={20} xs={20}>
+                            <h2 className="section-title section-title-center">
+                            <b></b>
+                                {(courses.status === 'success' && data.length > 0) && <span className="section-title-main">{data[0].ten_khung_ct}</span>}
+                                <b></b>
+                            </h2>
+                            {data.length > 0 && (
+                            <Row gutter={[16, 16]} className="list-cate-items">
+                                {data.map((cate, index) => {
+                                    return (
+                                        <Col xl={5} sm={12} xs={12} className="course-cate-row" key={cate.key}>
+                                            <div className="course-cate-box">
+                                                <div className="image-box">
+                                                    {/* {typeProgramme === 1 
+                                                    ?
+                                                        <Button className='btn-enter-online-course' onClick={() => requestExamOnline(cate.khoa_hoc_id)}>
+                                                            <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
                                                         </Button>
-                                                    </div>
-                                                :
-                                                <Link to={`/luyen-tap/luyen-tap/${hashids.encode(cate.khoa_hoc_id)}`}>
-                                                    <Button type="primary">
-                                                        Xem chi tiết
-                                                    </Button>
-                                                </Link>
-                                                }
-                                            </p>
-                                        </div>
-                                    </div>
-                                </Col>
-                            )
-                        })}
+                                                    :       
+                                                        <Link to={`/luyen-tap/luyen-tap/${hashids.encode(cate.khoa_hoc_id)}`}>
+                                                            <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
+                                                        </Link>
+                                                    } */}
+                                                    <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>
+                                                        <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
+                                                    </Link>
+                                                </div>
+                                                <div className="box-text pb-1">
+                                                    {typeProgramme === 1 
+                                                    ?
+                                                        <>
+                                                            {/* <Button className='btn-enter-online-course' onClick={() => requestExamOnline(cate.khoa_hoc_id)}>
+                                                                {cate.ten_khoa_hoc}
+                                                            </Button> */}
+                                                            <h3 className="course-cate-title">
+                                                                <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>{cate.ten_khoa_hoc}</Link>
+                                                            </h3>
+                                                            <p className="course-cate-description">
+                                                                <span>Ngày bắt đầu: {moment(cate.ngay_bat_dau).format(config.DATE_FORMAT_SHORT)}</span>
+                                                                <span>Ngày kết thúc: {moment(cate.ngay_ket_thuc).format(config.DATE_FORMAT_SHORT)}</span>
+                                                                <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`} >
+                                                                    <Button type="primary" style={{margin: '12px 0 12px 0', fontSize: 12, borderRadius: 4}}>
+                                                                        Chi tiết
+                                                                    </Button>
+                                                                </Link>
+                                                            </p>
+                                                        </>
+                                                    :
+                                                        <>
+                                                            <h3 className="course-cate-title">
+                                                                <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>{cate.ten_khoa_hoc}</Link>
+                                                            </h3>
+                                                            <p className="course-cate-description">
+                                                                <span>Ngày bắt đầu: {moment(cate.ngay_bat_dau).format(config.DATE_FORMAT_SHORT)}</span>
+                                                                <span>Ngày kết thúc: {moment(cate.ngay_ket_thuc).format(config.DATE_FORMAT_SHORT)}</span>
+                                                                <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`} >
+                                                                    <Button type="primary" style={{margin: '12px 0 12px 0', fontSize: 12, borderRadius: 4}}>
+                                                                        Chi tiết
+                                                                    </Button>
+                                                                </Link>
+                                                            </p>
+                                                        </>
+                                                    }
+                                                    
+                                                    {/* <p className="course-cate-description">
+                                                        {typeProgramme === 1 
+                                                        ?
+                                                            <div>
+                                                                <Button type="primary" onClick={() => requestExamOnline(cate.khoa_hoc_id)} >
+                                                                    Xem chi tiết
+                                                                </Button>
+                                                            </div>
+                                                        :
+                                                        <Link to={`/luyen-tap/luyen-tap/${hashids.encode(cate.khoa_hoc_id)}`}>
+                                                            <Button type="primary">
+                                                                Xem chi tiết
+                                                            </Button>
+                                                        </Link>
+                                                        }
+                                                    </p> */}
+                                                </div>
+                                            </div>
+                                        </Col>
+                                    )
+                                })}
+                            </Row>
+                            )}
+                        </Col>
                     </Row>
-                    )}
                 </div>
             </div>
         )

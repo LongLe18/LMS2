@@ -38,6 +38,7 @@ const ExamPage = (props) => {
 
     const [existCourse, setExistCourse] = useState(false);
 
+    // version cũ: Lấy đề thi theo loại đề thi tổng hợp
     const getCourseOfUser = () => {
         axios.get(config.API_URL + `/student/list/course`, { headers: {Authorization: `Bearer ${localStorage.getItem('userToken')}`,} 
         })
@@ -63,12 +64,12 @@ const ExamPage = (props) => {
 
     useEffect(() => {
         dispatch(courseActions.getCourse({ id: hashids.decode(idCourse) }));
-        dispatch(examActions.getExamCourse({ idCourse: hashids.decode(idCourse) }));
+        dispatch(examActions.getExamCourseOnline({ idCourse: hashids.decode(idCourse) }));
         if (userToken) {
             getCourseOfUser();
         }
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
+    
     const breadcrumbs = [{ title: 'Đề thi', link: `/luyen-tap/kiem-tra/${idCourse}` }];
 
     const renderExams = () => {
@@ -88,7 +89,7 @@ const ExamPage = (props) => {
                                 <Progress percent={100} showInfo={false} strokeColor={"#faad14"} />
                                 <div className="list-author-archive">
                                     <div className="author">
-                                        <UserOutlined /> <span> Trung tâm đào tạo CT & T</span>
+                                        <UserOutlined /> <span> Trung tâm đào tạo ENNO</span>
                                     </div>
                                     <div className="date">
                                         <CalendarOutlined /> {formatedDate(item.ngay_tao)}
@@ -120,7 +121,7 @@ const ExamPage = (props) => {
                                 <Progress percent={100} showInfo={false} strokeColor={"#faad14"} />
                                 <div className="list-author-archive">
                                     <div className="author">
-                                        <UserOutlined /> <span> Trung tâm đào tạo CT & T</span>
+                                        <UserOutlined /> <span> Trung tâm đào tạo ENNO</span>
                                     </div>
                                     <div className="date">
                                         <CalendarOutlined /> {formatedDate(item.ngay_tao)}
@@ -165,7 +166,7 @@ const ExamPage = (props) => {
                                         <div className="info-course">
                                         <div className="info">
                                             <h1 className="archive-title">Danh sách đề thi</h1>
-                                            <p>Giáo viên: Thầy Cô của Trung tâm đào tạo CT & T</p>
+                                            <p>Giáo viên: Thầy Cô của Trung tâm đào tạo ENNO</p>
                                             <p>Số lượng đề thi: {examCourse.data.length}</p>
                                             <p>Kiểm tra thiết bị trước khi làm bài</p>
                                         </div>

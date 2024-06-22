@@ -12,14 +12,7 @@ import config from '../../../../configs/index';
 import moment from "moment";
 
 // component
-import { Layout, Row, Col, Button, Input, Select, Form, Menu } from 'antd';
-import {
-    AppstoreOutlined,
-    ContainerOutlined,
-    DesktopOutlined,
-    MailOutlined,
-    PieChartOutlined,
-  } from '@ant-design/icons';
+import { Layout, Row, Col, Button, Input, Select, Form, Menu, Tooltip } from 'antd';
 import CarouselCustom from 'components/parts/Carousel/Carousel';
 
 // redux
@@ -39,6 +32,7 @@ const CoursesPage = (props) => {
     const [form] = Form.useForm();
     const courses = useSelector(state => state.course.list.result);
     const programmes = useSelector(state => state.programme.list.result);
+    const programmeCourses = useSelector(state => state.programme.courses.result);
 
     useEffect(() => {
         dispatch(courseAction.getCourses({ idkct: '', status: 1, search: '' }, (res) => {
@@ -48,9 +42,10 @@ const CoursesPage = (props) => {
                 // dataInit.push(...courses.data);    
             }
         }));
-        dispatch(programmeAction.getProgrammes({ status: '' }))
+        dispatch(programmeAction.getProgrammes({ status: '' }));
+        dispatch(programmeAction.getProgrammeCourses());
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
+    
     const renderProgramme = () => {
         let options = [];
         if (programmes.status === 'success') {
@@ -135,32 +130,30 @@ const CoursesPage = (props) => {
         }
     };
 
-    function getItem(label, key, icon, children, type) {
+    function getItem(label, key, children, type) {
         return {
           key,
-          icon,
           children,
           label,
           type,
         };
     }
-    const items = [
-        getItem('Option 1', '1', <PieChartOutlined />),
-        getItem('Option 2', '2', <DesktopOutlined />),
-        getItem('Option 3', '3', <ContainerOutlined />),
-        getItem('Navigation One', 'sub1', <MailOutlined />, [
-            getItem('Option 5', '5'),
-            getItem('Option 6', '6'),
-            getItem('Option 7', '7'),
-            getItem('Option 8', '8'),
-        ]),
-        getItem('Navigation Two', 'sub2', <AppstoreOutlined />, [
-            getItem('Option 9', '9'),
-            getItem('Option 10', '10'),
-            getItem('Submenu', 'sub3', null, [getItem('Option 11', '11'), getItem('Option 12', '12')]),
-        ]),
-    ];
-
+    
+    // menu khóa học
+    const items = [];
+    if (programmeCourses.status === 'success') {
+        programmeCourses?.data.forEach((item, index) => {
+            let children = [];
+            if (item.khoa_hocs && item.khoa_hocs.length > 0) {
+                item.khoa_hocs.forEach((item2, index2) => {
+                    
+                    children.push(getItem(item2.ten_khoa_hoc, item2.khoa_hoc_id, null, 'item'));
+                });
+            }
+            items.push(getItem(item.ten_khung_ct, item.kct_id, children, 'item'));
+        });
+    }
+    
     const renderCourses = () => {
         return (
             <>      
@@ -207,13 +200,27 @@ const CoursesPage = (props) => {
                         <br/>
                         <Row gutter={16}>
                             <Col Col xl={4} md={4} xs={4}>
-                                <Menu style={{borderRadius: 6}}
-                                    defaultSelectedKeys={['1']}
-                                    defaultOpenKeys={['sub1']}
-                                    mode="inline"
-                                    theme="light"
-                                    items={items}
-                                />
+                                {(programmeCourses.status === 'success' && items.length > 0) &&
+                                    <Menu style={{borderRadius: 6}}
+                                        mode="inline"
+                                        theme="light"
+                                        defaultSelectedKeys={['1']}
+                                    >
+                                        {items.map((item, index) => {
+                                            return (
+                                                <Menu.SubMenu title={item.label}>
+                                                    {item.children?.map((child, index) => {
+                                                        return (
+                                                            <Menu.Item key={child.key}>
+                                                                <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${child.key}`}>{child.label}</Link>
+                                                            </Menu.Item>
+                                                        )
+                                                    })}
+                                                </Menu.SubMenu>
+                                            )
+                                        })}
+                                    </Menu>
+                                }
                             </Col>
                             <Col Col xl={20} md={20} xs={20}>
                                 {dataSearch.length > 0 && (

@@ -277,6 +277,25 @@ function* fetchExamCourse(payload) {
     }
 };
 
+
+function* fetchExamCourseOnline(payload) {
+    try {
+        let endpoint = `${config.API_URL}/exam/onlineExam?khoa_hoc_id=${payload.params.idCourse}`;
+        const response = yield call(getApiAuth, endpoint);
+        const result = yield response.data;
+        yield put({ type: actions.exam.GET_EXAM_COURSE_ONLINE_USER_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.exam.GET_EXAM_COURSE_ONLINE_USER_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        notification.error({
+            message: get(error, 'response.data.error', 'Tải dữ liệu đề thi khóa học đã thất bại ' + messageError),
+        });
+    }
+};
+
 function* fetchExamsUser(payload) {
     try {
         let endpoint = `${config.API_URL}/student_exam?de_thi_id=${payload.params.idExam}&mo_dun_id=${payload.params.idModule}&loai_de_thi_id=${payload.params.type}`;
@@ -426,6 +445,11 @@ export function* loadCombineExam() {
 export function* loadExamCourse() {
     yield takeEvery(actions.exam.GET_EXAM_COURSE_USER, fetchExamCourse);
 }
+
+export function* loadExamCourseOnline() {
+    yield takeEvery(actions.exam.GET_EXAM_COURSE_ONLINE_USER, fetchExamCourseOnline);
+}
+
 
 export function* loadExamUser() {
     yield takeEvery(actions.exam.GET_EXAM_USER, fetchExamUser);

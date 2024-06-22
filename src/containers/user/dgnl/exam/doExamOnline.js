@@ -5,6 +5,7 @@ import { Helmet } from 'react-helmet';
 import moment from 'moment';
 import { secondsToMinutes } from 'helpers/common.helper';
 import './css/ExamDetail2.scss'
+import 'katex/dist/katex.min.css';
 import config from '../../../../configs/index';
 import defaultImage from 'assets/img/default.jpg';
 import { diff } from 'helpers/common.helper';
@@ -22,6 +23,7 @@ import LoadingCustom from "components/parts/loading/Loading"
 import { Layout, Row, Col, Modal, Button, notification, Input, Alert, Upload, message, List, Comment, Space, Timeline } from 'antd';
 import { InfoCircleOutlined, CommentOutlined, UploadOutlined, DownloadOutlined, FileOutlined } from '@ant-design/icons';
 import TextEditorWidget2 from 'components/common/TextEditor/TextEditor2';
+import Latex from 'react-latex-next';
 
 // redux
 import { useSelector, useDispatch } from 'react-redux';
@@ -107,7 +109,6 @@ const ExamOnlineDetail = () => {
 
     useEffect(() => {
         const callback = (res) => {
-            console.log(res);
             const subCallBack = (subres) => {
                 ///// Xử lý trường hợp Khi đã nộp bài
                 // Nếu có thời gian làm bài => đã nộp bài
@@ -479,10 +480,7 @@ const ExamOnlineDetail = () => {
             <div className={`answer ${!isDoing && (isWrong && !answer.dap_an_dung) ? 'incorrect' : ''} ${!isDoing && answer.dap_an_dung ? 'correct' : ''}`}>
                 <span className="answer-label">{renderAnswerKey(index)}</span>
                 <div className="answer-content">             
-                    <img alt="..."
-                        className="img-no-padding img-responsive"
-                        src={config.API_URL + answer.noi_dung_dap_an}
-                    />
+                    <Latex>{answer.noi_dung_dap_an}</Latex>
                 </div>
             </div>
         );
@@ -1119,6 +1117,16 @@ const ExamOnlineDetail = () => {
                                 <>
                                     {partQuestions.map((question, ParentIndex) => {
                                         if (ParentIndex < exam.data[`so_cau_hoi_phan_${state.sectionExam}`]) {
+
+                                            const inputString = question.cau_hoi.noi_dung;
+                                            const regex2 = /\\begin{center}\s*\\includegraphics(?:\[[^\]]*\])?\{([^}]*)\}\s*\\end{center}/g;
+                                            let urls = [];
+                                            let match;
+                                            while ((match = regex2.exec(inputString)) !== null) {
+                                                urls.push(match[1]); // Capture the content inside {}
+                                            }
+                                            const matches = inputString.replace(regex2, '');
+
                                             return (
                                                 <>
                                                     {(question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom !== undefined && question.cau_hoi.exceprtTo !== undefined) &&
@@ -1146,10 +1154,10 @@ const ExamOnlineDetail = () => {
                                                         </div>
 
                                                         <div className="title-exam">
-                                                            <img alt="..."
-                                                                className="img-no-padding img-responsive"
-                                                                src={config.API_URL + question.cau_hoi.noi_dung}
-                                                            />
+                                                            <Latex>{matches}</Latex>
+                                                            {urls.length > 0 && urls.map((url, idx) => (
+                                                                <img src={config.API_URL + `/${url}`} alt='img'/>
+                                                            ))}
                                                         </div>
 
                                                         <div className="content-answer-question">
@@ -1190,43 +1198,40 @@ const ExamOnlineDetail = () => {
                                                                                         }/>
                                                                                     </li>
                                                                                 :
-                                                                                <div className='wrongrightAnswer'>
-                                                                                    <button id={`button-Right-${index}`}
-                                                                                        className={`btn-DS ${isAnswered && isAnswered.ket_qua_chon[index] === '1' ? 'active' : '' }`}
-                                                                                        
-                                                                                        onClick={() => {
-                                                                                            dispatch(answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, 
-                                                                                                (res) => {
-                                                                                                    if (res.status === 'success') {
-                                                                                                        answers = res.data;
-                                                                                                        onChooseAnswer(question, renderAnswerKey(index), index, res.data)   
+                                                                                    <div className='wrongrightAnswer'>
+                                                                                        <button id={`button-Right-${index}`}
+                                                                                            className={`btn-DS ${isAnswered && isAnswered.ket_qua_chon[index] === '1' ? 'active' : '' }`}
+                                                                                            
+                                                                                            onClick={() => {
+                                                                                                dispatch(answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, 
+                                                                                                    (res) => {
+                                                                                                        if (res.status === 'success') {
+                                                                                                            answers = res.data;
+                                                                                                            onChooseAnswer(question, renderAnswerKey(index), index, res.data)   
+                                                                                                        }
                                                                                                     }
-                                                                                                }
-                                                                                            ))
-                                                                                        }}
-                                                                                    >
-                                                                                        <span className="answer-label">Đ</span>
-                                                                                    </button>
-                                                                                    <button id={`button-Wrong-${index}`}
-                                                                                        className={`btn-DS ${isAnswered && isAnswered.ket_qua_chon[index] === '0' ? 'active' : '' }`}
-                                                                                        onClick={() => {
-                                                                                            dispatch(answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, 
-                                                                                                (res) => {
-                                                                                                    if (res.status === 'success') {
-                                                                                                        answers = res.data;
-                                                                                                        onChooseAnswer(question, renderAnswerKey(index), index, res.data);
+                                                                                                ))
+                                                                                            }}
+                                                                                        >
+                                                                                            <span className="answer-label">Đ</span>
+                                                                                        </button>
+                                                                                        <button id={`button-Wrong-${index}`}
+                                                                                            className={`btn-DS ${isAnswered && isAnswered.ket_qua_chon[index] === '0' ? 'active' : '' }`}
+                                                                                            onClick={() => {
+                                                                                                dispatch(answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, 
+                                                                                                    (res) => {
+                                                                                                        if (res.status === 'success') {
+                                                                                                            answers = res.data;
+                                                                                                            onChooseAnswer(question, renderAnswerKey(index), index, res.data);
+                                                                                                        }
                                                                                                     }
-                                                                                                }
-                                                                                            ))
-                                                                                        }}
-                                                                                    >
-                                                                                        <span className="answer-label">S</span>
-                                                                                    </button>
-                                                                                    <img alt="..."
-                                                                                        className="img-no-padding img-responsive"
-                                                                                        src={config.API_URL + answer.noi_dung_dap_an}
-                                                                                    />
-                                                                                </div>
+                                                                                                ))
+                                                                                            }}
+                                                                                        >
+                                                                                            <span className="answer-label">S</span>
+                                                                                        </button>
+                                                                                        <Latex>{answer.noi_dung_dap_an}</Latex>
+                                                                                    </div>
                                                                                 }
                                                                             </ul>
                                                                         </Col>
@@ -1243,223 +1248,224 @@ const ExamOnlineDetail = () => {
                             )
                         } else return null;
                     })}
-                    {(exam.status === 'success' && !isDoing) && exam.data.cau_hoi_de_this.map((question, ParentIndex) => (
-                        <>
-                            {(question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom !== undefined && question.cau_hoi.exceprtTo !== undefined) &&
-                                <>
-                                    {(question.cau_hoi.exceprtFrom === question.cau_hoi.exceprtTo) 
-                                    ? <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi {question.cau_hoi.exceprtFrom + 1}</span>
-                                    : <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi từ {question.cau_hoi.exceprtFrom + 1} đến {question.cau_hoi.exceprtTo + 1}</span>
-                                    }
-                                    <br/>
-                                    <div className="answer-content" style={{paddingLeft: '20px'}}>             
-                                        <img alt="..."
-                                            className="img-no-padding img-responsive"
-                                            src={config.API_URL + question.cau_hoi.trich_doan.noi_dung}
-                                        />
-                                    </div>
-                                </>
-                            }
-                            <div className="question-list" key={ParentIndex}>
-                                
-                                <div className="question-info" id={`${ParentIndex + 1}`}>
-                                    <b style={{fontSize: "22px", color: "#2e66ad"}}>Câu {ParentIndex + 1} 
-                                        <span className="point">[{question.cau_hoi.diem} điểm]</span>
-                                        {/* <span className="point">[Mức độ: {renderLevelQuestion(question.cau_hoi.mdch_id)}]</span> */}
-                                    </b>
-                                    <ul className="action-links"></ul>
-                                </div>
-
-                                <div className="title-exam">
-                                    <img alt="..."
-                                        className="img-no-padding img-responsive"
-                                        src={config.API_URL + question.cau_hoi.noi_dung}
-                                    />
-                                </div>
-
-                                <div className="content-answer-question">
-                                    <Row gutter={[20, 10]} className="multi-choice" style={{rowGap: 0}}>
-                                        {question.cau_hoi.dap_ans.map((answer, index) => {
-                                            const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
-                                            return (
-                                                <Col xs={24} sm={24} md={getAnswerCols(question.cau_hoi.cot_tren_hang)} key={index}>
-                                                    <ul key={index}>
-                                                        {(question.cau_hoi.loai_cau_hoi === 1) ?
-                                                            <li className={`item ${isAnswered && isAnswered.dap_an === renderAnswerKey(index) ? 'active' : ''}`}>
-                                                                <button style={{width:"100%"}}
-                                                                    className="btn-onclick"
-                                                                >
-                                                                    {renderAnswer(question.cau_hoi, answer, index)}
-                                                                </button>
-                                                            </li>
-                                                        : (question.cau_hoi.loai_cau_hoi === 0) ?
-                                                            <li>
-                                                                <TextArea rows={4} style={{width:"100%"}} disabled={!isDoing} 
-                                                                    defaultValue={isAnswered !== undefined ? isAnswered.noi_dung : null} />
-                                                            </li>
-                                                        :
-                                                        <div className='wrongrightAnswer'>
-                                                            <button id={`button-Right-${index}`}
-                                                                className={`btn-DS 
-                                                                    ${isCorrectQuestionDungSai(question.cau_hoi, index, true) !== null && !isCorrectQuestionDungSai(question.cau_hoi, index, true)  ? 'incorrect' : ''}
-                                                                    ${isCorrectQuestionDungSai(question.cau_hoi, index, true) !== null && isCorrectQuestionDungSai(question.cau_hoi, index, true) ? 'correct' : ''}`
-                                                                }
-                                                            >
-                                                                <span className="answer-label">Đ</span>
-                                                            </button>
-                                                            <button id={`button-Wrong-${index}`}
-                                                                className={`btn-DS 
-                                                                    ${isCorrectQuestionDungSai(question.cau_hoi, index, false) !== null && !isCorrectQuestionDungSai(question.cau_hoi, index, false) ? `incorrect` : ''}
-                                                                    ${isCorrectQuestionDungSai(question.cau_hoi, index, false) !== null && isCorrectQuestionDungSai(question.cau_hoi, index, false) ? 'correct' : ''}`
-                                                                }
-                                                            >
-                                                                <span className="answer-label">S</span>
-                                                            </button>
-                                                            <img alt="..."
-                                                                className="img-no-padding img-responsive"
-                                                                src={config.API_URL + answer.noi_dung_dap_an}
-                                                            />
-                                                        </div>
-                                                        }
-                                                    </ul>
-                                                </Col>
-                                            )
-                                        })}
-                                    </Row>
-                                    {renderAnswerResult(question)}
-                                </div>
-
-                                {!isDoing && 
-                                    <div className="question-actions">
-                                        <Button
-                                            type="default"
-                                            shape="round"
-                                            icon={<InfoCircleOutlined />}
-                                            onClick={() => {
-                                                if (!help.includes(question.cau_hoi_id)) {
-                                                    setHelp([...help, question.cau_hoi_id]);
-                                                } else {
-                                                    setHelp(help.filter((cau_hoi_id) => cau_hoi_id !== question.cau_hoi_id));
-                                                }
-                                            }}
-                                        >
-                                            Xem lời giải
-                                        </Button>
-                                        <Button
-                                            type="default"
-                                            shape="round"
-                                            icon={<CommentOutlined />}
-                                            onClick={() => {
-                                                if (!commnetOpen.includes(question.cau_hoi_id)) {
-                                                    setCommentOpen([...commnetOpen, question.cau_hoi_id]);
-                                                } else {
-                                                    setCommentOpen(commnetOpen.filter((cau_hoi_id) => cau_hoi_id !== question.cau_hoi_id));
-                                                }
-                                            }}
-                                        >
-                                            Hỏi đáp / Thảo Luận
-                                        </Button>
-                                        <div className="question-toggle">
-                                        
-                                        {help.includes(question.cau_hoi_id) &&(
-                                            <Alert
-                                                message=""
-                                                type="warning"
-                                                description={
-                                                    <div className="help-answer">
-                                                        <img alt="..."
-                                                                className="img-no-padding img-responsive"
-                                                                src={config.API_URL + question.cau_hoi.loi_giai}
-                                                            />
-                                                        {/* {question.cau_hoi.loai_cau_hoi ?
-                                                            
-                                                        :   <span>{question.cau_hoi.loi_giai}</span>
-                                                        } */}
-                                                    </div>
-                                                }
-                                                closable
-                                                onClose={() => setHelp(help.filter((cau_hoi_id) => cau_hoi_id !== question.cau_hoi_id))}
+                    {(exam.status === 'success' && !isDoing) && exam.data.cau_hoi_de_this.map((question, ParentIndex) => {
+                        const inputString = question.cau_hoi.noi_dung;
+                        const regex2 = /\\begin{center}\s*\\includegraphics(?:\[[^\]]*\])?\{([^}]*)\}\s*\\end{center}/g;
+                        let urls = [];
+                        let match;
+                        while ((match = regex2.exec(inputString)) !== null) {
+                            urls.push(match[1]); // Capture the content inside {}
+                        }
+                        const matches = inputString.replace(regex2, '');
+                        
+                        return (
+                            <>
+                                {(question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom !== undefined && question.cau_hoi.exceprtTo !== undefined) &&
+                                    <>
+                                        {(question.cau_hoi.exceprtFrom === question.cau_hoi.exceprtTo) 
+                                        ? <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi {question.cau_hoi.exceprtFrom + 1}</span>
+                                        : <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi từ {question.cau_hoi.exceprtFrom + 1} đến {question.cau_hoi.exceprtTo + 1}</span>
+                                        }
+                                        <br/>
+                                        <div className="answer-content" style={{paddingLeft: '20px'}}>             
+                                            <img alt="..."
+                                                className="img-no-padding img-responsive"
+                                                src={config.API_URL + question.cau_hoi.trich_doan.noi_dung}
                                             />
-                                        )}
-
-                                        {commnetOpen.includes(question.cau_hoi_id) && (
-                                            <Alert
-                                                message=""
-                                                type="warning"
-                                                description={
-                                                <div className="comments">
-                                                    {comments.data.filter(item => Number(item.lien_ket_id.split('/')[1]) === question.cau_hoi_id).length > 0 && (
-                                                    <List
-                                                        className="comment-list"
-                                                        itemLayout="horizontal"
-                                                        dataSource={comments.data.filter(item => Number(item.lien_ket_id.split('/')[1]) === question.cau_hoi_id)}
-                                                        renderItem={(item, index) => (
-                                                        <li key={index}>
-                                                            <Comment author={<p style={{fontWeight: 'bold'}}>{item.ten_hoc_vien}</p>} 
-                                                                avatar={item.anh_dai_dien !== null ? config.API_URL + item.anh_dai_dien : defaultImage} 
-                                                                content={<div><div dangerouslySetInnerHTML={{ __html: item.noi_dung }}></div>{item.anh_dinh_kem !== null && <img src={config.API_URL + item.anh_dinh_kem} alt="ảnh bình luận"/>}</div>} 
-                                                                datetime={diff(item.ngay_tao)} 
-                                                                actions={[
-                                                                    <Space>
-                                                                        <Button type='link' onClick={() => replyComment(item.binh_luan_id)}>Phản hồi</Button>
-                                                                        {item.hoc_vien_id === JSON.parse(localStorage.getItem('userInfo')).hoc_vien_id && 
-                                                                        <>
-                                                                            <Button type='link' onClick={() => EditComment(item.binh_luan_id, item.binh_luan_phu_id, false)}>Sửa</Button>
-                                                                            <Button type='link' onClick={() => deleteComment(item.binh_luan_id, item.binh_luan_phu_id, false)}>Xóa</Button>
-                                                                        </>
-                                                                        }
-                                                                        {(item.so_binh_luan_phu > 0 && !state.showSubcomment) &&            
-                                                                            <Button onClick={() => renderMoreSubComment(item.binh_luan_id)} type="link">{item.so_binh_luan_phu} phản hồi</Button> 
-                                                                        }
-                                                                    </Space>
-                                                                ]}
-                                                            >
-                                                            <div id={item.binh_luan_id}></div>
-                                                            </Comment>
-                                                        </li>
-                                                        )}
-                                                    />
-                                                    )}
-
-                                                    <TextEditorWidget2
-                                                        placeholder="Nhập nội dung bình luận..."
-                                                        showToolbar={true}
-                                                        isMinHeight200={true}
-                                                        isSimple={false}
-                                                        value={comment}
-                                                        onChange={(val) => setComment(val)}
-                                                    />
-                                                    <Dragger {...propsImage} maxCount={1}
-                                                        listType="picture"
-                                                        className="upload-list-inline"
-                                                    >
-                                                        <p className="ant-upload-drag-icon"><UploadOutlined /></p>
-                                                        <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
-                                                    </Dragger>
-                                                    <Space>
-                                                        <Button className='mt-2'
-                                                            type="primary"
-                                                            shape="round"
-                                                            onClick={() => {
-                                                                saveComment(question.cau_hoi_id, question.cau_hoi.mo_dun_id, question.cau_hoi.chuyen_de_id);
-                                                            }}
-                                                        >
-                                                        Gửi bình luận
-                                                        </Button>
-                                                        {(state.isReplied || state.isEdit) && <Button type="primary" danger className='mt-2' onClick={() => cancelReplyOrEdit()} shape="round">HỦY</Button>  }
-                                                    </Space>
-                                                </div>
-                                                }
-                                                closable
-                                                onClose={() => setCommentOpen(commnetOpen.filter((cau_hoi_id) => cau_hoi_id !== question.cau_hoi_id))}
-                                            />
-                                        )}
                                         </div>
-                                    </div>
+                                    </>
                                 }
-                            </div>
-                        </>
-                    ))}
+                                <div className="question-list" key={ParentIndex}>
+                                    
+                                    <div className="question-info" id={`${ParentIndex + 1}`}>
+                                        <b style={{fontSize: "22px", color: "#2e66ad"}}>Câu {ParentIndex + 1} 
+                                            <span className="point">[{question.cau_hoi.diem} điểm]</span>
+                                            {/* <span className="point">[Mức độ: {renderLevelQuestion(question.cau_hoi.mdch_id)}]</span> */}
+                                        </b>
+                                        <ul className="action-links"></ul>
+                                    </div>
+
+                                    <div className="title-exam">
+                                        <Latex>{matches}</Latex>
+                                        {urls.length > 0 && urls.map((url, idx) => (
+                                            <img src={config.API_URL + `/${url}`} alt='img'/>
+                                        ))}
+                                    </div>
+
+                                    <div className="content-answer-question">
+                                        <Row gutter={[20, 10]} className="multi-choice" style={{rowGap: 0}}>
+                                            {question.cau_hoi.dap_ans.map((answer, index) => {
+                                                const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
+                                                return (
+                                                    <Col xs={24} sm={24} md={getAnswerCols(question.cau_hoi.cot_tren_hang)} key={index}>
+                                                        <ul key={index}>
+                                                            {(question.cau_hoi.loai_cau_hoi === 1) ?
+                                                                <li className={`item ${isAnswered && isAnswered.dap_an === renderAnswerKey(index) ? 'active' : ''}`}>
+                                                                    <button style={{width:"100%"}}
+                                                                        className="btn-onclick"
+                                                                    >
+                                                                        {renderAnswer(question.cau_hoi, answer, index)}
+                                                                    </button>
+                                                                </li>
+                                                            : (question.cau_hoi.loai_cau_hoi === 0) ?
+                                                                <li>
+                                                                    <TextArea rows={4} style={{width:"100%"}} disabled={!isDoing} 
+                                                                        defaultValue={isAnswered !== undefined ? isAnswered.noi_dung : null} />
+                                                                </li>
+                                                            :
+                                                            <div className='wrongrightAnswer'>
+                                                                <button id={`button-Right-${index}`}
+                                                                    className={`btn-DS 
+                                                                        ${isCorrectQuestionDungSai(question.cau_hoi, index, true) !== null && !isCorrectQuestionDungSai(question.cau_hoi, index, true)  ? 'incorrect' : ''}
+                                                                        ${isCorrectQuestionDungSai(question.cau_hoi, index, true) !== null && isCorrectQuestionDungSai(question.cau_hoi, index, true) ? 'correct' : ''}`
+                                                                    }
+                                                                >
+                                                                    <span className="answer-label">Đ</span>
+                                                                </button>
+                                                                <button id={`button-Wrong-${index}`}
+                                                                    className={`btn-DS 
+                                                                        ${isCorrectQuestionDungSai(question.cau_hoi, index, false) !== null && !isCorrectQuestionDungSai(question.cau_hoi, index, false) ? `incorrect` : ''}
+                                                                        ${isCorrectQuestionDungSai(question.cau_hoi, index, false) !== null && isCorrectQuestionDungSai(question.cau_hoi, index, false) ? 'correct' : ''}`
+                                                                    }
+                                                                >
+                                                                    <span className="answer-label">S</span>
+                                                                </button>
+                                                                <Latex>{ answer.noi_dung_dap_an}</Latex>
+                                                            </div>
+                                                            }
+                                                        </ul>
+                                                    </Col>
+                                                )
+                                            })}
+                                        </Row>
+                                        {renderAnswerResult(question)}
+                                    </div>
+
+                                    {!isDoing && 
+                                        <div className="question-actions">
+                                            <Button
+                                                type="default"
+                                                shape="round"
+                                                icon={<InfoCircleOutlined />}
+                                                onClick={() => {
+                                                    if (!help.includes(question.cau_hoi_id)) {
+                                                        setHelp([...help, question.cau_hoi_id]);
+                                                    } else {
+                                                        setHelp(help.filter((cau_hoi_id) => cau_hoi_id !== question.cau_hoi_id));
+                                                    }
+                                                }}
+                                            >
+                                                Xem lời giải
+                                            </Button>
+                                            <Button
+                                                type="default"
+                                                shape="round"
+                                                icon={<CommentOutlined />}
+                                                onClick={() => {
+                                                    if (!commnetOpen.includes(question.cau_hoi_id)) {
+                                                        setCommentOpen([...commnetOpen, question.cau_hoi_id]);
+                                                    } else {
+                                                        setCommentOpen(commnetOpen.filter((cau_hoi_id) => cau_hoi_id !== question.cau_hoi_id));
+                                                    }
+                                                }}
+                                            >
+                                                Hỏi đáp / Thảo Luận
+                                            </Button>
+                                            <div className="question-toggle">
+                                            
+                                            {help.includes(question.cau_hoi_id) &&(
+                                                <Alert
+                                                    message=""
+                                                    type="warning"
+                                                    description={
+                                                        <div className="help-answer">
+                                                            <Latex>{ question.cau_hoi.loi_giai }</Latex>
+                                                        </div>
+                                                    }
+                                                    closable
+                                                    onClose={() => setHelp(help.filter((cau_hoi_id) => cau_hoi_id !== question.cau_hoi_id))}
+                                                />
+                                            )}
+
+                                            {commnetOpen.includes(question.cau_hoi_id) && (
+                                                <Alert
+                                                    message=""
+                                                    type="warning"
+                                                    description={
+                                                    <div className="comments">
+                                                        {comments.data.filter(item => Number(item.lien_ket_id.split('/')[1]) === question.cau_hoi_id).length > 0 && (
+                                                        <List
+                                                            className="comment-list"
+                                                            itemLayout="horizontal"
+                                                            dataSource={comments.data.filter(item => Number(item.lien_ket_id.split('/')[1]) === question.cau_hoi_id)}
+                                                            renderItem={(item, index) => (
+                                                            <li key={index}>
+                                                                <Comment author={<p style={{fontWeight: 'bold'}}>{item.ten_hoc_vien}</p>} 
+                                                                    avatar={item.anh_dai_dien !== null ? config.API_URL + item.anh_dai_dien : defaultImage} 
+                                                                    content={<div><div dangerouslySetInnerHTML={{ __html: item.noi_dung }}></div>{item.anh_dinh_kem !== null && <img src={config.API_URL + item.anh_dinh_kem} alt="ảnh bình luận"/>}</div>} 
+                                                                    datetime={diff(item.ngay_tao)} 
+                                                                    actions={[
+                                                                        <Space>
+                                                                            <Button type='link' onClick={() => replyComment(item.binh_luan_id)}>Phản hồi</Button>
+                                                                            {item.hoc_vien_id === JSON.parse(localStorage.getItem('userInfo')).hoc_vien_id && 
+                                                                            <>
+                                                                                <Button type='link' onClick={() => EditComment(item.binh_luan_id, item.binh_luan_phu_id, false)}>Sửa</Button>
+                                                                                <Button type='link' onClick={() => deleteComment(item.binh_luan_id, item.binh_luan_phu_id, false)}>Xóa</Button>
+                                                                            </>
+                                                                            }
+                                                                            {(item.so_binh_luan_phu > 0 && !state.showSubcomment) &&            
+                                                                                <Button onClick={() => renderMoreSubComment(item.binh_luan_id)} type="link">{item.so_binh_luan_phu} phản hồi</Button> 
+                                                                            }
+                                                                        </Space>
+                                                                    ]}
+                                                                >
+                                                                    <div id={item.binh_luan_id}></div>
+                                                                </Comment>
+                                                            </li>
+                                                            )}
+                                                        />
+                                                        )}
+
+                                                        <TextEditorWidget2
+                                                            placeholder="Nhập nội dung bình luận..."
+                                                            showToolbar={true}
+                                                            isMinHeight200={true}
+                                                            isSimple={false}
+                                                            value={comment}
+                                                            onChange={(val) => setComment(val)}
+                                                        />
+                                                        <Dragger {...propsImage} maxCount={1}
+                                                            listType="picture"
+                                                            className="upload-list-inline"
+                                                        >
+                                                            <p className="ant-upload-drag-icon"><UploadOutlined /></p>
+                                                            <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
+                                                        </Dragger>
+                                                        <Space>
+                                                            <Button className='mt-2'
+                                                                type="primary"
+                                                                shape="round"
+                                                                onClick={() => {
+                                                                    saveComment(question.cau_hoi_id, question.cau_hoi.mo_dun_id, question.cau_hoi.chuyen_de_id);
+                                                                }}
+                                                            >
+                                                            Gửi bình luận
+                                                            </Button>
+                                                            {(state.isReplied || state.isEdit) && <Button type="primary" danger className='mt-2' onClick={() => cancelReplyOrEdit()} shape="round">HỦY</Button>  }
+                                                        </Space>
+                                                    </div>
+                                                    }
+                                                    closable
+                                                    onClose={() => setCommentOpen(commnetOpen.filter((cau_hoi_id) => cau_hoi_id !== question.cau_hoi_id))}
+                                                />
+                                            )}
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </>
+                        )
+                    })}
                 </Col>
                 {isDoing && Array.from({ length: exam.data.so_phan }).map((_, index) => {
                     if (index + 1 === state.sectionExam) {

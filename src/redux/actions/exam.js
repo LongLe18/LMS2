@@ -58,6 +58,10 @@ export const GET_EXAM_COURSE_USER = "GET_EXAM_COURSE_USER";
 export const GET_EXAM_COURSE_USER_SUCCESS = "GET_EXAM_COURSE_USER_SUCCESS";
 export const GET_EXAM_COURSE_USER_FAILED = "GET_EXAM_COURSE_USER_FAILED";
 
+export const GET_EXAM_COURSE_ONLINE_USER = "GET_EXAM_COURSE_ONLINE_USER";
+export const GET_EXAM_COURSE_ONLINE_USER_SUCCESS = "GET_EXAM_COURSE_ONLINE_USER_SUCCESS";
+export const GET_EXAM_COURSE_ONLINE_USER_FAILED = "GET_EXAM_COURSE_ONLINE_USER_FAILED";
+
 // cho table de_thi_hoc_vien
 export const GET_EXAM_USER = "GET_EXAM_USER";
 export const GET_EXAM_USER_SUCCESS = "GET_EXAM_USER_SUCCESS";
@@ -210,6 +214,15 @@ export function getExamCourse(params, callback) {
         callback
     }
 }
+
+export function getExamCourseOnline(params, callback) {
+    return {
+        type: GET_EXAM_COURSE_ONLINE_USER,
+        params,
+        callback
+    }
+}
+
 
 export function getExamsUser(params, callback) {
     return {

@@ -920,7 +920,8 @@ body, html {
 
 .header-bottom-nav li a {
   font-family: "Roboto", sans-serif !important;
-  color: #000000B2 !important;
+  /* color: #000000B2 !important; */
+  color: #fff !important;
   font-weight: 600 !important;
   text-transform: uppercase;
 }

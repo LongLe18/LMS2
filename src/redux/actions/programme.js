@@ -28,6 +28,21 @@ export const CREATE_PROGRAMME = 'CREATE_PROGRAMME';
 export const CREATE_PROGRAMME_SUCCESS = 'CREATE_PROGRAMME_SUCCESS';
 export const CREATE_PROGRAMME_FAILED = 'CREATE_PROGRAMME_FAIL';
 
+// lấy tất nhóm khoa học theo khung chương trình
+export const GET_PROGRAMME_COURSES = 'GET_PROGRAMME_COURSES';
+export const GET_PROGRAMME_COURSES_SUCCESS = 'GET_PROGRAMME_COURSES_SUCCESS';
+export const GET_PROGRAMME_COURSES_FAILED = 'GET_PROGRAMME_COURSES_FAIL';
+
+export function getProgrammeCourses(params, callback) {
+    return {
+        type: GET_PROGRAMME_COURSES,
+        params,
+        callback,
+    };
+
+}
+
+
 export function getProgramme(params, callback) {
     return {
         type: GET_PROGRAMME,

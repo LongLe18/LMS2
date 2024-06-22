@@ -90,7 +90,7 @@ const ExamModulePage = (props) => {
                                 <Progress percent={100} showInfo={false} strokeColor={"#faad14"} />
                                 <div className="list-author-archive">
                                     <div className="author">
-                                        <UserOutlined /> <span> Trung tâm đào tạo CT & T</span>
+                                        <UserOutlined /> <span> Trung tâm đào tạo ENNO</span>
                                     </div>
                                     <div className="date">
                                         <CalendarOutlined /> {formatedDate(item.ngay_tao)}
@@ -122,7 +122,7 @@ const ExamModulePage = (props) => {
                                 <Progress percent={100} showInfo={false} strokeColor={"#faad14"} />
                                 <div className="list-author-archive">
                                     <div className="author">
-                                        <UserOutlined /> <span> Trung tâm đào tạo CT & T</span>
+                                        <UserOutlined /> <span> Trung tâm đào tạo ENNO</span>
                                     </div>
                                     <div className="date">
                                         <CalendarOutlined /> {formatedDate(item.ngay_tao)}
@@ -167,7 +167,7 @@ const ExamModulePage = (props) => {
                                         <div className="info">
                                             <h1 className="archive-title">Danh sách đề thi</h1>
                                             <>
-                                                <p>Giáo viên: Thầy Cô của Trung tâm đào tạo CT & T</p>
+                                                <p>Giáo viên: Thầy Cô của Trung tâm đào tạo ENNO</p>
                                                 <p>Số lượng đề thi: {examCourse.data.length}</p>
                                                 <p>Kiểm tra thiết bị trước khi làm bài</p>
                                             </>

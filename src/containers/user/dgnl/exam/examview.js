@@ -169,7 +169,7 @@ const ExamViewPage = (props) => {
                     <h1 className="single-title">{exam.data.ten_de_thi}</h1>
                     <div className="list-author-single">
                         <div className="author">
-                            Tác giả <span>Ban chuyên môn của Trung tâm Luyện thi Quốc gia CT&T</span>
+                            Tác giả <span>Ban chuyên môn của Trung tâm Luyện thi Quốc gia ENNO</span>
                         </div>{' '}
                         <div className="date">
                             <CalendarOutlined /> {formatedDate(exam.data.ngay_tao)}

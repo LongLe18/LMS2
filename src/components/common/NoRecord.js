@@ -9,7 +9,7 @@ function NoRecord(props) {
       title={props.title ? props.title : 'Dữ liệu chưa được cập nhật.'}
       subTitle={props.subTitle ? props.subTitle : 'Không tìm thấy dữ liệu.'}
       extra={
-        <Button type="primary">
+        <Button type="primary" style={{borderRadius: 6}}>
           <Link to="/luyen-tap/kinh-doanh-khoa-hoc">Về trang chủ</Link>
         </Button>
       }
