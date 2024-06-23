@@ -238,13 +238,13 @@ const ExamViewPage = (props) => {
                         <AppBreadCrumb list={breadcrumbs} hidden={false} />
                 
                         <div className="list-news-box-single post-module">
-                        <div className="wraper list-news-bg">
-                            <Row gutter={[20]}>
-                            <Col xl={24} sm={24} xs={24} className="news-left">
-                                {renderDetail()}
-                            </Col>
-                            </Row>
-                        </div>
+                            <div className="wraper list-news-bg">
+                                <Row gutter={[20]}>
+                                    <Col xl={24} sm={24} xs={24} className="news-left">
+                                        {renderDetail()}
+                                    </Col>
+                                </Row>
+                            </div>
                         </div>
                     </Content>
                 </Layout>

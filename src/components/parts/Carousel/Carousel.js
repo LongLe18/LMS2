@@ -1,19 +1,19 @@
 import React from 'react';
 import { Carousel } from 'antd';
 
-const contentStyle = {
-  margin: 0,
-  height: '160px',
-  color: '#fff',
-  lineHeight: '160px',
-  textAlign: 'center',
-  background: '#364d79',
-};
+// const contentStyle = {
+//   margin: 0,
+//   height: '160px',
+//   color: '#fff',
+//   lineHeight: '160px',
+//   textAlign: 'center',
+//   background: '#364d79',
+// };
 
 const CarouselCustom = () => {
-  const onChange = (currentSlide) => {
-    console.log(currentSlide);
-  };
+  // const onChange = (currentSlide) => {
+  //   console.log(currentSlide);
+  // };
 
   return (
     <Carousel autoplay style={{marginBottom: 12, minHeight: 475}}>

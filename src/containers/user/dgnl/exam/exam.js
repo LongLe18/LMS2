@@ -72,6 +72,16 @@ const ExamPage = (props) => {
     
     const breadcrumbs = [{ title: 'Đề thi', link: `/luyen-tap/kiem-tra/${idCourse}` }];
 
+    // Hàm xử lý nếu kct_id = 1 => Hiển thị form đồng ý quy định thi 
+    const confirmExam = (id) => {
+        if (userToken) {
+            history.push(`/luyen-tap/xem/${id}/${idCourse}`);
+        } else {
+            document.getElementsByClassName('singin')[0].click();
+        }
+    }
+
+
     const renderExams = () => {
         const listExams = examCourse.data.map((item, index) => {
             if (index < 0) {
@@ -82,7 +92,7 @@ const ExamPage = (props) => {
                             else {document.getElementsByClassName('singin')[0].click()}
                         }}>
                             <div className="box-image">
-                                <Image preview={false} src={config.API_URL + item.anh_dai_dien} />
+                                <Image preview={false} src={item.anh_dai_dien ? config.API_URL + item.anh_dai_dien : require('assets/img/exam/exam-orange.png').default} />
                             </div>
                             <div className="box-text">
                                 <h5 className="list-exam-title-archive">{item.ten_de_thi}</h5>
@@ -114,7 +124,7 @@ const ExamPage = (props) => {
                                 }
                             }}>
                             <div className="box-image">
-                                <Image preview={false} src={config.API_URL + item.anh_dai_dien} />
+                                <Image preview={false} src={item.anh_dai_dien ? config.API_URL + item.anh_dai_dien : require('assets/img/exam/exam-orange.png').default} />
                             </div>
                             <div className="box-text">
                                 <h5 className="list-exam-title-archive">{item.ten_de_thi}</h5>
@@ -162,16 +172,18 @@ const ExamPage = (props) => {
                         <div className="list-exam-box-archive post-module">
                             <div className="wraper list-news-bg">
                                 <Row gutter={[20]}>
-                                    <Col xl={34} sm={24} xs={24} className="news-left">
+                                    <Col xl={24} sm={24} xs={24} className="news-left">
                                         <div className="info-course">
-                                        <div className="info">
-                                            <h1 className="archive-title">Danh sách đề thi</h1>
-                                            <p>Giáo viên: Thầy Cô của Trung tâm đào tạo ENNO</p>
-                                            <p>Số lượng đề thi: {examCourse.data.length}</p>
-                                            <p>Kiểm tra thiết bị trước khi làm bài</p>
-                                        </div>
+                                            <div className="info">
+                                                <h1 className="archive-title">Danh sách đề thi</h1>
+                                                <p>Giáo viên: Thầy Cô của Trung tâm đào tạo ENNO</p>
+                                                <p>Số lượng đề thi: {examCourse.data.length}</p>
+                                                <p>Kiểm tra thiết bị trước khi làm bài</p>
+                                            </div>
                                         </div>
                                         {renderExams()}
+
+                                        {/* Hiển thị giao diện 'Đồng ý quy định' */}
                                     </Col>
                                 </Row>
                             </div>

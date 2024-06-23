@@ -4,8 +4,7 @@ import './css/business.css';
 import './css/Testimonials.css';
 
 import { Helmet } from 'react-helmet';
-import { Link, useHistory } from "react-router-dom";
-import axios from 'axios';
+import { Link } from "react-router-dom";
 
 // helper
 import defaultImage from 'assets/img/default.jpg';
@@ -17,7 +16,7 @@ import Hashids from 'hashids';
 import useFetch from "hooks/useFetch";
 
 // component
-import { Layout, Row, Col, Button, notification } from 'antd';
+import { Layout, Row, Col, Button } from 'antd';
 import CarouselCustom from 'components/parts/Carousel/Carousel';
 import NoRecord from "components/common/NoRecord";
 
@@ -29,7 +28,7 @@ import * as courseAction from '../../../../redux/actions/course';
 const {Content} = Layout;
 const CoursesUser = (props) => {
     const dataInit = [];
-    let history = useHistory();
+    // let history = useHistory();
     const dispatch = useDispatch();
     const hashids = new Hashids();
     
