@@ -8,7 +8,7 @@ import { formatedDate } from 'helpers/common.helper';
 import Hashids from 'hashids';
 
 // antd
-import { Modal, Timeline, Layout, Button, Row, Col, notification, Table } from 'antd';
+import { Modal, Timeline, Layout, Button, Row, Col, notification, Table, Avatar } from 'antd';
 import { CalendarOutlined } from '@ant-design/icons';
 
 // component
@@ -220,6 +220,73 @@ const ExamViewPage = (props) => {
         )
     }
 
+    const renderConfirmExam = () => {
+        return (
+            <>
+                <Row className="logo" align={'middle'}>
+                    <Col xs={{ span: 24 }} lg={{ span: 4 }}>
+                        <div className="logo">
+                            <Avatar shape="square" size={130} src={require('assets/img/logo/vnu-cet-logo.png').default} />
+                        </div>
+                    </Col>
+                    <Col xs={{ span: 22, offset: 1 }} lg={{ span: 9, offset: 4}}>
+                        <h4 style={{fontWeight: 500, fontSize: 30, textAlign: 'center'}}>Kỳ thi đánh giá năng lực học sinh trung học phổ thông</h4>
+                    </Col>
+                </Row>
+                <Row className='title-section' justify={'center'}>
+                    <Col xs={{ span: 22, offset: 1 }} lg={{ span: 11, offset: 7 }}>
+                        {Array.from({ length: exam.data.so_phan }).map((_, index) => {
+                            return (
+                                <div className={`section-${index}`}>Phần {index + 1}: {index === 0 ? `Tư duy định lượng (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)` 
+                                    : index === 1 ? `Tư duy định tính (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)`
+                                    : `Khoa học (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)`}</div>
+                            )
+                        })}
+                    </Col>
+                </Row>
+                <div className="content-page" style={{fontSize: 16}}>
+                    <span style={{fontSize: 18, color: 'green', fontWeight: 600}}>Tiến trình làm bài thi trên máy tính</span>
+                    <br/>
+                    <span>Khi BẮT ĐẦU lảm bải, màn hình máy tính sẽ hiển thị phần thi thứ nhất:</span>
+                    <br/>
+
+                    <div style={{fontStyle: 'italic'}}><span style={{fontWeight: 700}}>Phần 1</span>: Tư duy định lượng</div>
+
+                    Thí sinh làm lần lượt các câu hỏi. Nếu bạn kết thúc phần 1 trước thời gian quy định. Bạn có thê
+                    chuyên sang phân thi thứ hai. Khi hết thời gian phần 1, máy tinh sẽ tự động chuyên sang phần thi thứ hai.
+                    Nếu phân thi có thêm câu hỏi thử nghiệm, máy tính sẽ cộng thời gian tương ứng đề hoàn thành tất cả các
+                    câu hỏi.
+                    <br/>
+
+                    <div style={{fontStyle: 'italic'}}><span style={{fontWeight: 700}}>Phần 2</span>: Tư duy định tính</div>       
+
+                    Câu hỏi được đánh thứ tự tiếp nói theo thứ tự câu hỏi của phần thi thứ nhất. Nếu bạn kết thúc phần
+                    2 trước thời gian quy định, bạn có thê chuyên sang phản thi thứ ba. Khi hết thời gian quy định, máy tính
+                    sẽ tự động chuyên sang phân thi thứ ba.
+                    <br/>
+
+                    <div style={{fontStyle: 'italic'}}><span style={{fontWeight: 700}}>Phần 3</span>: Khoa học</div>       
+
+
+                    Câu hỏi được đánh thứ tự tiếp nỗi theo thứ tự câu hỏi của phần thi thứ hai cho đến câu hỏi c
+                    cùng. Nếu bạn kết thúc phần 3 trước thời gian quy định, bạn có thẻ bắm NỘP BÀI đề hoàn thảnh bài thi
+                    sớm. Khi hết thời gian theo quy định, máy tính sẽ tự động NỘP BÀI.
+                    <br/>
+
+                    Khi KÉT THÚC bài thi, mản hình máy tính sẽ hiển thị kết quả thi của bạn.
+
+                </div>
+                <p className="block-action text-center mt-0">
+                    <Button type="primary" size="large" className="join-exam-button" onClick={() => goExam()} 
+                        style={{borderRadius: 8, backgroundColor: 'rgba(0, 115, 8, 0.92)', borderColor: 'rgba(0, 115, 8, 0.92)'}}
+                    >
+                        Làm bài thi
+                    </Button>
+                </p>
+            </>
+        )
+    }
+
     return (
         <>
             {loading && <LoadingCustom/>}
@@ -241,7 +308,7 @@ const ExamViewPage = (props) => {
                             <div className="wraper list-news-bg">
                                 <Row gutter={[20]}>
                                     <Col xl={24} sm={24} xs={24} className="news-left">
-                                        {renderDetail()}
+                                        {course.data.kct_id !== 1 ? renderDetail() : renderConfirmExam()}
                                     </Col>
                                 </Row>
                             </div>
