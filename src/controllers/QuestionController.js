@@ -99,15 +99,15 @@ const putUpdate = async (req, res) => {
         if (
             req.files['noi_dung'] &&
             question.noi_dung &&
-            fs.existsSync(`src/public${question.noi_dung}`)
+            fs.existsSync(`public${question.noi_dung}`)
         )
-            fs.unlinkSync(`src/public${question.noi_dung}`);
+            fs.unlinkSync(`public${question.noi_dung}`);
         if (
             req.files['loi_giai'] &&
             question.loi_giai &&
-            fs.existsSync(`src/public${question.loi_giai}`)
+            fs.existsSync(`public${question.loi_giai}`)
         )
-            fs.unlinkSync(`src/public${question.loi_giai}`);
+            fs.unlinkSync(`public${question.loi_giai}`);
     }
     await Question.update(
         {

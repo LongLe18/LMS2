@@ -349,15 +349,15 @@ const putUpdate = async (req, res) => {
         if (
             req.files['anh_dai_dien'] &&
             modun.anh_dai_dien &&
-            fs.existsSync(`src/public${modun.anh_dai_dien}`)
+            fs.existsSync(`public${modun.anh_dai_dien}`)
         )
-            fs.unlinkSync(`src/public${modun.anh_dai_dien}`);
+            fs.unlinkSync(`public${modun.anh_dai_dien}`);
         if (
             req.files['video_gioi_thieu'] &&
             modun.video_gioi_thieu &&
-            fs.existsSync(`src/public${modun.video_gioi_thieu}`)
+            fs.existsSync(`public${modun.video_gioi_thieu}`)
         )
-            fs.unlinkSync(`src/public${modun.video_gioi_thieu}`);
+            fs.unlinkSync(`public${modun.video_gioi_thieu}`);
     }
     await Modun.update(
         {
@@ -421,13 +421,13 @@ const forceDelete = async (req, res) => {
             mo_dun_id: req.params.id,
         },
     });
-    if (modun.anh_dai_dien && fs.existsSync(`src/public${modun.anh_dai_dien}`))
-        fs.unlinkSync(`src/public${modun.anh_dai_dien}`);
+    if (modun.anh_dai_dien && fs.existsSync(`public${modun.anh_dai_dien}`))
+        fs.unlinkSync(`public${modun.anh_dai_dien}`);
     if (
         modun.video_gioi_thieu &&
-        fs.existsSync(`src/public${modun.video_gioi_thieu}`)
+        fs.existsSync(`public${modun.video_gioi_thieu}`)
     )
-        fs.unlinkSync(`src/public${modun.video_gioi_thieu}`);
+        fs.unlinkSync(`public${modun.video_gioi_thieu}`);
     await Modun.destroy({
         where: {
             mo_dun_id: req.params.id,

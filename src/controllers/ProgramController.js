@@ -73,9 +73,9 @@ const putUpdate = async (req, res) => {
     if (
         req.file &&
         program.anh_dai_dien &&
-        fs.existsSync(`src/public${program.anh_dai_dien}`)
+        fs.existsSync(`public${program.anh_dai_dien}`)
     )
-        fs.unlinkSync(`src/public${program.anh_dai_dien}`);
+        fs.unlinkSync(`public${program.anh_dai_dien}`);
     await Program.update(
         {
             ...req.body,
@@ -140,9 +140,9 @@ const forceDelete = async (req, res) => {
     });
     if (
         program.anh_dai_dien &&
-        fs.existsSync(`src/public${program.anh_dai_dien}`)
+        fs.existsSync(`public${program.anh_dai_dien}`)
     )
-        fs.unlinkSync(`src/public${program.anh_dai_dien}`);
+        fs.unlinkSync(`public${program.anh_dai_dien}`);
     await Program.destroy({
         where: {
             kct_id: req.params.id,

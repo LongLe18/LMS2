@@ -499,15 +499,15 @@ const putUpdate = async (req, res) => {
         if (
             req.files['video_mo_ta'] &&
             course.video_mo_ta &&
-            fs.existsSync(`src/public${course.video_mo_ta}`)
+            fs.existsSync(`public${course.video_mo_ta}`)
         )
-            fs.unlinkSync(`src/public${course.video_mo_ta}`);
+            fs.unlinkSync(`public${course.video_mo_ta}`);
         if (
             req.files['anh_dai_dien'] &&
             course.anh_dai_dien &&
-            fs.existsSync(`src/public${course.anh_dai_dien}`)
+            fs.existsSync(`public${course.anh_dai_dien}`)
         )
-            fs.unlinkSync(`src/public${course.anh_dai_dien}`);
+            fs.unlinkSync(`public${course.anh_dai_dien}`);
     }
     await Course.update(
         {
@@ -633,11 +633,11 @@ const forceDelete = async (req, res) => {
     });
     if (
         course.anh_dai_dien &&
-        fs.existsSync(`src/public${course.anh_dai_dien}`)
+        fs.existsSync(`public${course.anh_dai_dien}`)
     )
-        fs.unlinkSync(`src/public${course.anh_dai_dien}`);
-    if (course.video_mo_ta && fs.existsSync(`src/public${course.video_mo_ta}`))
-        fs.unlinkSync(`src/public${course.video_mo_ta}`);
+        fs.unlinkSync(`public${course.anh_dai_dien}`);
+    if (course.video_mo_ta && fs.existsSync(`public${course.video_mo_ta}`))
+        fs.unlinkSync(`public${course.video_mo_ta}`);
     await Course.destroy({
         where: {
             khoa_hoc_id: req.params.id,

@@ -194,9 +194,9 @@ const putUpdate = async (req, res) => {
         if (
             req.file &&
             staff.anh_dai_dien &&
-            fs.existsSync(`src/public${staff.anh_dai_dien}`)
+            fs.existsSync(`public${staff.anh_dai_dien}`)
         )
-            fs.unlinkSync(`src/public${staff.anh_dai_dien}`);
+            fs.unlinkSync(`public${staff.anh_dai_dien}`);
         if (req.body.mat_khau)
             req.body.mat_khau = security.hashPassword(req.body.mat_khau);
         
@@ -288,8 +288,8 @@ const forceDelete = async (req, res) => {
             nhan_vien_id: req.params.id,
         },
     });
-    if (staff.anh_dai_dien && fs.existsSync(`src/public${staff.anh_dai_dien}`))
-        fs.unlinkSync(`src/public${staff.anh_dai_dien}`);
+    if (staff.anh_dai_dien && fs.existsSync(`public${staff.anh_dai_dien}`))
+        fs.unlinkSync(`public${staff.anh_dai_dien}`);
     await Staff.destroy({
         where: {
             nhan_vien_id: req.params.id,

@@ -100,8 +100,8 @@ const putUpdate = async (req, res) => {
                 },
                 raw: true,
             });
-            if (answer.noi_dung_dap_an&&fs.existsSync(`src/public${answer.noi_dung_dap_an}`))
-                fs.unlinkSync(`src/public${answer.noi_dung_dap_an}`);
+            if (answer.noi_dung_dap_an&&fs.existsSync(`public${answer.noi_dung_dap_an}`))
+                fs.unlinkSync(`public${answer.noi_dung_dap_an}`);
         }
         if (req.files['noi_dung_dap_an2']) {
             const answer = await Answer.findOne({
@@ -110,8 +110,8 @@ const putUpdate = async (req, res) => {
                 },
                 raw: true,
             });
-            if (answer.noi_dung_dap_an&&fs.existsSync(`src/public${answer.noi_dung_dap_an}`))
-                fs.unlinkSync(`src/public${answer.noi_dung_dap_an}`);
+            if (answer.noi_dung_dap_an&&fs.existsSync(`public${answer.noi_dung_dap_an}`))
+                fs.unlinkSync(`public${answer.noi_dung_dap_an}`);
         }
         if (req.files['noi_dung_dap_an3']) {
             const answer = await Answer.findOne({
@@ -120,8 +120,8 @@ const putUpdate = async (req, res) => {
                 },
                 raw: true,
             });
-            if (answer.noi_dung_dap_an&&fs.existsSync(`src/public${answer.noi_dung_dap_an}`))
-                fs.unlinkSync(`src/public${answer.noi_dung_dap_an}`);
+            if (answer.noi_dung_dap_an&&fs.existsSync(`public${answer.noi_dung_dap_an}`))
+                fs.unlinkSync(`public${answer.noi_dung_dap_an}`);
         }
         if (req.files['noi_dung_dap_an4']) {
             const answer = await Answer.findOne({
@@ -130,8 +130,8 @@ const putUpdate = async (req, res) => {
                 },
                 raw: true,
             });
-            if (answer.noi_dung_dap_an&&fs.existsSync(`src/public${answer.noi_dung_dap_an}`))
-                fs.unlinkSync(`src/public${answer.noi_dung_dap_an}`);
+            if (answer.noi_dung_dap_an&&fs.existsSync(`public${answer.noi_dung_dap_an}`))
+                fs.unlinkSync(`public${answer.noi_dung_dap_an}`);
         }
         if (!req.body.dap_an_dung1) {
             req.body.dap_an_dung1 = 0;
@@ -214,8 +214,8 @@ const deleteByIdQuestion = async (req, res) => {
         raw: true,
     })
     answers.forEach(async answer => {
-        if (answer.noi_dung_dap_an&&fs.existsSync(`src/public${answer.noi_dung_dap_an}`))
-            fs.unlinkSync(`src/public${answer.noi_dung_dap_an}`);
+        if (answer.noi_dung_dap_an&&fs.existsSync(`public${answer.noi_dung_dap_an}`))
+            fs.unlinkSync(`public${answer.noi_dung_dap_an}`);
         await Answer.destroy({
             where: {
                 dap_an_id: answer.dap_an_id,

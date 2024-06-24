@@ -401,9 +401,9 @@ const putUpdate = async (req, res) => {
         });
         if (
             lesson.link_bai_giang &&
-            fs.existsSync(`src/public${lesson.link_bai_giang}`)
+            fs.existsSync(`public${lesson.link_bai_giang}`)
         )
-            fs.unlinkSync(`src/public${lesson.link_bai_giang}`);
+            fs.unlinkSync(`public${lesson.link_bai_giang}`);
     }
     await Lesson.update(
         {
@@ -470,9 +470,9 @@ const forceDelete = async (req, res) => {
     });
     if (
         lesson.link_bai_giang &&
-        fs.existsSync(`src/public${lesson.link_bai_giang}`)
+        fs.existsSync(`public${lesson.link_bai_giang}`)
     )
-        fs.unlinkSync(`src/public${lesson.link_bai_giang}`);
+        fs.unlinkSync(`public${lesson.link_bai_giang}`);
     await Lesson.destroy({
         where: {
             bai_giang_id: req.params.id,

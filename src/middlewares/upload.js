@@ -90,7 +90,7 @@ const storage = multer.diskStorage({
         const filePath = `/upload/${fileTypePath}/${ymdPath}`;
         const filename = `${moment().unix()}-${uuid()}${extname(file.originalname)}`
         req.body[file.fieldname] = `${filePath}/${filename}`;
-        cb(null, `${moment().unix()}-${uuid()}${extname(file.originalname)}`);
+        cb(null, filename);
     },
 });
 

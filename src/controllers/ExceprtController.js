@@ -57,8 +57,8 @@ const putUpdate = async (req, res) => {
                 trich_doan_id: req.params.id,
             },
         });
-        if (exceprt.noi_dung && fs.existsSync(`src/public${exceprt.noi_dung}`))
-            fs.unlinkSync(`src/public${exceprt.noi_dung}`);
+        if (exceprt.noi_dung && fs.existsSync(`public${exceprt.noi_dung}`))
+            fs.unlinkSync(`public${exceprt.noi_dung}`);
     }
     await Exceprt.update(
         {

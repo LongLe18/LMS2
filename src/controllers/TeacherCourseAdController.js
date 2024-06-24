@@ -57,9 +57,9 @@ const putUpdate = async (req, res) => {
         });
         if (
             teacherCourseAd.anh_dai_dien &&
-            fs.existsSync(`src/public${teacherCourseAd.anh_dai_dien}`)
+            fs.existsSync(`public${teacherCourseAd.anh_dai_dien}`)
         )
-            fs.unlinkSync(`src/public${teacherCourseAd.anh_dai_dien}`);
+            fs.unlinkSync(`public${teacherCourseAd.anh_dai_dien}`);
     }
     await TeacherCourseAd.update(
         {
@@ -122,9 +122,9 @@ const deleteById = async (req, res) => {
     });
     if (
         teacherCourseAd.anh_dai_dien &&
-        fs.existsSync(`src/public${teacherCourseAd.anh_dai_dien}`)
+        fs.existsSync(`public${teacherCourseAd.anh_dai_dien}`)
     )
-        fs.unlinkSync(`src/public${teacherCourseAd.anh_dai_dien}`);
+        fs.unlinkSync(`public${teacherCourseAd.anh_dai_dien}`);
     await TeacherCourseAd.destroy({
         where: {
             qcgvkh_id: req.params.id,

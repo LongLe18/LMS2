@@ -498,9 +498,9 @@ const putUpdate = async (req, res) => {
         });
         if (
             exam.anh_dai_dien &&
-            fs.existsSync(`src/public${exam.anh_dai_dien}`)
+            fs.existsSync(`public${exam.anh_dai_dien}`)
         )
-            fs.unlinkSync(`src/public${exam.anh_dai_dien}`);
+            fs.unlinkSync(`public${exam.anh_dai_dien}`);
     }
     await Exam.update(
         {
@@ -616,8 +616,8 @@ const forceDelete = async (req, res) => {
             de_thi_id: req.params.id,
         },
     });
-    if (exam && exam.anh_dai_dien && fs.existsSync(`src/public${exam.anh_dai_dien}`))
-        fs.unlinkSync(`src/public${exam.anh_dai_dien}`);
+    if (exam && exam.anh_dai_dien && fs.existsSync(`public${exam.anh_dai_dien}`))
+        fs.unlinkSync(`public${exam.anh_dai_dien}`);
     if(fs.existsSync(`public/Picture/word/media/${req.params.id}`)){
         fs.rmSync(`public/Picture/word/media/${req.params.id}`, { recursive: true, force: true });
     }
@@ -661,9 +661,9 @@ const clearAll = async (req, res) => {
     for (const exam of exams) {
         if (
             exam.anh_dai_dien &&
-            fs.existsSync(`src/public${exam.anh_dai_dien}`)
+            fs.existsSync(`public${exam.anh_dai_dien}`)
         )
-            fs.unlinkSync(`src/public${exam.anh_dai_dien}`);
+            fs.unlinkSync(`public${exam.anh_dai_dien}`);
     }
     await sequelize.query('DELETE FROM de_thi', {
         type: sequelize.QueryTypes.DELETE,

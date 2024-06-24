@@ -444,9 +444,9 @@ const putUpdate = async (req, res) => {
                     if (
                         req.file &&
                         student.anh_dai_dien &&
-                        fs.existsSync(`src/public${student.anh_dai_dien}`)
+                        fs.existsSync(`public${student.anh_dai_dien}`)
                     )
-                        fs.unlinkSync(`src/public${student.anh_dai_dien}`);
+                        fs.unlinkSync(`public${student.anh_dai_dien}`);
                     if (req.body.mat_khau)
                         req.body.mat_khau = security.hashPassword(req.body.mat_khau);
                     await Student.update(
@@ -529,9 +529,9 @@ const forceDelete = async (req, res) => {
     });
     if (
         student.anh_dai_dien &&
-        fs.existsSync(`src/public${student.anh_dai_dien}`)
+        fs.existsSync(`public${student.anh_dai_dien}`)
     )
-        fs.unlinkSync(`src/public${student.anh_dai_dien}`);
+        fs.unlinkSync(`public${student.anh_dai_dien}`);
     await Student.destroy({
         where: {
             hoc_vien_id: req.params.id,

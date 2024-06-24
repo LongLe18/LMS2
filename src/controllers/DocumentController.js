@@ -79,15 +79,15 @@ const putUpdate = async (req, res) => {
         if (
             req.files['noi_dung'] &&
             document.anh_dai_dien &&
-            fs.existsSync(`src/public${document.noi_dung}`)
+            fs.existsSync(`public${document.noi_dung}`)
         )
-            fs.unlinkSync(`src/public${document.noi_dung}`);
+            fs.unlinkSync(`public${document.noi_dung}`);
         if (
             req.files['anh_dai_dien'] &&
             document.anh_dai_dien &&
-            fs.existsSync(`src/public${document.anh_dai_dien}`)
+            fs.existsSync(`public${document.anh_dai_dien}`)
         )
-            fs.unlinkSync(`src/public${document.anh_dai_dien}`);
+            fs.unlinkSync(`public${document.anh_dai_dien}`);
     }
     await Document.update(
         {
@@ -150,14 +150,14 @@ const deleteById = async (req, res) => {
     });
     if (
         document.anh_dai_dien &&
-        fs.existsSync(`src/public${document.noi_dung}`)
+        fs.existsSync(`public${document.noi_dung}`)
     )
-        fs.unlinkSync(`src/public${document.noi_dung}`);
+        fs.unlinkSync(`public${document.noi_dung}`);
     if (
         document.anh_dai_dien &&
-        fs.existsSync(`src/public${document.anh_dai_dien}`)
+        fs.existsSync(`public${document.anh_dai_dien}`)
     )
-        fs.unlinkSync(`src/public${document.anh_dai_dien}`);
+        fs.unlinkSync(`public${document.anh_dai_dien}`);
     await Document.destroy({
         where: {
             tai_lieu_id: req.params.id,

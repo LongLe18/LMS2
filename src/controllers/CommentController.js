@@ -185,8 +185,8 @@ const putUpdate = async (req, res) => {
         })
         if(comment.anh_dinh_kem){
             for(const anh_dinh_kem of comment.anh_dinh_kem.split(',')){
-                if (fs.existsSync(`src/public${anh_dinh_kem}`))
-                    fs.unlinkSync(`src/public${anh_dinh_kem}`);
+                if (fs.existsSync(`public${anh_dinh_kem}`))
+                    fs.unlinkSync(`public${anh_dinh_kem}`);
             }
         }
     }
@@ -223,8 +223,8 @@ const deleteById = async (req, res) => {
             })
             if(comment.anh_dinh_kem){
                 for(const anh_dinh_kem of comment.anh_dinh_kem.split(',')){
-                    if (fs.existsSync(`src/public${anh_dinh_kem}`))
-                        fs.unlinkSync(`src/public${anh_dinh_kem}`);
+                    if (fs.existsSync(`public${anh_dinh_kem}`))
+                        fs.unlinkSync(`public${anh_dinh_kem}`);
                 }
             }
             if (decodedToken.role === 0)  { // hoc vien 

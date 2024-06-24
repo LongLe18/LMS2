@@ -57,9 +57,9 @@ const putUpdate = async (req, res) => {
         });
         if (
             documentAd.anh_dai_dien &&
-            fs.existsSync(`src/public${documentAd.anh_dai_dien}`)
+            fs.existsSync(`public${documentAd.anh_dai_dien}`)
         )
-            fs.unlinkSync(`src/public${documentAd.anh_dai_dien}`);
+            fs.unlinkSync(`public${documentAd.anh_dai_dien}`);
     }
     const documentAd = await DocumentAd.update(
         {
@@ -122,9 +122,9 @@ const deleteById = async (req, res) => {
     });
     if (
         documentAd.anh_dai_dien &&
-        fs.existsSync(`src/public${documentAd.anh_dai_dien}`)
+        fs.existsSync(`public${documentAd.anh_dai_dien}`)
     )
-        fs.unlinkSync(`src/public${documentAd.anh_dai_dien}`);
+        fs.unlinkSync(`public${documentAd.anh_dai_dien}`);
     await DocumentAd.destroy({
         where: {
             qctl_id: req.params.id,
