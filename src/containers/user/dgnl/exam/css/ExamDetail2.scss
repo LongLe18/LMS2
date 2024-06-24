@@ -195,7 +195,7 @@
   float: right;
   margin: 0;
   margin-top: 10px;
-  margin-right: -25px;
+  // margin-right: -25px;
 }
 
 .topbar-exam .white-spread-upper {
@@ -604,4 +604,22 @@
   height: 30px;
   width: 30px;
   margin-right: 4px;
+}
+
+.section-question {
+  color: #fff;
+  margin: 12px 0px;
+  padding: 12px;
+  background: #1890ff;
+  border-radius: 6px;
+  font-size: 18px;
+}
+
+.list-questions {
+  .item {
+    margin: 0px 12px;
+    a {
+      color: #fff;
+    }
+  }
 }

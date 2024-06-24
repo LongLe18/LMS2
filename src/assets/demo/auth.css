@@ -72,6 +72,18 @@ body {
   width: 640px;
 }
 
+.app-auth {
+  .div-form {
+    display: flex;
+    flex-direction: column;
+    h4 {
+      font-size: 28px;
+      color: #007308eb;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+  }
+}
 .app-auth .logo {
   text-align: center;
   padding: 5em;

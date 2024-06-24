@@ -101,6 +101,33 @@
   margin-right: 10px;
 }
 
+.title-section {
+  div {
+    border-radius: 6px;
+    margin: 12px;
+    padding: 12px;
+    font-size: 16px;
+  }
+
+  .section-0 {
+    background: #d4ad00;
+    border-color: #d4ad00;
+    color: #b60505;
+  }
+
+  .section-1 {
+    background: #2222ffc2;
+    border-color: #2222ffc2;
+    color: #fff;
+  }
+
+  .section-2 {
+    background: #b60505;
+    border-color: #b60505;
+    color: #d4ad00;
+  }
+}
+
 @media only screen and (max-width: 480px) {
   .post-module .list-author-single {
     display: flex;

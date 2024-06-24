@@ -555,6 +555,9 @@ const ExamAdminPage = () => {
                               {/* {renderTypeExams2()} */}
                               <br/>
                               <Button onClick={() => showModal()} shape="round" type="primary" icon={<PlusOutlined />} className=" btn-action">
+                                  Tạo nhanh đề thi
+                              </Button>
+                              <Button onClick={() => showModal()} shape="round" type="primary" icon={<PlusOutlined />} className=" btn-action">
                                   Thêm mới đề thi
                               </Button> 
                               <Modal visible={isModalVisible}  mask={true} centered={true} className="cra-exam-modal" wrapClassName="cra-exam-modal-container"                                   

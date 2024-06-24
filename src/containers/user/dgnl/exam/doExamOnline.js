@@ -975,558 +975,637 @@ const ExamOnlineDetail = () => {
         );
     };
 
+    const getCurrentDate = () => {
+        const date = new Date();
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+        const year = date.getFullYear();
+    
+        return `${day}-${month}-${year}`;
+    };
+
     const renderExam = () => {
         if (!userToken) return <NoRecord subTitle="Bạn cần đăng nhập để làm bài thi." status="403" />;
         if (error) return <NoRecord subTitle="Không tìm thấy đề thi." />;
 
         return (
-            <Row className="question-content">
-                
-                <Col span={18}>
-                    {(!isDoing && examUser.status === 'success') &&(
-                        <div className="history-header">
-                            <div className="summury-result">
-                                <div className="head-result">
-                                    <p className="size-18 color-blue">
-                                        <b>
-                                        Chúc mừng bạn đã hoàn thành <span>{exam.data.ten_de_thi}</span>
-                                        </b>
-                                    </p>
-                                </div>
-                                <div className="body-result">
-                                    <div className="total_point mb-4">
-                                        <p>
-                                        <label className="point-label"> ĐIỂM SỐ</label>
-                                        <b className="point font-weight-5">{examUser.data.ket_qua_diem}/{exam.data.tong_diem}</b>
-                                        </p>
-                                    </div>
-                                    <div className="total_point">
-                                        <p className='font-weight-5'>
-                                            Thời gian làm:{' '}
+            <>  
+                <div className='section-question'>
+                    <Row justify={'space-between'}>
+                        {/* Show current day, fullname and time */}
+                        <Col>CET {getCurrentDate()}</Col>
+                        <Col style={{display: 'flex'}}>
+                            <div style={{marginRight: 12}}>Họ và tên: {JSON.parse(localStorage.getItem('userInfo')).ho_ten}</div>
+                            <div>Tài khoản: {JSON.parse(localStorage.getItem('userInfo')).email}</div>
+                        </Col>
+                        <Col><b style={{ color: '#fff', fontSize: 20 }}>{secondsToMinutes(countSection)}</b></Col>
+                    </Row>
+                    <Row className='list-questions' justify={'center'}>
+                        {isDoing && Array.from({ length: exam.data.so_phan }).map((_, index) => {
+                            if (index + 1 === state.sectionExam) {
+                                const startIndex = (state.sectionExam - 1) * exam.data[`so_cau_hoi_phan_${state.sectionExam}`];
+                                const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${state.sectionExam}`];
+                                const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
+                                return (
+                                    <>
+                                        {partQuestions.map((question, index) => {
+                                            const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
+                                            if (!isAnswered) {
+                                                return (
+                                                    <div key={index + 1} className={`item`}>
+                                                        <a href={`#${index + 1}`}>{index + 1}</a>
+                                                    </div>
+                                                );
+                                            }
+                                            return null;
+                                        })}
+                                    </>
+                                )
+                            } else return null;
+                        })}
+                    </Row>
+                    <Row className='list-questions' justify={'center'} style={{background: '#f0f0f0'}}>
+                    {isDoing && Array.from({ length: exam.data.so_phan }).map((_, index) => {
+                            if (index + 1 === state.sectionExam) {
+                                const startIndex = (state.sectionExam - 1) * exam.data[`so_cau_hoi_phan_${state.sectionExam}`];
+                                const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${state.sectionExam}`];
+                                const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
+                                return (
+                                    <>
+                                        {partQuestions.map((question, index) => {
+                                            const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
+                                            if (isAnswered) {
+                                                return (
+                                                    <div key={index + 1} className={`item`}>
+                                                        <a href={`#${index + 1}`} style={{color: 'green'}}>{index + 1}</a>
+                                                    </div>
+                                                );
+                                            }
+                                            return null;
+                                        })}
+                                    </>
+                                )
+                            } else return null;
+                        })}
+                    </Row>
+                </div>
+                <Row className="question-content">
+                    <Col span={18}>
+                        {(!isDoing && examUser.status === 'success') &&(
+                            <div className="history-header">
+                                <div className="summury-result">
+                                    <div className="head-result">
+                                        <p className="size-18 color-blue">
                                             <b>
-                                                {examUser.data.thoi_gian_lam_bai}
+                                            Chúc mừng bạn đã hoàn thành <span>{exam.data.ten_de_thi}</span>
                                             </b>
                                         </p>
                                     </div>
-                                    <Timeline>
-                                        {Array.from({ length: exam.data.so_phan }).map((_, index) => {
-                                            const startIndex = (index + 1 - 1) * exam.data[`so_cau_hoi_phan_${index + 1}`];
-                                            const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${index + 1}`];
-                                            const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
-                                            const number = partQuestions.map((question, index) => {
-                                                let number = 0;
-                                                if (!isDoing && examUser.status === 'success') {
-                                                    if (examUser.data.dap_an_da_chons) {
-                                                        let currentSubmitAnswer = examUser.data.dap_an_da_chons.find((item) => item.cau_hoi_id === question.cau_hoi.cau_hoi_id);
-                                                        if (question.cau_hoi.dap_an_dungs && currentSubmitAnswer !== undefined) {
-                                                            if (question.cau_hoi.loai_cau_hoi === 1 || question.cau_hoi.loai_cau_hoi === 2) { // Câu trắc nghiệm
-                                                                let answerRight = convertAnswer(question.cau_hoi.dap_an_dungs);
-                                                                if (currentSubmitAnswer && answerRight === currentSubmitAnswer.ket_qua_chon) {
-                                                                    number = number + 1;
-                                                                } 
-                                                            } else { // Câu tự luận
-                                                                if (currentSubmitAnswer && question.cau_hoi.dap_ans[0].noi_dung_dap_an === (currentSubmitAnswer?.noi_dung_tra_loi)?.toLowerCase()) {
-                                                                    number = number + 1;
-                                                                } 
+                                    <div className="body-result">
+                                        <div className="total_point mb-4">
+                                            <p>
+                                            <label className="point-label"> ĐIỂM SỐ</label>
+                                            <b className="point font-weight-5">{examUser.data.ket_qua_diem}/{exam.data.tong_diem}</b>
+                                            </p>
+                                        </div>
+                                        <div className="total_point">
+                                            <p className='font-weight-5'>
+                                                Thời gian làm:{' '}
+                                                <b>
+                                                    {examUser.data.thoi_gian_lam_bai}
+                                                </b>
+                                            </p>
+                                        </div>
+                                        <Timeline>
+                                            {Array.from({ length: exam.data.so_phan }).map((_, index) => {
+                                                const startIndex = (index + 1 - 1) * exam.data[`so_cau_hoi_phan_${index + 1}`];
+                                                const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${index + 1}`];
+                                                const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
+                                                const number = partQuestions.map((question, index) => {
+                                                    let number = 0;
+                                                    if (!isDoing && examUser.status === 'success') {
+                                                        if (examUser.data.dap_an_da_chons) {
+                                                            let currentSubmitAnswer = examUser.data.dap_an_da_chons.find((item) => item.cau_hoi_id === question.cau_hoi.cau_hoi_id);
+                                                            if (question.cau_hoi.dap_an_dungs && currentSubmitAnswer !== undefined) {
+                                                                if (question.cau_hoi.loai_cau_hoi === 1 || question.cau_hoi.loai_cau_hoi === 2) { // Câu trắc nghiệm
+                                                                    let answerRight = convertAnswer(question.cau_hoi.dap_an_dungs);
+                                                                    if (currentSubmitAnswer && answerRight === currentSubmitAnswer.ket_qua_chon) {
+                                                                        number = number + 1;
+                                                                    } 
+                                                                } else { // Câu tự luận
+                                                                    if (currentSubmitAnswer && question.cau_hoi.dap_ans[0].noi_dung_dap_an === (currentSubmitAnswer?.noi_dung_tra_loi)?.toLowerCase()) {
+                                                                        number = number + 1;
+                                                                    } 
+                                                                }
                                                             }
                                                         }
                                                     }
-                                                }
-                                                return number;
-                                            })
-                                            return (
-                                                <Timeline.Item key={index + 1} style={{paddingBottom: index + 1 === exam.data.so_phan ? 0 : 20, fontWeight: 600}}>
-                                                    Điểm thi phần {index + 1}: {number.reduce((partialSum, a) => partialSum + a, 0)} / {exam.data[`so_cau_hoi_phan_${index + 1}`]} = {(number.reduce((partialSum, a) => partialSum + a, 0) / exam.data[`so_cau_hoi_phan_${index + 1}`] * 100).toFixed(0)} %
-                                                </Timeline.Item>
-                                            )
-                                        })}
-                                    </Timeline>
-                                </div>
-                                <div className="body-evaluation">
-                                    <h5 style={{fontWeight: 700, textAlign: 'center'}}>Kết quả đánh giá</h5>
-                                    <Timeline>
-                                        {Array.from({ length: exam.data.so_phan }).map((_, index) => {
-                                            const startIndex = (index + 1 - 1) * exam.data[`so_cau_hoi_phan_${index + 1}`];
-                                            const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${index + 1}`];
-                                            const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
-                                            // số câu đúng của từng phần
-                                            const number = partQuestions.map((question, index) => {
-                                                let number = 0;
-                                                if (!isDoing && examUser.status === 'success') {
-                                                    if (examUser.data.dap_an_da_chons) {
-                                                        let currentSubmitAnswer = examUser.data.dap_an_da_chons.find((item) => item.cau_hoi_id === question.cau_hoi.cau_hoi_id);
-                                                        if (question.cau_hoi.dap_an_dungs && currentSubmitAnswer !== undefined) {
-                                                            if (question.cau_hoi.loai_cau_hoi === 1 || question.cau_hoi.loai_cau_hoi === 2) { // Câu trắc nghiệm
-                                                                let answerRight = convertAnswer(question.cau_hoi.dap_an_dungs);
-                                                                if (currentSubmitAnswer && answerRight === currentSubmitAnswer.ket_qua_chon) {
-                                                                    number = number + 1;
-                                                                } 
-                                                            } else { // Câu tự luận
-                                                                if (currentSubmitAnswer && question.cau_hoi.dap_ans[0].noi_dung_dap_an === (currentSubmitAnswer?.noi_dung_tra_loi)?.toLowerCase()) {
-                                                                    number = number + 1;
-                                                                } 
+                                                    return number;
+                                                })
+                                                return (
+                                                    <Timeline.Item key={index + 1} style={{paddingBottom: index + 1 === exam.data.so_phan ? 0 : 20, fontWeight: 600}}>
+                                                        Điểm thi phần {index + 1}: {number.reduce((partialSum, a) => partialSum + a, 0)} / {exam.data[`so_cau_hoi_phan_${index + 1}`]} = {(number.reduce((partialSum, a) => partialSum + a, 0) / exam.data[`so_cau_hoi_phan_${index + 1}`] * 100).toFixed(0)} %
+                                                    </Timeline.Item>
+                                                )
+                                            })}
+                                        </Timeline>
+                                    </div>
+                                    <div className="body-evaluation">
+                                        <h5 style={{fontWeight: 700, textAlign: 'center'}}>Kết quả đánh giá</h5>
+                                        <Timeline>
+                                            {Array.from({ length: exam.data.so_phan }).map((_, index) => {
+                                                const startIndex = (index + 1 - 1) * exam.data[`so_cau_hoi_phan_${index + 1}`];
+                                                const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${index + 1}`];
+                                                const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
+                                                // số câu đúng của từng phần
+                                                const number = partQuestions.map((question, index) => {
+                                                    let number = 0;
+                                                    if (!isDoing && examUser.status === 'success') {
+                                                        if (examUser.data.dap_an_da_chons) {
+                                                            let currentSubmitAnswer = examUser.data.dap_an_da_chons.find((item) => item.cau_hoi_id === question.cau_hoi.cau_hoi_id);
+                                                            if (question.cau_hoi.dap_an_dungs && currentSubmitAnswer !== undefined) {
+                                                                if (question.cau_hoi.loai_cau_hoi === 1 || question.cau_hoi.loai_cau_hoi === 2) { // Câu trắc nghiệm
+                                                                    let answerRight = convertAnswer(question.cau_hoi.dap_an_dungs);
+                                                                    if (currentSubmitAnswer && answerRight === currentSubmitAnswer.ket_qua_chon) {
+                                                                        number = number + 1;
+                                                                    } 
+                                                                } else { // Câu tự luận
+                                                                    if (currentSubmitAnswer && question.cau_hoi.dap_ans[0].noi_dung_dap_an === (currentSubmitAnswer?.noi_dung_tra_loi)?.toLowerCase()) {
+                                                                        number = number + 1;
+                                                                    } 
+                                                                }
                                                             }
                                                         }
                                                     }
-                                                }
-                                                return number;
-                                            });
-                                            // Đánh giá của phần tương ứng
-                                            const evaluationsTemp = evaluations?.data.filter((item) => item.phan_thi === index + 1);
-                                            // Kiểm tra số câu đúng của từng phần và lấy ra đánh giá tương ứng
-                                            const evaluation = evaluationsTemp?.map((item) => {
-                                                let evaluation = '';
-                                                if (number.reduce((partialSum, a) => partialSum + a, 0) === 0) {
-                                                    if (item.cau_bat_dau <= number.reduce((partialSum, a) => partialSum + a, 0) + 1 && number.reduce((partialSum, a) => partialSum + a, 0) + 1 <= item.cau_ket_thuc) {
-                                                        evaluation = item?.danh_gia;
+                                                    return number;
+                                                });
+                                                // Đánh giá của phần tương ứng
+                                                const evaluationsTemp = evaluations?.data.filter((item) => item.phan_thi === index + 1);
+                                                // Kiểm tra số câu đúng của từng phần và lấy ra đánh giá tương ứng
+                                                const evaluation = evaluationsTemp?.map((item) => {
+                                                    let evaluation = '';
+                                                    if (number.reduce((partialSum, a) => partialSum + a, 0) === 0) {
+                                                        if (item.cau_bat_dau <= number.reduce((partialSum, a) => partialSum + a, 0) + 1 && number.reduce((partialSum, a) => partialSum + a, 0) + 1 <= item.cau_ket_thuc) {
+                                                            evaluation = item?.danh_gia;
+                                                        }
+                                                    } else {
+                                                        if (item.cau_bat_dau <= number.reduce((partialSum, a) => partialSum + a, 0) && number.reduce((partialSum, a) => partialSum + a, 0) <= item.cau_ket_thuc) {
+                                                            evaluation = item?.danh_gia;
+                                                        }
                                                     }
-                                                } else {
-                                                    if (item.cau_bat_dau <= number.reduce((partialSum, a) => partialSum + a, 0) && number.reduce((partialSum, a) => partialSum + a, 0) <= item.cau_ket_thuc) {
-                                                        evaluation = item?.danh_gia;
-                                                    }
-                                                }
-                                                return evaluation;
-                                            });
-                                            return (
-                                                <Timeline.Item key={index + 1} style={{paddingBottom: index + 1 === exam.data.so_phan ? 0 : 20, fontWeight: 600}}>
-                                                    <div style={{whiteSpace: 'pre-line'}}>Nhận xét đánh phần {index + 1}: <br/>{evaluation.filter((item) => item !== '')[0]?.split('-').filter((item) => item !== '').join('\n')}</div>
-                                                </Timeline.Item>
-                                            )
-                                        })}
-                                    </Timeline>
+                                                    return evaluation;
+                                                });
+                                                return (
+                                                    <Timeline.Item key={index + 1} style={{paddingBottom: index + 1 === exam.data.so_phan ? 0 : 20, fontWeight: 600}}>
+                                                        <div style={{whiteSpace: 'pre-line'}}>Nhận xét đánh phần {index + 1}: <br/>{evaluation.filter((item) => item !== '')[0]?.split('-').filter((item) => item !== '').join('\n')}</div>
+                                                    </Timeline.Item>
+                                                )
+                                            })}
+                                        </Timeline>
+                                    </div>
+                                </div>
+                                <div className="block-action">
+                                    <Button type="default" size="large" className="dowload-exam-button" onClick={() => doExamAgain()}>
+                                        <FileOutlined />
+                                        Làm lại bài thi
+                                    </Button>
+                                    <Button type="default" size="large" className="dowload-exam-button" onClick={() => downloadReport()}>
+                                        <DownloadOutlined />
+                                        Tải báo cáo
+                                    </Button>
                                 </div>
                             </div>
-                            <div className="block-action">
-                                <Button type="default" size="large" className="dowload-exam-button" onClick={() => doExamAgain()}>
-                                    <FileOutlined />
-                                    Làm lại bài thi
-                                </Button>
-                                <Button type="default" size="large" className="dowload-exam-button" onClick={() => downloadReport()}>
-                                    <DownloadOutlined />
-                                    Tải báo cáo
-                                </Button>
-                            </div>
-                        </div>
-                    )}
-                    {(exam.status === 'success' && isDoing) && Array.from({ length: exam.data.so_phan }).map((_, index) => {
+                        )}
+                        {(exam.status === 'success' && isDoing) && Array.from({ length: exam.data.so_phan }).map((_, index) => {
+                            if (index + 1 === state.sectionExam) {
+                                const startIndex = (state.sectionExam - 1) * exam.data[`so_cau_hoi_phan_${state.sectionExam}`];
+                                const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${state.sectionExam}`];
+                                const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
+                                return (
+                                    <>
+                                        {partQuestions.map((question, ParentIndex) => {
+                                            if (ParentIndex < exam.data[`so_cau_hoi_phan_${state.sectionExam}`]) {
+
+                                                const inputString = question.cau_hoi.noi_dung;
+                                                const regex2 = /\\begin{center}\s*\\includegraphics(?:\[[^\]]*\])?\{([^}]*)\}\s*\\end{center}/g;
+                                                let urls = [];
+                                                let match;
+                                                while ((match = regex2.exec(inputString)) !== null) {
+                                                    urls.push(match[1]); // Capture the content inside {}
+                                                }
+                                                const matches = inputString.replace(regex2, '');
+
+                                                return (
+                                                    <>
+                                                        {(question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom !== undefined && question.cau_hoi.exceprtTo !== undefined) &&
+                                                            <>
+                                                                {(question.cau_hoi.exceprtFrom === question.cau_hoi.exceprtTo) 
+                                                                ? <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi {question.cau_hoi.exceprtFrom + 1}</span>
+                                                                : <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi từ {question.cau_hoi.exceprtFrom + 1} đến {question.cau_hoi.exceprtTo + 1}</span>
+                                                                }
+                                                                <br/>
+                                                                <div className="answer-content" style={{paddingLeft: '20px'}}>             
+                                                                    <img alt="..."
+                                                                        className="img-no-padding img-responsive"
+                                                                        src={config.API_URL + question.cau_hoi.trich_doan.noi_dung}
+                                                                    />
+                                                                </div>
+                                                            </>
+                                                        }
+                                                        <div className="question-list" key={ParentIndex}>
+                                                            <div className="question-info" id={`${ParentIndex + 1}`}>
+                                                                <b style={{fontSize: "22px", color: "#2e66ad"}}>Câu {ParentIndex + 1} 
+                                                                    <span className="point">[{question.cau_hoi.diem} điểm]</span>
+                                                                    <span style={{display: question.cau_hoi.loai_cau_hoi === 2 ? 'block' : 'none'}} className="point">[Câu trắc nghiệm đúng sai]</span>
+                                                                </b>
+                                                                <ul className="action-links"></ul>
+                                                            </div>
+
+                                                            <div className="title-exam">
+                                                                <Latex>{matches}</Latex>
+                                                                {urls.length > 0 && urls.map((url, idx) => (
+                                                                    <img src={config.API_URL + `/${url}`} alt='img'/>
+                                                                ))}
+                                                            </div>
+
+                                                            <div className="content-answer-question">
+                                                                <Row gutter={[20, 10]} className="multi-choice" style={{rowGap: 0}}>
+                                                                    {question.cau_hoi.dap_ans.map((answer, index) => {
+                                                                        const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
+                                                                        return (
+                                                                            <Col xs={24} sm={24} md={getAnswerCols(question.cau_hoi.cot_tren_hang)} key={index}>
+                                                                                <ul key={index}>
+                                                                                    {(question.cau_hoi.loai_cau_hoi === 1) ?
+                                                                                        <li className={`item ${isAnswered && isAnswered.dap_an.includes(renderAnswerKey(index)) ? 'active' : ''}`}>
+                                                                                            <button style={{width:"100%"}} disabled={pause}
+                                                                                                className="btn-onclick"
+                                                                                                onClick={() => {   
+                                                                                                    setPause(true); // Tạm dừng để ngăn chặn việc thay đổi đáp án quá nhanh
+                                                                                                    dispatch(answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, 
+                                                                                                        (res) => {
+                                                                                                            if (res.status === 'success') {
+                                                                                                                answers = res.data;
+                                                                                                                onChooseAnswer(question, renderAnswerKey(index), index, res.data)   
+                                                                                                            }
+                                                                                                        }
+                                                                                                    ))
+                                                                                                }}
+                                                                                            >
+                                                                                                {renderAnswer(question.cau_hoi, answer, index)}
+                                                                                            </button>
+                                                                                        </li>
+                                                                                    : (question.cau_hoi.loai_cau_hoi === 0) ?
+                                                                                        <li>
+                                                                                            <TextArea rows={4} style={{width:"100%"}} disabled={!isDoing} defaultValue={isAnswered !== undefined ? isAnswered.noi_dung : null}
+                                                                                                onChange={(e) => {
+                                                                                                    localStorage.setItem('answerText', null);
+                                                                                                    localStorage.setItem('question', null);
+                                                                                                    localStorage.setItem('answerText', e.target.value);
+                                                                                                    localStorage.setItem('question', JSON.stringify(question));                            
+                                                                                                }
+                                                                                            }/>
+                                                                                        </li>
+                                                                                    :
+                                                                                        <div className='wrongrightAnswer'>
+                                                                                            <button id={`button-Right-${index}`}
+                                                                                                className={`btn-DS ${isAnswered && isAnswered.ket_qua_chon[index] === '1' ? 'active' : '' }`}
+                                                                                                
+                                                                                                onClick={() => {
+                                                                                                    dispatch(answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, 
+                                                                                                        (res) => {
+                                                                                                            if (res.status === 'success') {
+                                                                                                                answers = res.data;
+                                                                                                                onChooseAnswer(question, renderAnswerKey(index), index, res.data)   
+                                                                                                            }
+                                                                                                        }
+                                                                                                    ))
+                                                                                                }}
+                                                                                            >
+                                                                                                <span className="answer-label">Đ</span>
+                                                                                            </button>
+                                                                                            <button id={`button-Wrong-${index}`}
+                                                                                                className={`btn-DS ${isAnswered && isAnswered.ket_qua_chon[index] === '0' ? 'active' : '' }`}
+                                                                                                onClick={() => {
+                                                                                                    dispatch(answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, 
+                                                                                                        (res) => {
+                                                                                                            if (res.status === 'success') {
+                                                                                                                answers = res.data;
+                                                                                                                onChooseAnswer(question, renderAnswerKey(index), index, res.data);
+                                                                                                            }
+                                                                                                        }
+                                                                                                    ))
+                                                                                                }}
+                                                                                            >
+                                                                                                <span className="answer-label">S</span>
+                                                                                            </button>
+                                                                                            <Latex>{answer.noi_dung_dap_an}</Latex>
+                                                                                        </div>
+                                                                                    }
+                                                                                </ul>
+                                                                            </Col>
+                                                                        )
+                                                                    })}
+                                                                </Row>
+                                                            </div>
+                                                        </div>
+                                                    </>
+                                                )
+                                            } else return null;
+                                        })}
+
+                                        <p className="block-action text-center mt-0">
+                                            <Button type="primary" size="large" className="join-exam-button" onClick={() => {
+                                                // Mở alat địa lý
+                                            }} 
+                                                style={{borderRadius: 8, backgroundColor: 'rgba(0, 115, 8, 0.92)', borderColor: 'rgba(0, 115, 8, 0.92)'}}
+                                            >
+                                                Mở alat địa lý
+                                            </Button>
+                                        </p>
+                                    </>
+                                )
+                            } else return null;
+                        })}
+                        {(exam.status === 'success' && !isDoing) && exam.data.cau_hoi_de_this.map((question, ParentIndex) => {
+                            const inputString = question.cau_hoi.noi_dung;
+                            const regex2 = /\\begin{center}\s*\\includegraphics(?:\[[^\]]*\])?\{([^}]*)\}\s*\\end{center}/g;
+                            let urls = [];
+                            let match;
+                            while ((match = regex2.exec(inputString)) !== null) {
+                                urls.push(match[1]); // Capture the content inside {}
+                            }
+                            const matches = inputString.replace(regex2, '');
+                            
+                            return (
+                                <>
+                                    {(question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom !== undefined && question.cau_hoi.exceprtTo !== undefined) &&
+                                        <>
+                                            {(question.cau_hoi.exceprtFrom === question.cau_hoi.exceprtTo) 
+                                            ? <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi {question.cau_hoi.exceprtFrom + 1}</span>
+                                            : <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi từ {question.cau_hoi.exceprtFrom + 1} đến {question.cau_hoi.exceprtTo + 1}</span>
+                                            }
+                                            <br/>
+                                            <div className="answer-content" style={{paddingLeft: '20px'}}>             
+                                                <img alt="..."
+                                                    className="img-no-padding img-responsive"
+                                                    src={config.API_URL + question.cau_hoi.trich_doan.noi_dung}
+                                                />
+                                            </div>
+                                        </>
+                                    }
+                                    <div className="question-list" key={ParentIndex}>
+                                        
+                                        <div className="question-info" id={`${ParentIndex + 1}`}>
+                                            <b style={{fontSize: "22px", color: "#2e66ad"}}>Câu {ParentIndex + 1} 
+                                                <span className="point">[{question.cau_hoi.diem} điểm]</span>
+                                                {/* <span className="point">[Mức độ: {renderLevelQuestion(question.cau_hoi.mdch_id)}]</span> */}
+                                            </b>
+                                            <ul className="action-links"></ul>
+                                        </div>
+
+                                        <div className="title-exam">
+                                            <Latex>{matches}</Latex>
+                                            {urls.length > 0 && urls.map((url, idx) => (
+                                                <img src={config.API_URL + `/${url}`} alt='img'/>
+                                            ))}
+                                        </div>
+
+                                        <div className="content-answer-question">
+                                            <Row gutter={[20, 10]} className="multi-choice" style={{rowGap: 0}}>
+                                                {question.cau_hoi.dap_ans.map((answer, index) => {
+                                                    const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
+                                                    return (
+                                                        <Col xs={24} sm={24} md={getAnswerCols(question.cau_hoi.cot_tren_hang)} key={index}>
+                                                            <ul key={index}>
+                                                                {(question.cau_hoi.loai_cau_hoi === 1) ?
+                                                                    <li className={`item ${isAnswered && isAnswered.dap_an === renderAnswerKey(index) ? 'active' : ''}`}>
+                                                                        <button style={{width:"100%"}}
+                                                                            className="btn-onclick"
+                                                                        >
+                                                                            {renderAnswer(question.cau_hoi, answer, index)}
+                                                                        </button>
+                                                                    </li>
+                                                                : (question.cau_hoi.loai_cau_hoi === 0) ?
+                                                                    <li>
+                                                                        <TextArea rows={4} style={{width:"100%"}} disabled={!isDoing} 
+                                                                            defaultValue={isAnswered !== undefined ? isAnswered.noi_dung : null} />
+                                                                    </li>
+                                                                :
+                                                                <div className='wrongrightAnswer'>
+                                                                    <button id={`button-Right-${index}`}
+                                                                        className={`btn-DS 
+                                                                            ${isCorrectQuestionDungSai(question.cau_hoi, index, true) !== null && !isCorrectQuestionDungSai(question.cau_hoi, index, true)  ? 'incorrect' : ''}
+                                                                            ${isCorrectQuestionDungSai(question.cau_hoi, index, true) !== null && isCorrectQuestionDungSai(question.cau_hoi, index, true) ? 'correct' : ''}`
+                                                                        }
+                                                                    >
+                                                                        <span className="answer-label">Đ</span>
+                                                                    </button>
+                                                                    <button id={`button-Wrong-${index}`}
+                                                                        className={`btn-DS 
+                                                                            ${isCorrectQuestionDungSai(question.cau_hoi, index, false) !== null && !isCorrectQuestionDungSai(question.cau_hoi, index, false) ? `incorrect` : ''}
+                                                                            ${isCorrectQuestionDungSai(question.cau_hoi, index, false) !== null && isCorrectQuestionDungSai(question.cau_hoi, index, false) ? 'correct' : ''}`
+                                                                        }
+                                                                    >
+                                                                        <span className="answer-label">S</span>
+                                                                    </button>
+                                                                    <Latex>{ answer.noi_dung_dap_an}</Latex>
+                                                                </div>
+                                                                }
+                                                            </ul>
+                                                        </Col>
+                                                    )
+                                                })}
+                                            </Row>
+                                            {renderAnswerResult(question)}
+                                        </div>
+
+                                        {!isDoing && 
+                                            <div className="question-actions">
+                                                <Button
+                                                    type="default"
+                                                    shape="round"
+                                                    icon={<InfoCircleOutlined />}
+                                                    onClick={() => {
+                                                        if (!help.includes(question.cau_hoi_id)) {
+                                                            setHelp([...help, question.cau_hoi_id]);
+                                                        } else {
+                                                            setHelp(help.filter((cau_hoi_id) => cau_hoi_id !== question.cau_hoi_id));
+                                                        }
+                                                    }}
+                                                >
+                                                    Xem lời giải
+                                                </Button>
+                                                <Button
+                                                    type="default"
+                                                    shape="round"
+                                                    icon={<CommentOutlined />}
+                                                    onClick={() => {
+                                                        if (!commnetOpen.includes(question.cau_hoi_id)) {
+                                                            setCommentOpen([...commnetOpen, question.cau_hoi_id]);
+                                                        } else {
+                                                            setCommentOpen(commnetOpen.filter((cau_hoi_id) => cau_hoi_id !== question.cau_hoi_id));
+                                                        }
+                                                    }}
+                                                >
+                                                    Hỏi đáp / Thảo Luận
+                                                </Button>
+                                                <div className="question-toggle">
+                                                
+                                                {help.includes(question.cau_hoi_id) &&(
+                                                    <Alert
+                                                        message=""
+                                                        type="warning"
+                                                        description={
+                                                            <div className="help-answer">
+                                                                <Latex>{ question.cau_hoi.loi_giai }</Latex>
+                                                            </div>
+                                                        }
+                                                        closable
+                                                        onClose={() => setHelp(help.filter((cau_hoi_id) => cau_hoi_id !== question.cau_hoi_id))}
+                                                    />
+                                                )}
+
+                                                {commnetOpen.includes(question.cau_hoi_id) && (
+                                                    <Alert
+                                                        message=""
+                                                        type="warning"
+                                                        description={
+                                                        <div className="comments">
+                                                            {comments.data.filter(item => Number(item.lien_ket_id.split('/')[1]) === question.cau_hoi_id).length > 0 && (
+                                                            <List
+                                                                className="comment-list"
+                                                                itemLayout="horizontal"
+                                                                dataSource={comments.data.filter(item => Number(item.lien_ket_id.split('/')[1]) === question.cau_hoi_id)}
+                                                                renderItem={(item, index) => (
+                                                                <li key={index}>
+                                                                    <Comment author={<p style={{fontWeight: 'bold'}}>{item.ten_hoc_vien}</p>} 
+                                                                        avatar={item.anh_dai_dien !== null ? config.API_URL + item.anh_dai_dien : defaultImage} 
+                                                                        content={<div><div dangerouslySetInnerHTML={{ __html: item.noi_dung }}></div>{item.anh_dinh_kem !== null && <img src={config.API_URL + item.anh_dinh_kem} alt="ảnh bình luận"/>}</div>} 
+                                                                        datetime={diff(item.ngay_tao)} 
+                                                                        actions={[
+                                                                            <Space>
+                                                                                <Button type='link' onClick={() => replyComment(item.binh_luan_id)}>Phản hồi</Button>
+                                                                                {item.hoc_vien_id === JSON.parse(localStorage.getItem('userInfo')).hoc_vien_id && 
+                                                                                <>
+                                                                                    <Button type='link' onClick={() => EditComment(item.binh_luan_id, item.binh_luan_phu_id, false)}>Sửa</Button>
+                                                                                    <Button type='link' onClick={() => deleteComment(item.binh_luan_id, item.binh_luan_phu_id, false)}>Xóa</Button>
+                                                                                </>
+                                                                                }
+                                                                                {(item.so_binh_luan_phu > 0 && !state.showSubcomment) &&            
+                                                                                    <Button onClick={() => renderMoreSubComment(item.binh_luan_id)} type="link">{item.so_binh_luan_phu} phản hồi</Button> 
+                                                                                }
+                                                                            </Space>
+                                                                        ]}
+                                                                    >
+                                                                        <div id={item.binh_luan_id}></div>
+                                                                    </Comment>
+                                                                </li>
+                                                                )}
+                                                            />
+                                                            )}
+
+                                                            <TextEditorWidget2
+                                                                placeholder="Nhập nội dung bình luận..."
+                                                                showToolbar={true}
+                                                                isMinHeight200={true}
+                                                                isSimple={false}
+                                                                value={comment}
+                                                                onChange={(val) => setComment(val)}
+                                                            />
+                                                            <Dragger {...propsImage} maxCount={1}
+                                                                listType="picture"
+                                                                className="upload-list-inline"
+                                                            >
+                                                                <p className="ant-upload-drag-icon"><UploadOutlined /></p>
+                                                                <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
+                                                            </Dragger>
+                                                            <Space>
+                                                                <Button className='mt-2'
+                                                                    type="primary"
+                                                                    shape="round"
+                                                                    onClick={() => {
+                                                                        saveComment(question.cau_hoi_id, question.cau_hoi.mo_dun_id, question.cau_hoi.chuyen_de_id);
+                                                                    }}
+                                                                >
+                                                                Gửi bình luận
+                                                                </Button>
+                                                                {(state.isReplied || state.isEdit) && <Button type="primary" danger className='mt-2' onClick={() => cancelReplyOrEdit()} shape="round">HỦY</Button>  }
+                                                            </Space>
+                                                        </div>
+                                                        }
+                                                        closable
+                                                        onClose={() => setCommentOpen(commnetOpen.filter((cau_hoi_id) => cau_hoi_id !== question.cau_hoi_id))}
+                                                    />
+                                                )}
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </>
+                            )
+                        })}
+                    </Col>
+                    {isDoing && Array.from({ length: exam.data.so_phan }).map((_, index) => {
                         if (index + 1 === state.sectionExam) {
                             const startIndex = (state.sectionExam - 1) * exam.data[`so_cau_hoi_phan_${state.sectionExam}`];
                             const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${state.sectionExam}`];
                             const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
                             return (
-                                <>
-                                    {partQuestions.map((question, ParentIndex) => {
-                                        if (ParentIndex < exam.data[`so_cau_hoi_phan_${state.sectionExam}`]) {
-
-                                            const inputString = question.cau_hoi.noi_dung;
-                                            const regex2 = /\\begin{center}\s*\\includegraphics(?:\[[^\]]*\])?\{([^}]*)\}\s*\\end{center}/g;
-                                            let urls = [];
-                                            let match;
-                                            while ((match = regex2.exec(inputString)) !== null) {
-                                                urls.push(match[1]); // Capture the content inside {}
+                                <Col span={6}>
+                                    <div className="exam-right-content" style={{ position: 'sticky', top: '0px' }}>
+                                        <div className="topbar-exam">
+                                            <p className="mg-0">
+                                                <b style={{fontSize: 16}}>Thời gian </b>
+                                                <span className="white-spread-upper"></span>
+                                                <b style={{ color: '#fff', fontSize: 20 }}>{secondsToMinutes(countSection)}</b>
+                                            </p>
+                                
+                                            <p className="mg-0">
+                                                <b style={{fontSize: 16}}>Số câu đã làm</b>
+                                                <span className="white-spread-under"></span>
+                                                <b style={{ color: '#fff', fontSize: 24 }}>
+                                                    <span style={{ color: '#373636' }}>{`${results.length}/${exam.data[`so_cau_hoi_phan_${state.sectionExam}`]}`}</span>
+                                                </b>
+                                            </p>
+                                        </div>
+                                        <div className="exam-right-info">
+                                            <p className="mg-0 color-blue text-center title-list-q"><b>Câu hỏi</b></p>
+                                            <ul>
+                                                {partQuestions.map((question, index) => {
+                                                    const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
+                                                    return (
+                                                        // <li key={index + 1} className={`item ${isAnswered ? 'active' : ''}`}>
+                                                        <li key={index + 1} className={`item ${((isAnswered && isAnswered.dap_an?.length !== 0) || (isAnswered && question?.cau_hoi?.loai_cau_hoi === 2)) ? 'active' : ''}`}>
+                                                            <a href={`#${index + 1}`}>{index + 1}</a>
+                                                        </li>
+                                                    );
+                                                })}
+                                            </ul>
+                                        </div>
+                                        <p className="text-center">
+                                            {(state.sectionExam === exam.data.so_phan) ?
+                                                <button className="btn-onclick submit-exam" onClick={() => submit()}>
+                                                    <b>Nộp bài thi</b>
+                                                </button>
+                                            :
+                                                <button className="btn-onclick submit-exam" onClick={() => handleNextSectionExam()}>
+                                                    <b>Phần tiếp theo</b>
+                                                </button>
                                             }
-                                            const matches = inputString.replace(regex2, '');
-
-                                            return (
-                                                <>
-                                                    {(question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom !== undefined && question.cau_hoi.exceprtTo !== undefined) &&
-                                                        <>
-                                                            {(question.cau_hoi.exceprtFrom === question.cau_hoi.exceprtTo) 
-                                                            ? <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi {question.cau_hoi.exceprtFrom + 1}</span>
-                                                            : <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi từ {question.cau_hoi.exceprtFrom + 1} đến {question.cau_hoi.exceprtTo + 1}</span>
-                                                            }
-                                                            <br/>
-                                                            <div className="answer-content" style={{paddingLeft: '20px'}}>             
-                                                                <img alt="..."
-                                                                    className="img-no-padding img-responsive"
-                                                                    src={config.API_URL + question.cau_hoi.trich_doan.noi_dung}
-                                                                />
-                                                            </div>
-                                                        </>
-                                                    }
-                                                    <div className="question-list" key={ParentIndex}>
-                                                        <div className="question-info" id={`${ParentIndex + 1}`}>
-                                                            <b style={{fontSize: "22px", color: "#2e66ad"}}>Câu {ParentIndex + 1} 
-                                                                <span className="point">[{question.cau_hoi.diem} điểm]</span>
-                                                                <span style={{display: question.cau_hoi.loai_cau_hoi === 2 ? 'block' : 'none'}} className="point">[Câu trắc nghiệm đúng sai]</span>
-                                                            </b>
-                                                            <ul className="action-links"></ul>
-                                                        </div>
-
-                                                        <div className="title-exam">
-                                                            <Latex>{matches}</Latex>
-                                                            {urls.length > 0 && urls.map((url, idx) => (
-                                                                <img src={config.API_URL + `/${url}`} alt='img'/>
-                                                            ))}
-                                                        </div>
-
-                                                        <div className="content-answer-question">
-                                                            <Row gutter={[20, 10]} className="multi-choice" style={{rowGap: 0}}>
-                                                                {question.cau_hoi.dap_ans.map((answer, index) => {
-                                                                    const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
-                                                                    return (
-                                                                        <Col xs={24} sm={24} md={getAnswerCols(question.cau_hoi.cot_tren_hang)} key={index}>
-                                                                            <ul key={index}>
-                                                                                {(question.cau_hoi.loai_cau_hoi === 1) ?
-                                                                                    <li className={`item ${isAnswered && isAnswered.dap_an.includes(renderAnswerKey(index)) ? 'active' : ''}`}>
-                                                                                        <button style={{width:"100%"}} disabled={pause}
-                                                                                            className="btn-onclick"
-                                                                                            onClick={() => {   
-                                                                                                setPause(true); // Tạm dừng để ngăn chặn việc thay đổi đáp án quá nhanh
-                                                                                                dispatch(answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, 
-                                                                                                    (res) => {
-                                                                                                        if (res.status === 'success') {
-                                                                                                            answers = res.data;
-                                                                                                            onChooseAnswer(question, renderAnswerKey(index), index, res.data)   
-                                                                                                        }
-                                                                                                    }
-                                                                                                ))
-                                                                                            }}
-                                                                                        >
-                                                                                            {renderAnswer(question.cau_hoi, answer, index)}
-                                                                                        </button>
-                                                                                    </li>
-                                                                                : (question.cau_hoi.loai_cau_hoi === 0) ?
-                                                                                    <li>
-                                                                                        <TextArea rows={4} style={{width:"100%"}} disabled={!isDoing} defaultValue={isAnswered !== undefined ? isAnswered.noi_dung : null}
-                                                                                            onChange={(e) => {
-                                                                                                localStorage.setItem('answerText', null);
-                                                                                                localStorage.setItem('question', null);
-                                                                                                localStorage.setItem('answerText', e.target.value);
-                                                                                                localStorage.setItem('question', JSON.stringify(question));                            
-                                                                                            }
-                                                                                        }/>
-                                                                                    </li>
-                                                                                :
-                                                                                    <div className='wrongrightAnswer'>
-                                                                                        <button id={`button-Right-${index}`}
-                                                                                            className={`btn-DS ${isAnswered && isAnswered.ket_qua_chon[index] === '1' ? 'active' : '' }`}
-                                                                                            
-                                                                                            onClick={() => {
-                                                                                                dispatch(answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, 
-                                                                                                    (res) => {
-                                                                                                        if (res.status === 'success') {
-                                                                                                            answers = res.data;
-                                                                                                            onChooseAnswer(question, renderAnswerKey(index), index, res.data)   
-                                                                                                        }
-                                                                                                    }
-                                                                                                ))
-                                                                                            }}
-                                                                                        >
-                                                                                            <span className="answer-label">Đ</span>
-                                                                                        </button>
-                                                                                        <button id={`button-Wrong-${index}`}
-                                                                                            className={`btn-DS ${isAnswered && isAnswered.ket_qua_chon[index] === '0' ? 'active' : '' }`}
-                                                                                            onClick={() => {
-                                                                                                dispatch(answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, 
-                                                                                                    (res) => {
-                                                                                                        if (res.status === 'success') {
-                                                                                                            answers = res.data;
-                                                                                                            onChooseAnswer(question, renderAnswerKey(index), index, res.data);
-                                                                                                        }
-                                                                                                    }
-                                                                                                ))
-                                                                                            }}
-                                                                                        >
-                                                                                            <span className="answer-label">S</span>
-                                                                                        </button>
-                                                                                        <Latex>{answer.noi_dung_dap_an}</Latex>
-                                                                                    </div>
-                                                                                }
-                                                                            </ul>
-                                                                        </Col>
-                                                                    )
-                                                                })}
-                                                            </Row>
-                                                        </div>
-                                                    </div>
-                                                </>
-                                            )
-                                        } else return null;
-                                    })}
-                                </>
+                                            {(state.sectionExam > 1 && !isDoing) &&
+                                                <button className="btn-onclick submit-exam" onClick={() => handlePrevSectionExam()}>
+                                                    <b>Phần thi trước</b>
+                                                </button>
+                                            }
+                                        </p>
+                                    </div>
+                                </Col>
                             )
                         } else return null;
                     })}
-                    {(exam.status === 'success' && !isDoing) && exam.data.cau_hoi_de_this.map((question, ParentIndex) => {
-                        const inputString = question.cau_hoi.noi_dung;
-                        const regex2 = /\\begin{center}\s*\\includegraphics(?:\[[^\]]*\])?\{([^}]*)\}\s*\\end{center}/g;
-                        let urls = [];
-                        let match;
-                        while ((match = regex2.exec(inputString)) !== null) {
-                            urls.push(match[1]); // Capture the content inside {}
-                        }
-                        const matches = inputString.replace(regex2, '');
-                        
-                        return (
-                            <>
-                                {(question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom !== undefined && question.cau_hoi.exceprtTo !== undefined) &&
-                                    <>
-                                        {(question.cau_hoi.exceprtFrom === question.cau_hoi.exceprtTo) 
-                                        ? <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi {question.cau_hoi.exceprtFrom + 1}</span>
-                                        : <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi từ {question.cau_hoi.exceprtFrom + 1} đến {question.cau_hoi.exceprtTo + 1}</span>
-                                        }
-                                        <br/>
-                                        <div className="answer-content" style={{paddingLeft: '20px'}}>             
-                                            <img alt="..."
-                                                className="img-no-padding img-responsive"
-                                                src={config.API_URL + question.cau_hoi.trich_doan.noi_dung}
-                                            />
-                                        </div>
-                                    </>
-                                }
-                                <div className="question-list" key={ParentIndex}>
-                                    
-                                    <div className="question-info" id={`${ParentIndex + 1}`}>
-                                        <b style={{fontSize: "22px", color: "#2e66ad"}}>Câu {ParentIndex + 1} 
-                                            <span className="point">[{question.cau_hoi.diem} điểm]</span>
-                                            {/* <span className="point">[Mức độ: {renderLevelQuestion(question.cau_hoi.mdch_id)}]</span> */}
-                                        </b>
-                                        <ul className="action-links"></ul>
-                                    </div>
-
-                                    <div className="title-exam">
-                                        <Latex>{matches}</Latex>
-                                        {urls.length > 0 && urls.map((url, idx) => (
-                                            <img src={config.API_URL + `/${url}`} alt='img'/>
-                                        ))}
-                                    </div>
-
-                                    <div className="content-answer-question">
-                                        <Row gutter={[20, 10]} className="multi-choice" style={{rowGap: 0}}>
-                                            {question.cau_hoi.dap_ans.map((answer, index) => {
-                                                const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
-                                                return (
-                                                    <Col xs={24} sm={24} md={getAnswerCols(question.cau_hoi.cot_tren_hang)} key={index}>
-                                                        <ul key={index}>
-                                                            {(question.cau_hoi.loai_cau_hoi === 1) ?
-                                                                <li className={`item ${isAnswered && isAnswered.dap_an === renderAnswerKey(index) ? 'active' : ''}`}>
-                                                                    <button style={{width:"100%"}}
-                                                                        className="btn-onclick"
-                                                                    >
-                                                                        {renderAnswer(question.cau_hoi, answer, index)}
-                                                                    </button>
-                                                                </li>
-                                                            : (question.cau_hoi.loai_cau_hoi === 0) ?
-                                                                <li>
-                                                                    <TextArea rows={4} style={{width:"100%"}} disabled={!isDoing} 
-                                                                        defaultValue={isAnswered !== undefined ? isAnswered.noi_dung : null} />
-                                                                </li>
-                                                            :
-                                                            <div className='wrongrightAnswer'>
-                                                                <button id={`button-Right-${index}`}
-                                                                    className={`btn-DS 
-                                                                        ${isCorrectQuestionDungSai(question.cau_hoi, index, true) !== null && !isCorrectQuestionDungSai(question.cau_hoi, index, true)  ? 'incorrect' : ''}
-                                                                        ${isCorrectQuestionDungSai(question.cau_hoi, index, true) !== null && isCorrectQuestionDungSai(question.cau_hoi, index, true) ? 'correct' : ''}`
-                                                                    }
-                                                                >
-                                                                    <span className="answer-label">Đ</span>
-                                                                </button>
-                                                                <button id={`button-Wrong-${index}`}
-                                                                    className={`btn-DS 
-                                                                        ${isCorrectQuestionDungSai(question.cau_hoi, index, false) !== null && !isCorrectQuestionDungSai(question.cau_hoi, index, false) ? `incorrect` : ''}
-                                                                        ${isCorrectQuestionDungSai(question.cau_hoi, index, false) !== null && isCorrectQuestionDungSai(question.cau_hoi, index, false) ? 'correct' : ''}`
-                                                                    }
-                                                                >
-                                                                    <span className="answer-label">S</span>
-                                                                </button>
-                                                                <Latex>{ answer.noi_dung_dap_an}</Latex>
-                                                            </div>
-                                                            }
-                                                        </ul>
-                                                    </Col>
-                                                )
-                                            })}
-                                        </Row>
-                                        {renderAnswerResult(question)}
-                                    </div>
-
-                                    {!isDoing && 
-                                        <div className="question-actions">
-                                            <Button
-                                                type="default"
-                                                shape="round"
-                                                icon={<InfoCircleOutlined />}
-                                                onClick={() => {
-                                                    if (!help.includes(question.cau_hoi_id)) {
-                                                        setHelp([...help, question.cau_hoi_id]);
-                                                    } else {
-                                                        setHelp(help.filter((cau_hoi_id) => cau_hoi_id !== question.cau_hoi_id));
-                                                    }
-                                                }}
-                                            >
-                                                Xem lời giải
-                                            </Button>
-                                            <Button
-                                                type="default"
-                                                shape="round"
-                                                icon={<CommentOutlined />}
-                                                onClick={() => {
-                                                    if (!commnetOpen.includes(question.cau_hoi_id)) {
-                                                        setCommentOpen([...commnetOpen, question.cau_hoi_id]);
-                                                    } else {
-                                                        setCommentOpen(commnetOpen.filter((cau_hoi_id) => cau_hoi_id !== question.cau_hoi_id));
-                                                    }
-                                                }}
-                                            >
-                                                Hỏi đáp / Thảo Luận
-                                            </Button>
-                                            <div className="question-toggle">
-                                            
-                                            {help.includes(question.cau_hoi_id) &&(
-                                                <Alert
-                                                    message=""
-                                                    type="warning"
-                                                    description={
-                                                        <div className="help-answer">
-                                                            <Latex>{ question.cau_hoi.loi_giai }</Latex>
-                                                        </div>
-                                                    }
-                                                    closable
-                                                    onClose={() => setHelp(help.filter((cau_hoi_id) => cau_hoi_id !== question.cau_hoi_id))}
-                                                />
-                                            )}
-
-                                            {commnetOpen.includes(question.cau_hoi_id) && (
-                                                <Alert
-                                                    message=""
-                                                    type="warning"
-                                                    description={
-                                                    <div className="comments">
-                                                        {comments.data.filter(item => Number(item.lien_ket_id.split('/')[1]) === question.cau_hoi_id).length > 0 && (
-                                                        <List
-                                                            className="comment-list"
-                                                            itemLayout="horizontal"
-                                                            dataSource={comments.data.filter(item => Number(item.lien_ket_id.split('/')[1]) === question.cau_hoi_id)}
-                                                            renderItem={(item, index) => (
-                                                            <li key={index}>
-                                                                <Comment author={<p style={{fontWeight: 'bold'}}>{item.ten_hoc_vien}</p>} 
-                                                                    avatar={item.anh_dai_dien !== null ? config.API_URL + item.anh_dai_dien : defaultImage} 
-                                                                    content={<div><div dangerouslySetInnerHTML={{ __html: item.noi_dung }}></div>{item.anh_dinh_kem !== null && <img src={config.API_URL + item.anh_dinh_kem} alt="ảnh bình luận"/>}</div>} 
-                                                                    datetime={diff(item.ngay_tao)} 
-                                                                    actions={[
-                                                                        <Space>
-                                                                            <Button type='link' onClick={() => replyComment(item.binh_luan_id)}>Phản hồi</Button>
-                                                                            {item.hoc_vien_id === JSON.parse(localStorage.getItem('userInfo')).hoc_vien_id && 
-                                                                            <>
-                                                                                <Button type='link' onClick={() => EditComment(item.binh_luan_id, item.binh_luan_phu_id, false)}>Sửa</Button>
-                                                                                <Button type='link' onClick={() => deleteComment(item.binh_luan_id, item.binh_luan_phu_id, false)}>Xóa</Button>
-                                                                            </>
-                                                                            }
-                                                                            {(item.so_binh_luan_phu > 0 && !state.showSubcomment) &&            
-                                                                                <Button onClick={() => renderMoreSubComment(item.binh_luan_id)} type="link">{item.so_binh_luan_phu} phản hồi</Button> 
-                                                                            }
-                                                                        </Space>
-                                                                    ]}
-                                                                >
-                                                                    <div id={item.binh_luan_id}></div>
-                                                                </Comment>
-                                                            </li>
-                                                            )}
-                                                        />
-                                                        )}
-
-                                                        <TextEditorWidget2
-                                                            placeholder="Nhập nội dung bình luận..."
-                                                            showToolbar={true}
-                                                            isMinHeight200={true}
-                                                            isSimple={false}
-                                                            value={comment}
-                                                            onChange={(val) => setComment(val)}
-                                                        />
-                                                        <Dragger {...propsImage} maxCount={1}
-                                                            listType="picture"
-                                                            className="upload-list-inline"
-                                                        >
-                                                            <p className="ant-upload-drag-icon"><UploadOutlined /></p>
-                                                            <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
-                                                        </Dragger>
-                                                        <Space>
-                                                            <Button className='mt-2'
-                                                                type="primary"
-                                                                shape="round"
-                                                                onClick={() => {
-                                                                    saveComment(question.cau_hoi_id, question.cau_hoi.mo_dun_id, question.cau_hoi.chuyen_de_id);
-                                                                }}
-                                                            >
-                                                            Gửi bình luận
-                                                            </Button>
-                                                            {(state.isReplied || state.isEdit) && <Button type="primary" danger className='mt-2' onClick={() => cancelReplyOrEdit()} shape="round">HỦY</Button>  }
-                                                        </Space>
-                                                    </div>
-                                                    }
-                                                    closable
-                                                    onClose={() => setCommentOpen(commnetOpen.filter((cau_hoi_id) => cau_hoi_id !== question.cau_hoi_id))}
-                                                />
-                                            )}
-                                            </div>
-                                        </div>
-                                    }
-                                </div>
-                            </>
-                        )
-                    })}
-                </Col>
-                {isDoing && Array.from({ length: exam.data.so_phan }).map((_, index) => {
-                    if (index + 1 === state.sectionExam) {
-                        const startIndex = (state.sectionExam - 1) * exam.data[`so_cau_hoi_phan_${state.sectionExam}`];
-                        const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${state.sectionExam}`];
-                        const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
-                        return (
-                            <Col span={6}>
-                                <div className="exam-right-content" style={{ position: 'sticky', top: '0px' }}>
-                                    <div className="topbar-exam">
-                                        <p className="mg-0">
-                                            <b style={{fontSize: 16}}>Thời gian </b>
-                                            <span className="white-spread-upper"></span>
-                                            <b style={{ color: '#fff', fontSize: 20 }}>{secondsToMinutes(countSection)}</b>
-                                        </p>
-                            
-                                        <p className="mg-0">
-                                            <b style={{fontSize: 16}}>Số câu đã làm</b>
-                                            <span className="white-spread-under"></span>
-                                            <b style={{ color: '#fff', fontSize: 24 }}>
-                                                <span style={{ color: '#373636' }}>{`${results.length}/${exam.data[`so_cau_hoi_phan_${state.sectionExam}`]}`}</span>
-                                            </b>
-                                        </p>
-                                    </div>
-                                    <div className="exam-right-info">
-                                        <p className="mg-0 color-blue text-center title-list-q"><b>Câu hỏi</b></p>
-                                        <ul>
-                                            {partQuestions.map((question, index) => {
-                                                const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
-                                                return (
-                                                    // <li key={index + 1} className={`item ${isAnswered ? 'active' : ''}`}>
-                                                    <li key={index + 1} className={`item ${((isAnswered && isAnswered.dap_an?.length !== 0) || (isAnswered && question?.cau_hoi?.loai_cau_hoi === 2)) ? 'active' : ''}`}>
-                                                        <a href={`#${index + 1}`}>{index + 1}</a>
-                                                    </li>
-                                                );
-                                            })}
-                                        </ul>
-                                    </div>
-                                    <p className="text-center">
-                                        {(state.sectionExam === exam.data.so_phan) ?
-                                            <button className="btn-onclick submit-exam" onClick={() => submit()}>
-                                                <b>Nộp bài thi</b>
-                                            </button>
-                                        :
-                                            <button className="btn-onclick submit-exam" onClick={() => handleNextSectionExam()}>
-                                                <b>Phần tiếp theo</b>
-                                            </button>
-                                        }
-                                        {(state.sectionExam > 1 && !isDoing) &&
-                                            <button className="btn-onclick submit-exam" onClick={() => handlePrevSectionExam()}>
-                                                <b>Phần thi trước</b>
-                                            </button>
-                                        }
-                                    </p>
-                                </div>
-                            </Col>
-                        )
-                    } else return null;
-                })}
-                {!isDoing && renderHistoryExamSidebar()}
-            </Row>
+                    {!isDoing && renderHistoryExamSidebar()}
+                </Row>
+            </>
         )
     }
 

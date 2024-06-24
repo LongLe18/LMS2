@@ -298,7 +298,7 @@
 }
 
 .login-form-forgot {
-  color: #1890ff;
+  color: rgba(0, 115, 8, 0.92);
   text-decoration: none;
   background-color: transparent;
   outline: none;

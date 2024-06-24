@@ -12,7 +12,7 @@ import config from '../../../../configs/index';
 // import moment from "moment";
 
 // component
-import { Layout, Row, Col, Button, Input, Select, Form, Menu, Tooltip } from 'antd';
+import { Layout, Row, Col, Button, Input, Select, Form, Menu } from 'antd';
 import CarouselCustom from 'components/parts/Carousel/Carousel';
 
 // redux

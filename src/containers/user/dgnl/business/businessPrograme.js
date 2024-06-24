@@ -1,15 +1,13 @@
 import React, { useEffect, useState, useRef } from 'react';
-import axios from 'axios';
 import './css/CourseCates.css';
 import './css/business.css';
 import './css/Testimonials.css';
 
 import { Helmet } from 'react-helmet';
-import { Link, useParams, useHistory } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 // helper
 import defaultImage from 'assets/img/default.jpg';
 import config from '../../../../configs/index';
-import Hashids from 'hashids';
 import jwt_decode from 'jwt-decode';
 
 // component
