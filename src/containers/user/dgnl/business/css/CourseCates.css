@@ -93,15 +93,17 @@
 }
 
 .course-cate-box {
+  transition: transform 0.3s, box-shadow 0.3s;
   &:hover {
+    transform: translateY(-10px);
     transition: all 0.2s ease-out;
-    box-shadow: 0px 4px 8px rgba(38, 38, 38, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     top: -4px;
     border: none;
     background-color: white;
   }
 
-  &:before {
+  /* &:before {
     content: "";
     position: absolute;
     z-index: -1;
@@ -114,7 +116,7 @@
     transform: scale(2);
     transform-origin: 50% 50%;
     transition: transform 0.15s ease-out;
-  }
+  } */
 
   &:hover:before {
     transform: scale(2.15);
