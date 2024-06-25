@@ -17,7 +17,7 @@ function Statisic() {
   return (
     <div className="statisic">
       <div className="wraper">
-        <Row gutter={[20]}>
+        <Row gutter={[20]} align={'middle'}>
           <Col xl={6} sm={12} xs={12} className="statisic-row">
             <div className="statisic-box">
               <div className="icon-box-img">
@@ -47,7 +47,7 @@ function Statisic() {
               <div className="icon-box-img">
                 <img src={successfully} className="box-icon" alt="successfully" />
               </div>
-              <h3 className="statisic-description">Hàng ngàn học sinh giỏi và ưu tú đã được đào tạo</h3>
+              <h3 className="statisic-description">Hàng ngàn học sinh giỏi đã được đào tạo</h3>
             </div>
           </Col>
         </Row>

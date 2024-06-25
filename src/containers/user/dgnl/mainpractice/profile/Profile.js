@@ -479,7 +479,7 @@ const ProfilePage = () => {
                                                 <Row>
                                                     <Row style={{width: '100%', justifyContent: 'center'}}>
                                                         <h5 className='bold full-width'>Họ và tên: </h5>
-                                                        <h5 style={{wordBreak: 'break-word'}}>{info.ho_ten}</h5>
+                                                        <h5 style={{wordBreak: 'break-word', fontSize: 18}}>{info.ho_ten}</h5>
                                                     </Row>
                                                     <Row style={{width: '100%', justifyContent: 'center'}}>
                                                         <h5 className='bold full-width'>Email: </h5>

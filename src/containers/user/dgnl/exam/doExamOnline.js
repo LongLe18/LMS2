@@ -11,7 +11,7 @@ import defaultImage from 'assets/img/default.jpg';
 import { diff } from 'helpers/common.helper';
 import { createRoot } from 'react-dom/client';
 import axios from 'axios';
-
+import alat from 'assets/alat.pdf'
 // hook
 import useDebounce from 'hooks/useDebounce';
 
@@ -235,7 +235,7 @@ const ExamOnlineDetail = () => {
     }, [textAnswer]); // eslint-disable-line react-hooks/exhaustive-deps
     
     const countDown = () => {
-        let secondsToGo = 5;
+        let secondsToGo = 30;
     
         const instance = PauseModal.success({
             title: 'Đã hết thời gian cho phần này',
@@ -559,7 +559,7 @@ const ExamOnlineDetail = () => {
         const questionRemain = exam.data[`so_cau_hoi_phan_${state.sectionExam}`] - results.length;
 
         Modal.confirm({
-            title: 'Xác nhận chuyển qua phần tiếp theo',
+            title: 'CHÚC MỪNG BẠN ĐÃ HOÀN THÀNH PHẦN THI',
             maskStyle: { background: 'rgba(0, 0, 0, 0.8)' },
             wrapClassName: 'cra-confirm-modal-container',
             content: (
@@ -573,7 +573,7 @@ const ExamOnlineDetail = () => {
                     <div>
                         Thời gian còn <span style={{fontWeight: 700}}>({timeLeftInMinutes} phút {timeLeftInSeconds} giây)</span>.
                     </div>
-                    <div>Bạn đồng ý qua phần tiếp theo?</div>
+                    <div>Đề thi phần tiếp theo sẽ hiện thị sau 30 giây. Bạn hãy sẵn có thể để vào làm bài</div>
                     <div style={{color: 'red', fontWeight: 700}}>
                         Lưu ý: Bài làm phần này sẽ tự động nộp và bạn không thể sửa được nữa
                     </div>
@@ -599,7 +599,7 @@ const ExamOnlineDetail = () => {
                             setCountSection((preCount) => preCount - 1);
                         }, 1000);
                         setResults([]); 
-                    }, 5000);
+                    }, 30000);
                 }
             },
         });
@@ -932,7 +932,7 @@ const ExamOnlineDetail = () => {
             <Col span={6}>
                 {examUser.status === 'success' &&
 
-                    <div className="exam-right-content" style={{ position: 'sticky', top: '0px' }}>
+                    <div className="exam-right-content" style={{ position: 'sticky', top: '70px' }}>
                         <div className="topbar-exam">
                             <p className="mg-0">
                             <b style={{fontSize: 18}}>Số câu đã làm</b>
@@ -992,7 +992,6 @@ const ExamOnlineDetail = () => {
             <>  
                 <div className='section-question'>
                     <Row justify={'space-between'}>
-                        {/* Show current day, fullname and time */}
                         <Col>CET {getCurrentDate()}</Col>
                         <Col style={{display: 'flex'}}>
                             <div style={{marginRight: 12}}>Họ và tên: {JSON.parse(localStorage.getItem('userInfo')).ho_ten}</div>
@@ -1103,9 +1102,21 @@ const ExamOnlineDetail = () => {
                                                     return number;
                                                 })
                                                 return (
-                                                    <Timeline.Item key={index + 1} style={{paddingBottom: index + 1 === exam.data.so_phan ? 0 : 20, fontWeight: 600}}>
-                                                        Điểm thi phần {index + 1}: {number.reduce((partialSum, a) => partialSum + a, 0)} / {exam.data[`so_cau_hoi_phan_${index + 1}`]} = {(number.reduce((partialSum, a) => partialSum + a, 0) / exam.data[`so_cau_hoi_phan_${index + 1}`] * 100).toFixed(0)} %
-                                                    </Timeline.Item>
+                                                    // <Timeline.Item key={index + 1} style={{paddingBottom: index + 1 === exam.data.so_phan ? 0 : 20, fontWeight: 600}}>
+                                                    //     Điểm thi phần {index + 1}: {number.reduce((partialSum, a) => partialSum + a, 0)} / {exam.data[`so_cau_hoi_phan_${index + 1}`]} = {(number.reduce((partialSum, a) => partialSum + a, 0) / exam.data[`so_cau_hoi_phan_${index + 1}`] * 100).toFixed(0)} %
+                                                    // </Timeline.Item>
+                                                    <div className='title-section' >
+                                                            <div className={`section-${index}`} style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                                                                <div style={{padding: 0}}>
+                                                                    Phần {index + 1}: {index === 0 ? `Tư duy định lượng: ` 
+                                                                    : index === 1 ? `Tư duy định tính: `
+                                                                    : `Khoa học:`}
+                                                                </div>
+                                                                <div style={{padding: 0}}>
+                                                                    {number.reduce((partialSum, a) => partialSum + a, 0)}
+                                                                </div>
+                                                            </div>
+                                                    </div>
                                                 )
                                             })}
                                         </Timeline>
@@ -1215,7 +1226,7 @@ const ExamOnlineDetail = () => {
                                                         <div className="question-list" key={ParentIndex}>
                                                             <div className="question-info" id={`${ParentIndex + 1}`}>
                                                                 <b style={{fontSize: "22px", color: "#2e66ad"}}>Câu {ParentIndex + 1} 
-                                                                    <span className="point">[{question.cau_hoi.diem} điểm]</span>
+                                                                    {/* <span className="point">[{question.cau_hoi.diem} điểm]</span> */}
                                                                     <span style={{display: question.cau_hoi.loai_cau_hoi === 2 ? 'block' : 'none'}} className="point">[Câu trắc nghiệm đúng sai]</span>
                                                                 </b>
                                                                 <ul className="action-links"></ul>
@@ -1256,7 +1267,7 @@ const ExamOnlineDetail = () => {
                                                                                         </li>
                                                                                     : (question.cau_hoi.loai_cau_hoi === 0) ?
                                                                                         <li>
-                                                                                            <TextArea rows={4} style={{width:"100%"}} disabled={!isDoing} defaultValue={isAnswered !== undefined ? isAnswered.noi_dung : null}
+                                                                                            <TextArea placeholder='Nhập đáp án' rows={1} style={{width:"35%", marginTop: 12}} disabled={!isDoing} defaultValue={isAnswered !== undefined ? isAnswered.noi_dung : null}
                                                                                                 onChange={(e) => {
                                                                                                     localStorage.setItem('answerText', null);
                                                                                                     localStorage.setItem('question', null);
@@ -1313,15 +1324,15 @@ const ExamOnlineDetail = () => {
                                             } else return null;
                                         })}
 
-                                        <p className="block-action text-center mt-0">
-                                            <Button type="primary" size="large" className="join-exam-button" onClick={() => {
-                                                // Mở alat địa lý
-                                            }} 
-                                                style={{borderRadius: 8, backgroundColor: 'rgba(0, 115, 8, 0.92)', borderColor: 'rgba(0, 115, 8, 0.92)'}}
-                                            >
-                                                Mở alat địa lý
-                                            </Button>
-                                        </p>
+                                        {index === 2 && 
+                                            <p className="block-action text-center mt-0">
+                                                <a className="ant-btn ant-btn-primary ant-btn-lg join-exam-button" href={alat} target='_blank' rel='noopener noreferrer'
+                                                    style={{borderRadius: 8, backgroundColor: 'rgba(0, 115, 8, 0.92)', borderColor: 'rgba(0, 115, 8, 0.92)'}}
+                                                >
+                                                    Mở alat địa lý
+                                                </a>
+                                            </p>
+                                        }
                                     </>
                                 )
                             } else return null;
@@ -1357,7 +1368,7 @@ const ExamOnlineDetail = () => {
                                         
                                         <div className="question-info" id={`${ParentIndex + 1}`}>
                                             <b style={{fontSize: "22px", color: "#2e66ad"}}>Câu {ParentIndex + 1} 
-                                                <span className="point">[{question.cau_hoi.diem} điểm]</span>
+                                                {/* <span className="point">[{question.cau_hoi.diem} điểm]</span> */}
                                                 {/* <span className="point">[Mức độ: {renderLevelQuestion(question.cau_hoi.mdch_id)}]</span> */}
                                             </b>
                                             <ul className="action-links"></ul>
@@ -1552,7 +1563,7 @@ const ExamOnlineDetail = () => {
                             const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
                             return (
                                 <Col span={6}>
-                                    <div className="exam-right-content" style={{ position: 'sticky', top: '0px' }}>
+                                    <div className="exam-right-content" style={{ position: 'sticky', top: '70px' }}>
                                         <div className="topbar-exam">
                                             <p className="mg-0">
                                                 <b style={{fontSize: 16}}>Thời gian </b>

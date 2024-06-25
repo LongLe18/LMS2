@@ -24,6 +24,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import * as courseAction from '../../../../redux/actions/course';
 import * as programmeAction from '../../../../redux/actions/programme';
 import * as userActions from '../../../../redux/actions/user';
+import Statisic from 'components/parts/statisic/Statisic';
 
 const { Content } = Layout;
 
@@ -261,17 +262,18 @@ const BusinessProgramePage = (props) => {
         if (courses.status === 'success' && courses.data.length === 0) return <NoRecord />
         return (
             <div className="list-course-cate">
-
                 <div className="wraper wraper-list-course-cate-index">
-                    <CarouselCustom />
-                    <Row gutter={16}>
-                        <Col Col xl={4} md={4} xs={4}>
+                    <Row gutter={16} style={{margin: '18px 0'}}>
+                        <Col xl={4} md={4} xs={4} style={{paddingLeft: 0}}>
                             {(programmeCourses.status === 'success' && items.length > 0) &&
                                 <Menu style={{borderRadius: 6}}
-                                    mode="inline"
+                                    mode="vertical"
                                     theme="light"
                                     defaultSelectedKeys={['1']}
                                 >
+                                    <Menu.Item style={{background: '#3da844', marginTop: 0, borderTopRightRadius: 6, borderTopLeftRadius: 6}}>
+                                        <span style={{fontWeight: 600, color: "#fff"}}>Các khóa học</span>
+                                    </Menu.Item>
                                     {items.map((item, index) => {
                                         return (
                                             <Menu.SubMenu title={item.label}>
@@ -287,8 +289,14 @@ const BusinessProgramePage = (props) => {
                                     })}
                                 </Menu>
                             }
+                        </Col> 
+                        <Col xl={20} md={20} xs={20}>
+                            <CarouselCustom />
                         </Col>
-                        <Col Col xl={20} md={20} xs={20}>
+                    </Row>
+                    <Statisic />
+                    <Row gutter={16}>
+                        <Col Col xl={24} md={24} xs={24}>
                             <h2 className="section-title section-title-center">
                             <b></b>
                                 {(courses.status === 'success' && data.length > 0) && <span className="section-title-main">{data[0].ten_khung_ct}</span>}
@@ -298,7 +306,7 @@ const BusinessProgramePage = (props) => {
                             <Row gutter={[16, 16]} className="list-cate-items">
                                 {data.map((cate, index) => {
                                     return (
-                                        <Col xl={5} sm={12} xs={12} className="course-cate-row" key={cate.key}>
+                                        <Col xl={4} sm={12} xs={12} className="course-cate-row" key={cate.key}>
                                             <div className="course-cate-box">
                                                 <div className="image-box">
                                                     {/* {typeProgramme === 1 
@@ -326,8 +334,8 @@ const BusinessProgramePage = (props) => {
                                                                 <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>{cate.ten_khoa_hoc}</Link>
                                                             </h3>
                                                             <p className="course-cate-description">
-                                                                <span>Ngày bắt đầu: {moment(cate.ngay_bat_dau).format(config.DATE_FORMAT_SHORT)}</span>
-                                                                <span>Ngày kết thúc: {moment(cate.ngay_ket_thuc).format(config.DATE_FORMAT_SHORT)}</span>
+                                                                {/* <span>Ngày bắt đầu: {moment(cate.ngay_bat_dau).format(config.DATE_FORMAT_SHORT)}</span>
+                                                                <span>Ngày kết thúc: {moment(cate.ngay_ket_thuc).format(config.DATE_FORMAT_SHORT)}</span> */}
                                                                 <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`} >
                                                                     <Button type="primary" style={{margin: '12px 0 12px 0', fontSize: 12, borderRadius: 4}}>
                                                                         Chi tiết

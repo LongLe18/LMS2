@@ -865,7 +865,7 @@ const ExamDetail = () => {
                                 <div className="question-info" id={`${ParentIndex + 1}`}>
                                     <b style={{fontSize: "22px", color: "#2e66ad"}}>Câu {ParentIndex + 1} 
                                         <span style={{display: question.cau_hoi.loai_cau_hoi === 2 ? 'block' : 'none'}} className="point">[Câu trắc nghiệm đúng sai]</span>
-                                        <span className="point">[{question.cau_hoi.diem} điểm]</span>
+                                        {/* <span className="point">[{question.cau_hoi.diem} điểm]</span> */}
                                     </b>
                                     <ul className="action-links"></ul>
                                 </div>
@@ -904,7 +904,7 @@ const ExamDetail = () => {
                                                             </li>
                                                         : (question.cau_hoi.loai_cau_hoi === 0) ?
                                                             <li>
-                                                                <TextArea rows={4} style={{width:"100%"}} disabled={!isDoing} defaultValue={isAnswered !== undefined ? isAnswered.noi_dung : null}
+                                                                <TextArea placeholder='Nhập đáp án' rows={1} style={{width:"35%", marginTop: 12}} disabled={!isDoing} defaultValue={isAnswered !== undefined ? isAnswered.noi_dung : null}
                                                                     onChange={(e) => {
                                                                         localStorage.setItem('answerText', null);
                                                                         localStorage.setItem('question', null);

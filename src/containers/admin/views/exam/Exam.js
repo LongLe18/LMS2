@@ -34,7 +34,8 @@ const ExamAdminPage = () => {
 
     const [form] = Form.useForm();
     const [isModalVisible, setIsModalVisible] = useState(false);
-    // const [selected, setSelected] = useState([]);
+    const [isModalFastVisible, setIsModalFastVisible] = useState(false);
+    // const [selected, setSelected] = useState([]);isModalFastVisible
 
     const dispatch = useDispatch();
 
@@ -93,6 +94,14 @@ const ExamAdminPage = () => {
     };
     
     const handleCancel = () => {
+        setIsModalVisible(false);
+    };
+
+    const handleFastOk = () => {
+        setIsModalVisible(false);
+    };
+    
+    const handleFastCancel = () => {
         setIsModalVisible(false);
     };
 
@@ -391,6 +400,10 @@ const ExamAdminPage = () => {
         )
     };
 
+    const renderFastAddModal = () => {
+
+    }
+    
     const onFilterChange = (field, value) => {
         if (field === 'ngay') {
           setFilter((state) => ({ ...state, start: value[0] }));  
@@ -567,6 +580,15 @@ const ExamAdminPage = () => {
                                   maskClosable={false}
                                   footer={null}>
                                   {renderAddModal()}
+                              </Modal>
+                              {/* Modal tạo nhanh đề thi */}
+                              <Modal visible={isModalFastVisible}  mask={true} centered={true} className="cra-exam-modal" wrapClassName="cra-exam-modal-container"                                   
+                                  onOk={handleFastOk} 
+                                  onCancel={handleFastCancel}
+                                  maskStyle={{ background: 'rgba(0, 0, 0, 0.8)' }}
+                                  maskClosable={false}
+                                  footer={null}>
+                                  {renderFastAddModal()}
                               </Modal>
                             </Col>
                         </Row>

@@ -81,7 +81,7 @@ const ExamPage = (props) => {
                 <Row className="logo" align={'middle'}>
                     <Col xs={{ span: 24 }} lg={{ span: 4 }}>
                         <div className="logo">
-                            <Avatar shape="square" size={130} src={require('assets/img/logo/vnu-cet-logo.png').default} />
+                            <Avatar shape="square" size={130} src={require('assets/rank/Logo.png').default} />
                         </div>
                     </Col>
                     <Col xs={{ span: 22, offset: 1 }} lg={{ span: 10, offset: 4}}>

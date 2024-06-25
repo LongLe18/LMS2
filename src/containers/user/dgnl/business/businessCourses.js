@@ -19,6 +19,7 @@ import CarouselCustom from 'components/parts/Carousel/Carousel';
 import { useSelector, useDispatch } from 'react-redux';
 import * as courseAction from '../../../../redux/actions/course';
 import * as programmeAction from '../../../../redux/actions/programme';
+import Statisic from "components/parts/statisic/Statisic";
 
 const { Content } = Layout;
 const { Option } = Select;
@@ -159,15 +160,17 @@ const CoursesPage = (props) => {
             <>      
                 <div className="list-course-cate">        
                     <div className="wraper wraper-list-course-cate-index">
-                    <Row gutter={16} style={{margin: '18px 0'}}>
-                            <Col Col xl={4} md={4} xs={4}>
+                        <Row gutter={16} style={{margin: '18px 0'}}>
+                            <Col xl={4} md={4} xs={4} style={{paddingLeft: 0}}>
                                 {(programmeCourses.status === 'success' && items.length > 0) &&
                                     <Menu style={{borderRadius: 6}}
                                         mode="vertical"
                                         theme="light"
                                         defaultSelectedKeys={['1']}
                                     >
-                                        <Menu.Item style={{background: '#3da844', marginTop: 0, borderTopRightRadius: 6, borderTopLeftRadius: 6}}><span style={{fontWeight: 600, color: "#fff"}}>Các khóa học</span></Menu.Item>
+                                        <Menu.Item style={{background: '#3da844', marginTop: 0, borderTopRightRadius: 6, borderTopLeftRadius: 6}}>
+                                            <span style={{fontWeight: 600, color: "#fff"}}>Các khóa học</span>
+                                        </Menu.Item>
                                         {items.map((item, index) => {
                                             return (
                                                 <Menu.SubMenu title={item.label}>
@@ -184,10 +187,11 @@ const CoursesPage = (props) => {
                                     </Menu>
                                 }
                             </Col> 
-                            <Col Col xl={20} md={20} xs={20}>
+                            <Col xl={20} md={20} xs={20}>
                                 <CarouselCustom />
                             </Col>
                         </Row>
+                        <Statisic />
                         <Row>
                             <Col span={24} className="filter-todo">
                                 <Form layout="vertical" form={form} autoComplete="off" onFinish={search}>
