@@ -5,7 +5,7 @@ const API_URL_PROD = 'http://103.127.207.97:3003';
 const DATE_FORMAT = 'HH:mm DD/MM/YYYY';
 const DATE_FORMAT_SHORT = 'DD/MM/YYYY';
 const SHOW_DATE_FORMAT = 'D MMMM YYYY, HH:mm';
-
+const API_LATEX = 'http://103.127.207.97:3002'
 
 const LANGUAGES = [
   {
@@ -27,6 +27,7 @@ const CAPTCHA = {
 };
 const config = {
   ENV,
+  API_LATEX,
   BASE_URL,
   API_URL: ENV === 'dev' ? API_URL_DEV : API_URL_PROD,
   RULE_SET_APP: ENV === 'dev' ? 'http://103.127.207.97:3001' : 'http://103.127.207.97:3001',

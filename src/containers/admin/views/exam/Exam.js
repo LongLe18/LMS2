@@ -5,9 +5,10 @@ import config from '../../../../configs/index';
 import Hashids from 'hashids';
 import defaultImage from 'assets/img/default.jpg';
 import moment from 'moment';
+import axios from 'axios';
 import './css/addmodal.scss';
 // antd
-import { Row, Col, Button, Tabs, Table, Avatar, Modal, Form, Input, Select, Upload, message, notification, Tooltip } from 'antd';
+import { Row, Col, Button, Tabs, Table, Avatar, Modal, Form, Input, Select, Upload, message, notification, Tooltip, Spin } from 'antd';
 import { PlusOutlined, UploadOutlined, EyeOutlined, LockOutlined, UnlockOutlined, RedoOutlined } from '@ant-design/icons';
 
 // component
@@ -33,8 +34,10 @@ const ExamAdminPage = () => {
     const hashids = new Hashids();
 
     const [form] = Form.useForm();
+    const [formFastExam] = Form.useForm();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isModalFastVisible, setIsModalFastVisible] = useState(false);
+    const [spinning, setSpinning] = useState(false);
     // const [selected, setSelected] = useState([]);isModalFastVisible
 
     const dispatch = useDispatch();
@@ -98,11 +101,12 @@ const ExamAdminPage = () => {
     };
 
     const handleFastOk = () => {
-        setIsModalVisible(false);
+      dispatch(courseActions.getCourses({ idkct: '', status: '', search: '' }));
+      setIsModalFastVisible(false);
     };
     
-    const handleFastCancel = () => {
-        setIsModalVisible(false);
+    const showFastModal = () => {
+      setIsModalFastVisible(true);
     };
 
     const column1 = [
@@ -240,6 +244,35 @@ const ExamAdminPage = () => {
         },
     };
 
+    const propsFile = {
+      name: 'file',
+      action: '#',
+
+      beforeUpload: file => {
+        const isDocx = file.type === 'application/msword';
+        if (!isDocx) {
+          message.error(`${file.name} có định dạng không phải là file docx`);
+        }
+        return isDocx || Upload.LIST_IGNORE;
+      },
+
+      onChange(info) {
+        setState({ ...state, fileImg: info.file.originFileObj });
+      },
+
+      async customRequest(options) {
+        const { onSuccess } = options;
+  
+        setTimeout(() => {
+          onSuccess("ok");
+        }, 0);
+      },
+
+      onRemove(e) {
+        setState({ ...state, fileImg: '' });
+      },
+  };
+
     const renderProgramme = () => {
       let options = [];
       if (programmes.status === 'success') {
@@ -310,6 +343,23 @@ const ExamAdminPage = () => {
           </Select>
         );
     };
+
+    const renderExam = () => {
+      let options = [];
+        if (exams.status === 'success') {
+          options = exams.data.map((exam) => (
+            <Option key={exam.de_thi_id} value={exam.de_thi_id} >{exam.ten_de_thi}</Option>
+          ))
+        }
+        return (
+          <Select
+            showSearch={false}
+            placeholder="Chọn đề thi"
+          >
+            {options}
+          </Select>
+        );
+    }
 
     const renderModule = () => {
         let options = [];
@@ -400,10 +450,79 @@ const ExamAdminPage = () => {
         )
     };
 
+    //Modal tạo nhanh đề thi 
     const renderFastAddModal = () => {
-
+      return (
+        <>
+            <h2 className="form-title">Tạo nhanh đề thi</h2>
+            <Form form={formFastExam} className="login-form app-form" name="login-form" onFinish={createFastExam}
+              labelCol={{span: 6,}} 
+            >
+              <Form.Item label="Khung" name="khung_ct" rules={[{ required: true, message: 'Loại đề thi là bắt buộc'}]}>
+                {renderProgramme()}
+              </Form.Item>
+              <Form.Item label="Khóa học" name="khoa_hoc_id" rules={[{ required: true, message: 'Khóa học là bắt buộc' }]}>
+                {renderCourse()}
+              </Form.Item>
+              <Form.Item label="Đề thi" name="de_thi_id" rules={[{ required: true, message: 'Khóa học là bắt buộc' }]}>
+                {renderExam()}
+              </Form.Item>
+              <Form.Item className="input-col" label="file đề thi" name="anh_dai_dien" rules={[]}>
+                  <Dragger {...propsFile} maxCount={1}
+                      listType="picture"
+                      className="upload-list-inline"
+                  >
+                      <p className="ant-upload-drag-icon">
+                        <UploadOutlined />
+                      </p>
+                      <p className="ant-upload-text bold">Click hoặc kéo file đề thi vào đây</p>
+                  </Dragger>
+              </Form.Item>
+              <Form.Item className="button-col" style={{marginBottom: 0}}>
+                <Button shape="round" type="primary" htmlType="submit" >Tạo đề thi</Button>
+              </Form.Item>
+            </Form>
+        </>
+      )
     }
     
+    // Tạo nhanh đề thi
+    const createFastExam = (values) => {
+      setSpinning(true);
+      const formData = new FormData();
+      if (state.fileImg !== '') formData.append('file', state.fileImg !== undefined ? state.fileImg : '');  
+      else {
+        notification.warning({
+          message: 'Thông báo',
+          description: 'Bạn chưa upload file',
+        })
+        return;
+      }
+      axios.post(config.API_LATEX + `${values.de_thi_id}/uploadfile`, )
+      .then(
+          res => {
+            console.log(res)
+            if (res.statusText === 'OK' && res.status === 200) {
+              formFastExam.resetFields();
+              dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, idThematic: filter.chuyen_de_id, status: filter.trang_thai, search: filter.search, 
+                  start: filter.start, end: filter.end, idType: filter.typeId, publish: tabs}));
+              notification.success({
+                  message: 'Thành công',
+                  description: 'Thêm đề thi mới thành công',
+              });
+              setIsModalFastVisible(false);
+              setSpinning(false);
+            } else {
+                notification.error({
+                    message: 'Thông báo',
+                    description: 'Thêm đề thi mới thất bại. Xin vui lòng kiểm tra lại tiêu chí đề',
+                })
+            }
+          }
+      )
+      .catch(error => notification.error({ message: error.message }));
+    }
+
     const onFilterChange = (field, value) => {
         if (field === 'ngay') {
           setFilter((state) => ({ ...state, start: value[0] }));  
@@ -415,12 +534,14 @@ const ExamAdminPage = () => {
     };
 
     useEffect(() => {
-        dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, idThematic: filter.chuyen_de_id, status: filter.trang_thai, search: filter.search, 
+        dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, 
+          idThematic: filter.chuyen_de_id, status: filter.trang_thai, search: filter.search, 
           start: filter.start, end: filter.end, idType: filter.typeId, publish: tabs}));
     }, [filter.khoa_hoc_id, filter.mo_dun_id, filter.chuyen_de_id, filter.trang_thai, filter.start, filter.end, filter.typeId]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
-      dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, idThematic: filter.chuyen_de_id, status: filter.trang_thai, search: filter.search, 
+      dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, 
+        idThematic: filter.chuyen_de_id, status: filter.trang_thai, search: filter.search, 
         start: filter.start, end: filter.end, idType: filter.typeId, publish: tabs}));
     }, [searchValue]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -567,7 +688,7 @@ const ExamAdminPage = () => {
                             <Col xl={12} sm={12} xs={24} className="right-actions">
                               {/* {renderTypeExams2()} */}
                               <br/>
-                              <Button onClick={() => showModal()} shape="round" type="primary" icon={<PlusOutlined />} className=" btn-action">
+                              <Button onClick={() => showFastModal()} shape="round" type="primary" icon={<PlusOutlined />} className=" btn-action">
                                   Tạo nhanh đề thi
                               </Button>
                               <Button onClick={() => showModal()} shape="round" type="primary" icon={<PlusOutlined />} className=" btn-action">
@@ -584,7 +705,7 @@ const ExamAdminPage = () => {
                               {/* Modal tạo nhanh đề thi */}
                               <Modal visible={isModalFastVisible}  mask={true} centered={true} className="cra-exam-modal" wrapClassName="cra-exam-modal-container"                                   
                                   onOk={handleFastOk} 
-                                  onCancel={handleFastCancel}
+                                  onCancel={handleFastOk}
                                   maskStyle={{ background: 'rgba(0, 0, 0, 0.8)' }}
                                   maskClosable={false}
                                   footer={null}>
@@ -611,6 +732,7 @@ const ExamAdminPage = () => {
                         description: 'Lấy dữ liệu đề thi thất bại',
                     })}
                 </Tabs>
+                <Spin spinning={spinning} fullscreen />
             </div>
         </>
     )
