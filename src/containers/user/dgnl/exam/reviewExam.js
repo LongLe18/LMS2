@@ -3,7 +3,9 @@ import { Helmet } from 'react-helmet';
 import config from '../../../../configs/index';
 import Hashids from 'hashids';
 import { useParams } from 'react-router-dom';
+import 'katex/dist/katex.min.css';
 import './css/ExamDetail2.scss'
+import Latex from 'react-latex-next';
 
 // component
 import LoadingCustom from 'components/parts/loading/Loading';
@@ -81,10 +83,7 @@ const ReviewExamPage = () => {
             <div className={`answer ${answer.dap_an_dung === true ? 'correct' : ''} `}>
                 <span className="answer-label">{renderAnswerKey(index)}</span>
                 <div className="answer-content">             
-                    <img alt="..."
-                        className="img-no-padding img-responsive"
-                        src={config.API_URL + answer.noi_dung_dap_an}
-                    />
+                    <Latex>{answer.noi_dung_dap_an}</Latex>
                 </div>
             </div>
         );
@@ -186,142 +185,143 @@ const ReviewExamPage = () => {
                             </div>
                         </div>   
                     )}
-                    {exam.status === 'success' && exam.data.cau_hoi_de_this.map((question, ParentIndex) => (
-                        <>
-                            {(question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom !== undefined && question.cau_hoi.exceprtTo !== undefined) &&
-                                <>  
-                                    {(question.cau_hoi.exceprtFrom === question.cau_hoi.exceprtTo) 
-                                    ? <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi {question.cau_hoi.exceprtFrom + 1}</span>
-                                    : <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi từ {question.cau_hoi.exceprtFrom + 1} đến {question.cau_hoi.exceprtTo + 1}</span>
-                                    }
-                                    <br/>
-                                    <div className="answer-content" style={{paddingLeft: '20px'}}>             
-                                        <img alt="..."
-                                            className="img-no-padding img-responsive"
-                                            src={config.API_URL + question.cau_hoi.trich_doan.noi_dung}
-                                        />
-                                    </div>
-                                </>
-                            }               
-                            <div className="question-list" key={ParentIndex}>
-                                
-                                <div className="question-info" id={`${ParentIndex + 1}`}>
-                                    <b style={{fontSize: "18px", color: "#2e66ad"}}>Câu {ParentIndex + 1} 
-                                        <span className="point">[{question.cau_hoi.diem} điểm]</span>
-                                    </b>
-                                    <ul className="action-links"></ul>
-                                </div>
+                    {exam.status === 'success' && exam.data.cau_hoi_de_this.map((question, ParentIndex) => {
+                        const inputString = question.cau_hoi.noi_dung;
+                        const regex2 = /\\begin{center}\s*\\includegraphics(?:\[[^\]]*\])?\{([^}]*)\}\s*\\end{center}/g;
+                        let urls = [];
+                        let match;
+                        while ((match = regex2.exec(inputString)) !== null) {
+                            urls.push(match[1]); // Capture the content inside {}
+                        }
+                        const matches = inputString.replace(regex2, '');
 
-                                <div className="title-exam">
-                                    <img alt="..."
-                                        className="img-no-padding img-responsive"
-                                        src={config.API_URL + question.cau_hoi.noi_dung}
-                                    />
-                                </div>
-
-                                <div className="content-answer-question">
-                                    <Row gutter={[20, 10]} className="multi-choice">
-                                        {question.cau_hoi.dap_ans.map((answer, index) => {
-                                            const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
-                                            return (
-                                                <Col xs={24} sm={24} md={getAnswerCols(question.cau_hoi.cot_tren_hang)} key={index}>
-                                                    <ul key={index}>
-                                                        <li className={`item ${isAnswered && isAnswered.dap_an === renderAnswerKey(index) ? 'active' : ''}`}>
-                                                            {(question.cau_hoi.loai_cau_hoi === 1) ?
-                                                                <button  style={{width:"100%"}}
-                                                                    className="btn-onclick"
-                                                                >
-                                                                    {renderAnswer(question.cau_hoi, answer, index)}
-                                                                </button>
-                                                            : (question.cau_hoi.loai_cau_hoi === 0) ?
-                                                                <button  style={{width:"100%"}}
-                                                                    className="btn-onclick"
-                                                                >
-                                                                    <TextArea rows={4} style={{width:"100%"}} onChange={(e) => {
-                                                                            const isAswered = results.find((item) => item.cau_hoi_id === question.cau_hoi_id);
-                                                                            if (isAswered) {
-                                                                                const newAnsers = results.map((item) => (item.cau_hoi_id === question.cau_hoi_id ? { ...item, noi_dung: e.target.value, gia_tri_dap_an: e.target.value, loai_dap_an: false } : item));
-                                                                                setResults(newAnsers);
-                                                                            } else {
-                                                                                setResults([...results, { cau_hoi_id: question.cau_hoi_id, noi_dung: e.target.value, gia_tri_dap_an: e.target.value, loai_dap_an: false }]);
-                                                                            }
-                                                                        }}/>
-                                                                </button>
-                                                            :
-                                                                <div className='wrongrightAnswer'>
-                                                                    <button id={`button-Right-${index}`}
-                                                                        className={`btn-DS ${isAnswered && isAnswered.ket_qua_chon[index] === '1' ? 'active' : '' } 
-                                                                            ${!isCorrectQuestionDungSai(question.cau_hoi, index, true)  ? 'no-thing' : ''}
-                                                                            ${isCorrectQuestionDungSai(question.cau_hoi, index, true) ? 'correct' : ''}`
-                                                                        }
-                                                                    >
-                                                                        <span style={{color: 'white'}}>Đ</span>
-                                                                    </button>
-                                                                    <button id={`button-Wrong-${index}`}
-                                                                        className={`btn-DS ${isAnswered && isAnswered.ket_qua_chon[index] === '0' ? 'active' : '' }
-                                                                            ${!isCorrectQuestionDungSai(question.cau_hoi, index, false) ? `no-thing` : ''}
-                                                                            ${isCorrectQuestionDungSai(question.cau_hoi, index, false) ? 'correct' : ''}`
-                                                                        }
-                                                                    >
-                                                                        <span style={{color: 'white'}}>S</span>
-                                                                    </button>
-                                                                    <img alt="..."
-                                                                        className="img-no-padding img-responsive"
-                                                                        src={config.API_URL + answer.noi_dung_dap_an}
-                                                                    />
-                                                                </div>
-                                                            }
-                                                        </li>
-                                                    </ul>
-                                                </Col>
-                                            )
-                                        })}
-                                    </Row>
-                                    {renderAnswerResult(question)}
-                                </div>
-
-                                <div className="question-actions">
-                                    <Button
-                                        type="default"
-                                        shape="round"
-                                        icon={<InfoCircleOutlined />}
-                                        onClick={() => {
-                                            if (!help.includes(question.cau_hoi_id)) {
-                                                setHelp([...help, question.cau_hoi_id]);
-                                            } else {
-                                                setHelp(help.filter((cau_hoi_id) => cau_hoi_id !== question.cau_hoi_id));
-                                            }
-                                        }}
-                                    >
-                                        Xem lời giải
-                                    </Button>
-                                    <div className="question-toggle">
+                        return (
+                            <>
+                                {(question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom !== undefined && question.cau_hoi.exceprtTo !== undefined) &&
+                                    <>  
+                                        {(question.cau_hoi.exceprtFrom === question.cau_hoi.exceprtTo) 
+                                        ? <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi {question.cau_hoi.exceprtFrom + 1}</span>
+                                        : <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi từ {question.cau_hoi.exceprtFrom + 1} đến {question.cau_hoi.exceprtTo + 1}</span>
+                                        }
+                                        <br/>
+                                        <div className="answer-content" style={{paddingLeft: '20px'}}>             
+                                            <img alt="..."
+                                                className="img-no-padding img-responsive"
+                                                src={config.API_URL + question.cau_hoi.trich_doan.noi_dung}
+                                            />
+                                        </div>
+                                    </>
+                                }               
+                                <div className="question-list" key={ParentIndex}>
                                     
-                                    {help.includes(question.cau_hoi_id) &&(
-                                        <Alert
-                                            message=""
-                                            type="warning"
-                                            description={
-                                                <div className="help-answer">
-                                                    <img alt="..."
-                                                            className="img-no-padding img-responsive"
-                                                            src={config.API_URL + question.cau_hoi.loi_giai}
-                                                        />
-                                                    {/* {question.cau_hoi.loai_cau_hoi ?
-                                                        
-                                                    :   <span>{question.cau_hoi.loi_giai}</span>
-                                                    } */}
-                                                </div>
-                                            }
-                                            closable
-                                            onClose={() => setHelp(help.filter((cau_hoi_id) => cau_hoi_id !== question.cau_hoi_id))}
-                                        />
-                                    )}
+                                    <div className="question-info" id={`${ParentIndex + 1}`}>
+                                        <b style={{fontSize: "18px", color: "#2e66ad"}}>Câu {ParentIndex + 1} 
+                                            <span className="point">[{question.cau_hoi.diem} điểm]</span>
+                                        </b>
+                                        <ul className="action-links"></ul>
+                                    </div>
+
+                                    <div className="title-exam">
+                                        <Latex>{matches}</Latex>
+                                        {urls.length > 0 && urls.map((url, idx) => (
+                                            <img src={config.API_URL + `/${url}`} alt='img'/>
+                                        ))}
+                                    </div>
+
+                                    <div className="content-answer-question">
+                                        <Row gutter={[20, 10]} className="multi-choice">
+                                            {question.cau_hoi.dap_ans.map((answer, index) => {
+                                                const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
+                                                return (
+                                                    <Col xs={24} sm={24} md={getAnswerCols(question.cau_hoi.cot_tren_hang)} key={index}>
+                                                        <ul key={index}>
+                                                            <li className={`item ${isAnswered && isAnswered.dap_an === renderAnswerKey(index) ? 'active' : ''}`}>
+                                                                {(question.cau_hoi.loai_cau_hoi === 1) ?
+                                                                    <button  style={{width:"100%"}}
+                                                                        className="btn-onclick"
+                                                                    >
+                                                                        {renderAnswer(question.cau_hoi, answer, index)}
+                                                                    </button>
+                                                                : (question.cau_hoi.loai_cau_hoi === 0) ?
+                                                                    <button  style={{width:"100%"}}
+                                                                        className="btn-onclick"
+                                                                    >
+                                                                        <TextArea rows={4} style={{width:"100%"}} onChange={(e) => {
+                                                                                const isAswered = results.find((item) => item.cau_hoi_id === question.cau_hoi_id);
+                                                                                if (isAswered) {
+                                                                                    const newAnsers = results.map((item) => (item.cau_hoi_id === question.cau_hoi_id ? { ...item, noi_dung: e.target.value, gia_tri_dap_an: e.target.value, loai_dap_an: false } : item));
+                                                                                    setResults(newAnsers);
+                                                                                } else {
+                                                                                    setResults([...results, { cau_hoi_id: question.cau_hoi_id, noi_dung: e.target.value, gia_tri_dap_an: e.target.value, loai_dap_an: false }]);
+                                                                                }
+                                                                            }}/>
+                                                                    </button>
+                                                                :
+                                                                    <div className='wrongrightAnswer'>
+                                                                        <button id={`button-Right-${index}`}
+                                                                            className={`btn-DS ${isAnswered && isAnswered.ket_qua_chon[index] === '1' ? 'active' : '' } 
+                                                                                ${!isCorrectQuestionDungSai(question.cau_hoi, index, true)  ? 'no-thing' : ''}
+                                                                                ${isCorrectQuestionDungSai(question.cau_hoi, index, true) ? 'correct' : ''}`
+                                                                            }
+                                                                        >
+                                                                            <span style={{color: 'white'}}>Đ</span>
+                                                                        </button>
+                                                                        <button id={`button-Wrong-${index}`}
+                                                                            className={`btn-DS ${isAnswered && isAnswered.ket_qua_chon[index] === '0' ? 'active' : '' }
+                                                                                ${!isCorrectQuestionDungSai(question.cau_hoi, index, false) ? `no-thing` : ''}
+                                                                                ${isCorrectQuestionDungSai(question.cau_hoi, index, false) ? 'correct' : ''}`
+                                                                            }
+                                                                        >
+                                                                            <span style={{color: 'white'}}>S</span>
+                                                                        </button>
+                                                                        <Latex>{answer.noi_dung_dap_an}</Latex>
+                                                                    </div>
+                                                                }
+                                                            </li>
+                                                        </ul>
+                                                    </Col>
+                                                )
+                                            })}
+                                        </Row>
+                                        {renderAnswerResult(question)}
+                                    </div>
+
+                                    <div className="question-actions">
+                                        <Button
+                                            type="default"
+                                            shape="round"
+                                            icon={<InfoCircleOutlined />}
+                                            onClick={() => {
+                                                if (!help.includes(question.cau_hoi_id)) {
+                                                    setHelp([...help, question.cau_hoi_id]);
+                                                } else {
+                                                    setHelp(help.filter((cau_hoi_id) => cau_hoi_id !== question.cau_hoi_id));
+                                                }
+                                            }}
+                                        >
+                                            Xem lời giải
+                                        </Button>
+                                        <div className="question-toggle">
+                                        
+                                        {help.includes(question.cau_hoi_id) &&(
+                                            <Alert
+                                                message=""
+                                                type="warning"
+                                                description={
+                                                    <div className="help-answer">
+                                                        <Latex>{ question.cau_hoi.loi_giai }</Latex>
+                                                    </div>
+                                                }
+                                                closable
+                                                onClose={() => setHelp(help.filter((cau_hoi_id) => cau_hoi_id !== question.cau_hoi_id))}
+                                            />
+                                        )}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </>
-                    ))}
+                            </>
+                        )
+                    })}
                 </Col>
                 {renderHistoryExamSidebar()}
             </Row>

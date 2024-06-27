@@ -80,7 +80,7 @@ const OnlineExamDetailPage = () => {
     const [currentStep, setCurrentStep] = useState(0);
     const [currentQuestion, setCurrentQuestion] = useState(defaultQuestion);
     const [isModalVisible, setIsModalVisible] = useState(false);
-
+    
     const exam = useSelector(state => state.exam.item.result);
     const loading = useSelector(state => state.exam.item.loading);
     const error = useSelector(state => state.exam.item.error);
@@ -222,8 +222,10 @@ const OnlineExamDetailPage = () => {
                         loai_cau_hoi: res.data.loai_cau_hoi,
                         muc_do_cau_hoi: res.data.mdch_id,
                         kieu_hien_thi_dap_an: res.data.cot_tren_hang.toString(),
-                        dap_an_dung: dap_an_dung
+                        dap_an_dung: dap_an_dung,
                     });
+                    setCurrentQuestion({...currentQuestion, noi_dung: res.data.noi_dung });
+
                     setState({ ...state, isEdit: true, idQuestion: cau_hoi.cau_hoi_id, indexQuestion: index + 1,
                         showTuLuan: res.data.loai_cau_hoi === 0 ? true : false, 
                         showTextTuLuan: res.data.loai_cau_hoi === 0 ? true : false, 
@@ -233,6 +235,7 @@ const OnlineExamDetailPage = () => {
         }
     };
 
+    // render danh sách câu hỏi cho sidebar bên phải 
     const renderQuestions = () => {
         const questionArr = exam.data.cau_hoi_de_this.map((question, index) => {
             return (
@@ -569,6 +572,7 @@ const OnlineExamDetailPage = () => {
         }
     };
 
+    console.log(currentQuestion);
     return (
         <>
             <div className="content">
@@ -724,8 +728,10 @@ const OnlineExamDetailPage = () => {
                                                                                     <TextEditorWidget
                                                                                         disabled={state.defaultExam.trang_thai === false}
                                                                                         value={currentQuestion.noi_dung}
-                                                                                        placeholder="Thêm nội dung câu hỏi (Chỉ sử dụng hình ảnh)"
-                                                                                        onChange={(val) => setCurrentQuestion({ ...currentQuestion, noi_dung: val })}
+                                                                                        placeholder="Thêm nội dung câu hỏi"
+                                                                                        onChange={(val) => {
+                                                                                            setCurrentQuestion({ ...currentQuestion, noi_dung: val });
+                                                                                        }}
                                                                                         isSimple={true} 
                                                                                     />
                                                                                 </Form.Item>

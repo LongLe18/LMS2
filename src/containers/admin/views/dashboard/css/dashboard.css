@@ -1729,7 +1729,7 @@ a {
 .ant-upload-list-picture .ant-upload-list-item-thumbnail,
 .ant-upload-list-picture-card .ant-upload-list-item-thumbnail {
   width: 100px !important;
-  height: 100px !important;
+  /* height: 100px !important; */
 }
 
 .FolderTree .TreeNode .AddFileIcon {

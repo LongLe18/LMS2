@@ -36,7 +36,6 @@ Block.tagName = 'div';
 Quill.register(Block);
 
 const TextEditorWidget = (props) => {
-
     const quillRef = useRef();
 
     const getBase64 = (img, callback) => {
@@ -103,8 +102,9 @@ const TextEditorWidget = (props) => {
     });
 
     const handleChange = (html) => {
-        if (html === '<div><br></div>') setState({ ...state, editorHtml: html, fileImg: '', isChanged: true });
-        else setState({ ...state, editorHtml: html, isChanged: true });
+        setState({ ...state, editorHtml: html })
+        // if (html === '<div><br></div>') setState({ ...state, editorHtml: html, fileImg: '', isChanged: true });
+        // else setState({ ...state, editorHtml: html, isChanged: true });
     };
     
     const formats = ['header', 'font', 'color', 'align', 'size', 'bold', 'italic', 'underline', 'strike', 'blockquote', 'list', 'bullet', 'indent', 'link', 'image', 'video', 'formula', 'width'];
@@ -192,7 +192,7 @@ const TextEditorWidget = (props) => {
             ${props.isMinHeight300 ? 'min-height-300' : ''}
             ${props.isMinHeight500 ? 'min-height-500' : ''}
         `}
-            onMouseLeave={() => {props.onChange(state.fileImg)}}
+            onMouseLeave={() => {props.onChange(state.editorHtml)}}
         >
             {!props.disabled && (
                 <ReactQuill
@@ -231,7 +231,6 @@ const TextEditorWidget = (props) => {
                         type="link"
                         title="Chèn công thức"
                         size="small"
-                        style={{display: 'none'}}
                         onClick={() =>
                         setMath({
                             ...math,
@@ -251,7 +250,7 @@ const TextEditorWidget = (props) => {
                                 setViewable(!viewable);
                             }}
                         >
-                        <EyeOutlined />
+                            <EyeOutlined />
                         </Button>
                     )}
                 </div>

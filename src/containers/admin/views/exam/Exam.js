@@ -8,7 +8,7 @@ import moment from 'moment';
 import axios from 'axios';
 import './css/addmodal.scss';
 // antd
-import { Row, Col, Button, Tabs, Table, Avatar, Modal, Form, Input, Select, Upload, message, notification, Tooltip, Spin } from 'antd';
+import { Row, Col, Button, Tabs, Table, Avatar, Modal, Form, Input, Select, Upload, message, notification, Tooltip, Spin, Alert } from 'antd';
 import { PlusOutlined, UploadOutlined, EyeOutlined, LockOutlined, UnlockOutlined, RedoOutlined } from '@ant-design/icons';
 
 // component
@@ -101,8 +101,10 @@ const ExamAdminPage = () => {
     };
 
     const handleFastOk = () => {
-      dispatch(courseActions.getCourses({ idkct: '', status: '', search: '' }));
-      setIsModalFastVisible(false);
+      if (!spinning) {
+        dispatch(courseActions.getCourses({ idkct: '', status: '', search: '' }));
+        setIsModalFastVisible(false);
+      }
     };
     
     const showFastModal = () => {
@@ -454,34 +456,36 @@ const ExamAdminPage = () => {
     const renderFastAddModal = () => {
       return (
         <>
-            <h2 className="form-title">Tạo nhanh đề thi</h2>
-            <Form form={formFastExam} className="login-form app-form" name="login-form" onFinish={createFastExam}
-              labelCol={{span: 6,}} 
-            >
-              <Form.Item label="Khung" name="khung_ct" rules={[{ required: true, message: 'Loại đề thi là bắt buộc'}]}>
-                {renderProgramme()}
-              </Form.Item>
-              <Form.Item label="Khóa học" name="khoa_hoc_id" rules={[{ required: true, message: 'Khóa học là bắt buộc' }]}>
-                {renderCourse()}
-              </Form.Item>
-              <Form.Item label="Đề thi" name="de_thi_id" rules={[{ required: true, message: 'Khóa học là bắt buộc' }]}>
-                {renderExam()}
-              </Form.Item>
-              <Form.Item className="input-col" label="file đề thi" name="anh_dai_dien" rules={[]}>
-                  <Dragger {...propsFile} maxCount={1}
-                      listType="picture"
-                      className="upload-list-inline"
-                  >
-                      <p className="ant-upload-drag-icon">
-                        <UploadOutlined />
-                      </p>
-                      <p className="ant-upload-text bold">Click hoặc kéo file đề thi vào đây</p>
-                  </Dragger>
-              </Form.Item>
-              <Form.Item className="button-col" style={{marginBottom: 0}}>
-                <Button shape="round" type="primary" htmlType="submit" >Tạo đề thi</Button>
-              </Form.Item>
-            </Form>
+            <Spin spinning={spinning}  tip="Đang xử lý tạo đề thi. Quá trình này sẽ mất thời gian, bạn xin vui lòng chờ">
+              <h2 className="form-title">Tạo nhanh đề thi</h2>
+              <Form form={formFastExam} className="login-form app-form" name="login-form" onFinish={createFastExam}
+                labelCol={{span: 6,}} 
+              >
+                <Form.Item label="Khung" name="khung_ct" rules={[{ required: true, message: 'Loại đề thi là bắt buộc'}]}>
+                  {renderProgramme()}
+                </Form.Item>
+                <Form.Item label="Khóa học" name="khoa_hoc_id" rules={[{ required: true, message: 'Khóa học là bắt buộc' }]}>
+                  {renderCourse()}
+                </Form.Item>
+                <Form.Item label="Đề thi" name="de_thi_id" rules={[{ required: true, message: 'Khóa học là bắt buộc' }]}>
+                  {renderExam()}
+                </Form.Item>
+                <Form.Item className="input-col" label="file đề thi" name="anh_dai_dien" rules={[]}>
+                    <Dragger {...propsFile} maxCount={1}
+                        listType="picture"
+                        className="upload-list-inline"
+                    >
+                        <p className="ant-upload-drag-icon">
+                          <UploadOutlined />
+                        </p>
+                        <p className="ant-upload-text bold">Click hoặc kéo file đề thi vào đây</p>
+                    </Dragger>
+                </Form.Item>
+                <Form.Item className="button-col" style={{marginBottom: 0}}>
+                  <Button shape="round" type="primary" htmlType="submit" >Tạo đề thi</Button>
+                </Form.Item>
+              </Form>
+            </Spin>
         </>
       )
     }
@@ -732,7 +736,6 @@ const ExamAdminPage = () => {
                         description: 'Lấy dữ liệu đề thi thất bại',
                     })}
                 </Tabs>
-                <Spin spinning={spinning} fullscreen />
             </div>
         </>
     )
