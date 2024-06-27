@@ -12,6 +12,9 @@ const trichdoan = sequelize.define(
         noi_dung: {
             type: DataTypes.STRING,
         },
+        tep_dinh_kem: {
+            type: DataTypes.STRING,
+        },
         nguoi_tao: {
             type: DataTypes.STRING,
         },

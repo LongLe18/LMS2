@@ -7,11 +7,23 @@ const { upload } = require('../middlewares/upload2');
 
 router.post(
     '/create', authToken, authRole([2], 6),
+    upload.fields([
+        { name: 'tep_dinh_kem1', maxCount: 10 },
+        { name: 'tep_dinh_kem2', maxCount: 10 },
+        { name: 'tep_dinh_kem3', maxCount: 10 },
+        { name: 'tep_dinh_kem4', maxCount: 10 },
+    ]),
     tryCatch(answerController.postCreate)
 );
 router.get('/:id/edit', authToken, authRole([2], 6), tryCatch(answerController.getUpdate));
 router.put(
     '/',  authToken, authRole([2], 6),
+    upload.fields([
+        { name: 'tep_dinh_kem1', maxCount: 10 },
+        { name: 'tep_dinh_kem2', maxCount: 10 },
+        { name: 'tep_dinh_kem3', maxCount: 10 },
+        { name: 'tep_dinh_kem4', maxCount: 10 },
+    ]),
     tryCatch(answerController.putUpdate)
 );
 router.delete('/:id', authToken, authRole([2], 6), tryCatch(answerController.deleteByIdQuestion));

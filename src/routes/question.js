@@ -7,11 +7,17 @@ const { upload } = require('../middlewares/upload2');
 
 router.post(
     '/create', authToken, authRole([2], 6),
+    upload.fields([
+        { name: 'tep_dinh_kem', maxCount: 10 },
+    ]),
     tryCatch(questionController.postCreate)
 );
 //router.get('/:id/edit', authToken, authRole([2], 6), tryCatch(questionController.getUpdate));
 router.put(
     '/:id', authToken, authRole([2], 6), 
+    upload.fields([
+        { name: 'tep_dinh_kem', maxCount: 10 },
+    ]),
     tryCatch(questionController.putUpdate)
     );
 router.get('/getByExam', authToken, authRole([2], 7), tryCatch(questionController.getByExam));

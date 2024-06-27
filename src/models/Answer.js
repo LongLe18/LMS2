@@ -12,6 +12,9 @@ const dapan = sequelize.define(
         noi_dung_dap_an: {
             type: DataTypes.STRING,
         },
+        tep_dinh_kem: {
+            type: DataTypes.STRING,
+        },
         dap_an_dung: {
             type: DataTypes.BOOLEAN,
         },

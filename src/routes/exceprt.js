@@ -7,11 +7,17 @@ const { upload } = require('../middlewares/upload2');
 
 router.post(
     '/create', authToken, authRole([2], 6), 
+    upload.fields([
+        { name: 'tep_dinh_kem', maxCount: 10 },
+    ]),
     tryCatch(excerptController.postCreate)
 );
 router.get('/:id/edit', authToken, authRole([2], 6), tryCatch(excerptController.getUpdate));
 router.put(
     '/:id', authToken, authRole([2], 6), 
+    upload.fields([
+        { name: 'tep_dinh_kem', maxCount: 10 },
+    ]),
     tryCatch(excerptController.putUpdate)
 );
 router.delete('/:id/force', authToken, authRole([2], 6), tryCatch(excerptController.forceDelete));
