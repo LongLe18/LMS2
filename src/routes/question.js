@@ -8,7 +8,8 @@ const { upload } = require('../middlewares/upload2');
 router.post(
     '/create', authToken, authRole([2], 6),
     upload.fields([
-        { name: 'tep_dinh_kem', maxCount: 10 },
+        { name: 'tep_dinh_kem_noi_dung', maxCount: 10 },
+        { name: 'tep_dinh_kem_loi_giai', maxCount: 10 },
     ]),
     tryCatch(questionController.postCreate)
 );
@@ -16,7 +17,8 @@ router.post(
 router.put(
     '/:id', authToken, authRole([2], 6), 
     upload.fields([
-        { name: 'tep_dinh_kem', maxCount: 10 },
+        { name: 'tep_dinh_kem_noi_dung', maxCount: 10 },
+        { name: 'tep_dinh_kem_loi_giai', maxCount: 10 },
     ]),
     tryCatch(questionController.putUpdate)
     );

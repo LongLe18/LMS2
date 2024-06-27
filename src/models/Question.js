@@ -21,7 +21,10 @@ const cauhoi = sequelize.define(
         loi_giai: {
             type: DataTypes.STRING,
         },
-        tep_dinh_kem: {
+        tep_dinh_kem_noi_dung: {
+            type: DataTypes.STRING,
+        },
+        tep_dinh_kem_loi_giai: {
             type: DataTypes.STRING,
         },
         cot_tren_hang: {
