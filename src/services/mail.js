@@ -4,6 +4,7 @@ const res = require('express/lib/response');
 const SendmailTransport = require('nodemailer/lib/sendmail-transport');
 const { api } = require('../config');
 const SMTPConnection = require('nodemailer/lib/smtp-connection');
+require('dotenv').config();
 
 // const oAuth2Client = new google.auth.OAuth2(
 //     oauth.GOOGLE_CLIENT_ID,
@@ -18,12 +19,12 @@ const sendMail = async (content, option) => {
         //const accessToken = await oAuth2Client.getAccessToken();
 
         const transport = nodemailer.createTransport({
-            host: 'h01.azdigimail.com',
-            port: 465,
-            secure: true, // true for 465, false for other ports
+            host: process.env.MAIL_HOST,
+            port: process.env.MAIL_PORT,
+            secure: false, // true for 465, false for other ports
             auth: {
-                user: 'support@luyenthiquocgia.edu.vn', // generated ethereal user
-                pass: 'Cttvnu@2022'  // generated ethereal password
+                user: process.env.MAIL_USER, // generated ethereal user
+                pass: process.env.MAIL_PASSWORD  // generated ethereal password
             }
         });
 
