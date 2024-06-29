@@ -34,7 +34,7 @@ const sendMail = async (content, option) => {
                 from: `TRUNG TÂM LUYỆN THI QUỐC GIA CTT<${process.env.MAIL_FROM}>`,
                 to: content.gmail,
                 subject: 'THÔNG BÁO KÍCH HOẠT TÀI KHOẢN',
-                sender: 'luyenthiquocgia.edu.vn',
+                sender: process.env.MAIL_SENDER,
                 text: '',
                 html: `
                 <div style="max-width: 900px">
@@ -58,7 +58,7 @@ const sendMail = async (content, option) => {
                 from: `TRUNG TÂM LUYỆN THI QUỐC GIA CTT<${process.env.MAIL_FROM}>`,
                 to: content.gmail,
                 subject: 'KHÔI PHỤC TÀI KHOẢN ĐĂNG NHẬP',
-                sender: 'luyenthiquocgia.edu.vn',
+                sender: process.env.MAIL_SENDER,
                 text: '',
                 html: `
                 <div style="max-width: 900px">
@@ -89,7 +89,7 @@ const sendMail = async (content, option) => {
                 from: `TRUNG TÂM LUYỆN THI QUỐC GIA CTT<${process.env.MAIL_FROM}>`,
                 to: content.gmail,
                 subject: 'THÔNG TIN ĐĂNG NHẬP',
-                sender: 'luyenthiquocgia.edu.vn',
+                sender: process.env.MAIL_SENDER,
                 text: '',
                 html: `
                 <div style="max-width: 900px">
@@ -120,7 +120,7 @@ const sendMail = async (content, option) => {
                 from: `TRUNG TÂM LUYỆN THI QUỐC GIA CTT<${process.env.MAIL_FROM}>`,
                 to: content.gmail,
                 subject: 'THANH TOÁN HÓA ĐƠN',
-                sender: 'luyenthiquocgia.edu.vn',
+                sender: process.env.MAIL_SENDER,
                 text: '',
                 html: `
                 `,
@@ -131,7 +131,7 @@ const sendMail = async (content, option) => {
                 from: `TRUNG TÂM LUYỆN THI QUỐC GIA CTT<${process.env.MAIL_FROM}>`,
                 to: content.gmail,
                 subject: `TÀI KHOẢN LUYỆN THI`,
-                sender: 'luyenthiquocgia.edu.vn',
+                sender: process.env.MAIL_SENDER,
                 text: '',
                 html: `
                 <div style="max-width: 900px">
@@ -164,7 +164,7 @@ const sendMail = async (content, option) => {
                 from: 'BAN TỔ CHỨC CUỘC THI TÀI NĂNG ANH NGỮ THỦ ĐÔ<support@luyenthiquocgia.edu.vn>',
                 to: content.gmail,
                 subject: 'THÔNG BÁO KÍCH HOẠT TÀI KHOẢN',
-                sender: 'luyenthiquocgia.edu.vn',
+                sender: process.env.MAIL_SENDER,
                 text: '',
                 html: `
                 <div style="max-width: 900px">
