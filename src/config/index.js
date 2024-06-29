@@ -21,7 +21,7 @@ const config = {
         GOOGLE_CLIENT_ID:
             '267207974318-6votl534m3fuce7vb3652ocq0818nl6m.apps.googleusercontent.com',
         GOOGLE_CLIENT_SECRET: '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',
-        CALLBACK_URL: ENV === 'dev' ? 'http://localhost:3001/auth/google/callback' : 'https://hsaplus.edu.vn:3002/auth/google/callback',
+        CALLBACK_URL: ENV === 'dev' ? 'http://localhost:3001/auth/google/callback' : 'https://hsaplus.edu.vn:3003/auth/google/callback',
         REDIRECT_URL: 'https://developers.google.com/oauthplayground',
         REFRESH_TOKEN:
             '1//040egfidmLHtnCgYIARAAGAQSNwF-L9IrHxmhECBn7gGwzm9gUCtdeqgLpj3lIs0XZIR35DsmGk6MeLjIGJctQEROltEOKH08H9M',
