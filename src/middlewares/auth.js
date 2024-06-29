@@ -58,6 +58,7 @@ passport.use(
             clientID: oauth.GOOGLE_CLIENT_ID,
             clientSecret: oauth.GOOGLE_CLIENT_SECRET,
             callbackURL: oauth.CALLBACK_URL,
+            passReqToCallback: true,
         },
         function (req, accessToken, refreshToken, profile, cb) {
             return cb(null, profile);
