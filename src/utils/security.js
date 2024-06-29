@@ -20,7 +20,7 @@ const generateRefreshToken = (data) => {
 };
 
 const hashPassword = (password) => {
-    return bcrypt.hashSync(password, bcrypt.genSaltSync(process.env.SALT_ROUNDS));
+    return bcrypt.hashSync(password, bcrypt.genSaltSync(Number(process.env.SALT_ROUNDS) || 8));
 };
 
 const comparePassword = (hashPassword, password) => {
