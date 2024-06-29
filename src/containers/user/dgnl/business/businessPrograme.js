@@ -306,7 +306,7 @@ const BusinessProgramePage = (props) => {
                             <Row gutter={[16, 16]} className="list-cate-items">
                                 {data.map((cate, index) => {
                                     return (
-                                        <Col xl={4} sm={12} xs={12} className="course-cate-row" key={cate.key}>
+                                        <Col xl={6} sm={12} xs={12} className="course-cate-row" key={cate.key}>
                                             <div className="course-cate-box">
                                                 <div className="image-box">
                                                     {/* {typeProgramme === 1 

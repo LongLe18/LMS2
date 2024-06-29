@@ -241,7 +241,7 @@ const CoursesPage = (props) => {
                                 <Row gutter={[16, 16]} className="list-cate-items">
                                     {dataSearch.map((cate, index) => {
                                         return (
-                                            <Col xl={4} sm={12} xs={12} className="course-cate-row" key={cate.khoa_hoc_id}>
+                                            <Col xl={6} sm={12} xs={12} className="course-cate-row" key={cate.khoa_hoc_id}>
                                                 <div className="course-cate-box">
                                                     <div className="image-box">
                                                         <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>
@@ -280,7 +280,7 @@ const CoursesPage = (props) => {
                                     if (index < 4) 
                                     {
                                         return (
-                                            <Col xl={4} sm={12} xs={12} className="course-cate-row" key={cate.khoa_hoc_id}>
+                                            <Col xl={6} sm={12} xs={12} className="course-cate-row" key={cate.khoa_hoc_id}>
                                                 <div className="course-cate-box">
                                                     <div className="image-box">
                                                         <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>
@@ -320,7 +320,7 @@ const CoursesPage = (props) => {
                                         <Row gutter={[16, 16]} className="list-cate-items" >
                                         {programmes.data.length > 0 ? courses.data.filter(course => course.kct_id === item.kct_id).map((item2, index2) => {
                                             return (
-                                                <Col xl={4} sm={12} xs={12} className="course-cate-row" key={index2}>
+                                                <Col xl={6} sm={12} xs={12} className="course-cate-row" key={index2}>
                                                     <div className="course-cate-box">
                                                         <div className="image-box">
                                                             <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${item2.khoa_hoc_id}`}>

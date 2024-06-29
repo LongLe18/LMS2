@@ -1,11 +1,11 @@
 const ENV = 'prod';
 const BASE_URL = ''
 const API_URL_DEV = 'http://localhost:8080';
-const API_URL_PROD = 'http://103.127.207.97:3003';
+const API_URL_PROD = 'https://hsaplus.edu.vn:3003';
 const DATE_FORMAT = 'HH:mm DD/MM/YYYY';
 const DATE_FORMAT_SHORT = 'DD/MM/YYYY';
 const SHOW_DATE_FORMAT = 'D MMMM YYYY, HH:mm';
-const API_LATEX = 'http://103.127.207.97:3002'
+const API_LATEX = 'http://hsaplus.edu.vn:3002'
 
 const LANGUAGES = [
   {
@@ -30,8 +30,8 @@ const config = {
   API_LATEX,
   BASE_URL,
   API_URL: ENV === 'dev' ? API_URL_DEV : API_URL_PROD,
-  RULE_SET_APP: ENV === 'dev' ? 'http://103.127.207.97:3001' : 'http://103.127.207.97:3001',
-  UPLOAD_API_URL: 'http://103.127.207.97:3001',
+  RULE_SET_APP: ENV === 'dev' ? 'http://hsaplus.edu.vn:3001' : 'http://hsaplus.edu.vn:3001',
+  UPLOAD_API_URL: 'http://hsaplus.edu.vn:3001',
   DATE_FORMAT,
   SHOW_DATE_FORMAT,
   DATE_FORMAT_SHORT,

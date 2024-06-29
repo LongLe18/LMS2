@@ -50,7 +50,7 @@ const FooterBusiness = (props) => {
                                 if (index >= 4) 
                                 {
                                     return (
-                                        <Col xl={4} sm={12} xs={12} className="course-cate-row" key={cate.khoa_hoc_id}>
+                                        <Col xl={6} sm={12} xs={12} className="course-cate-row" key={cate.khoa_hoc_id}>
                                             <div className="course-cate-box">
                                                 <div className="image-box">
                                                     <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>
