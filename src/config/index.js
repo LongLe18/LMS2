@@ -16,12 +16,12 @@ const config = {
         be_url: ENV === 'dev' ? 'http://localhost:3001' : 'https://luyenthiquocgia.edu.vn:3000',
     },
     oauth: {
-        REDIRECT_DOMAIN: ENV === 'dev' ? 'http://localhost:3002' : 'https://dgnl.luyenthiquocgia.edu.vn',
+        REDIRECT_DOMAIN: ENV === 'dev' ? 'http://localhost:3002' : 'https://hsaplus.edu.vn/',
         USER: 'viettrieu.mta@gmail.com',
         GOOGLE_CLIENT_ID:
-            '43022684672-hikc0ecj5ajdo9f0nn043aban2v2hbef.apps.googleusercontent.com',
-        GOOGLE_CLIENT_SECRET: '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',
-        CALLBACK_URL: ENV === 'dev' ? 'http://localhost:3001/auth/google/callback' : 'https://luyenthiquocgia.edu.vn:3000/auth/google/callback',
+            '267207974318-6votl534m3fuce7vb3652ocq0818nl6m.apps.googleusercontent.com',
+        GOOGLE_CLIENT_SECRET: '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',
+        CALLBACK_URL: ENV === 'dev' ? 'http://localhost:3001/auth/google/callback' : 'https://hsaplus.edu.vn:3002/auth/google/callback',
         REDIRECT_URL: 'https://developers.google.com/oauthplayground',
         REFRESH_TOKEN:
             '1//040egfidmLHtnCgYIARAAGAQSNwF-L9IrHxmhECBn7gGwzm9gUCtdeqgLpj3lIs0XZIR35DsmGk6MeLjIGJctQEROltEOKH08H9M',
