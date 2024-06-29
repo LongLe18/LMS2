@@ -16,7 +16,7 @@ const config = {
         be_url: ENV === 'dev' ? 'http://localhost:3001' : 'https://luyenthiquocgia.edu.vn:3000',
     },
     oauth: {
-        REDIRECT_DOMAIN: ENV === 'dev' ? 'http://localhost:3002' : 'https://hsaplus.edu.vn/',
+        REDIRECT_DOMAIN: ENV === 'dev' ? 'http://localhost:3002' : 'https://hsaplus.edu.vn',
         USER: 'viettrieu.mta@gmail.com',
         GOOGLE_CLIENT_ID:
             '267207974318-6votl534m3fuce7vb3652ocq0818nl6m.apps.googleusercontent.com',
