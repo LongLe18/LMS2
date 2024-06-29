@@ -528,7 +528,7 @@ const authGoogle = async (req, res) => {
                 mat_khau: security.hashPassword(password),
                 trang_thai: 1,
             });
-            const content={gmail: req.user.emails[0].value, password: password, ho_ten: req.uer.displayName};
+            const content={gmail: req.user.emails[0].value, password: password, ho_ten: req.user.displayName};
             await sendMail(content, 3);
         }
         res.redirect(oauth.REDIRECT_DOMAIN + req.query.url);
