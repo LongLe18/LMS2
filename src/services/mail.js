@@ -31,7 +31,7 @@ const sendMail = async (content, option) => {
         let mailOptions;
         if (option == 1) {
             mailOptions = {
-                from: `TRUNG TÂM LUYỆN THI QUỐC GIA CTT<${process.env.MAIL_USER}>`,
+                from: `TRUNG TÂM LUYỆN THI QUỐC GIA CTT<${process.env.MAIL_FROM}>`,
                 to: content.gmail,
                 subject: 'THÔNG BÁO KÍCH HOẠT TÀI KHOẢN',
                 sender: 'luyenthiquocgia.edu.vn',
@@ -55,7 +55,7 @@ const sendMail = async (content, option) => {
             };
         } else if (option == 2) {
             mailOptions = {
-                from: `TRUNG TÂM LUYỆN THI QUỐC GIA CTT<${process.env.MAIL_USER}>`,
+                from: `TRUNG TÂM LUYỆN THI QUỐC GIA CTT<${process.env.MAIL_FROM}>`,
                 to: content.gmail,
                 subject: 'KHÔI PHỤC TÀI KHOẢN ĐĂNG NHẬP',
                 sender: 'luyenthiquocgia.edu.vn',
@@ -86,7 +86,7 @@ const sendMail = async (content, option) => {
             };
         } else if (option == 3) {
             mailOptions = {
-                from: `TRUNG TÂM LUYỆN THI QUỐC GIA CTT<${process.env.MAIL_USER}>`,
+                from: `TRUNG TÂM LUYỆN THI QUỐC GIA CTT<${process.env.MAIL_FROM}>`,
                 to: content.gmail,
                 subject: 'THÔNG TIN ĐĂNG NHẬP',
                 sender: 'luyenthiquocgia.edu.vn',
@@ -117,7 +117,7 @@ const sendMail = async (content, option) => {
             };
         } else if (option == 4) {
             mailOptions = {
-                from: `TRUNG TÂM LUYỆN THI QUỐC GIA CTT<${process.env.MAIL_USER}>`,
+                from: `TRUNG TÂM LUYỆN THI QUỐC GIA CTT<${process.env.MAIL_FROM}>`,
                 to: content.gmail,
                 subject: 'THANH TOÁN HÓA ĐƠN',
                 sender: 'luyenthiquocgia.edu.vn',
@@ -128,7 +128,7 @@ const sendMail = async (content, option) => {
         } else if (option == 5) {
             const d=new Date(content.ngay);
             mailOptions = {
-                from: `TRUNG TÂM LUYỆN THI QUỐC GIA CTT<${process.env.MAIL_USER}>`,
+                from: `TRUNG TÂM LUYỆN THI QUỐC GIA CTT<${process.env.MAIL_FROM}>`,
                 to: content.gmail,
                 subject: `TÀI KHOẢN LUYỆN THI`,
                 sender: 'luyenthiquocgia.edu.vn',
