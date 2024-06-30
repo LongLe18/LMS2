@@ -872,9 +872,11 @@ const ExamDetail = () => {
                         
                                 <div className="title-exam">
                                     <Latex>{matches}</Latex>
-                                    {urls.length > 0 && urls.map((url, idx) => (
-                                        <img src={config.API_URL + `/${url}`} alt='img'/>
-                                    ))}
+                                    <div style={{width: '100%', textAlign: 'center'}}>
+                                        {urls.length > 0 && urls.map((url, idx) => (
+                                            <img src={config.API_URL + `/${url}`} alt='img'/>
+                                        ))}
+                                    </div>
                                 </div>
                                 <div className="content-answer-question">
                                     <Row gutter={[20, 10]} className="multi-choice" style={{rowGap: 0}}>

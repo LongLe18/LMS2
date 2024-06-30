@@ -101,7 +101,7 @@ const CoursesUser = (props) => {
                             <Row gutter={[16, 16]} className="list-cate-items">
                                 {courseOfUser.map((cate, index) => {
                                     return (
-                                        <Col xl={6} sm={12} xs={12} className="course-cate-row" key={cate.khoa_hoc_id}>
+                                        <Col xl={5} sm={12} xs={12} className="course-cate-row" key={cate.khoa_hoc_id}>
                                             <div className="course-cate-box">
                                                 <div className="image-box">
                                                     {cate.loai_kct === 1 
