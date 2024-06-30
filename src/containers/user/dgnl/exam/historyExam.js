@@ -168,10 +168,7 @@ const HistoryExam = () => {
             <div className={`answer ${answer.dap_an_dung === true ? 'correct' : ''} ${ isWrong ? 'incorrect' : ''}`}>
                 <span className="answer-label">{renderAnswerKey(index)}</span>
                 <div className="answer-content">             
-                    <img alt="..."
-                        className="img-no-padding img-responsive"
-                        src={config.API_URL + answer.noi_dung_dap_an}
-                    />
+                    <Latex>{answer.noi_dung_dap_an}</Latex>
                 </div>
             </div>
         );
@@ -252,10 +249,7 @@ const HistoryExam = () => {
                                         }
                                         <br/>
                                         <div className="answer-content" style={{paddingLeft: '20px'}}>             
-                                            <img alt="..."
-                                                className="img-no-padding img-responsive"
-                                                src={config.API_URL + question.cau_hoi.trich_doan.noi_dung}
-                                            />
+                                            <Latex>{question.cau_hoi.trich_doan.noi_dung}</Latex>
                                         </div>
                                     </>
                                 }
@@ -359,7 +353,7 @@ const HistoryExam = () => {
                     <div className="header-exam">
                         <h1>{exam.data.ten_de_thi}</h1>
                     </div>
-                    <div className="wraper">{renderExam()}</div>
+                    <div className="wraper" style={{ padding: '0 48px' }}>{renderExam()}</div>
                 </Content>
                 </Layout>
             }

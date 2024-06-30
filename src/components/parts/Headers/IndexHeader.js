@@ -394,7 +394,10 @@ function IndexHeader(props) {
                   )
               })}
               {!state.isLogin ?
-                <li><Button type="primary" onClick={() => showModal()} style={{borderRadius: 6}}>Đăng nhập</Button></li>
+                <>
+                  <li><Button type="default" onClick={() => showModal()} style={{borderRadius: 6}}>Đăng nhập</Button></li>
+                  <li><Button type="primary" onClick={() => window.location.href = config.BASE_URL + '/auth/register'} style={{borderRadius: 6}}>Đăng ký</Button></li>
+                </>
               : 
                 <>
                 <li>
@@ -435,7 +438,10 @@ function IndexHeader(props) {
             </button>
           </div>
           {!state.isLogin ?
+            <>
               <li><Button type="primary" onClick={() => showModal()} style={{borderRadius: 6}}>Đăng nhập</Button></li>
+              <li><Button type="primary" onClick={() => window.location.href = config.BASE_URL + '/auth/register'} style={{borderRadius: 6}}>Đăng ký</Button></li>
+            </>
             : 
             <>
               <li>

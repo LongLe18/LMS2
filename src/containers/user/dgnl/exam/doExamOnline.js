@@ -810,7 +810,7 @@ const ExamOnlineDetail = () => {
             dispatch(examActions.getExamUser({ id: params.idExamUser }, (response) => {
                 if (response.status === 'success') {
                     const points = Array.from({ length: exam.data.so_phan }).map((_, index) => {
-                        const startIndex = index * exam.data[`so_cau_hoi_phan_${index + 1}`];
+                        const startIndex = index === 0 ? 0 : Array.from({ length: index }).reduce((sum, _, i) => sum + exam.data[`so_cau_hoi_phan_${i + 1}`], 0);
                         const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${index + 1}`];
                         const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
                         const number = partQuestions.map((question, index) => {
@@ -846,7 +846,7 @@ const ExamOnlineDetail = () => {
             }))
         };
 
-        let timePassedInSecond = (new Date().getTime() - startTime) / 1000;
+        let timePassedInSecond = (new Date().getTime() - new Date(examUser.data.thoi_diem_bat_dau).getTime()) / 1000;
         timePassedInSecond = Math.round(timePassedInSecond);
 
         const info = {
@@ -955,7 +955,7 @@ const ExamOnlineDetail = () => {
             <Col span={6}>
                 {examUser.status === 'success' &&
 
-                    <div className="exam-right-content" style={{ position: 'sticky', top: '70px' }}>
+                    <div className="exam-right-content" style={{ position: 'sticky', top: '100px' }}>
                         <div className="topbar-exam">
                             <p className="mg-0">
                             <b style={{fontSize: 18}}>Số câu đã làm</b>
@@ -986,7 +986,7 @@ const ExamOnlineDetail = () => {
                                 {exam.status === 'success' && exam.data.cau_hoi_de_this.map((question, index) => {
                                     return (
                                         <li key={index + 1} className={isCorrectAnswer(question.cau_hoi)}>
-                                            <a href={`#${index + 1}`}>{index + 1}</a>
+                                            <a href={`#${index}`}>{index + 1}</a>
                                         </li>
                                     );
                                 })}
@@ -1015,7 +1015,7 @@ const ExamOnlineDetail = () => {
             <>  
                 <div className='section-question'>
                     <Row justify={'space-between'}>
-                        <Col>CET {getCurrentDate()}</Col>
+                        <Col>ENNO {getCurrentDate()}</Col>
                         <Col style={{display: 'flex'}}>
                             <div style={{marginRight: 12}}>Họ và tên: {JSON.parse(localStorage.getItem('userInfo')).ho_ten}</div>
                             <div>Tài khoản: {JSON.parse(localStorage.getItem('userInfo')).email}</div>
@@ -1025,7 +1025,7 @@ const ExamOnlineDetail = () => {
                     <Row className='list-questions' justify={'center'}>
                         {isDoing && Array.from({ length: exam.data.so_phan }).map((_, index) => {
                             if (index + 1 === state.sectionExam) {
-                                const startIndex = (state.sectionExam - 1) * exam.data[`so_cau_hoi_phan_${state.sectionExam}`];
+                                const startIndex = index === 0 ? 0 : Array.from({ length: index }).reduce((sum, _, i) => sum + exam.data[`so_cau_hoi_phan_${i + 1}`], 0);
                                 const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${state.sectionExam}`];
                                 const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
                                 return (
@@ -1049,7 +1049,7 @@ const ExamOnlineDetail = () => {
                     <Row className='list-questions' justify={'center'} style={{background: '#f0f0f0'}}>
                     {isDoing && Array.from({ length: exam.data.so_phan }).map((_, index) => {
                             if (index + 1 === state.sectionExam) {
-                                const startIndex = (state.sectionExam - 1) * exam.data[`so_cau_hoi_phan_${state.sectionExam}`];
+                                const startIndex = index === 0 ? 0 : Array.from({ length: index }).reduce((sum, _, i) => sum + exam.data[`so_cau_hoi_phan_${i + 1}`], 0);
                                 const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${state.sectionExam}`];
                                 const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
                                 return (
@@ -1059,7 +1059,7 @@ const ExamOnlineDetail = () => {
                                             if (isAnswered) {
                                                 return (
                                                     <div key={index + 1} className={`item`}>
-                                                        <a href={`#${index + 1}`} style={{color: 'green'}}>{index + 1}</a>
+                                                        <a href={`#${index}`} style={{color: 'green'}}>{index + 1}</a>
                                                     </div>
                                                 );
                                             }
@@ -1100,7 +1100,7 @@ const ExamOnlineDetail = () => {
                                         </div>
                                         <Timeline>
                                             {Array.from({ length: exam.data.so_phan }).map((_, index) => {
-                                                const startIndex = (index + 1 - 1) * exam.data[`so_cau_hoi_phan_${index + 1}`];
+                                                const startIndex = index === 0 ? 0 : Array.from({ length: index }).reduce((sum, _, i) => sum + exam.data[`so_cau_hoi_phan_${i + 1}`], 0);
                                                 const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${index + 1}`];
                                                 const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
                                                 const number = partQuestions.map((question, index) => {
@@ -1153,7 +1153,7 @@ const ExamOnlineDetail = () => {
                                         <h5 style={{fontWeight: 700, textAlign: 'center'}}>Kết quả đánh giá</h5>
                                         <Timeline>
                                             {Array.from({ length: exam.data.so_phan }).map((_, index) => {
-                                                const startIndex = (index + 1 - 1) * exam.data[`so_cau_hoi_phan_${index + 1}`];
+                                                const startIndex = index === 0 ? 0 : Array.from({ length: index }).reduce((sum, _, i) => sum + exam.data[`so_cau_hoi_phan_${i + 1}`], 0);
                                                 const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${index + 1}`];
                                                 const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
                                                 // số câu đúng của từng phần
@@ -1219,7 +1219,6 @@ const ExamOnlineDetail = () => {
                             if (index + 1 === state.sectionExam) {
                                 const startIndex = index === 0 ? 0 : Array.from({ length: index }).reduce((sum, _, i) => sum + exam.data[`so_cau_hoi_phan_${i + 1}`], 0);
                                 const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${index + 1}`];
-                                console.log(state.sectionExam, startIndex, endIndex)
                                 const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
                                 return (
                                     <>
@@ -1233,7 +1232,7 @@ const ExamOnlineDetail = () => {
                                                 while ((match = regex2.exec(inputString)) !== null) {
                                                     urls.push(match[1]); // Capture the content inside {}
                                                 }
-                                                const matches = inputString.replace(regex2, '');
+                                                const matches = inputString.replace(regex2, '');                                                
 
                                                 return (
                                                     <>
@@ -1244,11 +1243,8 @@ const ExamOnlineDetail = () => {
                                                                 : <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi từ {question.cau_hoi.exceprtFrom + 1} đến {question.cau_hoi.exceprtTo + 1}</span>
                                                                 }
                                                                 <br/>
-                                                                <div className="answer-content" style={{paddingLeft: '20px'}}>             
-                                                                    <img alt="..."
-                                                                        className="img-no-padding img-responsive"
-                                                                        src={config.API_URL + question.cau_hoi.trich_doan.noi_dung}
-                                                                    />
+                                                                <div className="answer-content" style={{paddingLeft: '20px', fontSize: 18}}>             
+                                                                    <Latex>{question.cau_hoi.trich_doan.noi_dung}</Latex>
                                                                 </div>
                                                             </>
                                                         }
@@ -1355,7 +1351,7 @@ const ExamOnlineDetail = () => {
                                             } else return null;
                                         })}
 
-                                        {index === 2 && 
+                                        {index >= 2 && 
                                             <p className="block-action text-center mt-0">
                                                 <a className="ant-btn ant-btn-primary ant-btn-lg join-exam-button" href={alat} target='_blank' rel='noopener noreferrer'
                                                     style={{borderRadius: 8, backgroundColor: 'rgba(0, 115, 8, 0.92)', borderColor: 'rgba(0, 115, 8, 0.92)'}}
@@ -1377,7 +1373,7 @@ const ExamOnlineDetail = () => {
                                 urls.push(match[1]); // Capture the content inside {}
                             }
                             const matches = noi_dung.replace(regex2, '');
-                            
+
                             return (
                                 <>
                                     {(question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom !== undefined && question.cau_hoi.exceprtTo !== undefined) &&
@@ -1388,10 +1384,7 @@ const ExamOnlineDetail = () => {
                                             }
                                             <br/>
                                             <div className="answer-content" style={{paddingLeft: '20px'}}>             
-                                                <img alt="..."
-                                                    className="img-no-padding img-responsive"
-                                                    src={config.API_URL + question.cau_hoi.trich_doan.noi_dung}
-                                                />
+                                                <Latex>{question.cau_hoi.trich_doan.noi_dung}</Latex>
                                             </div>
                                         </>
                                     }
@@ -1591,12 +1584,12 @@ const ExamOnlineDetail = () => {
                     </Col>
                     {isDoing && Array.from({ length: exam.data.so_phan }).map((_, index) => {
                         if (index + 1 === state.sectionExam) {
-                            const startIndex = (state.sectionExam - 1) * exam.data[`so_cau_hoi_phan_${state.sectionExam}`];
+                            const startIndex = index === 0 ? 0 : Array.from({ length: index }).reduce((sum, _, i) => sum + exam.data[`so_cau_hoi_phan_${i + 1}`], 0);
                             const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${state.sectionExam}`];
                             const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
                             return (
                                 <Col span={6}>
-                                    <div className="exam-right-content" style={{ position: 'sticky', top: '70px' }}>
+                                    <div className="exam-right-content" style={{ position: 'sticky', top: '100px' }}>
                                         <div className="topbar-exam">
                                             <p className="mg-0">
                                                 <b style={{fontSize: 16}}>Thời gian </b>
@@ -1620,7 +1613,7 @@ const ExamOnlineDetail = () => {
                                                     return (
                                                         // <li key={index + 1} className={`item ${isAnswered ? 'active' : ''}`}>
                                                         <li key={index + 1} className={`item ${((isAnswered && isAnswered.dap_an?.length !== 0) || (isAnswered && question?.cau_hoi?.loai_cau_hoi === 2)) ? 'active' : ''}`}>
-                                                            <a href={`#${index + 1}`}>{index + 1}</a>
+                                                            <a href={`#${index}`}>{index + 1}</a>
                                                         </li>
                                                     );
                                                 })}
@@ -1668,7 +1661,7 @@ const ExamOnlineDetail = () => {
                             <AuthModal />
                         </div>
                         <AppBreadCrumb list={breadcrumbs} hidden={false} />
-                        <div className="wraper">{renderExam()}</div>
+                        <div className="wraper" style={{ padding: '0 48px' }}>{renderExam()}</div>
                     </Content>
                 </Layout>
             }

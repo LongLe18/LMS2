@@ -205,10 +205,7 @@ const ReviewExamPage = () => {
                                         }
                                         <br/>
                                         <div className="answer-content" style={{paddingLeft: '20px'}}>             
-                                            <img alt="..."
-                                                className="img-no-padding img-responsive"
-                                                src={config.API_URL + question.cau_hoi.trich_doan.noi_dung}
-                                            />
+                                            <Latex>{question.cau_hoi.trich_doan.noi_dung}</Latex>
                                         </div>
                                     </>
                                 }               
@@ -223,9 +220,11 @@ const ReviewExamPage = () => {
 
                                     <div className="title-exam">
                                         <Latex>{matches}</Latex>
-                                        {urls.length > 0 && urls.map((url, idx) => (
-                                            <img src={config.API_URL + `/${url}`} alt='img'/>
-                                        ))}
+                                        <div style={{width: '100%', textAlign: 'center'}}>
+                                            {urls.length > 0 && urls.map((url, idx) => (
+                                                <img src={config.API_URL + `/${url}`} alt='img'/>
+                                            ))}
+                                        </div>
                                     </div>
 
                                     <div className="content-answer-question">

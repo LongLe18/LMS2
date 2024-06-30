@@ -133,8 +133,8 @@ const CoursesUser = (props) => {
                                                         </h3>
                                                     }
                                                     <p className="course-cate-description">
-                                                        <span>Ngày bắt đầu: {moment(cate.ngay_bat_dau).format(config.DATE_FORMAT_SHORT)}</span>
-                                                        <span>Ngày kết thúc: {moment(cate.ngay_ket_thuc).format(config.DATE_FORMAT_SHORT)}</span>
+                                                        {/* <span>Ngày bắt đầu: {moment(cate.ngay_bat_dau).format(config.DATE_FORMAT_SHORT)}</span>
+                                                        <span>Ngày kết thúc: {moment(cate.ngay_ket_thuc).format(config.DATE_FORMAT_SHORT)}</span> */}
                                                         {cate.loai_kct === 1
                                                         ?
                                                             // <div>
@@ -189,8 +189,8 @@ const CoursesUser = (props) => {
                                                             <Link to={`/luyen-tap/luyen-tap/${hashids.encode(cate.san_pham_id)}`}>{cate.ten_san_pham}</Link>
                                                         </h3>
                                                         <p className="course-cate-description">
-                                                            <span>Ngày bắt đầu: {moment(cate.ngay_bat_dau).format(config.DATE_FORMAT_SHORT)}</span>
-                                                            <span>Ngày kết thúc: {moment(cate.ngay_ket_thuc).format(config.DATE_FORMAT_SHORT)}</span>
+                                                            {/* <span>Ngày bắt đầu: {moment(cate.ngay_bat_dau).format(config.DATE_FORMAT_SHORT)}</span>
+                                                            <span>Ngày kết thúc: {moment(cate.ngay_ket_thuc).format(config.DATE_FORMAT_SHORT)}</span> */}
                                                             <Link to={`/luyen-tap/luyen-tap/${hashids.encode(cate.san_pham_id)}`}>
                                                                 <Button type="primary">
                                                                     Bắt đầu xem

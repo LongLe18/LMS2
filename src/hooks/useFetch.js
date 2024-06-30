@@ -12,26 +12,28 @@ const useFetch = (url) => {
 
     useEffect(() => {
         const token = localStorage.getItem('userToken');
-        axios.get(config.API_URL + `${url}`, { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'}})
-            .then(
-                res => {
-                    if (res.status === 200 && res.statusText === 'OK') {
-                        if (res.data.data.length > 0)
-                            setData(res.data.data.map((item, index) => ({...item, key: index})));
-                        else 
-                            setData(res.data.data);
-                    } else {
-                        notification.error({
-                            message: 'Lỗi',
-                            description: 'Có lỗi xảy ra khi lấy dữ liệu',
-                        })
+        if (token) {
+            axios.get(config.API_URL + `${url}`, { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'}})
+                .then(
+                    res => {
+                        if (res.status === 200 && res.statusText === 'OK') {
+                            if (res.data.data.length > 0)
+                                setData(res.data.data.map((item, index) => ({...item, key: index})));
+                            else 
+                                setData(res.data.data);
+                        } else {
+                            notification.error({
+                                message: 'Lỗi',
+                                description: 'Có lỗi xảy ra khi lấy dữ liệu',
+                            })
+                        }
                     }
-                }
-            )
-            .catch(error => 
-            {   
-                notification.error({ message: error.response.data })
-            });
+                )
+                .catch(error => 
+                {   
+                    notification.error({ message: error.response.data })
+                });
+        }
     }, [url])
 
     return [data];

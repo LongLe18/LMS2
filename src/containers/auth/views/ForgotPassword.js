@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import 'assets/demo/auth.css';
 import config from '../../../configs/index';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 
 import { Form, Input, Button, Avatar, notification, Col, Row } from 'antd';
 import Icon from '@ant-design/icons';
@@ -48,6 +48,11 @@ const ForgotPasswordPage = (props) => {
                     </Col>
                     <Col xs={{ span: 22, offset: 1 }} lg={{ span: 9, offset: 4}}>
                         <h4>Kỳ thi đánh giá năng lực học sinh trung học phổ thông</h4>
+                    </Col>
+                    <Col xs={{ span: 24 }} lg={{ span: 6 }}>
+                        <NavLink to='/luyen-tap/kinh-doanh-khoa-hoc' className="logo">
+                            <Avatar size={130} src={require('assets/rank/logo-hsa.png').default} style={{width: 250}}/>
+                        </NavLink>
                     </Col>
                 </Row>
                 <Row>

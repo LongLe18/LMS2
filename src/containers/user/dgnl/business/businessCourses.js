@@ -5,11 +5,13 @@ import './css/Testimonials.css';
 
 import { Helmet } from 'react-helmet';
 import { Link } from "react-router-dom";
+import Hashids from 'hashids';
 
 // helper
 import defaultImage from 'assets/img/default.jpg';
 import config from '../../../../configs/index';
 // import moment from "moment";
+import useFetch from "hooks/useFetch";
 
 // component
 import { Layout, Row, Col, Button, Input, Select, Form, Menu } from 'antd';
@@ -25,8 +27,10 @@ const { Content } = Layout;
 const { Option } = Select;
 
 const CoursesPage = (props) => {
+    const hashids = new Hashids();
     const [dataInit, setDataInit] = useState([]);
     const [dataSearch, setDataSearch] = useState([]);
+    const [courseOfUser] = useFetch(`/student/list/course`);
     
     const dispatch = useDispatch();
 
@@ -269,6 +273,69 @@ const CoursesPage = (props) => {
                             </>
                         )}
                         
+                        {localStorage.getItem('userToken') && 
+                            <>
+                                <h2 className="section-title section-title-center">
+                                    <b></b>
+                                    <span className="section-title-main">CÁC LỚP HỌC ĐÃ ĐĂNG KÝ</span>
+                                    <b></b>
+                                </h2>
+                                {(courseOfUser.length > 0) && (
+                                    <>
+                                        <Row gutter={[16, 16]} className="list-cate-items">
+                                            {courseOfUser.map((cate, index) => {
+                                                return (
+                                                    <Col xl={5} sm={12} xs={12} className="course-cate-row" key={cate.khoa_hoc_id}>
+                                                        <div className="course-cate-box">
+                                                            <div className="image-box">
+                                                                {cate.loai_kct === 1 
+                                                                ?
+                                                                    <Link to={`/luyen-tap/kiem-tra/${hashids.encode(cate.khoa_hoc_id)}`}>
+                                                                        <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
+                                                                    </Link>
+                                                                :
+                                                                    <Link to={`/luyen-tap/luyen-tap/${hashids.encode(cate.khoa_hoc_id)}`}>
+                                                                        <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
+                                                                    </Link>
+                                                                }
+                                                            </div>
+                                                            <div className="box-text">
+                                                                {cate.loai_kct === 1
+                                                                ?
+                                                                    <h3 className="course-cate-title">
+                                                                        <Link to={`/luyen-tap/kiem-tra/${hashids.encode(cate.khoa_hoc_id)}`}>{cate.ten_khoa_hoc}</Link>
+                                                                    </h3>
+                                                                :
+                                                                    <h3 className="course-cate-title">
+                                                                        <Link to={`/luyen-tap/luyen-tap/${hashids.encode(cate.khoa_hoc_id)}`}>{cate.ten_khoa_hoc}</Link>
+                                                                    </h3>
+                                                                }
+                                                                <p className="course-cate-description">
+                                                                    {cate.loai_kct === 1
+                                                                    ?
+                                                                        <Link to={`/luyen-tap/kiem-tra/${hashids.encode(cate.khoa_hoc_id)}`}>
+                                                                            <Button type="primary" className="mt-2 mb-2" style={{borderRadius: 6}}>
+                                                                                Bắt đầu thi
+                                                                            </Button>
+                                                                        </Link>
+                                                                    :
+                                                                        <Link to={`/luyen-tap/luyen-tap/${hashids.encode(cate.khoa_hoc_id)}`}>
+                                                                            <Button type="primary" className="mt-2 mb-2" style={{borderRadius: 6}}>
+                                                                                Bắt đầu thi
+                                                                            </Button>
+                                                                        </Link>
+                                                                    }
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </Col>
+                                                )
+                                            })}
+                                        </Row>
+                                    </>
+                                )}
+                            </>
+                        }
                         {/* <h2 className="section-title section-title-center">
                             <b></b>
                             <span className="section-title-main">KHÓA HỌC MỚI NHẤT</span>

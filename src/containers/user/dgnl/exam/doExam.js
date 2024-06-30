@@ -853,10 +853,7 @@ const ExamDetail = () => {
                                     }
                                     <br/>
                                     <div className="answer-content" style={{paddingLeft: '20px'}}>             
-                                        <img alt="..."
-                                            className="img-no-padding img-responsive"
-                                            src={config.API_URL + question.cau_hoi.trich_doan.noi_dung}
-                                        />
+                                        <Latex>{question.cau_hoi.trich_doan.noi_dung}</Latex>
                                     </div>
                                 </>
                             }
@@ -1111,7 +1108,7 @@ const ExamDetail = () => {
                             <AuthModal />
                         </div>
                         <AppBreadCrumb list={breadcrumbs} hidden={false} />
-                        <div className="wraper">{renderExam()}</div>
+                        <div className="wraper" style={{ padding: '0 48px' }}>{renderExam()}</div>
                     </Content>
                 </Layout>
             }
