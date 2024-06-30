@@ -24,7 +24,8 @@ const getAll = async (req, res) => {
                 `SELECT loai_kct FROM khung_chuong_trinh WHERE kct_id IN (${menu.gia_tri}) `,
                 { type: sequelize.QueryTypes.SELECT }
             );
-            menu.dataValues.loai_kct = program[0].loai_kct;
+            if(program[0])
+                menu.dataValues.loai_kct = program[0].loai_kct;
         }
     }
     res.status(200).send({
