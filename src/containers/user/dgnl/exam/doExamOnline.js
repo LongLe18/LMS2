@@ -32,6 +32,7 @@ import * as answerActions from '../../../../redux/actions/answer';
 import * as evaluationActions from '../../../../redux/actions/evaluate';
 import * as commentAction from '../../../../redux/actions/comment';
 import * as notificationAction from '../../../../redux/actions/notification';
+import * as courseActions from '../../../../redux/actions/course';
 
 const { Content } = Layout;
 const { TextArea } = Input;
@@ -44,6 +45,7 @@ const ExamOnlineDetail = () => {
     const dispatch = useDispatch();
 
     const timerId = useRef(null);
+    let timeOut = '';
     const [PauseModal, contextHolder] = Modal.useModal();
     const [pause, setPause] = useState(false);
     const [isDoing, setIsDoing] = useState(true);
@@ -70,6 +72,7 @@ const ExamOnlineDetail = () => {
     const examUser = useSelector(state => state.exam.examUser.result);
     const comments = useSelector(state => state.comment.list.result);
     const evaluations = useSelector(state => state.evaluate.list.result);
+    const course = useSelector(state => state.course.item.result);
 
     let answers = [];
     let breadcrumbs = [];
@@ -219,8 +222,9 @@ const ExamOnlineDetail = () => {
         ));
         dispatch(commentAction.getCOMMENTs({ idCourse: '', idModule: '', type: 1 }));
         dispatch(evaluationActions.getEVALUATEs({ id: hashids.decode(params.idExam), pageIndex: 0, pageSize: 100 }));
+        dispatch(courseActions.getCourse({ id: hashids.decode(params.idCourse) }));
     }, [params.idExam, params.idExamUser]) // eslint-disable-line react-hooks/exhaustive-deps
-
+    
     useMemo(() => {
         if (textAnswer !== null && localStorage.getItem('question') !== null) {
             dispatch(answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, 
@@ -240,6 +244,25 @@ const ExamOnlineDetail = () => {
         const instance = PauseModal.success({
             title: 'Đã hết thời gian cho phần này',
             content: `Phần tiếp theo sẽ bắt đầu ngay sau ${secondsToGo} giây.`,
+            okText: 'Làm ngay phần tiếp theo',
+            onOk: () => {
+                // Huỷ chờ đếm ngược
+                // Bắt đầu làm luôn phần thi mới
+                clearTimeout(timeOut);
+                sessionStorage.setItem('section', state.sectionExam + 1);
+                sessionStorage.setItem('timeStartSection', new Date().getTime());
+                setCountSection(exam.data[`thoi_gian_phan_${state.sectionExam + 1}`] * 60) // set biến đêm Thời gian = của phần tiếp theo
+                setState(prevState => ({
+                    ...prevState,
+                    sectionExam: prevState.sectionExam + 1
+                }));
+                timerId.current = setInterval(() => {
+                    setCountSection((preCount) => preCount - 1);
+                }, 1000);
+                setResults([]); 
+
+                instance.destroy();
+            }
         });
     
         const timer = setInterval(() => {
@@ -279,7 +302,7 @@ const ExamOnlineDetail = () => {
                     setCountSection((preCount) => preCount - 1);
                 }, 1000);
                 setResults([]); 
-            }, 5000);
+            }, 30000);
         }     
     }, [countSection]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -587,7 +610,7 @@ const ExamOnlineDetail = () => {
                     countDown();
                     clearInterval(timerId?.current); // Dừng đếm thời gian section
 
-                    setTimeout(() => {
+                    timeOut = setTimeout(() => {
                         sessionStorage.setItem('section', state.sectionExam + 1);
                         sessionStorage.setItem('timeStartSection', new Date().getTime());
                         setCountSection(exam.data[`thoi_gian_phan_${state.sectionExam + 1}`] * 60) // set biến đêm Thời gian = của phần tiếp theo
@@ -1102,21 +1125,26 @@ const ExamOnlineDetail = () => {
                                                     return number;
                                                 })
                                                 return (
-                                                    // <Timeline.Item key={index + 1} style={{paddingBottom: index + 1 === exam.data.so_phan ? 0 : 20, fontWeight: 600}}>
-                                                    //     Điểm thi phần {index + 1}: {number.reduce((partialSum, a) => partialSum + a, 0)} / {exam.data[`so_cau_hoi_phan_${index + 1}`]} = {(number.reduce((partialSum, a) => partialSum + a, 0) / exam.data[`so_cau_hoi_phan_${index + 1}`] * 100).toFixed(0)} %
-                                                    // </Timeline.Item>
-                                                    <div className='title-section' >
-                                                            <div className={`section-${index}`} style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
-                                                                <div style={{padding: 0}}>
-                                                                    Phần {index + 1}: {index === 0 ? `Tư duy định lượng: ` 
-                                                                    : index === 1 ? `Tư duy định tính: `
-                                                                    : `Khoa học:`}
+                                                    <>
+                                                    {course.kct_id === 1 ? 
+                                                        <div className='title-section' >
+                                                                <div className={`section-${index}`} style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                                                                    <div style={{padding: 0}}>
+                                                                        Phần {index + 1}: {index === 0 ? `Tư duy định lượng: ` 
+                                                                        : index === 1 ? `Tư duy định tính: `
+                                                                        : `Khoa học:`}
+                                                                    </div>
+                                                                    <div style={{padding: 0}}>
+                                                                        {number.reduce((partialSum, a) => partialSum + a, 0)}
+                                                                    </div>
                                                                 </div>
-                                                                <div style={{padding: 0}}>
-                                                                    {number.reduce((partialSum, a) => partialSum + a, 0)}
-                                                                </div>
-                                                            </div>
-                                                    </div>
+                                                        </div>
+                                                        :
+                                                        <Timeline.Item key={index + 1} style={{paddingBottom: index + 1 === exam.data.so_phan ? 0 : 20, fontWeight: 600}}>
+                                                            Điểm thi phần {index + 1}: {number.reduce((partialSum, a) => partialSum + a, 0)} / {exam.data[`so_cau_hoi_phan_${index + 1}`]} = {(number.reduce((partialSum, a) => partialSum + a, 0) / exam.data[`so_cau_hoi_phan_${index + 1}`] * 100).toFixed(0)} %
+                                                        </Timeline.Item>
+                                                    }
+                                                    </>
                                                 )
                                             })}
                                         </Timeline>
@@ -1338,14 +1366,17 @@ const ExamOnlineDetail = () => {
                             } else return null;
                         })}
                         {(exam.status === 'success' && !isDoing) && exam.data.cau_hoi_de_this.map((question, ParentIndex) => {
-                            const inputString = question.cau_hoi.noi_dung;
+                            const noi_dung = question.cau_hoi.noi_dung;
                             const regex2 = /\\begin{center}\s*\\includegraphics(?:\[[^\]]*\])?\{([^}]*)\}\s*\\end{center}/g;
                             let urls = [];
                             let match;
-                            while ((match = regex2.exec(inputString)) !== null) {
+                            while ((match = regex2.exec(noi_dung)) !== null) {
                                 urls.push(match[1]); // Capture the content inside {}
                             }
-                            const matches = inputString.replace(regex2, '');
+                            const matches = noi_dung.replace(regex2, '');
+                            // const matches = `
+                            //     \\[\\begin{array}{|c | c | c | c | c|}\n\\hline\n Năm & Ngành & Ngành & Ngành & Ngành \\\\\n\\hline\n Năm & Nông - lâm – thủy sản & Công nghiệp – xây dựng & Dịch vụ & Thuế sản phẩm trừ trợ cấp sản phẩm \\\\\n\\hline\n2010 & 4,7 & 29,1 & 55,7 & 10,5 \\\\\n\\hline\n2020 & 6,5 & 28,3 & 60,3 & 4,9 \\\\\n\\hline\n\\end{array}\\]
+                            // `
                             
                             return (
                                 <>

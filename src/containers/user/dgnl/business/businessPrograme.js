@@ -264,7 +264,7 @@ const BusinessProgramePage = (props) => {
             <div className="list-course-cate">
                 <div className="wraper wraper-list-course-cate-index">
                     <Row gutter={16} style={{margin: '18px 0'}}>
-                        <Col xl={4} md={4} xs={4} style={{paddingLeft: 0}}>
+                        <Col xl={5} md={4} xs={4} style={{paddingLeft: 0}}>
                             {(programmeCourses.status === 'success' && items.length > 0) &&
                                 <Menu style={{borderRadius: 6}}
                                     mode="vertical"
@@ -290,7 +290,7 @@ const BusinessProgramePage = (props) => {
                                 </Menu>
                             }
                         </Col> 
-                        <Col xl={20} md={20} xs={20}>
+                        <Col xl={19} md={20} xs={20}>
                             <CarouselCustom />
                         </Col>
                     </Row>
@@ -306,7 +306,7 @@ const BusinessProgramePage = (props) => {
                             <Row gutter={[16, 16]} className="list-cate-items">
                                 {data.map((cate, index) => {
                                     return (
-                                        <Col xl={6} sm={12} xs={12} className="course-cate-row" key={cate.key}>
+                                        <Col xl={5} sm={12} xs={12} className="course-cate-row" key={cate.key}>
                                             <div className="course-cate-box">
                                                 <div className="image-box">
                                                     {/* {typeProgramme === 1 

@@ -6,7 +6,7 @@ function NoRecord(props) {
   return (
     <Result
       status={props.status ? props.status : '404'}
-      title={props.title ? props.title : 'Dữ liệu chưa được cập nhật.'}
+      title={props.title ? props.title : 'Dữ liệu chỉ được cập nhật khi bạn đăng ký môn học.'}
       subTitle={props.subTitle ? props.subTitle : 'Không tìm thấy dữ liệu.'}
       extra={
         <Button type="primary" style={{borderRadius: 6}}>

@@ -161,7 +161,7 @@ const CoursesPage = (props) => {
                 <div className="list-course-cate">        
                     <div className="wraper wraper-list-course-cate-index">
                         <Row gutter={16} style={{margin: '18px 0'}}>
-                            <Col xl={4} md={4} xs={4} style={{paddingLeft: 0}}>
+                            <Col xl={5} md={4} xs={4} style={{paddingLeft: 0}}>
                                 {(programmeCourses.status === 'success' && items.length > 0) &&
                                     <Menu style={{borderRadius: 6}}
                                         mode="vertical"
@@ -187,7 +187,7 @@ const CoursesPage = (props) => {
                                     </Menu>
                                 }
                             </Col> 
-                            <Col xl={20} md={20} xs={20}>
+                            <Col xl={19} md={20} xs={20}>
                                 <CarouselCustom />
                             </Col>
                         </Row>
@@ -269,7 +269,7 @@ const CoursesPage = (props) => {
                             </>
                         )}
                         
-                        <h2 className="section-title section-title-center">
+                        {/* <h2 className="section-title section-title-center">
                             <b></b>
                             <span className="section-title-main">KHÓA HỌC MỚI NHẤT</span>
                             <b></b>
@@ -280,7 +280,7 @@ const CoursesPage = (props) => {
                                     if (index < 4) 
                                     {
                                         return (
-                                            <Col xl={6} sm={12} xs={12} className="course-cate-row" key={cate.khoa_hoc_id}>
+                                            <Col xl={5} sm={12} xs={12} className="course-cate-row" key={cate.khoa_hoc_id}>
                                                 <div className="course-cate-box">
                                                     <div className="image-box">
                                                         <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>
@@ -292,8 +292,8 @@ const CoursesPage = (props) => {
                                                             <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>{cate.ten_khoa_hoc}</Link>
                                                         </h3>
                                                         <p className="course-cate-description">
-                                                            {/* <span>Ngày bắt đầu: {moment(cate.ngay_bat_dau).format(config.DATE_FORMAT_SHORT)}</span>
-                                                            <span>Ngày kết thúc: {moment(cate.ngay_ket_thuc).format(config.DATE_FORMAT_SHORT)}</span> */}
+                                                            <span>Ngày bắt đầu: {moment(cate.ngay_bat_dau).format(config.DATE_FORMAT_SHORT)}</span>
+                                                            <span>Ngày kết thúc: {moment(cate.ngay_ket_thuc).format(config.DATE_FORMAT_SHORT)}</span>
                                                             <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>
                                                                 <Button type="primary" style={{margin: '12px 0 12px 0', fontSize: 12, borderRadius: 4}}>
                                                                     Chi tiết
@@ -307,7 +307,7 @@ const CoursesPage = (props) => {
                                     } else return null;
                                 })}
                             </Row>
-                        )}
+                        )} */}
 
                         {(courses.status === 'success' && programmes.status === 'success' && programmes.data.length > 0) && programmes.data.map((item, index) => {
                                 return (
@@ -320,7 +320,7 @@ const CoursesPage = (props) => {
                                         <Row gutter={[16, 16]} className="list-cate-items" >
                                         {programmes.data.length > 0 ? courses.data.filter(course => course.kct_id === item.kct_id).map((item2, index2) => {
                                             return (
-                                                <Col xl={6} sm={12} xs={12} className="course-cate-row" key={index2}>
+                                                <Col xl={5} sm={12} xs={12} className="course-cate-row" key={index2}>
                                                     <div className="course-cate-box">
                                                         <div className="image-box">
                                                             <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${item2.khoa_hoc_id}`}>

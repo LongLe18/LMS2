@@ -56,7 +56,7 @@ const BusinessPage = () => {
                     <Row gutter={[16, 16]} className="list-cate-items">
                         {data.map((cate, index) => {
                             return (
-                                <Col xl={6} sm={12} xs={12} className="course-cate-row" key={cate.key}>
+                                <Col xl={5} sm={12} xs={12} className="course-cate-row" key={cate.key}>
                                     <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>
                                         <Card style={{textAlign: 'center', border: 'none'}}
                                             hoverable

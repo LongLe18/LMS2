@@ -8,7 +8,7 @@ import moment from 'moment';
 import axios from 'axios';
 import './css/addmodal.scss';
 // antd
-import { Row, Col, Button, Tabs, Table, Avatar, Modal, Form, Input, Select, Upload, message, notification, Tooltip, Spin, Alert } from 'antd';
+import { Row, Col, Button, Tabs, Table, Avatar, Modal, Form, Input, Select, Upload, message, notification, Tooltip, Spin } from 'antd';
 import { PlusOutlined, UploadOutlined, EyeOutlined, LockOutlined, UnlockOutlined, RedoOutlined } from '@ant-design/icons';
 
 // component

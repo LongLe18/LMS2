@@ -89,7 +89,7 @@
 .list-course-cate .image-box img {
   width: 100%;
   height: auto;
-  min-height: 165px;
+  min-height: 150px;
 }
 
 .course-cate-box {
@@ -164,5 +164,13 @@
 @media screen and (max-width: 46.1875em) {
   .list-course-cate .image-box {
     height: 100%;
+  }
+}
+
+@media (min-width: 1200px) {
+  .ant-col-xl-5 {
+    display: block;
+    flex: 0 0 20%;
+    max-width: 20%;
   }
 }
