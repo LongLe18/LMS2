@@ -1217,8 +1217,9 @@ const ExamOnlineDetail = () => {
                         )}
                         {(exam.status === 'success' && isDoing) && Array.from({ length: exam.data.so_phan }).map((_, index) => {
                             if (index + 1 === state.sectionExam) {
-                                const startIndex = (state.sectionExam - 1) * exam.data[`so_cau_hoi_phan_${state.sectionExam}`];
-                                const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${state.sectionExam}`];
+                                const startIndex = index === 0 ? 0 : Array.from({ length: index }).reduce((sum, _, i) => sum + exam.data[`so_cau_hoi_phan_${i + 1}`], 0);
+                                const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${index + 1}`];
+                                console.log(state.sectionExam, startIndex, endIndex)
                                 const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
                                 return (
                                     <>
@@ -1376,9 +1377,6 @@ const ExamOnlineDetail = () => {
                                 urls.push(match[1]); // Capture the content inside {}
                             }
                             const matches = noi_dung.replace(regex2, '');
-                            // const matches = `
-                            //     \\[\\begin{array}{|c | c | c | c | c|}\n\\hline\n Năm & Ngành & Ngành & Ngành & Ngành \\\\\n\\hline\n Năm & Nông - lâm – thủy sản & Công nghiệp – xây dựng & Dịch vụ & Thuế sản phẩm trừ trợ cấp sản phẩm \\\\\n\\hline\n2010 & 4,7 & 29,1 & 55,7 & 10,5 \\\\\n\\hline\n2020 & 6,5 & 28,3 & 60,3 & 4,9 \\\\\n\\hline\n\\end{array}\\]
-                            // `
                             
                             return (
                                 <>
