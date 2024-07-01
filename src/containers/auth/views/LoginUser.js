@@ -85,12 +85,12 @@ const LoginUserPage = (props) => {
                             <Avatar shape="square" size={130} src={require('assets/img/logo/vnu-cet-logo.png').default} />
                         </NavLink>
                     </Col>
-                    <Col xs={{ span: 22, offset: 1 }} lg={{ span: 9, offset: 4}}>
+                    <Col xs={{ span: 22, offset: 1 }} lg={{ span: 9, offset: 4}} style={{marginRight: '10%'}}>
                         <h4>Kỳ thi đánh giá năng lực học sinh trung học phổ thông</h4>
                     </Col>
-                    <Col xs={{ span: 24 }} lg={{ span: 6 }}>
+                    <Col xs={{ span: 24 }} lg={{ span: 4 }}>
                         <NavLink to='/luyen-tap/kinh-doanh-khoa-hoc' className="logo">
-                            <Avatar size={130} src={require('assets/rank/logo-hsa.png').default} style={{width: 250}}/>
+                            <img src={require('assets/rank/logo-hsa.png').default} style={{width: 250}} alt='logo'/>
                         </NavLink>
                     </Col>
                 </Row>

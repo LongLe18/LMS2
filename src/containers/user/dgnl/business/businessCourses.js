@@ -159,6 +159,7 @@ const CoursesPage = (props) => {
         });
     }
     
+    
     const renderCourses = () => {
         return (
             <>      
@@ -376,7 +377,7 @@ const CoursesPage = (props) => {
                             </Row>
                         )} */}
 
-                        {(courses.status === 'success' && programmes.status === 'success' && programmes.data.length > 0) && programmes.data.map((item, index) => {
+                        {(courses.status === 'success' && programmes.status === 'success' && programmes.data.length > 0) && programmes.data.filter(programme => programme.trang_thai !== false).map((item, index) => {
                                 return (
                                     <div key={index}>
                                         <h2 className="section-title section-title-center" >

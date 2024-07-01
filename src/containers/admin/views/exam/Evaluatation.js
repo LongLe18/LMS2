@@ -45,7 +45,7 @@ const EvaluationPage = () => {
     if (evaluations.status === 'success' ) {    
         evaluations.data.map((item, index) => dataEvaluations.push({...item, 'key': index}));
     };
-
+    
     // event show modal
     const showModal = () => {
         setIsModalVisible(true);
@@ -348,13 +348,13 @@ const EvaluationPage = () => {
 
                 {(evaluations.status === 'success') &&
                     <>
-                        <Table className="table-striped-rows" columns={columns} dataSource={dataEvaluations} />
-                        <Pagination
+                        <Table className="table-striped-rows" columns={columns} dataSource={dataEvaluations}  pagination={false}/>
+                        <Pagination style={{marginTop: 12}}
                             showSizeChanger
                             onShowSizeChange={onShowSizeChange}
                             onChange={onChange}
                             defaultCurrent={pageIndex + 1}
-                            total={dataEvaluations.length}
+                            total={evaluations?.count}
                         />
                     </>
                 }

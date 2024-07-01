@@ -1179,12 +1179,12 @@ const ExamOnlineDetail = () => {
                                                     return number;
                                                 });
                                                 // Đánh giá của phần tương ứng
-                                                const evaluationsTemp = evaluations?.data.filter((item) => item.phan_thi === index + 1);
+                                                const evaluationsTemp = evaluations?.data?.filter((item) => item.phan_thi === index + 1);
                                                 // Kiểm tra số câu đúng của từng phần và lấy ra đánh giá tương ứng
                                                 const evaluation = evaluationsTemp?.map((item) => {
                                                     let evaluation = '';
                                                     if (number.reduce((partialSum, a) => partialSum + a, 0) === 0) {
-                                                        if (item.cau_bat_dau <= number.reduce((partialSum, a) => partialSum + a, 0) + 1 && number.reduce((partialSum, a) => partialSum + a, 0) + 1 <= item.cau_ket_thuc) {
+                                                        if (item.cau_bat_dau <= number.reduce((partialSum, a) => partialSum + a, 0) && number.reduce((partialSum, a) => partialSum + a, 0) <= item.cau_ket_thuc) {
                                                             evaluation = item?.danh_gia;
                                                         }
                                                     } else {
@@ -1196,7 +1196,7 @@ const ExamOnlineDetail = () => {
                                                 });
                                                 return (
                                                     <Timeline.Item key={index + 1} style={{paddingBottom: index + 1 === exam.data.so_phan ? 0 : 20, fontWeight: 600}}>
-                                                        <div style={{whiteSpace: 'pre-line'}}>Nhận xét đánh phần {index + 1}: <br/>{evaluation.filter((item) => item !== '')[0]?.split('-').filter((item) => item !== '').join('\n')}</div>
+                                                        <div style={{whiteSpace: 'pre-line'}}>Nhận xét đánh phần {index + 1}: <br/>{evaluation?.filter((item) => item !== '')[0]?.split('-').filter((item) => item !== '').join('\n')}</div>
                                                     </Timeline.Item>
                                                 )
                                             })}
@@ -1232,8 +1232,9 @@ const ExamOnlineDetail = () => {
                                                 while ((match = regex2.exec(inputString)) !== null) {
                                                     urls.push(match[1]); // Capture the content inside {}
                                                 }
-                                                const matches = inputString.replace(regex2, '');                                                
-
+                                                const noi_dungs = inputString.replace(regex2, '').split('\n').filter(item => item !== '\\\\'); 
+                                                const trich_doans = question.cau_hoi?.trich_doan?.noi_dung?.split('\n').filter(item => item !== '\\\\');
+                                                
                                                 return (
                                                     <>
                                                         {(question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom !== undefined && question.cau_hoi.exceprtTo !== undefined) &&
@@ -1243,8 +1244,14 @@ const ExamOnlineDetail = () => {
                                                                 : <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi từ {question.cau_hoi.exceprtFrom + 1} đến {question.cau_hoi.exceprtTo + 1}</span>
                                                                 }
                                                                 <br/>
-                                                                <div className="answer-content" style={{paddingLeft: '20px', fontSize: 18}}>             
-                                                                    <Latex>{question.cau_hoi.trich_doan.noi_dung}</Latex>
+                                                                <div className="answer-content" style={{paddingLeft: '20px', fontSize: 18}}> 
+                                                                    {trich_doans.map(trich_doan => {
+                                                                        return (
+                                                                            <>
+                                                                                <Latex>{trich_doan.replace('\\\\', '')}</Latex><br/>
+                                                                            </>
+                                                                        )
+                                                                    })}            
                                                                 </div>
                                                             </>
                                                         }
@@ -1258,7 +1265,13 @@ const ExamOnlineDetail = () => {
                                                             </div>
 
                                                             <div className="title-exam">
-                                                                <Latex>{matches}</Latex>
+                                                                {noi_dungs.map(noi_dung => {
+                                                                    return (
+                                                                        <>
+                                                                            <Latex>{noi_dung.replace('\\\\', '')}</Latex><br/>
+                                                                        </>
+                                                                    )
+                                                                })}      
                                                                 <div style={{width: '100%', textAlign: 'center'}}>
                                                                     {urls.length > 0 && urls.map((url, idx) => (
                                                                         <img src={config.API_URL + `/${url}`} alt='img'/>
@@ -1336,7 +1349,7 @@ const ExamOnlineDetail = () => {
                                                                                             >
                                                                                                 <span className="answer-label">S</span>
                                                                                             </button>
-                                                                                            <Latex>{answer.noi_dung_dap_an}</Latex>
+                                                                                            <Latex>{answer.noi_dung_dap_an.slice(0, -2)}</Latex>
                                                                                         </div>
                                                                                     }
                                                                                 </ul>
@@ -1365,14 +1378,15 @@ const ExamOnlineDetail = () => {
                             } else return null;
                         })}
                         {(exam.status === 'success' && !isDoing) && exam.data.cau_hoi_de_this.map((question, ParentIndex) => {
-                            const noi_dung = question.cau_hoi.noi_dung;
+                            const inputString = question.cau_hoi.noi_dung;
                             const regex2 = /\\begin{center}\s*\\includegraphics(?:\[[^\]]*\])?\{([^}]*)\}\s*\\end{center}/g;
                             let urls = [];
                             let match;
-                            while ((match = regex2.exec(noi_dung)) !== null) {
+                            while ((match = regex2.exec(inputString)) !== null) {
                                 urls.push(match[1]); // Capture the content inside {}
                             }
-                            const matches = noi_dung.replace(regex2, '');
+                            const noi_dungs = inputString.replace(regex2, '').split('\n').filter(item => item !== '\\\\'); 
+                            const trich_doans = question.cau_hoi?.trich_doan?.noi_dung?.split('\n').filter(item => item !== '\\\\');
 
                             return (
                                 <>
@@ -1384,7 +1398,13 @@ const ExamOnlineDetail = () => {
                                             }
                                             <br/>
                                             <div className="answer-content" style={{paddingLeft: '20px'}}>             
-                                                <Latex>{question.cau_hoi.trich_doan.noi_dung}</Latex>
+                                                {trich_doans.map(trich_doan => {
+                                                    return (
+                                                        <>
+                                                            <Latex>{trich_doan.replace('\\\\', '')}</Latex><br/>
+                                                        </>
+                                                    )
+                                                })} 
                                             </div>
                                         </>
                                     }
@@ -1399,7 +1419,13 @@ const ExamOnlineDetail = () => {
                                         </div>
 
                                         <div className="title-exam">
-                                            <Latex>{matches}</Latex>
+                                            {noi_dungs.map(noi_dung => {
+                                                return (
+                                                    <>
+                                                        <Latex>{noi_dung.replace('\\\\', '')}</Latex><br/>
+                                                    </>
+                                                )
+                                            })}  
                                             <div style={{width: '100%', textAlign: 'center'}}>
                                                 {urls.length > 0 && urls.map((url, idx) => (
                                                     <img src={config.API_URL + `/${url}`} alt='img'/>
@@ -1445,7 +1471,7 @@ const ExamOnlineDetail = () => {
                                                                     >
                                                                         <span className="answer-label">S</span>
                                                                     </button>
-                                                                    <Latex>{ answer.noi_dung_dap_an}</Latex>
+                                                                    <Latex>{ answer.noi_dung_dap_an.slice(0, -2)}</Latex>
                                                                 </div>
                                                                 }
                                                             </ul>
@@ -1494,7 +1520,7 @@ const ExamOnlineDetail = () => {
                                                         type="warning"
                                                         description={
                                                             <div className="help-answer">
-                                                                <Latex>{ question.cau_hoi.loi_giai }</Latex>
+                                                                <Latex>{ question.cau_hoi.loi_giai.slice(0, -3) }</Latex>
                                                             </div>
                                                         }
                                                         closable
