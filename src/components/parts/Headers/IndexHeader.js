@@ -110,7 +110,7 @@ function IndexHeader(props) {
         dispatch(userAction.logoutUser({}, (res) => {
           if (res.status === 200 && res.statusText === 'OK') {
             setState(state => ({ ...state, isLogin: false, info: {} }));
-            history.push('/luyen-tap/kinh-doanh-khoa-hoc');
+            history.push('/luyen-tap/trang-chu');
           }
         }));
         
@@ -323,16 +323,16 @@ function IndexHeader(props) {
     <div ref={sidebar} className="header-page">
       <Container>
         <Row className="header-logo">
-          <NavLink to="/luyen-tap/kinh-doanh-khoa-hoc">
+          <NavLink to="/luyen-tap/trang-chu">
             <img alt="..."  style={{maxHeight: '155px', width: '100%'}}
             className="img-no-padding img-responsive"
-            src={require("assets/rank/banner-2.png").default}
+            src={require("assets/rank/banner.jpg").default}
             />
           </NavLink>
         </Row>
       </Container>
       <div id="wide-nav" className="header-bottom wide-nav nav-dark hide-for-medium">
-        <NavLink to="/luyen-tap/kinh-doanh-khoa-hoc">
+        <NavLink to="/luyen-tap/trang-chu">
           <img alt="..."  style={{maxHeight: '60px'}} className="img-no-padding img-responsive"
             src={require("assets/rank/enno.png").default}
           />
@@ -470,7 +470,7 @@ function IndexHeader(props) {
           <nav className="nav__mobile" style={{transform: collapsed ? 'translateX(0)' : 'translateX(-100%)'}}>
             <div className="nav__mobile-logo">
               <a
-                href="/luyen-tap/kinh-doanh-khoa-hoc"
+                href="/luyen-tap/trang-chu"
                 className="simple-text logo-mini"
               >
                 <Avatar src={require("assets/rank/Logo.png").default} alt="react-logo" size={40} />

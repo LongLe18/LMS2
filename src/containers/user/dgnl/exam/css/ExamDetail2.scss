@@ -35,10 +35,12 @@
 
 .question-list .title-exam {
   font-size: 20px;
-  // display: flex;
-  // flex-direction: column;
-  // justify-content: center;
-  // align-items: center;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 12px;
 }
 
 .question-list img {
@@ -436,6 +438,9 @@
 
 .result-exam-item .right-answer {
   color: #3da844;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .result-exam-item .wrong-answer {
@@ -635,4 +640,9 @@
       color: #fff;
     }
   }
+}
+
+.MJXc-display {
+  margin: 0 !important;
+  font-size: 18px !important;
 }

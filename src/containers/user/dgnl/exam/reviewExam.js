@@ -3,9 +3,8 @@ import { Helmet } from 'react-helmet';
 import config from '../../../../configs/index';
 import Hashids from 'hashids';
 import { useParams } from 'react-router-dom';
-import 'katex/dist/katex.min.css';
 import './css/ExamDetail2.scss'
-import Latex from 'react-latex-next';
+import MathJax from 'react-mathjax';
 
 // component
 import LoadingCustom from 'components/parts/loading/Loading';
@@ -79,11 +78,26 @@ const ReviewExamPage = () => {
     };
     
     const renderAnswer = (question, answer, index) => {
+        let regex = /\\begin{center}\\includegraphics\[scale = 0\.5\]{(.*?)}\\end{center}/;
         return (
             <div className={`answer ${answer.dap_an_dung === true ? 'correct' : ''} `}>
                 <span className="answer-label">{renderAnswerKey(index)}</span>
                 <div className="answer-content">             
-                    <Latex>{answer.noi_dung_dap_an}</Latex>
+                    <MathJax.Provider>
+                        {answer.noi_dung_dap_an.split('\n').map((item) =>
+                            item.indexOf('includegraphics') !== -1 ? (
+                                <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                            ) : (
+                                item.split('$').map((item2, index2) => {
+                                    return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')))? (
+                                        <MathJax.Node key={index2} formula={item2} />
+                                    ) : (
+                                        <div key={index2} style={{margin: '0 6px'}}>{item2}</div>
+                                    );
+                                })
+                            )
+                        )}
+                    </MathJax.Provider>
                 </div>
             </div>
         );
@@ -186,15 +200,8 @@ const ReviewExamPage = () => {
                         </div>   
                     )}
                     {exam.status === 'success' && exam.data.cau_hoi_de_this.map((question, ParentIndex) => {
-                        const inputString = question.cau_hoi.noi_dung;
-                        const regex2 = /\\begin{center}\s*\\includegraphics(?:\[[^\]]*\])?\{([^}]*)\}\s*\\end{center}/g;
-                        let urls = [];
-                        let match;
-                        while ((match = regex2.exec(inputString)) !== null) {
-                            urls.push(match[1]); // Capture the content inside {}
-                        }
-                        const matches = inputString.replace(regex2, '');
-
+                        let regex = /\\begin{center}\\includegraphics\[scale = 0\.5\]{(.*?)}\\end{center}/;
+                        
                         return (
                             <>
                                 {(question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom !== undefined && question.cau_hoi.exceprtTo !== undefined) &&
@@ -205,7 +212,21 @@ const ReviewExamPage = () => {
                                         }
                                         <br/>
                                         <div className="answer-content" style={{paddingLeft: '20px'}}>             
-                                            <Latex>{question.cau_hoi.trich_doan.noi_dung}</Latex>
+                                            <MathJax.Provider>
+                                                {question.cau_hoi?.trich_doan?.noi_dung?.split('\n').map((item) =>
+                                                    item.indexOf('includegraphics') !== -1 ? (
+                                                        <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                                                    ) : (
+                                                        item.split('$').map((item2, index2) => {
+                                                            return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\'))) ? (
+                                                                <MathJax.Node key={index2} formula={item2} />
+                                                            ) : (
+                                                                <div key={index2} >{item2}</div>
+                                                            );
+                                                        })
+                                                    )
+                                                )}
+                                            </MathJax.Provider>
                                         </div>
                                     </>
                                 }               
@@ -219,12 +240,21 @@ const ReviewExamPage = () => {
                                     </div>
 
                                     <div className="title-exam">
-                                        <Latex>{matches}</Latex>
-                                        <div style={{width: '100%', textAlign: 'center'}}>
-                                            {urls.length > 0 && urls.map((url, idx) => (
-                                                <img src={config.API_URL + `/${url}`} alt='img'/>
-                                            ))}
-                                        </div>
+                                        <MathJax.Provider>
+                                            {question.cau_hoi.noi_dung.split('\n').map((item) =>
+                                                item.indexOf('includegraphics') !== -1 ? (
+                                                    <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                                                ) : (
+                                                    item.split('$').map((item2, index2) => {
+                                                        return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\'))) ? (
+                                                            <MathJax.Node key={index2} formula={item2} />
+                                                        ) : (
+                                                            <div key={index2} >{item2}</div>
+                                                        );
+                                                    })
+                                                )
+                                            )}
+                                        </MathJax.Provider>
                                     </div>
 
                                     <div className="content-answer-question">
@@ -273,7 +303,21 @@ const ReviewExamPage = () => {
                                                                         >
                                                                             <span style={{color: 'white'}}>S</span>
                                                                         </button>
-                                                                        <Latex>{answer.noi_dung_dap_an}</Latex>
+                                                                        <MathJax.Provider>
+                                                                            {answer.noi_dung_dap_an.split('\n').map((item) =>
+                                                                                item.indexOf('includegraphics') !== -1 ? (
+                                                                                    <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                                                                                ) : (
+                                                                                    item.split('$').map((item2, index2) => {
+                                                                                        return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\'))) ? (
+                                                                                            <MathJax.Node key={index2} formula={item2} />
+                                                                                        ) : (
+                                                                                            <div key={index2} >{item2}</div>
+                                                                                        );
+                                                                                    })
+                                                                                )
+                                                                            )}
+                                                                        </MathJax.Provider>
                                                                     </div>
                                                                 }
                                                             </li>
@@ -308,7 +352,21 @@ const ReviewExamPage = () => {
                                                 type="warning"
                                                 description={
                                                     <div className="help-answer">
-                                                        <Latex>{ question.cau_hoi.loi_giai }</Latex>
+                                                        <MathJax.Provider>
+                                                            {question.cau_hoi.loi_giai.split('\n').map((item) =>
+                                                                item.indexOf('includegraphics') !== -1 ? (
+                                                                    <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                                                                ) : (
+                                                                    item.split('$').map((item2, index2) => {
+                                                                        return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')))? (
+                                                                            <MathJax.Node key={index2} formula={item2} />
+                                                                        ) : (
+                                                                            <div key={index2} >{item2}</div>
+                                                                        );
+                                                                    })
+                                                                )
+                                                            )}
+                                                        </MathJax.Provider>
                                                     </div>
                                                 }
                                                 closable

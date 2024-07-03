@@ -171,7 +171,7 @@ function AuthModal() {
             });
             setVisible(false);
             form.resetFields();
-            history.push('/luyen-tap/kinh-doanh-khoa-hoc');
+            history.push('/luyen-tap/trang-chu');
         };
         const token = captchaRef.current.getValue();
         values.token = token;

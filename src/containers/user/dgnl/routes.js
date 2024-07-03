@@ -26,8 +26,16 @@ import CoursesUser from './business/coursesUser';
 import ReceiptUserPage from './business/receiptUser';
 import CheckOutPage from './business/checkout';
 import CheckOutPage2 from './business/checkout2';
+import MainPageUser from './business/mainPage';
 
 var routes = [
+    {
+        id: "trang-chu",
+        path: "/luyen-tap/trang-chu",
+        exact: true,
+        hidden: true,
+        render: (props) => <MainPageUser {...props}/>,
+    },
     {
         id: "luyen-tap",
         path: "/luyen-tap/luyen-tap/:id",

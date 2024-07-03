@@ -16,7 +16,7 @@ export const AppRouter = ({ children }) => {
                 })}
             </Switch>
             <Route exact path="/">
-                <Redirect to="/luyen-tap/kinh-doanh-khoa-hoc" />
+                <Redirect to="/luyen-tap/trang-chu" />
             </Route>
         </BrowserRouter>
     );

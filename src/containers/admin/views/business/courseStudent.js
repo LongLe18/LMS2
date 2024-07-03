@@ -371,23 +371,17 @@ const CourseStudentPage = (props) => {
                 </Col>
                 <Tabs defaultActiveKey={state.activeTab} activeKey={state.activeTab} onChange={onChangeTab}>
                     <TabPane tab="Quản lý khóa học - học viên" key="1">
-                        {(data.length > 0) && 
-                            <Table className="table-striped-rows" columns={columns} dataSource={data} />
-                        }
+                        <Table className="table-striped-rows" columns={columns} dataSource={data} />
                     </TabPane>
                     <TabPane tab="Chi tiết khóa học" disabled key="2">
-                        {(dataDetail.length > 0) && 
                             <Table className="table-striped-rows" columns={columns2} dataSource={dataDetail} />
-                        }
                     </TabPane>
                     <TabPane tab="Thêm học viên" disabled key="3">
-                        {(remainData.length > 0) && 
-                            <>
-                                <Table className="table-striped-rows" columns={columns3} dataSource={remainData} pagination={false} rowSelection={rowSelection}/>
-                                <br/>
-                                <Pagination current={pageIndex} onChange={onChange} total={remainStudentofCourse.count} onShowSizeChange={onShowSizeChange} defaultPageSize={pageSize}/>
-                            </>
-                        }
+                        <>
+                            <Table className="table-striped-rows" columns={columns3} dataSource={remainData} pagination={false} rowSelection={rowSelection}/>
+                            <br/>
+                            <Pagination current={pageIndex} onChange={onChange} total={remainStudentofCourse.count} onShowSizeChange={onShowSizeChange} defaultPageSize={pageSize}/>
+                        </>
                     </TabPane>
                 </Tabs>  
             </div>

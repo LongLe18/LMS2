@@ -5,7 +5,6 @@ import { Helmet } from 'react-helmet';
 import moment from 'moment';
 import { secondsToMinutes } from 'helpers/common.helper';
 import './css/ExamDetail2.scss'
-import 'katex/dist/katex.min.css';
 import config from '../../../../configs/index';
 import defaultImage from 'assets/img/default.jpg';
 import { diff } from 'helpers/common.helper';
@@ -23,7 +22,7 @@ import LoadingCustom from "components/parts/loading/Loading"
 import { Layout, Row, Col, Modal, Button, notification, Input, Alert, Upload, message, List, Comment, Space, Timeline } from 'antd';
 import { InfoCircleOutlined, CommentOutlined, UploadOutlined, DownloadOutlined, FileOutlined } from '@ant-design/icons';
 import TextEditorWidget2 from 'components/common/TextEditor/TextEditor2';
-import Latex from 'react-latex-next';
+import MathJax from 'react-mathjax';
 
 // redux
 import { useSelector, useDispatch } from 'react-redux';
@@ -492,6 +491,7 @@ const ExamOnlineDetail = () => {
         // - Đáp án đúng của câu hỏi => màu xanh
         // - Lựa chọn đúng với đáp án => màu xanh
         // - Lựa chọn sai với đáp án => màu đỏ
+        let regex = /\\begin{center}\\includegraphics\[scale = 0\.5\]{(.*?)}\\end{center}/;
         let isWrong = false;
         let currentSubmitAnswer = results.find((item) => item.cau_hoi_id === question.cau_hoi_id);
         if (currentSubmitAnswer?.gia_tri_dap_an && question?.dap_an_dungs) {
@@ -503,7 +503,21 @@ const ExamOnlineDetail = () => {
             <div className={`answer ${!isDoing && (isWrong && !answer.dap_an_dung) ? 'incorrect' : ''} ${!isDoing && answer.dap_an_dung ? 'correct' : ''}`}>
                 <span className="answer-label">{renderAnswerKey(index)}</span>
                 <div className="answer-content">             
-                    <Latex>{answer.noi_dung_dap_an}</Latex>
+                    <MathJax.Provider>
+                        {answer.noi_dung_dap_an.split('\n').map((item) =>
+                            item.indexOf('includegraphics') !== -1 ? (
+                                <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                            ) : (
+                                item.split('$').map((item2, index2) => {
+                                    return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')))? (
+                                        <MathJax.Node key={index2} formula={item2} />
+                                    ) : (
+                                        <div key={index2} style={{margin: '0 6px'}}>{item2}</div>
+                                    );
+                                })
+                            )
+                        )}
+                    </MathJax.Provider>
                 </div>
             </div>
         );
@@ -525,12 +539,30 @@ const ExamOnlineDetail = () => {
     };
 
     const renderAnswerResult = (question) => {
+        let regex = /\\begin{center}\\includegraphics\[scale = 0\.5\]{(.*?)}\\end{center}/;
+
         if (!isDoing && exam.status === 'success') {
             return (
                 <p className="result-exam-item">
                     {(question.cau_hoi.loai_cau_hoi === 1 || question.cau_hoi.loai_cau_hoi === 2) ?
                         <span className="right-answer">Đáp án đúng {question.cau_hoi.dap_an_dungs.map((item) => renderAnswerKey(item)).join(', ')}</span>
-                        : <span className="right-answer">Đáp án đúng: {question.cau_hoi.dap_ans[0].noi_dung_dap_an}</span>
+                        : <span className="right-answer">Đáp án đúng: 
+                            <MathJax.Provider>
+                                {question.cau_hoi.dap_ans[0].noi_dung_dap_an.split('\n').map((item) =>
+                                    item.indexOf('includegraphics') !== -1 ? (
+                                        <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                                    ) : (
+                                        item.split('$').map((item2, index2) => {
+                                            return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\'))) ? (
+                                                <MathJax.Node key={index2} formula={item2} />
+                                            ) : (
+                                                <div key={index2} >{item2}</div>
+                                            );
+                                        })
+                                    )
+                                )}
+                            </MathJax.Provider>
+                        </span>
                     }
                 </p>
             );
@@ -939,6 +971,7 @@ const ExamOnlineDetail = () => {
     const doExamAgain = () => {
         const callback = (res) => {
             if (res.status === 200 && res.statusText === 'OK') {
+                sessionStorage.clear();
                 window.location.href = `/luyen-tap/lam-kiem-tra-online/${params.idExam}/${moment().toNow()}/${res.data.data.dthv_id}/${params.idCourse}`;
             }
         };
@@ -1225,33 +1258,26 @@ const ExamOnlineDetail = () => {
                                         {partQuestions.map((question, ParentIndex) => {
                                             if (ParentIndex < exam.data[`so_cau_hoi_phan_${state.sectionExam}`]) {
 
-                                                const inputString = question.cau_hoi.noi_dung;
-                                                const regex2 = /\\begin{center}\s*\\includegraphics(?:\[[^\]]*\])?\{([^}]*)\}\s*\\end{center}/g;
-                                                let urls = [];
-                                                let match;
-                                                while ((match = regex2.exec(inputString)) !== null) {
-                                                    urls.push(match[1]); // Capture the content inside {}
-                                                }
-                                                const noi_dungs = inputString.replace(regex2, '').split('\n').filter(item => item !== '\\\\'); 
-                                                const trich_doans = question.cau_hoi?.trich_doan?.noi_dung?.split('\n').filter(item => item !== '\\\\');
+                                                let regex = /\\begin{center}\\includegraphics\[scale = 0\.5\]{(.*?)}\\end{center}/;
                                                 
                                                 return (
                                                     <>
                                                         {(question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom !== undefined && question.cau_hoi.exceprtTo !== undefined) &&
                                                             <>
                                                                 {(question.cau_hoi.exceprtFrom === question.cau_hoi.exceprtTo) 
-                                                                ? <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi {question.cau_hoi.exceprtFrom + 1}</span>
-                                                                : <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi từ {question.cau_hoi.exceprtFrom + 1} đến {question.cau_hoi.exceprtTo + 1}</span>
+                                                                ? <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi {index + 1}</span>
+                                                                : <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi từ {index + 1} đến {partQuestions.length + 1}</span>
                                                                 }
                                                                 <br/>
                                                                 <div className="answer-content" style={{paddingLeft: '20px', fontSize: 18}}> 
-                                                                    {trich_doans.map(trich_doan => {
-                                                                        return (
-                                                                            <>
-                                                                                <Latex>{trich_doan.replace('\\\\', '')}</Latex><br/>
-                                                                            </>
-                                                                        )
-                                                                    })}            
+                                                                    <MathJax.Provider>
+                                                                        <div style={{whiteSpace: 'pre-line'}}>{question.cau_hoi?.trich_doan?.noi_dung}</div>
+                                                                        {question.cau_hoi?.trich_doan?.noi_dung?.split('\n').map((item) =>
+                                                                            item.indexOf('includegraphics') !== -1 && (
+                                                                                <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                                                                            ) 
+                                                                        )}
+                                                                    </MathJax.Provider>
                                                                 </div>
                                                             </>
                                                         }
@@ -1265,18 +1291,21 @@ const ExamOnlineDetail = () => {
                                                             </div>
 
                                                             <div className="title-exam">
-                                                                {noi_dungs.map(noi_dung => {
-                                                                    return (
-                                                                        <>
-                                                                            <Latex>{noi_dung.replace('\\\\', '')}</Latex><br/>
-                                                                        </>
-                                                                    )
-                                                                })}      
-                                                                <div style={{width: '100%', textAlign: 'center'}}>
-                                                                    {urls.length > 0 && urls.map((url, idx) => (
-                                                                        <img src={config.API_URL + `/${url}`} alt='img'/>
-                                                                    ))}
-                                                                </div>
+                                                                <MathJax.Provider>
+                                                                    {question.cau_hoi.noi_dung.split('\n').map((item) =>
+                                                                        item.indexOf('includegraphics') !== -1 ? (
+                                                                            <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                                                                        ) : (
+                                                                            item.split('$').map((item2, index2) => {
+                                                                                return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\'))) ? (
+                                                                                    <MathJax.Node key={index2} formula={item2} />
+                                                                                ) : (
+                                                                                    <div key={index2} >{item2}</div>
+                                                                                );
+                                                                            })
+                                                                        )
+                                                                    )}
+                                                                </MathJax.Provider>
                                                             </div>
 
                                                             <div className="content-answer-question">
@@ -1349,7 +1378,21 @@ const ExamOnlineDetail = () => {
                                                                                             >
                                                                                                 <span className="answer-label">S</span>
                                                                                             </button>
-                                                                                            <Latex>{answer.noi_dung_dap_an.slice(0, -2)}</Latex>
+                                                                                            <MathJax.Provider>
+                                                                                                {answer.noi_dung_dap_an.split('\n').map((item) =>
+                                                                                                    item.indexOf('includegraphics') !== -1 ? (
+                                                                                                        <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                                                                                                    ) : (
+                                                                                                        item.split('$').map((item2, index2) => {
+                                                                                                            return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\'))) ? (
+                                                                                                                <MathJax.Node key={index2} formula={item2} />
+                                                                                                            ) : (
+                                                                                                                <div key={index2} >{item2}</div>
+                                                                                                            );
+                                                                                                        })
+                                                                                                    )
+                                                                                                )}
+                                                                                            </MathJax.Provider>
                                                                                         </div>
                                                                                     }
                                                                                 </ul>
@@ -1378,15 +1421,8 @@ const ExamOnlineDetail = () => {
                             } else return null;
                         })}
                         {(exam.status === 'success' && !isDoing) && exam.data.cau_hoi_de_this.map((question, ParentIndex) => {
-                            const inputString = question.cau_hoi.noi_dung;
-                            const regex2 = /\\begin{center}\s*\\includegraphics(?:\[[^\]]*\])?\{([^}]*)\}\s*\\end{center}/g;
-                            let urls = [];
-                            let match;
-                            while ((match = regex2.exec(inputString)) !== null) {
-                                urls.push(match[1]); // Capture the content inside {}
-                            }
-                            const noi_dungs = inputString.replace(regex2, '').split('\n').filter(item => item !== '\\\\'); 
-                            const trich_doans = question.cau_hoi?.trich_doan?.noi_dung?.split('\n').filter(item => item !== '\\\\');
+                            
+                            let regex = /\\begin{center}\\includegraphics\[scale = 0\.5\]{(.*?)}\\end{center}/;
 
                             return (
                                 <>
@@ -1398,13 +1434,14 @@ const ExamOnlineDetail = () => {
                                             }
                                             <br/>
                                             <div className="answer-content" style={{paddingLeft: '20px'}}>             
-                                                {trich_doans.map(trich_doan => {
-                                                    return (
-                                                        <>
-                                                            <Latex>{trich_doan.replace('\\\\', '')}</Latex><br/>
-                                                        </>
-                                                    )
-                                                })} 
+                                                <MathJax.Provider>
+                                                    <div style={{whiteSpace: 'pre-line'}}>{question.cau_hoi?.trich_doan?.noi_dung}</div>
+                                                    {question.cau_hoi?.trich_doan?.noi_dung?.split('\n').map((item) =>
+                                                        item.indexOf('includegraphics') !== -1 && (
+                                                            <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                                                        ) 
+                                                    )}
+                                                </MathJax.Provider>
                                             </div>
                                         </>
                                     }
@@ -1419,18 +1456,21 @@ const ExamOnlineDetail = () => {
                                         </div>
 
                                         <div className="title-exam">
-                                            {noi_dungs.map(noi_dung => {
-                                                return (
-                                                    <>
-                                                        <Latex>{noi_dung.replace('\\\\', '')}</Latex><br/>
-                                                    </>
-                                                )
-                                            })}  
-                                            <div style={{width: '100%', textAlign: 'center'}}>
-                                                {urls.length > 0 && urls.map((url, idx) => (
-                                                    <img src={config.API_URL + `/${url}`} alt='img'/>
-                                                ))}
-                                            </div>
+                                            <MathJax.Provider>
+                                                {question.cau_hoi.noi_dung.split('\n').map((item) =>
+                                                    item.indexOf('includegraphics') !== -1 ? (
+                                                        <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                                                    ) : (
+                                                        item.split('$').map((item2, index2) => {
+                                                            return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\'))) ? (
+                                                                <MathJax.Node key={index2} formula={item2} />
+                                                            ) : (
+                                                                <div key={index2} >{item2}</div>
+                                                            );
+                                                        })
+                                                    )
+                                                )}
+                                            </MathJax.Provider>
                                         </div>
 
                                         <div className="content-answer-question">
@@ -1471,7 +1511,21 @@ const ExamOnlineDetail = () => {
                                                                     >
                                                                         <span className="answer-label">S</span>
                                                                     </button>
-                                                                    <Latex>{ answer.noi_dung_dap_an.slice(0, -2)}</Latex>
+                                                                    <MathJax.Provider>
+                                                                        {answer.noi_dung_dap_an.split('\n').map((item) =>
+                                                                            item.indexOf('includegraphics') !== -1 ? (
+                                                                                <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                                                                            ) : (
+                                                                                item.split('$').map((item2, index2) => {
+                                                                                    return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\'))) ? (
+                                                                                        <MathJax.Node key={index2} formula={item2} />
+                                                                                    ) : (
+                                                                                        <div key={index2} >{item2}</div>
+                                                                                    );
+                                                                                })
+                                                                            )
+                                                                        )}
+                                                                    </MathJax.Provider>
                                                                 </div>
                                                                 }
                                                             </ul>
@@ -1514,13 +1568,27 @@ const ExamOnlineDetail = () => {
                                                 </Button>
                                                 <div className="question-toggle">
                                                 
-                                                {help.includes(question.cau_hoi_id) &&(
+                                                {help.includes(question.cau_hoi_id) && (
                                                     <Alert
                                                         message=""
                                                         type="warning"
                                                         description={
                                                             <div className="help-answer">
-                                                                <Latex>{ question.cau_hoi.loi_giai.slice(0, -3) }</Latex>
+                                                                <MathJax.Provider>
+                                                                    {question.cau_hoi.loi_giai.split('\n').map((item) =>
+                                                                        item.indexOf('includegraphics') !== -1 ? (
+                                                                            <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                                                                        ) : (
+                                                                            item.split('$').map((item2, index2) => {
+                                                                                return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')))? (
+                                                                                    <MathJax.Node key={index2} formula={item2} />
+                                                                                ) : (
+                                                                                    <div key={index2} >{item2}</div>
+                                                                                );
+                                                                            })
+                                                                        )
+                                                                    )}
+                                                                </MathJax.Provider>
                                                             </div>
                                                         }
                                                         closable

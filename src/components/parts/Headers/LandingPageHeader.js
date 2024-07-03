@@ -64,7 +64,7 @@ function LandingPageHeader() {
           <nav className="nav__mobile" style={{transform: collapsed ? 'translateX(0)' : 'translateX(-100%)'}}>
             <div className="nav__mobile-logo">
               <a
-                href="/luyen-tap/kinh-doanh-khoa-hoc"
+                href="/luyen-tap/trang-chu"
                 className="simple-text logo-mini"
               >
                 <Avatar src={require("assets/rank/Logo.png").default} alt="react-logo" size={40} />

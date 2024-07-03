@@ -57,7 +57,7 @@ const IntroCoursePage = () => {
     const [existCourse, setExistCourse] = useState(false);
 
     const userToken = localStorage.getItem('userToken');
-    let breadcrumbs = [{ title: 'Trang chủ', link: `/luyen-tap/kinh-doanh-khoa-hoc` }, { title: 'Khóa học', link: '/luyen-tap/kinh-doanh-khoa-hoc' }];
+    let breadcrumbs = [{ title: 'Trang chủ', link: `/luyen-tap/trang-chu` }, { title: 'Khóa học', link: '/luyen-tap/kinh-doanh-khoa-hoc' }];
     
     const getCourseOfUser = () => {
         axios.get(config.API_URL + `/student/list/course`, { headers: {Authorization: `Bearer ${localStorage.getItem('userToken')}`,} 

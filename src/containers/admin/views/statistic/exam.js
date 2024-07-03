@@ -53,7 +53,6 @@ const StatisticExam = (props) => {
         .then(
             res => {
                 if (res.status === 200 && res.statusText === 'OK') {
-                    console.log(res)
                     if (res.data.data.length > 0) {
                         res.data.data.map((item, index) => {
                             if (item.diem_cac_phan !== null && item.diem_cac_phan !== "") {

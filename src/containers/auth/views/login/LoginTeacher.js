@@ -50,7 +50,7 @@ const LoginTeacherPage = (props) => {
                 if (localStorage.getItem('userToken') !== null)  {
                     const json_token = jwt_decode(localStorage.getItem('userToken'));
                     if (json_token.role === 0) {
-                        props.history.push('/luyen-tap/kinh-doanh-khoa-hoc');
+                        props.history.push('/luyen-tap/trang-chu');
                     } else if (json_token.role === 1) {
                         props.history.push('/teacher/dashboard');
                     }
@@ -73,15 +73,15 @@ const LoginTeacherPage = (props) => {
             <div className="div-form">
                 <Row className="logo" align={'middle'}>
                     <Col xs={{ span: 24 }} lg={{ span: 4 }}>
-                        <NavLink to='/luyen-tap/kinh-doanh-khoa-hoc' className="logo">
-                            <Avatar shape="square" size={130} src={require('assets/img/logo/vnu-cet-logo.png').default} />
+                        <NavLink to='/luyen-tap/trang-chu' className="logo">
+                            <Avatar shape="square" size={200} src={require('assets/rank/Logo.png').default} />
                         </NavLink>
                     </Col>
                     <Col xs={{ span: 22, offset: 1 }} lg={{ span: 9, offset: 4}} style={{marginRight: '10%'}}>
                         <h4>Kỳ thi đánh giá năng lực học sinh trung học phổ thông</h4>
                     </Col>
                     <Col xs={{ span: 24 }} lg={{ span: 4 }}>
-                        <NavLink to='/luyen-tap/kinh-doanh-khoa-hoc' className="logo">
+                        <NavLink to='/luyen-tap/trang-chu' className="logo">
                             <img src={require('assets/rank/logo-hsa.png').default} style={{width: 250}} alt='logo'/>
                         </NavLink>
                     </Col>

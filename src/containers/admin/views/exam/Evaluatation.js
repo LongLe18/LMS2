@@ -190,10 +190,10 @@ const EvaluationPage = () => {
                                         },
                                         ({ getFieldValue }) => ({
                                             validator(_, value) {
-                                                if (!value || getFieldValue('cau_bat_dau') < value) {
+                                                if (!value || getFieldValue('cau_bat_dau') <= value) {
                                                     return Promise.resolve();
                                                 }
-                                                return Promise.reject(new Error('Câu kết thúc phải lớn hơn câu bắt đầu!'));
+                                                return Promise.reject(new Error('Câu kết thúc phải lớn hơn hoặc bằng câu bắt đầu!'));
                                             },
                                         }),
                                     ]}
