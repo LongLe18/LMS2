@@ -898,7 +898,7 @@ const ExamOnlineDetail = () => {
 
                 const submit = {
                     "ket_qua_chon": "",
-                    "noi_dung_tra_loi": value,
+                    "noi_dung_tra_loi": value?.trim().toLowerCase(),
                     "dthv_id": params.idExamUser,
                     "cau_hoi_id": question.cau_hoi_id
                 }
@@ -907,7 +907,7 @@ const ExamOnlineDetail = () => {
                 setResults([...results, { cau_hoi_id: question.cau_hoi_id, noi_dung: value, gia_tri_dap_an: value, loai_dap_an: false }]);
                 
                 const tu_luan = [{
-                    "noi_dung": value,
+                    "noi_dung": value?.trim().toLowerCase(),
                     "cau_hoi_id": question.cau_hoi_id
                 }]
                 const submit = {
