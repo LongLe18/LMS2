@@ -41,7 +41,7 @@ const sendMail = async (content, option) => {
                 text: '',
                 html: `
                 <div style="max-width: 900px">
-                    <img style="max-width:100%; height:auto" src="https://hsaplus.edu.vn/static/media/banner-2.2aa23b93.png"></img>
+                    <img style="max-width:100%; height:auto" src="https://hsaplus.edu.vn/static/media/banner.c516629f.jpg"></img>
                     <div>
                         <p><span style="color: black">Xin chào bạn ${content.ho_ten}!</span></p>
                         <p><span style="color: black">Bạn vừa đăng kí tài khoản trên hệ thống ôn thi Đánh giá năng lực ĐHQGHN của Trung tâm Đào tạo và Chuyển giao công nghệ Enno  https://hsaplus.edu.vn//.</p>
@@ -65,7 +65,7 @@ const sendMail = async (content, option) => {
                 text: '',
                 html: `
                 <div style="max-width: 900px">
-                    <img style="max-width:100%; height:auto" src="https://hsaplus.edu.vn/static/media/banner-2.2aa23b93.png"></img>
+                    <img style="max-width:100%; height:auto" src="https://hsaplus.edu.vn/static/media/banner.c516629f.jpg"></img>
                     <div>
                         <p><span style="color: black">Xin chào bạn ${content.ho_ten}!</span></p>
                         <p><span style="color: black">Thông tin đăng nhập trên hệ thống ôn thi Đánh giá năng lực ĐHQGHN của Trung tâm Đào tạo và Chuyển giao công nghệ Enno  https://hsaplus.edu.vn// đã được khôi phục</p>
@@ -96,7 +96,7 @@ const sendMail = async (content, option) => {
                 text: '',
                 html: `
                 <div style="max-width: 900px">
-                    <img style="max-width:100%; height:auto" src="https://hsaplus.edu.vn/static/media/banner-2.2aa23b93.png"></img>
+                    <img style="max-width:100%; height:auto" src="https://hsaplus.edu.vn/static/media/banner.c516629f.jpg"></img>
                     <div>
                         <p><span style="color: black">Xin chào bạn ${content.ho_ten}!</span></p>
                         <p><span style="color: black">Bạn vừa đăng kí tài khoản trên hệ thống ôn thi Đánh giá năng lực ĐHQGHN của Trung tâm Đào tạo và Chuyển giao công nghệ Enno  https://hsaplus.edu.vn//.  Dưới đây là thông tin tài khoản của bạn:</p>
@@ -138,7 +138,7 @@ const sendMail = async (content, option) => {
                 text: '',
                 html: `
                 <div style="max-width: 900px">
-                    <img style="max-width:100%; height:auto" style="max-width:100%; height:auto" src="https://hsaplus.edu.vn/static/media/banner-2.2aa23b93.png"></img>
+                    <img style="max-width:100%; height:auto" style="max-width:100%; height:auto" src="https://hsaplus.edu.vn/static/media/banner.c516629f.jpg"></img>
                     <div>
                         <p><span style="color: black">Xin chào bạn ${content.ho_ten}!</span></p>
                         <p><span style="color: black">Tài khoản Luyện thi của bạn trên hệ thống trên hệ thống ôn thi Đánh giá năng lực ĐHQGHN của Trung tâm Đào tạo và Chuyển giao công nghệ Enno https://hsaplus.edu.vn// đã được kích hoạt.</p>
