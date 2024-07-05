@@ -269,8 +269,8 @@ const AccountPage = () => {
         ))
       }
       return (
-        <Select
-          showSearch={false} value={state.courseId}
+        <Select 
+          showSearch={true} value={state.courseId}
           onChange={(khoa_hoc_id) => setState({khoa_hoc_id, ...state })}
           placeholder="Chọn khóa học"
           mode="multiple"
@@ -655,6 +655,7 @@ const AccountPage = () => {
                     message: 'Thông báo',
                     description: 'Lấy dữ liệu thành viên thất bại',
                 })}
+                <br/>
                 <Row>
                     <Col xl={24} sm={24} xs={24} className="cate-form-block">
                     {(state.isEdit) ? <h5>Sửa thông tin thành viên</h5> : <h5>Thêm mới thành viên</h5>}  

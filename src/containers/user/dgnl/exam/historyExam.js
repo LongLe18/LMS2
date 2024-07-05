@@ -169,15 +169,19 @@ const HistoryExam = () => {
                 <span className="answer-label">{renderAnswerKey(index)}</span>
                 <div className="answer-content">             
                     <MathJax.Provider>
-                        {answer.noi_dung_dap_an.split('\n').map((item) =>
+                        {answer.noi_dung_dap_an.replace('\\bold', '\\textbf').split('\n').map((item) =>
                             item.indexOf('includegraphics') !== -1 ? (
                                 <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img${index}`}></img>
                             ) : (
                                 item.split('$').map((item2, index2) => {
-                                    return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')))? (
+                                    return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && !item2.includes('\\underline')) ? (
                                         <MathJax.Node key={index2} formula={item2} />
-                                    ) : (
-                                        <div key={index2} style={{margin: '0 6px'}}>{item2}</div>
+                                    ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\underline')) ?
+                                        (
+                                            <div key={index2} style={{textDecoration: 'underline'}}>{item2.split('\\underline{')[1].split('}')[0]}</div>
+                                        )
+                                    :(
+                                        <div key={index2} >{item2}</div>
                                     );
                                 })
                             )
@@ -257,14 +261,18 @@ const HistoryExam = () => {
                                         <br/>
                                         <div className="answer-content" style={{paddingLeft: '20px'}}>             
                                             <MathJax.Provider>
-                                                {question.cau_hoi?.trich_doan?.noi_dung?.split('\n').map((item, index) =>
+                                                {question.cau_hoi?.trich_doan?.noi_dung?.replace('\\bold', '\\textbf').split('\n').map((item, index) =>
                                                     item.indexOf('includegraphics') !== -1 ? (
                                                         <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img${index}`}></img>
                                                     ) : (
                                                         item.split('$').map((item2, index2) => {
-                                                            return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\'))) ? (
+                                                            return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && !item2.includes('\\underline')) ? (
                                                                 <MathJax.Node key={index2} formula={item2} />
-                                                            ) : (
+                                                            ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\underline')) ?
+                                                                (
+                                                                    <div key={index2} style={{textDecoration: 'underline'}}>{item2.split('\\underline{')[1].split('}')[0]}</div>
+                                                                )
+                                                            :(
                                                                 <div key={index2} >{item2}</div>
                                                             );
                                                         })
@@ -286,14 +294,18 @@ const HistoryExam = () => {
 
                                     <div className="title-exam">
                                         <MathJax.Provider>
-                                            {question.cau_hoi.noi_dung.split('\n').map((item, index) =>
+                                            {question.cau_hoi.noi_dung.replace('\\bold', '\\textbf').split('\n').map((item, index) =>
                                                 item.indexOf('includegraphics') !== -1 ? (
                                                     <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img${index}`}></img>
                                                 ) : (
                                                     item.split('$').map((item2, index2) => {
-                                                        return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\'))) ? (
+                                                        return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && !item2.includes('\\underline')) ? (
                                                             <MathJax.Node key={index2} formula={item2} />
-                                                        ) : (
+                                                        ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\underline')) ?
+                                                            (
+                                                                <div key={index2} style={{textDecoration: 'underline'}}>{item2.split('\\underline{')[1].split('}')[0]}</div>
+                                                            )
+                                                        :(
                                                             <div key={index2} >{item2}</div>
                                                         );
                                                     })
@@ -355,14 +367,18 @@ const HistoryExam = () => {
                                                 description={
                                                     <div className="help-answer">
                                                         <MathJax.Provider>
-                                                            {question.cau_hoi.loi_giai.split('\n').map((item, index) =>
+                                                            {question.cau_hoi.loi_giai.replace('\\bold', '\\textbf').split('\n').map((item, index) =>
                                                                 item.indexOf('includegraphics') !== -1 ? (
                                                                     <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img${index}`}></img>
                                                                 ) : (
                                                                     item.split('$').map((item2, index2) => {
-                                                                        return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')))? (
+                                                                        return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && !item2.includes('\\underline')) ? (
                                                                             <MathJax.Node key={index2} formula={item2} />
-                                                                        ) : (
+                                                                        ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\underline')) ?
+                                                                            (
+                                                                                <div key={index2} style={{textDecoration: 'underline'}}>{item2.split('\\underline{')[1].split('}')[0]}</div>
+                                                                            )
+                                                                        :(
                                                                             <div key={index2} >{item2}</div>
                                                                         );
                                                                     })
