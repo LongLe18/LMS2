@@ -1,4 +1,4 @@
-const { redirect } = require('express/lib/response');
+﻿const { redirect } = require('express/lib/response');
 const CourseStudent = require('../models/CourseStudent');
 const { Student, Staff, Teacher, Role, Token } = require('../models');
 const security = require('../utils/security');

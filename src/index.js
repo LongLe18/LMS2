@@ -13,10 +13,9 @@ require('dotenv').config();
 
 // This line is from the Node.js HTTPS documentation.
 // var options = {
-//     key: fs.readFileSync('ssl/ltqg_key.pem'),
-//     ca: fs.readFileSync('ssl/ltqg_csr.pem'),
-//     cert: fs.readFileSync('ssl/ltqg_cert.pem')
-// };
+//     key: fs.readFileSync('C:/nginx/ssl/hsaplus_edu_vn/private.key'),
+//     cert: fs.readFileSync('C:/nginx/ssl/hsaplus_edu_vn/hsaplus_edu_vn.crt')
+//};
 
 app.use(cors());
 app.use(express.static(path.join(process.cwd(), 'public')));
@@ -41,8 +40,8 @@ route(app);
 // Create an HTTP service.
 http.createServer(app).listen(process.env.port || 3000);
 // Create an HTTPS service identical to the HTTP service.
-// https.createServer(options, app).listen(portHttps,()=>{
-//     console.log(`Server is running at port ${portHttps}`)
+// https.createServer(options, app).listen(process.env.port || 3000,()=>{
+//      console.log(`Server is running at port ${process.env.port || 3000}`)
 // });
 
 //require('https').globalAgent.options.ca = require('ssl-root-cas/latest').create();
