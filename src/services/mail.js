@@ -1,4 +1,4 @@
-const nodemailer = require('nodemailer');
+﻿const nodemailer = require('nodemailer');
 const { oauth } = require('../config');
 const res = require('express/lib/response');
 const SendmailTransport = require('nodemailer/lib/sendmail-transport');
