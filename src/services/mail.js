@@ -25,6 +25,9 @@ const sendMail = async (content, option) => {
             auth: {
                 user: process.env.MAIL_USER, // generated ethereal user
                 pass: process.env.MAIL_PASSWORD  // generated ethereal password
+            },
+            tls: {
+                rejectUnauthorized: false
             }
         });
 
