@@ -1265,8 +1265,8 @@ const ExamOnlineDetail = () => {
                                                         {(question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom !== undefined && question.cau_hoi.exceprtTo !== undefined) &&
                                                             <>
                                                                 {(question.cau_hoi.exceprtFrom === question.cau_hoi.exceprtTo) 
-                                                                ? <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi {index + 1}</span>
-                                                                : <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi từ {index + 1} đến {partQuestions.length + 1}</span>
+                                                                ? <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi {ParentIndex + 1}</span>
+                                                                : <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi từ {ParentIndex + 1} đến {partQuestions.length}</span>
                                                                 }
                                                                 <br/>
                                                                 <div className="answer-content" style={{paddingLeft: '20px', fontSize: 18}}> 
