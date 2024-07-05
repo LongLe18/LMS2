@@ -283,7 +283,6 @@ const getById = async (req, res) => {
                 include: [
                     {
                         model: Answer,
-                        as: 'dap_ans'
                     },
                     {
                         model: Exceprt,

@@ -140,6 +140,7 @@ const putUpdate = async (req, res) => {
         where: {
             dthv_id: req.params.id,
         },
+        order: [[sequelize.col('dap_an_id'), 'ASC']],
     });
     let ket_qua_diem = 0;
     let so_cau_tra_loi_dung = 0;
