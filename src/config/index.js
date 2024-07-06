@@ -13,7 +13,7 @@ const config = {
         port: 3001,
         portHttps: 3000,
         login_url: ENV === 'dev' ? 'http://localhost:3002/auth/hocvien' : 'https://hsaplus.edu.vn/auth/hocvien',
-        be_url: ENV === 'dev' ? 'http://localhost:3001' : 'https://hsaplus.edu.vn:3000',
+        be_url: ENV === 'dev' ? 'http://localhost:3001' : 'https://hsaplus.edu.vn:3003',
     },
     oauth: {
         REDIRECT_DOMAIN: ENV === 'dev' ? 'http://localhost:3002' : 'https://hsaplus.edu.vn',
