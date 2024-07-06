@@ -34,17 +34,17 @@ const sendMail = async (content, option) => {
         let mailOptions;
         if (option == 1) {
             mailOptions = {
-                from: `TRUNG TÂM LUYỆN THI QUỐC GIA CTT<${process.env.MAIL_FROM}>`,
+                from: `TRUNG TÂM LUYỆN THI VÀ ĐÁNH GIÁ NĂNG LỰC ENNO EDUCATION<${process.env.MAIL_FROM}>`,
                 to: content.gmail,
                 subject: 'THÔNG BÁO KÍCH HOẠT TÀI KHOẢN',
                 sender: process.env.MAIL_SENDER,
                 text: '',
                 html: `
                 <div style="max-width: 900px">
-                    <img style="max-width:100%; height:auto" src="https://luyenthiquocgia.edu.vn/wp-content/uploads/2023/09/e803d5fc604eb510ec5f.png"></img>
+                    <img style="max-width:100%; height:auto" src="https://hsaplus.edu.vn/static/media/banner-2.2aa23b93.png"></img>
                     <div>
                         <p><span style="color: black">Xin chào bạn ${content.ho_ten}!</span></p>
-                        <p><span style="color: black">Bạn vừa đăng kí tài khoản trên hệ thống ôn thi Đánh giá năng lực ĐHQGHN của Trung tâm CT&T  https://luyenthiquocgia.edu.vn/.</p>
+                        <p><span style="color: black">Bạn vừa đăng kí tài khoản trên hệ thống ôn thi Đánh giá năng lực ĐHQGHN của Trung tâm Đào tạo và Chuyển giao công nghệ Enno  https://hsaplus.edu.vn//.</p>
                         <p><span style="color: black">Để hoàn tất xác thực email vui lòng Click vào đây: <a style="font-style:italic" href="${api.be_url}/auth/confirm/${content.token}">Xác thực email</a></p>
                         <p><span style="color: black">Trân trọng!</p>
                     </div>
@@ -58,17 +58,17 @@ const sendMail = async (content, option) => {
             };
         } else if (option == 2) {
             mailOptions = {
-                from: `TRUNG TÂM LUYỆN THI QUỐC GIA CTT<${process.env.MAIL_FROM}>`,
+                from: `TRUNG TÂM LUYỆN THI VÀ ĐÁNH GIÁ NĂNG LỰC ENNO EDUCATION<${process.env.MAIL_FROM}>`,
                 to: content.gmail,
                 subject: 'KHÔI PHỤC TÀI KHOẢN ĐĂNG NHẬP',
                 sender: process.env.MAIL_SENDER,
                 text: '',
                 html: `
                 <div style="max-width: 900px">
-                    <img style="max-width:100%; height:auto" src="https://luyenthiquocgia.edu.vn/wp-content/uploads/2023/09/e803d5fc604eb510ec5f.png"></img>
+                    <img style="max-width:100%; height:auto" src="https://hsaplus.edu.vn/static/media/banner-2.2aa23b93.png"></img>
                     <div>
                         <p><span style="color: black">Xin chào bạn ${content.ho_ten}!</span></p>
-                        <p><span style="color: black">Thông tin đăng nhập trên hệ thống ôn thi Đánh giá năng lực ĐHQGHN của Trung tâm CT&T  https://luyenthiquocgia.edu.vn/ đã được khôi phục</p>
+                        <p><span style="color: black">Thông tin đăng nhập trên hệ thống ôn thi Đánh giá năng lực ĐHQGHN của Trung tâm Đào tạo và Chuyển giao công nghệ Enno  https://hsaplus.edu.vn// đã được khôi phục</p>
                         <div style="border: 2px solid rgb(137,166,191); border-radius: 20px; padding: 10px; background-color: rgb(219,238,244)">
                             <p><span style="color: black; font-weight:bold">Thông tin đăng nhập:</span></p>
                             <ul>
@@ -89,17 +89,17 @@ const sendMail = async (content, option) => {
             };
         } else if (option == 3) {
             mailOptions = {
-                from: `TRUNG TÂM LUYỆN THI QUỐC GIA CTT<${process.env.MAIL_FROM}>`,
+                from: `TRUNG TÂM LUYỆN THI VÀ ĐÁNH GIÁ NĂNG LỰC ENNO EDUCATION<${process.env.MAIL_FROM}>`,
                 to: content.gmail,
                 subject: 'THÔNG TIN ĐĂNG NHẬP',
                 sender: process.env.MAIL_SENDER,
                 text: '',
                 html: `
                 <div style="max-width: 900px">
-                    <img style="max-width:100%; height:auto" src="https://luyenthiquocgia.edu.vn/wp-content/uploads/2023/09/e803d5fc604eb510ec5f.png"></img>
+                    <img style="max-width:100%; height:auto" src="https://hsaplus.edu.vn/static/media/banner-2.2aa23b93.png"></img>
                     <div>
                         <p><span style="color: black">Xin chào bạn ${content.ho_ten}!</span></p>
-                        <p><span style="color: black">Bạn vừa đăng kí tài khoản trên hệ thống ôn thi Đánh giá năng lực ĐHQGHN của Trung tâm CT&T  https://luyenthiquocgia.edu.vn/.  Dưới đây là thông tin tài khoản của bạn:</p>
+                        <p><span style="color: black">Bạn vừa đăng kí tài khoản trên hệ thống ôn thi Đánh giá năng lực ĐHQGHN của Trung tâm Đào tạo và Chuyển giao công nghệ Enno  https://hsaplus.edu.vn//.  Dưới đây là thông tin tài khoản của bạn:</p>
                         <div style="border: 2px solid rgb(137,166,191); border-radius: 20px; padding: 10px; background-color: rgb(219,238,244)">
                             <p><span style="color: black; font-weight:bold">Thông tin tài khoản</span></p>
                             <ul>
@@ -120,7 +120,7 @@ const sendMail = async (content, option) => {
             };
         } else if (option == 4) {
             mailOptions = {
-                from: `TRUNG TÂM LUYỆN THI QUỐC GIA CTT<${process.env.MAIL_FROM}>`,
+                from: `TRUNG TÂM LUYỆN THI VÀ ĐÁNH GIÁ NĂNG LỰC ENNO EDUCATION<${process.env.MAIL_FROM}>`,
                 to: content.gmail,
                 subject: 'THANH TOÁN HÓA ĐƠN',
                 sender: process.env.MAIL_SENDER,
@@ -131,17 +131,17 @@ const sendMail = async (content, option) => {
         } else if (option == 5) {
             const d=new Date(content.ngay);
             mailOptions = {
-                from: `TRUNG TÂM LUYỆN THI QUỐC GIA CTT<${process.env.MAIL_FROM}>`,
+                from: `TRUNG TÂM LUYỆN THI VÀ ĐÁNH GIÁ NĂNG LỰC ENNO EDUCATION<${process.env.MAIL_FROM}>`,
                 to: content.gmail,
                 subject: `TÀI KHOẢN LUYỆN THI`,
                 sender: process.env.MAIL_SENDER,
                 text: '',
                 html: `
                 <div style="max-width: 900px">
-                    <img style="max-width:100%; height:auto" style="max-width:100%; height:auto" src="https://luyenthiquocgia.edu.vn/wp-content/uploads/2023/09/e803d5fc604eb510ec5f.png"></img>
+                    <img style="max-width:100%; height:auto" style="max-width:100%; height:auto" src="https://hsaplus.edu.vn/static/media/banner-2.2aa23b93.png"></img>
                     <div>
                         <p><span style="color: black">Xin chào bạn ${content.ho_ten}!</span></p>
-                        <p><span style="color: black">Tài khoản Luyện thi của bạn trên hệ thống trên hệ thống ôn thi Đánh giá năng lực ĐHQGHN của Trung tâm CT&T https://luyenthiquocgia.edu.vn/ đã được kích hoạt.</p>
+                        <p><span style="color: black">Tài khoản Luyện thi của bạn trên hệ thống trên hệ thống ôn thi Đánh giá năng lực ĐHQGHN của Trung tâm Đào tạo và Chuyển giao công nghệ Enno https://hsaplus.edu.vn// đã được kích hoạt.</p>
                         <div style="border: 2px solid rgb(137,166,191); border-radius: 20px; padding: 10px; background-color: rgb(219,238,244)">
                             <p><span style="color: black; font-weight:bold">Thông tin khóa học</span></p>
                             <ul>
