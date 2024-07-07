@@ -669,10 +669,11 @@ const ProfilePage = () => {
                                                                 >
                                                                     {renderProvince()}
                                                                 </Form.Item>
+                                                            </Col>
+                                                            <Col xl={24} sm={24} xs={24} className="cate-form-block">
                                                                 <Form.Item className="input-col" name="gioi_thieu" label='Giới thiệu'>
                                                                     <TextArea rows={2} />
                                                                 </Form.Item>
-                                                                
                                                             </Col>
                                                         </Row>
                                                         <Form.Item className="input-col" label="Hình đại diện" name="anh_dai_dien" rules={[]}>

@@ -440,7 +440,6 @@ const AccountPage = () => {
         formData.append('email', values.email);
         if (state.isEdit)
           formData.append('trang_thai', values.trang_thai);
-        formData.append('mat_khau', 'User123@');
         if (state.ngay_sinh !== '') {
           formData.append('ngay_sinh', state.ngay_sinh);
         }
