@@ -408,7 +408,7 @@ const postCreateAdmin = async (req, res) => {
             message: 'Email already exists',
         });
     else {
-        const password = security.generatePassword();
+        const password = 'Enno@123';
         await Student.create({
             ...req.body,
             mat_khau: security.hashPassword(password),
