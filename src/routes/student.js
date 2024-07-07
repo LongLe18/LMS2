@@ -12,6 +12,15 @@ router.post(
     upload.single('anh_dai_dien'),
     tryCatch(studentController.postCreate)
 );
+
+router.post(
+    '/adminCreate',
+    authToken,
+    authRole([2], 2),
+    upload.single('anh_dai_dien'),
+    tryCatch(studentController.postCreateAdmin)
+);
+
 router.get('/create', authToken, tryCatch(studentController.getCreate));
 router.get('/:id/edit', authToken, tryCatch(studentController.getUpdate));
 router.put(
