@@ -345,7 +345,7 @@ function* createUser(payload) {
 
 function* createStudent(payload) {
   try {
-    const endpoint = `${config.API_URL}/student/create`;
+    const endpoint = `${config.API_URL}/student/createadminCreate`;
     const response = yield call(postApiAuth, endpoint, payload.params);
     const data = yield response.data;
     yield put({ type: actions.user.CREATE_STUDENT_SUCCESS, result: data });

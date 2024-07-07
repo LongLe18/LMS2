@@ -339,21 +339,33 @@ const TeacherPage = () => {
         };
 
         if (state.isEdit) {
-            if (values.vai_tro === 'nhân viên') {
-                dispatch(userAction.editStaff( {formData: formData, nhan_vien_id: state.idStaff}, callback));
-            } else if (values.vai_tro === 'giáo viên') {
-                dispatch(userAction.editTeacher({formData: formData, giao_vien_id: state.idTeacher}, callback));
-            } else {
-                dispatch(userAction.editStudent({formData: formData, hoc_vien_id: state.idStudent}, callback));
+            switch(values.vai_tro) {
+                case 'nhân viên':
+                    dispatch(userAction.editStaff( {formData: formData, nhan_vien_id: state.idStaff}, callback));
+                    break;
+                case 'giáo viên':
+                    dispatch(userAction.editTeacher({formData: formData, giao_vien_id: state.idTeacher}, callback));
+                    break;
+                case 'học viên':
+                    dispatch(userAction.editStudent({formData: formData, hoc_vien_id: state.idStudent}, callback));
+                    break;
+                default:
+                    break;
             }
         } else {
-            if (values.vai_tro === 'nhân viên') {
-                formData.append('phan_quyen_id', 3);    
-                dispatch(userAction.createStaff(formData, callback));
-            } else if (values.vai_tro === 'giáo viên') {
-                dispatch(userAction.createTeacher(formData, callback));
-            } else {
-                dispatch(userAction.createStudent(formData, callback));
+            switch(values.vai_tro) {
+                case 'nhân viên':
+                    formData.append('phan_quyen_id', 3);
+                    dispatch(userAction.createStaff(formData, callback));
+                    break;
+                case 'giáo viên':
+                    dispatch(userAction.createTeacher(formData, callback));
+                    break;
+                case 'học viên':
+                    dispatch(userAction.createStudent(formData, callback));
+                    break;
+                default:
+                    break;
             }
         }
     };
@@ -388,161 +400,159 @@ const TeacherPage = () => {
     }, [searchValue]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
-        <>
-            <div className='content'>
-                <Col xl={24} className="body-content">
-                    <Row className="app-main">
-                        <Col xl={24} sm={24} xs={24}>
-                            <AppFilter
-                            title="Quản lý Giáo viên"
-                            isShowStatus={true}
-                            isShowSearchBox={true}
-                            isShowDatePicker={true}
-                            isRangeDatePicker={true}
-                            onFilterChange={(field, value) => onFilterChange(field, value)}
-                            />
-                        </Col>
-                    </Row>
-                </Col>
-                {data.length > 0 && 
-                    <Table className="table-striped-rows" columns={columns} dataSource={data} />
-                }
-                {(errorteachers) && notification.error({
-                    message: 'Thông báo',
-                    description: 'Lấy dữ liệu giáo viên thất bại',
-                })}
-                <Row>
-                    <Col xl={24} sm={24} xs={24} className="cate-form-block">
-                    {(state.isEdit) ? <h5>Sửa thông tin giáo viên</h5> : <h5>Thêm mới giáo viên</h5>}  
-                        <Form layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={createUser}>
-                            <Form.Item
-                                className="input-col"
-                                label="Họ và tên"
-                                name="ho_ten"
-                                rules={[
-                                    {
-                                    required: true,
-                                    message: 'Họ và tên là trường bắt buộc.',
-                                    },
-                                ]}
-                                >
-                                    <Input placeholder=""/>
-                            </Form.Item>
-                            <Form.Item
-                                className="input-col"
-                                label="Giới tính"
-                                name="gioi_tinh"
-                            >
-                                {renderGender()}
-                            </Form.Item>   
-                            
-                            <Form.Item
-                                className="input-col"
-                                label="Ngày sinh"
-                                name="ngay_sinh"
-                              >
-                                  <DatePicker
-                                    placeholder='Ngày sinh'
-                                    format="YYYY-MM-DD"
-                                    onChange={onChangeStart}
-                                    locale={{
-                                      lang: {
-                                        locale: 'en_US',
-                                        rangePlaceholder: ['Từ ngày', 'Đến ngày'],
-                                      },
-                                    }}
-                                  />
-                            </Form.Item> 
-
-                            <Form.Item
-                                name="email"
-                                label="Email"
-                                rules={[
-                                    { required: true, message: 'E-mail là trường bắt buộc.' },
-                                    { type: 'email', message: 'Không đúng định dạng E-mail.' },
-                                ]}
-                            >
-                                <Input size="normal" placeholder='Email' />
-                            </Form.Item>
-                            <Form.Item
-                                name="dia_chi"
-                                label="Địa chỉ"
-                                rules={[]}
-                            >
-                                <Input size="normal" placeholder='Địa chỉ' />
-                            </Form.Item>
-                            <Form.Item name="sdt" label="Số điện thoại">
-                                <Input size="normal" type={"tel"} placeholder='Số điện thoại' />
-                            </Form.Item>
-                            {/* Chuyên ngành */}
-                            <Form.Item
-                                label="Chuyên ngành"
-                                className="input-col"
-                                name="chuyen_nganh_id"
-                                rules={[
-                                    { required: true, message: 'Chuyên ngành là trường bắt buộc.' },
-                                ]} 
-                            >
-                                {renderMajor()}
-                            </Form.Item>    
-                            {/* Vai trò */}
-                            <Form.Item
-                                name="vai_tro"
-                                label="Vai trò"
-                                rules={[
-                                    { required: true, message: 'Vai trò là trường bắt buộc.' },
-                                ]}
-                            >
-                                {renderRole()}
-                            </Form.Item>
-                            {/* Trạng thái */}
-                            {/* Trạng thái */}
-                            {(state.isEdit) ?  
-                              <Form.Item 
-                                initialValue={state.form.trang_thai}
-                                label="Trạng thái"
-                                className="input-col"
-                                name="trang_thai"
-                                rules={[]} >
-                                {renderStatus()}
-                              </Form.Item>  
-                            : <Form.Item style={{display: 'none'}}
-                                initialValue={state.form.trang_thai}
-                                label="Trạng thái"
-                                className="input-col"
-                                name="trang_thai"
-                                rules={[]} >
-                                {renderStatus()}
-                              </Form.Item> 
-                            } 
-                            <Form.Item className="input-col" label="Hình đại diện" name="anh_dai_dien" rules={[]}>
-                              <Dragger {...propsImage} maxCount={1}
-                                  listType="picture"
-                                  className="upload-list-inline"
-                              >
-                                  <p className="ant-upload-drag-icon">
-                                  <UploadOutlined />
-                                  </p>
-                                  <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
-                              </Dragger>
-                            </Form.Item>
-                            <Form.Item className="button-col">
-                                <Space>
-                                    <Button shape="round" type="primary" htmlType="submit" >
-                                    {(state.isEdit ) ? 'Cập nhật' : 'Thêm mới'}   
-                                    </Button>
-                                    {(state.isEdit ) 
-                                    ?  <Button shape="round" type="danger" onClick={() => cancelEdit()} > 
-                                        Hủy bỏ
-                                    </Button>
-                                    : ''}    
-                                </Space>    
-                            </Form.Item>
-                        </Form>
+        <div className='content'>
+            <Col xl={24} className="body-content">
+                <Row className="app-main">
+                    <Col xl={24} sm={24} xs={24}>
+                        <AppFilter
+                        title="Quản lý Giáo viên"
+                        isShowStatus={true}
+                        isShowSearchBox={true}
+                        isShowDatePicker={true}
+                        isRangeDatePicker={true}
+                        onFilterChange={(field, value) => onFilterChange(field, value)}
+                        />
                     </Col>
                 </Row>
-            </div>
-        </>
+            </Col>
+            {data.length > 0 && 
+                <Table className="table-striped-rows" columns={columns} dataSource={data} />
+            }
+            {(errorteachers) && notification.error({
+                message: 'Thông báo',
+                description: 'Lấy dữ liệu giáo viên thất bại',
+            })}
+            <Row>
+                <Col xl={24} sm={24} xs={24} className="cate-form-block">
+                {(state.isEdit) ? <h5>Sửa thông tin giáo viên</h5> : <h5>Thêm mới giáo viên</h5>}  
+                    <Form layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={createUser}>
+                        <Form.Item
+                            className="input-col"
+                            label="Họ và tên"
+                            name="ho_ten"
+                            rules={[
+                                {
+                                required: true,
+                                message: 'Họ và tên là trường bắt buộc.',
+                                },
+                            ]}
+                            >
+                                <Input placeholder=""/>
+                        </Form.Item>
+                        <Form.Item
+                            className="input-col"
+                            label="Giới tính"
+                            name="gioi_tinh"
+                        >
+                            {renderGender()}
+                        </Form.Item>   
+                        
+                        <Form.Item
+                            className="input-col"
+                            label="Ngày sinh"
+                            name="ngay_sinh"
+                            >
+                                <DatePicker
+                                placeholder='Ngày sinh'
+                                format="YYYY-MM-DD"
+                                onChange={onChangeStart}
+                                locale={{
+                                    lang: {
+                                    locale: 'en_US',
+                                    rangePlaceholder: ['Từ ngày', 'Đến ngày'],
+                                    },
+                                }}
+                                />
+                        </Form.Item> 
+
+                        <Form.Item
+                            name="email"
+                            label="Email"
+                            rules={[
+                                { required: true, message: 'E-mail là trường bắt buộc.' },
+                                { type: 'email', message: 'Không đúng định dạng E-mail.' },
+                            ]}
+                        >
+                            <Input size="normal" placeholder='Email' />
+                        </Form.Item>
+                        <Form.Item
+                            name="dia_chi"
+                            label="Địa chỉ"
+                            rules={[]}
+                        >
+                            <Input size="normal" placeholder='Địa chỉ' />
+                        </Form.Item>
+                        <Form.Item name="sdt" label="Số điện thoại">
+                            <Input size="normal" type={"tel"} placeholder='Số điện thoại' />
+                        </Form.Item>
+                        {/* Chuyên ngành */}
+                        <Form.Item
+                            label="Chuyên ngành"
+                            className="input-col"
+                            name="chuyen_nganh_id"
+                            rules={[
+                                { required: true, message: 'Chuyên ngành là trường bắt buộc.' },
+                            ]} 
+                        >
+                            {renderMajor()}
+                        </Form.Item>    
+                        {/* Vai trò */}
+                        <Form.Item
+                            name="vai_tro"
+                            label="Vai trò"
+                            rules={[
+                                { required: true, message: 'Vai trò là trường bắt buộc.' },
+                            ]}
+                        >
+                            {renderRole()}
+                        </Form.Item>
+                        {/* Trạng thái */}
+                        {/* Trạng thái */}
+                        {(state.isEdit) ?  
+                            <Form.Item 
+                            initialValue={state.form.trang_thai}
+                            label="Trạng thái"
+                            className="input-col"
+                            name="trang_thai"
+                            rules={[]} >
+                            {renderStatus()}
+                            </Form.Item>  
+                        : <Form.Item style={{display: 'none'}}
+                            initialValue={state.form.trang_thai}
+                            label="Trạng thái"
+                            className="input-col"
+                            name="trang_thai"
+                            rules={[]} >
+                            {renderStatus()}
+                            </Form.Item> 
+                        } 
+                        <Form.Item className="input-col" label="Hình đại diện" name="anh_dai_dien" rules={[]}>
+                            <Dragger {...propsImage} maxCount={1}
+                                listType="picture"
+                                className="upload-list-inline"
+                            >
+                                <p className="ant-upload-drag-icon">
+                                <UploadOutlined />
+                                </p>
+                                <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
+                            </Dragger>
+                        </Form.Item>
+                        <Form.Item className="button-col">
+                            <Space>
+                                <Button shape="round" type="primary" htmlType="submit" >
+                                {(state.isEdit ) ? 'Cập nhật' : 'Thêm mới'}   
+                                </Button>
+                                {(state.isEdit ) 
+                                ?  <Button shape="round" type="danger" onClick={() => cancelEdit()} > 
+                                    Hủy bỏ
+                                </Button>
+                                : ''}    
+                            </Space>    
+                        </Form.Item>
+                    </Form>
+                </Col>
+            </Row>
+        </div>
     )
 };
 

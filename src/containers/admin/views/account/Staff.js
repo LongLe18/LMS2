@@ -388,33 +388,37 @@ const StaffPage = () => {
             dispatch(userAction.editStudent({formData: formData, hoc_vien_id: state.idStudent}, callback));
           }
         } else {
-          if (values.vai_tro === 'nhân viên') {
-            let Parentpermission = ['quyen_he_thong', 'quyen_nhan_su', 'quyen_kinh_doanh', 'quyen_khao_thi'];
-            let remainSubPermission = [];
+          switch(values.vai_tro) {
+            case 'nhân viên':
+              let Parentpermission = ['quyen_he_thong', 'quyen_nhan_su', 'quyen_kinh_doanh', 'quyen_khao_thi'];
+              let remainSubPermission = [];
 
-            if (values.quyen !== undefined) {
-              values.quyen.map(value => {
-                if (values[value] !== undefined) {
-                  let permission = ['0', '0'];
-                  values[value].map((item) => {
-                    if (item === '1') permission[0] = '1';
-                    else permission[1] = '1';
-                    return null;
-                  })
-                  formData.append(value, permission.join(''));
-                } else {
-                  formData.append(value, '00');
-                } 
-                return null;
-              })
-            }
-            remainSubPermission = Parentpermission.filter(element => values.quyen.indexOf(element) === -1);
-            remainSubPermission.map((item) => formData.append(item, '00'));
-            dispatch(userAction.createStaff(formData, callback));
-          } else if (values.vai_tro === 'giáo viên') {
+              if (values.quyen !== undefined) {
+                values.quyen.map(value => {
+                  if (values[value] !== undefined) {
+                    let permission = ['0', '0'];
+                    values[value].map((item) => {
+                      if (item === '1') permission[0] = '1';
+                      else permission[1] = '1';
+                      return null;
+                    })
+                    formData.append(value, permission.join(''));
+                  } else {
+                    formData.append(value, '00');
+                  } 
+                  return null;
+                })
+              }
+              remainSubPermission = Parentpermission.filter(element => values.quyen.indexOf(element) === -1);
+              remainSubPermission.map((item) => formData.append(item, '00'));
+              dispatch(userAction.createStaff(formData, callback));
+              break;
+            case 'giáo viên':
               dispatch(userAction.createTeacher(formData, callback));
-          } else {
+              break;
+            default:
               dispatch(userAction.createStudent(formData, callback));
+              break;
           }
         }
     };

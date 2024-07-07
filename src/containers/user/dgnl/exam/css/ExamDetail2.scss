@@ -254,6 +254,9 @@
   padding-left: 46px;
   font-size: 18px;
   text-align: left;
+  .underline {
+    text-decoration: underline;
+  }
 }
 
 .answer-content div {
@@ -645,4 +648,5 @@
 .MJXc-display {
   margin: 0 !important;
   font-size: 18px !important;
+  padding-right: 4px !important;
 }
