@@ -148,37 +148,37 @@ const putUpdate = async (req, res) => {
             phan_thi: req.body.phan_thi,
         },
     });
-    if (check) {
-        // Nếu câu bắt đầu hoặc câu kết thúc khác thì cho phép update
-        if (
-            check.cau_bat_dau !== req.body.cau_bat_dau ||
-            check.cau_ket_thuc !== req.body.cau_ket_thuc
-        ) {
-            await Evaluate.update(
-                {
-                    ...req.body,
-                },
-                {
-                    where: {
-                        danh_gia_id: req.params.id,
-                    },
-                }
-            );
-            res.status(200).send({
-                status: 'success',
-                data: null,
-                message: 'Cập nhật thành công',
-            });
-            return;
-        } else {
-            res.status(400).send({
-                status: 'error',
-                data: null,
-                message: 'Đề thi đã có đánh giá của phần thi này',
-            });
-            return;
-        }
-    }
+    // if (check) {
+    //     // Nếu câu bắt đầu hoặc câu kết thúc khác thì cho phép update
+    //     if (
+    //         check.cau_bat_dau !== req.body.cau_bat_dau ||
+    //         check.cau_ket_thuc !== req.body.cau_ket_thuc
+    //     ) {
+    //         await Evaluate.update(
+    //             {
+    //                 ...req.body,
+    //             },
+    //             {
+    //                 where: {
+    //                     danh_gia_id: req.params.id,
+    //                 },
+    //             }
+    //         );
+    //         res.status(200).send({
+    //             status: 'success',
+    //             data: null,
+    //             message: 'Cập nhật thành công',
+    //         });
+    //         return;
+    //     } else {
+    //         res.status(400).send({
+    //             status: 'error',
+    //             data: null,
+    //             message: 'Đề thi đã có đánh giá của phần thi này',
+    //         });
+    //         return;
+    //     }
+    // }
 
     await Evaluate.update(
         {
