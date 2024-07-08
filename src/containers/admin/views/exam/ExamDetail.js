@@ -168,7 +168,6 @@ const ExamDetailPage = () => {
         },
   
         onRemove(e) {
-          console.log(e);
           setState({ ...state, fileImg: '' });
         },
     };

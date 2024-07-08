@@ -3,12 +3,13 @@ import ReactQuill, { Quill } from 'react-quill';
 import ImageResize from 'quill-image-resize-module-react';
 import './TextEditor.css';
 import 'react-quill/dist/quill.snow.css';
-import 'katex/dist/katex.min.css';
 
 // component
 import { Button, Tabs, Upload, message } from 'antd';
 import { FunctionOutlined, CameraOutlined, EyeOutlined, EditOutlined } from '@ant-design/icons';
-import AutoLaTeX from 'react-autolatex';
+// import AutoLaTeX from 'react-autolatex';
+import MathJax from 'react-mathjax';
+import config from '../../../configs/index';
 
 import icon1 from 'assets/img/math-icons/1.png';
 import icon2 from 'assets/img/math-icons/2.png';
@@ -37,6 +38,7 @@ Quill.register(Block);
 
 const TextEditorWidget = (props) => {
     const quillRef = useRef();
+    const regex = /\\includegraphics\[scale = 0\.5\]{(.*?)}/;
 
     const getBase64 = (img, callback) => {
         const reader = new FileReader();
@@ -45,10 +47,10 @@ const TextEditorWidget = (props) => {
     };
 
     const [state, setState] = useState({
-        editorHtml: props.value,
+        editorHtml: props.valueParent,
         theme: 'snow',
         isChanged: false,
-        fileImg: props.value
+        fileImg: props.valueParent
     });
     
     // props upload image
@@ -102,7 +104,7 @@ const TextEditorWidget = (props) => {
     });
 
     const handleChange = (html) => {
-        setState({ ...state, editorHtml: html })
+        setState({ ...state, editorHtml: html, isChanged: true })
         // if (html === '<div><br></div>') setState({ ...state, editorHtml: html, fileImg: '', isChanged: true });
         // else setState({ ...state, editorHtml: html, isChanged: true });
     };
@@ -145,9 +147,9 @@ const TextEditorWidget = (props) => {
     };
     
     useEffect(() => {
-        // setState({ ...state, editorHtml: props.value, isChanged: false });
+        setState({ ...state, editorHtml: props.valueParent, isChanged: false });
         setViewable(false);
-    }, [props.value]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [props.valueParent]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         setViewable(false);
@@ -160,19 +162,19 @@ const TextEditorWidget = (props) => {
         }
     }, [text]); // eslint-disable-line react-hooks/exhaustive-deps
     
-    if (viewable && props.value && props.value !== '') {
+    if (viewable && props.valueParent && props.valueParent !== '') {
         return (
             <div className="viewable-editor">
                 <div className="viewable-content">
-                    <AutoLaTeX>{props.value}</AutoLaTeX>
+                    {/* <AutoLaTeX>{props.valueParent}</AutoLaTeX> */}
                 </div>
                 <Button
                     type="link"
                     size="small"
                     onClick={() => {
                         if (!props.disabled) {
-                        setViewable(false);
-                        props.openEditor(true);
+                            setViewable(false);
+                            props.openEditor(true);
                         }
                     }}
                 >
@@ -240,7 +242,7 @@ const TextEditorWidget = (props) => {
                     >
                         <FunctionOutlined />
                     </Button>
-                    {props.value && props.value !== ''  && (
+                    {props.valueParent && props.valueParent !== ''  && (
                         <Button
                             className={viewable ? 'active add-image' : 'add-image'}
                             type="link"
@@ -592,7 +594,30 @@ const TextEditorWidget = (props) => {
                     )}
                     <div className="form-math">
                         <div className="math-item">
-                            <AutoLaTeX>{state.editorHtml}</AutoLaTeX>
+                        {/* <AutoLaTeX>{state.editorHtml}</AutoLaTeX> */}
+                            <MathJax.Provider>
+                                {state.editorHtml?.split('\n').map((item) =>
+                                    item.indexOf('includegraphics') !== -1 ? (
+                                        <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                                    ) : (
+                                        item.split('$').map((item2, index2) => {
+                                            return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold'))) ? (
+                                                <MathJax.Node key={index2} formula={item2} />
+                                            ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\underline')) ?
+                                                (
+                                                    <div key={index2} style={{textDecoration: 'underline'}}>{item2.split('\\underline{')[1].split('}')[0]}</div>
+                                                )
+                                            : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\bold')) ?
+                                                (
+                                                    <div key={index2} style={{fontWeight: 700}}>{item2.split('\\bold{')[1].split('}')[0]}</div>
+                                                )
+                                            :(
+                                                <div key={index2} >{item2}</div>
+                                            );
+                                        })
+                                    )
+                                )}
+                            </MathJax.Provider>
                         </div>
                     </div>
                 </div>
