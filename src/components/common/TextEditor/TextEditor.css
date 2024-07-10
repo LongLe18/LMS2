@@ -102,7 +102,7 @@
   }
   
   .math-area .math-item div {
-    display: inline-block;
+    /* display: inline-block; */
     font-family: KaTeX_Math;
   }
   
@@ -124,10 +124,25 @@
   .form-math .math-item {
     flex: 1;
     margin: 0 6px;
+
+    width: 100%;
+    margin: 25px 0;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    clear: both;
+    min-height: 50px;
+    border: 1px solid #dfd4ff;
+    padding: 12px;
+    font-size: 24px;
+    border-radius: 10px;
+    background: #f1f1f1;
   }
   
   .form-math .math-item>div {
-    width: 100%;
+    margin-right: 6px;
+    /* width: 100%;
     margin: 25px 0;
     display: block;
     clear: both;
@@ -136,7 +151,7 @@
     padding: 12px;
     font-size: 24px;
     border-radius: 10px;
-    background: #f1f1f1;
+    background: #f1f1f1; */
   }
   
   .form-math textarea {
@@ -211,7 +226,7 @@
     min-height: 56px;
   }
   .simple-editor .ql-editor div {
-    display: inline-block;
+    /* display: inline-block; */
     line-height: 180%;
     font-size: 16px;
   }

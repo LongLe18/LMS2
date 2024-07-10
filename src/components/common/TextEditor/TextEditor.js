@@ -7,7 +7,6 @@ import 'react-quill/dist/quill.snow.css';
 // component
 import { Button, Tabs, Upload, message } from 'antd';
 import { FunctionOutlined, CameraOutlined, EyeOutlined, EditOutlined } from '@ant-design/icons';
-// import AutoLaTeX from 'react-autolatex';
 import MathJax from 'react-mathjax';
 import config from '../../../configs/index';
 
@@ -32,13 +31,10 @@ import icon14 from 'assets/img/math-icons/14.png';
 
 const { TabPane } = Tabs;
 Quill.register('modules/imageResize', ImageResize);
-const Block = Quill.import('blots/block');
-Block.tagName = 'div';
-Quill.register(Block);
 
 const TextEditorWidget = (props) => {
     const quillRef = useRef();
-    const regex = /\\includegraphics\[scale = 0\.5\]{(.*?)}/;
+    const regex = /\\begin{center}\\includegraphics\[scale = 0\.5\]{(.*?)}\\end{center}/;
 
     const getBase64 = (img, callback) => {
         const reader = new FileReader();
@@ -97,16 +93,15 @@ const TextEditorWidget = (props) => {
     const [media, setMedia] = useState({
         visible: false,
     });
-    const [viewable, setViewable] = useState(false);
     const [text, setText] = useState('');
     const [math, setMath] = useState({
         visible: false,
     });
 
     const handleChange = (html) => {
-        setState({ ...state, editorHtml: html, isChanged: true })
-        // if (html === '<div><br></div>') setState({ ...state, editorHtml: html, fileImg: '', isChanged: true });
-        // else setState({ ...state, editorHtml: html, isChanged: true });
+        // const text = quillRef.current.getEditor().getText();
+        console.log(html, text)
+        // setState({ ...state, editorHtml: text, isChanged: true })
     };
     
     const formats = ['header', 'font', 'color', 'align', 'size', 'bold', 'italic', 'underline', 'strike', 'blockquote', 'list', 'bullet', 'indent', 'link', 'image', 'video', 'formula', 'width'];
@@ -147,13 +142,10 @@ const TextEditorWidget = (props) => {
     };
     
     useEffect(() => {
-        setState({ ...state, editorHtml: props.valueParent, isChanged: false });
-        setViewable(false);
+        const value = props.valueParent.replace('\n', '<br>')
+        setState({ ...state, editorHtml: value, isChanged: false });
     }, [props.valueParent]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    useEffect(() => {
-        setViewable(false);
-    }, [props.viewable]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         if (text !== '') {
@@ -161,28 +153,6 @@ const TextEditorWidget = (props) => {
             setText('');
         }
     }, [text]); // eslint-disable-line react-hooks/exhaustive-deps
-    
-    if (viewable && props.valueParent && props.valueParent !== '') {
-        return (
-            <div className="viewable-editor">
-                <div className="viewable-content">
-                    {/* <AutoLaTeX>{props.valueParent}</AutoLaTeX> */}
-                </div>
-                <Button
-                    type="link"
-                    size="small"
-                    onClick={() => {
-                        if (!props.disabled) {
-                            setViewable(false);
-                            props.openEditor(true);
-                        }
-                    }}
-                >
-                    <EditOutlined title="Chỉnh sửa" />
-                </Button>
-            </div>
-        );
-    }
     
     return (
         <div
@@ -242,19 +212,6 @@ const TextEditorWidget = (props) => {
                     >
                         <FunctionOutlined />
                     </Button>
-                    {props.valueParent && props.valueParent !== ''  && (
-                        <Button
-                            className={viewable ? 'active add-image' : 'add-image'}
-                            type="link"
-                            title="Chế độ xem"
-                            size="small"
-                            onClick={() => {
-                                setViewable(!viewable);
-                            }}
-                        >
-                            <EyeOutlined />
-                        </Button>
-                    )}
                 </div>
             )}
 
@@ -594,9 +551,8 @@ const TextEditorWidget = (props) => {
                     )}
                     <div className="form-math">
                         <div className="math-item">
-                        {/* <AutoLaTeX>{state.editorHtml}</AutoLaTeX> */}
                             <MathJax.Provider>
-                                {state.editorHtml?.split('\n').map((item) =>
+                                {state.editorHtml?.replace('<br>', '\n').split('\n').map((item) =>
                                     item.indexOf('includegraphics') !== -1 ? (
                                         <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
                                     ) : (

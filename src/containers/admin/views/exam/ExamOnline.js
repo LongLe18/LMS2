@@ -572,7 +572,6 @@ const OnlineExamDetailPage = () => {
         }
     };
 
-    console.log(currentQuestion);
     return (
         <>
             <div className="content">
@@ -727,7 +726,7 @@ const OnlineExamDetailPage = () => {
                                                                                 >
                                                                                     <TextEditorWidget
                                                                                         disabled={state.defaultExam.trang_thai === false}
-                                                                                        value={currentQuestion.noi_dung}
+                                                                                        valueParent={currentQuestion.noi_dung}
                                                                                         placeholder="Thêm nội dung câu hỏi"
                                                                                         onChange={(val) => {
                                                                                             setCurrentQuestion({ ...currentQuestion, noi_dung: val });
@@ -737,7 +736,7 @@ const OnlineExamDetailPage = () => {
                                                                                 </Form.Item>
                                                                             </Col>
                                                                         </Row>
-                                                                        <Row>
+                                                                        {/* <Row>
                                                                             <Col xl={4}>
                                                                                 <Form.Item className="label">
                                                                                     <span>Tùy chọn thêm</span>
@@ -991,7 +990,7 @@ const OnlineExamDetailPage = () => {
                                                                                     <Radio.Group options={constants.EXAM_ANSWER_VIEW_LIST} disabled={state.trang_thai === 'active'} optionType="button" buttonStyle="solid" />
                                                                                 </Form.Item>
                                                                             </Col>
-                                                                        </Row>
+                                                                        </Row> */}
                                                                     </Col>
                                                                 </Row>
                                                             </div>
