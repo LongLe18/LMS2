@@ -240,6 +240,7 @@ const download = async (req, res) => {
             where: {
                 dthv_id: req.params.id,
             },
+            order: [[sequelize.col('dap_an_id'), 'ASC']],
         });
         let ket_qua_diem = [];
         let ket_qua_chons;
