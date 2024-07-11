@@ -729,14 +729,23 @@ const OnlineExamDetailPage = () => {
                                                                                         valueParent={currentQuestion.noi_dung}
                                                                                         placeholder="Thêm nội dung câu hỏi"
                                                                                         onChange={(val) => {
-                                                                                            setCurrentQuestion({ ...currentQuestion, noi_dung: val });
+                                                                                            let value = '';
+                                                                                            const divContentRegex = /<div[^>]*>(.*?)<\/div>/g;
+                                                                                            const matches = val.match(divContentRegex);
+                                                                                            if (matches) {
+                                                                                                matches.forEach((match) => {
+                                                                                                    const content = match.replace(/<\/?div[^>]*>/g, ''); // Remove <div> tags
+                                                                                                    if (content.trim() !== '<br>') value += content.trim() + '\\n'
+                                                                                                });
+                                                                                            }
+                                                                                            setCurrentQuestion({ ...currentQuestion, noi_dung: value });
                                                                                         }}
                                                                                         isSimple={true} 
                                                                                     />
                                                                                 </Form.Item>
                                                                             </Col>
                                                                         </Row>
-                                                                        {/* <Row>
+                                                                        <Row>
                                                                             <Col xl={4}>
                                                                                 <Form.Item className="label">
                                                                                     <span>Tùy chọn thêm</span>
@@ -770,7 +779,7 @@ const OnlineExamDetailPage = () => {
                                                                                 </Form.Item>
                                                                             </Col>
                                                                         </Row>
-                                                                        <Row>
+                                                                        {/*  <Row>
                                                                             <Col xl={4}>
                                                                                 <Form.Item className="label">
                                                                                     <span style={{ color: '#ff4d4f' }}>*</span>Loại câu hỏi

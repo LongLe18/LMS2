@@ -99,9 +99,7 @@ const TextEditorWidget = (props) => {
     });
 
     const handleChange = (html) => {
-        // const text = quillRef.current.getEditor().getText();
-        console.log(html, text)
-        // setState({ ...state, editorHtml: text, isChanged: true })
+        // setState({ ...state, editorHtml: html, isChanged: true })
     };
     
     const formats = ['header', 'font', 'color', 'align', 'size', 'bold', 'italic', 'underline', 'strike', 'blockquote', 'list', 'bullet', 'indent', 'link', 'image', 'video', 'formula', 'width'];
@@ -142,10 +140,18 @@ const TextEditorWidget = (props) => {
     };
     
     useEffect(() => {
-        const value = props.valueParent.replace('\n', '<br>')
+        let value = props.valueParent?.replace('\n', '<br>');
+        const divContentRegex = /<div[^>]*>(.*?)<\/div>/g;
+        const matches = props.valueParent.match(divContentRegex);
+        if (matches) {
+            matches.forEach((match) => {
+                const content = match.replace(/<\/?div[^>]*>/g, ''); // Remove <div> tags
+                if (content.trim() !== '<br>') value += content.trim() + '\\n'
+            });
+        }
+        console.log(value);
         setState({ ...state, editorHtml: value, isChanged: false });
     }, [props.valueParent]); // eslint-disable-line react-hooks/exhaustive-deps
-
 
     useEffect(() => {
         if (text !== '') {
