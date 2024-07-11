@@ -283,6 +283,7 @@ const getById = async (req, res) => {
                 include: [
                     {
                         model: Answer,
+                        as: 'dap_ans'
                     },
                     {
                         model: Exceprt,
@@ -293,6 +294,7 @@ const getById = async (req, res) => {
         where: {
             de_thi_id: req.params.id,
         },
+        order: [[sequelize.col('dap_an_id'), 'ASC']],
     });
     let criteria;
     if (exam) {
@@ -453,7 +455,7 @@ const postCreate = async (req, res) => {
                 await Exam.create({
                     ...req.body,
                 });
-                
+
                 res.status(200).send({
                     status: 'success',
                     data: exam,
@@ -496,10 +498,7 @@ const putUpdate = async (req, res) => {
                 de_thi_id: req.params.id,
             },
         });
-        if (
-            exam.anh_dai_dien &&
-            fs.existsSync(`public${exam.anh_dai_dien}`)
-        )
+        if (exam.anh_dai_dien && fs.existsSync(`public${exam.anh_dai_dien}`))
             fs.unlinkSync(`public${exam.anh_dai_dien}`);
     }
     await Exam.update(
@@ -610,45 +609,52 @@ const stateChange = async (req, res) => {
 };
 
 const forceDelete = async (req, res) => {
-   try{
-    const exam = await Exam.findOne({
-        where: {
-            de_thi_id: req.params.id,
-        },
-    });
-    if (exam && exam.anh_dai_dien && fs.existsSync(`public${exam.anh_dai_dien}`))
-        fs.unlinkSync(`public${exam.anh_dai_dien}`);
-    if(fs.existsSync(`public/Picture/word/media/${req.params.id}`)){
-        fs.rmSync(`public/Picture/word/media/${req.params.id}`, { recursive: true, force: true });
+    try {
+        const exam = await Exam.findOne({
+            where: {
+                de_thi_id: req.params.id,
+            },
+        });
+        if (
+            exam &&
+            exam.anh_dai_dien &&
+            fs.existsSync(`public${exam.anh_dai_dien}`)
+        )
+            fs.unlinkSync(`public${exam.anh_dai_dien}`);
+        if (fs.existsSync(`public/Picture/word/media/${req.params.id}`)) {
+            fs.rmSync(`public/Picture/word/media/${req.params.id}`, {
+                recursive: true,
+                force: true,
+            });
+        }
+        await Exceprt.destroy({
+            where: {
+                de_thi_id: req.params.id,
+            },
+        });
+        await Question.destroy({
+            where: {
+                de_thi_id: req.params.id,
+            },
+        });
+        await Answer.destroy({
+            where: {
+                de_thi_id: req.params.id,
+            },
+        });
+        await Exam.destroy({
+            where: {
+                de_thi_id: req.params.id,
+            },
+        });
+        await ExamQuestion.destroy({
+            where: {
+                de_thi_id: req.params.id,
+            },
+        });
+    } catch (err) {
+        console.log(err);
     }
-    await Exceprt.destroy({
-        where: {
-            de_thi_id: req.params.id,
-        },
-    })
-    await Question.destroy({
-        where: {
-            de_thi_id: req.params.id,
-        },
-    })
-    await Answer.destroy({
-        where: {
-            de_thi_id: req.params.id,
-        },
-    })
-    await Exam.destroy({
-        where: {
-            de_thi_id: req.params.id,
-        },
-    });
-    await ExamQuestion.destroy({
-        where: {
-            de_thi_id: req.params.id,
-        },
-    });
-   }catch(err){
-    console.log(err)
-   }
     res.status(200).send({
         status: 'success',
         data: null,
@@ -659,10 +665,7 @@ const forceDelete = async (req, res) => {
 const clearAll = async (req, res) => {
     const exams = await findAll();
     for (const exam of exams) {
-        if (
-            exam.anh_dai_dien &&
-            fs.existsSync(`public${exam.anh_dai_dien}`)
-        )
+        if (exam.anh_dai_dien && fs.existsSync(`public${exam.anh_dai_dien}`))
             fs.unlinkSync(`public${exam.anh_dai_dien}`);
     }
     await sequelize.query('DELETE FROM de_thi', {
