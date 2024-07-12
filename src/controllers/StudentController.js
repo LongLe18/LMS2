@@ -393,6 +393,41 @@ const postCreate = async (req, res) => {
     }
 };
 
+//[POST] student/adminCreate
+// Hàm do admin tạo tài khoản cho học viên
+const postCreateAdmin = async (req, res) => {
+    let student = await Student.findOne({
+        where: {
+            email: req.body.email,
+        },
+    });
+    if (student)
+        res.status(409).send({
+            status: 'fail',
+            data: student,
+            message: 'Email already exists',
+        });
+    else {
+        const password = 'Enno@123';
+        await Student.create({
+            ...req.body,
+            mat_khau: security.hashPassword(password),
+            trang_thai: 1,
+        });
+        student = await Student.findOne({
+            where: {
+                email: req.body.email,
+            },
+        });
+        res.status(200).send({
+            status: 'success',
+            data: student,
+            message: null,
+        });
+    }
+}
+
+
 //[GET] student/:id
 const getUpdate = async (req, res) => {
     const student = await Student.findOne({
@@ -575,10 +610,11 @@ module.exports = {
     getCreate,
     addCourse,
     postCreate,
+    postCreateAdmin,
     getUpdate,
     putUpdate,
     stateChange,
     forceDelete,
     getStatistical,
-    getCourseOfUser
+    getCourseOfUser,
 };
