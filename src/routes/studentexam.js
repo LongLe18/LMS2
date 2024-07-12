@@ -5,6 +5,7 @@ const studentExamController = require('../controllers/StudentExamController');
 const { authToken, authRole } = require('../middlewares/auth');
 
 router.post('/create', authToken, tryCatch(studentExamController.postCreate));
+router.post('/dgnl/create', authToken, tryCatch(studentExamController.postCreatev2));
 router.put('/:id', authToken, tryCatch(studentExamController.putUpdate));
 router.delete('/:id/force', authToken, authRole([2], 6), tryCatch(studentExamController.forceDelete));
 router.delete('/clear/:id', authToken, authRole([2], 6), tryCatch(studentExamController.clearAll));

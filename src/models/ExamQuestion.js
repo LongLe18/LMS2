@@ -9,6 +9,9 @@ const cauhoidethi = sequelize.define(
             autoIncrement: true,
             primaryKey: true,
         },
+        phan: {
+            type: DataTypes.INTEGER,
+        },
         cau_hoi_id: {
             type: DataTypes.INTEGER,
         },
