@@ -150,7 +150,6 @@ const ExamPage = (props) => {
         )
     }
 
-
     const renderExams = () => {
         const listExams = examCourse.data.map((item, index) => {
             if (index <= 0) {

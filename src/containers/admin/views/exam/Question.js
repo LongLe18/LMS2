@@ -1,86 +1,229 @@
-import React from 'react';
-import moment from 'moment';
+import React, { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
 
 import config from '../../../../configs/index'
-import { Row, Table, Space, Col, Button } from 'antd';
+import { Row, Table, Space, Col, Button, Pagination, notification, Modal, Select } from 'antd';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+import MathJax from 'react-mathjax';
+import './css/question.css';
 
 // component
-import AppFilter from 'components/common/AppFilter';
+import LoadingCustom from "components/parts/loading/Loading";
+
+// redux
+import { useSelector, useDispatch } from "react-redux";
+import * as questionActions from '../../../../redux/actions/question';
+import * as majorActions from '../../../../redux/actions/major';
+import * as programmeAction from '../../../../redux/actions/programme';
+
+const { confirm } = Modal;
+const { Option } = Select;
 
 const QuestionPage = () => {
+    const regex = /\\begin{center}\\includegraphics\[scale = 0\.5\]{(.*?)}\\end{center}/;
+    const dispatch = useDispatch();
 
-    const column1 = [
+    const majors = useSelector(state => state.major.list.result);
+    const programmes = useSelector(state => state.programme.list.result);
+    const questions = useSelector(state => state.question.list.result);
+    const loading = useSelector(state => state.question.list.loading);
+    const error = useSelector(state => state.question.list.error);
+
+    const [pageIndex, setPageIndex] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [filter, setFilter] = useState({
+      kct_id: '',
+      chuyen_nganh_id: '',
+    });
+
+    useEffect(() => {
+      dispatch(majorActions.getMajors());
+      dispatch(programmeAction.getProgrammes({ status: '' }));
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+      dispatch(questionActions.getQuestions({ kct_id: filter.kct_id, chuyen_nganh_id: filter.chuyen_nganh_id, pageSize: pageSize, pageIndex: pageIndex }));
+    }, [pageSize, pageIndex]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+      dispatch(questionActions.getQuestions({ kct_id: filter.kct_id, chuyen_nganh_id: filter.chuyen_nganh_id, pageSize: pageSize, pageIndex: pageIndex }));
+    }, [filter.chuyen_nganh_id, filter.kct_id]) // eslint-disable-line react-hooks/exhaustive-deps
+
+    const showConfirmDelete = (cau_hoi_id) => {
+      confirm({
+        icon: <ExclamationCircleOutlined />,
+        content: 'Bạn có chắc chắn muốn xóa câu hỏi này không?',
+        okText: 'Xác nhận',
+        cancelText: 'Hủy bỏ',
+        onOk() {
+          deleteQuestion(cau_hoi_id);
+        },
+        onCancel() {
+          Modal.destroyAll();
+        },
+      });
+    };
+
+    // Hàm hiển thị bộ lọc 'Chuyên ngành'
+    const renderMajor = () => {
+      let options = [];
+      if (majors.status === 'success') {
+        options = majors.data.map((major) => (
+          <Option key={major.chuyen_nganh_id} value={major.chuyen_nganh_id} >{major.ten_chuyen_nganh}</Option>
+        ))
+      }
+      return (
+        <Select style={{width: '100%'}}
+          showSearch={true}
+          onChange={(chuyen_nganh_id) => {
+            setFilter({ ...filter, chuyen_nganh_id: chuyen_nganh_id });
+          }}
+          placeholder="Chọn chuyên ngành"
+        >
+          {options}
+        </Select>
+      );
+    };
+
+    // Hàm hiển thị bộ lọc 'Khung chương trình'
+    const renderProgramme = () => {
+      let options = [];
+        if (programmes.status === 'success') {
+            options = programmes.data.map((programme) => (
+                <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
+            ))
+        }
+        return (
+            <Select style={{width: '100%'}}
+              showSearch={true}
+              placeholder="Chọn khung chương trình"
+              onChange={(kct_id) => {
+                setFilter({ ...filter, kct_id: kct_id });
+              }}
+            >
+            {options}
+            </Select>
+      );
+    };
+
+    const column = [
         {
-          title: 'Tên câu hỏi',
-          dataIndex: 'ten_cau_hoi',
-          key: 'ten_de_thi',
+          title: 'Câu hỏi',
+          dataIndex: 'noi_dung',
+          key: 'noi_dung',
           responsive: ['md'],
+          render: (noi_dung) => (
+            <div className="title-exam">
+              <MathJax.Provider>
+                {noi_dung.split('\n').map((item, index_cauhoi) =>
+                    item.indexOf('includegraphics') !== -1 ? (
+                        <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question_${index_cauhoi}`}></img>
+                    ) : (
+                        item.split('$').map((item2, index2) => {
+                            return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold'))) ? (
+                                <MathJax.Node key={index2} formula={item2} />
+                            ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\underline')) ?
+                                (
+                                    <div key={index2} style={{textDecoration: 'underline'}}>{item2.split('\\underline{')[1].split('}')[0]}</div>
+                                )
+                            : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\bold')) ?
+                                (
+                                    <div key={index2} style={{fontWeight: 700}}>{item2.split('\\bold{')[1].split('}')[0]}</div>
+                                )
+                            :(
+                                <div key={index2} >{item2}</div>
+                            );
+                        })
+                    )
+                )}
+            </MathJax.Provider>
+          </div>
+        )
         },
         {
-          title: 'Mức độ',
-          dataIndex: 'thoi_gian',
-          key: 'thoi_gian',
+          title: 'Chuyên ngành',
+          dataIndex: 'chuyen_nganh',
+          key: 'chuyen_nganh',
           responsive: ['md'],
-        },
-        {
-          title: 'Đề thi',
-          dataIndex: 'ten_de_thi',
-          key: 'ten_de_thi',
-          responsive: ['md'],
-        },
-        {
-          title: 'Ngày tạo',
-          dataIndex: 'ngay_tao',
-          key: 'ngay_tao',
-          responsive: ['md'],
-          render: (date) => (
-            moment(date).utc(7).format(config.DATE_FORMAT)
-          )
         },
         {
           title: 'Tùy chọn',
-          key: 'de_thi_id',
-          dataIndex: 'de_thi_id',
+          key: 'cau_hoi_id',
+          dataIndex: 'cau_hoi_id',
           // Redirect view for edit
-          render: (de_thi_id) => (
+          render: (cau_hoi_id) => (
             <Space size="middle">
               <Link to={ "#" } type="button" className="ant-btn ant-btn-round ant-btn-primary">Xem</Link>
-              <Button shape="round" type="danger" >Xóa</Button> 
+              <Button shape="round" type="danger" onClick={() => showConfirmDelete(cau_hoi_id)}>Xóa</Button> 
             </Space>
           ),
         },
     ];
+
+    const onChangePageIndex = (page) => {
+      setPageIndex(page);
+    };
+    
+    const onShowSizeChange = (current, pageSize) => {
+      setPageSize(pageSize);
+    };
+
+    // hàm xóa câu hỏi 
+    const deleteQuestion = (idQuestion) => {
+      const callback = (res) => {
+        if (res.status === 'success') {
+          notification.success({
+            message: 'Thông báo',
+            description: 'Xóa câu hỏi thành công',
+          });
+          dispatch(questionActions.getQuestions({ kct_id: '', chuyen_nganh_id: '', pageSize: pageSize, pageIndex: pageIndex }));
+        } else {
+          notification.error({
+            message: 'Thông báo',
+            description: 'Xóa câu hỏi thất bại',
+          });
+        }
+      }
+
+      dispatch(questionActions.deleteQuestion({ idQuestion: idQuestion }, callback));
+    }
 
     return (
         <>
             <div className="content">
                 <Row className="app-main">
                     <Col xl={24} className="body-content">
-                        <Row>
-                            <Col xl={24} sm={24} xs={24}>
-                                {/* {courses.status === "success" && */}
-                                    <AppFilter
-                                    title="Quản lý câu hỏi"
-                                    isShowCourse={false}
-                                    isShowModule={false}
-                                    isShowThematic={false}
-                                    isShowStatus={true}
-                                    isShowSearchBox={true}
-                                    isShowDatePicker={true}
-                                    isRangeDatePicker={true}
-                                    // courses={courses.data}
-                                    // onFilterChange={(field, value) => onFilterChange(field, value)}
-                                />
-                                {/* } */}
-                            </Col>
-                        </Row>
+                      <h5>Quản lý câu hỏi</h5>
+                      {/* Bộ lọc */}
+                      <Row gutter={8}>
+                        <Col xl={8} md={24} xs={24}>
+                          {renderMajor()}
+                        </Col>
+                        <Col xl={12} md={24} xs={24}>
+                          {renderProgramme()}
+                        </Col>
+                      </Row>
                     </Col>
                 </Row>
                 <br/>
-                <Table className="table-striped-rows" columns={column1}>
+                {loading && <LoadingCustom/>}
+                {questions.status === 'success' && 
+                  <div className="question-list">
+                    <Table className="table-striped-rows" pagination={false} columns={column} dataSource={questions.data}/>
+                    <br/>
+                    <Pagination current={pageIndex}
+                      onChange={onChangePageIndex} 
+                      total={questions.totalCount} 
+                      onShowSizeChange={onShowSizeChange} 
+                      defaultPageSize={pageSize}
+                    />
+                  </div>
+                }
+                {error && notification.error({
+                    message: 'Thông báo',
+                    description: 'Lấy dữ liệu đề thi thất bại',
+                })}
 
-                </Table>
             </div>
         </>
     )

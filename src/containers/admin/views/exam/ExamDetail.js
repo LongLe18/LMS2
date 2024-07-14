@@ -199,6 +199,7 @@ const ExamDetailPage = () => {
             if (type.loai_de_thi_id !== 4)
                 return <Option key={type.loai_de_thi_id} value={type.loai_de_thi_id} >{type.mo_ta}</Option>
             })
+            return null;
         }
         return (
           <Select

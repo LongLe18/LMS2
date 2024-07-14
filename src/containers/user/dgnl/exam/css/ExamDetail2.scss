@@ -257,6 +257,9 @@
   .underline {
     text-decoration: underline;
   }
+  .bold {
+    font-weight: 700;
+  }
 }
 
 .answer-content div {
@@ -633,7 +636,7 @@
   font-size: 18px;
   position: sticky;
   top: 0;
-  z-index: 10000;
+  z-index: 99;
 }
 
 .list-questions {

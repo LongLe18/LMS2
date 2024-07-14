@@ -3,18 +3,20 @@ import React, { useEffect, useState } from 'react';
 import config from '../../../../configs/index';
 import moment from 'moment';
 import MathJax from 'react-mathjax';
+import './css/exceprt.css';
 
 // component
-import { Row, Col, Table, notification, Button, Space, Form, Upload, message } from 'antd';
+import { Row, Col, Table, notification, Button, Space, Form, Input } from 'antd';
 import LoadingCustom from 'components/parts/loading/Loading';
 import AppFilter from 'components/common/AppFilter';
-import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 
 // redux
 import * as exceprtAction from '../../../../redux/actions/exceprt';
 import { useSelector, useDispatch } from "react-redux"; 
 
-const { Dragger } = Upload;
+// const { Dragger } = Upload;
+const { TextArea } = Input;
 
 const Exceprt = (props) => {
     const dispatch = useDispatch();
@@ -39,10 +41,13 @@ const Exceprt = (props) => {
             let doan_trichs = item.noi_dung.split('$').map((doan_trich) => {
                 if (doan_trich.includes('\\underline')) {
                     doan_trich = '<span class="underline">' + doan_trich.split('\\underline{')[1].split('}')[0] + '</span>';
+                } else if (doan_trich.includes('\\bold')) {
+                    doan_trich = '<span class="bold">' + doan_trich.split('\\bold{')[1].split('}')[0] + '</span>';
                 }
                 return doan_trich
             })
             data.push({...item, 'key': index, noi_dung: doan_trichs?.join('') })
+            return null;
         });
     }
 
@@ -53,14 +58,11 @@ const Exceprt = (props) => {
             key: 'noi_dung',
             responsive: ['md'],
             render: (noi_dung) => (
-                <MathJax.Provider>
-                    <div style={{whiteSpace: 'pre-line'}} dangerouslySetInnerHTML={{ __html: noi_dung }}></div>
-                    {/* {question.cau_hoi?.trich_doan?.noi_dung?.split('\n').map((item) =>
-                        item.indexOf('includegraphics') !== -1 && (
-                            <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
-                        ) 
-                    )} */}
-                </MathJax.Provider>
+                <div className='answer-content'>
+                    <MathJax.Provider>
+                        <div style={{whiteSpace: 'pre-line'}} dangerouslySetInnerHTML={{ __html: noi_dung }}></div>
+                    </MathJax.Provider>
+                </div>
             )
         },
         {
@@ -77,48 +79,48 @@ const Exceprt = (props) => {
             // Redirect view for edit
             render: (trich_doan_id) => (
                 <Space size="middle">
-                <Button  type="button" onClick={() => Edit(trich_doan_id)} className="ant-btn ant-btn-round ant-btn-primary">Sửa</Button>
-                <Button shape="round" type="danger" onClick={() => Delete(trich_doan_id)} >Xóa</Button> 
+                <Button  type="button" onClick={() => editExceprt(trich_doan_id)} className="ant-btn ant-btn-round ant-btn-primary">Sửa</Button>
+                <Button shape="round" type="danger" onClick={() => deleteExceprt(trich_doan_id)} >Xóa</Button> 
                 </Space>
             ),
         },
     ];  
 
     // props for upload image
-    const propsImage = {
-        name: 'file',
-        action: '#',
+    // const propsImage = {
+    //     name: 'file',
+    //     action: '#',
   
-        beforeUpload: file => {
-          const isPNG = file.type === 'image/png' || file.type === 'image/jpeg';
-          if (!isPNG) {
-            message.error(`${file.name} có định dạng không phải là png/jpg`);
-          }
-          return isPNG || Upload.LIST_IGNORE;
-        },
+    //     beforeUpload: file => {
+    //       const isPNG = file.type === 'image/png' || file.type === 'image/jpeg';
+    //       if (!isPNG) {
+    //         message.error(`${file.name} có định dạng không phải là png/jpg`);
+    //       }
+    //       return isPNG || Upload.LIST_IGNORE;
+    //     },
   
-        onChange(info) {
-          setState({ ...state, fileImg: info.file.originFileObj });
-        },
+    //     onChange(info) {
+    //       setState({ ...state, fileImg: info.file.originFileObj });
+    //     },
   
-        async customRequest(options) {
-          const { onSuccess } = options;
+    //     async customRequest(options) {
+    //       const { onSuccess } = options;
     
-          setTimeout(() => {
-            onSuccess("ok");
-          }, 0);
-        },
+    //       setTimeout(() => {
+    //         onSuccess("ok");
+    //       }, 0);
+    //     },
   
-        onRemove(e) {
-          console.log(e);
-          setState({ ...state, fileImg: '' });
-        },
-    };
+    //     onRemove(e) {
+    //       console.log(e);
+    //       setState({ ...state, fileImg: '' });
+    //     },
+    // };
 
-    const Edit = (trich_doan_id) => {
+    const editExceprt = (trich_doan_id) => {
         const callback = (res) => {
             if (res.status === 'success') form.setFieldsValue(res.data);
-            document.getElementsByClassName('select-action-group')[0].scrollIntoView();
+            document.getElementById('form-control').scrollIntoView();
         };
 
         setIsEdit(true);
@@ -126,7 +128,7 @@ const Exceprt = (props) => {
         dispatch(exceprtAction.getEXCEPRT({ id: trich_doan_id }, callback))
     };
 
-    const Delete = (trich_doan_id) => {
+    const deleteExceprt = (trich_doan_id) => {
         const result = window.confirm('Bạn có chắc chán muốn xóa trích đoạn này?');
         if (result) {
           const callback = (res) => {
@@ -164,9 +166,10 @@ const Exceprt = (props) => {
             }
         };
 
-        if (state.fileImg !== '')
-            formData.append('noi_dung', state.fileImg !== undefined ? state.fileImg : '');
-        
+        // if (state.fileImg !== '')
+        //     formData.append('noi_dung', state.fileImg !== undefined ? state.fileImg : '');
+
+        formData.append('noi_dung', values.noi_dung);
         if (!isEdit)
             dispatch(exceprtAction.createEXCEPRT(formData, callback));
         else dispatch(exceprtAction.editEXCEPRT({ id: state.idExceprt, formData: formData }, callback));
@@ -195,9 +198,13 @@ const Exceprt = (props) => {
                 <Row className="select-action-group" gutter={[8, 8]}>
                     <Col xl={12} sm={12} xs={24}></Col>
                     <Col xl={12} sm={12} xs={24} className="right-actions">
-                        <Button shape="round" type="primary" icon={<PlusOutlined />} className=" btn-action" onClick={() => {
-                            setIsEdit(false)
-                        }}>
+                        <Button shape="round" type="primary" icon={<PlusOutlined />} className=" btn-action" 
+                            onClick={() => {
+                                // scroll to form-control
+                                document.getElementById('form-control').scrollIntoView();
+                                setIsEdit(false);
+                            }}
+                        >
                             Thêm mới trích đoạn
                         </Button>
                     </Col>
@@ -209,10 +216,10 @@ const Exceprt = (props) => {
                 <Row>
                     <Col xl={24} sm={24} xs={24} className="cate-form-block">
                         {!isEdit ? <h5>Thêm mới trích đoạn đề thi</h5> :  <h5>Sửa trích đoạn đề thi</h5>}
-                        <Form layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={createExceprt}>
+                        <Form id='form-control' layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={createExceprt}>
                             <Row gutter={25}>
                                 <Col xl={24} sm={24} xs={24} className="right-content">
-                                    <Form.Item
+                                    <Form.Item 
                                         className="input-col"
                                         label="Nội dung"
                                         name="noi_dung"
@@ -223,7 +230,8 @@ const Exceprt = (props) => {
                                             },
                                         ]}
                                     >
-                                        <Dragger {...propsImage} maxCount={1}
+                                        <TextArea placeholder="Nhập nội dung câu hỏi" showCount style={{width: '100%', height: 400}}/>
+                                        {/* <Dragger {...propsImage} maxCount={1}
                                             listType="picture"
                                             className="upload-list-inline"
                                         >
@@ -231,7 +239,7 @@ const Exceprt = (props) => {
                                             <UploadOutlined />
                                             </p>
                                             <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
-                                        </Dragger>
+                                        </Dragger> */}
                                     </Form.Item>                         
                                     <Form.Item className="button-col" style={{textAlign: 'right'}}>
                                         {!isEdit ? <Button shape="round" type="primary" htmlType="submit" >Thêm mới</Button> : <Button shape="round" type="primary" htmlType="submit" >Cập nhật</Button>}                             

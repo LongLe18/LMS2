@@ -84,9 +84,9 @@ const ReviewExamPage = () => {
                 <span className="answer-label">{renderAnswerKey(index)}</span>
                 <div className="answer-content">             
                     <MathJax.Provider>
-                        {answer.noi_dung_dap_an.split('\n').map((item) =>
+                        {answer.noi_dung_dap_an.split('\n').map((item, index_cauhoi) =>
                             item.indexOf('includegraphics') !== -1 ? (
-                                <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                                <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_${index_cauhoi}`}></img>
                             ) : (
                                 item.split('$').map((item2, index2) => {
                                     return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold'))) ? (
@@ -238,19 +238,19 @@ const ReviewExamPage = () => {
                                     </>
                                 }               
                                 <div className="question-list" key={ParentIndex}>
-                                    
                                     <div className="question-info" id={`${ParentIndex + 1}`}>
-                                        <b style={{fontSize: "18px", color: "#2e66ad"}}>Câu {ParentIndex + 1} 
-                                            <span className="point">[{question.cau_hoi.diem} điểm]</span>
+                                        <b style={{fontSize: "22px", color: "#2e66ad"}}>Câu {ParentIndex + 1} 
+                                            {/* <span className="point">[{question.cau_hoi.diem} điểm]</span> */}
+                                            <span style={{display: question.cau_hoi.loai_cau_hoi === 2 ? 'block' : 'none'}} className="point">[Câu trắc nghiệm đúng sai]</span>
                                         </b>
                                         <ul className="action-links"></ul>
                                     </div>
 
                                     <div className="title-exam">
                                         <MathJax.Provider>
-                                            {question.cau_hoi.noi_dung.split('\n').map((item) =>
+                                            {question.cau_hoi.noi_dung.split('\n').map((item, index_cauhoi) =>
                                                 item.indexOf('includegraphics') !== -1 ? (
-                                                    <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                                                    <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></img>
                                                 ) : (
                                                     item.split('$').map((item2, index2) => {
                                                         return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold'))) ? (
@@ -258,11 +258,12 @@ const ReviewExamPage = () => {
                                                         ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\underline')) ?
                                                             (
                                                                 <div key={index2} style={{textDecoration: 'underline'}}>{item2.split('\\underline{')[1].split('}')[0]}</div>
-                                                        ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\bold')) ?
+                                                            )
+                                                        : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\bold')) ?
                                                             (
                                                                 <div key={index2} style={{fontWeight: 700}}>{item2.split('\\bold{')[1].split('}')[0]}</div>
                                                             )
-                                                        : (
+                                                        :(
                                                             <div key={index2} >{item2}</div>
                                                         );
                                                     })
@@ -318,9 +319,9 @@ const ReviewExamPage = () => {
                                                                             <span style={{color: 'white'}}>S</span>
                                                                         </button>
                                                                         <MathJax.Provider>
-                                                                            {answer.noi_dung_dap_an.split('\n').map((item) =>
+                                                                            {answer.noi_dung_dap_an.split('\n').map((item, index_cauhoi) =>
                                                                                 item.indexOf('includegraphics') !== -1 ? (
-                                                                                    <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                                                                                    <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question_${index_cauhoi}`}></img>
                                                                                 ) : (
                                                                                     item.split('$').map((item2, index2) => {
                                                                                         return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold'))) ? (
@@ -374,9 +375,9 @@ const ReviewExamPage = () => {
                                                 description={
                                                     <div className="help-answer">
                                                         <MathJax.Provider>
-                                                            {question.cau_hoi.loi_giai.split('\n').map((item) =>
+                                                            {question.cau_hoi.loi_giai.split('\n').map((item, index_cauhoi) =>
                                                                 item.indexOf('includegraphics') !== -1 ? (
-                                                                    <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                                                                    <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_answer_question_${index_cauhoi}`}></img>
                                                                 ) : (
                                                                     item.split('$').map((item2, index2) => {
                                                                         return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold'))) ? (

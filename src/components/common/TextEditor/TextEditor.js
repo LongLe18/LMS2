@@ -6,7 +6,7 @@ import 'react-quill/dist/quill.snow.css';
 
 // component
 import { Button, Tabs, Upload, message } from 'antd';
-import { FunctionOutlined, CameraOutlined, EyeOutlined, EditOutlined } from '@ant-design/icons';
+import { FunctionOutlined, CameraOutlined } from '@ant-design/icons';
 import MathJax from 'react-mathjax';
 import config from '../../../configs/index';
 
@@ -44,6 +44,7 @@ const TextEditorWidget = (props) => {
 
     const [state, setState] = useState({
         editorHtml: props.valueParent,
+        viewEditor: '',
         theme: 'snow',
         isChanged: false,
         fileImg: props.valueParent
@@ -99,9 +100,19 @@ const TextEditorWidget = (props) => {
     });
 
     const handleChange = (html) => {
-        // setState({ ...state, editorHtml: html, isChanged: true })
+        let value = '';
+        const divContentRegex = /<div[^>]*>(.*?)<\/div>/g;
+        const matches = html.match(divContentRegex);
+        if (matches) {
+            matches.forEach((match) => {
+                const content = match.replace(/<\/?div[^>]*>/g, ''); // Remove <div> tags
+                if (content.trim() !== '<br>') value += content.trim() + '\n'
+            });
+        };
+        console.log(html, value)
+        setState({ ...state, editorHtml: html, viewEditor: value, isChanged: true })
     };
-    
+
     const formats = ['header', 'font', 'color', 'align', 'size', 'bold', 'italic', 'underline', 'strike', 'blockquote', 'list', 'bullet', 'indent', 'link', 'image', 'video', 'formula', 'width'];
 
     const modules = {
@@ -141,16 +152,7 @@ const TextEditorWidget = (props) => {
     
     useEffect(() => {
         let value = props.valueParent?.replace('\n', '<br>');
-        const divContentRegex = /<div[^>]*>(.*?)<\/div>/g;
-        const matches = props.valueParent.match(divContentRegex);
-        if (matches) {
-            matches.forEach((match) => {
-                const content = match.replace(/<\/?div[^>]*>/g, ''); // Remove <div> tags
-                if (content.trim() !== '<br>') value += content.trim() + '\\n'
-            });
-        }
-        console.log(value);
-        setState({ ...state, editorHtml: value, isChanged: false });
+        setState({ ...state, editorHtml: value, viewEditor: props.valueParent, isChanged: false });
     }, [props.valueParent]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
@@ -170,7 +172,7 @@ const TextEditorWidget = (props) => {
             ${props.isMinHeight300 ? 'min-height-300' : ''}
             ${props.isMinHeight500 ? 'min-height-500' : ''}
         `}
-            onMouseLeave={() => {props.onChange(state.editorHtml)}}
+            onMouseLeave={() => {props.onChange(state.viewEditor)}}
         >
             {!props.disabled && (
                 <ReactQuill
@@ -558,9 +560,10 @@ const TextEditorWidget = (props) => {
                     <div className="form-math">
                         <div className="math-item">
                             <MathJax.Provider>
-                                {state.editorHtml?.replace('<br>', '\n').split('\n').map((item) =>
-                                    item.indexOf('includegraphics') !== -1 ? (
-                                        <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                                {props.valueParent?.split('\n').map((item, index_cauhoi) => 
+                                
+                                    (item.indexOf('includegraphics') !== -1 && item !== '' && item?.match(regex) !== null && item?.match(regex).length >= 2) ? (
+                                        <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question_${index_cauhoi}`}></img>
                                     ) : (
                                         item.split('$').map((item2, index2) => {
                                             return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold'))) ? (

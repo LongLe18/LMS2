@@ -520,9 +520,9 @@ const ExamModuleDetail = () => {
                 <span className="answer-label">{renderAnswerKey(index)}</span>
                 <div className="answer-content">             
                     <MathJax.Provider>
-                        {answer.noi_dung_dap_an.split('\n').map((item) =>
+                        {answer.noi_dung_dap_an.split('\n').map((item, index_cauhoi) =>
                             item.indexOf('includegraphics') !== -1 ? (
-                                <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                                <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question_${index_cauhoi}`}></img>
                             ) : (
                                 item.split('$').map((item2, index2) => {
                                     return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold'))) ? (
@@ -897,9 +897,9 @@ const ExamModuleDetail = () => {
                         
                                 <div className="title-exam">
                                     <MathJax.Provider>
-                                        {question.cau_hoi.noi_dung.split('\n').map((item) =>
+                                        {question.cau_hoi.noi_dung.split('\n').map((item, index_cauhoi) =>
                                             item.indexOf('includegraphics') !== -1 ? (
-                                                <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                                                <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question2_${index_cauhoi}`}></img>
                                             ) : (
                                                 item.split('$').map((item2, index2) => {
                                                     return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold'))) ? (
@@ -995,9 +995,9 @@ const ExamModuleDetail = () => {
                                                                 <span className="answer-label">S</span>
                                                             </button>
                                                             <MathJax.Provider>
-                                                                {answer.noi_dung_dap_an.split('\n').map((item) =>
+                                                                {answer.noi_dung_dap_an.split('\n').map((item, index_cauhoi) =>
                                                                     item.indexOf('includegraphics') !== -1 ? (
-                                                                        <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                                                                        <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question3_${index_cauhoi}`}></img>
                                                                     ) : (
                                                                         item.split('$').map((item2, index2) => {
                                                                             return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold'))) ? (
@@ -1064,9 +1064,9 @@ const ExamModuleDetail = () => {
                                                 description={
                                                     <div className="help-answer">
                                                         <MathJax.Provider>
-                                                            {question.cau_hoi.loi_giai.split('\n').map((item) =>
+                                                            {question.cau_hoi.loi_giai.split('\n').map((item, index_cauhoi) =>
                                                                 item.indexOf('includegraphics') !== -1 ? (
-                                                                    <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                                                                    <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question4_${index_cauhoi}`}></img>
                                                                 ) : (
                                                                     item.split('$').map((item2, index2) => {
                                                                         return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold'))) ? (

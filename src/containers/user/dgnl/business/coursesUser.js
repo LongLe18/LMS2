@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 // helper
 import defaultImage from 'assets/img/default.jpg';
 import config from '../../../../configs/index';
-import moment from "moment";
+// import moment from "moment";
 import Hashids from 'hashids';
 
 // hooks

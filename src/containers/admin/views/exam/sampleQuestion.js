@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import './css/ExamDetail.css'
 import LoadingCustom from "components/parts/loading/Loading";
-import { notification } from "antd";
 import config from '../../../../configs/index';
 
-import { Button, Modal } from 'antd';
-import { Row, Col, Select } from 'antd';
+import { Button, Modal, Pagination, Row, Col, Select, notification } from 'antd';
+import MathJax from 'react-mathjax';
+
 // redux
 import { useSelector, useDispatch } from "react-redux";
 import * as questionActions from '../../../../redux/actions/question';
@@ -36,18 +36,20 @@ const SampleQuestion = (props) => {
     const thematics = useSelector(state => state.thematic.listbyId.result);
     const loadingThematics = useSelector(state => state.thematic.listbyId.loading);
 
+    const regex = /\\begin{center}\\includegraphics\[scale = 0\.5\]{(.*?)}\\end{center}/;
     const [filter, setFilter] = useState({
         khoa_hoc_id: '',
         mo_dun_id: '',
         chuyen_de_id: '',
         de_thi_id: ''
     });
+    const [pageIndex, setPageIndex] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
 
     useEffect(() => {
         const callback = (res) => {
             // lấy số lượng câu hỏi của đề theo tiêu chí đề  thi thuộc vào
             if (res.status === 'success') {
-                console.log(res);
                 if (res.data.loai_de_thi_id === 1) { // loại chuyên đề
                     dispatch(examActions.getThematicCriteria({  idThematic: res.data.chuyen_de_id }));
                 }
@@ -62,7 +64,7 @@ const SampleQuestion = (props) => {
             };
         };
 
-        dispatch(questionActions.getQuestions());
+        dispatch(questionActions.getQuestions({ kct_id: '', chuyen_nganh_id: '', pageSize: pageSize, pageIndex: pageIndex }));
         dispatch(examActions.getExam({ id: idExam }, callback));
         dispatch(courseActions.getCourses({ idkct: '', status: 1, search: '' }));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -71,6 +73,18 @@ const SampleQuestion = (props) => {
         dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, idThematic: filter.chuyen_de_id, status: '', search: '', 
             start: '', end: '', idType: '', publish: 1 }));
     }, [filter.khoa_hoc_id, filter.mo_dun_id, filter.chuyen_de_id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+        dispatch(questionActions.getQuestions({ kct_id: '', chuyen_nganh_id: '', pageSize: pageSize, pageIndex: pageIndex }));
+    }, [pageSize, pageIndex]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    const onChangePageIndex = (page) => {
+        setPageIndex(page);
+    };
+      
+    const onShowSizeChange = (current, pageSize) => {
+        setPageSize(pageSize);
+    };
 
     const renderCourses = () => {
         let options = [];
@@ -230,31 +244,58 @@ const SampleQuestion = (props) => {
                         onClick={() => exam.data.loai_de_thi_id === 4 ? 
                             props.history.push(`/admin/onlineExam/detail/${idExam}`) : 
                             props.history.push(`/admin/exam/detail/${idExam}`)}
-                            >Quay lại đề thi
+                    >Quay lại đề thi
                     </Button>
                 }
                 {loading && <LoadingCustom/>}
                 {questions.status === 'success' && 
-                    questions.data.map((question, index) => (
-                        <div className="question-items" key={index}>
-                            <div
-                                className='item'
-                                onClick={() => chooseQuestion(question.cau_hoi_id)}
-                            >
-                                <div className="header-question">
-                                    Câu {index + 1} <span className="point">[{question.diem} điểm]</span>
-                                </div>
-                                <div className="body-question">
-                                    <div className="answer-detail">
-                                        <img alt="..."
-                                            className="img-no-padding img-responsive"
-                                            src={config.API_URL + question.noi_dung}
-                                        />
+                    <>
+                        {questions.data.map((question, index) => (
+                            <div className="question-items" key={index}>
+                                <div
+                                    className='item'
+                                    onClick={() => chooseQuestion(question.cau_hoi_id)}
+                                >
+                                    <div className="header-question">
+                                        Câu {index + 1} <span className="point">[{question.diem} điểm]</span>
                                     </div>
-                                </div>
-                            </div>  
-                        </div>
-                    ))
+                                    <div className="body-question">
+                                        <div className="answer-detail">
+                                            <MathJax.Provider>
+                                                {question.noi_dung.split('\n').map((item, index_cauhoi) =>
+                                                    item.indexOf('includegraphics') !== -1 ? (
+                                                        <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question_${index_cauhoi}`}></img>
+                                                    ) : (
+                                                        item.split('$').map((item2, index2) => {
+                                                            return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold'))) ? (
+                                                                <MathJax.Node key={index2} formula={item2} />
+                                                            ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\underline')) ?
+                                                                (
+                                                                    <div key={index2} style={{textDecoration: 'underline'}}>{item2.split('\\underline{')[1].split('}')[0]}</div>
+                                                                )
+                                                            : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\bold')) ?
+                                                                (
+                                                                    <div key={index2} style={{fontWeight: 700}}>{item2.split('\\bold{')[1].split('}')[0]}</div>
+                                                                )
+                                                            :(
+                                                                <div key={index2} >{item2}</div>
+                                                            );
+                                                        })
+                                                    )
+                                                )}
+                                            </MathJax.Provider>
+                                        </div>
+                                    </div>
+                                </div>  
+                            </div>
+                        ))}
+                        <Pagination current={pageIndex}
+                            onChange={onChangePageIndex} 
+                            total={questions.totalCount} 
+                            onShowSizeChange={onShowSizeChange} 
+                            defaultPageSize={pageSize}
+                        />
+                    </>
                 }
                 {error && notification.error({
                     message: 'Thông báo',

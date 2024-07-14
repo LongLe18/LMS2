@@ -101,6 +101,17 @@ const ProgramPage = () => {
             ),
         },
         {
+            title: 'Loại khung chương trình',
+            dataIndex: 'loai_kct',
+            key: 'loai_kct',
+            responsive: ['md'],
+            render: (loai_kct) => (
+                <Tag color={loai_kct === true ? 'green' : 'orange'} key={loai_kct}>
+                {loai_kct === 1 ? "Thi thử Online" : "Đánh giá năng lực"}
+                </Tag>
+            ),
+        },
+        {
             title: 'Mô tả',
             dataIndex: 'mo_ta',
             key: 'mo_ta',
@@ -271,7 +282,7 @@ const ProgramPage = () => {
                                 },
                             ]}
                             >
-                                <Input placeholder=""/>
+                                <Input placeholder="Nhập tên khung chương trình"/>
                         </Form.Item>
                         <Form.Item
                             name="loai_kct"
@@ -286,10 +297,10 @@ const ProgramPage = () => {
                         >
                             <Radio.Group>
                                 <Radio className="option-payment" value={0}>
-                                Ôn luyện
+                                    Đánh giá năng lực
                                 </Radio>
                                 <Radio className="option-payment" value={1}>
-                                Thi thử Online
+                                    Thi thử Online
                                 </Radio>
                             </Radio.Group>
                         </Form.Item>
@@ -299,7 +310,7 @@ const ProgramPage = () => {
                             name="mo_ta"
                             rules={[]}
                             >
-                                <TextArea placeholder=""/>
+                                <TextArea placeholder="Nhập mô tả"/>
                         </Form.Item>
                         <Form.Item className="input-col" label="Hình đại diện" name="anh_dai_dien" rules={[]}>
                             <Dragger {...propsImage} maxCount={1}

@@ -7,24 +7,24 @@ import { Helmet } from 'react-helmet';
 import { Link } from "react-router-dom";
 
 // component
-import { Layout, Row, Col, Button, Input, Select, Form, Menu } from 'antd';
+import { Layout, Row, Col, Menu } from 'antd';
 import CarouselCustom from 'components/parts/Carousel/Carousel';
 
 // redux
 import { useSelector, useDispatch } from 'react-redux';
-import * as courseAction from '../../../../redux/actions/course';
+// import * as courseAction from '../../../../redux/actions/course';
 import * as programmeAction from '../../../../redux/actions/programme';
 import Statisic from "components/parts/statisic/Statisic";
 
 const { Content } = Layout;
-const { Option } = Select;
+// const { Option } = Select;
 
 const MainPageUser = (props) => {
     
     const dispatch = useDispatch();
 
-    const [form] = Form.useForm();
-    const programmes = useSelector(state => state.programme.list.result);
+    // const [form] = Form.useForm();
+    // const programmes = useSelector(state => state.programme.list.result);
     const programmeCourses = useSelector(state => state.programme.courses.result);
 
     useEffect(() => {

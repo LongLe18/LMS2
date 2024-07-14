@@ -3,7 +3,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import Hashids from 'hashids';
 import LoadingCustom from "components/parts/loading/Loading";
 import config from '../../../../configs/index';
-import constants from '../../../../helpers/constants';
+// import constants from '../../../../helpers/constants';
 
 // antd
 import { Row, Col, Form, Steps, Tabs, Modal,
@@ -712,7 +712,7 @@ const OnlineExamDetailPage = () => {
                                                                                     <span style={{ color: '#ff4d4f' }}>*</span>Nội dung câu hỏi
                                                                                 </Form.Item>
                                                                             </Col>
-                                                                            <Col xl={20}>
+                                                                            <Col xl={20} key={index}>
                                                                                 <Form.Item
                                                                                     className="input-col"
                                                                                     label=""
@@ -724,21 +724,12 @@ const OnlineExamDetailPage = () => {
                                                                                         },
                                                                                     ]}
                                                                                 >
-                                                                                    <TextEditorWidget
+                                                                                    <TextEditorWidget 
                                                                                         disabled={state.defaultExam.trang_thai === false}
                                                                                         valueParent={currentQuestion.noi_dung}
                                                                                         placeholder="Thêm nội dung câu hỏi"
                                                                                         onChange={(val) => {
-                                                                                            let value = '';
-                                                                                            const divContentRegex = /<div[^>]*>(.*?)<\/div>/g;
-                                                                                            const matches = val.match(divContentRegex);
-                                                                                            if (matches) {
-                                                                                                matches.forEach((match) => {
-                                                                                                    const content = match.replace(/<\/?div[^>]*>/g, ''); // Remove <div> tags
-                                                                                                    if (content.trim() !== '<br>') value += content.trim() + '\\n'
-                                                                                                });
-                                                                                            }
-                                                                                            setCurrentQuestion({ ...currentQuestion, noi_dung: value });
+                                                                                            setCurrentQuestion({ ...currentQuestion, noi_dung: val });
                                                                                         }}
                                                                                         isSimple={true} 
                                                                                     />

@@ -7,14 +7,15 @@ import { get } from 'lodash';
 
 function* fetchQuestions(payload) {
     try {
-        let endpoint = `${config.API_URL}/question`;
+        let endpoint = `${config.API_URL}/question?pageIndex=${payload.params.pageIndex}&pageSize=${payload.params.pageSize}&chuyen_nganh_id=${payload.params.chuyen_nganh_id}&kct_id=${payload.params.kct_id}`;
         const response = yield call(getApiAuth, endpoint);
         const result = yield response.data;
         yield put({ type: actions.quesiton.GET_QUESTIONS_SUCCESS, result: result });
-        if (payload.callback) {
+        if (payload.callback) { 
             payload.callback(result);
         }
     } catch (error) {
+        console.log(error)
         yield put({ type: actions.quesiton.GET_QUESTIONS_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
         notification.error({

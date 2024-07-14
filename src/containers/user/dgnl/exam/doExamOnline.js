@@ -504,9 +504,9 @@ const ExamOnlineDetail = () => {
                 <span className="answer-label">{renderAnswerKey(index)}</span>
                 <div className="answer-content">             
                     <MathJax.Provider>
-                        {answer.noi_dung_dap_an.split('\n').map((item) =>
+                        {answer.noi_dung_dap_an.split('\n').map((item, index_cauhoi) =>
                             item.indexOf('includegraphics') !== -1 ? (
-                                <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                                <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></img>
                             ) : (
                                 item.split('$').map((item2, index2) => {
                                     return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold'))) ? (
@@ -555,9 +555,9 @@ const ExamOnlineDetail = () => {
                         <span className="right-answer">Đáp án đúng {question.cau_hoi.dap_an_dungs.map((item) => renderAnswerKey(item)).join(', ')}</span>
                         : <span className="right-answer">Đáp án đúng: 
                             <MathJax.Provider>
-                                {question.cau_hoi.dap_ans[0].noi_dung_dap_an.split('\n').map((item) =>
+                                {question.cau_hoi.dap_ans[0].noi_dung_dap_an.split('\n').map((item, index_cauhoi) =>
                                     item.indexOf('includegraphics') !== -1 ? (
-                                        <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                                        <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></img>
                                     ) : (
                                         item.split('$').map((item2, index2) => {
                                             return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold'))) ? (
@@ -1255,7 +1255,7 @@ const ExamOnlineDetail = () => {
                                         <FileOutlined />
                                         Làm lại bài thi
                                     </Button>
-                                    <Button type="default" size="large" className="dowload-exam-button" onClick={() => downloadReport()}>
+                                    <Button type="primary" size="large" className="dowload-exam-button" onClick={() => downloadReport()}>
                                         <DownloadOutlined />
                                         Tải báo cáo
                                     </Button>
@@ -1277,6 +1277,8 @@ const ExamOnlineDetail = () => {
                                                 let doan_trichs = question.cau_hoi?.trich_doan?.noi_dung?.split('$').map((doan_trich) => {
                                                     if (doan_trich.includes('\\underline')) {
                                                         doan_trich = '<span class="underline">' + doan_trich.split('\\underline{')[1].split('}')[0] + '</span>';
+                                                    } else if (doan_trich.includes('\\bold')) {
+                                                        doan_trich = '<span class="bold">' + doan_trich.split('\\bold{')[1].split('}')[0] + '</span>';
                                                     }
                                                     return doan_trich
                                                 })
@@ -1293,9 +1295,9 @@ const ExamOnlineDetail = () => {
                                                                 <div className="answer-content" style={{paddingLeft: '20px', fontSize: 18}}> 
                                                                     <MathJax.Provider>
                                                                         <div style={{whiteSpace: 'pre-line'}} dangerouslySetInnerHTML={{ __html: doan_trichs?.join('') }}></div>
-                                                                        {question.cau_hoi?.trich_doan?.noi_dung?.split('\n').map((item) =>
+                                                                        {question.cau_hoi?.trich_doan?.noi_dung?.split('\n').map((item, index_cauhoi) =>
                                                                             item.indexOf('includegraphics') !== -1 && (
-                                                                                <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                                                                                <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question_${index_cauhoi}`}></img>
                                                                             ) 
                                                                         )}
                                                                     </MathJax.Provider>
@@ -1313,9 +1315,9 @@ const ExamOnlineDetail = () => {
 
                                                             <div className="title-exam">
                                                                 <MathJax.Provider>
-                                                                    {question.cau_hoi.noi_dung.split('\n').map((item) =>
+                                                                    {question.cau_hoi.noi_dung.split('\n').map((item, index_cauhoi) =>
                                                                         item.indexOf('includegraphics') !== -1 ? (
-                                                                            <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                                                                            <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question2_${index_cauhoi}`}></img>
                                                                         ) : (
                                                                             item.split('$').map((item2, index2) => {
                                                                                 return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold'))) ? (
@@ -1408,9 +1410,9 @@ const ExamOnlineDetail = () => {
                                                                                                 <span className="answer-label">S</span>
                                                                                             </button>
                                                                                             <MathJax.Provider>
-                                                                                                {answer.noi_dung_dap_an.split('\n').map((item) =>
+                                                                                                {answer.noi_dung_dap_an.split('\n').map((item, index_cauhoi) =>
                                                                                                     item.indexOf('includegraphics') !== -1 ? (
-                                                                                                        <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                                                                                                        <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question3_${index_cauhoi}`}></img>
                                                                                                     ) : (
                                                                                                         item.split('$').map((item2, index2) => {
                                                                                                             console.log(item2, item2.includes('\\bold'))
@@ -1502,9 +1504,9 @@ const ExamOnlineDetail = () => {
 
                                         <div className="title-exam">
                                             <MathJax.Provider>
-                                                {question.cau_hoi.noi_dung.split('\n').map((item) =>
+                                                {question.cau_hoi.noi_dung.split('\n').map((item, index_cauhoi) =>
                                                     item.indexOf('includegraphics') !== -1 ? (
-                                                        <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                                                        <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question4_${index_cauhoi}`}></img>
                                                     ) : (
                                                         item.split('$').map((item2, index2) => {
                                                             return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold'))) ? (
@@ -1564,9 +1566,9 @@ const ExamOnlineDetail = () => {
                                                                         <span className="answer-label">S</span>
                                                                     </button>
                                                                     <MathJax.Provider>
-                                                                        {answer.noi_dung_dap_an.split('\n').map((item) =>
+                                                                        {answer.noi_dung_dap_an.split('\n').map((item, index_cauhoi) =>
                                                                             item.indexOf('includegraphics') !== -1 ? (
-                                                                                <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                                                                                <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question5_${index_cauhoi}`}></img>
                                                                             ) : (
                                                                                 item.split('$').map((item2, index2) => {
                                                                                     return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold'))) ? (
@@ -1634,9 +1636,9 @@ const ExamOnlineDetail = () => {
                                                         description={
                                                             <div className="help-answer">
                                                                 <MathJax.Provider>
-                                                                    {question.cau_hoi.loi_giai.split('\n').map((item) =>
+                                                                    {question.cau_hoi.loi_giai.split('\n').map((item, index_cauhoi) =>
                                                                         item.indexOf('includegraphics') !== -1 ? (
-                                                                            <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                                                                            <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question6_${index_cauhoi}`}></img>
                                                                         ) : (
                                                                             item.split('$').map((item2, index2) => {
                                                                                 return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold'))) ? (
