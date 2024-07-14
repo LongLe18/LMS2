@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import defaultImage from 'assets/img/default.jpg';
+// import defaultImage from 'assets/img/default.jpg';
 import config from '../../../../configs/index';
 import moment from 'moment';
+import MathJax from 'react-mathjax';
 
 // component
 import { Row, Col, Table, notification, Button, Space, Form, Upload, message } from 'antd';
@@ -33,7 +34,17 @@ const Exceprt = (props) => {
         dispatch(exceprtAction.getExceprts());
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-    if (exceprts.status === 'success') exceprts.data.map((item, index) => data.push({...item, 'key': index}))
+    if (exceprts.status === 'success') {
+        exceprts.data.map((item, index) => {
+            let doan_trichs = item.noi_dung.split('$').map((doan_trich) => {
+                if (doan_trich.includes('\\underline')) {
+                    doan_trich = '<span class="underline">' + doan_trich.split('\\underline{')[1].split('}')[0] + '</span>';
+                }
+                return doan_trich
+            })
+            data.push({...item, 'key': index, noi_dung: doan_trichs?.join('') })
+        });
+    }
 
     const columns = [
         {
@@ -42,10 +53,14 @@ const Exceprt = (props) => {
             key: 'noi_dung',
             responsive: ['md'],
             render: (noi_dung) => (
-                <img alt="..."
-                    className="img-no-padding img-responsive"
-                    src={noi_dung !== null ? config.API_URL + noi_dung : defaultImage}
-                />
+                <MathJax.Provider>
+                    <div style={{whiteSpace: 'pre-line'}} dangerouslySetInnerHTML={{ __html: noi_dung }}></div>
+                    {/* {question.cau_hoi?.trich_doan?.noi_dung?.split('\n').map((item) =>
+                        item.indexOf('includegraphics') !== -1 && (
+                            <img src={config.API_URL + `/${item.match(regex)[1]}`}></img>
+                        ) 
+                    )} */}
+                </MathJax.Provider>
             )
         },
         {
@@ -53,7 +68,6 @@ const Exceprt = (props) => {
             dataIndex: 'ngay_tao',
             key: 'ngay_tao',
             responsive: ['md'],
-            width: 200,
             render: (ngay_tao) => moment(ngay_tao).format(config.DATE_FORMAT)
         },
         {

@@ -74,6 +74,7 @@ import {
   PhoneOutlined,
 } from '@ant-design/icons';
 import StatisticExam from './views/statistic/exam.js';
+import QuestionPage from './views/exam/Question.js';
 // import GenerateExam from './views/exam/GenerateExam.js';
 
 var routes = [
@@ -210,7 +211,7 @@ var routes = [
       render: (props) => <Criteria {...props}/>
     },{
       parent: "question",
-      path: "/admin/question/question",
+      path: "/admin/question/excerpt",
       name: "Trích đoạn đề thi",
       icon: <FileSearchOutlined />,
       render: (props) => <Exceprt {...props}/>
@@ -226,6 +227,12 @@ var routes = [
       name: "Đánh giá",
       icon: <FileTextOutlined />,
       render: (props) => <EvaluationPage {...props}/>
+    }, {
+      parent: "question",
+      path: "/admin/question/question",
+      name: "Danh mục câu hỏi",
+      icon: <QuestionCircleOutlined />,
+      render: (props) => <QuestionPage {...props}/>
     }
     // {
     //   parent: "question",
