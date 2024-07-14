@@ -1,4 +1,4 @@
-const { Question, Answer } = require('../models');
+const { Question, Answer, Majoring } = require('../models');
 const fs = require('fs');
 const { Op } = require('sequelize');
 const sequelize = require('../utils/db');
@@ -43,6 +43,10 @@ const getAll = async (req, res) => {
     const { count, rows } = await Question.findAndCountAll({
         include: {
             model: Answer,
+        },
+        include: {
+            model: Majoring,
+            attributes: ['chuyen_nganh_id', 'ten_chuyen_nganh'],
         },
         where: {
             ...(req.query.chuyen_nganh_id && {
