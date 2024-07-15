@@ -294,6 +294,10 @@ const CoursesPage = (props) => {
                                                                     <Link to={`/luyen-tap/kiem-tra/${hashids.encode(cate.khoa_hoc_id)}`}>
                                                                         <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
                                                                     </Link>
+                                                                : cate.loai_kct === 0 ? // đánh giá năng lực
+                                                                    <Link to={`/luyen-tap/danh-gia-nang-luc/${hashids.encode(cate.khoa_hoc_id)}`}>
+                                                                        <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
+                                                                    </Link>
                                                                 :
                                                                     <Link to={`/luyen-tap/luyen-tap/${hashids.encode(cate.khoa_hoc_id)}`}>
                                                                         <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
@@ -305,6 +309,10 @@ const CoursesPage = (props) => {
                                                                 ?
                                                                     <h3 className="course-cate-title">
                                                                         <Link to={`/luyen-tap/kiem-tra/${hashids.encode(cate.khoa_hoc_id)}`}>{cate.ten_khoa_hoc}</Link>
+                                                                    </h3>
+                                                                : cate.loai_kct === 0 ? // đánh giá năng lực
+                                                                    <h3 className="course-cate-title">
+                                                                        <Link to={`/luyen-tap/danh-gia-nang-luc/${hashids.encode(cate.khoa_hoc_id)}`}>{cate.ten_khoa_hoc}</Link>
                                                                     </h3>
                                                                 :
                                                                     <h3 className="course-cate-title">
@@ -319,7 +327,13 @@ const CoursesPage = (props) => {
                                                                                 Bắt đầu thi
                                                                             </Button>
                                                                         </Link>
-                                                                    :
+                                                                    : cate.loai_kct === 0 ? // đánh giá năng lực
+                                                                        <Link to={`/luyen-tap/danh-gia-nang-luc/${hashids.encode(cate.khoa_hoc_id)}`}>
+                                                                            <Button type="primary" className="mt-2 mb-2" style={{borderRadius: 6}}>
+                                                                                Bắt đầu thi
+                                                                            </Button>
+                                                                        </Link>
+                                                                    :   
                                                                         <Link to={`/luyen-tap/luyen-tap/${hashids.encode(cate.khoa_hoc_id)}`}>
                                                                             <Button type="primary" className="mt-2 mb-2" style={{borderRadius: 6}}>
                                                                                 Bắt đầu thi

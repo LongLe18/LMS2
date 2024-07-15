@@ -15,6 +15,7 @@ import ExamOnlineDetail from './exam/doExamOnline';
 import ExamModuleDetail from './exam/doExamModule';
 import ReviewExamPage from './exam/reviewExam';
 import HistoryExam from './exam/historyExam';
+import ExamViewDGNL from './exam/examViewDGNL';
 // business
 import BusinessPage from './business/business';
 import BusinessProgramePage from './business/businessPrograme';
@@ -56,6 +57,13 @@ var routes = [
         exact: true,
         hidden: true,
         render: (props) => <ExamPage {...props}/>,
+    },
+    {
+        id: 'danh-gia-nang-luc',
+        path: '/luyen-tap/danh-gia-nang-luc/:idCourse',
+        exact: true,
+        hidden: true,
+        render: (props) => <ExamViewDGNL {...props}/>,
     },
     {
         id: 'practicedetail',
