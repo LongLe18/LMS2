@@ -1,16 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Helmet } from 'react-helmet';
 import { useParams } from 'react-router-dom';
 import Hashids from "hashids";
 import './css/exam.css';
 
 // component
-import { Layout, Row, Col, Carousel, Table } from 'antd';
+import { Layout, Row, Col, Carousel, Table, Steps, Radio, Checkbox, Button } from 'antd';
 import Statisic from "components/parts/statisic/Statisic";
 
 // redux
 import { useSelector, useDispatch } from 'react-redux';
 import * as courseActions from '../../../../redux/actions/course';
+import * as majorActions from '../../../../redux/actions/major';
 
 const { Content } = Layout;
 
@@ -18,6 +19,8 @@ const ExamViewDGNL = (props) => {
     const idCourse = useParams().idCourse;
     const dispatch = useDispatch();
     const hashids = new Hashids();
+    const [type, setType] = useState(1);
+  
     const dataSource = [
         {
           key: '1',
@@ -91,8 +94,19 @@ const ExamViewDGNL = (props) => {
     ];
 
     const course = useSelector(state => state.course.item.result);
+    const majors = useSelector(state => state.major.list.result);
+
+    // sự kiên đổi loại thi phần 3
+    const onChangeType = (e) => {
+        setType(e.target.value);
+    };
+
+    const onChangeSubject = (checkedValues) => {
+        console.log('checked = ', checkedValues);
+    };
 
     useEffect(() => {
+        dispatch(majorActions.getMajors());
         dispatch(courseActions.getCourse({ id: hashids.decode(idCourse) }));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -152,6 +166,74 @@ const ExamViewDGNL = (props) => {
                                     <div style={{fontSize: 16}}>
                                         Đề thi đầy đủ theo đúng cấu trúc về số lượng môn, số lượng câu hỏi, định dạng.
                                     </div>
+                                </div>
+                                {/* Form chọn các môn thi */}
+                                <div className="form-exam">
+                                    <h5 className="textCenter">Đề trải nghiệm Đánh giá năng lực Hà Nội</h5>
+                                    <h6 className="textCenter" style={{color: '#747474'}}>Để các em có thể làm bài trải nghiệm và định hình được kiểu ra đề.</h6>
+                                    <h6 className="textCenter" style={{fontWeight: 700, marginTop: 12}}>Bài thi gồm có</h6>
+                                    <Steps style={{alignItems: 'center'}}
+                                        progressDot
+                                        current={2}
+                                        direction="vertical"
+                                        items={[
+                                            {
+                                                title: 'Toán học và xử lý số liệu (50 câu)',
+                                            },
+                                            {
+                                                title: 'Văn học - Ngôn ngữ (50 câu)',
+                                            },
+                                            {
+                                                title: 'Tự chọn (50 câu) : Khoa học',
+                                            },
+                                        ]}
+                                    />
+                                    <Radio.Group onChange={onChangeType} value={type}>
+                                        <Radio value={1}>Khoa học</Radio>
+                                        <Radio value={2}>Tiếng Anh</Radio>
+                                    </Radio.Group>
+                                    {type === 1 && 
+                                        <>
+                                            <h6 style={{marginTop: 12}}>Bạn hãy chọn 3 môn phía dưới:</h6>
+                                        
+                                            <Checkbox.Group style={{ width: '100%' }} onChange={onChangeSubject}>
+                                                <Row>
+                                                <Col span={8}>
+        <Checkbox value="A">A</Checkbox>
+      </Col>
+      <Col span={8}>
+        <Checkbox value="B">B</Checkbox>
+      </Col>
+      <Col span={8}>
+        <Checkbox value="C">C</Checkbox>
+      </Col>
+      <Col span={8}>
+        <Checkbox value="D">D</Checkbox>
+      </Col>
+      <Col span={8}>
+        <Checkbox value="E">E</Checkbox>
+      </Col>
+                                                    {/* {majors.status === 'success' && 
+                                                        majors.data.map((major) => (
+                                                            <Col span={24}>
+                                                                <Checkbox value={major.chuyen_nganh_id}>{major.ten_chuyen_nganh}</Checkbox>
+                                                            </Col>
+                                                        ))
+                                                    } */}
+                                                </Row>
+                                            </Checkbox.Group>
+                                        </>
+                                    }
+
+                                    <p className="block-action text-center mt-4">
+                                        <Button type="primary" size="large" className="join-exam-button" style={{borderRadius: 8, backgroundColor: 'rgba(0, 115, 8, 0.92)', borderColor: 'rgba(0, 115, 8, 0.92)'}}
+                                            onClick={() => {
+                                                
+                                            }}
+                                        >
+                                            Làm bài thi
+                                        </Button>
+                                    </p>
                                 </div>
                             </>
                         }

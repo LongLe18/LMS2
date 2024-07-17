@@ -305,6 +305,25 @@
     background-color: transparent;
     background-image: none;
   }
+
+  .form-exam {
+    background-color: transparent;
+    border: 1px #3da844 solid !important;
+    padding: 1em;
+    text-align: center;
+  }
+
+  h5 {
+    color: #3da844 !important;
+  }
+
+  .textCenter {
+    text-align: center;
+  }
+
+  .ant-steps-item {
+    width: 21%;
+  }
 }
 
 /*tablet*/
