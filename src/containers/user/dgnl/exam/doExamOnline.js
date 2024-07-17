@@ -325,7 +325,7 @@ const ExamOnlineDetail = () => {
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', 'danhgia.docx'); // Replace with your file name and extension
+            link.setAttribute('download', 'danhgia.pdf'); // Replace with your file name and extension
             document.body.appendChild(link);
             link.click();
             link.parentNode.removeChild(link);

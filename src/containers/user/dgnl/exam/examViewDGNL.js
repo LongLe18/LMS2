@@ -20,7 +20,8 @@ const ExamViewDGNL = (props) => {
     const dispatch = useDispatch();
     const hashids = new Hashids();
     const [type, setType] = useState(1);
-  
+    const [subjects, setSubjects] = useState([]);
+
     const dataSource = [
         {
           key: '1',
@@ -102,7 +103,7 @@ const ExamViewDGNL = (props) => {
     };
 
     const onChangeSubject = (checkedValues) => {
-        console.log('checked = ', checkedValues);
+        setSubjects(checkedValues);
     };
 
     useEffect(() => {
@@ -198,21 +199,21 @@ const ExamViewDGNL = (props) => {
                                         
                                             <Checkbox.Group style={{ width: '100%' }} onChange={onChangeSubject}>
                                                 <Row>
-                                                <Col span={8}>
-        <Checkbox value="A">A</Checkbox>
-      </Col>
-      <Col span={8}>
-        <Checkbox value="B">B</Checkbox>
-      </Col>
-      <Col span={8}>
-        <Checkbox value="C">C</Checkbox>
-      </Col>
-      <Col span={8}>
-        <Checkbox value="D">D</Checkbox>
-      </Col>
-      <Col span={8}>
-        <Checkbox value="E">E</Checkbox>
-      </Col>
+                                                    <Col span={8}>
+                                                        <Checkbox value="A">A</Checkbox>
+                                                    </Col>
+                                                    <Col span={8}>
+                                                        <Checkbox value="B">B</Checkbox>
+                                                    </Col>
+                                                    <Col span={8}>
+                                                        <Checkbox value="C">C</Checkbox>
+                                                    </Col>
+                                                    <Col span={8}>
+                                                        <Checkbox value="D">D</Checkbox>
+                                                    </Col>
+                                                    <Col span={8}>
+                                                        <Checkbox value="E">E</Checkbox>
+                                                    </Col>
                                                     {/* {majors.status === 'success' && 
                                                         majors.data.map((major) => (
                                                             <Col span={24}>
