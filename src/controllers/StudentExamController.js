@@ -127,6 +127,31 @@ const postCreate = async (req, res) => {
     });
 };
 
+// Dùng cho thi đánh giá năng lực mới
+const postCreatev2 = async (req, res) => {
+    const { khoa_hoc_id, ...rest } = req.body
+    const exam = await Exam.create({
+        ten_de_thi: 'THI ĐÁNH GIÁ NĂNG LỰC',
+        tong_diem: 150,
+        // xuat_ban: 1,
+        // trang_thai: 1,
+        de_tu_sinh: 1,
+        kct_id: 1,
+        khoa_hoc_id,
+        loai_de_thi_id: 3
+    })
+    const studentExam = await StudentExam.create({
+        ...rest,
+        de_thi_id: exam.de_thi_id,
+        hoc_vien_id: req.userId,
+    });
+    res.status(200).send({
+        status: 'success',
+        data: studentExam,
+        message: null,
+    });
+};
+
 const putUpdate = async (req, res) => {
     const selectedAnswers = await SelectedAnswer.findAll({
         include: {
@@ -511,4 +536,5 @@ module.exports = {
     forceDelete,
     clearAll,
     exportReport,
+    postCreatev2,
 };

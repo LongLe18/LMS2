@@ -40,13 +40,34 @@ const getByExam = async (req, res) => {
 };
 
 const getAll = async (req, res) => {
-    const questions = await Question.findAll({
-        order: [['ngay_tao', 'DESC']],
-        limit: 100,
+    const { count, rows } = await Question.findAndCountAll({
+        include: {
+            model: Answer,
+        },
+        where: {
+            ...(req.query.chuyen_nganh_id && {
+                chuyen_nganh_id: req.query.chuyen_nganh_id,
+            }),
+            ...(req.query.kct_id && { kct_id: req.query.kct_id }),
+        },
+        offset:
+            (Number(req.query.pageIndex || 1) - 1) *
+            Number(req.query.pageSize || 10),
+        limit: Number(req.query.pageSize || 10),
+        order: [
+            req.query.sortBy
+                ? req.query.sortBy.split(',')
+                : ['ngay_tao', 'DESC'],
+        ],
     });
+
     res.status(200).send({
         status: 'success',
-        data: questions,
+        data: rows,
+        pageIndex: Number(req.query.pageIndex || 1),
+        pageSize: Number(req.query.pageSize || 10),
+        totalCount: count,
+        totalPage: Math.ceil(count / Number(req.query.pageSize || 10)),
         message: null,
     });
 };
@@ -92,17 +113,17 @@ const postCreate = async (req, res) => {
                     )
                     .join(','),
             }),
-            ...(req.files &&
-                req.files.tep_dinh_kem_loi_giai && {
-                    tep_dinh_kem_loi_giai: req.files.tep_dinh_kem_loi_giai
-                        .map(
-                            (item) =>
-                                item.destination.replace('public', '') +
-                                '/' +
-                                item.filename
-                        )
-                        .join(','),
-                }),
+        ...(req.files &&
+            req.files.tep_dinh_kem_loi_giai && {
+                tep_dinh_kem_loi_giai: req.files.tep_dinh_kem_loi_giai
+                    .map(
+                        (item) =>
+                            item.destination.replace('public', '') +
+                            '/' +
+                            item.filename
+                    )
+                    .join(','),
+            }),
     });
     res.status(200).send({
         status: 'success',
@@ -118,14 +139,24 @@ const putUpdate = async (req, res) => {
                 cau_hoi_id: req.params.id,
             },
         });
-        if (req.files['tep_dinh_kem_noi_dung'] && question.tep_dinh_kem_noi_dung) {
-            for (const tep_dinh_kem_noi_dung of question.tep_dinh_kem_noi_dung.split(',')) {
+        if (
+            req.files['tep_dinh_kem_noi_dung'] &&
+            question.tep_dinh_kem_noi_dung
+        ) {
+            for (const tep_dinh_kem_noi_dung of question.tep_dinh_kem_noi_dung.split(
+                ','
+            )) {
                 if (fs.existsSync(`public${tep_dinh_kem_noi_dung}`))
                     fs.unlinkSync(`public${tep_dinh_kem_noi_dung}`);
             }
         }
-          if (req.files['tep_dinh_kem_loi_giai'] && question.tep_dinh_kem_loi_giai) {
-            for (const tep_dinh_kem_loi_giai of question.tep_dinh_kem_loi_giai.split(',')) {
+        if (
+            req.files['tep_dinh_kem_loi_giai'] &&
+            question.tep_dinh_kem_loi_giai
+        ) {
+            for (const tep_dinh_kem_loi_giai of question.tep_dinh_kem_loi_giai.split(
+                ','
+            )) {
                 if (fs.existsSync(`public${tep_dinh_kem_loi_giai}`))
                     fs.unlinkSync(`public${tep_dinh_kem_loi_giai}`);
             }
@@ -175,13 +206,17 @@ const forceDelete = async (req, res) => {
             fs.unlinkSync(`public/${media}`);
         }
         if (question.tep_dinh_kem_noi_dung) {
-            for (const tep_dinh_kem_noi_dung of question.tep_dinh_kem_noi_dung.split(',')) {
+            for (const tep_dinh_kem_noi_dung of question.tep_dinh_kem_noi_dung.split(
+                ','
+            )) {
                 if (fs.existsSync(`public${tep_dinh_kem_noi_dung}`))
                     fs.unlinkSync(`public${tep_dinh_kem_noi_dung}`);
             }
         }
         if (question.tep_dinh_kem_loi_giai) {
-            for (const tep_dinh_kem_loi_giai of question.tep_dinh_kem_loi_giai.split(',')) {
+            for (const tep_dinh_kem_loi_giai of question.tep_dinh_kem_loi_giai.split(
+                ','
+            )) {
                 if (fs.existsSync(`public${tep_dinh_kem_loi_giai}`))
                     fs.unlinkSync(`public${tep_dinh_kem_loi_giai}`);
             }

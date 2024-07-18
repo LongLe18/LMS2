@@ -395,6 +395,213 @@ const getById = async (req, res) => {
     });
 };
 
+// dùng cho thi đánh giá năng lực mới
+const getByIdv2 = async (req, res) => {
+    let exam = await Exam.findOne({
+        where: {
+            de_thi_id: req.params.id,
+        },
+    });
+    let criteria;
+    if (exam) {
+        criteria = await SyntheticCriteria.findOne({
+            where: {
+                khoa_hoc_id: exam.khoa_hoc_id,
+            },
+        });
+        if (!criteria) {
+            res.status(404).send({
+                status: 'error',
+                data: null,
+                message: 'no criteria',
+            });
+            return;
+        }
+    }
+    if (Number(req.query.phan) === 1) {
+        const count = await ExamQuestion.count({
+            where: {
+                de_thi_id: exam.de_thi_id,
+                phan: 1,
+            },
+        });
+        if (count === 0)
+            await sequelize.query(
+                `
+                INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
+                    SELECT cau_hoi_id, :de_thi_id, 1 FROM cau_hoi
+                    WHERE chuyen_nganh_id = 1 AND kct_id = 1
+                    ORDER BY RAND() LIMIT ${criteria.so_cau_hoi_phan_1}
+            `,
+                {
+                    type: sequelize.QueryTypes.INSERT,
+                    replacements: {
+                        de_thi_id: Number(req.params.id),
+                    },
+                }
+            );
+    } else if (Number(req.query.phan) === 2) {
+        const count = await ExamQuestion.count({
+            where: {
+                de_thi_id: exam.de_thi_id,
+                phan: 2,
+            },
+        });
+        if (count === 0)
+            await sequelize.query(
+                `
+                INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
+                    SELECT cau_hoi_id, :de_thi_id, 2 FROM cau_hoi
+                    WHERE chuyen_nganh_id = 7 AND kct_id = 1
+                    ORDER BY trich_doan_id DESC, RAND()
+                    LIMIT ${criteria.so_cau_hoi_phan_2}
+            `,
+                {
+                    type: sequelize.QueryTypes.INSERT,
+                    replacements: {
+                        de_thi_id: Number(req.params.id),
+                    },
+                }
+            );
+    } else if (Number(req.query.phan) === 3) {
+        const count = await ExamQuestion.count({
+            where: {
+                de_thi_id: exam.de_thi_id,
+                phan: 3,
+            },
+        });
+        if (count === 0) {
+            let so_cau_hoi_phan_3 = 0;
+            for (const chuyen_nganh_id of req.query.chuyen_nganh_ids.split(
+                ','
+            )) {
+                let so_cau_hoi_chuyen_de =  Number(chuyen_nganh_id) === 3
+                ? criteria.so_cau_hoi_chuyen_nganh_1
+                : Number(chuyen_nganh_id) === 4
+                ? criteria.so_cau_hoi_chuyen_nganh_2
+                : Number(chuyen_nganh_id) === 6
+                ? criteria.so_cau_hoi_chuyen_nganh_3
+                : Number(chuyen_nganh_id) === 8
+                ? criteria.so_cau_hoi_chuyen_nganh_4
+                : criteria.so_cau_hoi_chuyen_nganh_5
+                so_cau_hoi_phan_3+=so_cau_hoi_chuyen_de;
+                await sequelize.query(
+                    `
+                INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
+                    SELECT cau_hoi_id, :de_thi_id, 3 FROM cau_hoi
+                    WHERE chuyen_nganh_id = :chuyen_nganh_id AND kct_id = 1
+                    ORDER BY RAND() LIMIT ${
+                        so_cau_hoi_chuyen_de
+                    }
+            `,
+                    {
+                        type: sequelize.QueryTypes.INSERT,
+                        replacements: {
+                            de_thi_id: Number(req.params.id),
+                            chuyen_nganh_id: Number(chuyen_nganh_id),
+                        },
+                    }
+                );
+            }
+            await sequelize.query(
+                `
+            INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
+                SELECT cau_hoi_id, :de_thi_id, 3 FROM cau_hoi
+                WHERE chuyen_nganh_id IN (:chuyen_nganh_ids) AND kct_id = 1
+                AND cau_hoi_id NOT IN (SELECT cau_hoi_de_thi
+                WHERE de_thi_id = :de_thi_id)
+                ORDER BY RAND() LIMIT ${criteria.so_cau_hoi_phan_3- so_cau_hoi_phan_3}
+        `,
+                {
+                    type: sequelize.QueryTypes.INSERT,
+                    replacements: {
+                        de_thi_id: Number(req.params.id),
+                        chuyen_nganh_ids: req.query.chuyen_nganh_ids,
+                    },
+                }
+            );
+        }
+    }
+    exam = await Exam.findOne({
+        include: {
+            model: ExamQuestion,
+            include: {
+                model: Question,
+                include: [
+                    {
+                        model: Answer,
+                    },
+                    {
+                        model: Exceprt,
+                    },
+                ],
+            },
+            where: {
+                phan: Number(req.query.phan),
+            },
+        },
+        where: {
+            de_thi_id: req.params.id,
+        },
+        order: [[sequelize.col('dap_an_id'), 'ASC']],
+    });
+    exam.dataValues.so_cau_hoi = criteria.so_cau_hoi;
+    exam.dataValues.thoi_gian = criteria.thoi_gian;
+    exam.dataValues.so_cau_hoi_phan_1 = criteria.so_cau_hoi_phan_1;
+    exam.dataValues.thoi_gian_phan_1 = criteria.thoi_gian_phan_1;
+    exam.dataValues.so_cau_hoi_phan_2 = criteria.so_cau_hoi_phan_2;
+    exam.dataValues.thoi_gian_phan_2 = criteria.thoi_gian_phan_2;
+    exam.dataValues.so_cau_hoi_phan_3 = criteria.so_cau_hoi_phan_3;
+    exam.dataValues.thoi_gian_phan_3 = criteria.thoi_gian_phan_3;
+    let dap_an_dungs;
+    let exceprtFrom;
+    let exceprtTo;
+    for (var index1 = 0; index1 < exam.cau_hoi_de_this.length; index1++) {
+        dap_an_dungs = [];
+        if (exam.cau_hoi_de_this[index1].cau_hoi.trich_doan_id) {
+            if (
+                index1 == 0 ||
+                exam.cau_hoi_de_this[index1].cau_hoi.trich_doan_id !=
+                    exam.cau_hoi_de_this[index1 - 1].cau_hoi.trich_doan_id
+            ) {
+                exceprtFrom = exceprtTo = index1;
+                for (
+                    var index3 = index1 + 1;
+                    index3 < exam.cau_hoi_de_this.length;
+                    index3++
+                ) {
+                    if (
+                        exam.cau_hoi_de_this[index1].cau_hoi.trich_doan_id ==
+                        exam.cau_hoi_de_this[index3].cau_hoi.trich_doan_id
+                    )
+                        exceprtTo = index3;
+                }
+                exam.cau_hoi_de_this[index1].cau_hoi.dataValues.exceprtFrom =
+                    exceprtFrom;
+                exam.cau_hoi_de_this[index1].cau_hoi.dataValues.exceprtTo =
+                    exceprtTo;
+            }
+        }
+        for (
+            var index2 = 0;
+            index2 < exam.cau_hoi_de_this[index1].cau_hoi.dap_ans.length;
+            index2++
+        ) {
+            if (
+                exam.cau_hoi_de_this[index1].cau_hoi.dap_ans[index2].dap_an_dung
+            )
+                dap_an_dungs.push(index2);
+            exam.cau_hoi_de_this[index1].cau_hoi.dataValues.dap_an_dungs =
+                dap_an_dungs;
+        }
+    }
+    res.status(200).send({
+        status: 'success',
+        data: exam,
+        message: null,
+    });
+};
+
 const postCreate = async (req, res) => {
     try {
         let exam;
@@ -804,4 +1011,5 @@ module.exports = {
     getSyntheticNew,
     studentStatistic,
     uploadWordMedia,
+    getByIdv2,
 };

@@ -69,6 +69,7 @@ router.get(
     authRole([2], 6),
     tryCatch(examController.reuse)
 );
+router.get('/dgnl/:id', authToken, tryCatch(examController.getByIdv2));
 router.get('/:id', authToken, tryCatch(examController.getById));
 
 module.exports = router;

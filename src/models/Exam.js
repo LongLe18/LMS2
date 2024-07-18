@@ -24,10 +24,16 @@ const dethi = sequelize.define(
         anh_dai_dien: {
             type: DataTypes.STRING,
         },
+        de_tu_sinh: {
+            type: DataTypes.INTEGER,
+        },
         loai_de_thi_id: {
             type: DataTypes.INTEGER,
         },
         khoa_hoc_id: {
+            type: DataTypes.INTEGER,
+        },
+        kct_id: {
             type: DataTypes.INTEGER,
         },
         mo_dun_id: {

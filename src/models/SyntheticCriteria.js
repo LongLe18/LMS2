@@ -21,6 +21,39 @@ const tieuchidetonghop = sequelize.define(
         so_lan_thi: {
             type: DataTypes.INTEGER,
         },
+        so_cau_hoi_phan_1: {
+            type: DataTypes.INTEGER,
+        },
+        thoi_gian_phan_1: {
+            type: DataTypes.INTEGER,
+        },
+        so_cau_hoi_phan_2: {
+            type: DataTypes.INTEGER,
+        },
+        thoi_gian_phan_2: {
+            type: DataTypes.INTEGER,
+        },
+        so_cau_hoi_phan_3: {
+            type: DataTypes.INTEGER,
+        },
+        thoi_gian_phan_3: {
+            type: DataTypes.INTEGER,
+        },
+        so_cau_hoi_chuyen_nganh_1: {
+            type: DataTypes.INTEGER,
+        },
+        so_cau_hoi_chuyen_nganh_2: {
+            type: DataTypes.INTEGER,
+        },
+        so_cau_hoi_chuyen_nganh_3: {
+            type: DataTypes.INTEGER,
+        },
+        so_cau_hoi_chuyen_nganh_4: {
+            type: DataTypes.INTEGER,
+        },
+        so_cau_hoi_chuyen_nganh_5: {
+            type: DataTypes.INTEGER,
+        },
         khoa_hoc_id: {
             type: DataTypes.INTEGER,
         },
