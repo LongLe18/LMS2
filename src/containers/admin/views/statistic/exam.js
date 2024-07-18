@@ -114,7 +114,7 @@ const StatisticExam = (props) => {
         }
         return (
             <Select style={{marginRight: 10, width: 300}}
-                showSearch={false}
+                showSearch={true}
                 placeholder="Chọn khóa học"
                 onChange={(khoa_hoc_id) => {
                     dispatch(examActions.filterExam({ idCourse: khoa_hoc_id, idModule: '', idThematic: '', status: '', search: '', 

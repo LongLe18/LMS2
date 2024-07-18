@@ -324,6 +324,10 @@
   .ant-steps-item {
     width: 21%;
   }
+
+  .ant-checkbox-wrapper {
+    font-size: 16px !important;
+  }
 }
 
 /*tablet*/

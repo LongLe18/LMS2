@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Helmet } from 'react-helmet';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
+import axios from 'axios';
 import Hashids from "hashids";
 import './css/exam.css';
+import config from '../../../../configs/index';
 
 // component
-import { Layout, Row, Col, Carousel, Table, Steps, Radio, Checkbox, Button } from 'antd';
+import { Layout, Row, Col, Carousel, Table, Steps, Radio, Checkbox, Button, notification, Spin } from 'antd';
 import Statisic from "components/parts/statisic/Statisic";
 
 // redux
@@ -18,9 +20,12 @@ const { Content } = Layout;
 const ExamViewDGNL = (props) => {
     const idCourse = useParams().idCourse;
     const dispatch = useDispatch();
+    const history = useHistory();
     const hashids = new Hashids();
+
     const [type, setType] = useState(1);
     const [subjects, setSubjects] = useState([]);
+    const [spinning, setSpinning] = useState(false);
 
     const dataSource = [
         {
@@ -103,6 +108,10 @@ const ExamViewDGNL = (props) => {
     };
 
     const onChangeSubject = (checkedValues) => {
+        /// prevent checked to checkbox
+        if (checkedValues.length > 3) {
+            checkedValues.shift();
+        }
         setSubjects(checkedValues);
     };
 
@@ -114,133 +123,155 @@ const ExamViewDGNL = (props) => {
     const renderPages = () => {
         return (
             <>      
-                <div className="list-course-cate">        
-                    <div className="wraper wraper-list-course-cate-index">
-                        <Row style={{margin: '18px 0'}}>
-                            <Col xl={24} md={20} xs={20}>
-                                <Carousel autoplay style={{marginBottom: 12}}>
-                                    <img src={require('assets/img/seo-exam-dgnl.png').default} alt='banner1'/>
-                                </Carousel>
-                            </Col>
-                        </Row>
-                        <Statisic />
+                <Spin spinning={spinning}  tip="Đang xử lý tạo đề thi. Quá trình này sẽ mất thời gian, bạn xin vui lòng chờ">
+                    <div className="list-course-cate">        
+                        <div className="wraper wraper-list-course-cate-index">
+                            <Row style={{margin: '18px 0'}}>
+                                <Col xl={24} md={20} xs={20}>
+                                    <Carousel autoplay style={{marginBottom: 12}}>
+                                        <img src={require('assets/img/seo-exam-dgnl.png').default} alt='banner1'/>
+                                    </Carousel>
+                                </Col>
+                            </Row>
+                            <Statisic />
 
-                        {course.status === 'success' &&
-                            <>
-                                <div className="header-exam">
-                                    <h1>THI THỬ ĐÁNH GIÁ NĂNG LỰC ĐẠI HỌC QUỐC GIA {course.data.ten_khoa_hoc}</h1>
-                                </div>
-                                <div>
-                                    <h5><b>MỤC ĐÍCH BÀI THI TRẢI NGHIỆM</b></h5>
-                                    <span style={{fontSize: 18, fontWeight: 500}}>Giúp thí sinh làm quen với định dạng bài thi Đánh giá năng lực, trải nghiệm ngân hàng câu hỏi phong phú, sẵn sàng kiến thức và tâm lý cho kỳ thi chính thức.</span>
-                                    <h5 style={{marginTop: 8}}><b>CẤU TRÚC BÀI THI</b></h5>
-                                    <Table style={{ whiteSpace: 'pre', textAlign: 'left'}} dataSource={dataSource} columns={columns} pagination={false}/>;
-                                    <h5><b>CHI TIẾT CẤU TRÚC:</b></h5>
-                                    <div style={{fontSize: 16}}>
-                                        Về hình thức, bài thi ĐGNL năm 2025 điều chỉnh chủ yếu ở phần 3 và cách đặt câu hỏi. Sau khi hoàn thành hai phần thi đầu, phần thi thứ 3 thí sinh sẽ được lựa chọn 3 trong 5 chủ đề thuộc lĩnh vực Lý, Hóa, Sinh, Sử, Địa để hoàn thành bài thi trong thời gian 195 phút (không kể thời gian bù thêm cho câu hỏi thử nghiệm).
+                            {course.status === 'success' &&
+                                <>
+                                    <div className="header-exam">
+                                        <h1>THI THỬ ĐÁNH GIÁ NĂNG LỰC ĐẠI HỌC QUỐC GIA {course.data.ten_khoa_hoc}</h1>
                                     </div>
-                                    <div style={{fontSize: 16, marginTop: 6}}>
-                                        Riêng phần lựa chọn liên quan đến Ngoại ngữ sẽ được xây dựng thành một hợp phần riêng thay thế phần Khoa học để đánh giá năng lực chuyên biệt.
-                                    </div>
-                                    <div style={{fontSize: 16, marginTop: 6}}>
-                                        Về câu hỏi, mỗi chủ đề thi sẽ xuất hiện câu hỏi chùm, trong một ngữ cảnh dữ liệu đầu bài sẽ hỏi kèm 1- 3 câu hỏi khác nhau để đánh giá năng lực tổng hợp của thí sinh. Câu hỏi chùm có thể là chủ đề mới với ngữ liệu cho trước đòi hỏi thí sinh phải nhận định, phân tích và đưa ra phương án giải quyết vấn đề đã cho.
-                                    </div>
+                                    <div>
+                                        <h5><b>MỤC ĐÍCH BÀI THI TRẢI NGHIỆM</b></h5>
+                                        <span style={{fontSize: 18, fontWeight: 500}}>Giúp thí sinh làm quen với định dạng bài thi Đánh giá năng lực, trải nghiệm ngân hàng câu hỏi phong phú, sẵn sàng kiến thức và tâm lý cho kỳ thi chính thức.</span>
+                                        <h5 style={{marginTop: 8}}><b>CẤU TRÚC BÀI THI</b></h5>
+                                        <Table style={{ whiteSpace: 'pre', textAlign: 'left'}} dataSource={dataSource} columns={columns} pagination={false}/>;
+                                        <h5><b>CHI TIẾT CẤU TRÚC:</b></h5>
+                                        <div style={{fontSize: 16}}>
+                                            Về hình thức, bài thi ĐGNL năm 2025 điều chỉnh chủ yếu ở phần 3 và cách đặt câu hỏi. Sau khi hoàn thành hai phần thi đầu, phần thi thứ 3 thí sinh sẽ được lựa chọn 3 trong 5 chủ đề thuộc lĩnh vực Lý, Hóa, Sinh, Sử, Địa để hoàn thành bài thi trong thời gian 195 phút (không kể thời gian bù thêm cho câu hỏi thử nghiệm).
+                                        </div>
+                                        <div style={{fontSize: 16, marginTop: 6}}>
+                                            Riêng phần lựa chọn liên quan đến Ngoại ngữ sẽ được xây dựng thành một hợp phần riêng thay thế phần Khoa học để đánh giá năng lực chuyên biệt.
+                                        </div>
+                                        <div style={{fontSize: 16, marginTop: 6}}>
+                                            Về câu hỏi, mỗi chủ đề thi sẽ xuất hiện câu hỏi chùm, trong một ngữ cảnh dữ liệu đầu bài sẽ hỏi kèm 1- 3 câu hỏi khác nhau để đánh giá năng lực tổng hợp của thí sinh. Câu hỏi chùm có thể là chủ đề mới với ngữ liệu cho trước đòi hỏi thí sinh phải nhận định, phân tích và đưa ra phương án giải quyết vấn đề đã cho.
+                                        </div>
 
-                                    <div style={{textAlign: 'center'}}>
-                                        <img style={{marginTop: 12}} src={require('assets/img/cau-truc-de-thi-dgnl.png').default} alt='banner1'/>
-                                    </div>
+                                        <div style={{textAlign: 'center'}}>
+                                            <img style={{marginTop: 12}} src={require('assets/img/cau-truc-de-thi-dgnl.png').default} alt='banner1'/>
+                                        </div>
 
-                                    <div style={{fontSize: 16}}>
-                                        <span style={{fontWeight: 700}}>Phần 1 (bắt buộc):</span> Toán học và Xử lý số liệu được làm bài trong 75 phút gồm 50 câu hỏi (35 câu hỏi trắc nghiệm bốn lựa chọn, 15 câu hỏi điền đáp án) thuộc lĩnh vực đại số và một số yếu tố giải tích, hình học và đo lường, thống kê và xác suất.
+                                        <div style={{fontSize: 16}}>
+                                            <span style={{fontWeight: 700}}>Phần 1 (bắt buộc):</span> Toán học và Xử lý số liệu được làm bài trong 75 phút gồm 50 câu hỏi (35 câu hỏi trắc nghiệm bốn lựa chọn, 15 câu hỏi điền đáp án) thuộc lĩnh vực đại số và một số yếu tố giải tích, hình học và đo lường, thống kê và xác suất.
+                                        </div>
+                                        <div style={{fontSize: 16, marginTop: 6}}>
+                                            <span style={{fontWeight: 700}}>Phần 2 (bắt buộc):</span> Ngôn ngữ - Văn học được hoàn thành trong 60 phút gồm 50 câu hỏi trắc nghiệm sử dụng ngữ liệu liên quan đến nhiều lĩnh vực trong đời sống như văn học, ngôn ngữ (từ vựng, ngữ pháp, hoạt động giao tiếp, sự phát triển của ngôn ngữ và các biến thể ngôn ngữ, hành văn), văn hóa, xã hội, lịch sử, địa lý, nghệ thuật, v.v… Ngữ liệu được lựa chọn trong hoặc ngoài chương trình giáo dục phổ thông.
+                                        </div>
+                                        <div style={{fontSize: 16, marginTop: 6}}>
+                                            <span style={{fontWeight: 700}}>Phần 3 (tự chọn):</span> Khoa học thiết kế thời gian là 60 phút gồm 50 câu hỏi trắc nghiệm và điền đáp án. Thí sinh lựa chọn 3 trong 5 chủ đề thuộc lĩnh vực:
+                                        </div>
+                                        <Table dataSource={dataSource2} columns={columns2} pagination={false}/>
+                                        <h5 style={{marginTop: 8}}><b>GHI CHÚ:</b></h5>
+                                        <div style={{fontSize: 16}}>
+                                            Đây là đề thi mô phỏng được Tuyensinh247.com xây dựng dựa trên thông tin mới nhất ĐHQG vừa công bố.
+                                        </div>
+                                        <div style={{fontSize: 16}}>
+                                            Đề thi đầy đủ theo đúng cấu trúc về số lượng môn, số lượng câu hỏi, định dạng.
+                                        </div>
                                     </div>
-                                    <div style={{fontSize: 16, marginTop: 6}}>
-                                        <span style={{fontWeight: 700}}>Phần 2 (bắt buộc):</span> Ngôn ngữ - Văn học được hoàn thành trong 60 phút gồm 50 câu hỏi trắc nghiệm sử dụng ngữ liệu liên quan đến nhiều lĩnh vực trong đời sống như văn học, ngôn ngữ (từ vựng, ngữ pháp, hoạt động giao tiếp, sự phát triển của ngôn ngữ và các biến thể ngôn ngữ, hành văn), văn hóa, xã hội, lịch sử, địa lý, nghệ thuật, v.v… Ngữ liệu được lựa chọn trong hoặc ngoài chương trình giáo dục phổ thông.
-                                    </div>
-                                    <div style={{fontSize: 16, marginTop: 6}}>
-                                        <span style={{fontWeight: 700}}>Phần 3 (tự chọn):</span> Khoa học thiết kế thời gian là 60 phút gồm 50 câu hỏi trắc nghiệm và điền đáp án. Thí sinh lựa chọn 3 trong 5 chủ đề thuộc lĩnh vực:
-                                    </div>
-                                    <Table dataSource={dataSource2} columns={columns2} pagination={false}/>
-                                    <h5 style={{marginTop: 8}}><b>GHI CHÚ:</b></h5>
-                                    <div style={{fontSize: 16}}>
-                                        Đây là đề thi mô phỏng được Tuyensinh247.com xây dựng dựa trên thông tin mới nhất ĐHQG vừa công bố.
-                                    </div>
-                                    <div style={{fontSize: 16}}>
-                                        Đề thi đầy đủ theo đúng cấu trúc về số lượng môn, số lượng câu hỏi, định dạng.
-                                    </div>
-                                </div>
-                                {/* Form chọn các môn thi */}
-                                <div className="form-exam">
-                                    <h5 className="textCenter">Đề trải nghiệm Đánh giá năng lực Hà Nội</h5>
-                                    <h6 className="textCenter" style={{color: '#747474'}}>Để các em có thể làm bài trải nghiệm và định hình được kiểu ra đề.</h6>
-                                    <h6 className="textCenter" style={{fontWeight: 700, marginTop: 12}}>Bài thi gồm có</h6>
-                                    <Steps style={{alignItems: 'center'}}
-                                        progressDot
-                                        current={2}
-                                        direction="vertical"
-                                        items={[
-                                            {
-                                                title: 'Toán học và xử lý số liệu (50 câu)',
-                                            },
-                                            {
-                                                title: 'Văn học - Ngôn ngữ (50 câu)',
-                                            },
-                                            {
-                                                title: 'Tự chọn (50 câu) : Khoa học',
-                                            },
-                                        ]}
-                                    />
-                                    <Radio.Group onChange={onChangeType} value={type}>
-                                        <Radio value={1}>Khoa học</Radio>
-                                        <Radio value={2}>Tiếng Anh</Radio>
-                                    </Radio.Group>
-                                    {type === 1 && 
-                                        <>
-                                            <h6 style={{marginTop: 12}}>Bạn hãy chọn 3 môn phía dưới:</h6>
-                                        
-                                            <Checkbox.Group style={{ width: '100%' }} onChange={onChangeSubject}>
-                                                <Row>
-                                                    <Col span={8}>
-                                                        <Checkbox value="A">A</Checkbox>
-                                                    </Col>
-                                                    <Col span={8}>
-                                                        <Checkbox value="B">B</Checkbox>
-                                                    </Col>
-                                                    <Col span={8}>
-                                                        <Checkbox value="C">C</Checkbox>
-                                                    </Col>
-                                                    <Col span={8}>
-                                                        <Checkbox value="D">D</Checkbox>
-                                                    </Col>
-                                                    <Col span={8}>
-                                                        <Checkbox value="E">E</Checkbox>
-                                                    </Col>
-                                                    {/* {majors.status === 'success' && 
-                                                        majors.data.map((major) => (
-                                                            <Col span={24}>
-                                                                <Checkbox value={major.chuyen_nganh_id}>{major.ten_chuyen_nganh}</Checkbox>
-                                                            </Col>
-                                                        ))
-                                                    } */}
-                                                </Row>
-                                            </Checkbox.Group>
-                                        </>
-                                    }
+                                    {/* Form chọn các môn thi */}
+                                    <div className="form-exam">
+                                        <h5 className="textCenter">Đề trải nghiệm Đánh giá năng lực Hà Nội</h5>
+                                        <h6 className="textCenter" style={{color: '#747474'}}>Để các em có thể làm bài trải nghiệm và định hình được kiểu ra đề.</h6>
+                                        <h6 className="textCenter" style={{fontWeight: 700, marginTop: 12}}>Bài thi gồm có</h6>
+                                        <Steps style={{alignItems: 'center'}}
+                                            progressDot
+                                            current={2}
+                                            direction="vertical"
+                                            items={[
+                                                {
+                                                    title: 'Toán học và xử lý số liệu (50 câu)',
+                                                },
+                                                {
+                                                    title: 'Văn học - Ngôn ngữ (50 câu)',
+                                                },
+                                                {
+                                                    title: 'Tự chọn (50 câu) : Khoa học',
+                                                },
+                                            ]}
+                                        />
+                                        <Radio.Group onChange={onChangeType} value={type}>
+                                            <Radio value={1}>Khoa học</Radio>
+                                            <Radio value={5}>Tiếng Anh</Radio>
+                                        </Radio.Group>
+                                        {type === 1 && 
+                                            <>
+                                                <h6 style={{marginTop: 12}}>Bạn hãy chọn 3 môn phía dưới:</h6>
+                                            
+                                                <Checkbox.Group style={{ width: '100%', display: 'flex', justifyContent: 'center' }} onChange={onChangeSubject} value={subjects}>
+                                                    <Row style={{width: '10%', textAlign: 'left'}}>
+                                                        {majors.status === 'success' && 
+                                                            majors.data.map((major) => {
 
-                                    <p className="block-action text-center mt-4">
-                                        <Button type="primary" size="large" className="join-exam-button" style={{borderRadius: 8, backgroundColor: 'rgba(0, 115, 8, 0.92)', borderColor: 'rgba(0, 115, 8, 0.92)'}}
-                                            onClick={() => {
-                                                
-                                            }}
-                                        >
-                                            Làm bài thi
-                                        </Button>
-                                    </p>
-                                </div>
-                            </>
-                        }
+                                                                if (major.chuyen_nganh_id !== 1 && major.chuyen_nganh_id !== 7 && major.chuyen_nganh_id !== 5) {
+                                                                    return (
+                                                                        <Col span={24}>
+                                                                            <Checkbox value={major.chuyen_nganh_id} checked={true}>{major.ten_chuyen_nganh}</Checkbox>
+                                                                        </Col>
+                                                                    )
+                                                                }
+                                                                return null;
+                                                            })
+                                                        }
+                                                    </Row>
+                                                </Checkbox.Group>
+                                            </>
+                                        }
+
+                                        <p className="block-action text-center mt-4">
+                                            <Button type="primary" size="large" className="join-exam-button" style={{borderRadius: 8, backgroundColor: 'rgba(0, 115, 8, 0.92)', borderColor: 'rgba(0, 115, 8, 0.92)'}}
+                                                onClick={() => {
+                                                    // Nếu không chọn Tiếng Anh thì phải Chọn đủ 3 môn học
+                                                    if (type !== 5 && subjects.length < 3) {
+                                                        notification.error({
+                                                            message: 'Thông báo',
+                                                            description: 'Vui lòng chọn đủ 3 môn học mà bạn muốn thi'
+                                                        });
+                                                        return;
+                                                    }
+                                                    const data = {
+                                                        "khoa_hoc_id": hashids.decode(idCourse),
+                                                        "chuyen_nganh_ids": type === 5 ? type : subjects
+                                                    };
+
+                                                    // Tạo đề thi
+                                                    setSpinning(true); // chờ
+                                                    axios.post(config.API_URL + `/student_exam/dgnl/create`, data)
+                                                        .then(
+                                                            res => {
+                                                                if (res.statusText === 'OK' && res.status === 200) {
+                                                                    setSpinning(false);
+                                                                    // điều hướng vào bài thi
+                                                                    history.push(`/luyen-tap/xem/${hashids.encode(res?.de_thi_id)}/${idCourse}`);
+                                                                } else {
+                                                                    notification.error({
+                                                                        message: 'Thông báo',
+                                                                        description: 'Tạo đề thi thất bại. Bạn xin vui lòng thử lại sau ít phút...',
+                                                                    })
+                                                                }
+                                                            }
+                                                        )
+                                                        .catch(error => notification.error({ message: error.message }));
+                                                }}
+                                            >
+                                                Làm bài thi
+                                            </Button>
+                                        </p>
+                                    </div>
+                                </>
+                            }
+                        </div>
                     </div>
-                </div>
-                
+                </Spin>
             </>
         )
     };

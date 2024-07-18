@@ -47,6 +47,7 @@ function AppFilter(props) {
     const loadingThematics = useSelector(state => state.thematic.listbyId.loading);
 
     const typeExams = useSelector(state => state.typeExam.list.result);
+
     const renderStatus = () => {
       const status = props.status ? props.status : COMMON_STATUS;
       let options = [];
@@ -55,8 +56,9 @@ function AppFilter(props) {
       )); 
       return (
       <Select style={{width:"90%"}}
-        defaultValue={''}
-        onChange={(value) => props.onFilterChange('trang_thai', value)}
+        allowClear={true}
+        // defaultValue={''}
+        onChange={(value) => props.onFilterChange('trang_thai', value ? value : '')}
         placeholder="Chọn trạng thái"
       >
         {options}
@@ -72,14 +74,15 @@ function AppFilter(props) {
       return (
           <Select style={{width:"90%"}}
               maxTagCount="responsive"
-              defaultValue={''}
+              // defaultValue={''}
               optionFilterProp="children"
               showSearch={true}
+              allowClear={true}
               filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
               onChange={(value) => {
-                props.onFilterChange('tinh', value);
+                props.onFilterChange('tinh', value ? value : '');
               }}
-              placeholder="Tỉnh/Thành phố"
+              placeholder="Chọn tỉnh/Thành phố"
           >
               {options}
           </Select>
@@ -95,10 +98,12 @@ function AppFilter(props) {
       return (
           <Select style={{width:"90%"}}
               maxTagCount="responsive"
-              defaultValue={''}
+              showSearch={true}
+              allowClear={true}
+              // defaultValue={''}
               onChange={(value) => {
-                props.onFilterChange('khoa_hoc_id', value);
-                dispatch(moduleActions.getModulesByIdCourse({ idCourse: value }))
+                props.onFilterChange('khoa_hoc_id', value ? value : '');
+                dispatch(moduleActions.getModulesByIdCourse({ idCourse: value ? value : '' }))
               }}
               placeholder="Danh mục khóa"
           >
@@ -117,11 +122,12 @@ function AppFilter(props) {
       }
       return (
         <Select style={{width:"90%"}}
-          showSearch={false}
+          allowClear={true}
+          showSearch={true}
           loading={loadingModules}
           onChange={(mo_dun_id) => {
-            props.onFilterChange('mo_dun_id', mo_dun_id);
-            dispatch(thematicActions.getThematicsByIdModule({ idModule: mo_dun_id }))
+            props.onFilterChange('mo_dun_id', mo_dun_id ? mo_dun_id : '');
+            dispatch(thematicActions.getThematicsByIdModule({ idModule: mo_dun_id ? mo_dun_id : ''}))
           }}
           placeholder="Chọn mô đun"
         >
@@ -140,10 +146,11 @@ function AppFilter(props) {
       }
       return (
         <Select
-          showSearch={false}
+          showSearch={true}
+          allowClear={true}
           loading={loadingThematics}
           onChange={(chuyen_de_id) => {
-            props.onFilterChange('chuyen_de_id', chuyen_de_id);
+            props.onFilterChange('chuyen_de_id', chuyen_de_id ? chuyen_de_id : '');
           }}
           placeholder="Chọn chuyên đề"
         >
@@ -163,11 +170,12 @@ function AppFilter(props) {
       }
       return (
         <Select
-          showSearch={false}
+          showSearch={true}
+          allowClear={true}
           placeholder="Chọn loại đề thi"
           maxTagCount="responsive"
           onChange={(typeId) => {
-            props.onFilterChange('typeId', typeId);
+            props.onFilterChange('typeId', typeId ? typeId : '');
           }}
         >
           <Option key={0} value={''}>Tất cả loại đề thi</Option>
