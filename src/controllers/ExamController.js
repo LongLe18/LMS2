@@ -962,7 +962,7 @@ const studentStatistic = async (req, res) => {
     );
     const students = await sequelize.query(
         `
-        SELECT hoc_vien.ho_ten, hoc_vien.sdt, tinh_thanhpho.ten as tinh, hoc_vien.truong_hoc,
+        SELECT hoc_vien.ho_ten, hoc_vien.sdt, tinh_thanhpho.ten as tinh, hoc_vien.truong_hoc, de_thi_hoc_vien.dthv_id,
         de_thi_hoc_vien.so_cau_tra_loi_dung, de_thi_hoc_vien.so_cau_tra_loi_sai, de_thi_hoc_vien.diem_cac_phan,
         (de_thi_hoc_vien.ket_qua_diem/de_thi.tong_diem)*10 AS diem_so, de_thi_hoc_vien.thoi_diem_bat_dau as ngay_thi
         FROM hoc_vien LEFT JOIN tinh_thanhpho ON hoc_vien.ttp_id=tinh_thanhpho.ttp_id JOIN de_thi_hoc_vien ON 
