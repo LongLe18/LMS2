@@ -11,7 +11,7 @@ const {
     Question,
     ThematicCriteria,
     ModunCriteria,
-    SyntheticCriteria,
+    OnlineCriteria,
     OnlineCriteria,
     ExamQuestion,
 } = require('../models');
@@ -140,10 +140,10 @@ const postCreatev2 = async (req, res) => {
         de_tu_sinh: 1,
         kct_id: 1,
         khoa_hoc_id,
-        loai_de_thi_id: 3,
+        loai_de_thi_id: 4,
     });
 
-    let criteria = await SyntheticCriteria.findOne({
+    let criteria = await OnlineCriteria.findOne({
         where: {
             khoa_hoc_id: khoa_hoc_id,
         },
@@ -182,55 +182,47 @@ const postCreatev2 = async (req, res) => {
         {
             type: sequelize.QueryTypes.INSERT,
         }
-    );    
+    );
 
     // phần 3
-    let so_cau_hoi_phan_3 = 0;
-        for (const chuyen_nganh_id of chuyen_nganh_ids.split(',')) {
-            let so_cau_hoi_chuyen_de =
-                Number(chuyen_nganh_id) === 3
-                    ? criteria.so_cau_hoi_chuyen_nganh_1
-                    : Number(chuyen_nganh_id) === 4
-                    ? criteria.so_cau_hoi_chuyen_nganh_2
-                    : Number(chuyen_nganh_id) === 6
-                    ? criteria.so_cau_hoi_chuyen_nganh_3
-                    : Number(chuyen_nganh_id) === 8
-                    ? criteria.so_cau_hoi_chuyen_nganh_4
-                    : criteria.so_cau_hoi_chuyen_nganh_5;
-            so_cau_hoi_phan_3 += so_cau_hoi_chuyen_de;
-            await sequelize.query(
-                `
+    const so_cau_hoi_tung_chuyen_nganh = parseInt(
+        Number(criteria.so_cau_hoi_phan_3) / 3
+    );
+    for (const chuyen_nganh_id of chuyen_nganh_ids.split(',')) {
+        await sequelize.query(
+            `
                     INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
                         SELECT cau_hoi_id, ${exam.de_thi_id}, 3 FROM cau_hoi
                         WHERE chuyen_nganh_id = :chuyen_nganh_id AND kct_id = 1
-                        ORDER BY RAND() LIMIT ${so_cau_hoi_chuyen_de}
+                        ORDER BY RAND() LIMIT ${so_cau_hoi_tung_chuyen_nganh}
                 `,
-                {
-                    type: sequelize.QueryTypes.INSERT,
-                    replacements: {
-                        chuyen_nganh_id: Number(chuyen_nganh_id),
-                    },
-                }
-            );
-        }
-        await sequelize.query(
-            `
+            {
+                type: sequelize.QueryTypes.INSERT,
+                replacements: {
+                    chuyen_nganh_id: Number(chuyen_nganh_id),
+                },
+            }
+        );
+    }
+    await sequelize.query(
+        `
                 INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
                     SELECT cau_hoi_id, ${exam.de_thi_id}, 3 FROM cau_hoi
                     WHERE chuyen_nganh_id IN (:chuyen_nganh_ids) AND kct_id = 1
                     AND cau_hoi_id NOT IN (SELECT cau_hoi_de_thi
                     WHERE de_thi_id = ${exam.de_thi_id})
                     ORDER BY RAND() LIMIT ${
-                        criteria.so_cau_hoi_phan_3 - so_cau_hoi_phan_3
+                        criteria.so_cau_hoi_phan_3 -
+                        so_cau_hoi_tung_chuyen_nganh * 3
                     }
             `,
-            {
-                type: sequelize.QueryTypes.INSERT,
-                replacements: {
-                    chuyen_nganh_ids: chuyen_nganh_ids,
-                },
-            }
-        );
+        {
+            type: sequelize.QueryTypes.INSERT,
+            replacements: {
+                chuyen_nganh_ids: chuyen_nganh_ids,
+            },
+        }
+    );
 
     const studentExam = await StudentExam.create({
         ...rest,
@@ -343,7 +335,7 @@ const putUpdate = async (req, res) => {
                 },
             });
         } else if (exam.loai_de_thi_id == 3) {
-            criteria = await SyntheticCriteria.findOne({
+            criteria = await OnlineCriteria.findOne({
                 where: {
                     khoa_hoc_id: exam.khoa_hoc_id,
                 },
