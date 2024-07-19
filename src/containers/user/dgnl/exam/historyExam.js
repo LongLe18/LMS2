@@ -57,13 +57,6 @@ const HistoryExam = () => {
         ));
     }, [params.idExam]); // eslint-disable-line react-hooks/exhaustive-deps
     
-    const renderAnswerKeyV2 = (dap_an) => {
-        if (dap_an === '0001') return ['D', 3];
-        else if (dap_an === '0010') return ['C', 2];
-        else if (dap_an === '0100') return ['B', 1];
-        else if (dap_an === '1000') return ['A', 0];
-    };
-
     const renderHistoryExamSidebar = () => {
         return (
             <Col span={6}>
@@ -78,6 +71,19 @@ const HistoryExam = () => {
                                 </b>
                             </p>
                         </div>
+                        <div className="result-question body-result-right">
+                            <p className="sum-result">
+                                <span className="aw_correct"></span>
+                                {`Đúng: `}
+                                <b>{examUser.data.so_cau_tra_loi_dung}</b>
+                                <span className="aw_not_correct"></span>
+                                {`Sai: `}
+                                <b>{examUser.data.so_cau_tra_loi_sai }</b>
+                                <span></span>
+                                {`Chưa chọn: `}
+                                <b>{exam.data.cau_hoi_de_this.length - examUser.data.so_cau_tra_loi_sai - examUser.data.so_cau_tra_loi_dung}</b>
+                            </p>
+                        </div>
                         <div className="exam-right-info">
                             <p className="mg-0 color-blue text-center title-list-q">
                                 <b>Câu hỏi</b>
@@ -85,7 +91,7 @@ const HistoryExam = () => {
                             <ul>
                                 {exam.status === 'success' && exam.data.cau_hoi_de_this.map((question, index) => {
                                     return (
-                                        <li key={index + 1} className={isCorrectAnswer(question.cau_hoi)[0]}>
+                                        <li key={index + 1} className={isCorrectAnswer(question.cau_hoi)}>
                                             <a href={`#${index + 1}`}>{index + 1}</a>
                                         </li>
                                     );
@@ -102,8 +108,22 @@ const HistoryExam = () => {
         if (index === 3) return 'D';
         else if (index === 2) return 'C';
         else if (index === 1) return 'B';
-        else if (index === 0) return 'A';
-        else return '';
+        else if (index === 0) return 'A'
+    };
+    
+    const renderAnswerKeyV2 = (dap_an) => {
+        const answerKey = ['A', 'B', 'C', 'D'];
+        let answerLetters = [];
+        let answerIndices = [];
+
+        for (let i = 0; i < dap_an.length; i++) {
+            if (dap_an[i] === '1') {
+                answerLetters.push(answerKey[i]);
+                answerIndices.push(i);
+            }
+        }
+        // Output: [['A', 'B'], [0, 1]]
+        return [answerLetters, answerIndices];
     };
     
     const convertAnswer = (answersRight) => {
@@ -121,57 +141,51 @@ const HistoryExam = () => {
         return A + B + C + D;
     };
 
-    const findIndex = (dap_an_da_chon) => {
-        if (dap_an_da_chon === '1000') return 0;
-        else if (dap_an_da_chon === '0100') return 1;
-        if (dap_an_da_chon === '0010') return 2;
-        if (dap_an_da_chon === '0001') return 3;
-    };  
 
     const isCorrectAnswer = (question) => {
         let isRight = '';
-        let index = 0;
             if (examUser.status === 'success') {
-                if (examUser.data.dap_an_da_chons.length !== 0) {
-                    let currentSubmitAnswer = examUser.data.dap_an_da_chons.find((item) => item.cau_hoi_id === question.cau_hoi_id);
+                if (examUser.data.dap_an_da_chons) {
+                    let currentSubmitAnswer = examUser.data.dap_an_da_chons.find((item) => (item.cau_hoi_id === question.cau_hoi_id && item.ket_qua_chon !== '0000'));
                     if (question.dap_an_dungs && currentSubmitAnswer !== undefined) {
-                        if (question.loai_cau_hoi) {
+                        if (question.loai_cau_hoi === 1 || question.loai_cau_hoi === 2) { // Câu trắc nghiệm
                             let answerRight = convertAnswer(question.dap_an_dungs);
                             if (currentSubmitAnswer && answerRight === currentSubmitAnswer.ket_qua_chon) {
                                 isRight = 'right-answer';
                             } else if (currentSubmitAnswer && answerRight !== currentSubmitAnswer.ket_qua_chon) {
                                 isRight = 'wrong-answer';
                             }
-                        } else {
-                            if (currentSubmitAnswer && currentSubmitAnswer.noi_dung_tra_loi === question.dap_ans[0].noi_dung_dap_an) {
+                        } else if (question.loai_cau_hoi === 0) { // Câu tự luận
+                            if (currentSubmitAnswer && question.dap_ans[0].noi_dung_dap_an === (currentSubmitAnswer.noi_dung_tra_loi).toLowerCase()) {
                                 isRight = 'right-answer';
-                            } else if (currentSubmitAnswer && currentSubmitAnswer.noi_dung_tra_loi !== question.dap_ans[0].noi_dung_dap_an) {
+                            } else if (currentSubmitAnswer && question.dap_ans[0].noi_dung_dap_an !== (currentSubmitAnswer.noi_dung_tra_loi).toLowerCase()) {
                                 isRight = 'wrong-answer';
                             }
                         }
                     }
-                    if (currentSubmitAnswer !== undefined) index = findIndex(currentSubmitAnswer.ket_qua_chon);
             }
         }
-        return [isRight, index];
+        return isRight;
     };
     
     const renderAnswer = (question, answer, index) => {
         let regex = /\\begin{center}\\includegraphics\[scale = 0\.5\]{(.*?)}\\end{center}/;
         let isWrong = false;
-        if (isCorrectAnswer(question)[0] === 'wrong-answer') {
-            if (index === isCorrectAnswer(question)[1])
-                isWrong = true;    
+        let currentSubmitAnswer = results.find((item) => item.cau_hoi_id === question.cau_hoi_id);
+        if (currentSubmitAnswer?.gia_tri_dap_an && question?.dap_an_dungs) {
+            if (convertAnswer(currentSubmitAnswer?.gia_tri_dap_an)[index] !== convertAnswer(question?.dap_an_dungs)[index]) {
+                isWrong = true;  
+            }
         }
 
         return (
             <div className={`answer ${answer.dap_an_dung === true ? 'correct' : ''} ${ isWrong ? 'incorrect' : ''}`}>
                 <span className="answer-label">{renderAnswerKey(index)}</span>
                 <div className="answer-content">             
-                    <MathJax.Provider>
-                        {answer.noi_dung_dap_an.split('\n').map((item) =>
+                <MathJax.Provider>
+                        {answer.noi_dung_dap_an.split('\n').map((item, index_cauhoi) =>
                             item.indexOf('includegraphics') !== -1 ? (
-                                <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img${index}`}></img>
+                                <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question_${index_cauhoi}`}></img>
                             ) : (
                                 item.split('$').map((item2, index2) => {
                                     return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold'))) ? (
@@ -216,6 +230,24 @@ const HistoryExam = () => {
         else return 24;
     };
     
+    const isCorrectQuestionDungSai = (question, index, boolCheck) => {
+        // return true / false
+        // boolCheck: true => Lựa chọn option đúng
+        // boolCheck: false => Lựa chọn option sai
+
+        let currentSubmitAnswer = results.find((item) => item.cau_hoi_id === question.cau_hoi_id);
+        if (currentSubmitAnswer?.gia_tri_dap_an && question?.dap_an_dungs) {
+            if (boolCheck) {
+                if (convertAnswer(question?.dap_an_dungs)[index] === '1') return true;
+                if (!currentSubmitAnswer?.gia_tri_dap_an?.includes(index)) return null;
+                return false;
+            } else {
+                if (document.getElementById(`button-Right-${index}`)?.classList.contains('correct') && currentSubmitAnswer?.gia_tri_dap_an?.includes(index)) return null;
+                return convertAnswer(question?.dap_an_dungs)[index] === '0';
+            }
+        }
+    }
+    
     const renderExam = () => {
         if (error) return <NoRecord subTitle="Không tìm thấy đề thi." />;
         return (
@@ -235,14 +267,14 @@ const HistoryExam = () => {
                                     <div className="total_point">
                                         <p>
                                         <label className="point-label"> ĐIỂM SỐ</label>
-                                        <b className="point font-weight-5">{exam.data.tong_diem}</b>
+                                        <b className="point font-weight-5">{examUser.data.ket_qua_diem}/{exam.data.tong_diem}</b>
                                         </p>
                                     </div>
                                     <div className="total_point">
                                         <p className='font-weight-5'>
                                             Thời gian làm:{' '}
                                             <b>
-                                                {exam.data.thoi_gian} phút
+                                                {examUser.data.thoi_gian_lam_bai}
                                             </b>
                                         </p>
                                     </div>
@@ -323,20 +355,62 @@ const HistoryExam = () => {
                                                 return (
                                                     <Col xs={24} sm={24} md={getAnswerCols(question.cau_hoi.cot_tren_hang)} key={index}>
                                                         <ul key={index}>
-                                                            <li className={`item ${isAnswered && isAnswered.dap_an === renderAnswerKey(index) ? 'active' : ''}`}>
-                                                                {question.cau_hoi.loai_cau_hoi ?
-                                                                    <button  style={{width:"100%"}}
-                                                                        className="btn-onclick"
-                                                                    >
-                                                                        {renderAnswer(question.cau_hoi, answer, index)}
-                                                                    </button>
-                                                                : <button  style={{width:"100%"}}
-                                                                    className="btn-onclick"
+                                                            {(question.cau_hoi.loai_cau_hoi === 1) ?
+                                                                <li className={`item ${isAnswered && isAnswered.dap_an.includes(renderAnswerKey(index)) ? 'active' : ''}`}>
+                                                                        <button  style={{width:"100%"}}
+                                                                            className="btn-onclick"
+                                                                        >
+                                                                            {renderAnswer(question.cau_hoi, answer, index)}
+                                                                        </button>
+                                                                        
+                                                                </li>
+                                                            : (question.cau_hoi.loai_cau_hoi === 0) ?
+                                                                <li>
+                                                                    <TextArea placeholder='Nhập đáp án' rows={1} style={{width:"35%", marginTop: 12}} defaultValue={isAnswered !== undefined ? isAnswered.noi_dung : null}/>
+                                                                </li>
+                                                            :
+                                                            <div className='wrongrightAnswer'>
+                                                                <button id={`button-Right-${index}`}
+                                                                    className={`btn-DS ${isAnswered && isAnswered.ket_qua_chon[index] === '1' ? 'active' : '' } 
+                                                                        ${isCorrectQuestionDungSai(question.cau_hoi, index, true) !== null && !isCorrectQuestionDungSai(question.cau_hoi, index, true)  ? 'incorrect' : ''}
+                                                                        ${isCorrectQuestionDungSai(question.cau_hoi, index, true) !== null && isCorrectQuestionDungSai(question.cau_hoi, index, true) ? 'correct' : ''}`
+                                                                    }
+                                                                    
                                                                 >
-                                                                    <TextArea rows={4} style={{width:"100%"}} disabled defaultValue={isAnswered !== undefined ? isAnswered.noi_dung : null}/>
+                                                                    <span className="answer-label">Đ</span>
                                                                 </button>
-                                                                }
-                                                            </li>
+                                                                <button id={`button-Wrong-${index}`}
+                                                                    className={`btn-DS ${isAnswered && isAnswered.ket_qua_chon[index] === '0' ? 'active' : '' }
+                                                                        ${isCorrectQuestionDungSai(question.cau_hoi, index, false) !== null && !isCorrectQuestionDungSai(question.cau_hoi, index, false) ? `incorrect` : ''}
+                                                                        ${isCorrectQuestionDungSai(question.cau_hoi, index, false) !== null && isCorrectQuestionDungSai(question.cau_hoi, index, false) ? 'correct' : ''}`
+                                                                    }
+                                                                >
+                                                                    <span className="answer-label">S</span>
+                                                                </button>
+                                                                <MathJax.Provider>
+                                                                    {answer.noi_dung_dap_an.split('\n').map((item, index_cauhoi) =>
+                                                                        item.indexOf('includegraphics') !== -1 ? (
+                                                                            <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question3_${index_cauhoi}`}></img>
+                                                                        ) : (
+                                                                            item.split('$').map((item2, index2) => {
+                                                                                return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold'))) ? (
+                                                                                    <MathJax.Node key={index2} formula={item2} />
+                                                                                ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\underline')) ?
+                                                                                    (
+                                                                                        <div key={index2} style={{textDecoration: 'underline'}}>{item2.split('\\underline{')[1].split('}')[0]}</div>
+                                                                                ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\bold')) ?
+                                                                                    (
+                                                                                        <div key={index2} style={{fontWeight: 700}}>{item2.split('\\bold{')[1].split('}')[0]}</div>
+                                                                                    )
+                                                                                : (
+                                                                                    <div key={index2} >{item2}</div>
+                                                                                );
+                                                                            })
+                                                                        )
+                                                                    )}
+                                                                </MathJax.Provider>
+                                                            </div>
+                                                            }
                                                         </ul>
                                                     </Col>
                                                 )

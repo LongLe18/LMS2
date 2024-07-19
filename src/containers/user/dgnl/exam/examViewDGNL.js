@@ -239,19 +239,25 @@ const ExamViewDGNL = (props) => {
                                                         return;
                                                     }
                                                     const data = {
-                                                        "khoa_hoc_id": hashids.decode(idCourse),
-                                                        "chuyen_nganh_ids": type === 5 ? type : subjects
+                                                        "khoa_hoc_id": hashids.decode(idCourse)[0],
+                                                        "chuyen_nganh_ids": type === 5 ? type : subjects.join(', ')
                                                     };
 
                                                     // Tạo đề thi
                                                     setSpinning(true); // chờ
-                                                    axios.post(config.API_URL + `/student_exam/dgnl/create`, data)
+                                                    axios({
+                                                        method: 'post', 
+                                                        url: config.API_URL + `/student_exam/dgnl/create`, 
+                                                        timeout: 1000 * 60 * 5,
+                                                        data,
+                                                        headers: {Authorization: `Bearer ${localStorage.getItem('userToken')}`,}
+                                                    })
                                                         .then(
                                                             res => {
                                                                 if (res.statusText === 'OK' && res.status === 200) {
                                                                     setSpinning(false);
                                                                     // điều hướng vào bài thi
-                                                                    history.push(`/luyen-tap/xem/${hashids.encode(res?.de_thi_id)}/${idCourse}`);
+                                                                    history.push(`/luyen-tap/xem/${hashids.encode(res.data.data.de_thi_id)}/${idCourse}`);
                                                                 } else {
                                                                     notification.error({
                                                                         message: 'Thông báo',

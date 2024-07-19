@@ -1316,7 +1316,7 @@ const ExamOnlineDetail = () => {
                                                             <div className="title-exam">
                                                                 <MathJax.Provider>
                                                                     {question.cau_hoi.noi_dung.split('\n').map((item, index_cauhoi) =>
-                                                                        item.indexOf('includegraphics') !== -1 ? (
+                                                                        (item.indexOf('includegraphics') !== -1 && item !== '' && item?.match(regex) !== null && item?.match(regex).length >= 2) ? (
                                                                             <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question2_${index_cauhoi}`}></img>
                                                                         ) : (
                                                                             item.split('$').map((item2, index2) => {
@@ -1415,7 +1415,6 @@ const ExamOnlineDetail = () => {
                                                                                                         <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question3_${index_cauhoi}`}></img>
                                                                                                     ) : (
                                                                                                         item.split('$').map((item2, index2) => {
-                                                                                                            console.log(item2, item2.includes('\\bold'))
                                                                                                             return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold'))) ? (
                                                                                                                 <MathJax.Node key={index2} formula={item2} />
                                                                                                             ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\underline')) ?

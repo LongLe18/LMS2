@@ -143,6 +143,13 @@ var routes = [
         render: (props) => (shouldHaveAccessPermission('detail', '/luyen-tap/lich-su/:idExam/:idDTHV') ? <HistoryExam {...props}/> : <Redirect to="/auth/hocvien"/>),
     },
     {
+        id: 'historyExam',
+        path: '/luyen-tap/lich-su-admin/:idExam/:idDTHV',
+        exact: true,
+        hidden: true,
+        render: (props) => (shouldHaveAccessPermission('all', '/luyen-tap/lich-su-admin/:idExam/:idDTHV') ? <HistoryExam {...props}/> : <Redirect to="/auth/hocvien"/>),
+    },
+    {
         id: 'business',
         path: '/luyen-tap/kinh-doanh/:idKCT',
         exact: true,

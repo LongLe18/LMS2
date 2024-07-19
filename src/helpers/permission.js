@@ -96,7 +96,11 @@ export const PERMISSIONS = [
                 {
                     name: 'Hỏi đáp',
                     key: '/teacher/reply'
-                }
+                },
+                {
+                    name: 'Lịch sử thi',
+                    key: '/luyen-tap/lich-su-admin/:idExam/:idDTHV'
+                },
             ]
         }
     },
@@ -228,7 +232,11 @@ export const PERMISSIONS = [
                 {
                     name: 'Liên hệ',
                     key: '/admin/system/contact'
-                }
+                },
+                {
+                    name: 'Lịch sử thi',
+                    key: '/luyen-tap/lich-su-admin/:idExam/:idDTHV'
+                },
             ]
         }
     }

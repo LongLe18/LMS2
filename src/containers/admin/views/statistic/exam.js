@@ -217,6 +217,52 @@ const StatisticExam = (props) => {
                 </Tag>
             ),
         },
+        {
+            title: 'Tùy chọn',
+            dataIndex: 'dthv_id',
+            key: 'dthv_id',
+            responsive: ['md'],
+            render: (dthv_id, record) => (
+                <>
+                    <Button type='primary' style={{borderRadius: 6, marginRight: 6}}
+                        onClick={async () => {
+                            try {
+                                const response = await axios({
+                                    url: `${config.API_URL}/evaluate/${dthv_id}/export-report`, 
+                                    method: 'GET',
+                                    responseType: 'blob', 
+                                    headers: {
+                                        Authorization: `Bearer ${localStorage.getItem('userToken')}`,
+                                    }
+                                });
+                    
+                                // Create a URL for the file
+                                const url = window.URL.createObjectURL(new Blob([response.data]));
+                                const link = document.createElement('a');
+                                link.href = url;
+                                link.setAttribute('download', `${moment(record.ngay_thi).utc(7).format('ddmmYY')}_${record.ho_ten}.pdf`); // Replace with your file name and extension
+                                document.body.appendChild(link);
+                                link.click();
+                                link.parentNode.removeChild(link);
+                            } catch (error) {
+                                console.error('Download error:', error);
+                            }
+                        }}
+                    >
+                        Tải báo cáo
+                    </Button>
+                    {/* Xem laị bài thi */}
+                    <Button type='primary' style={{borderRadius: 6}}
+                        onClick={() => {
+                            // open new  tab
+                            window.open(`/luyen-tap/lich-su-admin/${state.examId}/${dthv_id}`, '_blank');
+                        }}
+                    >
+                        Xem lại
+                    </Button>
+                </>
+            )
+        }
     ];
 
     return (
