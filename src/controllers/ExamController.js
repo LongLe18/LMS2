@@ -293,7 +293,10 @@ const getById = async (req, res) => {
         where: {
             de_thi_id: req.params.id,
         },
-        order: [[sequelize.col('dap_an_id'), 'ASC']],
+        order: [
+            [sequelize.col('phan'), 'ASC'],
+            [sequelize.col('dap_an_id'), 'ASC'],
+        ],
     });
     let criteria;
     if (exam) {
@@ -475,24 +478,23 @@ const getByIdv2 = async (req, res) => {
             for (const chuyen_nganh_id of req.query.chuyen_nganh_ids.split(
                 ','
             )) {
-                let so_cau_hoi_chuyen_de =  Number(chuyen_nganh_id) === 3
-                ? criteria.so_cau_hoi_chuyen_nganh_1
-                : Number(chuyen_nganh_id) === 4
-                ? criteria.so_cau_hoi_chuyen_nganh_2
-                : Number(chuyen_nganh_id) === 6
-                ? criteria.so_cau_hoi_chuyen_nganh_3
-                : Number(chuyen_nganh_id) === 8
-                ? criteria.so_cau_hoi_chuyen_nganh_4
-                : criteria.so_cau_hoi_chuyen_nganh_5
-                so_cau_hoi_phan_3+=so_cau_hoi_chuyen_de;
+                let so_cau_hoi_chuyen_de =
+                    Number(chuyen_nganh_id) === 3
+                        ? criteria.so_cau_hoi_chuyen_nganh_1
+                        : Number(chuyen_nganh_id) === 4
+                        ? criteria.so_cau_hoi_chuyen_nganh_2
+                        : Number(chuyen_nganh_id) === 6
+                        ? criteria.so_cau_hoi_chuyen_nganh_3
+                        : Number(chuyen_nganh_id) === 8
+                        ? criteria.so_cau_hoi_chuyen_nganh_4
+                        : criteria.so_cau_hoi_chuyen_nganh_5;
+                so_cau_hoi_phan_3 += so_cau_hoi_chuyen_de;
                 await sequelize.query(
                     `
                 INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
                     SELECT cau_hoi_id, :de_thi_id, 3 FROM cau_hoi
                     WHERE chuyen_nganh_id = :chuyen_nganh_id AND kct_id = 1
-                    ORDER BY RAND() LIMIT ${
-                        so_cau_hoi_chuyen_de
-                    }
+                    ORDER BY RAND() LIMIT ${so_cau_hoi_chuyen_de}
             `,
                     {
                         type: sequelize.QueryTypes.INSERT,
@@ -510,7 +512,9 @@ const getByIdv2 = async (req, res) => {
                 WHERE chuyen_nganh_id IN (:chuyen_nganh_ids) AND kct_id = 1
                 AND cau_hoi_id NOT IN (SELECT cau_hoi_de_thi
                 WHERE de_thi_id = :de_thi_id)
-                ORDER BY RAND() LIMIT ${criteria.so_cau_hoi_phan_3- so_cau_hoi_phan_3}
+                ORDER BY RAND() LIMIT ${
+                    criteria.so_cau_hoi_phan_3 - so_cau_hoi_phan_3
+                }
         `,
                 {
                     type: sequelize.QueryTypes.INSERT,
