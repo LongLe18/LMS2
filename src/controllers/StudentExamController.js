@@ -183,56 +183,57 @@ const postCreatev2 = async (req, res) => {
         }
     );
 
-    // phần 3: Tiếng Anh
-    await sequelize.query(
-        `
-            INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
-                SELECT cau_hoi_id, ${exam.de_thi_id}, 3 FROM cau_hoi
-                WHERE chuyen_nganh_id = 5 AND kct_id = 1
-                ORDER BY trich_doan_id DESC, RAND()
-                LIMIT ${criteria.so_cau_hoi_phan_4}
-        `,
-        {
-            type: sequelize.QueryTypes.INSERT,
+    // phần 3
+    if (chuyen_nganh_ids === '5') {
+        await sequelize.query(
+            `
+        INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
+            SELECT cau_hoi_id, ${exam.de_thi_id}, 3 FROM cau_hoi
+            WHERE chuyen_nganh_id = 5 AND kct_id = 1
+            ORDER BY trich_doan_id DESC, RAND()
+            LIMIT ${criteria.so_cau_hoi_phan_3}
+    `,
+            {
+                type: sequelize.QueryTypes.INSERT,
+            }
+        );
+    } else if(chuyen_nganh_ids.split(',').every(element => typeof element === 'string'  && !isNaN(parseFloat(element)) && isFinite(element))){
+        const so_cau_hoi_tung_chuyen_nganh = parseInt(
+            Number(criteria.so_cau_hoi_phan_3) / 3
+        );
+        for (const chuyen_nganh_id of chuyen_nganh_ids.split(',')) {
+            await sequelize.query(
+                `
+                        INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
+                            SELECT cau_hoi_id, ${exam.de_thi_id}, 3 FROM cau_hoi
+                            WHERE chuyen_nganh_id = :chuyen_nganh_id AND kct_id = 1
+                            ORDER BY RAND() LIMIT ${so_cau_hoi_tung_chuyen_nganh}
+                    `,
+                {
+                    type: sequelize.QueryTypes.INSERT,
+                    replacements: {
+                        chuyen_nganh_id: Number(chuyen_nganh_id),
+                    },
+                }
+            );
         }
-    );
-
-    // phần 4
-    const so_cau_hoi_tung_chuyen_nganh = parseInt(
-        Number(criteria.so_cau_hoi_phan_4) / 3
-    );
-    for (const chuyen_nganh_id of chuyen_nganh_ids.split(',')) {
         await sequelize.query(
             `
                     INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
-                        SELECT cau_hoi_id, ${exam.de_thi_id}, 4 FROM cau_hoi
-                        WHERE chuyen_nganh_id = :chuyen_nganh_id AND kct_id = 1
-                        ORDER BY RAND() LIMIT ${so_cau_hoi_tung_chuyen_nganh}
+                        SELECT cau_hoi_id, ${exam.de_thi_id}, 3 FROM cau_hoi
+                        WHERE chuyen_nganh_id IN (${chuyen_nganh_ids}) AND kct_id = 1
+                        AND cau_hoi_id NOT IN (SELECT cau_hoi_id
+                        WHERE de_thi_id = ${exam.de_thi_id})
+                        ORDER BY RAND() LIMIT ${
+                            criteria.so_cau_hoi_phan_3 -
+                            so_cau_hoi_tung_chuyen_nganh * 3
+                        }
                 `,
             {
                 type: sequelize.QueryTypes.INSERT,
-                replacements: {
-                    chuyen_nganh_id: Number(chuyen_nganh_id),
-                },
             }
         );
     }
-    await sequelize.query(
-        `
-                INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
-                    SELECT cau_hoi_id, ${exam.de_thi_id}, 4 FROM cau_hoi
-                    WHERE chuyen_nganh_id IN (${chuyen_nganh_ids}) AND kct_id = 1
-                    AND cau_hoi_id NOT IN (SELECT cau_hoi_id
-                    WHERE de_thi_id = ${exam.de_thi_id})
-                    ORDER BY RAND() LIMIT ${
-                        criteria.so_cau_hoi_phan_4 -
-                        so_cau_hoi_tung_chuyen_nganh * 3
-                    }
-            `,
-        {
-            type: sequelize.QueryTypes.INSERT,
-        }
-    );
 
     const studentExam = await StudentExam.create({
         ...rest,
