@@ -10,7 +10,7 @@ import useFetch from 'hooks/useFetch';
 import useDebounce from 'hooks/useDebounce';
 
 // component
-import { Row, Col, Table, Button, Tag, Select, notification } from 'antd';
+import { Row, Col, Table, Button, Tag, Select, notification, Pagination } from 'antd';
 import AppFilter from "components/common/AppFilter";
 import ReactExport from "react-export-excel";
 
@@ -44,16 +44,18 @@ const StatisticExam = (props) => {
 
     const [province] = useFetch('/province');
     const [data, setData] = useState([]);
-
-    // const [data] = useFetch( ``);
+    const [total, setTotal] = useState(0);
+    const [pageIndex, setPageIndex] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
 
     const fetchStatiscal = (idExam) => {
         const token = localStorage.getItem('userToken');
-        axios.get(config.API_URL + `/exam/student/${idExam}?index=1&limit=10000&search=${searchValue}&ngay_bat_dau=${filter.start}&ngay_ket_thuc=${filter.end}&tinh=${filter.tinh}`, { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'}})
+        axios.get(config.API_URL + `/exam/student/${idExam}?index=${pageIndex}&limit=${pageSize}&search=${searchValue}&ngay_bat_dau=${filter.start}&ngay_ket_thuc=${filter.end}&tinh=${filter.tinh}`, { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'}})
         .then(
             res => {
                 if (res.status === 200 && res.statusText === 'OK') {
                     if (res.data.data.length > 0) {
+                        setTotal(res.data.total);
                         res.data.data.map((item, index) => {
                             if (item.diem_cac_phan !== null && item.diem_cac_phan !== "") {
                                 const scores = item.diem_cac_phan.split(',');
@@ -148,7 +150,7 @@ const StatisticExam = (props) => {
     
     useEffect(() => {
         fetchStatiscal(state.examId)
-    }, [filter.start, filter.end, filter.tinh, state.examId]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [filter.start, filter.end, filter.tinh, state.examId, pageIndex, pageSize]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useMemo(() => {
         fetchStatiscal(state.examId)
@@ -265,6 +267,14 @@ const StatisticExam = (props) => {
         }
     ];
 
+    const onChange = (page) => {
+        setPageIndex(page);
+    };
+      
+      const onShowSizeChange = (current, pageSize) => {
+        setPageSize(pageSize);
+    };
+
     return (
         <div className='content'>
             <Col xl={24} className="body-content">
@@ -308,7 +318,9 @@ const StatisticExam = (props) => {
                     </Col>
                 </Row>
             </Col>
-            <Table className="table-striped-rows" columns={columns} dataSource={data} />
+            <Table className="table-striped-rows" columns={columns} dataSource={data} pagination={false}/>
+            <br/>
+            <Pagination current={pageIndex} onChange={onChange} total={total} onShowSizeChange={onShowSizeChange} showSizeChanger defaultPageSize={pageSize}/>
         </div>
     )
 };

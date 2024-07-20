@@ -677,7 +677,7 @@ const AccountPage = () => {
                               },
                           ]}
                           >
-                              <Input placeholder=""/>
+                              <Input placeholder="Nhập họ và tên"/>
                       </Form.Item>
                       <Form.Item
                           className="input-col"

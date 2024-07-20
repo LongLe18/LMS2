@@ -1209,7 +1209,7 @@ a {
 .home-screen .ant-table .ant-avatar>img {
   width: 100%;
   height: auto;
-  min-height: 68px;
+  min-height: 50px;
   margin: auto;
   border-radius: 10px;
 }
