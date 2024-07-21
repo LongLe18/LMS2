@@ -319,7 +319,7 @@ const getAll_admin = async (req, res) => {
                 mo_dun_id: parseInt(req.query.mo_dun_id),
                 chuyen_de_id: parseInt(req.query.chuyen_de_id),
                 limit: parseInt(limit),
-                offset: parseInt(offset),
+                offset: parseInt(offset) * parseInt(limit),
             },
             type: sequelize.QueryTypes.SELECT,
         }
@@ -328,8 +328,8 @@ const getAll_admin = async (req, res) => {
         status: 'success',
         data: exams,
         message: null,
-        pageSize: limit,
-        pageIndex: offset,
+        pageSize: parseInt(limit),
+        pageIndex: parseInt(offset),
         total: totalRecords[0].tong
     });
 };
