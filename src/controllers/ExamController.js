@@ -228,28 +228,85 @@ const getAll_admin = async (req, res) => {
         chuyen_de_id = 'de_thi.chuyen_de_id=:chuyen_de_id';
     }
     let filter = `${search} AND ${trang_thai} AND ${loai_de_thi_id} AND ${xuat_ban} AND ${khoa_hoc_id} AND ${mo_dun_id} AND ${chuyen_de_id} AND ${ngay_tao}`;
+    const totalRecords = await sequelize.query(
+        `
+        SELECT COUNT(*) as tong FROM (
+        (
+            SELECT de_thi.de_thi_id, de_thi.anh_dai_dien, de_thi.ten_de_thi, de_thi.trang_thai, de_thi.ngay_tao, loai_de_thi.mo_ta, loai_de_thi.loai_de_thi_id, 
+            khoa_hoc.ten_khoa_hoc, mo_dun.ten_mo_dun, chuyen_de.ten_chuyen_de, de_thi.xuat_ban, tieu_chi_de_chuyen_de.so_cau_hoi, 
+            tieu_chi_de_chuyen_de.thoi_gian FROM de_thi LEFT JOIN khoa_hoc ON de_thi.khoa_hoc_id=khoa_hoc.khoa_hoc_id LEFT JOIN 
+            mo_dun ON de_thi.mo_dun_id=mo_dun.mo_dun_id LEFT JOIN chuyen_de ON chuyen_de.chuyen_de_id=de_thi.chuyen_de_id 
+            LEFT JOIN tieu_chi_de_chuyen_de ON de_thi.mo_dun_id=tieu_chi_de_chuyen_de.mo_dun_id LEFT JOIN loai_de_thi ON 
+            loai_de_thi.loai_de_thi_id=de_thi.loai_de_thi_id WHERE de_thi.loai_de_thi_id=1 AND ${filter}
+        ) 
+        UNION (
+            SELECT de_thi.de_thi_id, de_thi.anh_dai_dien, de_thi.ten_de_thi, de_thi.trang_thai, de_thi.ngay_tao, loai_de_thi.mo_ta, loai_de_thi.loai_de_thi_id,
+            khoa_hoc.ten_khoa_hoc, mo_dun.ten_mo_dun, 'No' AS ten_chuyen_de, de_thi.xuat_ban, tieu_chi_de_mo_dun.so_cau_hoi, 
+            tieu_chi_de_mo_dun.thoi_gian FROM de_thi LEFT JOIN khoa_hoc ON de_thi.khoa_hoc_id=khoa_hoc.khoa_hoc_id 
+            LEFT JOIN mo_dun ON de_thi.mo_dun_id=mo_dun.mo_dun_id LEFT JOIN tieu_chi_de_mo_dun ON de_thi.mo_dun_id=tieu_chi_de_mo_dun.mo_dun_id 
+            LEFT JOIN loai_de_thi ON loai_de_thi.loai_de_thi_id=de_thi.loai_de_thi_id WHERE de_thi.loai_de_thi_id=2 AND ${filter}
+        ) 
+        UNION (
+            SELECT de_thi.de_thi_id, de_thi.anh_dai_dien, de_thi.ten_de_thi, de_thi.trang_thai, de_thi.ngay_tao, loai_de_thi.mo_ta, loai_de_thi.loai_de_thi_id, khoa_hoc.ten_khoa_hoc, 
+            'No' AS ten_mo_dun, 'No' AS ten_chuyen_de, de_thi.xuat_ban, tieu_chi_de_tong_hop.so_cau_hoi, tieu_chi_de_tong_hop.thoi_gian 
+            FROM de_thi LEFT JOIN khoa_hoc ON de_thi.khoa_hoc_id=khoa_hoc.khoa_hoc_id LEFT JOIN tieu_chi_de_tong_hop ON 
+            de_thi.khoa_hoc_id=tieu_chi_de_tong_hop.khoa_hoc_id LEFT JOIN loai_de_thi ON loai_de_thi.loai_de_thi_id=de_thi.loai_de_thi_id 
+            WHERE de_thi.loai_de_thi_id=3 AND ${filter}
+        ) 
+        UNION (
+            SELECT de_thi.de_thi_id, de_thi.anh_dai_dien, de_thi.ten_de_thi, de_thi.trang_thai, de_thi.ngay_tao, loai_de_thi.mo_ta, 
+            loai_de_thi.loai_de_thi_id, khoa_hoc.ten_khoa_hoc, 'No' AS ten_mo_dun, 'No' AS ten_chuyen_de, de_thi.xuat_ban, tieu_chi_de_thi_online.so_cau_hoi, tieu_chi_de_thi_online.thoi_gian
+            FROM de_thi LEFT JOIN khoa_hoc ON de_thi.khoa_hoc_id=khoa_hoc.khoa_hoc_id LEFT JOIN tieu_chi_de_thi_online ON
+            de_thi.khoa_hoc_id=tieu_chi_de_thi_online.khoa_hoc_id LEFT JOIN loai_de_thi ON loai_de_thi.loai_de_thi_id=de_thi.loai_de_thi_id 
+            WHERE de_thi.loai_de_thi_id=4 AND ${filter})
+        ) AS exam ORDER BY exam.ten_de_thi ASC`,
+        {
+            replacements: {
+                search: `%${decodeURI(req.query.search)}%`,
+                ngay_bat_dau: req.query.ngay_bat_dau,
+                ngay_ket_thuc: req.query.ngay_ket_thuc,
+                trang_thai: parseInt(req.query.trang_thai),
+                loai_de_thi_id: parseInt(req.query.loai_de_thi_id),
+                xuat_ban: parseInt(req.query.xuat_ban),
+                khoa_hoc_id: parseInt(req.query.khoa_hoc_id),
+                mo_dun_id: parseInt(req.query.mo_dun_id),
+                chuyen_de_id: parseInt(req.query.chuyen_de_id),
+            },
+            type: sequelize.QueryTypes.SELECT,
+        }
+    );
     const exams = await sequelize.query(
         `
-        SELECT * FROM ((SELECT de_thi.de_thi_id, de_thi.anh_dai_dien, de_thi.ten_de_thi, de_thi.trang_thai, de_thi.ngay_tao, loai_de_thi.mo_ta, loai_de_thi.loai_de_thi_id, 
-        khoa_hoc.ten_khoa_hoc, mo_dun.ten_mo_dun, chuyen_de.ten_chuyen_de, de_thi.xuat_ban, tieu_chi_de_chuyen_de.so_cau_hoi, 
-        tieu_chi_de_chuyen_de.thoi_gian FROM de_thi LEFT JOIN khoa_hoc ON de_thi.khoa_hoc_id=khoa_hoc.khoa_hoc_id LEFT JOIN 
-        mo_dun ON de_thi.mo_dun_id=mo_dun.mo_dun_id LEFT JOIN chuyen_de ON chuyen_de.chuyen_de_id=de_thi.chuyen_de_id 
-        LEFT JOIN tieu_chi_de_chuyen_de ON de_thi.mo_dun_id=tieu_chi_de_chuyen_de.mo_dun_id LEFT JOIN loai_de_thi ON 
-        loai_de_thi.loai_de_thi_id=de_thi.loai_de_thi_id WHERE de_thi.loai_de_thi_id=1 AND ${filter}) UNION 
-        (SELECT de_thi.de_thi_id, de_thi.anh_dai_dien, de_thi.ten_de_thi, de_thi.trang_thai, de_thi.ngay_tao, loai_de_thi.mo_ta, loai_de_thi.loai_de_thi_id,
-        khoa_hoc.ten_khoa_hoc, mo_dun.ten_mo_dun, 'No' AS ten_chuyen_de, de_thi.xuat_ban, tieu_chi_de_mo_dun.so_cau_hoi, 
-        tieu_chi_de_mo_dun.thoi_gian FROM de_thi LEFT JOIN khoa_hoc ON de_thi.khoa_hoc_id=khoa_hoc.khoa_hoc_id 
-        LEFT JOIN mo_dun ON de_thi.mo_dun_id=mo_dun.mo_dun_id LEFT JOIN tieu_chi_de_mo_dun ON de_thi.mo_dun_id=tieu_chi_de_mo_dun.mo_dun_id 
-        LEFT JOIN loai_de_thi ON loai_de_thi.loai_de_thi_id=de_thi.loai_de_thi_id WHERE de_thi.loai_de_thi_id=2 AND ${filter}) 
-        UNION (SELECT de_thi.de_thi_id, de_thi.anh_dai_dien, de_thi.ten_de_thi, de_thi.trang_thai, de_thi.ngay_tao, loai_de_thi.mo_ta, loai_de_thi.loai_de_thi_id, khoa_hoc.ten_khoa_hoc, 
-        'No' AS ten_mo_dun, 'No' AS ten_chuyen_de, de_thi.xuat_ban, tieu_chi_de_tong_hop.so_cau_hoi, tieu_chi_de_tong_hop.thoi_gian 
-        FROM de_thi LEFT JOIN khoa_hoc ON de_thi.khoa_hoc_id=khoa_hoc.khoa_hoc_id LEFT JOIN tieu_chi_de_tong_hop ON 
-        de_thi.khoa_hoc_id=tieu_chi_de_tong_hop.khoa_hoc_id LEFT JOIN loai_de_thi ON loai_de_thi.loai_de_thi_id=de_thi.loai_de_thi_id 
-        WHERE de_thi.loai_de_thi_id=3 AND ${filter}) UNION (SELECT de_thi.de_thi_id, de_thi.anh_dai_dien, de_thi.ten_de_thi, de_thi.trang_thai, de_thi.ngay_tao, loai_de_thi.mo_ta, 
-        loai_de_thi.loai_de_thi_id, khoa_hoc.ten_khoa_hoc, 'No' AS ten_mo_dun, 'No' AS ten_chuyen_de, de_thi.xuat_ban, tieu_chi_de_thi_online.so_cau_hoi, tieu_chi_de_thi_online.thoi_gian
-        FROM de_thi LEFT JOIN khoa_hoc ON de_thi.khoa_hoc_id=khoa_hoc.khoa_hoc_id LEFT JOIN tieu_chi_de_thi_online ON
-        de_thi.khoa_hoc_id=tieu_chi_de_thi_online.khoa_hoc_id LEFT JOIN loai_de_thi ON loai_de_thi.loai_de_thi_id=de_thi.loai_de_thi_id 
-        WHERE de_thi.loai_de_thi_id=4 AND ${filter})) AS exam ORDER BY exam.ten_de_thi ASC LIMIT :offset, :limit`,
+        SELECT * FROM (
+        (
+            SELECT de_thi.de_thi_id, de_thi.anh_dai_dien, de_thi.ten_de_thi, de_thi.trang_thai, de_thi.ngay_tao, loai_de_thi.mo_ta, loai_de_thi.loai_de_thi_id, 
+            khoa_hoc.ten_khoa_hoc, mo_dun.ten_mo_dun, chuyen_de.ten_chuyen_de, de_thi.xuat_ban, tieu_chi_de_chuyen_de.so_cau_hoi, 
+            tieu_chi_de_chuyen_de.thoi_gian FROM de_thi LEFT JOIN khoa_hoc ON de_thi.khoa_hoc_id=khoa_hoc.khoa_hoc_id LEFT JOIN 
+            mo_dun ON de_thi.mo_dun_id=mo_dun.mo_dun_id LEFT JOIN chuyen_de ON chuyen_de.chuyen_de_id=de_thi.chuyen_de_id 
+            LEFT JOIN tieu_chi_de_chuyen_de ON de_thi.mo_dun_id=tieu_chi_de_chuyen_de.mo_dun_id LEFT JOIN loai_de_thi ON 
+            loai_de_thi.loai_de_thi_id=de_thi.loai_de_thi_id WHERE de_thi.loai_de_thi_id=1 AND ${filter}
+        ) 
+        UNION (
+            SELECT de_thi.de_thi_id, de_thi.anh_dai_dien, de_thi.ten_de_thi, de_thi.trang_thai, de_thi.ngay_tao, loai_de_thi.mo_ta, loai_de_thi.loai_de_thi_id,
+            khoa_hoc.ten_khoa_hoc, mo_dun.ten_mo_dun, 'No' AS ten_chuyen_de, de_thi.xuat_ban, tieu_chi_de_mo_dun.so_cau_hoi, 
+            tieu_chi_de_mo_dun.thoi_gian FROM de_thi LEFT JOIN khoa_hoc ON de_thi.khoa_hoc_id=khoa_hoc.khoa_hoc_id 
+            LEFT JOIN mo_dun ON de_thi.mo_dun_id=mo_dun.mo_dun_id LEFT JOIN tieu_chi_de_mo_dun ON de_thi.mo_dun_id=tieu_chi_de_mo_dun.mo_dun_id 
+            LEFT JOIN loai_de_thi ON loai_de_thi.loai_de_thi_id=de_thi.loai_de_thi_id WHERE de_thi.loai_de_thi_id=2 AND ${filter}
+        ) 
+        UNION (
+            SELECT de_thi.de_thi_id, de_thi.anh_dai_dien, de_thi.ten_de_thi, de_thi.trang_thai, de_thi.ngay_tao, loai_de_thi.mo_ta, loai_de_thi.loai_de_thi_id, khoa_hoc.ten_khoa_hoc, 
+            'No' AS ten_mo_dun, 'No' AS ten_chuyen_de, de_thi.xuat_ban, tieu_chi_de_tong_hop.so_cau_hoi, tieu_chi_de_tong_hop.thoi_gian 
+            FROM de_thi LEFT JOIN khoa_hoc ON de_thi.khoa_hoc_id=khoa_hoc.khoa_hoc_id LEFT JOIN tieu_chi_de_tong_hop ON 
+            de_thi.khoa_hoc_id=tieu_chi_de_tong_hop.khoa_hoc_id LEFT JOIN loai_de_thi ON loai_de_thi.loai_de_thi_id=de_thi.loai_de_thi_id 
+            WHERE de_thi.loai_de_thi_id=3 AND ${filter}
+        ) 
+        UNION (
+            SELECT de_thi.de_thi_id, de_thi.anh_dai_dien, de_thi.ten_de_thi, de_thi.trang_thai, de_thi.ngay_tao, loai_de_thi.mo_ta, 
+            loai_de_thi.loai_de_thi_id, khoa_hoc.ten_khoa_hoc, 'No' AS ten_mo_dun, 'No' AS ten_chuyen_de, de_thi.xuat_ban, tieu_chi_de_thi_online.so_cau_hoi, tieu_chi_de_thi_online.thoi_gian
+            FROM de_thi LEFT JOIN khoa_hoc ON de_thi.khoa_hoc_id=khoa_hoc.khoa_hoc_id LEFT JOIN tieu_chi_de_thi_online ON
+            de_thi.khoa_hoc_id=tieu_chi_de_thi_online.khoa_hoc_id LEFT JOIN loai_de_thi ON loai_de_thi.loai_de_thi_id=de_thi.loai_de_thi_id 
+            WHERE de_thi.loai_de_thi_id=4 AND ${filter})
+        ) AS exam ORDER BY exam.ten_de_thi ASC LIMIT :offset, :limit`,
         {
             replacements: {
                 search: `%${decodeURI(req.query.search)}%`,
@@ -262,7 +319,7 @@ const getAll_admin = async (req, res) => {
                 mo_dun_id: parseInt(req.query.mo_dun_id),
                 chuyen_de_id: parseInt(req.query.chuyen_de_id),
                 limit: parseInt(limit),
-                offset: parseInt(offset),
+                offset: parseInt(offset) * parseInt(limit),
             },
             type: sequelize.QueryTypes.SELECT,
         }
@@ -271,6 +328,9 @@ const getAll_admin = async (req, res) => {
         status: 'success',
         data: exams,
         message: null,
+        pageSize: parseInt(limit),
+        pageIndex: parseInt(offset),
+        total: totalRecords[0].tong
     });
 };
 
