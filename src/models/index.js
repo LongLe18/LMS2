@@ -165,6 +165,9 @@ Exam.belongsTo(Evaluate, { foreignKey: 'de_thi_id', constraints: false});
 Majoring.hasMany(Question, { foreignKey: 'chuyen_nganh_id', constraints: false});
 Question.belongsTo(Majoring, { foreignKey: 'chuyen_nganh_id', constraints: false});
 
+Exam.hasOne(OnlineCriteria, { foreignKey: 'khoa_hoc_id', sourceKey: 'khoa_hoc_id', constraints: false});
+OnlineCriteria.belongsTo(Exam, { foreignKey: 'khoa_hoc_id', targetKey: 'khoa_hoc_id', constraints: false});
+
 module.exports = {
     Course,
     Lesson,
