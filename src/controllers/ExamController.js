@@ -59,7 +59,6 @@ const getExamDGNL = async (req, res) => {
             ...(req.query.trang_thai && { trang_thai: req.query.trang_thai }),
             ...(req.query.xuat_ban && { xuat_ban: req.query.xuat_ban }),
             ...(req.query.khoa_hoc_id && { khoa_hoc_id: req.query.khoa_hoc_id }),
-            loai_de_thi_id: 4,
             de_mau: true
         },
         offset:
