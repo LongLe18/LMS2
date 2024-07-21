@@ -11,7 +11,6 @@ import Course from "./views/course/Course";
 import AccountPage from './views/account/Account.js';
 import TeacherPage from './views/account/Teacher.js';
 import StaffPage from './views/account/Staff.js';
-import MajorPage from './views/account/Major.js';
 import ProfilePage from './views/account/profile.js';
 import ExamAdminPage from './views/exam/Exam.js';
 import ExamDetailPage from './views/exam/ExamDetail.js';
@@ -55,7 +54,6 @@ import {
   FolderOutlined,
   SettingOutlined,
   MenuOutlined,
-  AppstoreOutlined,
   FileSearchOutlined,
   QuestionCircleOutlined,
   FileTextOutlined,
@@ -77,7 +75,7 @@ import StatisticExam from './views/statistic/exam.js';
 import QuestionPage from './views/exam/Question.js';
 // import GenerateExam from './views/exam/GenerateExam.js';
 
-var routes = [
+const routes = [
   {
     id: "dashboard",
     path: "/admin/dashboard",
@@ -183,12 +181,6 @@ var routes = [
       name: "Bài giảng",
       icon: <CalendarOutlined />,
       render: (props) => (shouldHaveAccessPermission('all', '/admin/lesson/lesson') ? <Lesson {...props}/> : <Redirect to="/"/>)
-    }, { 
-      parent: "account",
-      path: "/admin/account/major",
-      name: "Chuyên ngành",
-      icon: <AppstoreOutlined />,
-      render: (props) => (shouldHaveAccessPermission('all', '/admin/account/major') ? <MajorPage {...props}/> : <Redirect to="/"/>) // OK
     }, {
       parent: "educate",
       path: "/admin/educate/course",
@@ -200,7 +192,7 @@ var routes = [
   {
     id: "question",
     path: "/admin/question/exam",
-    name: "Trắc nghiệm",
+    name: "Danh mục đề thi",
     hide: false,
     icon: <QuestionCircleOutlined />,
     sub: [{

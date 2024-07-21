@@ -282,77 +282,75 @@ const BankInfoPage = (props) => {
     };
 
     return (
-        <>
-            <div className='content'>
-                <br/>
-                <h5>Quản lý tài khoản ngân hàng</h5>
-                {banks.status === 'success' && 
-                    <Table className="table-striped-rows" columns={columns} dataSource={data} />
-                }
-                <Row>
-                    <Col xl={24} sm={24} xs={24} className="cate-form-block">
-                    {loadingBank && <LoadingCustom/>}   
-                    {(state.isEdit && bank.status === 'success' && bank) ? <h5>Sửa thông tin ngân hàng</h5> : <h5>Thêm mới ngân hàng</h5>}  
-                        <Form layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={onSubmitForm}>
-                            <Form.Item
-                                className="input-col"
-                                label="Tên ngân hàng"
-                                name="ten_ngan_hang"
-                                rules={[
-                                    {
-                                    required: true,
-                                    message: 'Tên ngân hàng là trường bắt buộc.',
-                                    },
-                                ]}
-                                >
-                                    {renderBanks()}
-                            </Form.Item>
-                            <Form.Item
-                                className="input-col"
-                                label="Số tài khoản"
-                                name="so_tai_khoan"
-                                rules={[
-                                    {
-                                    required: true,
-                                    message: 'Số tài khoản là trường bắt buộc.',
-                                    },
-                                ]}
-                                >
-                                    <Input placeholder=""/>
-                            </Form.Item>
-                            <Form.Item
-                              className="input-col"
-                              label="Đơn vị hưởng thụ"
-                              name="ten_dvth"
-                              rules={[]}
+        <div className='content'>
+            <br/>
+            <h5>Quản lý tài khoản ngân hàng</h5>
+            {banks.status === 'success' && 
+                <Table className="table-striped-rows" columns={columns} dataSource={data} />
+            }
+            <Row>
+                <Col xl={24} sm={24} xs={24} className="cate-form-block">
+                {loadingBank && <LoadingCustom/>}   
+                {(state.isEdit && bank.status === 'success' && bank) ? <h5>Sửa thông tin ngân hàng</h5> : <h5>Thêm mới ngân hàng</h5>}  
+                    <Form layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={onSubmitForm}>
+                        <Form.Item
+                            className="input-col"
+                            label="Tên ngân hàng"
+                            name="ten_ngan_hang"
+                            rules={[
+                                {
+                                required: true,
+                                message: 'Tên ngân hàng là trường bắt buộc.',
+                                },
+                            ]}
                             >
-                              <Input placeholder='Nhập tên đơn vị hưởng thụ' />
-                            </Form.Item>
-                            <Form.Item
-                              className="input-col"
-                              label="Chi nhánh"
-                              name="chi_nhanh"
-                              rules={[]}
+                                {renderBanks()}
+                        </Form.Item>
+                        <Form.Item
+                            className="input-col"
+                            label="Số tài khoản"
+                            name="so_tai_khoan"
+                            rules={[
+                                {
+                                required: true,
+                                message: 'Số tài khoản là trường bắt buộc.',
+                                },
+                            ]}
                             >
-                              <Input placeholder='Nhập tên chi nhánh' />
-                            </Form.Item>
-                            <Form.Item className="button-col">
-                                <Space>
-                                    <Button shape="round" type="primary" htmlType="submit" >
-                                    {(state.isEdit && bank.status === 'success' && bank) ? 'Cập nhật' : 'Thêm mới'}   
-                                    </Button>
-                                    {(state.isEdit && bank.status === 'success' && bank) 
-                                    ?  <Button shape="round" type="danger" onClick={() => cancelEdit()} > 
-                                        Hủy bỏ
-                                    </Button>
-                                    : ''}    
-                                </Space>    
-                            </Form.Item>
-                        </Form>
-                    </Col>
-                </Row>
-            </div>
-        </>
+                                <Input placeholder="Nhập số tài khoản"/>
+                        </Form.Item>
+                        <Form.Item
+                            className="input-col"
+                            label="Đơn vị hưởng thụ"
+                            name="ten_dvth"
+                            rules={[]}
+                        >
+                            <Input placeholder='Nhập tên đơn vị hưởng thụ' />
+                        </Form.Item>
+                        <Form.Item
+                            className="input-col"
+                            label="Chi nhánh"
+                            name="chi_nhanh"
+                            rules={[]}
+                        >
+                            <Input placeholder='Nhập tên chi nhánh' />
+                        </Form.Item>
+                        <Form.Item className="button-col">
+                            <Space>
+                                <Button shape="round" type="primary" htmlType="submit" >
+                                {(state.isEdit && bank.status === 'success' && bank) ? 'Cập nhật' : 'Thêm mới'}   
+                                </Button>
+                                {(state.isEdit && bank.status === 'success' && bank) 
+                                ?  <Button shape="round" type="danger" onClick={() => cancelEdit()} > 
+                                    Hủy bỏ
+                                </Button>
+                                : ''}    
+                            </Space>    
+                        </Form.Item>
+                    </Form>
+                </Col>
+            </Row>
+        </div>
     )
 };
 

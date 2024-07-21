@@ -420,169 +420,167 @@ const ModuleCate = (props) => {
     }
 
     return (
-        <> 
-            <div className="content">
-              <Row className="app-main">
-                    <Col xl={24} className="body-content">
-                        <Row>
-                            <Col xl={24} sm={24} xs={24}>
-                            <AppFilter
-                                title={"Nhóm mô đun"}
-                                isShowCourse={true}
-                                isShowModule={false}
-                                isShowThematic={false}
-                                isShowStatus={true}
-                                isShowSearchBox={true}
-                                isShowDatePicker={true}
-                                isRangeDatePicker={true}
-                                courses={courses.data}
-                                onFilterChange={(field, value) => onFilterChange(field, value)}
-                            />
-                            </Col>
-                        </Row>
-                    </Col>
-              </Row>
+        <div className="content">
+          <Row className="app-main">
+                <Col xl={24} className="body-content">
+                    <Row>
+                        <Col xl={24} sm={24} xs={24}>
+                          <AppFilter
+                              title={"Nhóm mô đun"}
+                              isShowCourse={true}
+                              isShowModule={false}
+                              isShowThematic={false}
+                              isShowStatus={true}
+                              isShowSearchBox={true}
+                              isShowDatePicker={true}
+                              isRangeDatePicker={true}
+                              courses={courses.data}
+                              onFilterChange={(field, value) => onFilterChange(field, value)}
+                          />
+                        </Col>
+                    </Row>
+                </Col>
+          </Row>
 
-              {/* {loading && <Loading />} */}
-              {data.length > 0 && 
-                <div>
-                  <Table className="table-striped-rows" columns={columns} dataSource={data} />
-                </div>
-              }                              
-              {error && notification.error({
-                message: 'Thông báo',
-                description: 'Lấy dữ liệu module thất bại',
-              })}
-              <Row>
-                <Col xl={24} sm={24} xs={24} className="cate-form-block">
-                      <h5>Thêm mới mô đun</h5>
-                      <Form layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={createModule}>
-                        <Row gutter={25}>
-                          <Col xl={12} sm={24} xs={24} className="left-content">              
-                            <Form.Item
-                                className="input-col"
-                                label="Tên mô đun"
-                                name="ten_mo_dun"
-                                rules={[
-                                    {
-                                    required: true,
-                                    message: 'Tên chuyên đề là trường bắt buộc.',
-                                    },
-                                ]}
-                                >
-                                    <Input placeholder=""/>
-                            </Form.Item>
-                            <Form.Item
-                              className="input-col"
-                              label="Lĩnh vực"
-                              name="linh_vuc"
-                              rules={[
-                                  {
-                                    required: true,
-                                    message: 'Tên lĩnh vực là trường bắt buộc.',
-                                  },
-                              ]}
+          {/* {loading && <Loading />} */}
+          {data.length > 0 && 
+            <div>
+              <Table className="table-striped-rows" columns={columns} dataSource={data} />
+            </div>
+          }                              
+          {error && notification.error({
+            message: 'Thông báo',
+            description: 'Lấy dữ liệu module thất bại',
+          })}
+          <Row>
+            <Col xl={24} sm={24} xs={24} className="cate-form-block">
+                  <h5>Thêm mới mô đun</h5>
+                  <Form layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={createModule}>
+                    <Row gutter={25}>
+                      <Col xl={12} sm={24} xs={24} className="left-content">              
+                        <Form.Item
+                            className="input-col"
+                            label="Tên mô đun"
+                            name="ten_mo_dun"
+                            rules={[
+                                {
+                                required: true,
+                                message: 'Tên chuyên đề là trường bắt buộc.',
+                                },
+                            ]}
                             >
-                              <Input placeholder=""/>
-                            </Form.Item>
-                            <Form.Item initialValue={1}
-                                className="input-col"
-                                label="Khung chương trình"
-                                name="khung_ct_id"
-                                rules={[
-                                    {
-                                      required: true,
-                                      message: 'Khung chương trình là trường bắt buộc.',
-                                    },
-                                ]}
-                                >
-                                    {renderProgramme()}
-                            </Form.Item>
-                            <Form.Item className="input-col" label="Khóa học" name="khoa_hoc_id" initialValue={state.courseId} rules={[]}>
-                                {renderParents()}
-                            </Form.Item>
-                            <Form.Item className="input-col" label="Mô tả" name="mo_ta" rules={[]}>
-                                <TextArea placeholder=""/>
-                            </Form.Item>
-                            <Form.Item
-                                initialValue={state.form.trang_thai}
-                                label="Trạng thái"
-                                className="input-col"
-                                name="trang_thai"
-                                rules={[]} >
-                                {renderStatus()}
-                            </Form.Item>     
-                            <Form.Item
-                              name="loai_tong_hop"
-                              label="Loại mô đun"
-                              initialValue={state.form.total}
-                              rules={[
+                                <Input placeholder="Nhập tên mô đun"/>
+                        </Form.Item>
+                        <Form.Item
+                          className="input-col"
+                          label="Lĩnh vực"
+                          name="linh_vuc"
+                          rules={[
+                              {
+                                required: true,
+                                message: 'Tên lĩnh vực là trường bắt buộc.',
+                              },
+                          ]}
+                        >
+                          <Input placeholder="Nhập tên lĩnh vực"/>
+                        </Form.Item>
+                        <Form.Item initialValue={1}
+                            className="input-col"
+                            label="Khung chương trình"
+                            name="khung_ct_id"
+                            rules={[
                                 {
                                   required: true,
-                                  message: 'Loại mô đun là trường bắt buộc.',
+                                  message: 'Khung chương trình là trường bắt buộc.',
                                 },
-                              ]}
+                            ]}
                             >
-                                <Radio.Group>
-                                  <Radio className="option-payment" value={1}>
-                                    Phần thi tổng hợp
-                                  </Radio>
-                                  <Radio className="option-payment" value={2}>
-                                    Phần thi mô đun
-                                  </Radio>
-                                  <Radio className="option-payment" value={0}>
-                                    Phần bài học
-                                  </Radio>
-                                </Radio.Group>
-                            </Form.Item>
-                            
-                          </Col>   
-                          {/* Giáo viên */}
-                          <Col xl={12} sm={24} xs={24} className="right-content" >                                    
-                            <Form.Item
-                                label="Chuyên ngành"
-                                className="input-col"
-                                name="chuyen_nganh"
-                                rules={[]} >
-                                {renderMajor()}
-                            </Form.Item>     
-                            <Form.Item className="input-col" label="Giáo viên" name="giao_vien_id" rules={[]}>
-                              {renderTeacher()}
-                            </Form.Item>
-                            <Form.Item className="input-col" label="Ảnh đại diện" name="anh_dai_dien" rules={[]}>
-                              <Dragger {...propsImage} maxCount={1}
-                                listType="picture"
-                                className="upload-list-inline"
-                              >
-                                <p className="ant-upload-drag-icon">
-                                  <UploadOutlined />
-                                </p>
-                                <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
-                              </Dragger>
-                            </Form.Item>
-                            <Form.Item className="input-col" label="Video đại diện" name="video_gioi_thieu" rules={[]}>
-                              <Dragger {...propsVideo} maxCount={1}
-                                listType="picture"
-                                className="upload-list-inline"
-                              >
-                                <p className="ant-upload-drag-icon">
-                                  <UploadOutlined />
-                                </p>
-                                <p className="ant-upload-text bold">Click hoặc kéo thả video đại diện vào đây</p>
-                              </Dragger>
-                            </Form.Item> 
-                          </Col>     
-                        </Row>
-                        
-                        <Form.Item className="button-col">
-                          <Button shape="round" type="primary" htmlType="submit" >Thêm mới
-                          </Button>
+                                {renderProgramme()}
                         </Form.Item>
-                    </Form>
-                </Col>
-              </Row>
-            </div>
-        </>
+                        <Form.Item className="input-col" label="Khóa học" name="khoa_hoc_id" initialValue={state.courseId} rules={[]}>
+                            {renderParents()}
+                        </Form.Item>
+                        <Form.Item className="input-col" label="Mô tả" name="mo_ta" rules={[]}>
+                            <TextArea placeholder="Nhập mô tả"/>
+                        </Form.Item>
+                        <Form.Item
+                            initialValue={state.form.trang_thai}
+                            label="Trạng thái"
+                            className="input-col"
+                            name="trang_thai"
+                            rules={[]} >
+                            {renderStatus()}
+                        </Form.Item>     
+                        <Form.Item
+                          name="loai_tong_hop"
+                          label="Loại mô đun"
+                          initialValue={state.form.total}
+                          rules={[
+                            {
+                              required: true,
+                              message: 'Loại mô đun là trường bắt buộc.',
+                            },
+                          ]}
+                        >
+                            <Radio.Group>
+                              <Radio className="option-payment" value={1}>
+                                Phần thi tổng hợp
+                              </Radio>
+                              <Radio className="option-payment" value={2}>
+                                Phần thi mô đun
+                              </Radio>
+                              <Radio className="option-payment" value={0}>
+                                Phần bài học
+                              </Radio>
+                            </Radio.Group>
+                        </Form.Item>
+                        
+                      </Col>   
+                      {/* Giáo viên */}
+                      <Col xl={12} sm={24} xs={24} className="right-content" >                                    
+                        <Form.Item
+                            label="Chuyên ngành"
+                            className="input-col"
+                            name="chuyen_nganh"
+                            rules={[]} >
+                            {renderMajor()}
+                        </Form.Item>     
+                        <Form.Item className="input-col" label="Giáo viên" name="giao_vien_id" rules={[]}>
+                          {renderTeacher()}
+                        </Form.Item>
+                        <Form.Item className="input-col" label="Ảnh đại diện" name="anh_dai_dien" rules={[]}>
+                          <Dragger {...propsImage} maxCount={1}
+                            listType="picture"
+                            className="upload-list-inline"
+                          >
+                            <p className="ant-upload-drag-icon">
+                              <UploadOutlined />
+                            </p>
+                            <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
+                          </Dragger>
+                        </Form.Item>
+                        <Form.Item className="input-col" label="Video đại diện" name="video_gioi_thieu" rules={[]}>
+                          <Dragger {...propsVideo} maxCount={1}
+                            listType="picture"
+                            className="upload-list-inline"
+                          >
+                            <p className="ant-upload-drag-icon">
+                              <UploadOutlined />
+                            </p>
+                            <p className="ant-upload-text bold">Click hoặc kéo thả video đại diện vào đây</p>
+                          </Dragger>
+                        </Form.Item> 
+                      </Col>     
+                    </Row>
+                    
+                    <Form.Item className="button-col">
+                      <Button shape="round" type="primary" htmlType="submit" >Thêm mới
+                      </Button>
+                    </Form.Item>
+                </Form>
+            </Col>
+          </Row>
+        </div>
     )
 }
 

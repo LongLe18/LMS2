@@ -160,7 +160,6 @@ function Lesson() {
   }, [filter]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <>
       <div className="content">
         <Row className="app-main">
           <Col xl={24} className="body-content">
@@ -199,15 +198,12 @@ function Lesson() {
           </Col>
         </Row>
         {/* {loadingLesson && <LoadingCustom/>} */}
-        {data.length > 0 && 
           <Table className="table-striped-rows" columns={columns} dataSource={data} />
-        }
         {erorrLesson && notification.error({
           message: 'Thông báo',
           description: 'Lấy dữ liệu bài giảng thất bại',
         })}
       </div>
-    </>
   );
 }
 

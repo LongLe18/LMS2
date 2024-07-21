@@ -315,154 +315,150 @@ const LessonCate = () => {
     };
 
     return (
-        <> 
-            <div className="content">
-                <Row className="app-main">
-                  <Col span={24} className="body-content">
-                    <div className="w5d-form">
-                      <Form layout="vertical" className="" form={form} onFinish={createLesson}>
+      <div className="content">
+          <Row className="app-main">
+            <Col span={24} className="body-content">
+              <div className="w5d-form">
+                <Form layout="vertical" className="" form={form} onFinish={createLesson}>
+                  <Row gutter={25}>
+                    <Col xl={15} sm={16} xs={24}>
+                      <h5 className="header-form-title">Thêm mới bài giảng</h5>
+                    </Col>
+                    <Col xl={9} sm={24} xs={24}>
+                      {/* <h5>Danh sách bài giảng</h5> */}
+                      <AppFilter
+                          title="Danh sách bài giảng"
+                          isShowCourse={false}
+                          isShowStatus={false}
+                          isShowSearchBox={true}
+                          isShowDatePicker={false}
+                          isRangeDatePicker={false}
+                          onFilterChange={(field, value) => onFilterChange(field, value)}
+                      />
+                    </Col>
+                    <Col xl={15} sm={24} xs={24} className="left-content">
+                      <div className="border-box">
                         <Row gutter={25}>
-                          <Col xl={15} sm={16} xs={24}>
-                            <h5 className="header-form-title">Thêm mới bài giảng</h5>
-                          </Col>
-                          <Col xl={9} sm={24} xs={24}>
-                            {/* <h5>Danh sách bài giảng</h5> */}
-                            <AppFilter
-                                title="Danh sách bài giảng"
-                                isShowCourse={false}
-                                isShowStatus={false}
-                                isShowSearchBox={true}
-                                isShowDatePicker={false}
-                                isRangeDatePicker={false}
-                                onFilterChange={(field, value) => onFilterChange(field, value)}
-                            />
-                          </Col>
-                          <Col xl={15} sm={24} xs={24} className="left-content">
-                            <div className="border-box">
-                              <Row gutter={25}>
-                                <Col xl={12} sm={12} xs={24}>
-                                  <Form.Item
+                          <Col xl={12} sm={12} xs={24}>
+                            <Form.Item
+                              className="input-col"
+                              label="Tên bài giảng"
+                              name="ten_bai_giang"
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Tên bài giảng là bắt buộc",
+                                },
+                              ]}
+                            >
+                              <Input placeholder="Tên bài giảng"/>
+                            </Form.Item>
+                            <Form.Item
+                              className="input-col"
+                              label="Mô đun"
+                              name="mo_dun"
+                              rules={[
+                                {
+                                  required: true,
+                                  message: 'Mô đun là bắt buộc',
+                                },
+                              ]}
+                            >
+                              {renderModules()}
+                            </Form.Item>   
+                            <Form.Item
+                            initialValue={"video"}
+                              className="input-col"
+                              label="Loại bài giảng"
+                              name="loai_bai_giang"
+                              rules={[
+                                {
+                                  required: true,
+                                  message: 'Loại bài giảng là bắt buộc',
+                                },
+                              ]}
+                            >
+                              {renderLessionCategories()}
+                            </Form.Item>
+                            <Form.Item initialValue={1}
                                     className="input-col"
-                                    label="Tên bài giảng"
-                                    name="ten_bai_giang"
+                                    label="Khung chương trình"
+                                    name="khung_ct_id"
                                     rules={[
-                                      {
-                                        required: true,
-                                        message: "Tên bài giảng là bắt buộc",
-                                      },
+                                        {
+                                          required: true,
+                                          message: 'Khung chương trình là trường bắt buộc.',
+                                        },
                                     ]}
-                                  >
-                                    <Input placeholder="Tên bài giảng"/>
-                                  </Form.Item>
-                                  <Form.Item
-                                    className="input-col"
-                                    label="Mô đun"
-                                    name="mo_dun"
-                                    rules={[
-                                      {
-                                        required: true,
-                                        message: 'Mô đun là bắt buộc',
-                                      },
-                                    ]}
-                                  >
-                                    {renderModules()}
-                                  </Form.Item>   
-                                  <Form.Item
-                                  initialValue={"video"}
-                                    className="input-col"
-                                    label="Loại bài giảng"
-                                    name="loai_bai_giang"
-                                    rules={[
-                                      {
-                                        required: true,
-                                        message: 'Loại bài giảng là bắt buộc',
-                                      },
-                                    ]}
-                                  >
-                                    {renderLessionCategories()}
-                                  </Form.Item>
-                                  <Form.Item initialValue={1}
-                                          className="input-col"
-                                          label="Khung chương trình"
-                                          name="khung_ct_id"
-                                          rules={[
-                                              {
-                                                required: true,
-                                                message: 'Khung chương trình là trường bắt buộc.',
-                                              },
-                                          ]}
-                                          >
-                                              {renderProgramme()}
-                                  </Form.Item>
-                                </Col>
-                                <Col xl={12} sm={12} xs={24}>
-                                  <Form.Item
-                                    className="input-col"
-                                    label="Khóa học"
-                                    name="khoa_hoc"
-                                    rules={[
-                                      {
-                                        required: true,
-                                        message: 'Khóa học là bắt buộc',
-                                      },
-                                    ]}
-                                  >
-                                    {renderCourses()}
-                                  </Form.Item>   
-                                  <Form.Item
-                                    className="input-col"
-                                    label="Chuyên đề"
-                                    name="chuyen_de"
-                                    rules={[
-                                      {
-                                        required: true,
-                                        message: 'Chuyên đề là bắt buộc',
-                                      },
-                                    ]}
-                                  >
-                                    {renderThematics()}
-                                  </Form.Item>   
-                                  <Form.Item className="input-col" label="Chọn pdf / video" name="bai_giang">
-                                    <Dragger {...propsImage} maxCount={1}
-                                      listType="picture"
-                                      className="upload-list-inline"
                                     >
-                                      <p className="ant-upload-drag-icon">
-                                        <UploadOutlined />
-                                      </p>
-                                      <p className="ant-upload-text bold">Click chọn file hoặc video bài giảng vào đây</p>
-                                    </Dragger>
-                                  </Form.Item>                           
-                                </Col>
-                              </Row>
-                              <Form.Item className="input-col" label="Mô tả" name="mo_ta" rules={[]}>
-                                <TextArea rows={6} placeholder="Mô tả"/>
-                              </Form.Item>
-                              <Form.Item className="button-col">
-                                {(state.Uploading) && <Progress percent={progress}/>}
-                                <Space>
-                                  <Button shape="round" type="primary" htmlType="submit" >Thêm mới</Button>
-                                </Space>
-                              </Form.Item>
-                            </div>
+                                        {renderProgramme()}
+                            </Form.Item>
                           </Col>
-                          <Col xl={9} sm={24} xs={24} className="right-content">
-                            {/* {loadingLessons && <LoadingCustom/>} */}
-                            {data.length > 0 && 
-                              <Table className="table-striped-rows" columns={columns} dataSource={data} pagination={{defaultPageSize: 6}}/>
-                            }
-                            {erorrLessons && notification.error({
-                              message: 'Thông báo',
-                              description: 'Lấy dữ liệu bài giảng thất bại',
-                            })}
+                          <Col xl={12} sm={12} xs={24}>
+                            <Form.Item
+                              className="input-col"
+                              label="Khóa học"
+                              name="khoa_hoc"
+                              rules={[
+                                {
+                                  required: true,
+                                  message: 'Khóa học là bắt buộc',
+                                },
+                              ]}
+                            >
+                              {renderCourses()}
+                            </Form.Item>   
+                            <Form.Item
+                              className="input-col"
+                              label="Chuyên đề"
+                              name="chuyen_de"
+                              rules={[
+                                {
+                                  required: true,
+                                  message: 'Chuyên đề là bắt buộc',
+                                },
+                              ]}
+                            >
+                              {renderThematics()}
+                            </Form.Item>   
+                            <Form.Item className="input-col" label="Chọn pdf / video" name="bai_giang">
+                              <Dragger {...propsImage} maxCount={1}
+                                listType="picture"
+                                className="upload-list-inline"
+                              >
+                                <p className="ant-upload-drag-icon">
+                                  <UploadOutlined />
+                                </p>
+                                <p className="ant-upload-text bold">Click chọn file hoặc video bài giảng vào đây</p>
+                              </Dragger>
+                            </Form.Item>                           
                           </Col>
                         </Row>
-                      </Form>
-                    </div>
-                  </Col>
-                </Row>
-            </div>
-        </>
+                        <Form.Item className="input-col" label="Mô tả" name="mo_ta" rules={[]}>
+                          <TextArea rows={6} placeholder="Mô tả"/>
+                        </Form.Item>
+                        <Form.Item className="button-col">
+                          {(state.Uploading) && <Progress percent={progress}/>}
+                          <Space>
+                            <Button shape="round" type="primary" htmlType="submit" >Thêm mới</Button>
+                          </Space>
+                        </Form.Item>
+                      </div>
+                    </Col>
+                    <Col xl={9} sm={24} xs={24} className="right-content">
+                      {/* {loadingLessons && <LoadingCustom/>} */}
+                      <Table className="table-striped-rows" columns={columns} dataSource={data} pagination={{defaultPageSize: 6}}/>
+                      {erorrLessons && notification.error({
+                        message: 'Thông báo',
+                        description: 'Lấy dữ liệu bài giảng thất bại',
+                      })}
+                    </Col>
+                  </Row>
+                </Form>
+              </div>
+            </Col>
+          </Row>
+      </div>
     )
 }
 

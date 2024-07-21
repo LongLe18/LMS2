@@ -511,10 +511,7 @@ const ExamAdminPage = () => {
         url: config.API_LATEX + `/${values.de_thi_id}/uploadfile`,
         timeout: 1000 * 60 * 5,
         formData,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('userToken')}`,
-          'Access-Control-Allow-Origin': '*'
-        },
+        headers: {Authorization: `Bearer ${localStorage.getItem('userToken')}`},
     }).then(
       res => {
         console.log(res)
@@ -721,7 +718,7 @@ const onChange = page => {
                     <Col xl={24} sm={24} xs={24}>
                         {courses.status === "success" &&
                           <AppFilter
-                            title="Quản lý đề thi"
+                            title="Quản lý đề mẫu ĐGNL"
                             isShowCourse={true}
                             isTypeExam={true}
                             isShowStatus={true}

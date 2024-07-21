@@ -215,33 +215,27 @@ const ReceiptPage = (props) => {
     }, [filter]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
-        <>
-            <div className="content">
-                <Col xl={24} className="body-content">
-                    <Row className="app-main">
-                        <Col xl={24} sm={24} xs={24}>
-                            <AppFilter
-                                title="Quản lý hóa đơn"
-                                status={PropStatusFilter}
-                                dataExportReceipt={data.length > 0 ? data : []}
-                                isShowStatus={true}
-                                isShowCourse={false}
-                                isShowSearchBox={true}
-                                isShowDatePicker={true}
-                                isRangeDatePicker={true}
-                                onFilterChange={(field, value) => onFilterChange(field, value)}
-                            />
-                        </Col>
-                    </Row>
-                </Col>
-                <br/>
-                {(data.length > 0) && 
-                    <>
-                        <Table className="table-striped-rows" columns={columns} dataSource={data} />
-                    </>
-                }
-            </div>
-        </>
+        <div className="content">
+            <Col xl={24} className="body-content">
+                <Row className="app-main">
+                    <Col xl={24} sm={24} xs={24}>
+                        <AppFilter
+                            title="Quản lý hóa đơn"
+                            status={PropStatusFilter}
+                            dataExportReceipt={data.length > 0 ? data : []}
+                            isShowStatus={true}
+                            isShowCourse={false}
+                            isShowSearchBox={true}
+                            isShowDatePicker={true}
+                            isRangeDatePicker={true}
+                            onFilterChange={(field, value) => onFilterChange(field, value)}
+                        />
+                    </Col>
+                </Row>
+            </Col>
+            <br/>
+            <Table className="table-striped-rows" columns={columns} dataSource={data} />
+        </div>
     )
 }
 

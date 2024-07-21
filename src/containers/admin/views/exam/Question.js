@@ -115,8 +115,8 @@ const QuestionPage = () => {
           render: (noi_dung) => (
             <div className="title-exam">
               <MathJax.Provider>
-                {noi_dung.split('\n').map((item, index_cauhoi) =>
-                    item.indexOf('includegraphics') !== -1 ? (
+                {noi_dung?.split('\n').map((item, index_cauhoi) =>
+                    (item.indexOf('includegraphics') !== -1 && item !== '' && item?.match(regex) !== null && item?.match(regex).length >= 2) ? (
                         <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question_${index_cauhoi}`}></img>
                     ) : (
                         item.split('$').map((item2, index2) => {
@@ -171,6 +171,7 @@ const QuestionPage = () => {
     // hàm xóa câu hỏi 
     const deleteQuestion = (idQuestion) => {
       const callback = (res) => {
+        console.log(res);
         if (res.status === 'success') {
           notification.success({
             message: 'Thông báo',
@@ -189,43 +190,41 @@ const QuestionPage = () => {
     }
 
     return (
-        <>
-            <div className="content">
-                <Row className="app-main">
-                    <Col xl={24} className="body-content">
-                      <h5>Quản lý câu hỏi</h5>
-                      {/* Bộ lọc */}
-                      <Row gutter={8}>
-                        <Col xl={8} md={24} xs={24}>
-                          {renderMajor()}
-                        </Col>
-                        <Col xl={12} md={24} xs={24}>
-                          {renderProgramme()}
-                        </Col>
-                      </Row>
+        <div className="content">
+            <Row className="app-main">
+                <Col xl={24} className="body-content">
+                  <h5>Quản lý câu hỏi</h5>
+                  {/* Bộ lọc */}
+                  <Row gutter={8}>
+                    <Col xl={8} md={24} xs={24}>
+                      {renderMajor()}
                     </Col>
-                </Row>
+                    <Col xl={12} md={24} xs={24}>
+                      {renderProgramme()}
+                    </Col>
+                  </Row>
+                </Col>
+            </Row>
+            <br/>
+            {loading && <LoadingCustom/>}
+            {questions.status === 'success' && 
+              <div className="question-list">
+                <Table className="table-striped-rows" pagination={false} columns={column} dataSource={questions.data}/>
                 <br/>
-                {loading && <LoadingCustom/>}
-                {questions.status === 'success' && 
-                  <div className="question-list">
-                    <Table className="table-striped-rows" pagination={false} columns={column} dataSource={questions.data}/>
-                    <br/>
-                    <Pagination current={pageIndex}
-                      onChange={onChangePageIndex} 
-                      total={questions.totalCount} 
-                      onShowSizeChange={onShowSizeChange} 
-                      defaultPageSize={pageSize}
-                    />
-                  </div>
-                }
-                {error && notification.error({
-                    message: 'Thông báo',
-                    description: 'Lấy dữ liệu đề thi thất bại',
-                })}
+                <Pagination current={pageIndex}
+                  onChange={onChangePageIndex} 
+                  total={questions.totalCount} 
+                  onShowSizeChange={onShowSizeChange} 
+                  defaultPageSize={pageSize}
+                />
+              </div>
+            }
+            {error && notification.error({
+                message: 'Thông báo',
+                description: 'Lấy dữ liệu đề thi thất bại',
+            })}
 
-            </div>
-        </>
+        </div>
     )
 }
 

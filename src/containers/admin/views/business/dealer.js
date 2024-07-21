@@ -326,45 +326,39 @@ const DealerTeacherPage = (props) => {
     };
 
     return (
-        <>
-            <div className="content">
-                <Col xl={24} className="body-content">
-                    <Row className="app-main">
-                        <Col xl={24} sm={24} xs={24}>
-                            <AppFilter
-                                title="Quản lý đại lý"
-                                dataExportReceiptTeacher={dataDetail.length > 0 ? dataDetail : []}
-                                status={PropStatusFilter}
-                                placeholder="Tìm kiếm theo mã chiết khấu"
-                                isShowStatus={state.activeTab === "2" ? true : false}
-                                isShowSearchBox={state.activeTab === "2" ? true : false}
-                                isShowDatePicker={state.activeTab === "2" ? true : false}
-                                isRangeDatePicker={state.activeTab === "2" ? true : false}
-                                onFilterChange={(field, value) => onFilterChange(field, value)}
-                            />
-                        </Col>
-                    </Row>
-                </Col>
-                
-                <Tabs defaultActiveKey={state.activeTab} activeKey={state.activeTab} onChange={onChangeTab}>
-                    <TabPane tab="Quản lý đại lý" key="1">
-                        {(data.length > 0) && 
-                            <Table className="table-striped-rows" columns={columns} dataSource={data} />
-                        }
-                    </TabPane>
-                    <TabPane tab="Chi tiết đại lý" disabled key="2">
-                        {(dataDetail.length > 0) && 
-                            <>
-                                <Table className="table-striped-rows" columns={columns2} dataSource={dataDetail} rowSelection={rowSelection}/>
-                                <Row>
-                                    <Button type="primary" onClick={() => handleSettlement()}>Quyết toán</Button>
-                                </Row>
-                            </>
-                        }
-                    </TabPane>
-                </Tabs>
-            </div>
-        </>
+        <div className="content">
+            <Col xl={24} className="body-content">
+                <Row className="app-main">
+                    <Col xl={24} sm={24} xs={24}>
+                        <AppFilter
+                            title="Quản lý đại lý"
+                            dataExportReceiptTeacher={dataDetail.length > 0 ? dataDetail : []}
+                            status={PropStatusFilter}
+                            placeholder="Tìm kiếm theo mã chiết khấu"
+                            isShowStatus={state.activeTab === "2" ? true : false}
+                            isShowSearchBox={state.activeTab === "2" ? true : false}
+                            isShowDatePicker={state.activeTab === "2" ? true : false}
+                            isRangeDatePicker={state.activeTab === "2" ? true : false}
+                            onFilterChange={(field, value) => onFilterChange(field, value)}
+                        />
+                    </Col>
+                </Row>
+            </Col>
+            
+            <Tabs defaultActiveKey={state.activeTab} activeKey={state.activeTab} onChange={onChangeTab}>
+                <TabPane tab="Quản lý đại lý" key="1">
+                    <Table className="table-striped-rows" columns={columns} dataSource={data} />
+                </TabPane>
+                <TabPane tab="Chi tiết đại lý" disabled key="2">
+                    <>
+                        <Table className="table-striped-rows" columns={columns2} dataSource={dataDetail} rowSelection={rowSelection}/>
+                        <Row>
+                            <Button type="primary" onClick={() => handleSettlement()}>Quyết toán</Button>
+                        </Row>
+                    </>
+                </TabPane>
+            </Tabs>
+        </div>
     )
 }
 

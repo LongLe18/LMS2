@@ -70,8 +70,10 @@ const SampleQuestion = (props) => {
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
-        dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, idThematic: filter.chuyen_de_id, status: '', search: '', 
-            start: '', end: '', idType: '', publish: 1 }));
+        dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, 
+            idThematic: filter.chuyen_de_id, status: '', search: '', 
+            start: '', end: '', idType: '', publish: 1 , offset: '', limit: 1000000
+        }));
     }, [filter.khoa_hoc_id, filter.mo_dun_id, filter.chuyen_de_id]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {

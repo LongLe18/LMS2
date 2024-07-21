@@ -43,7 +43,7 @@ function* fetchExam(payload) {
 
 function* fectchFilter(payload) {
     try {
-        let endpoint = `${config.API_URL}/exam/all_admin?trang_thai=${payload.params.status}&khoa_hoc_id=${payload.params.idCourse}&mo_dun_id=${payload.params.idModule}&chuyen_de_id=${payload.params.idThematic}&loai_de_thi_id=${payload.params.idType}&ngay_bat_dau=${payload.params.start}&ngay_ket_thuc=${payload.params.end}&search=${payload.params.search}&xuat_ban=${payload.params.publish}`;
+        let endpoint = `${config.API_URL}/exam/all_admin?offset=${payload.params.offset}&limit=${payload.params.limit}&trang_thai=${payload.params.status}&khoa_hoc_id=${payload.params.idCourse}&mo_dun_id=${payload.params.idModule}&chuyen_de_id=${payload.params.idThematic}&loai_de_thi_id=${payload.params.idType}&ngay_bat_dau=${payload.params.start}&ngay_ket_thuc=${payload.params.end}&search=${payload.params.search}&xuat_ban=${payload.params.publish}`;
         const response = yield call(getApiAuth, endpoint);
         const result = yield response.data;
         yield put({ type: actions.exam.FILTER_EXAMS_SUCCESS, result: result });

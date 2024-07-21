@@ -59,9 +59,9 @@ const BodyDetailPage = (props) => {
     }
 
     useEffect(() => {
-        dispatch(thematicActions.getThematicsByIdModule({ 'idModule': props.id }));  
-        dispatch(examActions.filterExam({ idCourse: props.idCourse, idModule: props.id, idThematic: '', status: 1, search: '', 
-            start: '', end: '', idType: 2, publish: '' })); // get exam module
+        dispatch(thematicActions.getThematicsByIdModule({ 'idModule': props?.id }));  
+        dispatch(examActions.filterExam({ idCourse: props?.idCourse, idModule: props?.id, idThematic: '', status: 1, search: '', 
+            start: '', end: '', idType: 2, publish: '', offset: '', limit: 1000000 })); // get exam module
         if (userToken) {
             getCourseOfUser();
         }    
@@ -73,10 +73,10 @@ const BodyDetailPage = (props) => {
     }
 
     if (thematics.status === 'success' && exams.status === 'success') {
-        var temp = thematics.data.thematics.filter(obj => { // Lọc những phần đang hoạt động
+        let temp = thematics.data.thematics.filter(obj => { // Lọc những phần đang hoạt động
             return obj.trang_thai === true;
         })
-        var temp2 = exams.data.filter(obj => { // Lọc những phần đang hoạt động
+        let temp2 = exams.data.filter(obj => { // Lọc những phần đang hoạt động
             return obj.xuat_ban === 1;
         })
         for (let thematic of temp) thematicsFilter.push(thematic);

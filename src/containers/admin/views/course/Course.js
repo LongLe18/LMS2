@@ -323,133 +323,130 @@ const Course = () => {
     };
 
     return(
-        <>
-            <div className='content'>
-              <Row className="app-main">
-                  <Col xl={24} className="body-content">
-                      <Row>
-                          <Col xl={24} sm={24} xs={24}>
-                              <AppFilter
-                                title="Danh sách khóa học"
-                                isShowCourse={false}
-                                isShowModule={false}
-                                isShowThematic={false}
-                                isShowStatus={true}
-                                isShowSearchBox={true}
-                                isShowDatePicker={true}
-                                isRangeDatePicker={true}
-                                courses={courses.data}
-                                onFilterChange={(field, value) => onFilterChange(field, value)}
-                              />
-                          </Col>
-                      </Row>
-                  </Col>
-              </Row>
-            {/* {loading && <LoadingCustom/>} */}
-                {data.length > 0 && 
-                    <Table className="table-striped-rows" columns={columns} dataSource={data} />
-                }
-                {error && notification.error({
-                    message: 'Thông báo',
-                    description: 'Lấy dữ liệu khóa học thất bại',
-                })}
-                <Row>
-                    <Col xl={24} sm={24} xs={24} className="cate-form-block">
-                    {loadingCourse && <LoadingCustom/>}   
-                    {(state.isEdit && course.status === 'success' && course) ? <h5>Sửa thông tin khóa học</h5> : <h5>Thêm mới khóa học</h5>}  
-                        <Form layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={createCourse}>
-                            <Form.Item
-                                className="input-col"
-                                label="Khung chương trình"
-                                name="kct_id"
-                                rules={[
-                                    {
-                                    required: true,
-                                    message: 'Khung chương trình là trường bắt buộc.',
-                                    },
-                                ]}
-                                >
-                                    {renderProgramme()}
-                            </Form.Item>
-                            <Form.Item
-                                className="input-col"
-                                label="Tên khóa học"
-                                name="ten_khoa_hoc"
-                                rules={[
-                                    {
-                                    required: true,
-                                    message: 'Tên khóa học là trường bắt buộc.',
-                                    },
-                                ]}
-                                >
-                                    <Input placeholder=""/>
-                            </Form.Item>
-                            <Row>
-                                <Form.Item
-                                    className="input-col"
-                                    label="Ngày bắt đầu / ngày kết thúc khóa học"
-                                    name="ngay_bat_dau"
-                                    rules={[
-                                        {
-                                        required: true,
-                                        message: 'Ngày bắt đầu / ngày kết thúc là trường bắt buộc.',
-                                        },
-                                    ]}
-                                >
-                                  <RangePicker
-                                    format="YYYY-MM-DD"
-                                    onChange={onChangeStart}
-                                    locale={{
-                                      lang: {
-                                        locale: 'en_US',
-                                        rangePlaceholder: ['Từ ngày', 'Đến ngày'],
-                                      },
-                                    }}
-                                  />
-                                </Form.Item>     
-                            </Row>
-                            <Form.Item className="input-col" label="Trạng thái (Thêm mới mặc định là đang hoạt động)" name="trang_thai" rules={[]} initialValue={true}>
-                                {renderStatus()}
-                            </Form.Item>
-                            <Form.Item
-                              className="input-col"
-                              label="Mô tả"
-                              name="mo_ta"
-                              rules={[]}
+        <div className='content'>
+          <Row className="app-main">
+              <Col xl={24} className="body-content">
+                  <Row>
+                      <Col xl={24} sm={24} xs={24}>
+                          <AppFilter
+                            title="Danh sách khóa học"
+                            isShowCourse={false}
+                            isShowModule={false}
+                            isShowThematic={false}
+                            isShowStatus={true}
+                            isShowSearchBox={true}
+                            isShowDatePicker={true}
+                            isRangeDatePicker={true}
+                            courses={courses.data}
+                            onFilterChange={(field, value) => onFilterChange(field, value)}
+                          />
+                      </Col>
+                  </Row>
+              </Col>
+          </Row>
+        {/* {loading && <LoadingCustom/>} */}
+            {data.length > 0 && 
+                <Table className="table-striped-rows" columns={columns} dataSource={data} />
+            }
+            {error && notification.error({
+                message: 'Thông báo',
+                description: 'Lấy dữ liệu khóa học thất bại',
+            })}
+            <Row>
+                <Col xl={24} sm={24} xs={24} className="cate-form-block">
+                {loadingCourse && <LoadingCustom/>}   
+                {(state.isEdit && course.status === 'success' && course) ? <h5>Sửa thông tin khóa học</h5> : <h5>Thêm mới khóa học</h5>}  
+                    <Form layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={createCourse}>
+                        <Form.Item
+                            className="input-col"
+                            label="Khung chương trình"
+                            name="kct_id"
+                            rules={[
+                                {
+                                required: true,
+                                message: 'Khung chương trình là trường bắt buộc.',
+                                },
+                            ]}
                             >
-                              <TextArea rows={4} />
-                            </Form.Item>
-                            <Form.Item className="input-col" label="Hình đại diện" name="anh_dai_dien" rules={[]}>
-                              <Dragger {...propsImage} maxCount={1}
-                                  listType="picture"
-                                  className="upload-list-inline"
-                              >
-                                  <p className="ant-upload-drag-icon">
-                                  <UploadOutlined />
-                                  </p>
-                                  <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
-                              </Dragger>
-                            </Form.Item>
-                            <br/>
-                            <br/>
-                            <Form.Item className="button-col">
-                                <Space>
-                                    <Button shape="round" type="primary" htmlType="submit" >
-                                    {(state.isEdit && course.status === 'success' && course) ? 'Cập nhật' : 'Thêm mới'}   
-                                    </Button>
-                                    {(state.isEdit && course.status === 'success' && course) 
-                                    ?  <Button shape="round" type="danger" onClick={() => cancelEdit()} > 
-                                        Hủy bỏ
-                                    </Button>
-                                    : ''}    
-                                </Space>    
-                            </Form.Item>
-                        </Form>
-                    </Col>
-                </Row>
-            </div>
-            
-        </>
+                                {renderProgramme()}
+                        </Form.Item>
+                        <Form.Item
+                            className="input-col"
+                            label="Tên khóa học"
+                            name="ten_khoa_hoc"
+                            rules={[
+                                {
+                                required: true,
+                                message: 'Tên khóa học là trường bắt buộc.',
+                                },
+                            ]}
+                            >
+                                <Input placeholder="Nhập tên khoá học"/>
+                        </Form.Item>
+                        <Row>
+                            <Form.Item
+                                className="input-col"
+                                label="Ngày bắt đầu / ngày kết thúc khóa học"
+                                name="ngay_bat_dau"
+                                rules={[
+                                    {
+                                    required: true,
+                                    message: 'Ngày bắt đầu / ngày kết thúc là trường bắt buộc.',
+                                    },
+                                ]}
+                            >
+                              <RangePicker
+                                format="YYYY-MM-DD"
+                                onChange={onChangeStart}
+                                locale={{
+                                  lang: {
+                                    locale: 'en_US',
+                                    rangePlaceholder: ['Từ ngày', 'Đến ngày'],
+                                  },
+                                }}
+                              />
+                            </Form.Item>     
+                        </Row>
+                        <Form.Item className="input-col" label="Trạng thái (Thêm mới mặc định là đang hoạt động)" name="trang_thai" rules={[]} initialValue={true}>
+                            {renderStatus()}
+                        </Form.Item>
+                        <Form.Item
+                          className="input-col"
+                          label="Mô tả"
+                          name="mo_ta"
+                          rules={[]}
+                        >
+                          <TextArea rows={4} placeholder='Nhập mô tả'/>
+                        </Form.Item>
+                        <Form.Item className="input-col" label="Hình đại diện" name="anh_dai_dien" rules={[]}>
+                          <Dragger {...propsImage} maxCount={1}
+                              listType="picture"
+                              className="upload-list-inline"
+                          >
+                              <p className="ant-upload-drag-icon">
+                              <UploadOutlined />
+                              </p>
+                              <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
+                          </Dragger>
+                        </Form.Item>
+                        <br/>
+                        <br/>
+                        <Form.Item className="button-col">
+                            <Space>
+                                <Button shape="round" type="primary" htmlType="submit" >
+                                {(state.isEdit && course.status === 'success' && course) ? 'Cập nhật' : 'Thêm mới'}   
+                                </Button>
+                                {(state.isEdit && course.status === 'success' && course) 
+                                ?  <Button shape="round" type="danger" onClick={() => cancelEdit()} > 
+                                    Hủy bỏ
+                                </Button>
+                                : ''}    
+                            </Space>    
+                        </Form.Item>
+                    </Form>
+                </Col>
+            </Row>
+        </div>
     )
 }
 

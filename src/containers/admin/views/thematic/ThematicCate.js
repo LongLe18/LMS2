@@ -373,97 +373,95 @@ const ThematicCate = () => {
     };
 
     return (
-        <> 
-            <div className="content">
-                <Row className="app-main">
-                    <Col span={24} className="body-content">
-                        <Row>
-                            <Col xl={24} sm={24} xs={24} className="table-cates">
-                                <Row>
-                                    <Col xl={20} sm={16} xs={24}>
-                                    <AppFilter
-                                        title={"Danh sách chuyên đề"}
-                                        isShowCourse={true}
-                                        isShowModule={true}
-                                        isShowThematic={false}
-                                        isShowStatus={true}
-                                        isShowSearchBox={true}
-                                        isShowDatePicker={false}
-                                        isRangeDatePicker={false}
-                                        courses={courses.data}
-                                        onFilterChange={(field, value) => onFilterChange(field, value)}
-                                    />
-                                    </Col>
-                                </Row>
-                            </Col>
-                        </Row>
-                    </Col>
-                </Row>
-                {/* {loading && <Loading />} */}
-                {data.length > 0 && 
-                  <div>
-                    <Table className="table-striped-rows" columns={columns} dataSource={data} />
-                  </div>
-                }
-                {error && notification.error({
-                  message: 'Thông báo',
-                  description: 'Lấy dữ liệu chuyên đề thất bại',
-                })}
-                            
-                <Row>
-                  <Col xl={24} sm={24} xs={24} className="cate-form-block">
-                      {loadingThematic && <LoadingCustom/>}                          
-                          <div> 
-                          {(state.isEdit && thematic.status === 'success' && thematic) ? <h5>Sửa thông tin chuyên đề</h5> : <h5>Thêm chuyên đề</h5>}      
-                            <Form layout="vertical" className="category-form" form={form} onFinish={CreateAndEditThematic}>
-                                <Form.Item
-                                    className="input-col"
-                                    label="Tên chuyên đề"
-                                    name="ten_chuyen_de"
-                                    rules={[
-                                        {
-                                        required: true,
-                                        message: 'Tên chuyên đề là trường bắt buộc.',
-                                        },
-                                    ]}
-                                    >
-                                        <Input placeholder=""/>
-                                </Form.Item>
-                                <Form.Item className="input-col" initialValue={1} label="Khung chương trình" name="kct_id" rules={[]} >
-                                    {renderProgramme()}
-                                </Form.Item>
-                                <Form.Item className="input-col" label="Khóa học" name="khoa_hoc_id" rules={[]} >
-                                    {renderCourses()}
-                                </Form.Item>
-                                <Form.Item className="input-col" label="Mô đun" name="mo_dun_id" rules={[]} >
-                                    {renderModules()}
-                                </Form.Item>
-                                <Form.Item className="input-col" label="Lớp học" name="lop_id" rules={[]} >
-                                    {renderClasses()}
-                                </Form.Item>
-                                <Form.Item className="input-col" label="Trạng thái (Thêm mới mặc định là đang hoạt động)" name="trang_thai" rules={[]}>
-                                    {renderStatus()}
-                                </Form.Item>
-                                <Form.Item className="input-col" label="Mô tả" name="mo_ta" rules={[]} >
-                                    <TextArea placeholder="" />
-                                </Form.Item>
-                                  <Space>
-                                    <Button shape="round" type="primary" htmlType="submit" >
-                                      {(state.isEdit && thematic.status === 'success' && thematic) ? 'Cập nhật' : 'Thêm mới'}   
+          <div className="content">
+              <Row className="app-main">
+                  <Col span={24} className="body-content">
+                      <Row>
+                          <Col xl={24} sm={24} xs={24} className="table-cates">
+                              <Row>
+                                  <Col xl={20} sm={16} xs={24}>
+                                  <AppFilter
+                                      title={"Danh sách chuyên đề"}
+                                      isShowCourse={true}
+                                      isShowModule={true}
+                                      isShowThematic={false}
+                                      isShowStatus={true}
+                                      isShowSearchBox={true}
+                                      isShowDatePicker={false}
+                                      isRangeDatePicker={false}
+                                      courses={courses.data}
+                                      onFilterChange={(field, value) => onFilterChange(field, value)}
+                                  />
+                                  </Col>
+                              </Row>
+                          </Col>
+                      </Row>
+                  </Col>
+              </Row>
+              {/* {loading && <Loading />} */}
+              {data.length > 0 && 
+                <div>
+                  <Table className="table-striped-rows" columns={columns} dataSource={data} />
+                </div>
+              }
+              {error && notification.error({
+                message: 'Thông báo',
+                description: 'Lấy dữ liệu chuyên đề thất bại',
+              })}
+                          
+              <Row>
+                <Col xl={24} sm={24} xs={24} className="cate-form-block">
+                    {loadingThematic && <LoadingCustom/>}                          
+                        <div> 
+                        {(state.isEdit && thematic.status === 'success' && thematic) ? <h5>Sửa thông tin chuyên đề</h5> : <h5>Thêm chuyên đề</h5>}      
+                          <Form layout="vertical" className="category-form" form={form} onFinish={CreateAndEditThematic}>
+                              <Form.Item
+                                  className="input-col"
+                                  label="Tên chuyên đề"
+                                  name="ten_chuyen_de"
+                                  rules={[
+                                      {
+                                      required: true,
+                                      message: 'Tên chuyên đề là trường bắt buộc.',
+                                      },
+                                  ]}
+                                  >
+                                      <Input placeholder="Nhập tên chuyên đề"/>
+                              </Form.Item>
+                              <Form.Item className="input-col" initialValue={1} label="Khung chương trình" name="kct_id" rules={[]} >
+                                  {renderProgramme()}
+                              </Form.Item>
+                              <Form.Item className="input-col" label="Khóa học" name="khoa_hoc_id" rules={[]} >
+                                  {renderCourses()}
+                              </Form.Item>
+                              <Form.Item className="input-col" label="Mô đun" name="mo_dun_id" rules={[]} >
+                                  {renderModules()}
+                              </Form.Item>
+                              <Form.Item className="input-col" label="Lớp học" name="lop_id" rules={[]} >
+                                  {renderClasses()}
+                              </Form.Item>
+                              <Form.Item className="input-col" label="Trạng thái (Thêm mới mặc định là đang hoạt động)" name="trang_thai" rules={[]}>
+                                  {renderStatus()}
+                              </Form.Item>
+                              <Form.Item className="input-col" label="Mô tả" name="mo_ta" rules={[]} >
+                                  <TextArea placeholder="Nhập mô tả" />
+                              </Form.Item>
+                                <Space>
+                                  <Button shape="round" type="primary" htmlType="submit" >
+                                    {(state.isEdit && thematic.status === 'success' && thematic) ? 'Cập nhật' : 'Thêm mới'}   
+                                  </Button>
+                                  {(state.isEdit && thematic.status === 'success' && thematic) 
+                                  ?  <Button shape="round" type="danger" onClick={() => cancelEdit()} > 
+                                      Hủy bỏ
                                     </Button>
-                                    {(state.isEdit && thematic.status === 'success' && thematic) 
-                                    ?  <Button shape="round" type="danger" onClick={() => cancelEdit()} > 
-                                        Hủy bỏ
-                                      </Button>
-                                    : ''}    
-                                  </Space>                                                                        
-                            </Form>
-                          </div>                           
-                    </Col>
-                </Row>
-          
-            </div>
-        </>
+                                  : ''}    
+                                </Space>                                                                        
+                          </Form>
+                        </div>                           
+                  </Col>
+              </Row>
+        
+          </div>
     )
 }
 

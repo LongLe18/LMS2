@@ -65,7 +65,7 @@ const ExamModulePage = (props) => {
     useEffect(() => {
         dispatch(courseActions.getCourse({ id: hashids.decode(idCourse) }));
         dispatch(examActions.filterExam({ idCourse: hashids.decode(idCourse), idModule: hashids.decode(idModule), idThematic: '', status: 1, search: '', 
-            start: '', end: '', idType: 2, publish: '' })); // get exam module
+            start: '', end: '', idType: 2, publish: '', offset: '', limit: 1000000 })); // get exam module
         if (userToken) {
             getCourseOfUser();
         }

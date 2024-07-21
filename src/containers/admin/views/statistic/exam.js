@@ -103,7 +103,7 @@ const StatisticExam = (props) => {
         }
         dispatch(courseActions.getCourses({ idkct: '', status: '', search: '' }));
         dispatch(examActions.filterExam({ idCourse: '', idModule: '', idThematic: '', status: '', search: '', 
-            start: '', end: '', idType: '', publish: '1' }, callback));
+            start: '', end: '', idType: '', publish: 1, offset: '', limit: 1000000 }, callback));
         
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 

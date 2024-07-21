@@ -40,7 +40,7 @@ function Dashboard() {
     dispatch(userAction.getTeachers({ idMajor: '', status: '', startDay: '', endDay: '', search: '' }));
     dispatch(courseAction.filterCourses({ status: '', search: '', start: '', end: ''}));
     dispatch(examActions.filterExam({ idCourse: '', idModule: '', idThematic: '', status: '', search: '', 
-            start: '', end: '', idType: '', publish: '' }));
+            start: '', end: '', idType: '', publish: '', offset: '', limit: '1000000' }));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (students.status === 'success' && teachers.status === 'success') {

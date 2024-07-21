@@ -39,7 +39,7 @@ const EvaluationPage = () => {
     // lấy dữ liệu danh sách đề thi
     useEffect(() => {
         dispatch(examActions.filterExam({ idCourse: '', idModule: '', idThematic: '', status: '', search: '', 
-            start: '', end: '', idType: 4, publish: 1 }));
+            start: '', end: '', idType: 4, publish: 1, offset: '', limit: 1000000 }));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     if (evaluations.status === 'success' ) {    

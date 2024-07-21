@@ -302,6 +302,9 @@ const ProgramPage = () => {
                                 <Radio className="option-payment" value={1}>
                                     Thi thử Online
                                 </Radio>
+                                <Radio className="option-payment" value={2}>
+                                    Ôn luyện
+                                </Radio>
                             </Radio.Group>
                         </Form.Item>
                         <Form.Item

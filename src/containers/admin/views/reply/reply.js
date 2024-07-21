@@ -433,191 +433,189 @@ const ReplyPage = (props) => {
     };
     
     return (
-        <>
-            <div className="content">
-                {state.activeTab === "1" && 
-                    <Row className="app-main">
-                        <Col xl={24} className="body-content">
-                            <Row>
-                                <Col xl={24} sm={24} xs={24}>
-                                    <AppFilter
-                                        title="Hỏi đáp"
-                                        isShowCourse={true}
-                                        isShowModule={true}
-                                        isShowStatus={true}
-                                        courses={courses.data}
-                                        onFilterChange={(field, value) => onFilterChange(field, value)}
-                                    />
-                                </Col>
-                            </Row>
-                        </Col>
-                    </Row>
-                }
-                <br/>
-                <Tabs defaultActiveKey={state.activeTab} activeKey={state.activeTab} onChange={onChangeTab}>
-                    <TabPane tab="Hỏi đáp" key="1">
-                        {state.comment !== '' &&
-                            <Table className="table-striped-rows" columns={columns} dataSource={state.comment} />
-                        }
-                    </TabPane>
-                    <TabPane tab="Chi tiết hỏi đáp" disabled key="2">
-                        {(comment.status === 'success' && subcomments.status === 'success') && 
-                        <div className='tab-panels'>
-                            {/* Show comment */}
-                            <ul>
-                                {/* Main comment */}
-                                <li>
-                                    <Row className="comment">
-                                        <Col xs={4} sm={1} className="avatar-user">
-                                            <Row style={{height: '100%', flexDirection: 'column'}}>
-                                                <Avatar size={"large"} src={comment.data.anh_dai_dien !== null ? config.API_URL + comment.data.anh_dai_dien : defaultImage} />
+        <div className="content">
+            {state.activeTab === "1" && 
+                <Row className="app-main">
+                    <Col xl={24} className="body-content">
+                        <Row>
+                            <Col xl={24} sm={24} xs={24}>
+                                <AppFilter
+                                    title="Hỏi đáp"
+                                    isShowCourse={true}
+                                    isShowModule={true}
+                                    isShowStatus={true}
+                                    courses={courses.data}
+                                    onFilterChange={(field, value) => onFilterChange(field, value)}
+                                />
+                            </Col>
+                        </Row>
+                    </Col>
+                </Row>
+            }
+            <br/>
+            <Tabs defaultActiveKey={state.activeTab} activeKey={state.activeTab} onChange={onChangeTab}>
+                <TabPane tab="Hỏi đáp" key="1">
+                    {state.comment !== '' &&
+                        <Table className="table-striped-rows" columns={columns} dataSource={state.comment} />
+                    }
+                </TabPane>
+                <TabPane tab="Chi tiết hỏi đáp" disabled key="2">
+                    {(comment.status === 'success' && subcomments.status === 'success') && 
+                    <div className='tab-panels'>
+                        {/* Show comment */}
+                        <ul>
+                            {/* Main comment */}
+                            <li>
+                                <Row className="comment">
+                                    <Col xs={4} sm={1} className="avatar-user">
+                                        <Row style={{height: '100%', flexDirection: 'column'}}>
+                                            <Avatar size={"large"} src={comment.data.anh_dai_dien !== null ? config.API_URL + comment.data.anh_dai_dien : defaultImage} />
+                                        </Row>
+                                    </Col>
+                                    <Col xs={20} sm={8} className="content-user">
+                                        <span className="name-user">{comment.data.ho_ten}</span>
+                                        <div className="content-comment">
+                                            <div dangerouslySetInnerHTML={{ __html: comment.data.noi_dung }}></div><br/>
+                                            {comment.data.anh_dinh_kem !== null && <img src={config.API_URL + comment.data.anh_dinh_kem} alt="ảnh bình luận"/>}
+                                        </div>
+                                    </Col>
+                                </Row>
+                                <ul>
+                                    <Row>
+                                        <Col xs={4} sm={1} ></Col>
+                                        <Col xs={20} sm={8}>
+                                            <Row>
+                                                {/* <li><Button style={{margin: 0, fontSize: '12px'}} type="link" onClick={() => replyComment(comment.data.binh_luan_id)}>Phản hồi</Button></li> */}
+                                                <li><Button style={{margin: 0, fontSize: '12px'}} type="link">{diff(comment.data.ngay_sua)}</Button></li>
                                             </Row>
-                                        </Col>
-                                        <Col xs={20} sm={8} className="content-user">
-                                            <span className="name-user">{comment.data.ho_ten}</span>
-                                            <div className="content-comment">
-                                                <div dangerouslySetInnerHTML={{ __html: comment.data.noi_dung }}></div><br/>
-                                                {comment.data.anh_dinh_kem !== null && <img src={config.API_URL + comment.data.anh_dinh_kem} alt="ảnh bình luận"/>}
-                                            </div>
                                         </Col>
                                     </Row>
-                                    <ul>
-                                        <Row>
-                                            <Col xs={4} sm={1} ></Col>
-                                            <Col xs={20} sm={8}>
-                                                <Row>
-                                                    {/* <li><Button style={{margin: 0, fontSize: '12px'}} type="link" onClick={() => replyComment(comment.data.binh_luan_id)}>Phản hồi</Button></li> */}
-                                                    <li><Button style={{margin: 0, fontSize: '12px'}} type="link">{diff(comment.data.ngay_sua)}</Button></li>
+                                </ul>
+                            </li>
+                            {/* Sub Comment */}
+                            <div id={comment.data.binh_luan_id}>
+
+                                {subcomments.data.map((item, index) => (
+                                    <li className='ml-10' key={index}>
+                                        <Row className="comment">
+                                            <Col xs={4} sm={1} className="avatar-user">
+                                                <Row style={{height: '100%', flexDirection: 'column'}}>
+                                                    <Avatar size={"large"}  src={item.anh_dai_dien !== null ? config.API_URL + item.anh_dai_dien : defaultImage}/>
                                                 </Row>
                                             </Col>
-                                        </Row>
-                                    </ul>
-                                </li>
-                                {/* Sub Comment */}
-                                <div id={comment.data.binh_luan_id}>
-
-                                    {subcomments.data.map((item, index) => (
-                                        <li className='ml-10' key={index}>
-                                            <Row className="comment">
-                                                <Col xs={4} sm={1} className="avatar-user">
-                                                    <Row style={{height: '100%', flexDirection: 'column'}}>
-                                                        <Avatar size={"large"}  src={item.anh_dai_dien !== null ? config.API_URL + item.anh_dai_dien : defaultImage}/>
-                                                    </Row>
-                                                </Col>
-                                                <Col xs={20} sm={8} className="content-user">
-                                                    <span className="name-user">{item.ho_ten}</span>
-                                                    <div className="content-comment">
-                                                        <div dangerouslySetInnerHTML={{ __html: item.noi_dung }}></div><br/>
-                                                        {item.anh_dinh_kem !== null && <img src={config.API_URL + item.anh_dinh_kem} alt="ảnh bình luận"/>}
-                                                    </div>
-                                                </Col>
-                                                {(item.nguoi_tra_loi_id === JSON.parse(localStorage.getItem('userInfo')).nhan_vien_id && item.loai_quyen === 2) && 
-                                                <Col className="ml-3">
-                                                    <Dropdown overlay={
-                                                        <Menu
-                                                            items={[
-                                                                {
-                                                                    label: <Button type="link" onClick={() => editComment(item.binh_luan_phu_id)} size='large' style={{width: '100%'}}>Chỉnh sửa</Button>,
-                                                                    key: '0',
-                                                                },
-                                                                {
-                                                                    label: <Button type="link" size='large' style={{width: '100%'}} onClick={() => deleteSubComment(item.binh_luan_phu_id)}>Xóa</Button>,
-                                                                    key: '1',
-                                                                },
-                                                            ]}
-                                                        />
-                                                    } 
-                                                    trigger={['click']}>
-                                                        <a href="#/" onClick={(e) => e.preventDefault()}>
-                                                            <Space>
-                                                                <DashOutlined />
-                                                            </Space>
-                                                        </a>
-                                                    </Dropdown>
-                                                </Col>
-                                                }
-                                            </Row>
-                                            <ul>
-                                                <Row>
-                                                    <Col xs={4} sm={1} ></Col>
-                                                    <Col xs={20} sm={8}>
-                                                        <Row>
-                                                            <li><Button style={{margin: 0, fontSize: '12px'}} type="link">{diff(item.ngay_sua)}</Button></li>
-                                                        </Row>
-                                                    </Col>
-                                                </Row>
-                                            </ul>
-                                        </li>             
-                                        ))  
-                                    }                                                                 
-                                </div>
-                            </ul>
-                            <br/>
-                            <Row id='review' className='woocommerce-Reviews'>
-                                <Col span={24}>
-                                    <div className='col-inner' id='review_form'>
-                                        <div className='review-form-inner has-border'>
-                                            <div id='response' className='comment-respond'>
-                                                <Form layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={submitComment}>
-                                                    <Form.Item 
-                                                        className="input-col"
-                                                        label="Nhận xét của bạn *"
-                                                        name="nhan_xet"
-                                                        rules={[
+                                            <Col xs={20} sm={8} className="content-user">
+                                                <span className="name-user">{item.ho_ten}</span>
+                                                <div className="content-comment">
+                                                    <div dangerouslySetInnerHTML={{ __html: item.noi_dung }}></div><br/>
+                                                    {item.anh_dinh_kem !== null && <img src={config.API_URL + item.anh_dinh_kem} alt="ảnh bình luận"/>}
+                                                </div>
+                                            </Col>
+                                            {(item.nguoi_tra_loi_id === JSON.parse(localStorage.getItem('userInfo')).nhan_vien_id && item.loai_quyen === 2) && 
+                                            <Col className="ml-3">
+                                                <Dropdown overlay={
+                                                    <Menu
+                                                        items={[
                                                             {
-                                                            required: true,
-                                                            message: 'Nhận xét là trường bắt buộc.',
+                                                                label: <Button type="link" onClick={() => editComment(item.binh_luan_phu_id)} size='large' style={{width: '100%'}}>Chỉnh sửa</Button>,
+                                                                key: '0',
+                                                            },
+                                                            {
+                                                                label: <Button type="link" size='large' style={{width: '100%'}} onClick={() => deleteSubComment(item.binh_luan_phu_id)}>Xóa</Button>,
+                                                                key: '1',
                                                             },
                                                         ]}
-                                                        >
-                                                            <TextEditorWidget2
-                                                                placeholder="Bình luận bài giảng"
-                                                                showToolbar={true}
-                                                                isMinHeight200={true}
-                                                                isSimple={false}
-                                                            />
-                                                    </Form.Item>
+                                                    />
+                                                } 
+                                                trigger={['click']}>
+                                                    <a href="#/" onClick={(e) => e.preventDefault()}>
+                                                        <Space>
+                                                            <DashOutlined />
+                                                        </Space>
+                                                    </a>
+                                                </Dropdown>
+                                            </Col>
+                                            }
+                                        </Row>
+                                        <ul>
+                                            <Row>
+                                                <Col xs={4} sm={1} ></Col>
+                                                <Col xs={20} sm={8}>
+                                                    <Row>
+                                                        <li><Button style={{margin: 0, fontSize: '12px'}} type="link">{diff(item.ngay_sua)}</Button></li>
+                                                    </Row>
+                                                </Col>
+                                            </Row>
+                                        </ul>
+                                    </li>             
+                                    ))  
+                                }                                                                 
+                            </div>
+                        </ul>
+                        <br/>
+                        <Row id='review' className='woocommerce-Reviews'>
+                            <Col span={24}>
+                                <div className='col-inner' id='review_form'>
+                                    <div className='review-form-inner has-border'>
+                                        <div id='response' className='comment-respond'>
+                                            <Form layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={submitComment}>
+                                                <Form.Item 
+                                                    className="input-col"
+                                                    label="Nhận xét của bạn *"
+                                                    name="nhan_xet"
+                                                    rules={[
+                                                        {
+                                                        required: true,
+                                                        message: 'Nhận xét là trường bắt buộc.',
+                                                        },
+                                                    ]}
+                                                    >
+                                                        <TextEditorWidget2
+                                                            placeholder="Bình luận bài giảng"
+                                                            showToolbar={true}
+                                                            isMinHeight200={true}
+                                                            isSimple={false}
+                                                        />
+                                                </Form.Item>
 
-                                                    <Form.Item className="input-col" label="Hình ảnh" name="hinh_anh" rules={[]}>
-                                                        <Dragger {...propsImage} maxCount={1}
-                                                            listType="picture"
-                                                            className="upload-list-inline"
-                                                        >
-                                                            <p className="ant-upload-drag-icon"><UploadOutlined /></p>
-                                                            <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
-                                                        </Dragger>
-                                                    </Form.Item>
-                                                    <Form.Item className="button-col" htmlType="submit">
-                                                        {state.isEdit === false ?
-                                                            <Button type="primary" htmlType="submit">BÌNH LUẬN</Button>
-                                                            :
-                                                            <Space>
-                                                                <Button type="primary"htmlType="submit" size='large'>GỬI ĐI</Button>  
-                                                                <Button type="primary" danger onClick={() => cancelEdit()} size='large'>HỦY</Button>  
-                                                            </Space>
-                                                        }
-                                                    </Form.Item>
-                                                </Form>
-                                            </div>
+                                                <Form.Item className="input-col" label="Hình ảnh" name="hinh_anh" rules={[]}>
+                                                    <Dragger {...propsImage} maxCount={1}
+                                                        listType="picture"
+                                                        className="upload-list-inline"
+                                                    >
+                                                        <p className="ant-upload-drag-icon"><UploadOutlined /></p>
+                                                        <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
+                                                    </Dragger>
+                                                </Form.Item>
+                                                <Form.Item className="button-col" htmlType="submit">
+                                                    {state.isEdit === false ?
+                                                        <Button type="primary" htmlType="submit">BÌNH LUẬN</Button>
+                                                        :
+                                                        <Space>
+                                                            <Button type="primary"htmlType="submit" size='large'>GỬI ĐI</Button>  
+                                                            <Button type="primary" danger onClick={() => cancelEdit()} size='large'>HỦY</Button>  
+                                                        </Space>
+                                                    }
+                                                </Form.Item>
+                                            </Form>
                                         </div>
                                     </div>
-                                </Col>
-                            </Row>
-                        </div>
-                        }
-                    </TabPane>
-                </Tabs>
+                                </div>
+                            </Col>
+                        </Row>
+                    </div>
+                    }
+                </TabPane>
+            </Tabs>
 
-                <Modal visible={isModalVisible}  mask={true} centered={true} className="cra-exam-modal" wrapClassName="cra-exam-modal-container"                                   
-                    onOk={handleOk} 
-                    onCancel={handleCancel}
-                    maskStyle={{ background: 'rgba(0, 0, 0, 0.8)' }}
-                    maskClosable={false}
-                    footer={null}>
-                    {renderModalForward()}
-                </Modal>
-            </div>
-        </>
+            <Modal visible={isModalVisible}  mask={true} centered={true} className="cra-exam-modal" wrapClassName="cra-exam-modal-container"                                   
+                onOk={handleOk} 
+                onCancel={handleCancel}
+                maskStyle={{ background: 'rgba(0, 0, 0, 0.8)' }}
+                maskClosable={false}
+                footer={null}>
+                {renderModalForward()}
+            </Modal>
+        </div>
     )
 };
 

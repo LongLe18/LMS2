@@ -240,95 +240,93 @@ const DocumentPage = (props) => {
     };
 
     return (
-        <>
-            <div className='content'>
-                <Row className="app-main">
-                    <Col xl={24} className="body-content">
-                        <Row>
-                            <Col xl={24} sm={24} xs={24}>
-                                <AppFilter
-                                    title="Danh sách tài liệu"
-                                    isShowCourse={false}
-                                    isShowModule={false}
-                                    isShowThematic={false}
-                                    isShowStatus={true}
-                                    isShowSearchBox={true}
-                                    isShowDatePicker={false}
-                                    isRangeDatePicker={false}
-                                    courses={data.data}
-                                    onFilterChange={(field, value) => onFilterChange(field, value)}
-                                />
-                            </Col>
-                        </Row>
-                    </Col>
-                </Row>
-                {data.length > 0 && 
-                    <Table className="table-striped-rows" columns={columns} dataSource={data} />
-                }
-                <Row>
-                    <Col xl={24} sm={24} xs={24} className="cate-form-block">
-                        {loadingDocument && <LoadingCustom/>}   
-                        {(state.isEdit && document.status === 'success' && document) 
-                            ? 
-                            <h5>Sửa thông tin tài liệu</h5> 
-                            : 
-                            <h5>Thêm mới tài liệu</h5>
-                        }  
-                        <Form layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={createDocument}>
-                            <Form.Item
-                                className="input-col"
-                                label="Tên tài liệu"
-                                name="ten_tai_lieu"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Tên tài liệu là trường bắt buộc.',
-                                    },
-                                ]}
-                                >
-                                    <Input placeholder=""/>
-                            </Form.Item>
-                            <Form.Item
-                                className="input-col"
-                                label="Mô tả"
-                                name="mo_ta"
-                                rules={[]}
-                                >
-                                    <TextArea placeholder=""/>
-                            </Form.Item>
-                            <Form.Item className="input-col" label="Trạng thái" name="trang_thai" rules={[]} initialValue={true}>
-                                {renderStatus()}
-                            </Form.Item>
-                            <Form.Item className="input-col" label="Hình đại diện" name="anh_dai_dien" rules={[]}>
-                              <Dragger {...propsImage} maxCount={1}
-                                  listType="picture"
-                                  className="upload-list-inline"
-                              >
-                                  <p className="ant-upload-drag-icon">
-                                  <UploadOutlined />
-                                  </p>
-                                  <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
-                              </Dragger>
-                            </Form.Item>
+        <div className='content'>
+            <Row className="app-main">
+                <Col xl={24} className="body-content">
+                    <Row>
+                        <Col xl={24} sm={24} xs={24}>
+                            <AppFilter
+                                title="Danh sách tài liệu"
+                                isShowCourse={false}
+                                isShowModule={false}
+                                isShowThematic={false}
+                                isShowStatus={true}
+                                isShowSearchBox={true}
+                                isShowDatePicker={false}
+                                isRangeDatePicker={false}
+                                courses={data.data}
+                                onFilterChange={(field, value) => onFilterChange(field, value)}
+                            />
+                        </Col>
+                    </Row>
+                </Col>
+            </Row>
+            {data.length > 0 && 
+                <Table className="table-striped-rows" columns={columns} dataSource={data} />
+            }
+            <Row>
+                <Col xl={24} sm={24} xs={24} className="cate-form-block">
+                    {loadingDocument && <LoadingCustom/>}   
+                    {(state.isEdit && document.status === 'success' && document) 
+                        ? 
+                        <h5>Sửa thông tin tài liệu</h5> 
+                        : 
+                        <h5>Thêm mới tài liệu</h5>
+                    }  
+                    <Form layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={createDocument}>
+                        <Form.Item
+                            className="input-col"
+                            label="Tên tài liệu"
+                            name="ten_tai_lieu"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Tên tài liệu là trường bắt buộc.',
+                                },
+                            ]}
+                            >
+                                <Input placeholder="Nhập tên tài liệu"/>
+                        </Form.Item>
+                        <Form.Item
+                            className="input-col"
+                            label="Mô tả"
+                            name="mo_ta"
+                            rules={[]}
+                            >
+                                <TextArea placeholder="Nhập mô tả"/>
+                        </Form.Item>
+                        <Form.Item className="input-col" label="Trạng thái" name="trang_thai" rules={[]} initialValue={true}>
+                            {renderStatus()}
+                        </Form.Item>
+                        <Form.Item className="input-col" label="Hình đại diện" name="anh_dai_dien" rules={[]}>
+                            <Dragger {...propsImage} maxCount={1}
+                                listType="picture"
+                                className="upload-list-inline"
+                            >
+                                <p className="ant-upload-drag-icon">
+                                <UploadOutlined />
+                                </p>
+                                <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
+                            </Dragger>
+                        </Form.Item>
 
-                            <br/>
-                            <Form.Item className="button-col">
-                                <Space>
-                                    <Button shape="round" type="primary" htmlType="submit" >
-                                    {(state.isEdit && document.status === 'success' && document) ? 'Cập nhật' : 'Thêm mới'}   
-                                    </Button>
-                                    {(state.isEdit && document.status === 'success' && document) 
-                                    ?  <Button shape="round" type="danger" onClick={() => cancelEdit()} > 
-                                        Hủy bỏ
-                                    </Button>
-                                    : ''}    
-                                </Space>    
-                            </Form.Item>
-                        </Form>
-                    </Col>
-                </Row>
-            </div>
-        </>
+                        <br/>
+                        <Form.Item className="button-col">
+                            <Space>
+                                <Button shape="round" type="primary" htmlType="submit" >
+                                {(state.isEdit && document.status === 'success' && document) ? 'Cập nhật' : 'Thêm mới'}   
+                                </Button>
+                                {(state.isEdit && document.status === 'success' && document) 
+                                ?  <Button shape="round" type="danger" onClick={() => cancelEdit()} > 
+                                    Hủy bỏ
+                                </Button>
+                                : ''}    
+                            </Space>    
+                        </Form.Item>
+                    </Form>
+                </Col>
+            </Row>
+        </div>
     )
 }
 
