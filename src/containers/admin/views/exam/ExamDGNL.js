@@ -30,7 +30,7 @@ const { TabPane } = Tabs;
 const { Dragger } = Upload;
 const { Option } = Select;
 
-const ExamAdminPage = () => {
+const ExamDGNLAdminPage = () => {
     const data = [];
     const hashids = new Hashids();
 
@@ -39,7 +39,7 @@ const ExamAdminPage = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isModalFastVisible, setIsModalFastVisible] = useState(false);
     const [spinning, setSpinning] = useState(false);
-    const [pageIndex, setPageIndex] = useState(0);
+    const [pageIndex, setPageIndex] = useState(1);
     const [pageSize, setPageSize] = useState(10);
 
     const dispatch = useDispatch();
@@ -55,23 +55,14 @@ const ExamAdminPage = () => {
 
     const [filter, setFilter] = useState({
         khoa_hoc_id: '',
-        mo_dun_id: '',
-        chuyen_de_id: '',
+        kct_id: '',
         trang_thai: '',
-        search: '',
-        start: '',
-        end: '',
-        typeId: '',
         publish: '',
     });
     const searchValue = useDebounce(filter.search, 250);
+    const [tabs, setTabs] = useState(1);
 
     useEffect(() => {
-      dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, 
-        idThematic: filter.chuyen_de_id, status: '', search: filter.search, 
-        start: filter.start, end: filter.end, idType: filter.typeId, publish: 1, 
-        offset: pageIndex, limit: pageSize 
-      }));
       dispatch(typeExamActions.getTypes());
       dispatch(courseActions.getCourses({ idkct: '', status: 1, search: '' })); // lấy khoá học đang hoạt động
       dispatch(programmeActions.getProgrammes({ status: 1 })); // lấy khung chương trình đang hoạt động
@@ -84,7 +75,6 @@ const ExamAdminPage = () => {
         showThematic: false,
         onlineExam: false,
     });
-    const [tabs, setTabs] = useState(1);
 
     if (exams.status === 'success') {
         exams.data.map((exam, index) => {
@@ -101,18 +91,18 @@ const ExamAdminPage = () => {
       setIsModalVisible(false);
       dispatch(courseActions.getCourses({ idkct: '', status: 1, search: '' }));
       // Gọi lại API lấy ds đề thi theo filter khoá học
-      dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, 
-        idThematic: filter.chuyen_de_id, status: filter.trang_thai, search: filter.search, 
-        start: filter.start, end: filter.end, idType: filter.typeId, publish: tabs, offset: pageIndex, limit: pageSize}));
+      dispatch(examActions.filterExamDGNL({ idCourse: filter.khoa_hoc_id, kct_id: filter.kct_id, 
+        status: filter.trang_thai, publish: tabs, pageIndex: pageIndex, pageSize: pageSize 
+      }));
     };
 
     const handleFastOk = () => {
       if (!spinning) {
         dispatch(courseActions.getCourses({ idkct: '', status: 1, search: '' }));
         // Gọi lại API lấy ds đề thi theo filter khoá học
-        dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, 
-          idThematic: filter.chuyen_de_id, status: filter.trang_thai, search: filter.search, 
-          start: filter.start, end: filter.end, idType: filter.typeId, publish: tabs, offset: pageIndex, limit: pageSize}));
+        dispatch(examActions.filterExamDGNL({ idCourse: filter.khoa_hoc_id, kct_id: filter.kct_id, 
+          status: filter.trang_thai, publish: tabs, pageIndex: pageIndex, pageSize: pageSize 
+        }));
         setIsModalFastVisible(false);
       }
     };
@@ -342,9 +332,9 @@ const ExamAdminPage = () => {
           onChange={(khoa_hoc_id) => {
               dispatch(moduleActions.getModulesByIdCourse({ idCourse: khoa_hoc_id }));
               // lấy danh sách đề thi 'chưa xuất bản'
-              dispatch(examActions.filterExam({ idCourse: khoa_hoc_id, idModule: filter.mo_dun_id, 
-                idThematic: filter.chuyen_de_id, status: filter.trang_thai, search: filter.search, 
-                start: filter.start, end: filter.end, idType: filter.typeId, publish: 0, offset: '', limit: ''}));
+                dispatch(examActions.filterExamDGNL({ idCourse: khoa_hoc_id, kct_id: filter.kct_id, 
+                  status: filter.trang_thai, publish: 0, pageIndex: '', pageSize: '' 
+                }));
           }}
         >
           {options}
@@ -514,13 +504,10 @@ const ExamAdminPage = () => {
         headers: {Authorization: `Bearer ${localStorage.getItem('userToken')}`},
     }).then(
       res => {
-        console.log(res)
         if (res.statusText === 'OK' && res.status === 200) {
           formFastExam.resetFields();
-          dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, 
-              idThematic: filter.chuyen_de_id, status: filter.trang_thai, search: filter.search, 
-              start: filter.start, end: filter.end, idType: filter.typeId, publish: tabs, 
-              offset: pageIndex, limit: pageSize
+          dispatch(examActions.filterExamDGNL({ idCourse: filter.khoa_hoc_id, kct_id: filter.kct_id, 
+            status: filter.trang_thai, publish: tabs, pageIndex: pageIndex, pageSize: pageSize 
           }));
           notification.success({
               message: 'Thành công',
@@ -553,34 +540,24 @@ const ExamAdminPage = () => {
   };
 
   useEffect(() => {
-    setPageIndex(0); // reset page index
-    dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, 
-      idThematic: filter.chuyen_de_id, status: filter.trang_thai, search: filter.search, 
-      start: filter.start, end: filter.end, idType: filter.typeId, publish: tabs, offset: '', limit: pageSize
+    setPageIndex(1); // reset page index
+    dispatch(examActions.filterExamDGNL({ idCourse: filter.khoa_hoc_id, kct_id: filter.kct_id, 
+      status: filter.trang_thai, publish: tabs, pageIndex: 1, pageSize: pageSize 
     }));
-  }, [filter.khoa_hoc_id, filter.mo_dun_id, filter.chuyen_de_id, filter.trang_thai, filter.start, filter.end, filter.typeId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [filter.khoa_hoc_id, filter.trang_thai, searchValue, tabs]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, 
-      idThematic: filter.chuyen_de_id, status: filter.trang_thai, search: filter.search, 
-      start: filter.start, end: filter.end, idType: filter.typeId, publish: tabs, offset: pageIndex, limit: pageSize}));
+    dispatch(examActions.filterExamDGNL({ idCourse: filter.khoa_hoc_id, kct_id: filter.kct_id, 
+      status: filter.trang_thai, publish: tabs, pageIndex: pageIndex, pageSize: pageSize 
+    }));
 }, [pageIndex, pageSize]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    setPageIndex(0); // reset page index
-    dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, 
-      idThematic: filter.chuyen_de_id, status: filter.trang_thai, search: filter.search, 
-      start: filter.start, end: filter.end, idType: filter.typeId, publish: tabs, offset: '', limit: pageSize
-    }));
-  }, [searchValue]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const createExam = (values) => {
       const callback = (res) => {
           if (res.statusText === 'OK' && res.status === 200) {
               form.resetFields();
-              dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, 
-                  idThematic: filter.chuyen_de_id, status: filter.trang_thai, search: filter.search, 
-                  start: filter.start, end: filter.end, idType: filter.typeId, publish: tabs, offset: pageIndex, limit: pageSize
+              dispatch(examActions.filterExamDGNL({ idCourse: filter.khoa_hoc_id, kct_id: filter.kct_id, 
+                status: filter.trang_thai, publish: tabs, pageIndex: pageIndex, pageSize: pageSize 
               }));
               notification.success({
                   message: 'Thành công',
@@ -598,6 +575,7 @@ const ExamAdminPage = () => {
       formData.append('ten_de_thi', values.ten_de_thi);
       formData.append('mo_ta', values.mo_ta !== undefined ? values.mo_ta : '' );
       formData.append('loai_de_thi_id', values.loai_de_thi_id);
+      formData.append('de_mau', 1); // Tạo đề mẫu cho ĐGNL
       if (values.de_thi_ma !== undefined) {
         formData.append('de_thi_ma', values.de_thi_ma !== undefined ? values.de_thi_ma : '');
       }
@@ -624,13 +602,13 @@ const ExamAdminPage = () => {
       if (result) {
           const callback = (res) => {
               if (res.statusText === 'OK' && res.status === 200) {
-                  dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, 
-                    idThematic: filter.chuyen_de_id, status: filter.trang_thai, search: filter.search, 
-                    start: filter.start, end: filter.end, idType: filter.typeId, publish: tabs, offset: pageIndex, limit: pageSize }));
-                  notification.success({
-                      message: 'Thành công',
-                      description: 'Xóa đề thi thành công',
-                  })
+                dispatch(examActions.filterExamDGNL({ idCourse: filter.khoa_hoc_id, kct_id: filter.kct_id, 
+                  status: filter.trang_thai, publish: tabs, pageIndex: pageIndex, pageSize: pageSize 
+                }));
+                notification.success({
+                    message: 'Thành công',
+                    description: 'Xóa đề thi thành công',
+                })
               } else {
                   notification.error({
                       message: 'Thông báo',
@@ -647,14 +625,13 @@ const ExamAdminPage = () => {
     if (result) {
         const callback = (res) => {
             if (res.status === 'success') {
-                dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, 
-                  idThematic: filter.chuyen_de_id, status: filter.trang_thai, search: filter.search, 
-                  start: filter.start, end: filter.end, idType: filter.typeId, publish: tabs, offset: pageIndex, limit: pageSize
-                }));
-                notification.success({
-                    message: 'Thành công',
-                    description: trang_thai === 1 ? 'Khóa đề thi thành công' : 'Sử dụng đề thi thành công',
-                })
+              dispatch(examActions.filterExamDGNL({ idCourse: filter.khoa_hoc_id, kct_id: filter.kct_id, 
+                status: filter.trang_thai, publish: tabs, pageIndex: pageIndex, pageSize: pageSize 
+              }));
+              notification.success({
+                  message: 'Thành công',
+                  description: trang_thai === 1 ? 'Khóa đề thi thành công' : 'Sử dụng đề thi thành công',
+              })
             } else {
                 notification.error({
                     message: 'Thông báo',
@@ -669,10 +646,8 @@ const ExamAdminPage = () => {
   const reuseExam = (id) => {
     const callback = (res) => {
       if (res.status === 200 && res.statusText === 'OK') {
-        dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, 
-          idThematic: filter.chuyen_de_id, status: filter.trang_thai, search: filter.search, 
-          start: filter.start, end: filter.end, idType: filter.typeId, publish: filter.publish,
-          offset: pageIndex, limit: pageSize
+        dispatch(examActions.filterExamDGNL({ idCourse: filter.khoa_hoc_id, kct_id: filter.kct_id, 
+          status: filter.trang_thai, publish: tabs, pageIndex: pageIndex, pageSize: pageSize 
         }));
         notification.success({
           message: 'Thành công',
@@ -688,13 +663,8 @@ const ExamAdminPage = () => {
   }
 
   const changeTab = (value) => {
-    setPageIndex(0); // reset page index
+    setPageIndex(1); // reset page index
     setTabs(value);
-    dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, 
-      idThematic: filter.chuyen_de_id, status: '', search: filter.search, 
-      start: filter.start, end: filter.end, idType: filter.typeId, publish: value,
-      offset: 0, limit: 10,
-    }));
   }
 
 // event đổi pageSize
@@ -704,7 +674,7 @@ const onShowSizeChange = (current, pageSize) => {
 
 // event đổi pageIndex
 const onChange = page => {
-  setPageIndex(page - 1);
+  setPageIndex(page);
 };
 
   return (
@@ -720,11 +690,8 @@ const onChange = page => {
                           <AppFilter
                             title="Quản lý đề mẫu ĐGNL"
                             isShowCourse={true}
-                            isTypeExam={true}
                             isShowStatus={true}
                             isShowSearchBox={true}
-                            isShowDatePicker={true}
-                            isRangeDatePicker={true}
                             courses={courses.data}
                             onFilterChange={(field, value) => onFilterChange(field, value)}
                           />
@@ -774,7 +741,7 @@ const onChange = page => {
                 onShowSizeChange={onShowSizeChange}
                 pageSize={pageSize}
                 onChange={onChange}
-                defaultCurrent={pageIndex + 1}
+                defaultCurrent={pageIndex}
                 total={exams?.total}
               />
             </TabPane>
@@ -785,7 +752,7 @@ const onChange = page => {
                 pageSize={pageSize}
                 onShowSizeChange={onShowSizeChange}
                 onChange={onChange}
-                defaultCurrent={pageIndex + 1}
+                defaultCurrent={pageIndex}
                 total={exams?.total}
               />
             </TabPane>
@@ -798,4 +765,4 @@ const onChange = page => {
   )
 }
 
-export default ExamAdminPage;
+export default ExamDGNLAdminPage;

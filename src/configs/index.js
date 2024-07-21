@@ -5,7 +5,7 @@ const API_URL_PROD = 'https://hsaplus.edu.vn:3003';
 const DATE_FORMAT = 'HH:mm DD/MM/YYYY';
 const DATE_FORMAT_SHORT = 'DD/MM/YYYY';
 const SHOW_DATE_FORMAT = 'D MMMM YYYY, HH:mm';
-const API_LATEX = 'http://hsaplus.edu.vn:3002'
+const API_LATEX = 'https://hsaplus.edu.vn:3002'
 
 const LANGUAGES = [
   {

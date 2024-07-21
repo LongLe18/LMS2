@@ -10,6 +10,10 @@ export const FILTER_EXAMS = "FILTER_EXAMS"
 export const FILTER_EXAMS_SUCCESS = "FILTER_EXAMS_SUCCESS";
 export const FILTER_EXAMS_FAILED = "FILTER_EXAMS_FAILED";
 
+export const FILTER_EXAMS_DGNL = "FILTER_EXAMS_DGNL"
+export const FILTER_EXAMS_DGNL_SUCCESS = "FILTER_EXAMS_DGNL_SUCCESS";
+export const FILTER_EXAMS_DGNL_FAILED = "FILTER_EXAMS_DGNL_FAILED";
+
 export const DELETE_EXAM = "DELETE_EXAM";
 export const DELETE_EXAM_SUCCESS = "DELETE_EXAM_SUCCESS";
 export const DELETE_EXAM_FAILED = "DELETE_EXAM_FAILED";
@@ -106,6 +110,14 @@ export function getExams(params, callback) {
 export function filterExam(params, callback) {
     return {
         type: FILTER_EXAMS,
+        params,
+        callback,
+    };
+}
+
+export function filterExamDGNL(params, callback) {
+    return {
+        type: FILTER_EXAMS_DGNL,
         params,
         callback,
     };

@@ -64,7 +64,7 @@ function Dashboard() {
       if (exam.xuat_ban === 0) 
           dataDoing.push({...exam, key: index})
       else 
-          dataDone.push({...exam, key: index});            
+          dataDone.push({...exam, key: index});   
       return null
     }) 
   }
@@ -167,7 +167,7 @@ function Dashboard() {
                         </div>
                         <div className="detail">
                           <div className="number">
-                            <span>{dataDoing.length + dataDoing.length}</span>
+                            <span>{dataDone.length + dataDoing.length}</span>
                           </div>
                           <div className="desc">
                             Đề thi <RightOutlined />

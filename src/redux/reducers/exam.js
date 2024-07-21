@@ -141,7 +141,7 @@ export default function examReducer(state = initState, action) {
                 ...state,
                 reuseExam: { ...state.reuseExam, loading: false, error: action.error },
             };
-        /// filter courses
+        /// filter exams
         case examActions.FILTER_EXAMS:
             return {
                 ...state,
@@ -153,6 +153,22 @@ export default function examReducer(state = initState, action) {
                 list: { ...state.list, loading: false, result: action.result },
             };
         case examActions.FILTER_EXAMS_FAILED:
+            return {
+                ...state,
+                list: { ...state.list, loading: false, error: action.error },
+            };
+        // filter exam DGNL
+        case examActions.FILTER_EXAMS_DGNL:
+            return {
+                ...state,
+                list: { ...state.list, loading: true },
+            };
+        case examActions.FILTER_EXAMS_DGNL_SUCCESS:
+            return {
+                ...state,
+                list: { ...state.list, loading: false, result: action.result },
+            };
+        case examActions.FILTER_EXAMS_DGNL_FAILED:
             return {
                 ...state,
                 list: { ...state.list, loading: false, error: action.error },

@@ -495,29 +495,25 @@ const ExamAdminPage = () => {
   }
     
   // Tạo nhanh đề thi
-  const createFastExam = (values) => {
-    const formData = new FormData();
-    if (state.fileImg !== '') formData.append('file', state.fileImg);  
-    else {
+  const createFastExam = async (values) => {
+    if (state.fileImg === '') {
       notification.warning({
         message: 'Thông báo',
         description: 'Bạn chưa upload file',
       })
       return;
     }
+    const formData = new FormData();
+    formData.append('file', state.fileImg); 
     setSpinning(true);
-    axios({
-        method: 'post',
-        url: config.API_LATEX + `/${values.de_thi_id}/uploadfile`,
-        timeout: 1000 * 60 * 5,
-        formData,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('userToken')}`,
-          'Access-Control-Allow-Origin': '*'
-        },
-    }).then(
+    await axios.post(
+      config.API_LATEX + `/${values.de_thi_id}/uploadfile`,
+      formData, 
+      {
+        headers: { "content-type": "multipart/form-data", Authorization: `Bearer ${localStorage.getItem('userToken')}`, },
+      }
+    ).then(
       res => {
-        console.log(res)
         if (res.statusText === 'OK' && res.status === 200) {
           formFastExam.resetFields();
           dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, 
@@ -540,7 +536,6 @@ const ExamAdminPage = () => {
       }
     )
     .catch(error => {
-      console.log(error);
       notification.error({ message: error.message })
     });
   }

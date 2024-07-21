@@ -13,6 +13,7 @@ import TeacherPage from './views/account/Teacher.js';
 import StaffPage from './views/account/Staff.js';
 import ProfilePage from './views/account/profile.js';
 import ExamAdminPage from './views/exam/Exam.js';
+import ExamDGNLAdminPage from './views/exam/ExamDGNL.js';
 import ExamDetailPage from './views/exam/ExamDetail.js';
 import OnlineExamDetailPage from './views/exam/ExamOnline.js';
 import SampleQuestion from './views/exam/sampleQuestion.js';
@@ -70,6 +71,8 @@ import {
   StockOutlined,
   InfoCircleOutlined,
   PhoneOutlined,
+  FileOutlined,
+  FileDoneOutlined,
 } from '@ant-design/icons';
 import StatisticExam from './views/statistic/exam.js';
 import QuestionPage from './views/exam/Question.js';
@@ -201,13 +204,13 @@ const routes = [
       name: "Tiêu chí đề thi",
       icon: <CloudOutlined />,
       render: (props) => <Criteria {...props}/>
-    },{
+    }, {
       parent: "question",
       path: "/admin/question/excerpt",
       name: "Trích đoạn đề thi",
       icon: <FileSearchOutlined />,
       render: (props) => <Exceprt {...props}/>
-    },{
+    }, {
       parent: "question",
       path: "/admin/question/exam",
       name: "Đề mẫu",
@@ -215,9 +218,15 @@ const routes = [
       render: (props) => <ExamAdminPage {...props}/>
     }, {
       parent: "question",
+      path: "/admin/question/examDgnl",
+      name: "Đề mẫu ĐGNL",
+      icon: <FileOutlined />,
+      render: (props) => <ExamDGNLAdminPage {...props}/>
+    }, {
+      parent: "question",
       path: "/admin/question/evaluation",
       name: "Đánh giá",
-      icon: <FileTextOutlined />,
+      icon: <FileDoneOutlined />,
       render: (props) => <EvaluationPage {...props}/>
     }, {
       parent: "question",
