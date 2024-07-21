@@ -730,7 +730,7 @@ const putUpdate = async (req, res) => {
 
 const publish = async (req, res) => {
     const exam = await Exam.findOne({
-        attributes: ['xuat_ban'],
+        attributes: ['xuat_ban', 'de_mau'],
         where: {
             de_thi_id: req.params.id,
         },
@@ -748,6 +748,20 @@ const publish = async (req, res) => {
             }
         );
     } else {
+        if(exam.de_mau){
+            await Exam.update(
+                {
+                    xuat_ban: false,
+                    trang_thai: false,
+                },
+                {
+                    where: {
+                        de_mau: true,
+                    },
+                }
+            );
+        }
+
         let tong_diem = 0;
         let questions = await sequelize.query(
             `
