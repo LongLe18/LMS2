@@ -60,77 +60,72 @@ const MainPageUser = (props) => {
     
     const renderCourses = () => {
         return (
-            <>      
-                <div className="list-course-cate">        
-                    <div className="wraper wraper-list-course-cate-index">
-                        <Row gutter={16} style={{margin: '18px 0'}}>
-                            <Col xl={5} md={4} xs={4} style={{paddingLeft: 0}}>
-                                {(programmeCourses.status === 'success' && items.length > 0) &&
-                                    <Menu style={{borderRadius: 6}}
-                                        mode="vertical"
-                                        theme="light"
-                                        defaultSelectedKeys={['1']}
-                                    >
-                                        <Menu.Item style={{background: '#3da844', marginTop: 0, borderTopRightRadius: 6, borderTopLeftRadius: 6}}>
-                                            <span style={{fontWeight: 600, color: "#fff"}}>Các khóa học</span>
-                                        </Menu.Item>
-                                        {items.map((item, index) => {
-                                            return (
-                                                <Menu.SubMenu title={item.label}>
-                                                    {item.children?.map((child, index) => {
-                                                        return (
-                                                            <Menu.Item key={child.key}>
-                                                                <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${child.key}`}>{child.label}</Link>
-                                                            </Menu.Item>
-                                                        )
-                                                    })}
-                                                </Menu.SubMenu>
-                                            )
-                                        })}
-                                    </Menu>
-                                }
-                            </Col> 
-                            <Col xl={19} md={20} xs={20}>
-                                <CarouselCustom />
-                            </Col>
-                        </Row>
-                        <Statisic />
-                        <img alt="..."  style={{borderRadius: 6}}
-                            className="img-no-padding img-responsive"
-                            src={require("assets/img/lich_khoa_hoc.jpg").default}
-                        />
+            <div className="list-course-cate">        
+                <div className="wraper wraper-list-course-cate-index">
+                    <Row gutter={16} style={{margin: '18px 0'}}>
+                        <Col xl={5} md={4} xs={4} style={{paddingLeft: 0}}>
+                            {(programmeCourses.status === 'success' && items.length > 0) &&
+                                <Menu style={{borderRadius: 6}}
+                                    mode="vertical"
+                                    theme="light"
+                                    defaultSelectedKeys={['1']}
+                                >
+                                    <Menu.Item style={{background: '#3da844', marginTop: 0, borderTopRightRadius: 6, borderTopLeftRadius: 6}}>
+                                        <span style={{fontWeight: 600, color: "#fff"}}>Các khóa học</span>
+                                    </Menu.Item>
+                                    {items.map((item, index) => {
+                                        return (
+                                            <Menu.SubMenu title={item.label} key={index}>
+                                                {item.children?.map((child, index) => {
+                                                    return (
+                                                        <Menu.Item key={child.key}>
+                                                            <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${child.key}`}>{child.label}</Link>
+                                                        </Menu.Item>
+                                                    )
+                                                })}
+                                            </Menu.SubMenu>
+                                        )
+                                    })}
+                                </Menu>
+                            }
+                        </Col> 
+                        <Col xl={19} md={20} xs={20}>
+                            <CarouselCustom />
+                        </Col>
+                    </Row>
+                    <Statisic />
+                    <img alt="..."  style={{borderRadius: 6}}
+                        className="img-no-padding img-responsive"
+                        src={require("assets/img/lich_khoa_hoc.jpg").default}
+                    />
 
-                        <br/>
+                    <br/>
 
-                        <img alt="..."  style={{borderRadius: 6, width: '100%'}}
-                            className="img-no-padding img-responsive"
-                            src={require("assets/img/chuc_nang.png").default}
-                        />
+                    <img alt="..."  style={{borderRadius: 6, width: '100%'}}
+                        className="img-no-padding img-responsive"
+                        src={require("assets/img/chuc_nang.png").default}
+                    />
 
-                        <br/>
+                    <br/>
 
-                        <img alt="..."  style={{borderRadius: 6, width: '100%'}}
-                            className="img-no-padding img-responsive"
-                            src={require("assets/img/trai_nghiem.png").default}
-                        />
-                    </div>
+                    <img alt="..."  style={{borderRadius: 6, width: '100%'}}
+                        className="img-no-padding img-responsive"
+                        src={require("assets/img/trai_nghiem.png").default}
+                    />
                 </div>
-                
-            </>
+            </div>
         )
     };
 
     return (
-        <>
-            <Layout className="main-app">
-                <Helmet>
-                    <title>Trang chủ</title>
-                </Helmet>
-                <Content className="app-content ">
-                    {renderCourses()}
-                </Content>
-            </Layout>
-        </>
+        <Layout className="main-app">
+            <Helmet>
+                <title>Trang chủ</title>
+            </Helmet>
+            <Content className="app-content ">
+                {renderCourses()}
+            </Content>
+        </Layout>
     )
 }
 

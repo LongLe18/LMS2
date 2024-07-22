@@ -25,6 +25,7 @@ import * as moduleActions from '../../../../redux/actions/part';
 import * as thematicActions from '../../../../redux/actions/thematic';
 import * as typeExamActions from '../../../../redux/actions/typeExam';
 import * as programmeActions from '../../../../redux/actions/programme';
+import * as majorActions from '../../../../redux/actions/major';
 
 const { TabPane } = Tabs;
 const { Dragger } = Upload;
@@ -52,6 +53,7 @@ const ExamDGNLAdminPage = () => {
     const courses = useSelector(state => state.course.list.result);
     const modules = useSelector(state => state.part.list.result);
     const thematics = useSelector(state => state.thematic.listbyId.result);
+    const majors = useSelector(state => state.major.list.result);
 
     const [filter, setFilter] = useState({
         khoa_hoc_id: '',
@@ -64,6 +66,7 @@ const ExamDGNLAdminPage = () => {
 
     useEffect(() => {
       dispatch(typeExamActions.getTypes());
+      dispatch(majorActions.getMajors());
       dispatch(courseActions.getCourses({ idkct: '', status: 1, search: '' })); // lấy khoá học đang hoạt động
       dispatch(programmeActions.getProgrammes({ status: 1 })); // lấy khung chương trình đang hoạt động
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -111,109 +114,87 @@ const ExamDGNLAdminPage = () => {
       setIsModalFastVisible(true);
     };
 
-    const column1 = [
-        {
-            title: 'Ảnh đại diện',
-            dataIndex: 'anh_dai_dien',
-            key: 'anh_dai_dien',
-            responsive: ['lg'],
-            render: (src) => (
-              <Avatar src={src !== null ? config.API_URL + src : defaultImage} size={50} shape='circle' />
-            )
-        },
-        {
-          title: 'Tên đề thi',
-          dataIndex: 'ten_de_thi',
-          key: 'ten_de_thi',
-          responsive: ['md'],
-          sorter: (a, b) => a.ten_de_thi.localeCompare(b.ten_de_thi),
-        },
-        {
-            title: 'Loại đề thi',
-            dataIndex: 'mo_ta',
-            key: 'mo_ta',
-            responsive: ['md'],
-        },
-        {
-            title: 'Khóa học',
-            dataIndex: 'ten_khoa_hoc',
-            key: 'ten_khoa_hoc',
-            responsive: ['md'],
-            width: 300,
-        },
-        {
-          title: 'Mô đun',
-          dataIndex: 'ten_mo_dun',
-          key: 'ten_mo_dun',
-          responsive: ['md'],
-        },
-        {
-          title: 'Chuyên đề',
-          dataIndex: 'ten_chuyen_de',
-          key: 'ten_chuyen_de',
-          responsive: ['md'],
-        },
-        {
-          title: 'Thời gian',
-          dataIndex: 'thoi_gian',
-          key: 'thoi_gian',
-          responsive: ['md'],
-          render: (thoi_gian, de_thi) => (
-            <>
-              <span>Thời gian thi: {thoi_gian} phút</span>
-              <br/>
-              <span>Số câu hỏi: {de_thi.so_cau_hoi}</span>
-            </>
-          )
-        },     
-        {
-          title: 'Ngày tạo',
-          dataIndex: 'ngay_tao',
-          key: 'ngay_tao',
-          responsive: ['md'],
-          render: (date) => (
-            moment(date).utc(7).format(config.DATE_FORMAT)
-          ),
-          sorter: (a, b) => moment(a.ngay_tao).unix() - moment(b.ngay_tao).unix()
-        },
-        {
-          title: 'Tùy chọn',
-          key: 'de_thi_id',
-          dataIndex: 'de_thi_id',
-          width: 50,
-          // Redirect view for edit
-          render: (de_thi_id, de_thi) => (
-            <Col>
-              <Link to={ de_thi.loai_de_thi_id === 4 ? `/admin/onlineExam/detail/${de_thi.de_thi_id}`  : `/admin/exam/detail/${de_thi.de_thi_id}` } type="button" className="ant-btn ant-btn-round ant-btn-primary" 
-                style={{display: de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}}
-                >Xem
-              </Link>
-              {de_thi.trang_thai === 0 ?
-                  <Tooltip title={`Mở khóa đề thi`} color="#2db7f5" placement="bottom">
-                      <Button shape="round" type="primary" 
-                      onClick={() => changeStatus(de_thi_id, de_thi.trang_thai)} style={{display: !de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}} icon={<UnlockOutlined />}>
-                    </Button> 
-                  </Tooltip> 
-              : 
-                <Tooltip title={`Khóa đề thi`} color="#2db7f5" placement="bottom">
-                  <Button shape="round" type="danger" 
-                    onClick={() => changeStatus(de_thi_id, de_thi.trang_thai)} style={{display: !de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}} icon={<LockOutlined />}>
-                  </Button> 
-                </Tooltip> 
-              }
-              <Tooltip title={`Xem lại đề`} color="#2db7f5" placement="bottom">
-                <Button shape="round" type="primary" 
-                  onClick={() => window.open(`/luyen-tap/xem-lai/${hashids.encode(de_thi_id)}`, "_blank")} style={{display: !de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}} icon={<EyeOutlined />}>
+  const column1 = [
+    {
+        title: 'Ảnh đại diện',
+        dataIndex: 'anh_dai_dien',
+        key: 'anh_dai_dien',
+        responsive: ['lg'],
+        render: (src) => (
+          <Avatar src={src !== null ? config.API_URL + src : defaultImage} size={50} shape='circle' />
+        )
+    },
+    {
+      title: 'Mã đề thi',
+      dataIndex: 'de_thi_ma',
+      key: 'de_thi_ma',
+      responsive: ['md'],
+      sorter: (a, b) => a.de_thi_ma.localeCompare(b.de_thi_ma),
+    },
+    {
+      title: 'Tên đề thi',
+      dataIndex: 'ten_de_thi',
+      key: 'ten_de_thi',
+      responsive: ['md'],
+      sorter: (a, b) => a.ten_de_thi.localeCompare(b.ten_de_thi),
+    },
+    {
+      title: 'Loại đề thi',
+      dataIndex: 'loai_de_thi_id',
+      key: 'loai_de_thi_id',
+      responsive: ['md'],
+      render: (loai_de_thi_id) => (
+        <span>{loai_de_thi_id === 1 ? 'Đề thi chuyên đề' : loai_de_thi_id === 2 ? 'Đề thi mô-đun' : loai_de_thi_id === 3 ? 'Đề thi tổng hợp' : 'Đề thi theo phần'}</span>
+      )
+    },
+    {
+      title: 'Ngày tạo',
+      dataIndex: 'ngay_tao',
+      key: 'ngay_tao',
+      responsive: ['md'],
+      render: (date) => (
+        moment(date).utc(7).format(config.DATE_FORMAT)
+      ),
+      sorter: (a, b) => moment(a.ngay_tao).unix() - moment(b.ngay_tao).unix()
+    },
+    {
+      title: 'Tùy chọn',
+      key: 'de_thi_id',
+      dataIndex: 'de_thi_id',
+      width: 50,
+      // Redirect view for edit
+      render: (de_thi_id, de_thi) => (
+        <Col>
+          <Link to={ de_thi.loai_de_thi_id === 4 ? `/admin/onlineExam/detail/${de_thi.de_thi_id}`  : `/admin/exam/detail/${de_thi.de_thi_id}` } type="button" className="ant-btn ant-btn-round ant-btn-primary" 
+            style={{display: de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}}
+            >Xem
+          </Link>
+          {de_thi.trang_thai === 0 ?
+              <Tooltip title={`Mở khóa đề thi`} color="#2db7f5" placement="bottom">
+                  <Button shape="round" type="primary" 
+                  onClick={() => changeStatus(de_thi_id, de_thi.trang_thai)} style={{display: !de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}} icon={<UnlockOutlined />}>
                 </Button> 
-              </Tooltip>
-              <Tooltip title={`Sử dụng lại đề`} color="#2db7f5" placement="bottom">
-                <Button shape='round' type='primary' onClick={() => reuseExam(de_thi_id)} style={{backgroundColor: 'green', borderColor: 'green', display: !de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}} icon={<RedoOutlined />}></Button>
-              </Tooltip>
-              <Button shape="round" type="danger" onClick={() => deleteExam(de_thi_id)} style={{marginBottom: '5px'}}>Xóa</Button> 
-            </Col>
-          ),
-        },
-    ];
+              </Tooltip> 
+          : 
+            <Tooltip title={`Khóa đề thi`} color="#2db7f5" placement="bottom">
+              <Button shape="round" type="danger" 
+                onClick={() => changeStatus(de_thi_id, de_thi.trang_thai)} style={{display: !de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}} icon={<LockOutlined />}>
+              </Button> 
+            </Tooltip> 
+          }
+          <Tooltip title={`Xem lại đề`} color="#2db7f5" placement="bottom">
+            <Button shape="round" type="primary" 
+              onClick={() => window.open(`/luyen-tap/xem-lai/${hashids.encode(de_thi_id)}`, "_blank")} style={{display: !de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}} icon={<EyeOutlined />}>
+            </Button> 
+          </Tooltip>
+          <Tooltip title={`Sử dụng lại đề`} color="#2db7f5" placement="bottom">
+            <Button shape='round' type='primary' onClick={() => reuseExam(de_thi_id)} style={{backgroundColor: 'green', borderColor: 'green', display: !de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}} icon={<RedoOutlined />}></Button>
+          </Tooltip>
+          <Button shape="round" type="danger" onClick={() => deleteExam(de_thi_id)} style={{marginBottom: '5px'}}>Xóa</Button> 
+        </Col>
+      ),
+    },
+  ];
 
     // props for upload image
   const propsImage = {
@@ -280,9 +261,14 @@ const ExamDGNLAdminPage = () => {
   const renderProgramme = () => {
       let options = [];
       if (programmes.status === 'success') {
-        options = programmes.data.map((programme) => (
-            <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
-          ))
+        options = programmes.data.map((programme) => {
+          if (programme.loai_kct === 0) { // lấy ra khung chương trình đgnl
+            return (
+              <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
+            )
+          }
+          return null;
+        })
       }
       return (
         <Select
@@ -298,9 +284,14 @@ const ExamDGNLAdminPage = () => {
   const renderTypeExams = () => {
       let options = [];
       if (typeExams.status === 'success') {
-        options = typeExams.data.map((type) => (
-          <Option key={type.loai_de_thi_id} value={type.loai_de_thi_id} >{type.mo_ta}</Option>
-        ))
+        options = typeExams.data.map((type) => {
+          if (type.loai_de_thi_id === 3 || type.loai_de_thi_id === 4) {
+            return (
+              <Option key={type.loai_de_thi_id} value={type.loai_de_thi_id} >{type.mo_ta}</Option>
+            )
+          }
+          return null;
+        })
       }
       return (
         <Select
@@ -413,7 +404,7 @@ const ExamDGNLAdminPage = () => {
                   <Form.Item label="Loại đề thi" name="loai_de_thi_id" rules={[{ required: true, message: 'Loại đề thi là bắt buộc'}]}>
                       {renderTypeExams()}
                   </Form.Item>
-                  <Form.Item label="Khung" name="khung_ct" rules={[{ required: state.showCourse, message: 'Loại đề thi là bắt buộc'}]}
+                  <Form.Item label="Khung" name="kct_id" rules={[{ required: state.showCourse, message: 'Khung chương trình là bắt buộc'}]}
                   style={{display: state.showCourse ? '' : 'none'}}>
                       {renderProgramme()}
                   </Form.Item>
@@ -448,6 +439,24 @@ const ExamDGNLAdminPage = () => {
       )
   };
 
+  // render UI chuyên ngành
+  const renderMajor = () => {
+    let options = [];
+    if (majors.status === 'success') {
+      options = majors.data.map((major) => (
+        <Option key={major.chuyen_nganh_id} value={major.chuyen_nganh_id} >{major.ten_chuyen_nganh}</Option>
+      ))
+    }
+    return (
+      <Select
+        showSearch={false}
+        placeholder="Chọn Chuyên ngành"
+      >
+        {options}
+      </Select>
+    );
+  };
+
   // Modal tạo nhanh đề thi 
   const renderFastAddModal = () => {
     return (
@@ -456,14 +465,17 @@ const ExamDGNLAdminPage = () => {
           <Form form={formFastExam} className="login-form app-form" name="login-form" onFinish={createFastExam}
             labelCol={{span: 6,}} 
           >
-            <Form.Item label="Khung" name="khung_ct" rules={[{ required: true, message: 'Loại đề thi là bắt buộc'}]}>
+            <Form.Item label="Khung" name="khung_ct" rules={[{ required: true, message: 'Khung chương trình là bắt buộc'}]}>
               {renderProgramme()}
             </Form.Item>
             <Form.Item label="Khóa học" name="khoa_hoc_id" rules={[{ required: true, message: 'Khóa học là bắt buộc' }]}>
               {renderCourse()}
             </Form.Item>
-            <Form.Item label="Đề thi" name="de_thi_id" rules={[{ required: true, message: 'Khóa học là bắt buộc' }]}>
+            <Form.Item label="Đề thi" name="de_thi_id" rules={[{ required: true, message: 'Đề thi là bắt buộc' }]}>
               {renderExam()}
+            </Form.Item>
+            <Form.Item label="Chuyên ngành" name="chuyen_nganh_id" rules={[{ required: true, message: 'Chuyên ngành là bắt buộc' }]}>
+              {renderMajor()}
             </Form.Item>
             <Form.Item className="input-col" label="file đề thi" name="anh_dai_dien" rules={[]}>
                 <Dragger {...propsFile} maxCount={1}
@@ -485,24 +497,25 @@ const ExamDGNLAdminPage = () => {
   }
     
   // Tạo nhanh đề thi
-  const createFastExam = (values) => {
-    const formData = new FormData();
-    if (state.fileImg !== '') formData.append('file', state.fileImg);  
-    else {
+  const createFastExam = async (values) => {
+    if (state.fileImg === '') {
       notification.warning({
         message: 'Thông báo',
         description: 'Bạn chưa upload file',
       })
       return;
     }
+    const formData = new FormData();
+    formData.append('file', state.fileImg); 
+    formData.append('chuyen_nganh_id', values.chuyen_nganh_id);
     setSpinning(true);
-    axios({
-        method: 'post',
-        url: config.API_LATEX + `/${values.de_thi_id}/uploadfile`,
-        timeout: 1000 * 60 * 5,
-        formData,
-        headers: {Authorization: `Bearer ${localStorage.getItem('userToken')}`},
-    }).then(
+    await axios.post(
+      config.API_LATEX + `/${values.de_thi_id}/uploadfile`,
+      formData, 
+      {
+        headers: { "content-type": "multipart/form-data", Authorization: `Bearer ${localStorage.getItem('userToken')}`, },
+      }
+    ).then(
       res => {
         if (res.statusText === 'OK' && res.status === 200) {
           formFastExam.resetFields();
@@ -524,7 +537,6 @@ const ExamDGNLAdminPage = () => {
       }
     )
     .catch(error => {
-      console.log(error);
       notification.error({ message: error.message })
     });
   }
@@ -575,6 +587,7 @@ const ExamDGNLAdminPage = () => {
       formData.append('ten_de_thi', values.ten_de_thi);
       formData.append('mo_ta', values.mo_ta !== undefined ? values.mo_ta : '' );
       formData.append('loai_de_thi_id', values.loai_de_thi_id);
+      formData.append('kct_id', values.kct_id);
       formData.append('de_mau', 1); // Tạo đề mẫu cho ĐGNL
       if (values.de_thi_ma !== undefined) {
         formData.append('de_thi_ma', values.de_thi_ma !== undefined ? values.de_thi_ma : '');
@@ -722,6 +735,7 @@ const onChange = page => {
                       {/* Modal tạo nhanh đề thi */}
                       <Modal visible={isModalFastVisible}  mask={true} centered={true} className="cra-exam-modal" wrapClassName="cra-exam-modal-container"                                   
                           onOk={handleFastOk} 
+                          width={700}
                           onCancel={handleFastOk}
                           maskStyle={{ background: 'rgba(0, 0, 0, 0.8)' }}
                           maskClosable={false}

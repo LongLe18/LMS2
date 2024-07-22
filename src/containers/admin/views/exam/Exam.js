@@ -88,7 +88,9 @@ const ExamAdminPage = () => {
 
     if (exams.status === 'success') {
         exams.data.map((exam, index) => {
-          data.push({...exam, key: index})
+          if (exam.de_mau === null || exam.de_mau === '' || exam.de_mau === undefined) {
+            data.push({...exam, key: index})
+          }
           return null
         }) 
     };
