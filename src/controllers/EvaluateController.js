@@ -7,7 +7,7 @@ const {
     Question,
     Answer,
 } = require('../models');
-const { Op } = require('sequelize')
+const { Op } = require('sequelize');
 const sequelize = require('../utils/db');
 const fs = require('fs');
 const e = require('cors');
@@ -15,6 +15,8 @@ const security = require('../utils/security');
 const path = require('path');
 const Docxtemplater = require('docxtemplater');
 const PizZip = require('pizzip');
+const libre = require('libreoffice-convert');
+libre.convertAsync = require('util').promisify(libre.convert);
 
 const getAll = async (req, res) => {
     let de_thi_id = 1;
@@ -299,7 +301,9 @@ const download = async (req, res) => {
                     selectedAnswer.noi_dung_tra_loi &&
                     selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an &&
                     selectedAnswer.noi_dung_tra_loi.trim().toLowerCase() ==
-                        selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an.trim().toLowerCase()
+                        selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an
+                            .trim()
+                            .toLowerCase()
                 )
                     result = true;
             }
@@ -369,7 +373,7 @@ const download = async (req, res) => {
                       )
                 : 0;
         const diem_tong_hop = phan_1 + phan_2 + phan_3 + phan_4;
-                      console.log(phan_1)
+        console.log(phan_1);
         let evaluate_1 = await Evaluate.findOne({
             where: {
                 de_thi_id: studentExam.de_thi_id,
@@ -461,15 +465,16 @@ const download = async (req, res) => {
             compression: 'DEFLATE',
         });
 
+        const reportPdf = await libre.convertAsync(buf, '.pdf', undefined);
+
         res.set({
-            'Content-Type':
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            'Content-Disposition': 'attachment; filename="report.docx"', // Replace 'example.doc' with your desired file name
-            'Content-Length': buf.length,
+            'Content-Type': 'application/pdf',
+            'Content-Disposition': 'attachment; filename="report.pdf"', // Replace 'example.doc' with your desired file name
+            'Content-Length': reportPdf.length,
         });
 
         // Send the buffer as response
-        res.send(buf);
+        res.send(reportPdf);
     } catch (err) {
         console.log(err);
         res.status(500).send({
