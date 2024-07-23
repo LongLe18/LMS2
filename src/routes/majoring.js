@@ -9,6 +9,6 @@ router.get('/:id/edit', authToken, authRole([1, 2]), tryCatch(majoringController
 router.put('/:id', authToken, authRole([1, 2]), tryCatch(majoringController.putUpdate));
 router.delete('/:id/force', authToken, authRole([1, 2]), tryCatch(majoringController.forceDelete));
 router.get('/:id', authToken, authRole([1, 2]), tryCatch(majoringController.getById));
-router.get('/', authToken, authRole([1, 2]), tryCatch(majoringController.getAll));
+router.get('/', authToken, tryCatch(majoringController.getAll));
 
 module.exports = router;
