@@ -13,6 +13,7 @@ const {
     ModunCriteria,
     SyntheticCriteria,
     OnlineCriteria,
+    ExamQuestion,
 } = require('../models');
 const sequelize = require('../utils/db');
 
@@ -129,7 +130,8 @@ const postCreate = async (req, res) => {
 
 // Dùng cho thi đánh giá năng lực mới
 const postCreatev2 = async (req, res) => {
-    const { khoa_hoc_id, ...rest } = req.body
+    const { khoa_hoc_id, chuyen_nganh_ids, ...rest } = req.body;
+
     const exam = await Exam.create({
         ten_de_thi: 'THI ĐÁNH GIÁ NĂNG LỰC',
         tong_diem: 150,
@@ -138,13 +140,104 @@ const postCreatev2 = async (req, res) => {
         de_tu_sinh: 1,
         kct_id: 1,
         khoa_hoc_id,
-        loai_de_thi_id: 3
-    })
+        loai_de_thi_id: 3,
+    });
+
+    let criteria = await SyntheticCriteria.findOne({
+        where: {
+            khoa_hoc_id: khoa_hoc_id,
+        },
+    });
+    if (!criteria) {
+        res.status(404).send({
+            status: 'error',
+            data: null,
+            message: 'no criteria',
+        });
+        return;
+    }
+
+    // phần 1
+    await sequelize.query(
+        `
+        INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
+            SELECT cau_hoi_id, ${exam.de_thi_id}, 1 FROM cau_hoi
+            WHERE chuyen_nganh_id = 1 AND kct_id = 1
+            ORDER BY RAND() LIMIT ${criteria.so_cau_hoi_phan_1}
+    `,
+        {
+            type: sequelize.QueryTypes.INSERT,
+        }
+    );
+
+    // phần 2
+    await sequelize.query(
+        `
+            INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
+                SELECT cau_hoi_id, ${exam.de_thi_id}, 2 FROM cau_hoi
+                WHERE chuyen_nganh_id = 7 AND kct_id = 1
+                ORDER BY trich_doan_id DESC, RAND()
+                LIMIT ${criteria.so_cau_hoi_phan_2}
+        `,
+        {
+            type: sequelize.QueryTypes.INSERT,
+        }
+    );    
+
+    // phần 3
+    let so_cau_hoi_phan_3 = 0;
+        for (const chuyen_nganh_id of chuyen_nganh_ids.split(',')) {
+            let so_cau_hoi_chuyen_de =
+                Number(chuyen_nganh_id) === 3
+                    ? criteria.so_cau_hoi_chuyen_nganh_1
+                    : Number(chuyen_nganh_id) === 4
+                    ? criteria.so_cau_hoi_chuyen_nganh_2
+                    : Number(chuyen_nganh_id) === 6
+                    ? criteria.so_cau_hoi_chuyen_nganh_3
+                    : Number(chuyen_nganh_id) === 8
+                    ? criteria.so_cau_hoi_chuyen_nganh_4
+                    : criteria.so_cau_hoi_chuyen_nganh_5;
+            so_cau_hoi_phan_3 += so_cau_hoi_chuyen_de;
+            await sequelize.query(
+                `
+                    INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
+                        SELECT cau_hoi_id, ${exam.de_thi_id}, 3 FROM cau_hoi
+                        WHERE chuyen_nganh_id = :chuyen_nganh_id AND kct_id = 1
+                        ORDER BY RAND() LIMIT ${so_cau_hoi_chuyen_de}
+                `,
+                {
+                    type: sequelize.QueryTypes.INSERT,
+                    replacements: {
+                        chuyen_nganh_id: Number(chuyen_nganh_id),
+                    },
+                }
+            );
+        }
+        await sequelize.query(
+            `
+                INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
+                    SELECT cau_hoi_id, ${exam.de_thi_id}, 3 FROM cau_hoi
+                    WHERE chuyen_nganh_id IN (:chuyen_nganh_ids) AND kct_id = 1
+                    AND cau_hoi_id NOT IN (SELECT cau_hoi_de_thi
+                    WHERE de_thi_id = ${exam.de_thi_id})
+                    ORDER BY RAND() LIMIT ${
+                        criteria.so_cau_hoi_phan_3 - so_cau_hoi_phan_3
+                    }
+            `,
+            {
+                type: sequelize.QueryTypes.INSERT,
+                replacements: {
+                    chuyen_nganh_ids: chuyen_nganh_ids,
+                },
+            }
+        );
+
     const studentExam = await StudentExam.create({
         ...rest,
         de_thi_id: exam.de_thi_id,
         hoc_vien_id: req.userId,
     });
+
     res.status(200).send({
         status: 'success',
         data: studentExam,
@@ -212,7 +305,9 @@ const putUpdate = async (req, res) => {
                 selectedAnswer.noi_dung_tra_loi &&
                 selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an &&
                 selectedAnswer.noi_dung_tra_loi.trim().toLowerCase() ==
-                selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an.trim().toLowerCase()
+                    selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an
+                        .trim()
+                        .toLowerCase()
             )
                 result = true;
         }
