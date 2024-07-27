@@ -24,9 +24,6 @@ const dethi = sequelize.define(
         anh_dai_dien: {
             type: DataTypes.STRING,
         },
-        de_tu_sinh: {
-            type: DataTypes.INTEGER,
-        },
         loai_de_thi_id: {
             type: DataTypes.INTEGER,
         },
@@ -41,6 +38,12 @@ const dethi = sequelize.define(
         },
         chuyen_de_id: {
             type: DataTypes.INTEGER,
+        },
+        de_mau_id: {
+            type: DataTypes.INTEGER,
+        },
+        de_mau: {
+            type: DataTypes.BOOLEAN,
         },
         xuat_ban: {
             type: DataTypes.BOOLEAN,

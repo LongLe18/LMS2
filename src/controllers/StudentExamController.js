@@ -131,15 +131,23 @@ const postCreate = async (req, res) => {
 const postCreatev2 = async (req, res) => {
     const { khoa_hoc_id, chuyen_nganh_ids, ...rest } = req.body;
 
+    const sampleExam = await Exam.findOne({
+        where: {
+            de_mau: true,
+            xuat_ban: true,
+            trang_thai: true,
+        },
+    });
+
     const exam = await Exam.create({
         ten_de_thi: 'THI ĐÁNH GIÁ NĂNG LỰC',
         tong_diem: 150,
-        // xuat_ban: 1,
-        // trang_thai: 1,
-        de_tu_sinh: 1,
+        xuat_ban: true,
+        trang_thai: true,
         kct_id: 1,
         khoa_hoc_id,
         loai_de_thi_id: 4,
+        de_mau_id: sampleExam.id
     });
 
     let criteria = await OnlineCriteria.findOne({
@@ -161,7 +169,7 @@ const postCreatev2 = async (req, res) => {
         `
         INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
             SELECT cau_hoi_id, ${exam.de_thi_id}, 1 FROM cau_hoi
-            WHERE chuyen_nganh_id = 1 AND kct_id = 1
+            WHERE chuyen_nganh_id = 1 AND kct_id = 1 AND de_thi_id = ${sampleExam.id}
             ORDER BY RAND() LIMIT ${criteria.so_cau_hoi_phan_1}
     `,
         {
@@ -174,7 +182,7 @@ const postCreatev2 = async (req, res) => {
         `
             INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
                 SELECT cau_hoi_id, ${exam.de_thi_id}, 2 FROM cau_hoi
-                WHERE chuyen_nganh_id = 7 AND kct_id = 1
+                WHERE chuyen_nganh_id = 7 AND kct_id = 1 AND de_thi_id = ${sampleExam.id}
                 ORDER BY trich_doan_id DESC, RAND()
                 LIMIT ${criteria.so_cau_hoi_phan_2}
         `,
@@ -189,7 +197,7 @@ const postCreatev2 = async (req, res) => {
             `
         INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
             SELECT cau_hoi_id, ${exam.de_thi_id}, 3 FROM cau_hoi
-            WHERE chuyen_nganh_id = 5 AND kct_id = 1
+            WHERE chuyen_nganh_id = 5 AND kct_id = 1 AND de_thi_id = ${sampleExam.id}
             ORDER BY trich_doan_id DESC, RAND()
             LIMIT ${criteria.so_cau_hoi_phan_3}
     `,
@@ -197,7 +205,16 @@ const postCreatev2 = async (req, res) => {
                 type: sequelize.QueryTypes.INSERT,
             }
         );
-    } else if(chuyen_nganh_ids.split(',').every(element => typeof element === 'string'  && !isNaN(parseFloat(element)) && isFinite(element))){
+    } else if (
+        chuyen_nganh_ids
+            .split(',')
+            .every(
+                (element) =>
+                    typeof element === 'string' &&
+                    !isNaN(parseFloat(element)) &&
+                    isFinite(element)
+            )
+    ) {
         const so_cau_hoi_tung_chuyen_nganh = parseInt(
             Number(criteria.so_cau_hoi_phan_3) / 3
         );
@@ -206,7 +223,7 @@ const postCreatev2 = async (req, res) => {
                 `
                         INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
                             SELECT cau_hoi_id, ${exam.de_thi_id}, 3 FROM cau_hoi
-                            WHERE chuyen_nganh_id = :chuyen_nganh_id AND kct_id = 1
+                            WHERE chuyen_nganh_id = :chuyen_nganh_id AND kct_id = 1 AND de_thi_id = ${sampleExam.id}
                             ORDER BY RAND() LIMIT ${so_cau_hoi_tung_chuyen_nganh}
                     `,
                 {
@@ -221,7 +238,7 @@ const postCreatev2 = async (req, res) => {
             `
                     INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
                         SELECT cau_hoi_id, ${exam.de_thi_id}, 3 FROM cau_hoi
-                        WHERE chuyen_nganh_id IN (${chuyen_nganh_ids}) AND kct_id = 1
+                        WHERE chuyen_nganh_id IN (${chuyen_nganh_ids}) AND kct_id = 1 AND de_thi_id = ${sampleExam.id}
                         AND cau_hoi_id NOT IN (SELECT cau_hoi_id
                         WHERE de_thi_id = ${exam.de_thi_id})
                         ORDER BY RAND() LIMIT ${
