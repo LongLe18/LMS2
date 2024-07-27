@@ -230,7 +230,7 @@ const getAll_admin = async (req, res) => {
     let filter = `${search} AND ${trang_thai} AND ${loai_de_thi_id} AND ${xuat_ban} AND ${khoa_hoc_id} AND ${mo_dun_id} AND ${chuyen_de_id} AND ${ngay_tao}`;
     const totalRecords = await sequelize.query(
         `
-        SELECT * FROM (
+        SELECT COUNT(*) as tong FROM (
         (
             SELECT de_thi.de_thi_id, de_thi.anh_dai_dien, de_thi.ten_de_thi, de_thi.trang_thai, de_thi.ngay_tao, loai_de_thi.mo_ta, loai_de_thi.loai_de_thi_id, 
             khoa_hoc.ten_khoa_hoc, mo_dun.ten_mo_dun, chuyen_de.ten_chuyen_de, de_thi.xuat_ban, tieu_chi_de_chuyen_de.so_cau_hoi, 
@@ -330,7 +330,7 @@ const getAll_admin = async (req, res) => {
         message: null,
         pageSize: limit,
         pageIndex: offset,
-        total: totalRecords[0].total
+        total: totalRecords[0].tong
     });
 };
 
