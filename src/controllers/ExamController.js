@@ -48,6 +48,42 @@ const getExamOnline = async (req, res) => {
     });
 };
 
+// lấy danh sách đề thi đánh giá năng lực
+const getExamDGNL = async (req, res) => {
+    const { count, rows } = await Exam.findAndCountAll({
+        include: {
+            model: OnlineCriteria,
+        },
+        where: {
+            ...(req.query.kct_id && { kct_id: req.query.kct_id }),
+            ...(req.query.trang_thai && { trang_thai: req.query.trang_thai }),
+            ...(req.query.xuat_ban && { xuat_ban: req.query.xuat_ban }),
+            ...(req.query.khoa_hoc_id && { khoa_hoc_id: req.query.khoa_hoc_id }),
+            loai_de_thi_id: 4,
+            de_mau: true
+        },
+        offset:
+            (Number(req.query.pageIndex || 1) - 1) *
+            Number(req.query.pageSize || 10),
+        limit: Number(req.query.pageSize || 10),
+        order: [
+            req.query.sortBy
+                ? req.query.sortBy.split(',')
+                : ['ngay_tao', 'DESC'],
+        ],
+    });
+
+    res.status(200).send({
+        status: 'success',
+        data: rows,
+        pageIndex: Number(req.query.pageIndex || 1),
+        pageSize: Number(req.query.pageSize || 10),
+        totalCount: count,
+        totalPage: Math.ceil(count / Number(req.query.pageSize || 10)),
+        message: null,
+    });
+};
+
 const getSynthetic = async (req, res) => {
     let khoa_hoc_id = 1;
     let limit = 100;
@@ -330,7 +366,7 @@ const getAll_admin = async (req, res) => {
         message: null,
         pageSize: parseInt(limit),
         pageIndex: parseInt(offset),
-        total: totalRecords[0].tong
+        total: totalRecords[0].tong,
     });
 };
 
@@ -808,7 +844,7 @@ const publish = async (req, res) => {
             }
         );
     } else {
-        if(exam.de_mau){
+        if (exam.de_mau) {
             await Exam.update(
                 {
                     xuat_ban: false,
@@ -1090,4 +1126,5 @@ module.exports = {
     studentStatistic,
     uploadWordMedia,
     getByIdv2,
+    getExamDGNL,
 };

@@ -58,6 +58,7 @@ router.get(
     tryCatch(examController.publish)
 );
 router.get('/all_admin', authToken, examController.getAll_admin);
+router.get('/dgnl', authToken, tryCatch(examController.getExamDGNL));
 router.get('/one_exam', authToken, tryCatch(examController.getOneExam));
 router.get('/synthetic', tryCatch(examController.getSynthetic));
 router.get('/onlineExam', tryCatch(examController.getExamOnline));
