@@ -170,8 +170,19 @@ const putUpdate = async (req, res) => {
         {
             ...req.body,
             ...(req.files &&
-                req.files.tep_dinh_kem && {
-                    tep_dinh_kem: req.files.tep_dinh_kem
+                req.files.tep_dinh_kem_noi_dung && {
+                    tep_dinh_kem_noi_dung: req.files.tep_dinh_kem_noi_dung
+                        .map(
+                            (item) =>
+                                item.destination.replace('public', '') +
+                                '/' +
+                                item.filename
+                        )
+                        .join(','),
+                }),
+            ...(req.files &&
+                req.files.tep_dinh_kem_loi_giai && {
+                    tep_dinh_kem_loi_giai: req.files.tep_dinh_kem_loi_giai
                         .map(
                             (item) =>
                                 item.destination.replace('public', '') +
