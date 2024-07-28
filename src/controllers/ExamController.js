@@ -1,4 +1,4 @@
-const {
+﻿const {
     Exceprt,
     Answer,
     Question,
@@ -283,7 +283,7 @@ const getAll_admin = async (req, res) => {
         ) 
         UNION (
             SELECT de_thi.de_thi_id, de_thi.anh_dai_dien, de_thi.ten_de_thi, de_thi.trang_thai, de_thi.ngay_tao, loai_de_thi.mo_ta, loai_de_thi.loai_de_thi_id, 
-            de_thi.de_mau, khoa_hoc.ten_khoa_hoc, 'No' AS ten_mo_dun, 'No' AS ten_chuyen_de, de_thi.de_mau, de_thi.xuat_ban, tieu_chi_de_tong_hop.so_cau_hoi, 
+            de_thi.de_mau, khoa_hoc.ten_khoa_hoc, 'No' AS ten_mo_dun, 'No' AS ten_chuyen_de, de_thi.xuat_ban, tieu_chi_de_tong_hop.so_cau_hoi, 
             tieu_chi_de_tong_hop.thoi_gian FROM de_thi LEFT JOIN khoa_hoc ON de_thi.khoa_hoc_id=khoa_hoc.khoa_hoc_id LEFT JOIN tieu_chi_de_tong_hop ON 
             de_thi.khoa_hoc_id=tieu_chi_de_tong_hop.khoa_hoc_id LEFT JOIN loai_de_thi ON loai_de_thi.loai_de_thi_id=de_thi.loai_de_thi_id 
             WHERE de_thi.loai_de_thi_id=3 AND ${filter}
@@ -330,7 +330,7 @@ const getAll_admin = async (req, res) => {
         ) 
         UNION (
             SELECT de_thi.de_thi_id, de_thi.anh_dai_dien, de_thi.ten_de_thi, de_thi.trang_thai, de_thi.ngay_tao, loai_de_thi.mo_ta, loai_de_thi.loai_de_thi_id, 
-            de_thi.de_mau, khoa_hoc.ten_khoa_hoc, 'No' AS ten_mo_dun, 'No' AS ten_chuyen_de, de_thi.de_mau, de_thi.xuat_ban, tieu_chi_de_tong_hop.so_cau_hoi, 
+            de_thi.de_mau, khoa_hoc.ten_khoa_hoc, 'No' AS ten_mo_dun, 'No' AS ten_chuyen_de, de_thi.xuat_ban, tieu_chi_de_tong_hop.so_cau_hoi, 
             tieu_chi_de_tong_hop.thoi_gian FROM de_thi LEFT JOIN khoa_hoc ON de_thi.khoa_hoc_id=khoa_hoc.khoa_hoc_id LEFT JOIN tieu_chi_de_tong_hop ON 
             de_thi.khoa_hoc_id=tieu_chi_de_tong_hop.khoa_hoc_id LEFT JOIN loai_de_thi ON loai_de_thi.loai_de_thi_id=de_thi.loai_de_thi_id 
             WHERE de_thi.loai_de_thi_id=3 AND ${filter}
