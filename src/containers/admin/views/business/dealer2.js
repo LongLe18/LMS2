@@ -5,9 +5,9 @@ import moment from "moment";
 import config from '../../../../configs/index';
 
 // component
-import { Row, Col, Table, Form, notification, Space, Button, Select, InputNumber } from 'antd';
+import { Row, Col, Table, Form, notification, Space, Button, Select, InputNumber, Modal } from 'antd';
 import AppFilter from "components/common/AppFilter";
-
+import { ExclamationCircleOutlined, } from '@ant-design/icons';
 // redux
 import * as dealerAction from '../../../../redux/actions/dealer';
 import * as courseAction from '../../../../redux/actions/course';
@@ -178,24 +178,29 @@ const DealerPage = (props) => {
     };
     
     const DeleteDealer = (id) => {
-        const result = window.confirm('Bạn có chắc chăn muốn xóa chiết khấu này?');
-        if (result) {
-            const callback = (res) => {
-                if (res.statusText === 'OK' && res.status === 200) {
-                    dispatch(dealerAction.getDealers({ name: filter.search, idCourse: filter.khoa_hoc_id }));
-                    notification.success({
-                        message: 'Thành công',
-                        description: 'Xóa chiết khấu khóa học thành công',
-                    })
-                } else {
-                    notification.error({
-                        message: 'Thông báo',
-                        description: 'Xóa chiết khấu khóa học thất bại',
-                    })
-                };
-            }
-            dispatch(dealerAction.DeleteDealer({ id: id }, callback));
-        }
+        Modal.confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: 'Bạn có chắc chăn muốn xóa chiết khấu này?',
+            okText: 'Đồng ý',
+            cancelText: 'Hủy',
+            onOk() {
+                const callback = (res) => {
+                    if (res.statusText === 'OK' && res.status === 200) {
+                        dispatch(dealerAction.getDealers({ name: filter.search, idCourse: filter.khoa_hoc_id }));
+                        notification.success({
+                            message: 'Thành công',
+                            description: 'Xóa chiết khấu khóa học thành công',
+                        })
+                    } else {
+                        notification.error({
+                            message: 'Thông báo',
+                            description: 'Xóa chiết khấu khóa học thất bại',
+                        })
+                    };
+                }
+                dispatch(dealerAction.DeleteDealer({ id: id }, callback));
+            },
+        });
     };
 
     const submitForm = (values) => {

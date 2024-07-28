@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import axios from "axios";
 
-import { Row, Col, Form, Input, Select, Table, notification, Tag, Button, Space, Upload, message, Progress } from "antd";
+import { Row, Col, Form, Input, Select, Table, notification, Tag, Button, 
+  Modal, Space, Upload, message, Progress } from "antd";
 // import Loading from '../../../components/parts/Loading/Loading';
-import { UploadOutlined } from "@ant-design/icons";
+import { UploadOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import AppFilter from "components/common/AppFilter";
 // redux
 import * as courseActions from '../../../../redux/actions/course';
@@ -256,16 +257,21 @@ const LessonCate = () => {
         }
       }
       if (isExist) {
-        const ask = window.confirm('Chuyên đề này đã có bài giảng pdf \n Bạn có muốn ghi đè bài giảng đã có không?')
-        if (ask) {
-          formData.append('ten_bai_giang', values.ten_bai_giang);
-          formData.append('loai_bai_giang', state.typeLesson);
-          formData.append('mo_ta', values.mo_ta !== undefined ? values.mo_ta : '' );
-          formData.append('chuyen_de_id', values.chuyen_de);
-          // video , image
-          if (state.filePdf !== '')
-            formData.append('link_bai_giang', state.filePdf);   
-        }     
+        Modal.confirm({
+          icon: <ExclamationCircleOutlined />,
+          content: 'Chuyên đề này đã có bài giảng pdf \n Bạn có muốn ghi đè bài giảng đã có không?',
+          okText: 'Đồng ý',
+          cancelText: 'Hủy',
+          onOk() {
+            formData.append('ten_bai_giang', values.ten_bai_giang);
+            formData.append('loai_bai_giang', state.typeLesson);
+            formData.append('mo_ta', values.mo_ta !== undefined ? values.mo_ta : '' );
+            formData.append('chuyen_de_id', values.chuyen_de);
+            // video , image
+            if (state.filePdf !== '')
+              formData.append('link_bai_giang', state.filePdf);   
+          },
+        });
       } else {
         formData.append('ten_bai_giang', values.ten_bai_giang);
         formData.append('loai_bai_giang', values.loai_bai_giang);

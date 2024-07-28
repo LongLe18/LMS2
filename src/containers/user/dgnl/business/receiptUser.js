@@ -11,7 +11,8 @@ import moment from "moment";
 import config from '../../../../configs/index';
 
 // component
-import { Layout, Button, Tag, Space, Table, notification } from 'antd';
+import { Layout, Button, Tag, Space, Table, notification, Modal, } from 'antd';
+import { ExclamationCircleOutlined, } from '@ant-design/icons';
 import Statisic from 'components/parts/statisic/Statisic';
 import NoRecord from "components/common/NoRecord";
 import * as CurrencyFormat from 'react-currency-format';
@@ -128,8 +129,12 @@ const ReceiptUserPage = (props) => {
     };
 
     const handleDelete = (hoa_don_id) => {
-        const result = window.confirm('Bạn có chắc chăn muốn hủy đơn này?');
-            if (result) {
+        Modal.confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: 'Bạn có chắc chăn muốn hủy đơn này?',
+            okText: 'Đồng ý',
+            cancelText: 'Hủy',
+            onOk() {
                 const callback = (res) => {
                     if (res.statusText === 'OK' && res.status === 200) {
                         dispatch(receiptAction.getRECEIPTs({ status: '', start: '', end: '', search: '' }));
@@ -146,8 +151,8 @@ const ReceiptUserPage = (props) => {
                     };
                 }
                 dispatch(receiptAction.DeleteRECEIPT({ id: hoa_don_id }, callback))
-                //   dispatch(receiptAction.DeleteRECEIPTDetail({ id: hoa_don_id }, callback))
-            }
+            },
+        });
     };
 
     const handlePayment = (hoa_don_id, hoa_don) => {

@@ -4,7 +4,8 @@ import moment from "moment";
 import config from '../../../../configs/index'
 
 import AppFilter from "components/common/AppFilter";
-import { Row, Col, Form, Input, Button, Select, Table, notification, Tag, Space } from "antd";
+import { Row, Col, Form, Input, Button, Select, Table, notification, Tag, Space, Modal, } from "antd";
+import { ExclamationCircleOutlined, } from '@ant-design/icons';
 
 import * as partActions from '../../../../redux/actions/part';
 import * as thematicActions from '../../../../redux/actions/thematic';
@@ -323,33 +324,38 @@ const ThematicCate = () => {
     };
 
     const DeleteThematic = (id) => {
-      const result = window.confirm('Bạn có chắc chán muốn xóa chuyên đề này?');
-      if (result) {
-        const callback = (res) => {
-          if (res.statusText === 'OK' && res.status === 200) {
-            dispatch(thematicActions.filterThematics({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, 
-              status: filter.trang_thai === 2 ? '' : filter.trang_thai, search: filter.search,
-              start: filter.start, end: filter.end }, (res) => {
-                if (res.status === 'success') {
-                  res.data = (res.data.map((thematic, index) => {
-                    return {...thematic, 'key': index };
-                  }));
-                  setData([...res.data]);
-                }
-              }));
-            notification.success({
-              message: 'Thành công',
-              description: 'Xóa chuyên đề thành công',
-            })
-          } else {
-            notification.error({
-              message: 'Thông báo',
-              description: 'Xóa chuyên đề mới thất bại',
-            })
-          };
-        }
-        dispatch(thematicActions.DeleteThematic({ idThematic: id }, callback))
-      }
+      Modal.confirm({
+        icon: <ExclamationCircleOutlined />,
+        content: 'Bạn có chắc chán muốn xóa chuyên đề này?',
+        okText: 'Đồng ý',
+        cancelText: 'Hủy',
+        onOk() {
+          const callback = (res) => {
+            if (res.statusText === 'OK' && res.status === 200) {
+              dispatch(thematicActions.filterThematics({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, 
+                status: filter.trang_thai === 2 ? '' : filter.trang_thai, search: filter.search,
+                start: filter.start, end: filter.end }, (res) => {
+                  if (res.status === 'success') {
+                    res.data = (res.data.map((thematic, index) => {
+                      return {...thematic, 'key': index };
+                    }));
+                    setData([...res.data]);
+                  }
+                }));
+              notification.success({
+                message: 'Thành công',
+                description: 'Xóa chuyên đề thành công',
+              })
+            } else {
+              notification.error({
+                message: 'Thông báo',
+                description: 'Xóa chuyên đề mới thất bại',
+              })
+            };
+          }
+          dispatch(thematicActions.DeleteThematic({ idThematic: id }, callback))
+        },
+      });
     };
 
     const EditThematic = (id) => {

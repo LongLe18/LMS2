@@ -5,7 +5,8 @@ import moment from "moment";
 import config from '../../../../configs/index';
 
 // component
-import { Tabs, Row, Col, Table, Space, Button, Tag, notification } from 'antd';
+import { Tabs, Row, Col, Table, Space, Button, Tag, notification, Modal } from 'antd';
+import { ExclamationCircleOutlined, } from '@ant-design/icons';
 import AppFilter from "components/common/AppFilter";
 import * as CurrencyFormat from 'react-currency-format';
 
@@ -261,29 +262,35 @@ const DealerTeacherPage = (props) => {
                 return;
             }
         }
-        const result = window.confirm('Bạn có chắc chăn muốn quyết toán chiết khấu này?');
-        if (result) {
-            const callback = (res) => {
-                if (res.status === 'success') {
-                    dispatch(dealerAction.getDealersDetailTeacher({ id: state.idTeacher, status: filter.trang_thai, start: filter.start, end: filter.end, search: filter.search }));
-                    notification.success({
-                        message: 'Thành công',
-                        description: 'Quyết toán thành công',
-                    });
-                    /// download excel file
-                    setSelectedRowKeys([]);
-                } else {
-                    notification.error({
-                        message: 'Thông báo',
-                        description: 'Quyết toán thất bại',
-                    })
-                };
-            }
-            const data = {
-                gia_tri: selectedRowKeys
-            }
-            dispatch(dealerAction.changeStaDealerDetail(data, callback))
-        }
+
+        Modal.confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: 'Bạn có chắc chăn muốn quyết toán chiết khấu này?',
+            okText: 'Đồng ý',
+            cancelText: 'Hủy',
+            onOk() {
+                const callback = (res) => {
+                    if (res.status === 'success') {
+                        dispatch(dealerAction.getDealersDetailTeacher({ id: state.idTeacher, status: filter.trang_thai, start: filter.start, end: filter.end, search: filter.search }));
+                        notification.success({
+                            message: 'Thành công',
+                            description: 'Quyết toán thành công',
+                        });
+                        /// download excel file
+                        setSelectedRowKeys([]);
+                    } else {
+                        notification.error({
+                            message: 'Thông báo',
+                            description: 'Quyết toán thất bại',
+                        })
+                    };
+                }
+                const data = {
+                    gia_tri: selectedRowKeys
+                }
+                dispatch(dealerAction.changeStaDealerDetail(data, callback))
+            },
+        });
     };
 
     const QuyetToan = (id) => {
@@ -302,27 +309,33 @@ const DealerTeacherPage = (props) => {
             })
             return;
         }   
-        const result = window.confirm('Bạn có chắc chăn muốn quyết toán chiết khấu này?');
-        if (result) {
-            const callback = (res) => {
-                if (res.status === 'success') {
-                    dispatch(dealerAction.getDealersDetailTeacher({ id: state.idTeacher, status: filter.trang_thai, start: filter.start, end: filter.end, search: filter.search }));
-                    notification.success({
-                        message: 'Thành công',
-                        description: 'Quyết toán thành công',
-                    });
-                } else {
-                    notification.error({
-                        message: 'Thông báo',
-                        description: 'Quyết toán thất bại',
-                    })
-                };
-            }
-            const data = {
-                gia_tri: id
-            }
-            dispatch(dealerAction.changeStaDealerDetail(data, callback))
-        }
+
+        Modal.confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: 'Bạn có chắc chăn muốn quyết toán chiết khấu này?',
+            okText: 'Đồng ý',
+            cancelText: 'Hủy',
+            onOk() {
+                const callback = (res) => {
+                    if (res.status === 'success') {
+                        dispatch(dealerAction.getDealersDetailTeacher({ id: state.idTeacher, status: filter.trang_thai, start: filter.start, end: filter.end, search: filter.search }));
+                        notification.success({
+                            message: 'Thành công',
+                            description: 'Quyết toán thành công',
+                        });
+                    } else {
+                        notification.error({
+                            message: 'Thông báo',
+                            description: 'Quyết toán thất bại',
+                        })
+                    };
+                }
+                const data = {
+                    gia_tri: id
+                }
+                dispatch(dealerAction.changeStaDealerDetail(data, callback))
+            },
+        });
     };
 
     return (

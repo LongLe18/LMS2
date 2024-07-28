@@ -26,7 +26,7 @@ function UserLayout(props){
                 <Route
                     path={prop.path}
                     render={prop.render}
-                    key={key}
+                    key={Number(key)}
                 />
                 );
             })}

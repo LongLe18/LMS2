@@ -8,7 +8,7 @@ import ReactExport from "react-export-excel";
 
 // antd
 import { Table, Tag, Button, Row, Col, notification, Space, Form, Input, Avatar, Upload, message, Select, DatePicker, Pagination, Modal } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
 // redux
 import * as userAction from '../../../../redux/actions/user';
@@ -20,6 +20,7 @@ import useDebounce from 'hooks/useDebounce';
 
 const { Option } = Select;
 const { Dragger } = Upload;
+const { confirm } = Modal;
 
 const ExcelFile = ReactExport.ExcelFile;
 const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
@@ -365,8 +366,53 @@ const AccountPage = () => {
     }, [student]);  // eslint-disable-line react-hooks/exhaustive-deps
     
     const DeleteUser = (id, vai_tro) => {
-        const result = window.confirm('Bạn có chắc chắn muốn hủy kích hoạt thành viên này?');
-        if (result) {
+      confirm({
+          icon: <ExclamationCircleOutlined />,
+          content: 'Bạn có chắc chắn muốn hủy kích hoạt thành viên này?',
+          okText: 'Đồng ý',
+          cancelText: 'Hủy',
+          onOk() {
+            const callback = (res) => {
+              if (res.status === 'success') {
+                dispatch(userAction.getStudents({ status: filter.trang_thai, search: filter.search,
+                  startDay: filter.start, endDay: filter.end, pageIndex: pageIndex - 1, 
+                  pageSize: pageSize, province: filter.tinh }, (res) => {
+                    if (res.status === 'success') {
+                      res.data = (res.data.map((student) => {
+                        return {...student, 'vai_tro': 'học viên', 'key': student.hoc_vien_id, 'id': student.hoc_vien_id };
+                      }));
+                      setData([...res.data]);
+                    }
+                  }));
+                notification.success({
+                    message: 'Thành công',
+                    description: 'Kích hoạt / Tạm dừng học viên thành công',
+                })
+              } else {
+                notification.error({
+                  message: 'Thông báo',
+                  description: 'Kích hoạt / Tạm dừng học viên thất bại',
+                })
+              };
+            }
+            if (vai_tro.vai_tro === 'nhân viên') {
+              dispatch(userAction.deleteStaff({ id: id }, callback))
+            } else if (vai_tro.vai_tro === 'giáo viên') {
+              dispatch(userAction.deleteTeacher({ id: id }, callback))
+            } else {
+              dispatch(userAction.deleteStudent({ id: id }, callback))
+            }
+          },
+      });
+    };
+
+    const DeleteStudent = (id) => {
+      confirm({
+        icon: <ExclamationCircleOutlined />,
+        content: 'Bạn có chắc chắn muốn xóa học viên này?',
+        okText: 'Đồng ý',
+        cancelText: 'Hủy',
+        onOk() {
           const callback = (res) => {
             if (res.status === 'success') {
               dispatch(userAction.getStudents({ status: filter.trang_thai, search: filter.search,
@@ -381,53 +427,18 @@ const AccountPage = () => {
                 }));
               notification.success({
                   message: 'Thành công',
-                  description: 'Kích hoạt / Tạm dừng học viên thành công',
+                  description: 'Xóa học viên thành công',
               })
             } else {
               notification.error({
                 message: 'Thông báo',
-                description: 'Kích hoạt / Tạm dừng học viên thất bại',
+                description: 'Xóa học viên thất bại',
               })
             };
           }
-          if (vai_tro.vai_tro === 'nhân viên') {
-            dispatch(userAction.deleteStaff({ id: id }, callback))
-          } else if (vai_tro.vai_tro === 'giáo viên') {
-            dispatch(userAction.deleteTeacher({ id: id }, callback))
-          } else {
-            dispatch(userAction.deleteStudent({ id: id }, callback))
-          }
-        }
-    };
-
-    const DeleteStudent = (id) => {
-      const result = window.confirm('Bạn có chắc chắn muốn xóa học viên này?');
-      if (result) {
-        const callback = (res) => {
-          if (res.status === 'success') {
-            dispatch(userAction.getStudents({ status: filter.trang_thai, search: filter.search,
-              startDay: filter.start, endDay: filter.end, pageIndex: pageIndex - 1, 
-              pageSize: pageSize, province: filter.tinh }, (res) => {
-                if (res.status === 'success') {
-                  res.data = (res.data.map((student) => {
-                    return {...student, 'vai_tro': 'học viên', 'key': student.hoc_vien_id, 'id': student.hoc_vien_id };
-                  }));
-                  setData([...res.data]);
-                }
-              }));
-            notification.success({
-                message: 'Thành công',
-                description: 'Xóa học viên thành công',
-            })
-          } else {
-            notification.error({
-              message: 'Thông báo',
-              description: 'Xóa học viên thất bại',
-            })
-          };
-        }
           dispatch(userAction.deleteStudent2({ id: id }, callback))
-      }
+        },
+      });
     }
 
     const createUser = (values) => {

@@ -541,6 +541,17 @@
   border: 1px solid #c64c1d;
 }
 
+.help-answer {
+  font-size: 20px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  grid-gap: 10px;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
 .help-answer img {
   max-width: 100%;
   height: auto;

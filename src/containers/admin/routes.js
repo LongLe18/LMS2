@@ -15,7 +15,7 @@ import ProfilePage from './views/account/profile.js';
 import ExamAdminPage from './views/exam/Exam.js';
 import ExamDGNLAdminPage from './views/exam/ExamDGNL.js';
 import ExamDetailPage from './views/exam/ExamDetail.js';
-import OnlineExamDetailPage from './views/exam/ExamOnline.js';
+import OnlineExamDetailPage from './views/exam/ExamDetailOnline.js';
 import SampleQuestion from './views/exam/sampleQuestion.js';
 import Criteria from './views/exam/criteria.js';
 import Exceprt from './views/exam/Exceprt.js';

@@ -35,6 +35,7 @@ Quill.register('modules/imageResize', ImageResize);
 const TextEditorWidget = (props) => {
     const quillRef = useRef();
     const regex = /\\begin{center}\\includegraphics\[scale = 0\.5\]{(.*?)}\\end{center}/;
+    const regexImg = /\\begin{center}\\includegraphics\[scale&nbsp;=&nbsp;0.5]{(.*?)}\\end{center}/;
 
     const getBase64 = (img, callback) => {
         const reader = new FileReader();
@@ -43,11 +44,11 @@ const TextEditorWidget = (props) => {
     };
 
     const [state, setState] = useState({
-        editorHtml: props.valueParent,
+        editorHtml: '',
         viewEditor: '',
         theme: 'snow',
         isChanged: false,
-        fileImg: props.valueParent
+        fileImg: ''
     });
     
     // props upload image
@@ -106,10 +107,9 @@ const TextEditorWidget = (props) => {
         if (matches) {
             matches.forEach((match) => {
                 const content = match.replace(/<\/?div[^>]*>/g, ''); // Remove <div> tags
-                if (content.trim() !== '<br>') value += content.trim() + '\n'
+                if (content.trim() !== '<br>') value += content.trim() + '\n';
             });
         };
-        console.log(html, value)
         setState({ ...state, editorHtml: html, viewEditor: value, isChanged: true })
     };
 
@@ -151,7 +151,7 @@ const TextEditorWidget = (props) => {
     };
     
     useEffect(() => {
-        let value = props.valueParent?.replace('\n', '<br>');
+        let value = props.valueParent?.split('\n').join('<br>');
         setState({ ...state, editorHtml: value, viewEditor: props.valueParent, isChanged: false });
     }, [props.valueParent]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -163,66 +163,69 @@ const TextEditorWidget = (props) => {
     }, [text]); // eslint-disable-line react-hooks/exhaustive-deps
     
     return (
-        <div
-            className={`text-quill-custom 
-            ${props.isOverlay ? 'overlay-editor' : ''} 
-            ${props.isSimple ? 'simple-editor' : ''} 
-            ${props.showToolbar ? 'show-toolbar-editor' : ''} 
-            ${props.isMinHeight200 ? 'min-height-200' : ''}
-            ${props.isMinHeight300 ? 'min-height-300' : ''}
-            ${props.isMinHeight500 ? 'min-height-500' : ''}
-        `}
-            onMouseLeave={() => {props.onChange(state.viewEditor)}}
-        >
-            {!props.disabled && (
-                <ReactQuill
-                    ref={quillRef}
-                    theme={state.theme}
-                    onChange={handleChange}
-                    value={state.editorHtml || ''}
-                    formats={formats}
-                    modules={modules}
-                    bounds={'.app'}
-                    disabled={props.disabled}
-                    placeholder={props.placeholder}
-                />
-            )}
+        <>
+            <div
+                className={`text-quill-custom 
+                ${props.isOverlay ? 'overlay-editor' : ''} 
+                ${props.isSimple ? 'simple-editor' : ''} 
+                ${props.showToolbar ? 'show-toolbar-editor' : ''} 
+                ${props.isMinHeight200 ? 'min-height-200' : ''}
+                ${props.isMinHeight300 ? 'min-height-300' : ''}
+                ${props.isMinHeight500 ? 'min-height-500' : ''}
+            `}
+                onMouseLeave={() => {props.onChange(state.viewEditor)}}
+            >
+                {!props.disabled && (
+                    <ReactQuill
+                        ref={quillRef}
+                        theme={state.theme}
+                        onChange={handleChange}
+                        value={state.editorHtml || ''}
+                        formats={formats}
+                        modules={modules}
+                        bounds={'.app'}
+                        disabled={props.disabled}
+                        placeholder={props.placeholder}
+                    />
+                )}
 
-            {props.isSimple && !props.disabled && (
-                <div className="simple-extra-actions">
-                    <Upload {...propsImage} maxCount={1} showUploadList={false}>
+                {props.isSimple && !props.disabled && (
+                    <div className="simple-extra-actions">
+                        {props.isUpload && (
+                            <Upload {...propsImage} maxCount={1} showUploadList={false}>
+                                <Button
+                                    className="add-image"
+                                    type="link"
+                                    size="small"
+                                    title="Chèn hình ảnh"
+                                    onClick={() =>
+                                        setMedia({
+                                        ...media,
+                                        visible: true,
+                                        })
+                                    }
+                                >
+                                    <CameraOutlined />
+                                </Button>
+                            </Upload>
+                        )}
                         <Button
-                            className="add-image"
+                            className={math.visible ? 'active add-image' : 'add-image'}
                             type="link"
+                            title="Chèn công thức"
                             size="small"
-                            title="Chèn hình ảnh"
                             onClick={() =>
-                                setMedia({
-                                  ...media,
-                                  visible: true,
-                                })
+                            setMath({
+                                ...math,
+                                visible: !math.visible,
+                            })
                             }
                         >
-                            <CameraOutlined />
+                            <FunctionOutlined />
                         </Button>
-                    </Upload>
-                    <Button
-                        className={math.visible ? 'active add-image' : 'add-image'}
-                        type="link"
-                        title="Chèn công thức"
-                        size="small"
-                        onClick={() =>
-                        setMath({
-                            ...math,
-                            visible: !math.visible,
-                        })
-                        }
-                    >
-                        <FunctionOutlined />
-                    </Button>
-                </div>
-            )}
-
+                    </div>
+                )}
+            </div>
             {(math.visible || props.disabled) && (
                 <div className='math-area'>
                     {math.visible && (
@@ -562,11 +565,13 @@ const TextEditorWidget = (props) => {
                             <MathJax.Provider>
                                 {props.valueParent?.split('\n').map((item, index_cauhoi) => 
                                 
-                                    (item.indexOf('includegraphics') !== -1 && item !== '' && item?.match(regex) !== null && item?.match(regex).length >= 2) ? (
-                                        <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question_${index_cauhoi}`}></img>
-                                    ) : (
+                                    (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
+                                        <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question_${index_cauhoi}`} key={`key${index_cauhoi}`}></img>
+                                    ) 
+                                    : (
                                         item.split('$').map((item2, index2) => {
-                                            return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold'))) ? (
+                                            return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') 
+                                                && !item2.includes('\\bold'))) ? (
                                                 <MathJax.Node key={index2} formula={item2} />
                                             ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\underline')) ?
                                                 (
@@ -576,8 +581,10 @@ const TextEditorWidget = (props) => {
                                                 (
                                                     <div key={index2} style={{fontWeight: 700}}>{item2.split('\\bold{')[1].split('}')[0]}</div>
                                                 )
-                                            :(
-                                                <div key={index2} >{item2}</div>
+                                            : (item2.indexOf('includegraphics') !== -1 && item2?.match(regexImg) !== null && item2?.match(regexImg).length > 1) ? (
+                                                <img src={config.API_URL + `/${item2?.match(regexImg)[1]}`} alt={`img_question_${index2}`} key={`key${index2}`}></img>
+                                            ) : ( 
+                                                <div key={index2}>{item2}</div>
                                             );
                                         })
                                     )
@@ -587,7 +594,7 @@ const TextEditorWidget = (props) => {
                     </div>
                 </div>
             )}
-        </div>
+        </>
     )
 }
 

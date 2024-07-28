@@ -6,7 +6,7 @@ import { Row, Col, Table, notification, Button, Space, Form, InputNumber, Select
 import LoadingCustom from 'components/parts/loading/Loading';
 import AppFilter from 'components/common/AppFilter';
 import { PlusOutlined } from '@ant-design/icons';
-
+import { ExclamationCircleOutlined, } from '@ant-design/icons';
 // redux
 import * as criteriaAction from '../../../../redux/actions/criteria';
 import * as courseAction from '../../../../redux/actions/course';
@@ -15,6 +15,7 @@ import * as thematicAction from '../../../../redux/actions/thematic';
 import { useSelector, useDispatch } from "react-redux"; 
 
 const { Option } = Select;
+const { confirm } = Modal;
 
 const Criteria = () => {
     const [form] = Form.useForm();
@@ -411,66 +412,81 @@ const Criteria = () => {
     };
 
     const DeleteCriteriaCourse = (id) => {
-        const result = window.confirm('Bạn có chắc chán muốn xóa tiêu chí này?');
-        if (result) {
-          const callback = (res) => {
-            if (res.statusText === 'OK' && res.status === 200) {
-                dispatch(criteriaAction.getCriteriasCourse());
-                notification.success({
-                    message: 'Thành công',
-                    description: 'Xóa tiêu chí thành công',
-                })
-            } else {
-              notification.error({
-                message: 'Thông báo',
-                description: 'Xóa tiêu chí mới thất bại',
-              })
-            };
-          }
-          dispatch(criteriaAction.deleteCriteriaCourse({ id: id }, callback))
-        }
+        confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: 'Bạn có chắc chắn muốn xóa tiêu chí này?',
+            okText: 'Đồng ý',
+            cancelText: 'Hủy',
+            onOk() {
+                const callback = (res) => {
+                    if (res.statusText === 'OK' && res.status === 200) {
+                        dispatch(criteriaAction.getCriteriasCourse());
+                        notification.success({
+                            message: 'Thành công',
+                            description: 'Xóa tiêu chí thành công',
+                        })
+                    } else {
+                        notification.error({
+                            message: 'Thông báo',
+                            description: 'Xóa tiêu chí mới thất bại',
+                        })
+                    };
+                }
+                dispatch(criteriaAction.deleteCriteriaCourse({ id: id }, callback))
+            },
+        });
     };
 
     const DeleteCriteriaModule = (id) => {
-        const result = window.confirm('Bạn có chắc chán muốn xóa tiêu chí này?');
-        if (result) {
-          const callback = (res) => {
-            if (res.statusText === 'OK' && res.status === 200) {
-            dispatch(criteriaAction.getCriteriasModule());         
-                notification.success({
-                    message: 'Thành công',
-                    description: 'Xóa tiêu chí thành công',
-                })
-            } else {
-              notification.error({
-                message: 'Thông báo',
-                description: 'Xóa tiêu chí mới thất bại',
-              })
-            };
-          }
-          dispatch(criteriaAction.deleteCriteriaModule({ id: id }, callback))
-        }
+        confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: 'Bạn có chắc chắn muốn xóa tiêu chí này?',
+            okText: 'Đồng ý',
+            cancelText: 'Hủy',
+            onOk() {
+                const callback = (res) => {
+                    if (res.statusText === 'OK' && res.status === 200) {
+                    dispatch(criteriaAction.getCriteriasModule());         
+                        notification.success({
+                            message: 'Thành công',
+                            description: 'Xóa tiêu chí thành công',
+                        })
+                    } else {
+                        notification.error({
+                            message: 'Thông báo',
+                            description: 'Xóa tiêu chí mới thất bại',
+                        })
+                    };
+                }
+                dispatch(criteriaAction.deleteCriteriaModule({ id: id }, callback))
+            },
+        });
     };
 
     const DeleteCriteriaThematic = (id) => {
-        const result = window.confirm('Bạn có chắc chán muốn xóa tiêu chí này?');
-        if (result) {
-          const callback = (res) => {
-            if (res.statusText === 'OK' && res.status === 200) {
-                dispatch(criteriaAction.getCriteriasThematic());
-                notification.success({
-                    message: 'Thành công',
-                    description: 'Xóa tiêu chí thành công',
-                })
-            } else {
-              notification.error({
-                message: 'Thông báo',
-                description: 'Xóa tiêu chí mới thất bại',
-              })
-            };
-          }
-          dispatch(criteriaAction.deleteCriteriaThematic({ id: id }, callback))
-        }
+        confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: 'Bạn có chắc chắn muốn xóa tiêu chí này?',
+            okText: 'Đồng ý',
+            cancelText: 'Hủy',
+            onOk() {
+                const callback = (res) => {
+                    if (res.statusText === 'OK' && res.status === 200) {
+                        dispatch(criteriaAction.getCriteriasThematic());
+                        notification.success({
+                            message: 'Thành công',
+                            description: 'Xóa tiêu chí thành công',
+                        })
+                    } else {
+                        notification.error({
+                            message: 'Thông báo',
+                            description: 'Xóa tiêu chí mới thất bại',
+                        })
+                    };
+                }
+                dispatch(criteriaAction.deleteCriteriaThematic({ id: id }, callback))
+            },
+        });
     };
 
     const createCriteria = (values) => {
@@ -610,24 +626,29 @@ const Criteria = () => {
     };
 
     const DeleteCriteriaOnline = (id) => {
-        const result = window.confirm('Bạn có chắc chán muốn xóa tiêu chí này?');
-        if (result) {
-          const callback = (res) => {
-            if (res.statusText === 'OK' && res.status === 200) {
-                dispatch(criteriaAction.getCriteriasOnline());
-                notification.success({
-                    message: 'Thành công',
-                    description: 'Xóa tiêu chí thành công',
-                })
-            } else {
-                notification.error({
-                    message: 'Thông báo',
-                    description: 'Xóa tiêu chí thất bại',
-                })
-            };
-          }
-          dispatch(criteriaAction.deleteCriteriaOnline({ id: id }, callback))
-        }
+        confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: 'Bạn có chắc chắn muốn xóa tiêu chí này?',
+            okText: 'Đồng ý',
+            cancelText: 'Hủy',
+            onOk() {
+                const callback = (res) => {
+                    if (res.statusText === 'OK' && res.status === 200) {
+                        dispatch(criteriaAction.getCriteriasOnline());
+                        notification.success({
+                            message: 'Thành công',
+                            description: 'Xóa tiêu chí thành công',
+                        })
+                    } else {
+                        notification.error({
+                            message: 'Thông báo',
+                            description: 'Xóa tiêu chí thất bại',
+                        })
+                    };
+                }
+                dispatch(criteriaAction.deleteCriteriaOnline({ id: id }, callback))
+            },
+        });
     };
 
     const renderCourses = () => {

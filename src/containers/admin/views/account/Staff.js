@@ -5,9 +5,9 @@ import defaultImage from 'assets/img/default.jpg';
 import AppFilter from 'components/common/AppFilter';
 
 // antd
-import { Table, Tag, Button, Row, Col, notification, Space, Avatar, Form, 
+import { Table, Tag, Button, Row, Col, notification, Space, Avatar, Form, Modal,
   Input, Upload, message, Select, DatePicker, Checkbox, Timeline, Pagination } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
 // redux
 import * as userAction from '../../../../redux/actions/user';
@@ -281,8 +281,12 @@ const StaffPage = () => {
     }, [staff]);  // eslint-disable-line react-hooks/exhaustive-deps
 
     const DeleteUser = (id, vai_tro) => {
-        const result = window.confirm('Bạn có chắc chắn muốn hủy kích hoạt thành viên này?');
-        if (result) {
+      Modal.confirm({
+        icon: <ExclamationCircleOutlined />,
+        content: 'Bạn có chắc chắn muốn hủy kích hoạt thành viên này?',
+        okText: 'Đồng ý',
+        cancelText: 'Hủy',
+        onOk() {
           const callback = (res) => {
             if (res.status === 'success') {
               dispatch(userAction.getStaffs({ search: filter.search, startDay: filter.start, 
@@ -312,7 +316,8 @@ const StaffPage = () => {
           } else {
             dispatch(userAction.deleteStudent({ id: id }, callback))
           }
-        }
+        },
+      });
     };
 
     const createUser = (values) => {

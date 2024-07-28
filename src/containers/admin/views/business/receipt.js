@@ -5,8 +5,8 @@ import moment from "moment";
 import config from '../../../../configs/index';
 
 // component
-import { Table, Tag, Space, Button, notification } from 'antd';
-import { SwapOutlined } from '@ant-design/icons';
+import { Table, Tag, Space, Button, notification, Modal } from 'antd';
+import { SwapOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import * as CurrencyFormat from 'react-currency-format';
 
 // redux
@@ -113,25 +113,30 @@ const ReceiptPage = (props) => {
     ];
 
     const handleDelete = (hoa_don_id) => {
-      const result = window.confirm('Bạn có chắc chăn muốn xóa hóa đơn này?');
-        if (result) {
-            const callback = (res) => {
-                if (res.statusText === 'OK' && res.status === 200) {
-                    dispatch(receiptAction.getRECEIPTs());
-                    dispatch(receiptAction.getRECEIPTsDetail({ idType: '' }));
-                    notification.success({
-                        message: 'Thành công',
-                        description: 'Xóa hóa đơn thành công',
-                    })
-                } else {
-                    notification.error({
-                        message: 'Thông báo',
-                        description: 'Xóa hóa đơn thất bại',
-                    })
-                };
-            }
-            dispatch(receiptAction.DeleteRECEIPTDetail({ id: hoa_don_id }, callback))
-        }
+      Modal.confirm({
+        icon: <ExclamationCircleOutlined />,
+        content: 'Bạn có chắc chăn muốn xóa hóa đơn này?',
+        okText: 'Đồng ý',
+        cancelText: 'Hủy',
+        onOk() {
+          const callback = (res) => {
+            if (res.statusText === 'OK' && res.status === 200) {
+                dispatch(receiptAction.getRECEIPTs());
+                dispatch(receiptAction.getRECEIPTsDetail({ idType: '' }));
+                notification.success({
+                    message: 'Thành công',
+                    description: 'Xóa hóa đơn thành công',
+                })
+            } else {
+                notification.error({
+                    message: 'Thông báo',
+                    description: 'Xóa hóa đơn thất bại',
+                })
+            };
+          }
+          dispatch(receiptAction.DeleteRECEIPTDetail({ id: hoa_don_id }, callback))
+        },
+      });
     };
 
     const handleEdit = (hoa_don_id, hoa_don) => {

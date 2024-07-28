@@ -4,8 +4,9 @@ import React, { useState, useEffect } from 'react';
 import config from '../../../../configs/index';
 import moment from 'moment';
 // component
-import { Select, notification, Row, Form, Col, Input, Timeline, InputNumber, Space, Button, Table } from 'antd';
-
+import { Select, notification, Row, Form, Col, Input, Timeline, InputNumber, 
+    Modal, Space, Button, Table } from 'antd';
+    import { ExclamationCircleOutlined, } from '@ant-design/icons';
 // redux
 import { useDispatch, useSelector } from 'react-redux';
 import * as menuAction from '../../../../redux/actions/menu';
@@ -78,7 +79,7 @@ const MenuPage = (props) => {
             render: (menu_id) => (
                 <Space size="middle">
                     <Button  type="button" onClick={() => EditMenu(menu_id)} className="ant-btn ant-btn-round ant-btn-primary">Sửa</Button>
-                    <Button shape="round" onClick={() => DeleteMenu(menu_id)} type="danger"  >Xóa</Button> 
+                    <Button shape="round" onClick={() => DeleteMenu(menu_id)} type="danger">Xóa</Button> 
                 </Space>
             ),
         },
@@ -194,23 +195,21 @@ const MenuPage = (props) => {
         };
 
         let data = {};
-
-        if (state.idType === 2) {
+        if (state.idType === 1) { // loại liên kết
             data = {
                 "ten_menu": values.ten_menu,
                 "vi_tri_hien_thi": values.vi_tri_hien_thi,
-                "gia_tri": values.gia_tri.join(','),
+                "gia_tri": values.gia_tri,
                 "loai_menu_id": values.loai_menu_id
             };
         } else {
             data = {
                 "ten_menu": values.ten_menu,
                 "vi_tri_hien_thi": values.vi_tri_hien_thi,
-                "gia_tri": (values.gia_tri.length > 0) ? values.gia_tri[0] : values.gia_tri,
+                "gia_tri": (values.gia_tri.length > 0 && typeof values.gia_tri !== 'number') ? values.gia_tri.join(',') : values.gia_tri,
                 "loai_menu_id": values.loai_menu_id
             };
         }
-
         if (state.isEdit) {
             dispatch(menuAction.EditMenu({ formData: data, id: state.idMenu }, callback))
         } else {
@@ -224,24 +223,29 @@ const MenuPage = (props) => {
     };
     
     const DeleteMenu = (id) => {
-        const result = window.confirm('Bạn có chắc chán muốn xóa menu này?');
-        if (result) {
-          const callback = (res) => {
-            if (res.statusText === 'OK' && res.status === 200) {
-                dispatch(menuAction.getMenus());
-                notification.success({
-                    message: 'Thành công',
-                    description: 'Xóa menu thành công',
-                })
-            } else {
-                notification.error({
-                    message: 'Thông báo',
-                    description: 'Xóa menu mới thất bại',
-                })
-            };
-          }
-          dispatch(menuAction.DeleteMenu({ id: id }, callback))
-        }
+        Modal.confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: 'Bạn có chắc chán muốn xóa menu này?',
+            okText: 'Đồng ý',
+            cancelText: 'Hủy',
+            onOk() {
+                const callback = (res) => {
+                    if (res.statusText === 'OK' && res.status === 200) {
+                        dispatch(menuAction.getMenus());
+                        notification.success({
+                            message: 'Thành công',
+                            description: 'Xóa menu thành công',
+                        })
+                    } else {
+                        notification.error({
+                            message: 'Thông báo',
+                            description: 'Xóa menu mới thất bại',
+                        })
+                    };
+                }
+                dispatch(menuAction.DeleteMenu({ id: id }, callback))
+            },
+        });
     };
 
     return (

@@ -840,10 +840,10 @@ const ExamDetail = () => {
                             </div>
                         </div>
                         <div className="block-action">
-                            <Button type="default" size="large" className="dowload-exam-button" onClick={() => doExamAgain()}>
+                            {/* <Button type="default" size="large" className="dowload-exam-button" onClick={() => doExamAgain()}>
                                 <Icon component={() => <img className="dowload-exam-right-icon" src={docIcon} alt="..." />} />
                                 Làm lại bài thi
-                            </Button>
+                            </Button> */}
 
                             <Link to={`/luyen-tap/chuyen-de/xem/${params.idthematic}/${params.idCourse}`}>
                                 <Button type="default" size="large" className="dowload-exam-button">

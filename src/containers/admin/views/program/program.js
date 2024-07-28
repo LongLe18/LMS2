@@ -4,8 +4,8 @@ import config from '../../../../configs/index';
 import moment from "moment";
 
 // react plugin for creating notifications over the dashboard
-import { Table, Tag, Button, Row, Col, notification, Space, Form, Input, Upload, message, Radio } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { Table, Tag, Button, Row, Col, notification, Space, Form, Input, Upload, message, Radio, Modal, } from 'antd';
+import { UploadOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
 // component
 import LoadingCustom from 'components/parts/loading/Loading';
@@ -213,24 +213,29 @@ const ProgramPage = () => {
     };
 
     const DeleteProgram = (id) => {
-        const result = window.confirm('Bạn có chắc chắn muốn dừng khung chương trình này?');
-        if (result) {
-            const callback = (res) => {
-                if (res.statusText === 'OK' && res.status === 200) {
-                    dispatch(programAction.getProgrammes({ status: filter.trang_thai === 2 ? '' : filter.trang_thai }));
-                    notification.success({
-                        message: 'Thành công',
-                        description: 'Dừng khung chương trình thành công',
-                    })
-                } else {
-                    notification.error({
-                        message: 'Thông báo',
-                        description: 'Dừng khung chương trình mới thất bại',
-                    })
-                };
-            }
-            dispatch(programAction.deleteProgramme({ id: id }, callback))
-        }
+        Modal.confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: 'Bạn có chắc chắn muốn dừng khung chương trình này?',
+            okText: 'Đồng ý',
+            cancelText: 'Hủy',
+            onOk() {
+                const callback = (res) => {
+                    if (res.statusText === 'OK' && res.status === 200) {
+                        dispatch(programAction.getProgrammes({ status: filter.trang_thai === 2 ? '' : filter.trang_thai }));
+                        notification.success({
+                            message: 'Thành công',
+                            description: 'Dừng khung chương trình thành công',
+                        })
+                    } else {
+                        notification.error({
+                            message: 'Thông báo',
+                            description: 'Dừng khung chương trình mới thất bại',
+                        })
+                    };
+                }
+                dispatch(programAction.deleteProgramme({ id: id }, callback))
+            },
+        });
     };
 
     return (

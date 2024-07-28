@@ -6,8 +6,9 @@ import defaultImage from 'assets/img/default.jpg';
 import moment from "moment";
 
 // component
-import { Table, Tag, Button, Row, Col, notification, Space, Avatar, Form, Input, Upload, message, Select} from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { Table, Tag, Button, Row, Col, notification, Space, Avatar, Form, 
+    Input, Upload, message, Select, Modal } from 'antd';
+import { UploadOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import AppFilter from "components/common/AppFilter";
 import LoadingCustom from 'components/parts/loading/Loading';
 
@@ -174,25 +175,30 @@ const DocumentPage = (props) => {
     }
 
     const DeleteDocument = (id) => {
-        const result = window.confirm('Bạn có chắc chán muốn xóa tài liệu này?');
-        if (result) {
-          const callback = (res) => {
-            if (res.statusText === 'OK' && res.status === 200) {
-              dispatch(documentAction.getDocs({ status: filter.trang_thai === 2 ? '' : filter.trang_thai, search: filter.search,
-                  start: filter.start, end: filter.end, typeId: filter.typeId }));
-              notification.success({
-                message: 'Thành công',
-                description: 'Xóa tài liệu thành công',
-              })
-            } else {
-              notification.error({
-                message: 'Thông báo',
-                description: 'Xóa tài liệu mới thất bại',
-              })
-            };
-          }
-          dispatch(documentAction.DeleteDoc({ id: id }, callback))
-        }
+        Modal.confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: 'Bạn có chắc chắn muốn xóa tài liệu này?',
+            okText: 'Đồng ý',
+            cancelText: 'Hủy',
+            onOk() {
+                const callback = (res) => {
+                    if (res.statusText === 'OK' && res.status === 200) {
+                        dispatch(documentAction.getDocs({ status: filter.trang_thai === 2 ? '' : filter.trang_thai, search: filter.search,
+                            start: filter.start, end: filter.end, typeId: filter.typeId }));
+                        notification.success({
+                            message: 'Thành công',
+                            description: 'Xóa tài liệu thành công',
+                        })
+                    } else {
+                        notification.error({
+                            message: 'Thông báo',
+                            description: 'Xóa tài liệu mới thất bại',
+                        })
+                    };
+                }
+                dispatch(documentAction.DeleteDoc({ id: id }, callback))
+            },
+        });
     };
     
     useEffect(() => {

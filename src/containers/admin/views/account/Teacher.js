@@ -7,8 +7,8 @@ import AppFilter from 'components/common/AppFilter';
 
 // antd
 import { Table, Tag, Button, Row, Col, notification, Space, Avatar, 
-    Form, Input, Upload, message, Select, DatePicker } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+    Form, Input, Upload, message, Select, DatePicker, Modal } from 'antd';
+import { UploadOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
 // redux
 import * as userAction from '../../../../redux/actions/user';
@@ -260,38 +260,43 @@ const TeacherPage = () => {
     }, [teacher]);  // eslint-disable-line react-hooks/exhaustive-deps
   
     const DeleteUser = (id, vai_tro) => {
-          const result = window.confirm('Bạn có chắc chắn muốn hủy kích hoạt thành viên này?');
-          if (result) {
-            const callback = (res) => {
-              if (res.status === 'success') {
-                dispatch(userAction.getTeachers({ idMajor: '', status: filter.trang_thai, startDay: 
-                    filter.start, endDay: filter.end, search: filter.search }, (res) => {
-                        if (res.status === 'success') {
-                            res.data = (res.data.map((teacher) => {
-                                return {...teacher, 'vai_tro': 'giáo viên', 'key': teacher.giao_vien_id, 'id': teacher.giao_vien_id };
-                            }));
-                            setData([...res.data]);
-                        }
-                    }));  
-                notification.success({
-                    message: 'Thành công',
-                    description: 'Kích hoạt / Tạm dừng giáo viên thành công',
-                })
-              } else {
-                    notification.error({
-                    message: 'Thông báo',
-                    description: 'Kích hoạt / Tạm dừng giáo viên thất bại',
-                    })
-                };
-            }
-            if (vai_tro.vai_tro === 'nhân viên') {
-                dispatch(userAction.deleteStaff({ id: id }, callback))
-            } else if (vai_tro.vai_tro === 'giáo viên') {
-                dispatch(userAction.deleteTeacher({ id: id }, callback))
-            } else {
-                dispatch(userAction.deleteStudent({ id: id }, callback))
-            }
-        }
+        Modal.confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: 'Bạn có chắc chắn muốn hủy kích hoạt thành viên này?',
+            okText: 'Đồng ý',
+            cancelText: 'Hủy',
+            onOk() {
+                const callback = (res) => {
+                    if (res.status === 'success') {
+                        dispatch(userAction.getTeachers({ idMajor: '', status: filter.trang_thai, startDay: 
+                            filter.start, endDay: filter.end, search: filter.search }, (res) => {
+                                if (res.status === 'success') {
+                                    res.data = (res.data.map((teacher) => {
+                                        return {...teacher, 'vai_tro': 'giáo viên', 'key': teacher.giao_vien_id, 'id': teacher.giao_vien_id };
+                                    }));
+                                setData([...res.data]);
+                                }
+                            }));  
+                        notification.success({
+                            message: 'Thành công',
+                            description: 'Kích hoạt / Tạm dừng giáo viên thành công',
+                        })
+                    } else {
+                        notification.error({
+                        message: 'Thông báo',
+                        description: 'Kích hoạt / Tạm dừng giáo viên thất bại',
+                        })
+                    };
+                }
+                if (vai_tro.vai_tro === 'nhân viên') {
+                    dispatch(userAction.deleteStaff({ id: id }, callback))
+                } else if (vai_tro.vai_tro === 'giáo viên') {
+                    dispatch(userAction.deleteTeacher({ id: id }, callback))
+                } else {
+                    dispatch(userAction.deleteStudent({ id: id }, callback))
+                }
+            },
+        });
     };
   
     const createUser = (values) => {

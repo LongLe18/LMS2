@@ -6,8 +6,8 @@ import config from '../../../../configs/index';
 import '../../../../../node_modules/video-react/styles/scss/video-react.scss';
 
 // component antd
-import { Row, Col, Form, Input, Select, Upload, Button, message, notification, Space, Progress } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { Row, Col, Form, Input, Select, Upload, Button, message, notification, Space, Progress, Modal } from 'antd';
+import { UploadOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Player } from "video-react";
 
 // other
@@ -299,12 +299,16 @@ const DetailLesson = () => {
       // video , image
       if (state.filePdf !== '') {
         if (lesson.data.link_bai_giang !== null) {
-          const ask = window.confirm('Chuyên đề này đã có bài giảng pdf \n Bạn có muốn ghi đè bài giảng đã có không?')
-          if (ask) {
-            formData.append('link_bai_giang', state.filePdf);
-          } else {
-            return;
-          }
+          Modal.confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: 'Chuyên đề này đã có bài giảng pdf \n Bạn có muốn ghi đè bài giảng đã có không?',
+            okText: 'Đồng ý',
+            cancelText: 'Hủy',
+            onOk() {
+              formData.append('link_bai_giang', state.filePdf);
+            },
+          });
+          
         } else {
           formData.append('link_bai_giang', state.filePdf);
         }

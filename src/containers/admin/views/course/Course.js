@@ -4,8 +4,9 @@ import config from '../../../../configs/index';
 import defaultImage from 'assets/img/default.jpg';
 import moment from "moment";
 // react plugin for creating notifications over the dashboard
-import { Table, Tag, Button, Row, Col, notification, Space, Avatar, Form, Input, Upload, message, DatePicker, Select} from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { Table, Tag, Button, Row, Col, notification, Space, Avatar, Form, Input, 
+  Upload, message, DatePicker, Select, Modal,  } from 'antd';
+import { UploadOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
 // component
 import AppFilter from "components/common/AppFilter";
@@ -294,8 +295,12 @@ const Course = () => {
     } 
 
     const DeleteCourse = (id) => {
-        const result = window.confirm('Bạn có chắc chán muốn xóa khóa học này?');
-        if (result) {
+      Modal.confirm({
+        icon: <ExclamationCircleOutlined />,
+        content: 'Bạn có chắc chán muốn xóa khóa học này?',
+        okText: 'Đồng ý',
+        cancelText: 'Hủy',
+        onOk() {
           const callback = (res) => {
             if (res.statusText === 'OK' && res.status === 200) {
               dispatch(courseAction.filterCourses({ status: filter.trang_thai === 2 ? '' : filter.trang_thai, search: filter.search,
@@ -319,7 +324,8 @@ const Course = () => {
             };
           }
           dispatch(courseAction.DeleteCourse({ idLesson: id }, callback))
-        }
+        },
+      });
     };
 
     return(

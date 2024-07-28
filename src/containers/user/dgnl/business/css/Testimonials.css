@@ -201,6 +201,54 @@
   }
 }
 
+.trang-chu {
+  .list-course-cate {
+    .intro-trang-chu {
+      background: #fff;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      display: flex;
+      padding: 12px;
+
+      .descripion-intro {
+        margin-left: 24px;
+        display: flex;
+        flex-direction: column;
+
+        .descripion {
+          margin: 8px 0px;
+          color: #5c5959;
+        }
+
+        button {
+          width: 80%;
+          background: rgb(250,143,3);
+          background: linear-gradient(90deg, rgba(250,143,3,1) 0%, rgba(251,177,2,1) 39%, rgba(255,175,0,1) 100%);
+          border-image-source: linear-gradient(90deg, rgba(250,143,3,1) 0%, rgba(251,177,2,1) 39%, rgba(255,175,0,1) 100%);
+        }
+      }
+    }
+
+    .try-exam {
+      border-radius: 10px;
+      background-color: transparent;
+      background-image: radial-gradient(at center center, #059E00 0%, #035700 100%);
+      display: flex;
+      padding: 48px;
+
+      .try-exam-description {
+        width: 60%;
+        margin-right: 12px;
+
+        h5 {
+          color: #fff;
+          font-size: 24px;
+        }
+      }
+    }
+  }
+}
+
 @media only screen and (max-width: 680px) {
   .list-our-team .image-box img {
     width: 40%;

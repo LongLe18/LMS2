@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import moment from "moment";
 // component
 import AppFilter from "components/common/AppFilter";
-import { Row, Col, Form, Input, Button, Space, Select,
+import { Row, Col, Form, Input, Button, Space, Select, Modal,
   Table, Tag, Avatar, Upload, message, notification, Radio } from "antd";
-import { UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 // import Loading from '../../../components/parts/Loading/Loading';
 import EllipsisTooltip from "components/common/EllipsisTooltip";
 
@@ -376,47 +376,55 @@ const ModuleCate = (props) => {
     };
 
     const DeleteModule = (id) => {
-      const result = window.confirm('Bạn có chắc chán muốn xóa mô đun này?');
-      if (result) {
-        const callback = (res) => {
-          console.log(res);
-          if (res.statusText === 'OK' && res.status === 200) {
-            dispatch(partActions.filterModule({ idCourse: filter.khoa_hoc_id, status: filter.trang_thai, search: filter.search, start: filter.start, end: filter.end}));
-            notification.success({
-              message: 'Thành công',
-              description: 'Xóa module mới thành công',
-            })
-          } else {
-            notification.error({
-              message: 'Thông báo',
-              description: 'Xóa module mới thất bại',
-            })
-          };
-        }
-        dispatch(partActions.DeleteModule({ idModule: id }, callback))
-      }
+      Modal.confirm({
+        icon: <ExclamationCircleOutlined />,
+        content: 'Bạn có chắc chán muốn xóa mô đun này?',
+        okText: 'Đồng ý',
+        cancelText: 'Hủy',
+        onOk() {
+          const callback = (res) => {
+            if (res.statusText === 'OK' && res.status === 200) {
+              dispatch(partActions.filterModule({ idCourse: filter.khoa_hoc_id, status: filter.trang_thai, search: filter.search, start: filter.start, end: filter.end}));
+              notification.success({
+                message: 'Thành công',
+                description: 'Xóa module mới thành công',
+              })
+            } else {
+              notification.error({
+                message: 'Thông báo',
+                description: 'Xóa module mới thất bại',
+              })
+            };
+          }
+          dispatch(partActions.DeleteModule({ idModule: id }, callback))
+        },
+      });
     };
 
     const ChangeStatusModule = (id) => {
-      const result = window.confirm('Bạn có chắc chán muốn xóa mô đun này?');
-      if (result) {
-        const callback = (res) => {
-          console.log(res);
-          if (res.statusText === 'OK' && res.status === 200) {
-            dispatch(partActions.filterModule({ idCourse: filter.khoa_hoc_id, status: filter.trang_thai, search: filter.search, start: filter.start, end: filter.end}));
-            notification.success({
-              message: 'Thành công',
-              description: 'Chuyển trạng thái module thành công',
-            })
-          } else {
-            notification.error({
-              message: 'Thông báo',
-              description: 'Chuyển trạng thái module thất bại',
-            })
-          };
-        }
-        dispatch(partActions.ChangeStatusModule({ idModule: id }, callback))
-      }
+      Modal.confirm({
+        icon: <ExclamationCircleOutlined />,
+        content: 'Bạn có chắc chán muốn xóa mô đun này?',
+        okText: 'Đồng ý',
+        cancelText: 'Hủy',
+        onOk() {
+          const callback = (res) => {
+            if (res.statusText === 'OK' && res.status === 200) {
+              dispatch(partActions.filterModule({ idCourse: filter.khoa_hoc_id, status: filter.trang_thai, search: filter.search, start: filter.start, end: filter.end}));
+              notification.success({
+                message: 'Thành công',
+                description: 'Chuyển trạng thái module thành công',
+              })
+            } else {
+              notification.error({
+                message: 'Thông báo',
+                description: 'Chuyển trạng thái module thất bại',
+              })
+            };
+          }
+          dispatch(partActions.ChangeStatusModule({ idModule: id }, callback))
+        },
+      });
     }
 
     return (

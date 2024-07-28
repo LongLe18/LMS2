@@ -7,7 +7,8 @@ import config from '../../../../configs/index';
 import moment from "moment";
 import { cutString } from 'helpers/common.helper';
 // components
-import { Table, Button, Row, Col, notification, Space, Form, Input } from 'antd';
+import { Table, Button, Row, Col, notification, Space, Form, Input, Modal, } from 'antd';
+import { ExclamationCircleOutlined, } from '@ant-design/icons';
 import LoadingCustom from 'components/parts/loading/Loading';
 import TextEditorWidget2 from 'components/common/TextEditor/TextEditor2';
 
@@ -133,24 +134,29 @@ const FooterPage = (props) => {
     }, [footer]);  // eslint-disable-line react-hooks/exhaustive-deps
     
     const DeleteFooter = (id) => {
-        const result = window.confirm('Bạn có chắc chán muốn xóa thông tin này?');
-        if (result) {
-            const callback = (res) => {
-                if (res.statusText === 'OK' && res.status === 200) {
-                    dispatch(footerAction.getFOOTERs());
-                    notification.success({
-                        message: 'Thành công',
-                        description: 'Xóa thông tin thành công',
-                    })
-                } else {
-                    notification.error({
-                        message: 'Thông báo',
-                        description: 'Xóa thông tin thất bại',
-                    })
-                };
-            }
-            dispatch(footerAction.DeleteFOOTER({ id: id }, callback))
-        }    
+        Modal.confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: 'Bạn có chắc chán muốn xóa thông tin này?',
+            okText: 'Đồng ý',
+            cancelText: 'Hủy',
+            onOk() {
+                const callback = (res) => {
+                    if (res.statusText === 'OK' && res.status === 200) {
+                        dispatch(footerAction.getFOOTERs());
+                        notification.success({
+                            message: 'Thành công',
+                            description: 'Xóa thông tin thành công',
+                        })
+                    } else {
+                        notification.error({
+                            message: 'Thông báo',
+                            description: 'Xóa thông tin thất bại',
+                        })
+                    };
+                }
+                dispatch(footerAction.DeleteFOOTER({ id: id }, callback))
+            },
+        });
     };
     
     return (

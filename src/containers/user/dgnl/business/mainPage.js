@@ -7,24 +7,20 @@ import { Helmet } from 'react-helmet';
 import { Link } from "react-router-dom";
 
 // component
-import { Layout, Row, Col, Menu } from 'antd';
+import { Layout, Row, Col, Menu, Button } from 'antd';
 import CarouselCustom from 'components/parts/Carousel/Carousel';
 
 // redux
 import { useSelector, useDispatch } from 'react-redux';
-// import * as courseAction from '../../../../redux/actions/course';
 import * as programmeAction from '../../../../redux/actions/programme';
 import Statisic from "components/parts/statisic/Statisic";
 
 const { Content } = Layout;
-// const { Option } = Select;
 
 const MainPageUser = (props) => {
     
     const dispatch = useDispatch();
 
-    // const [form] = Form.useForm();
-    // const programmes = useSelector(state => state.programme.list.result);
     const programmeCourses = useSelector(state => state.programme.courses.result);
 
     useEffect(() => {
@@ -75,7 +71,7 @@ const MainPageUser = (props) => {
                                     </Menu.Item>
                                     {items.map((item, index) => {
                                         return (
-                                            <Menu.SubMenu title={item.label} key={index}>
+                                            <Menu.SubMenu title={item.label} key={Number(index)}>
                                                 {item.children?.map((child, index) => {
                                                     return (
                                                         <Menu.Item key={child.key}>
@@ -101,24 +97,84 @@ const MainPageUser = (props) => {
 
                     <br/>
 
-                    <img alt="..."  style={{borderRadius: 6, width: '100%'}}
-                        className="img-no-padding img-responsive"
-                        src={require("assets/img/chuc_nang.png").default}
-                    />
+                    <Row gutter={12} style={{marginTop: 12}}>
+                        <Col xl={8} md={12} xs={24}>
+                            <div className="intro-trang-chu">
+                                <img alt="..."  style={{borderRadius: 6}}
+                                    className="img-no-padding img-responsive"
+                                    src={require("assets/img/trang-chu-1.png").default}
+                                />
+                                <div className="descripion-intro">
+                                    <h4>Khoá học</h4>
+                                    <span className='descripion'>Cung cấp thông tin đầy đủ về các khóa học, bài giảng chất lượng và lộ trình học tập</span>
+                                    <Button type="primary" style={{borderRadius: 8}} size={'large'} 
+                                        onClick={() => window.location.href = 'https://enno.edu.vn/khoa-hoc/'}>
+                                        Tham khảo
+                                    </Button>
+                                </div>
+                            </div>
+                        </Col>
+                        <Col xl={8} md={12} xs={24}>
+                            <div className="intro-trang-chu">
+                                <img alt="..."  style={{borderRadius: 6}}
+                                    className="img-no-padding img-responsive"
+                                    src={require("assets/img/trang-chu-2.png").default}
+                                />
+                                <div className="descripion-intro">
+                                    <h4>Sách - Tài liệu</h4>
+                                    <span className='descripion'>Đầy đủ giáo trình học, sách ôn luyện từ đơn giản tới nâng cao bám sát chương trình HỌC & THI</span>
+                                    <Button type="primary" style={{borderRadius: 8}} size={'large'} 
+                                        onClick={() => window.location.href = 'https://enno.edu.vn/sach/'}>
+                                        Tham khảo
+                                    </Button>
+                                </div>
+                            </div>
+                        </Col>
+                        <Col xl={8} md={12} xs={24}>
+                            <div className="intro-trang-chu">
+                                <img alt="..."  style={{borderRadius: 6}}
+                                    className="img-no-padding img-responsive"
+                                    src={require("assets/img/trang-chu-3.png").default}
+                                />
+                                <div className="descripion-intro">
+                                    <h4>Thi thử</h4>
+                                    <span className='descripion'>Tham gia các kỳ thi thử và làm quen với các hình thức thi mới nhất</span>
+                                    <Button type="primary" style={{borderRadius: 8}} size={'large'} 
+                                        onClick={() => window.location.href = 'https://enno.edu.vn/sach/'}>
+                                        Tham khảo
+                                    </Button>
+                                </div>
+                            </div>
+                        </Col>
+                    </Row>
 
                     <br/>
 
-                    <img alt="..."  style={{borderRadius: 6, width: '100%'}}
-                        className="img-no-padding img-responsive"
-                        src={require("assets/img/trai_nghiem.png").default}
-                    />
+                    <div className="try-exam">
+                        <div className="try-exam-description">
+                            <h3 style={{color: '#fff', fontWeight: 700}}>THI THỬ - trải nghiệm thật</h3>
+                            <h5>Học sinh mong muốn trải nghiệm cuộc thi đánh giá năng lực chuẩn 90%, bám sát hệ thống đề các kỳ thi thật</h5>
+                            <h5>Học sinh muốn kiểm tra trình độ, năng lực thực tế qua các bài kiểm tra test đầu vào theo kiến thức chuẩn</h5>
+                            <h5>Học sinh mong muốn thử sức với các kỳ thi vào trường chuyên</h5>
+                            <div style={{width: '100%', textAlign: 'center'}}>
+                                <Button type="primary" style={{borderRadius: 8, color: '#000', backgroundColor: '#fff', borderColor: '#fff'}} size={'large'} 
+                                    onClick={() => window.location.href = 'https://enno.edu.vn/lien-he/'}>
+                                    Đăng ký
+                                </Button>
+                            </div>
+                        </div>
+                        <img alt="..."  style={{borderRadius: 10, width: 560}}
+                            className="img-no-padding img-responsive"
+                            src={require("assets/img/trang-chu-4.png").default}
+                        />
+                    </div>
                 </div>
             </div>
         )
     };
 
     return (
-        <Layout className="main-app">
+        <Layout className="trang-chu">
             <Helmet>
                 <title>Trang chủ</title>
             </Helmet>

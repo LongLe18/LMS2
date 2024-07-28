@@ -6,7 +6,7 @@ import config from '../../../../configs/index';
 
 import { Button, Modal, Pagination, Row, Col, Select, notification } from 'antd';
 import MathJax from 'react-mathjax';
-
+import { ExclamationCircleOutlined, } from '@ant-design/icons';
 // redux
 import { useSelector, useDispatch } from "react-redux";
 import * as questionActions from '../../../../redux/actions/question';
@@ -185,25 +185,30 @@ const SampleQuestion = (props) => {
             return;
         };
         
-        const result = window.confirm('Bạn có chắc chắn chọn câu hỏi này?');
-        if (result) {
-            const callback = (res) => {
-                if (res.status === 200) {
-                    dispatch(examActions.getExam({ id: idExam }));
-                    notification.success({
-                        message: 'Thành công',
-                        description: 'Thêm câu hỏi vào đề thi thành công',
-                    })
-                } else {
-                    notification.error({
-                        message: 'Thông báo',
-                        description: 'Thêm câu hỏi vào đề thi thất bại',
-                    })
-                };
-            }
-            const questionExam = { cau_hoi_id: id, de_thi_id: idExam }
-            dispatch(questionActions.createQuestionExam(questionExam, callback));
-        }
+        Modal.confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: 'Bạn có chắc chắn chọn câu hỏi này?',
+            okText: 'Đồng ý',
+            cancelText: 'Hủy',
+            onOk() {
+                const callback = (res) => {
+                    if (res.status === 200) {
+                        dispatch(examActions.getExam({ id: idExam }));
+                        notification.success({
+                            message: 'Thành công',
+                            description: 'Thêm câu hỏi vào đề thi thành công',
+                        })
+                    } else {
+                        notification.error({
+                            message: 'Thông báo',
+                            description: 'Thêm câu hỏi vào đề thi thất bại',
+                        })
+                    };
+                }
+                const questionExam = { cau_hoi_id: id, de_thi_id: idExam }
+                dispatch(questionActions.createQuestionExam(questionExam, callback));
+            },
+        });
     };
 
     return (

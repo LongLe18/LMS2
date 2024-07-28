@@ -1251,13 +1251,13 @@ const ExamOnlineDetail = () => {
                                     </div>
                                 </div>
                                 <div className="block-action">
-                                    <Button type="default" size="large" className="dowload-exam-button" onClick={() => doExamAgain()}>
+                                    {/* <Button type="default" size="large" className="dowload-exam-button" onClick={() => doExamAgain()}>
                                         <FileOutlined />
                                         Làm lại bài thi
-                                    </Button>
+                                    </Button> */}
                                     <Button type="primary" size="large" className="dowload-exam-button" onClick={() => downloadReport()}>
                                         <DownloadOutlined />
-                                        Tải báo cáo
+                                        Tải kết quả đánh giá
                                     </Button>
                                 </div>
                             </div>

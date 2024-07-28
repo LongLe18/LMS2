@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 import config from '../../../../configs/index';
 import moment from "moment";
 // react plugin for creating notifications over the dashboard
-import { Table, Tag, Button, Row, Col, notification, Space } from 'antd';
-import { PlusOutlined } from "@ant-design/icons";
+import { Table, Tag, Button, Row, Col, notification, Space, Modal } from 'antd';
+import { PlusOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 
 // component
 import AppFilter from "components/common/AppFilter";
@@ -122,10 +122,13 @@ function Lesson() {
   }
 
   const DeleteThematic = (id) => {
-    const result = window.confirm('Bạn có chắc chán muốn xóa Bài giảng này?');
-      if (result) {
+    Modal.confirm({
+      icon: <ExclamationCircleOutlined />,
+      content: 'Bạn có chắc chán muốn xóa Bài giảng này?',
+      okText: 'Đồng ý',
+      cancelText: 'Hủy',
+      onOk() {
         const callback = (res) => {
-          console.log(res);
           if (res.statusText === 'OK' && res.status === 200) {
             dispatch(lessonActions.filterLessons({ idCourse: '', idModule: filter.mo_dun_id, idThematic: filter.chuyen_de_id, status: '', search: filter.search, 
                 start: filter.start, end: filter.end}));
@@ -141,7 +144,8 @@ function Lesson() {
           };
         }
         dispatch(lessonActions.DeleteLesson({ idLesson: id }, callback))
-      }
+      },
+    });
   };
 
   const onFilterChange = (field, value) => {

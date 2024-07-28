@@ -64,7 +64,7 @@ const FooterBusiness = (props) => {
                                                     <p className="course-cate-description">
                                                         {/* Ngày bắt đầu: {moment(cate.ngay_bat_dau).format(config.DATE_FORMAT_SHORT)} */}
                                                         <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>
-                                                            <Button type="primary" onClick={() => history.push(`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`)}>
+                                                            <Button style={{borderRadius: 6}} type="primary" onClick={() => history.push(`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`)}>
                                                                 Xem chi tiết
                                                             </Button>
                                                         </Link>
@@ -105,7 +105,7 @@ const FooterBusiness = (props) => {
                                                     <p className="course-cate-description">
                                                         Ngày bắt đầu: {moment(cate.ngay_bat_dau).format(config.DATE_FORMAT_SHORT)}
                                                         <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>
-                                                            <Button type="primary" onClick={() => history.push(`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`)}>
+                                                            <Button style={{borderRadius: 6}} type="primary" onClick={() => history.push(`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`)}>
                                                                 Xem chi tiết
                                                             </Button>
                                                         </Link>

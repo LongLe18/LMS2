@@ -5,8 +5,9 @@ import config from '../../../../configs/index';
 import moment from "moment";
 
 // components
-import { Table, Button, Row, Col, notification, Space, Form, Select, Input } from 'antd';
+import { Table, Button, Row, Col, notification, Space, Form, Select, Input, Modal } from 'antd';
 import LoadingCustom from 'components/parts/loading/Loading';
+import { ExclamationCircleOutlined, } from '@ant-design/icons';
 
 // redux
 import * as bankAction from '../../../../redux/actions/bank';
@@ -261,24 +262,29 @@ const BankInfoPage = (props) => {
     };
 
     const DeleteBank = (id) => {
-        const result = window.confirm('Bạn có chắc chán muốn xóa thông tin ngân hàng này?');
-        if (result) {
-            const callback = (res) => {
-                if (res.statusText === 'OK' && res.status === 200) {
-                    dispatch(bankAction.getBANKs());
-                    notification.success({
-                        message: 'Thành công',
-                        description: 'Xóa thông tin ngân hàng thành công',
-                    })
-                } else {
-                    notification.error({
-                        message: 'Thông báo',
-                        description: 'Xóa thông tin ngân hàng thất bại',
-                    })
-                };
-            }
-            dispatch(bankAction.DeleteBANK({ id: id }, callback))
-        }    
+        Modal.confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: 'Bạn có chắc chán muốn xóa thông tin ngân hàng này?',
+            okText: 'Đồng ý',
+            cancelText: 'Hủy',
+            onOk() {
+                const callback = (res) => {
+                    if (res.statusText === 'OK' && res.status === 200) {
+                        dispatch(bankAction.getBANKs());
+                        notification.success({
+                            message: 'Thành công',
+                            description: 'Xóa thông tin ngân hàng thành công',
+                        })
+                    } else {
+                        notification.error({
+                            message: 'Thông báo',
+                            description: 'Xóa thông tin ngân hàng thất bại',
+                        })
+                    };
+                }
+                dispatch(bankAction.DeleteBANK({ id: id }, callback))
+            },
+        });
     };
 
     return (

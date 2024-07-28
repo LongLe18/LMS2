@@ -5,7 +5,8 @@ import axios from "axios";
 import config from '../../../../configs/index';
 
 // component
-import { Tabs, Row, Col, Table, Space, Button, notification, Pagination } from 'antd';
+import { Tabs, Row, Col, Table, Space, Button, notification, Pagination, Modal } from 'antd';
+import { ExclamationCircleOutlined, } from '@ant-design/icons';
 import AppFilter from "components/common/AppFilter";
 import ReactExport from "react-export-excel";
 // redux
@@ -83,7 +84,7 @@ const CourseStudentPage = (props) => {
             // Redirect view for edit
             render: (khoa_hoc_id) => (
                 <Space size="middle">
-                    <Button  type="button" onClick={() => StudentOfCourse(khoa_hoc_id)} className="ant-btn ant-btn-round ant-btn-primary">Xem chi tiết</Button>
+                    <Button style={{borderRadius: 6}} type="button" onClick={() => StudentOfCourse(khoa_hoc_id)} className="ant-btn ant-btn-round ant-btn-primary">Xem chi tiết</Button>
                     <Button shape="round" type="danger" onClick={() => RemainStudentOfCourse(khoa_hoc_id)}>Thêm học viên</Button>
                 </Space>
             ),
@@ -249,24 +250,29 @@ const CourseStudentPage = (props) => {
     };
 
     const deleteStudentCourse = (id) => {
-        const result = window.confirm('Bạn có chắc chăn muốn học viên này?');
-        if (result) {
-            const callback = (res) => {
-                if (res.statusText === 'OK' && res.status === 200) {
-                    dispatch(courseActions.getStudentOfCourse({ idCourse: state.idCourse, province: filter.tinh, search: filter.search }));
-                    notification.success({
-                        message: 'Thành công',
-                        description: 'Xóa học viên thành công',
-                    })
-                } else {
-                    notification.error({
-                        message: 'Thông báo',
-                        description: 'Xóa học viên thất bại',
-                    })
-                };
-            }
-            dispatch(courseActions.deleteCourseStudent({ idCourseStudent: id }, callback));
-        }
+        Modal.confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: 'Bạn có chắc chăn muốn học viên này?',
+            okText: 'Đồng ý',
+            cancelText: 'Hủy',
+            onOk() {
+                const callback = (res) => {
+                    if (res.statusText === 'OK' && res.status === 200) {
+                        dispatch(courseActions.getStudentOfCourse({ idCourse: state.idCourse, province: filter.tinh, search: filter.search }));
+                        notification.success({
+                            message: 'Thành công',
+                            description: 'Xóa học viên thành công',
+                        })
+                    } else {
+                        notification.error({
+                            message: 'Thông báo',
+                            description: 'Xóa học viên thất bại',
+                        })
+                    };
+                }
+                dispatch(courseActions.deleteCourseStudent({ idCourseStudent: id }, callback));
+            },
+        });
     }
 
     const onChange = (page) => {

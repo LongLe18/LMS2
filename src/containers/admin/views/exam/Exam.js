@@ -10,7 +10,8 @@ import './css/addmodal.scss';
 // antd
 import { Row, Col, Button, Tabs, Table, Avatar, Modal, Form, Input, Select, Upload, 
   message, notification, Tooltip, Spin, Pagination } from 'antd';
-import { PlusOutlined, UploadOutlined, EyeOutlined, LockOutlined, UnlockOutlined, RedoOutlined } from '@ant-design/icons';
+import { PlusOutlined, UploadOutlined, EyeOutlined, LockOutlined, 
+  UnlockOutlined, RedoOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
 // component
 import AppFilter from 'components/common/AppFilter';
@@ -620,50 +621,60 @@ const ExamAdminPage = () => {
   }
 
   const deleteExam = (id) => {
-      const result = window.confirm('Bạn có chắc chắn muốn xóa đề thi này?');
-      if (result) {
-          const callback = (res) => {
-              if (res.statusText === 'OK' && res.status === 200) {
-                  dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, 
-                    idThematic: filter.chuyen_de_id, status: filter.trang_thai, search: filter.search, 
-                    start: filter.start, end: filter.end, idType: filter.typeId, publish: tabs, offset: pageIndex, limit: pageSize }));
-                  notification.success({
-                      message: 'Thành công',
-                      description: 'Xóa đề thi thành công',
-                  })
-              } else {
-                  notification.error({
-                      message: 'Thông báo',
-                      description: 'Xóa đề thi thất bại',
-                  })
-              };
-          }
-          dispatch(examActions.deleteExam({ idExam: id }, callback))
-      }
+    Modal.confirm({
+      icon: <ExclamationCircleOutlined />,
+      content: 'Bạn có chắc chắn muốn xóa đề thi này?',
+      okText: 'Đồng ý',
+      cancelText: 'Hủy',
+      onOk() {
+        const callback = (res) => {
+          if (res.statusText === 'OK' && res.status === 200) {
+              dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, 
+                idThematic: filter.chuyen_de_id, status: filter.trang_thai, search: filter.search, 
+                start: filter.start, end: filter.end, idType: filter.typeId, publish: tabs, offset: pageIndex, limit: pageSize }));
+              notification.success({
+                  message: 'Thành công',
+                  description: 'Xóa đề thi thành công',
+              })
+          } else {
+              notification.error({
+                  message: 'Thông báo',
+                  description: 'Xóa đề thi thất bại',
+              })
+          };
+        }
+        dispatch(examActions.deleteExam({ idExam: id }, callback))
+      },
+    });
   };
 
   const changeStatus = (id, trang_thai) => {
-    const result = window.confirm('Bạn có chắc chắn muốn sử dụng/hủy sử dụng đề thi này không?');
-    if (result) {
+    Modal.confirm({
+      icon: <ExclamationCircleOutlined />,
+      content: 'Bạn có chắc chắn muốn sử dụng/hủy sử dụng đề thi này không?',
+      okText: 'Đồng ý',
+      cancelText: 'Hủy',
+      onOk() {
         const callback = (res) => {
-            if (res.status === 'success') {
-                dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, 
-                  idThematic: filter.chuyen_de_id, status: filter.trang_thai, search: filter.search, 
-                  start: filter.start, end: filter.end, idType: filter.typeId, publish: tabs, offset: pageIndex, limit: pageSize
-                }));
-                notification.success({
-                    message: 'Thành công',
-                    description: trang_thai === 1 ? 'Khóa đề thi thành công' : 'Sử dụng đề thi thành công',
-                })
-            } else {
-                notification.error({
-                    message: 'Thông báo',
-                    description: trang_thai === 1 ? 'Khóa đề thi thất bại' : 'Sử dụng đề thi thất bại',
-                })
-            };
+          if (res.status === 'success') {
+              dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, 
+                idThematic: filter.chuyen_de_id, status: filter.trang_thai, search: filter.search, 
+                start: filter.start, end: filter.end, idType: filter.typeId, publish: tabs, offset: pageIndex, limit: pageSize
+              }));
+              notification.success({
+                  message: 'Thành công',
+                  description: trang_thai === 1 ? 'Khóa đề thi thành công' : 'Sử dụng đề thi thành công',
+              })
+          } else {
+              notification.error({
+                  message: 'Thông báo',
+                  description: trang_thai === 1 ? 'Khóa đề thi thất bại' : 'Sử dụng đề thi thất bại',
+              })
+          };
         }
         dispatch(examActions.getUsing({ id: id }, callback))
-    }
+      },
+    });
   };
 
   const reuseExam = (id) => {
@@ -681,10 +692,15 @@ const ExamAdminPage = () => {
       }
     };
 
-    const ask = window.confirm('Bạn chắc chắn muốn sử dụng lại đề này ?')
-    if (ask) {
-      dispatch(examActions.reuseExam({ idExam: id }, callback))
-    }
+    Modal.confirm({
+      icon: <ExclamationCircleOutlined />,
+      content: 'Bạn chắc chắn muốn sử dụng lại đề này ?',
+      okText: 'Đồng ý',
+      cancelText: 'Hủy',
+      onOk() {
+        dispatch(examActions.reuseExam({ idExam: id }, callback))
+      },
+    });
   }
 
   const changeTab = (value) => {

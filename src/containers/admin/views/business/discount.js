@@ -5,7 +5,9 @@ import moment from "moment";
 import config from '../../../../configs/index';
 
 // component
-import { Row, Col, Table, Form, notification, Tag, Space, Button, Select, InputNumber, DatePicker } from 'antd';
+import { Row, Col, Table, Form, notification, Tag, Space, 
+    Button, Select, InputNumber, DatePicker, Modal } from 'antd';
+import { ExclamationCircleOutlined, } from '@ant-design/icons';
 import AppFilter from 'components/common/AppFilter';
 import LoadingCustom from 'components/parts/loading/Loading';
 
@@ -234,32 +236,37 @@ const DiscountPage = (props) => {
     };
 
     const DeleteDiscount = (id) => {
-        const result = window.confirm('Bạn có chắc chăn muốn xóa khuyến mãi này?');
-        if (result) {
-            const callback = (res) => {
-                if (res.statusText === 'OK' && res.status === 200) {
-                    dispatch(discountAction.getDiscounts({ status: filter.trang_thai === 2 ? '' : filter.trang_thai, idCourse: filter.khoa_hoc_id }, (res) => {
-                        if (res.status === 'success') {
-                            res.data.map((item, index) => {
-                                item.key = index;
-                                return null;
-                            });
-                            setState({...state, dataDiscounts: res.data})
-                        };
-                    }));
-                    notification.success({
-                        message: 'Thành công',
-                        description: 'Xóa khuyến mãi khóa học thành công',
-                    })
-                } else {
-                    notification.error({
-                        message: 'Thông báo',
-                        description: 'Xóa khuyến mãi khóa học mới thất bại',
-                    })
-                };
-            }
-            dispatch(discountAction.DeleteDiscount({ id: id }, callback))
-        }
+        Modal.confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: 'Bạn có chắc chăn muốn xóa khuyến mãi này?',
+            okText: 'Đồng ý',
+            cancelText: 'Hủy',
+            onOk() {
+                const callback = (res) => {
+                    if (res.statusText === 'OK' && res.status === 200) {
+                        dispatch(discountAction.getDiscounts({ status: filter.trang_thai === 2 ? '' : filter.trang_thai, idCourse: filter.khoa_hoc_id }, (res) => {
+                            if (res.status === 'success') {
+                                res.data.map((item, index) => {
+                                    item.key = index;
+                                    return null;
+                                });
+                                setState({...state, dataDiscounts: res.data})
+                            };
+                        }));
+                        notification.success({
+                            message: 'Thành công',
+                            description: 'Xóa khuyến mãi khóa học thành công',
+                        })
+                    } else {
+                        notification.error({
+                            message: 'Thông báo',
+                            description: 'Xóa khuyến mãi khóa học mới thất bại',
+                        })
+                    };
+                }
+                dispatch(discountAction.DeleteDiscount({ id: id }, callback))
+            },
+        });
     };
 
     return (

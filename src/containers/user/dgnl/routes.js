@@ -29,7 +29,7 @@ import CheckOutPage from './business/checkout';
 import CheckOutPage2 from './business/checkout2';
 import MainPageUser from './business/mainPage';
 
-let routes = [
+const routes = [
     {
         id: "trang-chu",
         path: "/luyen-tap/trang-chu",

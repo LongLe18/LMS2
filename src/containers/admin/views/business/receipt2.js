@@ -6,8 +6,8 @@ import moment from "moment";
 import config from '../../../../configs/index';
 
 // component
-import { Table, Tag, Space, Button, notification, Col, Row } from 'antd';
-import { SwapOutlined } from '@ant-design/icons';
+import { Table, Tag, Space, Button, notification, Col, Row, Modal} from 'antd';
+import { SwapOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import AppFilter from "components/common/AppFilter";
 import * as CurrencyFormat from 'react-currency-format';
 
@@ -159,8 +159,12 @@ const ReceiptPage = (props) => {
     ];
 
     const handleDelete = (hoa_don_id) => {
-        const result = window.confirm('Bạn có chắc chăn muốn xóa hóa đơn này?');
-            if (result) {
+        Modal.confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: 'Bạn có chắc chắn muốn xóa tiêu chí này?',
+            okText: 'Đồng ý',
+            cancelText: 'Hủy',
+            onOk() {
                 const callback = (res) => {
                     if (res.statusText === 'OK' && res.status === 200) {
                         dispatch(receiptAction.getRECEIPTs({ status: filter.trang_thai, search: filter.search, start: filter.start, end: filter.end }));
@@ -175,8 +179,9 @@ const ReceiptPage = (props) => {
                         })
                     };
                 }
-            dispatch(receiptAction.DeleteRECEIPT({ id: hoa_don_id }, callback))
-        }
+                dispatch(receiptAction.DeleteRECEIPT({ id: hoa_don_id }, callback))
+            },
+        });
     };
   
     const handleEdit = (hoa_don_id, hoa_don) => {

@@ -461,34 +461,32 @@ const IntroCoursePage = () => {
     };
 
     return (
-        <>
-            <Layout className='main-app'>
-                <Helmet>
-                    <title>Học trực tuyến</title>
-                </Helmet>
-                <Content className="app-content">
-                    <AppBreadCrumb list={breadcrumbs} hidden={false} />
-                    {(LoadingCourse && LoadingDescription) && <LoadingCustom />}
-                    {(course.status === 'success' && course.data && description.status === 'success' && description.data) ? renderIntro(): <NoRecord />}
-                    <FooterBusiness course={true} />
-                    <Modal
-                        className="cra-auth-modal"
-                        wrapClassName="cra-auth-modal-container"
-                        maskStyle={{ background: 'rgba(0, 0, 0, 0.8)' }}
-                        maskClosable={false}
-                        footer={null}
-                        mask={true}
-                        centered={true}
-                        visible={visiable}
-                        onOk={handleOk}
-                        onCancel={handleCancel}
-                        width={480}
-                    >
-                        {renderLogin()}
-                    </Modal>
-                </Content>
-            </Layout>
-        </>
+        <Layout className='main-app'>
+            <Helmet>
+                <title>Học trực tuyến</title>
+            </Helmet>
+            <Content className="app-content">
+                <AppBreadCrumb list={breadcrumbs} hidden={false} />
+                {(LoadingCourse && LoadingDescription) && <LoadingCustom />}
+                {(course.status === 'success' && course.data && description.status === 'success' && description.data) ? renderIntro(): <NoRecord />}
+                <FooterBusiness course={true} />
+                <Modal
+                    className="cra-auth-modal"
+                    wrapClassName="cra-auth-modal-container"
+                    maskStyle={{ background: 'rgba(0, 0, 0, 0.8)' }}
+                    maskClosable={false}
+                    footer={null}
+                    mask={true}
+                    centered={true}
+                    visible={visiable}
+                    onOk={handleOk}
+                    onCancel={handleCancel}
+                    width={480}
+                >
+                    {renderLogin()}
+                </Modal>
+            </Content>
+        </Layout>
     )
 };
 

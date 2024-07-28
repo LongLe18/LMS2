@@ -10,10 +10,10 @@ import Hashids from "hashids";
 
 // components
 import { Row, Col, Tag, Space, Button, Table, Tabs, Avatar, Form, 
-    Upload, message, notification, Dropdown, Menu } from 'antd';
+    Upload, message, notification, Dropdown, Menu, Modal, } from 'antd';
 import AppFilter from "components/common/AppFilter";
 import TextEditorWidget2 from "components/common/TextEditor/TextEditor2";
-import { UploadOutlined, DashOutlined } from "@ant-design/icons";
+import { UploadOutlined, DashOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 
 // redux
 import * as commentAction from '../../../../redux/actions/comment';
@@ -273,10 +273,15 @@ const ReplyPage = (props) => {
             };
         }
 
-        const result = window.confirm('Bạn có chắc chắn muốn xóa bình luận này?');
-        if (result) {
-            dispatch(commentAction.DeleteSUBCCOMMENT({ idComment: binh_luan_phu_id }, callback));
-        } 
+        Modal.confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: 'Bạn có chắc chắn muốn xóa bình luận này?',
+            okText: 'Đồng ý',
+            cancelText: 'Hủy',
+            onOk() {
+                dispatch(commentAction.DeleteSUBCCOMMENT({ idComment: binh_luan_phu_id }, callback));
+            },
+        });
     };
 
     const editComment = (binh_luan_phu_id) => {

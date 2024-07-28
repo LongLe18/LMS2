@@ -6,10 +6,10 @@ import MathJax from 'react-mathjax';
 import './css/exceprt.css';
 
 // component
-import { Row, Col, Table, notification, Button, Space, Form, Input } from 'antd';
+import { Row, Col, Table, notification, Button, Space, Form, Input, Modal } from 'antd';
 import LoadingCustom from 'components/parts/loading/Loading';
 import AppFilter from 'components/common/AppFilter';
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
 // redux
 import * as exceprtAction from '../../../../redux/actions/exceprt';
@@ -129,24 +129,29 @@ const Exceprt = (props) => {
     };
 
     const deleteExceprt = (trich_doan_id) => {
-        const result = window.confirm('Bạn có chắc chán muốn xóa trích đoạn này?');
-        if (result) {
-          const callback = (res) => {
-            if (res.statusText === 'OK' && res.status === 200) {
-                dispatch(exceprtAction.getExceprts());
-                notification.success({
-                    message: 'Thành công',
-                    description: 'Xóa trích đoạn thành công',
-                })
-            } else {
-              notification.error({
-                message: 'Thông báo',
-                description: 'Xóa trích đoạn thất bại',
-              })
-            };
-          }
-          dispatch(exceprtAction.deleteEXCEPRT({ id: trich_doan_id }, callback))
-        }
+        Modal.confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: 'Bạn có chắc chán muốn xóa trích đoạn này?',
+            okText: 'Đồng ý',
+            cancelText: 'Hủy',
+            onOk() {
+                const callback = (res) => {
+                    if (res.statusText === 'OK' && res.status === 200) {
+                        dispatch(exceprtAction.getExceprts());
+                        notification.success({
+                            message: 'Thành công',
+                            description: 'Xóa trích đoạn thành công',
+                        })
+                    } else {
+                        notification.error({
+                            message: 'Thông báo',
+                            description: 'Xóa trích đoạn thất bại',
+                        })
+                    };
+                }
+                  dispatch(exceprtAction.deleteEXCEPRT({ id: trich_doan_id }, callback))
+            },
+        });
     };
 
     const createExceprt = (values) => {

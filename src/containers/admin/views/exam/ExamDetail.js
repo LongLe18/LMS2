@@ -4,12 +4,13 @@ import config from '../../../../configs/index';
 import Hashids from 'hashids';
 import constants from '../../../../helpers/constants';
 import { useParams } from 'react-router-dom';
+import MathJax from 'react-mathjax';
 import './css/ExamDetail.css'
 // antd
 import { Row, Col, Form, Steps, Tabs, Modal,
     Input, Upload, message, Result,
     Select, Image, Button, notification, Radio } from 'antd';
-import { UploadOutlined, SaveOutlined, RightOutlined, LeftOutlined, CloseOutlined } from '@ant-design/icons';
+import { UploadOutlined, SaveOutlined, RightOutlined, LeftOutlined, CloseOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import LoadingCustom from 'components/parts/loading/Loading';
 import TextEditorWidget from 'components/common/TextEditor/TextEditor';
 
@@ -23,6 +24,7 @@ import * as typeExamActions from '../../../../redux/actions/typeExam';
 import * as questionActions from '../../../../redux/actions/question';
 import * as answerActions from '../../../../redux/actions/answer';
 import * as exceprtActions from '../../../../redux/actions/exceprt';
+import * as majorActions from '../../../../redux/actions/major';
 
 // image
 import nottickImg from 'assets/img/math-icons/ic_tick_disabled.png';
@@ -97,6 +99,7 @@ const ExamDetailPage = () => {
     const questions = useSelector(state => state.question.questionExamList.result);
     const question = useSelector(state => state.question.item.result);
     const exceprts = useSelector(state => state.exceprt.list.result);
+    const majors = useSelector(state => state.major.list.result);
 
     const [state, setState] = useState({
         isEdit: false,
@@ -140,6 +143,7 @@ const ExamDetailPage = () => {
         dispatch(courseActions.getCourses({ idkct: '', status: '', search: '' }));
         dispatch(questionActions.getQuestionsExam({ idQuestion: '', idExam: id }));
         dispatch(exceprtActions.getExceprts());
+        dispatch(majorActions.getMajors()); // request chuyên ngành
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     // props for upload image
@@ -185,20 +189,25 @@ const ExamDetailPage = () => {
     };
     
     const chooseExceprt = (id) => {
-        const result = window.confirm('Bạn có chắc chắn chọn trích đoạn này?');
-        if (result) {
-            questionForm.setFieldsValue({'trich_doan': id})
-            setIsModalVisible(false);
-        }
+        Modal.confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: 'Bạn có chắc chắn chọn trích đoạn này?',
+            okText: 'Đồng ý',
+            cancelText: 'Hủy',
+            onOk() {
+                questionForm.setFieldsValue({'trich_doan': id})
+                setIsModalVisible(false);
+            },
+        });
     };
 
     const renderExamCategories = () => {
         let options = [];
         if (typeExams.status === 'success') {
-          options = typeExams.data.map((type) => {
-            if (type.loai_de_thi_id !== 4)
-                return <Option key={type.loai_de_thi_id} value={type.loai_de_thi_id} >{type.mo_ta}</Option>
-            })
+            options = typeExams.data.map((type) => {
+                if (type.loai_de_thi_id !== 4)
+                    return <Option key={type.loai_de_thi_id} value={type.loai_de_thi_id} >{type.mo_ta}</Option>
+                })
             return null;
         }
         return (
@@ -226,17 +235,35 @@ const ExamDetailPage = () => {
         }
         return (
           <Select
-            disabled={state.showCourse}
-            showSearch={false}
-            placeholder="Chọn khóa học"
-            onChange={(khoa_hoc_id) => {
-                dispatch(moduleActions.getModulesByIdCourse({ idCourse: khoa_hoc_id }))
-            }}
-          >
-            {options}
-          </Select>
+                disabled={state.showCourse}
+                showSearch={false}
+                placeholder="Chọn khóa học"
+                onChange={(khoa_hoc_id) => {
+                    dispatch(moduleActions.getModulesByIdCourse({ idCourse: khoa_hoc_id }))
+                }}
+            >
+                {options}
+            </Select>
         );
     };
+
+    // render UI chuyên ngành
+    const renderMajor = () => {
+        let options = [];
+        if (majors.status === 'success') {
+          options = majors.data.map((major) => (
+            <Option key={major.chuyen_nganh_id} value={major.chuyen_nganh_id} >{major.ten_chuyen_nganh}</Option>
+          ))
+        }
+        return (
+            <Select
+                showSearch={true}
+                placeholder="Chọn Chuyên ngành"
+            >
+                {options}
+            </Select>
+        );
+    }
 
     const renderModule = () => {
         let options = [];
@@ -475,7 +502,7 @@ const ExamDetailPage = () => {
                         if (dap_an_dung[0] === '') dap_an_dung.shift(); // xóa phần tử đâu tiên ''
                         for (let i = 0; i < dap_an_dung.length; i++) {
                             if (dap_an_dung[i] === 'A') answer.append('dap_an_dung1', 1)
-                            else if (dap_an_dung[i] === 'B') answer.append('dap_an_dung2', 1)
+                            if (dap_an_dung[i] === 'B') answer.append('dap_an_dung2', 1)
                             if (dap_an_dung[i] === 'C') answer.append('dap_an_dung3', 1)
                             if (dap_an_dung[i] === 'D') answer.append('dap_an_dung4', 1)
                         }
@@ -555,6 +582,10 @@ const ExamDetailPage = () => {
         formQuestionData.append('mo_dun_id', values.mo_dun_id_2);
         formQuestionData.append('chuyen_de_id', values.chuyen_de_id_2);
         formQuestionData.append('cot_tren_hang', values.kieu_hien_thi_dap_an);
+        formQuestionData.append('chuyen_nganh_id', values.chuyen_nganh_id);
+
+        if (state.fileImg !== '')
+            formQuestionData.append('tep_dinh_kem_noi_dung', state.fileImg !== undefined ? state.fileImg : '');
         if (values.trich_doan !== '')
             formQuestionData.append('trich_doan_id', values.trich_doan);    
         if (state.isEdit) {
@@ -565,51 +596,65 @@ const ExamDetailPage = () => {
     };
 
     const EditQuestion = (cau_hoi, index) => {
-        const ask = window.confirm(`Bạn muốn cập nhật lại câu hỏi số ${index + 1}?`);
-        if (ask) {
-            dispatch(questionActions.getQuestion({ id: cau_hoi.cau_hoi_id }, (res) => {
-                if (res.status === 'success') {
-                    let dap_an_dung = [''];
-                    res.data.dap_ans.map((item, index) => {
-                        if (item.dap_an_dung) {
+        Modal.confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: `Bạn muốn cập nhật lại câu hỏi số ${index + 1}?`,
+            okText: 'Đồng ý',
+            cancelText: 'Hủy',
+            onOk() {
+                dispatch(questionActions.getQuestion({ id: cau_hoi.cau_hoi_id }, (res) => {
+                    if (res.status === 'success') {
+                        let dap_ans = [];
+                        let dap_an_dung = [''];
+                        res.data.dap_ans.map((item, index) => {
                             switch(index) {
                                 case 0:
-                                    dap_an_dung.push('A');
+                                    if (item.dap_an_dung) dap_an_dung.push('A');
+                                    dap_ans.push({ tieu_de: item.noi_dung_dap_an, label: 'Đáp án A', key: 'A' });
                                     break;
                                 case 1:
-                                    dap_an_dung.push('B');
+                                    if (item.dap_an_dung) dap_an_dung.push('B');
+                                    dap_ans.push({ tieu_de: item.noi_dung_dap_an, label: 'Đáp án B', key: 'B' });
                                     break;
                                 case 2:
-                                    dap_an_dung.push('C');
+                                    if (item.dap_an_dung) dap_an_dung.push('C');
+                                    dap_ans.push({ tieu_de: item.noi_dung_dap_an, label: 'Đáp án C', key: 'C' });
                                     break;
                                 case 3: 
-                                    dap_an_dung.push('D');
+                                    if (item.dap_an_dung) dap_an_dung.push('D');
+                                    dap_ans.push({ tieu_de: item.noi_dung_dap_an, label: 'Đáp án D', key: 'D' });
                                     break; 
                                 default:  
-                                    dap_an_dung.push('');
+                                    if (item.dap_an_dung) dap_an_dung.push('');
                                     break;                                   
                             }
-                        }
-                        return null;
-                    })
+                            return null;
+                        });
+    
+                        questionForm.setFieldsValue({
+                            trich_doan: res.data.trich_doan_id ? res.data.trich_doan_id : '',
+                            diem: res.data.diem,
+                            loai_cau_hoi: res.data.loai_cau_hoi,
+                            muc_do_cau_hoi: res.data.mdch_id,
+                            mo_dun_id_2: res.data.mo_dun_id !== null ? res.data.mo_dun_id : '',
+                            chuyen_de_id_2: res.data.chuyen_de_id !== null ? res.data.chuyen_de_id : '',
+                            kieu_hien_thi_dap_an: res.data.cot_tren_hang.toString(),
+                            chuyen_nganh_id: res.data.chuyen_nganh_id,
+                            dap_an_dung: dap_an_dung,
+                        });
 
-                    questionForm.setFieldsValue({
-                        trich_doan: res.data.trich_doan_id ? res.data.trich_doan_id : '',
-                        diem: res.data.diem,
-                        loai_cau_hoi: res.data.loai_cau_hoi,
-                        muc_do_cau_hoi: res.data.mdch_id,
-                        mo_dun_id_2: res.data.mo_dun_id !== null ? res.data.mo_dun_id : '',
-                        chuyen_de_id_2: res.data.chuyen_de_id !== null ? res.data.chuyen_de_id : '',
-                        kieu_hien_thi_dap_an: res.data.cot_tren_hang.toString(),
-                        dap_an_dung: dap_an_dung
-                    });
-                    setState({ ...state, isEdit: true, idQuestion: cau_hoi.cau_hoi_id, indexQuestion: index + 1,
-                        showTuLuan: res.data.loai_cau_hoi === 0 ? true : false, 
-                        showTextTuLuan: res.data.loai_cau_hoi === 0 ? true : false, 
-                        showTextTuLuan2: res.data.loai_cau_hoi === 0 ? true : false })
-                }
-            }));
-        }
+                        setCurrentQuestion({...currentQuestion, noi_dung: res.data.noi_dung, 
+                            dap_an: dap_ans, loi_giai: res.data.loi_giai,
+                        });
+
+                        setState({ ...state, isEdit: true, idQuestion: cau_hoi.cau_hoi_id, indexQuestion: index + 1,
+                            showTuLuan: res.data.loai_cau_hoi === 0 ? true : false, 
+                            showTextTuLuan: res.data.loai_cau_hoi === 0 ? true : false, 
+                            showTextTuLuan2: res.data.loai_cau_hoi === 0 ? true : false })
+                    }
+                }));
+            },
+        });
     };
 
     const renderQuestions = () => {
@@ -817,6 +862,12 @@ const ExamDetailPage = () => {
                                                                 </Col>
                                                             </Row>
                                                         }
+                                                        {/* Section đề bài */}
+                                                        <Col xl={24}>
+                                                            <Form.Item className="label">
+                                                                <span style={{ color: '#000', fontWeight: 600 }}>Nội dung</span>
+                                                            </Form.Item>
+                                                        </Col>
                                                         <Row>         
                                                             <Col xl={4}>
                                                                 <Form.Item className="label">
@@ -829,23 +880,53 @@ const ExamDetailPage = () => {
                                                                     label=""
                                                                     name="noi_dung"
                                                                     rules={[
-                                                                    {
-                                                                        required: true,
-                                                                        message: 'Nội dung câu hỏi là trường bắt buộc',
-                                                                    },
+                                                                        {
+                                                                            required: true,
+                                                                            message: 'Nội dung câu hỏi là trường bắt buộc',
+                                                                        },
                                                                     ]}
                                                                 >
                                                                     <TextEditorWidget
                                                                         disabled={state.defaultExam.trang_thai === false}
-                                                                        value={currentQuestion.noi_dung}
-                                                                        placeholder="Thêm nội dung câu hỏi (Chỉ sử dụng hình ảnh)"
+                                                                        valueParent={currentQuestion.noi_dung}
+                                                                        placeholder="Thêm nội dung câu hỏi"
                                                                         onChange={(val) => setCurrentQuestion({ ...currentQuestion, noi_dung: val })}
-                                                                        openEditor={(val) => setIsOpenEditor(val)}
+                                                                        // openEditor={(val) => setIsOpenEditor(val)}
                                                                         isSimple={true} 
                                                                     />
                                                                 </Form.Item>
                                                             </Col>
                                                         </Row>
+                                                        <Row>
+                                                            <Col xl={4}>
+                                                                <Form.Item className="label">
+                                                                    <span style={{ color: '#000', fontWeight: 600 }}>Hình ảnh câu hỏi</span>
+                                                                </Form.Item>
+                                                            </Col>
+                                                            <Col xl={20}>
+                                                                <Form.Item
+                                                                    className="input-col"
+                                                                    label=""
+                                                                    name="tep_dinh_kem_noi_dung"
+                                                                >
+                                                                    <Dragger {...propsImage} style={{width: '90%'}} maxCount={1}>
+                                                                        <p className="ant-upload-drag-icon">
+                                                                            <UploadOutlined />
+                                                                        </p>
+                                                                        <p className="ant-upload-text">Kéo thả hình ảnh tại đây</p>
+                                                                        <p className="ant-upload-hint">
+                                                                            Định dạng hình ảnh JPEG/PNG
+                                                                        </p>
+                                                                    </Dragger>
+                                                                </Form.Item>
+                                                            </Col>
+                                                        </Row>
+                                                        {/* Section tuỳ chọn */}
+                                                        <Col xl={24}>
+                                                            <Form.Item className="label">
+                                                                <span style={{ color: '#000', fontWeight: 600 }}>Tùy chọn câu hỏi</span>
+                                                            </Form.Item>
+                                                        </Col>
                                                         <Row>
                                                             <Col xl={4}>
                                                                 <Form.Item className="label">
@@ -892,13 +973,35 @@ const ExamDetailPage = () => {
                                                                     label=""
                                                                     name="loai_cau_hoi"
                                                                     rules={[
-                                                                    {
-                                                                        required: true,
-                                                                        message: 'Loại câu hỏi là trường bắt buộc',
-                                                                    },
+                                                                        {
+                                                                            required: true,
+                                                                            message: 'Loại câu hỏi là trường bắt buộc',
+                                                                        },
                                                                     ]}
                                                                 >
                                                                     <Radio.Group onChange={(type) => handleChangeType(type)} options={constants.QUESTIONS_TYPES} optionType="button" buttonStyle="solid" />
+                                                                </Form.Item>
+                                                            </Col>
+                                                        </Row>
+                                                        <Row>
+                                                            <Col xl={4}>
+                                                                <Form.Item className="label">
+                                                                    <span style={{ color: '#ff4d4f' }}>*</span>Chuyên ngành
+                                                                </Form.Item>
+                                                            </Col>
+                                                            <Col xl={10}>
+                                                                <Form.Item
+                                                                    className="input-col"
+                                                                    label=""
+                                                                    name="chuyen_nganh_id"
+                                                                    rules={[
+                                                                    {
+                                                                        required: true,
+                                                                        message: 'Chuyên ngành là trường bắt buộc',
+                                                                    },
+                                                                    ]}
+                                                                >
+                                                                    {renderMajor()}
                                                                 </Form.Item>
                                                             </Col>
                                                             <Col xl={4}>
@@ -922,6 +1025,7 @@ const ExamDetailPage = () => {
                                                                     <Input  disabled={state.typeQuestion === 2 ? true : false} placeholder="Nhập điểm câu hỏi" style={{width: '60%'}}/>
                                                                 </Form.Item>
                                                             </Col>  
+
                                                         </Row>
                                                         <Row>
                                                             <Col xl={4}>
@@ -958,10 +1062,10 @@ const ExamDetailPage = () => {
                                                                     label=""
                                                                     name="mo_dun_id_2"
                                                                     rules={[
-                                                                    {
-                                                                        required: true,
-                                                                        message: 'Mô đun/Học phần là trường bắt buộc',
-                                                                    },
+                                                                        {
+                                                                            required: true,
+                                                                            message: 'Mô đun/Học phần là trường bắt buộc',
+                                                                        },
                                                                     ]}
                                                                 >
                                                                     {renderModule2()}
@@ -1011,7 +1115,32 @@ const ExamDetailPage = () => {
                                                                 </Form.Item>
                                                             </Col>
                                                         </Row>
-
+                                                        <Row>
+                                                            <Col xl={4}>
+                                                                <Form.Item className="label"><span style={{ color: '#ff4d4f' }}>*</span>Hiển thị đáp án</Form.Item>
+                                                            </Col>
+                                                            <Col xl={20}>
+                                                                <Form.Item
+                                                                    className="input-col"
+                                                                    label=""
+                                                                    name="kieu_hien_thi_dap_an"
+                                                                    rules={[
+                                                                    {
+                                                                        required: true,
+                                                                        message: 'Hiển thị đáp án',
+                                                                    },
+                                                                    ]}
+                                                                >
+                                                                    <Radio.Group options={constants.EXAM_ANSWER_VIEW_LIST} disabled={state.trang_thai === 'active'} optionType="button" buttonStyle="solid" />
+                                                                </Form.Item>
+                                                            </Col>
+                                                        </Row>
+                                                        {/* Section Đáp án */}
+                                                        <Col xl={24}>
+                                                            <Form.Item className="label">
+                                                                <span style={{ color: '#000', fontWeight: 600 }}>Tùy chọn đáp án</span>
+                                                            </Form.Item>
+                                                        </Col>
                                                         <Form.List name="dap_an">
                                                             {(fields, { add, remove }) => (
                                                                 <div className="group-answers">
@@ -1036,7 +1165,6 @@ const ExamDetailPage = () => {
                                                                                             setCurrentQuestion({ ...currentQuestion, dap_an });
                                                                                         }}
                                                                                         isSimple={true}
-                                                                                        openEditor={(val) => setIsOpenEditor(val)}
                                                                                     />
                                                                                 </Form.Item>
                                                                             </Col>
@@ -1045,7 +1173,7 @@ const ExamDetailPage = () => {
                                                                 </div>
                                                             )}
                                                         </Form.List>
-                                                        
+                                                        {/* câu hỏi Tự luận */}
                                                         <Form.List name="dap_an_tu_luan">
                                                             {(fields, { add, remove }) => (
                                                                 <div className="group-answers">
@@ -1062,7 +1190,7 @@ const ExamDetailPage = () => {
                                                                                 >
                                                                                     <TextEditorWidget 
                                                                                         value={currentQuestion.dap_an_tu_luan[key].tieu_de}
-                                                                                        placeholder="Thêm nội dung đáp án (Chỉ sử dụng hình ảnh)"
+                                                                                        placeholder="Thêm nội dung đáp án"
                                                                                         onChange={(val) => {
                                                                                             let dap_an_tu_luan = [...currentQuestion.dap_an_tu_luan];
                                                                                             dap_an_tu_luan[key] = {
@@ -1072,7 +1200,6 @@ const ExamDetailPage = () => {
                                                                                             setCurrentQuestion({ ...currentQuestion, dap_an_tu_luan });
                                                                                         }}
                                                                                         isSimple={true}
-                                                                                        openEditor={(val) => setIsOpenEditor(val)}
                                                                                     />
                                                                                 </Form.Item>     
                                                                                 <Form.Item {...restField} name={[name, 'tieu_de']} rules={[{ required: state.showTextTuLuan && state.showTuLuan, message: 'Bạn chưa nhập nội dung đáp án' }]}
@@ -1111,7 +1238,6 @@ const ExamDetailPage = () => {
                                                                         value={currentQuestion.loi_giai}
                                                                         placeholder="Thêm nội dung lời giải"
                                                                         onChange={(val) => setCurrentQuestion({ ...currentQuestion, loi_giai: val })}
-                                                                        openEditor={(val) => setIsOpenEditor(val)}
                                                                         isSimple={true}
                                                                     />  
                                                                 </Form.Item>
@@ -1122,30 +1248,8 @@ const ExamDetailPage = () => {
                                                                         value={currentQuestion.loi_giai}
                                                                         placeholder="Thêm nội dung lời giải"
                                                                         onChange={(val) => setCurrentQuestion({ ...currentQuestion, loi_giai: val })}
-                                                                        openEditor={(val) => setIsOpenEditor(val)}
                                                                         isSimple={true}
                                                                     />
-                                                                </Form.Item>
-                                                            </Col>
-                                                        </Row>
-
-                                                        <Row>
-                                                            <Col xl={4}>
-                                                                <Form.Item className="label"><span style={{ color: '#ff4d4f' }}>*</span>Hiển thị đáp án</Form.Item>
-                                                            </Col>
-                                                            <Col xl={20}>
-                                                                <Form.Item
-                                                                    className="input-col"
-                                                                    label=""
-                                                                    name="kieu_hien_thi_dap_an"
-                                                                    rules={[
-                                                                    {
-                                                                        required: true,
-                                                                        message: 'Hiển thị đáp án',
-                                                                    },
-                                                                    ]}
-                                                                >
-                                                                    <Radio.Group options={constants.EXAM_ANSWER_VIEW_LIST} disabled={state.trang_thai === 'active'} optionType="button" buttonStyle="solid" />
                                                                 </Form.Item>
                                                             </Col>
                                                         </Row>
@@ -1165,7 +1269,7 @@ const ExamDetailPage = () => {
                                                     }}
                                                     size="large"
                                                 >
-                                                {state.isEdit ? 'Hủy bỏ' : 'Làm lại'}
+                                                    {state.isEdit ? 'Hủy bỏ' : 'Làm lại'}
                                                 </Button>
                                                 <Button
                                                     type="primary"
@@ -1284,10 +1388,9 @@ const ExamDetailPage = () => {
                                         </div>
                                         <div className="body-question">
                                             <div className="answer-detail">
-                                                <img alt="..."
-                                                    className="img-no-padding img-responsive"
-                                                    src={config.API_URL + exceprt.noi_dung}
-                                                />
+                                                <MathJax.Provider>
+                                                    <div style={{whiteSpace: 'pre-line'}} dangerouslySetInnerHTML={{ __html: exceprt.noi_dung }}></div>
+                                                </MathJax.Provider>
                                             </div>
                                         </div>
                                     </div>

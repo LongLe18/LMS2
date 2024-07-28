@@ -5,8 +5,8 @@ import defaultImage from 'assets/img/default.jpg';
 import moment from "moment";
 
 // component
-import { Tabs, Row, Col, Table, Form, Avatar, Tag, Space, Button, Upload, Select, message, notification } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { Tabs, Row, Col, Table, Form, Avatar, Tag, Space, Button, Upload, Select, message, notification, Modal } from 'antd';
+import { UploadOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
 // redux
 import * as documentAction from '../../../../redux/actions/document';
@@ -385,24 +385,29 @@ const BannerCoursePage = (props) => {
     };
 
     const DeleteDoc = (id) => {
-        const result = window.confirm('Bạn có chắc chán muốn xóa quảng cáo tài liệu này?');
-        if (result) {
-          const callback = (res) => {
-            if (res.statusText === 'OK' && res.status === 200) {
-              dispatch(advertiseAction.getAdsDocs({ status: '' }));
-              notification.success({
-                message: 'Thành công',
-                description: 'Xóa quảng cáo tài liệu thành công',
-              })
-            } else {
-              notification.error({
-                message: 'Thông báo',
-                description: 'Xóa quảng cáo tài liệu mới thất bại',
-              })
-            };
-          }
-          dispatch(advertiseAction.DeleteAdsDoc({ id: id }, callback))
-        }
+        Modal.confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: 'Bạn có chắc chán muốn xóa quảng cáo tài liệu này?',
+            okText: 'Đồng ý',
+            cancelText: 'Hủy',
+            onOk() {
+                const callback = (res) => {
+                    if (res.statusText === 'OK' && res.status === 200) {
+                        dispatch(advertiseAction.getAdsDocs({ status: '' }));
+                        notification.success({
+                            message: 'Thành công',
+                            description: 'Xóa quảng cáo tài liệu thành công',
+                        })
+                    } else {
+                        notification.error({
+                            message: 'Thông báo',
+                            description: 'Xóa quảng cáo tài liệu mới thất bại',
+                        })
+                    };
+                }
+                dispatch(advertiseAction.DeleteAdsDoc({ id: id }, callback))
+            },
+        });
     };
 
     const cancelEditDoc = () => {
@@ -472,24 +477,29 @@ const BannerCoursePage = (props) => {
     }
 
     const DeleteAdsCourse = (id) => {
-        const result = window.confirm('Bạn có chắc chán muốn xóa quảng cáo khóa học này?');
-        if (result) {
-          const callback = (res) => {
-            if (res.statusText === 'OK' && res.status === 200) {
-                dispatch(advertiseAction.getAdsCourses({ status: '' }));
-                notification.success({
-                    message: 'Thành công',
-                    description: 'Xóa quảng cáo khóa học thành công',
-                })
-            } else {
-                notification.error({
-                    message: 'Thông báo',
-                    description: 'Xóa quảng cáo khóa học mới thất bại',
-                })
-            };
-          }
-          dispatch(advertiseAction.DeleteAdsCourse({ id: id }, callback))
-        }
+        Modal.confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: 'Bạn có chắc chán muốn xóa quảng cáo khóa học này?',
+            okText: 'Đồng ý',
+            cancelText: 'Hủy',
+            onOk() {
+                const callback = (res) => {
+                    if (res.statusText === 'OK' && res.status === 200) {
+                        dispatch(advertiseAction.getAdsCourses({ status: '' }));
+                        notification.success({
+                            message: 'Thành công',
+                            description: 'Xóa quảng cáo khóa học thành công',
+                        })
+                    } else {
+                        notification.error({
+                            message: 'Thông báo',
+                            description: 'Xóa quảng cáo khóa học mới thất bại',
+                        })
+                    };
+                }
+                dispatch(advertiseAction.DeleteAdsCourse({ id: id }, callback))
+            },
+        });
     };
     
     const cancelEditCourse = () => {
@@ -565,24 +575,29 @@ const BannerCoursePage = (props) => {
     };
 
     const DeleteAdsTeacher = (id) => {
-        const result = window.confirm('Bạn có chắc chán muốn xóa quảng cáo giáo viên này?');
-        if (result) {
-          const callback = (res) => {
-            if (res.statusText === 'OK' && res.status === 200) {
-                dispatch(advertiseAction.getAdsTeachers({ status: '' }));
-                notification.success({
-                    message: 'Thành công',
-                    description: 'Xóa quảng cáo giáo viên thành công',
-                })
-            } else {
-                notification.error({
-                    message: 'Thông báo',
-                    description: 'Xóa quảng cáo giáo viên mới thất bại',
-                })
-            };
-          }
-          dispatch(advertiseAction.DeleteAdsTeacher({ id: id }, callback))
-        }
+        Modal.confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: 'Bạn có chắc chán muốn xóa quảng cáo giáo viên này?',
+            okText: 'Đồng ý',
+            cancelText: 'Hủy',
+            onOk() {
+                const callback = (res) => {
+                    if (res.statusText === 'OK' && res.status === 200) {
+                        dispatch(advertiseAction.getAdsTeachers({ status: '' }));
+                        notification.success({
+                            message: 'Thành công',
+                            description: 'Xóa quảng cáo giáo viên thành công',
+                        })
+                    } else {
+                        notification.error({
+                            message: 'Thông báo',
+                            description: 'Xóa quảng cáo giáo viên mới thất bại',
+                        })
+                    };
+                }
+                dispatch(advertiseAction.DeleteAdsTeacher({ id: id }, callback))
+            },
+        });
     };
 
     return (

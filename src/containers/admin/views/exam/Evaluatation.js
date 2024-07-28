@@ -4,8 +4,9 @@ import { Helmet } from 'react-helmet';
 import moment from 'moment';
 import config from '../../../../configs/index';
 
-import { Row, Col, Table, Pagination, Space, Button, notification, Form, Modal, Select, InputNumber, Input } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { Row, Col, Table, Pagination, Space, Button, notification, 
+    Form, Modal, Select, InputNumber, Input } from 'antd';
+import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
 // redux
 import * as evaluationAction from '../../../../redux/actions/evaluate';
@@ -238,24 +239,29 @@ const EvaluationPage = () => {
     }
     
     const DeleteEvaluation = (danh_gia_id) => {
-        const result = window.confirm('Bạn có chắc chắn muốn xóa đánh giá này?');
-        if (result) {
-          const callback = (res) => {
-            if (res.statusText === 'OK' && res.status === 200) {
-                dispatch(evaluationAction.getEVALUATEs({ id: idExam, pageIndex: pageIndex, pageSize: pageSize}));         
-                notification.success({
-                    message: 'Thành công',
-                    description: 'Xóa đánh giá thành công',
-                })
-            } else {
-              notification.error({
-                message: 'Thông báo',
-                description: 'Xóa đánh giá mới thất bại',
-              })
-            };
-          }
-          dispatch(evaluationAction.DeleteEVALUATE({ id: danh_gia_id }, callback))
-        }
+        Modal.confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: 'Bạn có chắc chắn muốn xóa đánh giá này?',
+            okText: 'Đồng ý',
+            cancelText: 'Hủy',
+            onOk() {
+                const callback = (res) => {
+                    if (res.statusText === 'OK' && res.status === 200) {
+                        dispatch(evaluationAction.getEVALUATEs({ id: idExam, pageIndex: pageIndex, pageSize: pageSize}));         
+                        notification.success({
+                            message: 'Thành công',
+                            description: 'Xóa đánh giá thành công',
+                        })
+                    } else {
+                        notification.error({
+                            message: 'Thông báo',
+                            description: 'Xóa đánh giá mới thất bại',
+                        })
+                    };
+                }
+                dispatch(evaluationAction.DeleteEVALUATE({ id: danh_gia_id }, callback))
+            },
+        });
     }
 
     // event đổi pageSize
