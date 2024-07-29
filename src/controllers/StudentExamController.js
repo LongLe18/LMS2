@@ -2,6 +2,8 @@ const PizZip = require('pizzip');
 const Docxtemplater = require('docxtemplater');
 const path = require('path');
 const fs = require('fs');
+const ExcelJS = require('exceljs');
+const { Op } = require('sequelize');
 
 const {
     Exam,
@@ -13,6 +15,7 @@ const {
     ModunCriteria,
     OnlineCriteria,
     ExamQuestion,
+    Student,
 } = require('../models');
 const sequelize = require('../utils/db');
 
@@ -147,7 +150,7 @@ const postCreatev2 = async (req, res) => {
         kct_id: 1,
         khoa_hoc_id,
         loai_de_thi_id: 4,
-        de_mau_id: sampleExam.id
+        de_mau_id: sampleExam.id,
     });
 
     let criteria = await OnlineCriteria.findOne({
@@ -238,7 +241,9 @@ const postCreatev2 = async (req, res) => {
             `
                     INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
                         SELECT cau_hoi_id, ${exam.de_thi_id}, 3 FROM cau_hoi
-                        WHERE chuyen_nganh_id IN (${chuyen_nganh_ids}) AND kct_id = 1 AND de_thi_id = ${sampleExam.id}
+                        WHERE chuyen_nganh_id IN (${chuyen_nganh_ids}) AND kct_id = 1 AND de_thi_id = ${
+                sampleExam.id
+            }
                         AND cau_hoi_id NOT IN (SELECT cau_hoi_id
                         WHERE de_thi_id = ${exam.de_thi_id})
                         ORDER BY RAND() LIMIT ${
@@ -433,205 +438,110 @@ const clearAll = async (req, res) => {
 
 const exportReport = async (req, res) => {
     try {
-        const studentExam = await StudentExam.findOne({
-            include: [
-                {
-                    model: Exam,
-                    attributes: ['ten_de_thi'],
-                },
-                {
-                    model: Exam,
-                    attributes: ['ten_de_thi'],
-                },
-            ],
-            where: {
-                dthv_id: req.params.id,
-            },
-        });
-
         const content = fs.readFileSync(
-            path.resolve(process.cwd(), 'public/templates/form_export.docx'),
-            'binary'
+            path.join(process.cwd(), '/public/templates/export_report.xlsx')
+        );
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.load(content);
+
+        workbook.creator = 'Me';
+        workbook.lastModifiedBy = 'Her';
+        workbook.created = new Date();
+        const workSheet = workbook.getWorksheet('Sheet1');
+
+        const list = await sequelize.query(
+            `
+            SELECT dt.de_thi_id, dt.ten_de_thi, hv.hoc_vien_id, hv.ho_ten, hv.email, dthv_s.ket_qua_diem FROM de_thi dt INNER JOIN 
+                (SELECT dthv.dthv_id, dthv.hoc_vien_id, dthv.de_thi_id, dthv.ket_qua_diem FROM (SELECT dthv.de_thi_id, dthv.hoc_vien_id, MAX(dthv.ngay_tao) ngay_tao FROM de_thi_hoc_vien dthv 
+                    WHERE dthv.ngay_tao BETWEEN :ngay_bat_dau AND :ngay_ket_thuc GROUP BY dthv.de_thi_id, dthv.hoc_vien_id) dthv_new
+                    INNER JOIN de_thi_hoc_vien dthv ON dthv_new.de_thi_id = dthv.de_thi_id AND dthv_new.hoc_vien_id = dthv.hoc_vien_id) dthv_s
+                        ON dt.de_thi_id = dthv_s.de_thi_id
+                        INNER JOIN hoc_vien hv ON dthv_s.hoc_vien_id = hv.hoc_vien_id`,
+            {
+                replacements: {
+                    ngay_bat_dau: req.query.ngay_bat_dau || '2000-01-01',
+                    ngay_ket_thuc: req.query.ngay_ket_thuc || '2100-01-01',
+                },
+                type: sequelize.QueryTypes.SELECT,
+            }
         );
 
-        const zip = new PizZip(content);
-
-        const doc = new Docxtemplater(zip, {
-            paragraphLoop: true,
-            linebreaks: true,
-        });
-
-        const selectedAnswers = await SelectedAnswer.findAll({
-            include: {
-                model: Question,
-                attributes: ['loai_cau_hoi', 'diem'],
-                include: {
-                    model: Answer,
-                    attributes: ['noi_dung_dap_an', 'dap_an_dung'],
-                },
-            },
-            where: {
-                dthv_id: req.params.id,
-            },
-        });
-        let ket_qua_diem = [];
-        let ket_qua_chons;
-        let dap_ans;
-        let result;
-        for (const selectedAnswer of selectedAnswers) {
-            result = false;
-            if (selectedAnswer.cau_hoi.loai_cau_hoi === 1) {
-                // Câu trắc nghiệm
-                ket_qua_chons = selectedAnswer.ket_qua_chon
-                    .toString()
-                    .split('');
-                dap_ans = selectedAnswer.cau_hoi.dap_ans;
-                if (
-                    ket_qua_chons.every(
-                        (ket_qua_chon, index) =>
-                            ket_qua_chon == dap_ans[index].dap_an_dung
-                    )
-                )
-                    result = true;
-            } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 2) {
-                // Câu trắc nghiệm đúng sai
-                const ket_qua_chons = [
-                    ...selectedAnswer.ket_qua_chon.toString(),
-                ];
-                const dap_ans = selectedAnswer.cau_hoi.dap_ans;
-                const bangDiem = {
-                    0: 0,
-                    1: selectedAnswer.cau_hoi.diem / 10,
-                    2: selectedAnswer.cau_hoi.diem / 4,
-                    3: selectedAnswer.cau_hoi.diem / 2,
-                };
-                let so_cau_dung = ket_qua_chons.reduce(
-                    (acc, ket_qua_chon, index) =>
-                        acc +
-                        ((ket_qua_chon === '1') === dap_ans[index].dap_an_dung),
-                    0
-                );
-                if (so_cau_dung) {
-                    ket_qua_diem.push(bangDiem[so_cau_dung]);
-                    continue;
-                }
-                if (so_cau_dung === 4) result = true;
-            } else {
-                // câu tự luận
-                if (
-                    selectedAnswer.noi_dung_tra_loi ==
-                    selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an
-                )
-                    result = true;
+        // Nhóm các phần tử theo de_thi_id và lấy các thuộc tính ten_de_thi duy nhất
+        const deThiIds = list.reduce((acc, current) => {
+            const { de_thi_id, ten_de_thi } = current;
+            if (!acc[de_thi_id]) {
+                acc[de_thi_id] = { de_thi_id, ten_de_thi };
             }
-            if (result) {
-                ket_qua_diem.push(selectedAnswer.cau_hoi.diem);
-            } else {
-                ket_qua_diem.push(0);
+            return acc;
+        }, {});
+
+        // Chuyển đối tượng thành mảng
+        const uniqueDeThiIds = Object.values(deThiIds);
+
+        // Nhóm các phần tử theo hoc_vien_id và lấy các thuộc tính ho_ten duy nhất
+        const hocVienIds = list.reduce((acc, current) => {
+            const { hoc_vien_id, ho_ten, email } = current;
+            if (!acc[hoc_vien_id]) {
+                acc[hoc_vien_id] = { hoc_vien_id, ho_ten, email };
             }
+            return acc;
+        }, {});
+
+        // Chuyển đối tượng thành mảng
+        const uniqueHocVienIds = Object.values(hocVienIds);
+
+        let row;
+        let indexCol = 3;
+
+        for (const item of uniqueDeThiIds) {
+            row = workSheet.getRow(2);
+
+            const order = row.getCell(indexCol);
+            order.value = item.ten_de_thi;
+
+            indexCol++;
         }
 
-        const criteria = await OnlineCriteria.findOne({
-            where: {
-                khoa_hoc_id: exam.khoa_hoc_id,
-            },
-        });
+        let indexRow = 3;
+        let count = 1;
 
-        const phan_1 =
-            criteria.so_phan >= 1
-                ? ket_qua_diem
-                      .slice(0, criteria.so_cau_hoi_phan_1)
-                      .reduce(
-                          (accumulator, currentValue) =>
-                              accumulator + currentValue,
-                          0
-                      )
-                : '';
-        const phan_2 =
-            criteria.so_phan >= 2
-                ? ket_qua_diem
-                      .slice(
-                          criteria.so_cau_hoi_phan_1,
-                          criteria.so_cau_hoi_phan_1 +
-                              criteria.so_cau_hoi_phan_2
-                      )
-                      .reduce(
-                          (accumulator, currentValue) =>
-                              accumulator + currentValue,
-                          0
-                      )
-                : '';
-        const phan_3 =
-            criteria.so_phan >= 3
-                ? ket_qua_diem
-                      .slice(
-                          criteria.so_cau_hoi_phan_1 +
-                              criteria.so_cau_hoi_phan_2,
-                          criteria.so_cau_hoi_phan_1 +
-                              criteria.so_cau_hoi_phan_2 +
-                              criteria.so_cau_hoi_phan_3
-                      )
-                      .reduce(
-                          (accumulator, currentValue) =>
-                              accumulator + currentValue,
-                          0
-                      )
-                : '';
-        const phan_4 =
-            criteria.so_phan >= 4
-                ? ket_qua_diem
-                      .slice(
-                          criteria.so_cau_hoi_phan_1 +
-                              criteria.so_cau_hoi_phan_2 +
-                              criteria.so_cau_hoi_phan_3,
-                          criteria.so_cau_hoi_phan_1 +
-                              criteria.so_cau_hoi_phan_2 +
-                              criteria.so_cau_hoi_phan_3 +
-                              criteria.so_cau_hoi_phan_4
-                      )
-                      .reduce(
-                          (accumulator, currentValue) =>
-                              accumulator + currentValue,
-                          0
-                      )
-                : '';
-        const diem_tong_hop =
-            phan_1 === ''
-                ? 0
-                : phan_1 + phan_2 === ''
-                ? 0
-                : phan_2 + phan_3 === ''
-                ? 0
-                : phan_3 + phan_4 === ''
-                ? 0
-                : phan_4;
+        for (const item of uniqueHocVienIds) {
+            row = workSheet.getRow(indexRow);
 
-        doc.render({
-            mon_thi: studentExam?.de_thi?.ten_de_thi,
-            phan_1: phan_1?.toString(),
-            phan_2: phan_2?.toString(),
-            phan_3: phan_3?.toString(),
-            phan_4: phan_4?.toString(),
-            diem_tong_hop: diem_tong_hop.toString(),
-            nhan_xet_1: 'New Website',
-        });
+            const order = row.getCell(1);
+            order.value = count;
 
-        const buf = doc.getZip().generate({
-            type: 'nodebuffer',
-            // compression: DEFLATE adds a compression step.
-            // For a 50MB output document, expect 500ms additional CPU time
-            compression: 'DEFLATE',
-        });
+            const fullName = row.getCell(2);
+            fullName.value = `${item.ho_ten} - ${item.email}`;
 
-        res.set({
-            'Content-Type':
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            'Content-Disposition': 'attachment; filename="report.docx"', // Replace 'example.doc' with your desired file name
-            'Content-Length': buf.length,
-        });
+            indexRow++;
+            count++;
+        }
 
-        // Send the buffer as response
-        res.send(buf);
+        for (const item of list) {
+            indexRow = uniqueHocVienIds.findIndex(
+                (item2) => item2.hoc_vien_id === item.hoc_vien_id
+            );
+            indexCol = uniqueDeThiIds.findIndex(
+                (item2) => item2.de_thi_id === item.de_thi_id
+            );
+            row = workSheet.getRow(indexRow + 3);
+
+            const score = row.getCell(indexCol + 3);
+            score.value = item.ket_qua_diem;
+        }
+
+        res.setHeader(
+            'Content-Type',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        );
+        res.setHeader(
+            'Content-Disposition',
+            'attachment; filename=' + 'export_report.xlsx'
+        );
+        await workbook.xlsx.write(res);
+
+        return res.end();
     } catch (err) {
         console.log(err);
         res.status(500).send({
