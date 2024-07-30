@@ -454,7 +454,8 @@ const exportReport = async (req, res) => {
             SELECT dt.de_thi_id, dt.ten_de_thi, hv.hoc_vien_id, hv.ho_ten, hv.email, dthv_s.ket_qua_diem FROM de_thi dt INNER JOIN 
                 (SELECT dthv.dthv_id, dthv.hoc_vien_id, dthv.de_thi_id, dthv.ket_qua_diem FROM (SELECT dthv.de_thi_id, dthv.hoc_vien_id, MAX(dthv.ngay_tao) ngay_tao FROM de_thi_hoc_vien dthv 
                     WHERE dthv.ngay_tao BETWEEN :ngay_bat_dau AND :ngay_ket_thuc GROUP BY dthv.de_thi_id, dthv.hoc_vien_id) dthv_new
-                    INNER JOIN de_thi_hoc_vien dthv ON dthv_new.de_thi_id = dthv.de_thi_id AND dthv_new.hoc_vien_id = dthv.hoc_vien_id) dthv_s
+                    INNER JOIN de_thi_hoc_vien dthv ON dthv_new.de_thi_id = dthv.de_thi_id AND dthv_new.hoc_vien_id = dthv.hoc_vien_id
+                        AND dthv_new.ngay_tao = dthv.ngay_tao) dthv_s
                         ON dt.de_thi_id = dthv_s.de_thi_id
                         INNER JOIN hoc_vien hv ON dthv_s.hoc_vien_id = hv.hoc_vien_id`,
             {
