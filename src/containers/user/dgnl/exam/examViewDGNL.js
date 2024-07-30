@@ -142,17 +142,17 @@ const ExamViewDGNL = (props) => {
                                     </div>
                                     <div>
                                         <h5><b>MỤC ĐÍCH BÀI THI TRẢI NGHIỆM</b></h5>
-                                        <span style={{fontSize: 18, fontWeight: 500}}>Giúp thí sinh làm quen với định dạng bài thi Đánh giá năng lực, trải nghiệm ngân hàng câu hỏi phong phú, sẵn sàng kiến thức và tâm lý cho kỳ thi chính thức.</span>
+                                        <span style={{fontSize: 20, fontWeight: 500}}>Giúp thí sinh làm quen với định dạng bài thi Đánh giá năng lực, trải nghiệm ngân hàng câu hỏi phong phú, sẵn sàng kiến thức và tâm lý cho kỳ thi chính thức.</span>
                                         <h5 style={{marginTop: 8}}><b>CẤU TRÚC BÀI THI</b></h5>
-                                        <Table style={{ whiteSpace: 'pre', textAlign: 'left'}} dataSource={dataSource} columns={columns} pagination={false}/>;
+                                        <Table className='table-structure' style={{ whiteSpace: 'pre', textAlign: 'left', fontSize: 20}} dataSource={dataSource} columns={columns} pagination={false}/>;
                                         <h5><b>CHI TIẾT CẤU TRÚC:</b></h5>
-                                        <div style={{fontSize: 16}}>
+                                        <div style={{fontSize: 20}}>
                                             Về hình thức, bài thi ĐGNL năm 2025 điều chỉnh chủ yếu ở phần 3 và cách đặt câu hỏi. Sau khi hoàn thành hai phần thi đầu, phần thi thứ 3 thí sinh sẽ được lựa chọn 3 trong 5 chủ đề thuộc lĩnh vực Lý, Hóa, Sinh, Sử, Địa để hoàn thành bài thi trong thời gian 195 phút (không kể thời gian bù thêm cho câu hỏi thử nghiệm).
                                         </div>
-                                        <div style={{fontSize: 16, marginTop: 6}}>
+                                        <div style={{fontSize: 20, marginTop: 6}}>
                                             Riêng phần lựa chọn liên quan đến Ngoại ngữ sẽ được xây dựng thành một hợp phần riêng thay thế phần Khoa học để đánh giá năng lực chuyên biệt.
                                         </div>
-                                        <div style={{fontSize: 16, marginTop: 6}}>
+                                        <div style={{fontSize: 20, marginTop: 6}}>
                                             Về câu hỏi, mỗi chủ đề thi sẽ xuất hiện câu hỏi chùm, trong một ngữ cảnh dữ liệu đầu bài sẽ hỏi kèm 1- 3 câu hỏi khác nhau để đánh giá năng lực tổng hợp của thí sinh. Câu hỏi chùm có thể là chủ đề mới với ngữ liệu cho trước đòi hỏi thí sinh phải nhận định, phân tích và đưa ra phương án giải quyết vấn đề đã cho.
                                         </div>
 
@@ -160,21 +160,21 @@ const ExamViewDGNL = (props) => {
                                             <img style={{marginTop: 12}} src={require('assets/img/cau-truc-de-thi-dgnl.png').default} alt='banner1'/>
                                         </div>
 
-                                        <div style={{fontSize: 16}}>
+                                        <div style={{fontSize: 20}}>
                                             <span style={{fontWeight: 700}}>Phần 1 (bắt buộc):</span> Toán học và Xử lý số liệu được làm bài trong 75 phút gồm 50 câu hỏi (35 câu hỏi trắc nghiệm bốn lựa chọn, 15 câu hỏi điền đáp án) thuộc lĩnh vực đại số và một số yếu tố giải tích, hình học và đo lường, thống kê và xác suất.
                                         </div>
-                                        <div style={{fontSize: 16, marginTop: 6}}>
+                                        <div style={{fontSize: 20, marginTop: 6}}>
                                             <span style={{fontWeight: 700}}>Phần 2 (bắt buộc):</span> Ngôn ngữ - Văn học được hoàn thành trong 60 phút gồm 50 câu hỏi trắc nghiệm sử dụng ngữ liệu liên quan đến nhiều lĩnh vực trong đời sống như văn học, ngôn ngữ (từ vựng, ngữ pháp, hoạt động giao tiếp, sự phát triển của ngôn ngữ và các biến thể ngôn ngữ, hành văn), văn hóa, xã hội, lịch sử, địa lý, nghệ thuật, v.v… Ngữ liệu được lựa chọn trong hoặc ngoài chương trình giáo dục phổ thông.
                                         </div>
-                                        <div style={{fontSize: 16, marginTop: 6}}>
+                                        <div style={{fontSize: 20, marginTop: 6}}>
                                             <span style={{fontWeight: 700}}>Phần 3 (tự chọn):</span> Khoa học thiết kế thời gian là 60 phút gồm 50 câu hỏi trắc nghiệm và điền đáp án. Thí sinh lựa chọn 3 trong 5 chủ đề thuộc lĩnh vực:
                                         </div>
                                         <Table dataSource={dataSource2} columns={columns2} pagination={false}/>
                                         <h5 style={{marginTop: 8}}><b>GHI CHÚ:</b></h5>
-                                        <div style={{fontSize: 16}}>
-                                            Đây là đề thi mô phỏng được Tuyensinh247.com xây dựng dựa trên thông tin mới nhất ĐHQG vừa công bố.
+                                        <div style={{fontSize: 20}}>
+                                            Đây là đề thi mô phỏng được hsaphus.edu.vn xây dựng dựa trên thông tin mới nhất ĐHQG vừa công bố.
                                         </div>
-                                        <div style={{fontSize: 16}}>
+                                        <div style={{fontSize: 20}}>
                                             Đề thi đầy đủ theo đúng cấu trúc về số lượng môn, số lượng câu hỏi, định dạng.
                                         </div>
                                     </div>

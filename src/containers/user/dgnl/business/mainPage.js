@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 // component
 import { Layout, Row, Col, Menu, Button } from 'antd';
 import CarouselCustom from 'components/parts/Carousel/Carousel';
-
+import { BookOutlined } from '@ant-design/icons';
 // redux
 import { useSelector, useDispatch } from 'react-redux';
 import * as programmeAction from '../../../../redux/actions/programme';
@@ -29,9 +29,10 @@ const MainPageUser = (props) => {
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
     
 
-    function getItem(label, key, children, type) {
+    function getItem(label, icon, key, children, type) {
         return {
           key,
+          icon,
           children,
           label,
           type,
@@ -46,10 +47,10 @@ const MainPageUser = (props) => {
             if (item.khoa_hocs && item.khoa_hocs.length > 0) {
                 item.khoa_hocs.forEach((item2, index2) => {
                     
-                    children.push(getItem(item2.ten_khoa_hoc, item2.khoa_hoc_id, null, 'item'));
+                    children.push(getItem(item2.ten_khoa_hoc, <BookOutlined />, item2.khoa_hoc_id, null, 'item'));
                 });
             }
-            items.push(getItem(item.ten_khung_ct, item.kct_id, children, 'item'));
+            items.push(getItem(item.ten_khung_ct, <BookOutlined />, item.kct_id, children, 'item'));
         });
     }
     
@@ -71,10 +72,11 @@ const MainPageUser = (props) => {
                                     </Menu.Item>
                                     {items.map((item, index) => {
                                         return (
-                                            <Menu.SubMenu title={item.label} key={Number(index)}>
+                                            <Menu.SubMenu title={item.label} key={Number(index)} icon={item.icon}>
                                                 {item.children?.map((child, index) => {
                                                     return (
                                                         <Menu.Item key={child.key}>
+                                                            
                                                             <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${child.key}`}>{child.label}</Link>
                                                         </Menu.Item>
                                                     )

@@ -22,11 +22,10 @@ import { UploadOutlined, QuestionCircleOutlined, FileDoneOutlined } from '@ant-d
 
 // component
 import { Container } from 'reactstrap';
-import { Doughnut, Line } from 'react-chartjs-2';
+import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend,
     CategoryScale, LinearScale, PointElement, LineElement,
     Title, } from 'chart.js';
-import NoRecord from 'components/common/NoRecord';
 
 // redux
 import { useDispatch } from "react-redux";
@@ -79,7 +78,7 @@ const ProfilePage = () => {
         form: defaultForm,
         fileImg: '',
         activeTab: '1',
-        course: '',
+        course: null,
         codeprovince: 'Hà Nội',
         longTime: 0
     });
@@ -203,7 +202,13 @@ const ProfilePage = () => {
             dataIndex: 'ten_khoa_hoc',
             key: 'ten_khoa_hoc',
             render: (ten_khoa_hoc, khoa_hoc) => (
-                <NavLink to={config.BASE_URL + `/luyen-tap/luyen-tap/${hashids.encode(khoa_hoc.khoa_hoc_id)}`}>{ten_khoa_hoc}</NavLink>
+                khoa_hoc.loai_kct === 1 ? (
+                    <NavLink to={config.BASE_URL + `/luyen-tap/kiem-tra/${hashids.encode(khoa_hoc.khoa_hoc_id)}`}>{ten_khoa_hoc}</NavLink>
+                ) : khoa_hoc.loai_kct === 0 ? (
+                    <NavLink to={config.BASE_URL + `/luyen-tap/danh-gia-nang-luc/${hashids.encode(khoa_hoc.khoa_hoc_id)}`}>{ten_khoa_hoc}</NavLink>
+                ) : (
+                    <NavLink to={config.BASE_URL + `/luyen-tap/luyen-tap/${hashids.encode(khoa_hoc.khoa_hoc_id)}`}>{ten_khoa_hoc}</NavLink>
+                )
             )
         },
     ];
@@ -446,11 +451,11 @@ const ProfilePage = () => {
                             <span className="section-title-main">KHÓA HỌC ĐÃ MUA</span>
                         <b></b>
                     </h2>
-                    {(courseOfUser.length > 0) ?
+                    {/* {(courseOfUser.length > 0) ? */}
                         <Table className="table-striped-rows" 
                             columns={columns} dataSource={courseOfUser} 
                         />
-                    : <NoRecord title={'Không có dữ liệu'} subTitle={''}/>}
+                    {/* : <NoRecord title={'Không có dữ liệu'} subTitle={''}/>} */}
                 </div>
         </div>
         )
@@ -473,57 +478,57 @@ const ProfilePage = () => {
                                     <Avatar src={info.anh_dai_dien !== null ? config.API_URL + info.anh_dai_dien : defaultImage} size={150} shape='circle' />
                                     <br/>
                                     <h3 className='mt-4'>{info.ho_ten}</h3>
-                                    {state.activeTab === '1' &&
+                                    {/* {state.activeTab === '1' && */}
                                         <>
                                             <Card>
                                                 <Row>
                                                     <Row style={{width: '100%', justifyContent: 'center'}}>
-                                                        <h5 className='bold full-width'>Họ và tên: </h5>
+                                                        {/* <h5 className='bold full-width'>Họ và tên: </h5> */}
                                                         <h5 style={{wordBreak: 'break-word', fontSize: 18}}>{info.ho_ten}</h5>
                                                     </Row>
                                                     <Row style={{width: '100%', justifyContent: 'center'}}>
-                                                        <h5 className='bold full-width'>Email: </h5>
+                                                        {/* <h5 className='bold full-width'>Email: </h5> */}
                                                         <h5 style={{wordBreak: 'break-word'}}>{info.email}</h5>
                                                     </Row>
                                                     <Row style={{width: '100%', justifyContent: 'center'}}>
-                                                        <h5 className='bold full-width'>Giới tính: </h5>
+                                                        {/* <h5 className='bold full-width'>Giới tính: </h5> */}
                                                         <h5 style={{wordBreak: 'break-word'}}>{info.gioi_tinh}</h5>
                                                     </Row>                 
                                                     <Row style={{width: '100%', justifyContent: 'center'}}>
-                                                        <h5 className='bold full-width'>Ngày sinh: </h5>
+                                                        {/* <h5 className='bold full-width'>Ngày sinh: </h5> */}
                                                         <h5 style={{wordBreak: 'break-word'}}>{ info.ngay_sinh !== null ? moment(info.ngay_sinh).utc(7).format(config.DATE_FORMAT_SHORT) : ''}</h5>
                                                     </Row>
                                                     <Row style={{width: '100%', justifyContent: 'center'}}>
-                                                        <h5 className='bold full-width'>Số điện thoại: </h5>
+                                                        {/* <h5 className='bold full-width'>Số điện thoại: </h5> */}
                                                         <h5 style={{wordBreak: 'break-word'}}>{info.sdt}</h5>
                                                     </Row>
                                                     <Row style={{width: '100%', justifyContent: 'center'}}>   
-                                                        <h5 className='bold full-width' >Trường học: </h5>
+                                                        {/* <h5 className='bold full-width' >Trường học: </h5> */}
                                                         <h5 style={{wordBreak: 'break-word'}}>{info.truong_hoc}</h5>
                                                     </Row>   
                                                     <Row style={{width: '100%', justifyContent: 'center'}}>   
-                                                        <h5 className='bold full-width' >Tỉnh/Thành phố: </h5>
+                                                        {/* <h5 className='bold full-width' >Tỉnh/Thành phố: </h5> */}
                                                         <h5 style={{wordBreak: 'break-word'}}>{info.tinh}</h5>
                                                     </Row>   
                                                     <Row style={{width: '100%', justifyContent: 'center'}}>
-                                                        <h5 className='bold full-width'>Vai trò:</h5>
+                                                        {/* <h5 className='bold full-width'>Vai trò:</h5> */}
                                                         <Tag color={json_token.role === 0 ? 'green' : 'red'} key={json_token.role} style={{fontSize: '16px', padding:'8px', margin: '4px'}}>
                                                             {json_token.role === 0 ? 'Học viên' : 'Giáo viên'}
                                                         </Tag>
                                                     </Row>
                                                     <Row style={{width: '100%', justifyContent: 'center'}}>
-                                                        <h5 className='bold full-width'>Địa chỉ: </h5>
+                                                        {/* <h5 className='bold full-width'>Địa chỉ: </h5> */}
                                                         <h5 style={{wordBreak: 'break-word'}}>{info.dia_chi}</h5>
                                                     </Row>       
                                                     <Row style={{width: '100%', justifyContent: 'center'}}>   
-                                                        <h5 className='bold full-width'>Giới thiệu: </h5>
-                                                        <br/>
+                                                        {/* <h5 className='bold full-width'>Giới thiệu: </h5> */}
+                                                        {/* <br/> */}
                                                         <h5 style={{wordBreak: 'break-word'}}>{info.gioi_thieu}</h5>
                                                     </Row>  
                                                     <Row style={{width: '100%', justifyContent: 'center'}}>
-                                                        <h5 className='bold full-width'>Ngày tạo: </h5>
+                                                        {/* <h5 className='bold full-width'>Ngày tạo: </h5> */}
                                                         {/* <span>Lần cuối đăng nhập: </span> */}
-                                                        <h5 style={{wordBreak: 'break-word'}}>{moment(info.ngay_tao).utc(7).format(config.SHOW_DATE_FORMAT)}</h5>
+                                                        <h5 style={{wordBreak: 'break-word'}}>{moment(info.ngay_tao).utc(7).format(config.DATE_FORMAT_SHORT)}</h5>
                                                     </Row> 
                                                 </Row>
                                             </Card>
@@ -531,7 +536,7 @@ const ProfilePage = () => {
                                                 {renderCoursePaid()}
                                             </Card>
                                         </>
-                                    }
+                                    {/* } */}
                                 </Card>
                             </Col>
                             <Col xl={16} sm={24} xs={24} className="cate-form-block">
@@ -571,29 +576,29 @@ const ProfilePage = () => {
                                                 </Card>
                                             }
                                             <br/>
-                                            {DetailHistoryPractice.length > 0 &&
-                                            <Card>
-                                                <Row>
-                                                    <Col xl={12} sm={24} xs={24}>
-                                                        <h5 style={{color: 'green', fontWeight: 700}}>Chi tiết ôn luyện</h5>
-                                                    </Col>
-                                                    <Col xl={12} sm={24} xs={24}>
-                                                        <Select style={{width: '100%'}} defaultValue={time}
-                                                            showSearch={false}
-                                                            placeholder="Chọn thời gian"
-                                                            onChange={(time) => setTime(time)}
-                                                        >
-                                                            <Option value={1}>Theo ngày</Option>
-                                                            <Option value={2}>Theo tuần</Option>
-                                                        </Select>
-                                                    </Col>
-                                                </Row>
-                                                <Row className='chart-history-practice-2'>
-                                                    <Line options={options} data={dataLine} />
-                                                </Row>
-                                            </Card>
-                                            }
-                                            <br/>
+                                            {/* {DetailHistoryPractice.length > 0 &&
+                                                <Card>
+                                                    <Row>
+                                                        <Col xl={12} sm={24} xs={24}>
+                                                            <h5 style={{color: 'green', fontWeight: 700}}>Chi tiết ôn luyện</h5>
+                                                        </Col>
+                                                        <Col xl={12} sm={24} xs={24}>
+                                                            <Select style={{width: '100%'}} defaultValue={time}
+                                                                showSearch={false}
+                                                                placeholder="Chọn thời gian"
+                                                                onChange={(time) => setTime(time)}
+                                                            >
+                                                                <Option value={1}>Theo ngày</Option>
+                                                                <Option value={2}>Theo tuần</Option>
+                                                            </Select>
+                                                        </Col>
+                                                    </Row>
+                                                    <Row className='chart-history-practice-2'>
+                                                        <Line options={options} data={dataLine} />
+                                                    </Row>
+                                                </Card>
+                                            } */}
+                                            {/* <br/> */}
                                             <Card>
                                                 <Row>
                                                     <Col xl={12} sm={24} xs={24}>
@@ -727,7 +732,7 @@ const ProfilePage = () => {
                                                     </Button>   
                                                 </Form.Item>
                                             </Form>
-                                        </TabPane>
+                                        </TabPane> 
                                     </Tabs>
                                 </Card>
                             </Col>

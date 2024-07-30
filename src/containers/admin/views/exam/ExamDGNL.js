@@ -286,7 +286,7 @@ const ExamDGNLAdminPage = () => {
       let options = [];
       if (typeExams.status === 'success') {
         options = typeExams.data.map((type) => {
-          if (type.loai_de_thi_id === 3 || type.loai_de_thi_id === 4) {
+          if (type.loai_de_thi_id === 3) {
             return (
               <Option key={type.loai_de_thi_id} value={type.loai_de_thi_id} >{type.mo_ta}</Option>
             )
@@ -295,7 +295,7 @@ const ExamDGNLAdminPage = () => {
         })
       }
       return (
-        <Select
+        <Select defaultValue={3}
           showSearch={false}
           placeholder="Chọn loại đề thi"
           onChange={(typeId) => {
@@ -322,11 +322,13 @@ const ExamDGNLAdminPage = () => {
           showSearch={false}
           placeholder="Chọn khóa học"
           onChange={(khoa_hoc_id) => {
-              dispatch(moduleActions.getModulesByIdCourse({ idCourse: khoa_hoc_id }));
-              // lấy danh sách đề thi 'chưa xuất bản'
-                dispatch(examActions.filterExamDGNL({ idCourse: khoa_hoc_id, kct_id: filter.kct_id, 
-                  status: filter.trang_thai, publish: 0, pageIndex: '', pageSize: '' 
-                }));
+            dispatch(moduleActions.getModulesByIdCourse({ idCourse: khoa_hoc_id }));
+            // lấy danh sách đề thi 'chưa xuất bản'
+            dispatch(examActions.filterExamDGNL({ idCourse: khoa_hoc_id, kct_id: filter.kct_id, 
+              status: filter.trang_thai, publish: 0, pageIndex: '', pageSize: '' 
+            }));
+            // set value de_thi_id => null
+            formFastExam.setFieldsValue({ de_thi_id: null });
           }}
         >
           {options}
@@ -538,7 +540,8 @@ const ExamDGNLAdminPage = () => {
       }
     )
     .catch(error => {
-      notification.error({ message: error.message })
+      notification.error({ message: error.message });
+      setSpinning(false);
     });
   }
 
@@ -696,15 +699,15 @@ const ExamDGNLAdminPage = () => {
     setTabs(value);
   }
 
-// event đổi pageSize
-const onShowSizeChange = (current, pageSize) => {
-  setPageSize(pageSize)
-};
+  // event đổi pageSize
+  const onShowSizeChange = (current, pageSize) => {
+    setPageSize(pageSize)
+  };
 
-// event đổi pageIndex
-const onChange = page => {
-  setPageIndex(page);
-};
+  // event đổi pageIndex
+  const onChange = page => {
+    setPageIndex(page);
+  };
 
   return (
     <div className="content">
@@ -735,28 +738,30 @@ const onChange = page => {
                       {/* {renderTypeExams2()} */}
                       <br/>
                       <Button onClick={() => showFastModal()} shape="round" type="primary" icon={<PlusOutlined />} className=" btn-action">
-                          Tạo nhanh đề thi
+                        Tạo nhanh đề thi
                       </Button>
                       <Button onClick={() => showModal()} shape="round" type="primary" icon={<PlusOutlined />} className=" btn-action">
-                          Thêm mới đề thi
+                        Thêm mới đề thi
                       </Button> 
                       <Modal visible={isModalVisible}  mask={true} centered={true} className="cra-exam-modal" wrapClassName="cra-exam-modal-container"                                   
-                          onOk={handleCancel} 
-                          onCancel={handleCancel}
-                          maskStyle={{ background: 'rgba(0, 0, 0, 0.8)' }}
-                          maskClosable={false}
-                          footer={null}>
-                          {renderAddModal()}
+                        onOk={handleCancel} 
+                        onCancel={handleCancel}
+                        maskStyle={{ background: 'rgba(0, 0, 0, 0.8)' }}
+                        maskClosable={false}
+                        footer={null}
+                      >
+                        {renderAddModal()}
                       </Modal>
                       {/* Modal tạo nhanh đề thi */}
                       <Modal visible={isModalFastVisible}  mask={true} centered={true} className="cra-exam-modal" wrapClassName="cra-exam-modal-container"                                   
-                          onOk={handleFastOk} 
-                          width={700}
-                          onCancel={handleFastOk}
-                          maskStyle={{ background: 'rgba(0, 0, 0, 0.8)' }}
-                          maskClosable={false}
-                          footer={null}>
-                          {renderFastAddModal()}
+                        onOk={handleFastOk} 
+                        width={700}
+                        onCancel={handleFastOk}
+                        maskStyle={{ background: 'rgba(0, 0, 0, 0.8)' }}
+                        maskClosable={false}
+                        footer={null}
+                      >
+                        {renderFastAddModal()}
                       </Modal>
                     </Col>
                 </Row>

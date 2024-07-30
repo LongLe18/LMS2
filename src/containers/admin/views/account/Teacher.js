@@ -230,7 +230,7 @@ const TeacherPage = () => {
     const renderRole = () => {
         return (
             <Select
-                value={state.form.vai_tro}
+                defaultValue={state.form.vai_tro}
                 onChange={(vai_tro) => setState({ ...state, vai_tro: vai_tro })}
                 placeholder="Chọn vai trò"
             >
@@ -442,7 +442,7 @@ const TeacherPage = () => {
                                 },
                             ]}
                             >
-                                <Input placeholder=""/>
+                                <Input placeholder="Nhập họ và tên"/>
                         </Form.Item>
                         <Form.Item
                             className="input-col"
@@ -478,7 +478,7 @@ const TeacherPage = () => {
                                 { type: 'email', message: 'Không đúng định dạng E-mail.' },
                             ]}
                         >
-                            <Input size="normal" placeholder='Email' />
+                            <Input size="normal" placeholder='Nhập Email' />
                         </Form.Item>
                         <Form.Item
                             name="dia_chi"
@@ -515,20 +515,22 @@ const TeacherPage = () => {
                         {/* Trạng thái */}
                         {(state.isEdit) ?  
                             <Form.Item 
-                            initialValue={state.form.trang_thai}
-                            label="Trạng thái"
-                            className="input-col"
-                            name="trang_thai"
-                            rules={[]} >
-                            {renderStatus()}
+                                initialValue={state.form.trang_thai}
+                                label="Trạng thái"
+                                className="input-col"
+                                name="trang_thai"
+                                rules={[]} 
+                            >
+                                {renderStatus()}
                             </Form.Item>  
                         : <Form.Item style={{display: 'none'}}
-                            initialValue={state.form.trang_thai}
-                            label="Trạng thái"
-                            className="input-col"
-                            name="trang_thai"
-                            rules={[]} >
-                            {renderStatus()}
+                                initialValue={state.form.trang_thai}
+                                label="Trạng thái"
+                                className="input-col"
+                                name="trang_thai"
+                                rules={[]} 
+                            >
+                                {renderStatus()}
                             </Form.Item> 
                         } 
                         <Form.Item className="input-col" label="Hình đại diện" name="anh_dai_dien" rules={[]}>

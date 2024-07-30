@@ -331,7 +331,7 @@ const AccountPage = () => {
     const renderRole = () => {
         return (
           <Select
-            value={state.form.vai_tro}
+            defaultValue={state.form.vai_tro}
             onChange={(vai_tro) => setState({ ...state, vai_tro: vai_tro })}
             placeholder="Chọn vai trò"
           >
@@ -658,16 +658,14 @@ const AccountPage = () => {
               </ExcelSheet>
           </ExcelFile>
         <br/>
-          {data.length > 0 && 
-            <>
-              <Table className="table-striped-rows" columns={columns} dataSource={data} pagination={false} rowSelection={rowSelection}/>
-              <br/>
-              <div style={{display: 'flex', alignItems: 'center'}}>
-                <Pagination current={pageIndex} onChange={onChange} total={students.total} onShowSizeChange={onShowSizeChange} showSizeChanger defaultPageSize={pageSize}/>
-                <span style={{marginLeft: '10px'}}>Tổng số học viên: <b>{students.total}</b></span>
-              </div>
-            </>
-          }
+          <>
+            <Table className="table-striped-rows" columns={columns} dataSource={data} pagination={false} rowSelection={rowSelection}/>
+            <br/>
+            <div style={{display: 'flex', alignItems: 'center'}}>
+              <Pagination current={pageIndex} onChange={onChange} total={students.total} onShowSizeChange={onShowSizeChange} showSizeChanger defaultPageSize={pageSize}/>
+              <span style={{marginLeft: '10px'}}>Tổng số học viên: <b>{students.total}</b></span>
+            </div>
+          </>
           {(errorusers) && notification.error({
               message: 'Thông báo',
               description: 'Lấy dữ liệu thành viên thất bại',
@@ -733,6 +731,15 @@ const AccountPage = () => {
                           ]}
                       >
                           <Input size="normal" placeholder='Email' />
+                      </Form.Item>
+                      <Form.Item
+                          name="password"
+                          label="Mật khẩu"
+                          rules={[
+                              { required: true, message: 'Mật khẩu là trường bắt buộc.' },
+                          ]}
+                      >
+                          <Input size="normal" placeholder='Mật khẩu' defaultValue={'Enno@123'} disabled={true}/>
                       </Form.Item>
                       <Form.Item
                           name="truong_hoc"

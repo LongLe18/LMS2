@@ -10,7 +10,6 @@ import defaultImage from 'assets/img/default.jpg';
 import { diff } from 'helpers/common.helper';
 import { createRoot } from 'react-dom/client';
 import axios from 'axios';
-import alat from 'assets/alat.pdf'
 // hook
 import useDebounce from 'hooks/useDebounce';
 
@@ -20,7 +19,7 @@ import AppBreadCrumb from "components/parts/breadcrumb/AppBreadCrumb";
 import NoRecord from 'components/common/NoRecord';
 import LoadingCustom from "components/parts/loading/Loading"
 import { Layout, Row, Col, Modal, Button, notification, Input, Alert, Upload, message, List, Comment, Space, Timeline } from 'antd';
-import { InfoCircleOutlined, CommentOutlined, UploadOutlined, DownloadOutlined, FileOutlined } from '@ant-design/icons';
+import { InfoCircleOutlined, CommentOutlined, UploadOutlined, DownloadOutlined } from '@ant-design/icons';
 import TextEditorWidget2 from 'components/common/TextEditor/TextEditor2';
 import MathJax from 'react-mathjax';
 
@@ -1062,7 +1061,7 @@ const ExamOnlineDetail = () => {
             <>  
                 <div className='section-question'>
                     <Row justify={'space-between'}>
-                        <Col>ENNO {getCurrentDate()}</Col>
+                        <Col>{getCurrentDate()}</Col>
                         <Col style={{display: 'flex'}}>
                             <div style={{marginRight: 12}}>Họ và tên: {JSON.parse(localStorage.getItem('userInfo')).ho_ten}</div>
                             <div>Tài khoản: {JSON.parse(localStorage.getItem('userInfo')).email}</div>
@@ -1446,7 +1445,7 @@ const ExamOnlineDetail = () => {
                                             } else return null;
                                         })}
 
-                                        {index >= 2 && 
+                                        {/* {index >= 2 && 
                                             <p className="block-action text-center mt-0">
                                                 <a className="ant-btn ant-btn-primary ant-btn-lg join-exam-button" href={alat} target='_blank' rel='noopener noreferrer'
                                                     style={{borderRadius: 8, backgroundColor: 'rgba(0, 115, 8, 0.92)', borderColor: 'rgba(0, 115, 8, 0.92)'}}
@@ -1454,7 +1453,7 @@ const ExamOnlineDetail = () => {
                                                     Mở alat địa lý
                                                 </a>
                                             </p>
-                                        }
+                                        } */}
                                     </>
                                 )
                             } else return null;

@@ -15,6 +15,16 @@
     border-color: transparent;
 }
 
+.ALAT {
+    background: rgba(0, 115, 8, 0.92);
+    border-radius: 20px;
+    padding: 0 18px;
+    color: white;
+    display: block;
+    margin-bottom: 6px;
+    border-color: transparent;
+}
+
 .FACEBOOK {
     background: #125c9e;
     border-radius: 20px;
@@ -35,6 +45,16 @@
     border-color: transparent;
 }
 
+.float-contact .ALAT {
+    background: rgba(0, 115, 8, 0.92) !important;
+    border-radius: 20px;
+    padding: 0 18px;
+    color: white;
+    display: block;
+    margin-bottom: 6px;
+    border-color: transparent;
+}
+
 .float-contact .HOTLINE {
     background: #e3680a!important;
     border-radius: 20px;
@@ -45,7 +65,7 @@
     border-color: transparent;
 }
 
-.ZALO a, .FACEBOOK a, .HOTLINE a, .YOUTUBE a {
+.ALAT a, .ZALO a, .FACEBOOK a, .HOTLINE a, .YOUTUBE a {
     font-size: 15px;
     color: white;
     font-weight: 400;

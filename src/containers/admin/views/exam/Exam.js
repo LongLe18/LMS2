@@ -343,11 +343,12 @@ const ExamAdminPage = () => {
           showSearch={false}
           placeholder="Chọn khóa học"
           onChange={(khoa_hoc_id) => {
-              dispatch(moduleActions.getModulesByIdCourse({ idCourse: khoa_hoc_id }));
-              // lấy danh sách đề thi 'chưa xuất bản'
-              dispatch(examActions.filterExam({ idCourse: khoa_hoc_id, idModule: filter.mo_dun_id, 
-                idThematic: filter.chuyen_de_id, status: filter.trang_thai, search: filter.search, 
-                start: filter.start, end: filter.end, idType: filter.typeId, publish: 0, offset: '', limit: ''}));
+            dispatch(moduleActions.getModulesByIdCourse({ idCourse: khoa_hoc_id }));
+            // lấy danh sách đề thi 'chưa xuất bản'
+            dispatch(examActions.filterExam({ idCourse: khoa_hoc_id, idModule: filter.mo_dun_id, 
+              idThematic: filter.chuyen_de_id, status: filter.trang_thai, search: filter.search, 
+              start: filter.start, end: filter.end, idType: filter.typeId, publish: 0, offset: '', limit: ''}));
+            formFastExam.setFieldsValue({ de_thi_id: null });
           }}
         >
           {options}
@@ -540,6 +541,7 @@ const ExamAdminPage = () => {
     )
     .catch(error => {
       notification.error({ message: error.message })
+      setSpinning(false);
     });
   }
 

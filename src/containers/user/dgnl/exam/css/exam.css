@@ -330,6 +330,11 @@
   }
 }
 
+.table-structure {
+  .ant-table {
+    font-size: 20px;
+  }
+}
 /*tablet*/
 
 @media only screen and (max-width: 680px) {

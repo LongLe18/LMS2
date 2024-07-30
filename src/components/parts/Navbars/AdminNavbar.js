@@ -215,12 +215,12 @@ function Header(props) {
           </div>
           <NavbarBrand href="/ltdhqg/admin/dashboard">{getBrand()}</NavbarBrand>
         </div>
-        <NavLink to="/admin/dashboard">
+        {/* <NavLink to="/admin/dashboard">
             <img alt="..."  style={{width:'90%'}}
             className="img-no-padding img-responsive"
             src={require("assets/rank/banner.png").default}
             />
-        </NavLink>
+        </NavLink> */}
         <NavbarToggler onClick={toggle}>
           <span className="navbar-toggler-bar navbar-kebab" />
           <span className="navbar-toggler-bar navbar-kebab" />
@@ -228,98 +228,100 @@ function Header(props) {
         </NavbarToggler>
 
         {/* Alert */}
-        <Collapse isOpen={isOpen} navbar className="justify-content-end">
-          <Nav navbar>
-            {state.notification !== '' &&
-            <Dropdown nav 
-                  isOpen={dropdownAlert}
-                  toggle={(e) => dropdownToggleAlert(e)}>
-              <DropdownToggle caret nav>
-                <a href="# " onClick={e => e.preventDefault()} className="ant-dropdown-link">
-                  <Badge count={state.notification.filter(item => item.trang_thai === false).length} offset={[6, 0]} size="small">
-                    <NotificationOutlined />
-                  </Badge>
-                </a>
-              </DropdownToggle>
-              
-              <DropdownMenu right style={{width: '500px', textAlign: 'center', overflow: 'scroll', height: '500px'}}>
-                <DropdownItem tag="a">{state.notification.length} thông báo</DropdownItem>
-                {state.notification.map((note, index) => 
-                <DropdownItem key={index} onClick={() => handleSeenComment(note.thong_bao_id, note.link_lien_ket)} 
-                  style={{background: !note.trang_thai ? '#f4f2f2' : 'white'}}>
-                  <Row>
-                    <Col xs={2} md={2} xl={2}>
-                      <BellOutlined />
-                    </Col>
-                    
-                    <Col xs={20} md={20} xl={20}>
-                      <Tooltip title={<AutoLaTeX>{`${note.noi_dung} <br/> - Gửi lúc: ${moment(note.ngay_tao).isValid() ? moment(new Date(note.ngay_tao)).utc().format(config.DATE_FORMAT_SHORT) : '-'}`}</AutoLaTeX>} color="#2db7f5" placement="bottom">
-                        {note.noi_dung.length > 50 ? cutString(note.noi_dung, 50) + ' ... ' : note.noi_dung}  
-                      </Tooltip>   
-                    </Col>
-                  </Row>
-                </DropdownItem>
-                )}
-                <DropdownItem tag="a" onClick={() => {
-                  if (localStorage.getItem('userToken') !== null) {
-                    const json_token = jwt_decode(localStorage.getItem('userToken'));
-                    if (json_token.role === 1) { //giáo viên
-                      props.history.push('/teacher/reply')
-                    } else if (json_token.role === 2) { // nhân viên
-                      props.history.push('/admin/reply')
-                    }
-                }}}>Xem tất cả</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-            }
-          </Nav>
-        </Collapse>
+        <div style={{display: 'flex'}}>
+          <Collapse isOpen={isOpen} navbar className="justify-content-end">
+            <Nav navbar>
+              {state.notification !== '' &&
+              <Dropdown nav 
+                    isOpen={dropdownAlert}
+                    toggle={(e) => dropdownToggleAlert(e)}>
+                <DropdownToggle caret nav>
+                  <a href="# " onClick={e => e.preventDefault()} className="ant-dropdown-link">
+                    <Badge count={state.notification.filter(item => item.trang_thai === false).length} offset={[6, 0]} size="small">
+                      <NotificationOutlined />
+                    </Badge>
+                  </a>
+                </DropdownToggle>
+                
+                <DropdownMenu right style={{width: '500px', textAlign: 'center', overflow: 'scroll', height: '500px'}}>
+                  <DropdownItem tag="a">{state.notification.length} thông báo</DropdownItem>
+                  {state.notification.map((note, index) => 
+                  <DropdownItem key={index} onClick={() => handleSeenComment(note.thong_bao_id, note.link_lien_ket)} 
+                    style={{background: !note.trang_thai ? '#f4f2f2' : 'white'}}>
+                    <Row>
+                      <Col xs={2} md={2} xl={2}>
+                        <BellOutlined />
+                      </Col>
+                      
+                      <Col xs={20} md={20} xl={20}>
+                        <Tooltip title={<AutoLaTeX>{`${note.noi_dung} <br/> - Gửi lúc: ${moment(note.ngay_tao).isValid() ? moment(new Date(note.ngay_tao)).utc().format(config.DATE_FORMAT_SHORT) : '-'}`}</AutoLaTeX>} color="#2db7f5" placement="bottom">
+                          {note.noi_dung.length > 50 ? cutString(note.noi_dung, 50) + ' ... ' : note.noi_dung}  
+                        </Tooltip>   
+                      </Col>
+                    </Row>
+                  </DropdownItem>
+                  )}
+                  <DropdownItem tag="a" onClick={() => {
+                    if (localStorage.getItem('userToken') !== null) {
+                      const json_token = jwt_decode(localStorage.getItem('userToken'));
+                      if (json_token.role === 1) { //giáo viên
+                        props.history.push('/teacher/reply')
+                      } else if (json_token.role === 2) { // nhân viên
+                        props.history.push('/admin/reply')
+                      }
+                  }}}>Xem tất cả</DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+              }
+            </Nav>
+          </Collapse>
 
-        <Collapse isOpen={isOpen} navbar className="justify-content-end">
-          <Nav navbar>
-            <Dropdown
-              nav
-              isOpen={dropdownOpen}
-              toggle={(e) => dropdownToggle(e)}
-              >
-              <DropdownToggle caret nav>
-                <Avatar size={48} 
-                  src={
-                    <Image
-                      src={avatar}
-                      style={{
-                        width: 48,
-                      }}
-                    />
+          <Collapse isOpen={isOpen} navbar className="justify-content-end">
+            <Nav navbar>
+              <Dropdown
+                nav
+                isOpen={dropdownOpen}
+                toggle={(e) => dropdownToggle(e)}
+                >
+                <DropdownToggle caret nav>
+                  <Avatar size={48} 
+                    src={
+                      <Image
+                        src={avatar}
+                        style={{
+                          width: 48,
+                        }}
+                      />
+                    }
+                  ></Avatar>
+                </DropdownToggle>
+                <DropdownMenu right>
+                  <DropdownItem tag="a" onClick={() => {
+                    if (localStorage.getItem('userToken') !== null) {
+                      const json_token = jwt_decode(localStorage.getItem('userToken'));
+                      if (json_token.role === 1) { //giáo viên
+                        props.history.push('/teacher/profile')
+                      } else if (json_token.role === 2) { // nhân viên
+                        props.history.push("/admin/profile")
+                      }
                   }
-                ></Avatar>
-              </DropdownToggle>
-              <DropdownMenu right>
-                <DropdownItem tag="a" onClick={() => {
-                  if (localStorage.getItem('userToken') !== null) {
-                    const json_token = jwt_decode(localStorage.getItem('userToken'));
-                    if (json_token.role === 1) { //giáo viên
-                      props.history.push('/teacher/profile')
-                    } else if (json_token.role === 2) { // nhân viên
-                      props.history.push("/admin/profile")
-                    }
-                }
-                }}>Tài khoản</DropdownItem>
-                <DropdownItem tag="a" onClick={() => {
-                  if (localStorage.getItem('userToken') !== null) {
-                    const json_token = jwt_decode(localStorage.getItem('userToken'));
-                    if (json_token.role === 1) { //giáo viên
-                      props.history.push('/teacher/reply')
-                    } else if (json_token.role === 2) { // nhân viên
-                      props.history.push('/admin/reply')
-                    }
-                }
-                }}>Thông báo</DropdownItem>
-                <DropdownItem tag="a" onClick={() => onLogout()}>Đăng xuất</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </Nav>
-        </Collapse>
+                  }}>Tài khoản</DropdownItem>
+                  <DropdownItem tag="a" onClick={() => {
+                    if (localStorage.getItem('userToken') !== null) {
+                      const json_token = jwt_decode(localStorage.getItem('userToken'));
+                      if (json_token.role === 1) { //giáo viên
+                        props.history.push('/teacher/reply')
+                      } else if (json_token.role === 2) { // nhân viên
+                        props.history.push('/admin/reply')
+                      }
+                  }
+                  }}>Thông báo</DropdownItem>
+                  <DropdownItem tag="a" onClick={() => onLogout()}>Đăng xuất</DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+            </Nav>
+          </Collapse>
+        </div>
       </Container>
     </Navbar>
   );

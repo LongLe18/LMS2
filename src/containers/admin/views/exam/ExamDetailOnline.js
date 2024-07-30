@@ -279,7 +279,11 @@ const OnlineExamDetailPage = () => {
                     />
       
                     <div className="header-question">
-                        Câu {index + 1} <span className="point">[{question.cau_hoi.diem} điểm] {question.cau_hoi.loai_cau_hoi === 2 && 'Câu hỏi đúng sai'}</span>
+                        Câu {index + 1} 
+                        <span className="point">
+                            {/* [{question.cau_hoi.diem} điểm] */}
+                            {question.cau_hoi.loai_cau_hoi === 2 && 'Câu hỏi đúng sai'}
+                        </span>
                     </div>
                     {(question.cau_hoi.loai_cau_hoi === 1 || question.cau_hoi.loai_cau_hoi === 2) ?
                         <div className="body-question">
