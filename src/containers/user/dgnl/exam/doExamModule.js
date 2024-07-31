@@ -25,7 +25,7 @@ import MathJax from 'react-mathjax';
 
 // icon
 import Icon from '@ant-design/icons';
-import docIcon from 'assets/img/exam/doc-icon.png';
+// import docIcon from 'assets/img/exam/doc-icon.png';
 import adope from 'assets/img/exam/adope.gif';
 
 // redux
@@ -189,6 +189,7 @@ const ExamModuleDetail = () => {
             dispatch(answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, 
                 (res) => {
                     if (res.status === 'success') {
+                        // eslint-disable-next-line react-hooks/exhaustive-deps
                         answers = res.data;
                         onChangeAnswerText(textAnswer, JSON.parse(localStorage.getItem('question')))
                     }
@@ -623,19 +624,19 @@ const ExamModuleDetail = () => {
         });
     };
 
-    const doExamAgain = () => {
-        const callback = (res) => {
-            if (res.status === 200 && res.statusText === 'OK') {
-                window.location.href = `/luyen-tap/lam-kiem-tra/${params.idmodule}/${moment().toNow()}/${res.data.data.de_thi_id}/${res.data.data.dthv_id}/${params.idCourse}`;
-            }
-        };
+    // const doExamAgain = () => {
+    //     const callback = (res) => {
+    //         if (res.status === 200 && res.statusText === 'OK') {
+    //             window.location.href = `/luyen-tap/lam-kiem-tra/${params.idmodule}/${moment().toNow()}/${res.data.data.de_thi_id}/${res.data.data.dthv_id}/${params.idCourse}`;
+    //         }
+    //     };
 
-        const data = {
-            "thoi_diem_bat_dau": moment().toISOString(),
-            "de_thi_id": params.id
-        }
-        dispatch(examActions.createExamUser(data, callback));
-    };
+    //     const data = {
+    //         "thoi_diem_bat_dau": moment().toISOString(),
+    //         "de_thi_id": params.id
+    //     }
+    //     dispatch(examActions.createExamUser(data, callback));
+    // };
 
     // bình luận
     const saveComment = (cau_hoi_id, mo_dun_id, chuyen_de_id) => {

@@ -12,6 +12,7 @@ import jwt_decode from 'jwt-decode';
 
 // component
 import { Layout, Row, Col, Button, notification, Form, Input, Modal, Menu } from 'antd';
+import { BookOutlined, BarsOutlined } from '@ant-design/icons';
 import NoRecord from 'components/common/NoRecord';
 import { UserOutlined, LockOutlined, EyeTwoTone, EyeInvisibleOutlined } from '@ant-design/icons';
 import SocialLogin from 'components/common/SocialLogin';
@@ -234,9 +235,10 @@ const BusinessProgramePage = (props) => {
     //         .catch(error => notification.error({ message: error.message }));
     // }
 
-    function getItem(label, key, children, type) {
+    function getItem(label, icon, key, children, type) {
         return {
           key,
+          icon,
           children,
           label,
           type,
@@ -251,10 +253,10 @@ const BusinessProgramePage = (props) => {
             if (item.khoa_hocs && item.khoa_hocs.length > 0) {
                 item.khoa_hocs.forEach((item2, index2) => {
                     
-                    children.push(getItem(item2.ten_khoa_hoc, item2.khoa_hoc_id, null, 'item'));
+                    children.push(getItem(item2.ten_khoa_hoc, <BookOutlined />, item2.khoa_hoc_id, null, 'item'));
                 });
             }
-            items.push(getItem(item.ten_khung_ct, item.kct_id, children, 'item'));
+            items.push(getItem(item.ten_khung_ct, <BookOutlined />, item.kct_id, children, 'item'));
         });
     }
 
@@ -271,12 +273,14 @@ const BusinessProgramePage = (props) => {
                                     theme="light"
                                     defaultSelectedKeys={['1']}
                                 >
-                                    <Menu.Item style={{background: '#3da844', marginTop: 0, borderTopRightRadius: 6, borderTopLeftRadius: 6}}>
+                                    <Menu.Item style={{background: '#3da844', marginTop: 0, borderTopRightRadius: 6, borderTopLeftRadius: 6}}
+                                        icon={<BarsOutlined style={{color: '#fff'}}/>}
+                                    >
                                         <span style={{fontWeight: 600, color: "#fff"}}>Các khóa học</span>
                                     </Menu.Item>
                                     {items.map((item, index) => {
                                         return (
-                                            <Menu.SubMenu title={item.label}>
+                                            <Menu.SubMenu title={item.label} key={Number(index)} icon={item.icon}>
                                                 {item.children?.map((child, index) => {
                                                     return (
                                                         <Menu.Item key={child.key}>

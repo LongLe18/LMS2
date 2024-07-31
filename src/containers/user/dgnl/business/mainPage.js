@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 // component
 import { Layout, Row, Col, Menu, Button } from 'antd';
 import CarouselCustom from 'components/parts/Carousel/Carousel';
-import { BookOutlined } from '@ant-design/icons';
+import { BookOutlined, BarsOutlined } from '@ant-design/icons';
 // redux
 import { useSelector, useDispatch } from 'react-redux';
 import * as programmeAction from '../../../../redux/actions/programme';
@@ -46,7 +46,6 @@ const MainPageUser = (props) => {
             let children = [];
             if (item.khoa_hocs && item.khoa_hocs.length > 0) {
                 item.khoa_hocs.forEach((item2, index2) => {
-                    
                     children.push(getItem(item2.ten_khoa_hoc, <BookOutlined />, item2.khoa_hoc_id, null, 'item'));
                 });
             }
@@ -67,7 +66,9 @@ const MainPageUser = (props) => {
                                     theme="light"
                                     defaultSelectedKeys={['1']}
                                 >
-                                    <Menu.Item style={{background: '#3da844', marginTop: 0, borderTopRightRadius: 6, borderTopLeftRadius: 6}}>
+                                    <Menu.Item style={{background: '#3da844', marginTop: 0, borderTopRightRadius: 6, borderTopLeftRadius: 6}} 
+                                        icon={<BarsOutlined style={{color: '#fff'}}/>}
+                                    >
                                         <span style={{fontWeight: 600, color: "#fff"}}>Các khóa học</span>
                                     </Menu.Item>
                                     {items.map((item, index) => {
@@ -76,7 +77,6 @@ const MainPageUser = (props) => {
                                                 {item.children?.map((child, index) => {
                                                     return (
                                                         <Menu.Item key={child.key}>
-                                                            
                                                             <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${child.key}`}>{child.label}</Link>
                                                         </Menu.Item>
                                                     )

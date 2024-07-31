@@ -204,6 +204,7 @@ const ExamDetailPage = () => {
     const renderExamCategories = () => {
         let options = [];
         if (typeExams.status === 'success') {
+            // eslint-disable-next-line array-callback-return
             options = typeExams.data.map((type) => {
                 if (type.loai_de_thi_id !== 4)
                     return <Option key={type.loai_de_thi_id} value={type.loai_de_thi_id} >{type.mo_ta}</Option>

@@ -24,8 +24,8 @@ import TextEditorWidget2 from 'components/common/TextEditor/TextEditor2';
 import MathJax from 'react-mathjax';
 
 // icon
-import Icon from '@ant-design/icons';
-import docIcon from 'assets/img/exam/doc-icon.png';
+// import Icon from '@ant-design/icons';
+// import docIcon from 'assets/img/exam/doc-icon.png';
 
 // redux
 import { useSelector, useDispatch } from 'react-redux';
@@ -187,6 +187,7 @@ const ExamCourseDetail = () => {
             dispatch(answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, 
                 (res) => {
                     if (res.status === 'success') {
+                        // eslint-disable-next-line react-hooks/exhaustive-deps
                         answers = res.data;
                         onChangeAnswerText(textAnswer, JSON.parse(localStorage.getItem('question')))
                     }
@@ -622,19 +623,19 @@ const ExamCourseDetail = () => {
     };
 
     // Function cho phép làm lại bài
-    const doExamAgain = () => {
-        const callback = (res) => {
-            if (res.status === 200 && res.statusText === 'OK') {
-                window.location.href = `/luyen-tap/lam-kiem-tra/${params.idExam}/${moment().toNow()}/${res.data.data.dthv_id}/${params.idCourse}`;
-            }
-        };
+    // const doExamAgain = () => {
+    //     const callback = (res) => {
+    //         if (res.status === 200 && res.statusText === 'OK') {
+    //             window.location.href = `/luyen-tap/lam-kiem-tra/${params.idExam}/${moment().toNow()}/${res.data.data.dthv_id}/${params.idCourse}`;
+    //         }
+    //     };
 
-        const data = {
-            "thoi_diem_bat_dau": moment().toISOString(),
-            "de_thi_id": hashids.decode(params.idExam)
-        }
-        dispatch(examActions.createExamUser(data, callback));
-    };
+    //     const data = {
+    //         "thoi_diem_bat_dau": moment().toISOString(),
+    //         "de_thi_id": hashids.decode(params.idExam)
+    //     }
+    //     dispatch(examActions.createExamUser(data, callback));
+    // };
 
     // bình luận
     const saveComment = (cau_hoi_id, mo_dun_id, chuyen_de_id) => {

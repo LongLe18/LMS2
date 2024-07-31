@@ -738,6 +738,7 @@ const AccountPage = () => {
                           rules={[
                               { required: true, message: 'Mật khẩu là trường bắt buộc.' },
                           ]}
+                          initialValue={'Enno@123'}
                       >
                           <Input size="normal" placeholder='Mật khẩu' defaultValue={'Enno@123'} disabled={true}/>
                       </Form.Item>
@@ -769,6 +770,7 @@ const AccountPage = () => {
                           rules={[
                               { required: true, message: 'Vai trò là trường bắt buộc.' },
                           ]}
+                          initialValue={state.form.vai_tro}
                       >
                           {renderRole()}
                       </Form.Item>

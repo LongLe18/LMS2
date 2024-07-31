@@ -544,6 +544,7 @@ const StaffPage = () => {
                           rules={[
                               { required: true, message: 'Vai trò là trường bắt buộc.' },
                           ]}
+                          initialValue={state.form.vai_tro}
                       >
                           {renderRole()}
                       </Form.Item>

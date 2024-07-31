@@ -169,7 +169,7 @@ const ExamViewDGNL = (props) => {
                                         <div style={{fontSize: 20, marginTop: 6}}>
                                             <span style={{fontWeight: 700}}>Phần 3 (tự chọn):</span> Khoa học thiết kế thời gian là 60 phút gồm 50 câu hỏi trắc nghiệm và điền đáp án. Thí sinh lựa chọn 3 trong 5 chủ đề thuộc lĩnh vực:
                                         </div>
-                                        <Table dataSource={dataSource2} columns={columns2} pagination={false}/>
+                                        <Table className='table-structure' dataSource={dataSource2} columns={columns2} pagination={false}/>
                                         <h5 style={{marginTop: 8}}><b>GHI CHÚ:</b></h5>
                                         <div style={{fontSize: 20}}>
                                             Đây là đề thi mô phỏng được hsaphus.edu.vn xây dựng dựa trên thông tin mới nhất ĐHQG vừa công bố.
@@ -179,7 +179,7 @@ const ExamViewDGNL = (props) => {
                                         </div>
                                     </div>
                                     {/* Form chọn các môn thi */}
-                                    <div className="form-exam">
+                                    <div className="form-exam" style={{fontSize: 20}}>
                                         <h5 className="textCenter">Đề trải nghiệm Đánh giá năng lực Hà Nội</h5>
                                         <h6 className="textCenter" style={{color: '#747474'}}>Để các em có thể làm bài trải nghiệm và định hình được kiểu ra đề.</h6>
                                         <h6 className="textCenter" style={{fontWeight: 700, marginTop: 12}}>Bài thi gồm có</h6>

@@ -72,6 +72,7 @@ const ProfilePage = () => {
         vai_tro: 'học viên',
     };
 
+    // eslint-disable-next-line no-unused-vars
     const [time, setTime] = useState(1);
     const [state, setState] = useState({
         ngay_sinh: '',
@@ -181,6 +182,7 @@ const ProfilePage = () => {
             return null;
         });
 
+        // eslint-disable-next-line no-unused-vars
         dataLine = {
             labels,
             datasets: datasets,

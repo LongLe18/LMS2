@@ -16,6 +16,7 @@ import useFetch from "hooks/useFetch";
 // component
 import { Layout, Row, Col, Button, Input, Select, Form, Menu } from 'antd';
 import CarouselCustom from 'components/parts/Carousel/Carousel';
+import { BookOutlined, BarsOutlined } from '@ant-design/icons';
 
 // redux
 import { useSelector, useDispatch } from 'react-redux';
@@ -28,6 +29,7 @@ const { Option } = Select;
 
 const CoursesPage = (props) => {
     const hashids = new Hashids();
+    // eslint-disable-next-line no-unused-vars
     const [dataInit, setDataInit] = useState([]);
     const [dataSearch, setDataSearch] = useState([]);
     const [courseOfUser] = useFetch(`/student/list/course`);
@@ -135,9 +137,10 @@ const CoursesPage = (props) => {
         }
     };
 
-    function getItem(label, key, children, type) {
+    function getItem(label, icon, key, children, type) {
         return {
           key,
+          icon,
           children,
           label,
           type,
@@ -152,10 +155,10 @@ const CoursesPage = (props) => {
             if (item.khoa_hocs && item.khoa_hocs.length > 0) {
                 item.khoa_hocs.forEach((item2, index2) => {
                     
-                    children.push(getItem(item2.ten_khoa_hoc, item2.khoa_hoc_id, null, 'item'));
+                    children.push(getItem(item2.ten_khoa_hoc, <BookOutlined />, item2.khoa_hoc_id, null, 'item'));
                 });
             }
-            items.push(getItem(item.ten_khung_ct, item.kct_id, children, 'item'));
+            items.push(getItem(item.ten_khung_ct, <BookOutlined />, item.kct_id, children, 'item'));
         });
     }
     
@@ -173,12 +176,14 @@ const CoursesPage = (props) => {
                                         theme="light"
                                         defaultSelectedKeys={['1']}
                                     >
-                                        <Menu.Item style={{background: '#3da844', marginTop: 0, borderTopRightRadius: 6, borderTopLeftRadius: 6}}>
+                                        <Menu.Item style={{background: '#3da844', marginTop: 0, borderTopRightRadius: 6, borderTopLeftRadius: 6}}
+                                            icon={<BarsOutlined style={{color: '#fff'}}/>}
+                                        >
                                             <span style={{fontWeight: 600, color: "#fff"}}>Các khóa học</span>
                                         </Menu.Item>
                                         {items.map((item, index) => {
                                             return (
-                                                <Menu.SubMenu title={item.label}>
+                                                <Menu.SubMenu title={item.label} key={Number(index)} icon={item.icon}>
                                                     {item.children?.map((child, index) => {
                                                         return (
                                                             <Menu.Item key={child.key}>

@@ -52,6 +52,7 @@ const ExamOnlineDetail = () => {
     const [comment, setComment] = useState('');
     const [countSection, setCountSection] = useState(3600);
     const [results, setResults] = useState([]);
+    // eslint-disable-next-line no-unused-vars
     const [startTime, setStartTime] = useState(0);
     const [state, setState] = useState({
         time: 0,
@@ -228,6 +229,7 @@ const ExamOnlineDetail = () => {
             dispatch(answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, 
                 (res) => {
                     if (res.status === 'success') {
+                        // eslint-disable-next-line react-hooks/exhaustive-deps
                         answers = res.data;
                         onChangeAnswerText(textAnswer, JSON.parse(localStorage.getItem('question')))
                     }
@@ -981,20 +983,20 @@ const ExamOnlineDetail = () => {
     };
 
     // Function cho phép làm lại bài
-    const doExamAgain = () => {
-        const callback = (res) => {
-            if (res.status === 200 && res.statusText === 'OK') {
-                sessionStorage.clear();
-                window.location.href = `/luyen-tap/lam-kiem-tra-online/${params.idExam}/${moment().toNow()}/${res.data.data.dthv_id}/${params.idCourse}`;
-            }
-        };
+    // const doExamAgain = () => {
+    //     const callback = (res) => {
+    //         if (res.status === 200 && res.statusText === 'OK') {
+    //             sessionStorage.clear();
+    //             window.location.href = `/luyen-tap/lam-kiem-tra-online/${params.idExam}/${moment().toNow()}/${res.data.data.dthv_id}/${params.idCourse}`;
+    //         }
+    //     };
 
-        const data = {
-            "thoi_diem_bat_dau": moment().toISOString(),
-            "de_thi_id": hashids.decode(params.idExam)
-        }
-        dispatch(examActions.createExamUser(data, callback));
-    };
+    //     const data = {
+    //         "thoi_diem_bat_dau": moment().toISOString(),
+    //         "de_thi_id": hashids.decode(params.idExam)
+    //     }
+    //     dispatch(examActions.createExamUser(data, callback));
+    // };
 
     const renderHistoryExamSidebar = () => {
         return (
