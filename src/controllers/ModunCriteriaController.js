@@ -1,17 +1,42 @@
-const { ModunCriteria } = require('../models');
+const { ModunCriteria, Modun, Course } = require('../models');
 const sequelize = require('../utils/db');
 
 const getAll_admin = async (req, res) => {
-    const modunCriterias = await sequelize.query(
-        `
-        SELECT tieu_chi_de_mo_dun.*, mo_dun.ten_mo_dun FROM tieu_chi_de_mo_dun 
-        LEFT JOIN mo_dun ON tieu_chi_de_mo_dun.mo_dun_id=mo_dun.mo_dun_id LIMIT 100
-        `,
-        { type: sequelize.QueryTypes.SELECT }
-    );
+    const { count, rows } = await ModunCriteria.findAndCountAll({
+        include:{
+            model: Modun,
+            attributes: ['mo_dun_id', 'ten_mo_dun'],
+            include: {
+                model: Course,
+                attributes: ['khoa_hoc_id', 'ten_khoa_hoc'],
+            },
+        },
+        where: {
+            ...(req.query.mo_dun_id && {
+                mo_dun_id: req.query.mo_dun_id,
+            }),
+            ...(req.query.khoa_hoc_id && {
+                '$mo_dun.khoa_hoc.khoa_hoc_id$': req.query.khoa_hoc_id,
+            }),
+        },
+        offset:
+            (Number(req.query.pageIndex || 1) - 1) *
+            Number(req.query.pageSize || 10),
+        limit: Number(req.query.pageSize || 10),
+        order: [
+            req.query.sortBy
+                ? req.query.sortBy.split(',')
+                : ['ngay_tao', 'DESC'],
+        ],
+    })
+
     res.status(200).send({
         status: 'success',
-        data: modunCriterias,
+        data: rows,
+        pageIndex: Number(req.query.pageIndex || 1),
+        pageSize: Number(req.query.pageSize || 10),
+        totalCount: count,
+        totalPage: Math.ceil(count / Number(req.query.pageSize || 10)),
         message: null,
     });
 };
