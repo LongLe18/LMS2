@@ -99,13 +99,13 @@ function AppFilter(props) {
           <Select style={{width:"90%"}}
               maxTagCount="responsive"
               showSearch={true}
+              filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
               allowClear={true}
-              // defaultValue={''}
               onChange={(value) => {
                 props.onFilterChange('khoa_hoc_id', value ? value : '');
                 dispatch(moduleActions.getModulesByIdCourse({ idCourse: value ? value : '' }))
               }}
-              placeholder="Danh mục khóa"
+              placeholder="Danh mục khóa học"
           >
               <Option key={''} value={''}>Tất cả khóa học</Option>
               {options}
@@ -124,6 +124,7 @@ function AppFilter(props) {
         <Select style={{width:"90%"}}
           allowClear={true}
           showSearch={true}
+          filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
           loading={loadingModules}
           onChange={(mo_dun_id) => {
             props.onFilterChange('mo_dun_id', mo_dun_id ? mo_dun_id : '');
@@ -152,6 +153,7 @@ function AppFilter(props) {
           onChange={(chuyen_de_id) => {
             props.onFilterChange('chuyen_de_id', chuyen_de_id ? chuyen_de_id : '');
           }}
+          filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
           placeholder="Chọn chuyên đề"
         >
           <Option key={''} value={''}>Tất cả chuyên đề</Option>
@@ -171,6 +173,7 @@ function AppFilter(props) {
       return (
         <Select
           showSearch={true}
+          filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
           allowClear={true}
           placeholder="Chọn loại đề thi"
           maxTagCount="responsive"

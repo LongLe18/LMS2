@@ -176,7 +176,7 @@ const ContentComponent = (props) => {
                                         src={anh_dai_dien !== null ? config.API_URL + anh_dai_dien : defaultImage}
                                     />
                                     <ProgressBar bgcolor="#89c304" progress={percentAchieved !== undefined ? percentAchieved : '50'}  height={30}/>
-                                    {token !== null 
+                                    {/* {token !== null 
                                     ?
                                         (props.id === 32 && JSON.parse(localStorage.getItem('userInfo')).university_unit === null && mo_dun_id === 60)
                                         ?
@@ -192,17 +192,32 @@ const ContentComponent = (props) => {
                                         </>
                                         : ''
                                     : <Button style={{padding: '4px 15px'}} type='primary' className="btn btn-primary" onClick={() => showModal()}>{props.id === 32 ? 'Vào thi' : 'Luyện'}</Button>
-                                    }
-                                    {/* {token !== null ?
+                                    } */}
+                                    {token !== null ?
                                         <> 
-                                            {loai_tong_hop === 0 && <NavLink className="btn btn-primary" to={"/luyen-tap/chi-tiet-luyen-tap/" + hashids.encode(mo_dun_id) + "/" + hashids.encode(props.id)}>{props.id === 32 ? 'Vào thi' : 'Luyện'}</NavLink>}
-                                            {loai_tong_hop === 2 && <NavLink className="btn btn-primary" to={"/luyen-tap/kiem-tra-mo-dun/" + hashids.encode(props.id) + "/" + hashids.encode(mo_dun_id)}>{props.id === 32 ? 'Vào thi' : 'Luyện'}</NavLink>}
-                                            {loai_tong_hop === 1 && <NavLink className="btn btn-primary" to={`/luyen-tap/kiem-tra/${hashids.encode(props.id)}`}>{props.id === 32 ? 'Vào thi' : 'Luyện'}</NavLink> }
+                                            {/* Bài học */}
+                                            {loai_tong_hop === 0 && 
+                                                <NavLink className="btn btn-primary" 
+                                                    to={"/luyen-tap/chi-tiet-luyen-tap/" + hashids.encode(mo_dun_id) + "/" + hashids.encode(props.id)}
+                                                >
+                                                    Luyện
+                                                </NavLink>
+                                            }
+                                            {/* Thi mô-đun */}
+                                            {loai_tong_hop === 2 && 
+                                                <NavLink className="btn btn-primary" 
+                                                    to={"/luyen-tap/kiem-tra-mo-dun/" + hashids.encode(props.id) + "/" + hashids.encode(mo_dun_id)}
+                                                >
+                                                    Luyện
+                                                </NavLink>
+                                            }
+                                            {/* Thi tổng hợp */}
+                                            {loai_tong_hop === 1 && <NavLink className="btn btn-primary" to={`/luyen-tap/kiem-tra/${hashids.encode(props.id)}`}>Luyện</NavLink> }
                                         </> :
                                         <>
-                                            <Button style={{padding: '4px 15px'}} type='primary' className="btn btn-primary" onClick={() => showModal()}>{props.id === 32 ? 'Vào thi' : 'Luyện'}</Button>
+                                            <Button style={{padding: '4px 15px'}} type='primary' className="btn btn-primary" onClick={() => showModal()}>Luyện</Button>
                                         </>
-                                    } */}
+                                    }
                                 </Row>                  
                             </div>
                         </div>

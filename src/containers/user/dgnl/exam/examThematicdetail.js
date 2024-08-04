@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import config from '../../../../configs/index';
 import moment from 'moment';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import "./css/examview.css";
 import { Helmet } from 'react-helmet';
-import {  useHistory } from 'react-router-dom';
 import Hashids from 'hashids';
 
 // hooks
@@ -124,7 +123,8 @@ const ExamThematicViewPage = (props) => {
         const subcallback = (res) => {
             const callback = (subres) => {
                 if (subres.status === 200 && subres.statusText === 'OK')
-                    history.push(`/luyen-tap/lam-kiem-tra/${idModule}/${moment().toNow()}/${params.id}/${subres.data.data.de_thi_id}/${subres.data.data.dthv_id}/${params.idCourse}`);
+                    console.log(subres);
+                    // history.push(`/luyen-tap/lam-kiem-tra/${idModule}/${moment().toNow()}/${params.id}/${subres.data.data.de_thi_id}/${subres.data.data.dthv_id}/${params.idCourse}`);
             };
 
             if (res.response) {

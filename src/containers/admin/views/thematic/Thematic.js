@@ -177,7 +177,7 @@ const Thematic = () => {
 
           </Row>
             
-          {data.length > 0 && <Table className="table-striped-rows" columns={columns} dataSource={data}/>}
+          <Table className="table-striped-rows" columns={columns} dataSource={data}/>
         </div>
       {error && notification.error({
         message: 'Thông báo',

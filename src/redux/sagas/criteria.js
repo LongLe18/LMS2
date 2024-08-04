@@ -7,7 +7,11 @@ import { get } from 'lodash';
 
 function* fetchCriteriasCourse(payload) {
     try {
-        let endpoint = `${config.API_URL}/synthetic_criteria/all_admin`;
+        let khoa_hoc_id = '';
+        if (payload.params?.khoa_hoc_id !== undefined) {
+            khoa_hoc_id = payload.params?.khoa_hoc_id;
+        }
+        let endpoint = `${config.API_URL}/synthetic_criteria/all_admin?khoa_hoc_id=${khoa_hoc_id}&pageIndex=${payload.params?.pageIndex}&pageSize=${payload.params?.pageSize}`;
         const response = yield call(getApiAuth, endpoint);
         const result = yield response.data;
         yield put({ type: actions.criteria.GET_CRITERIAS_COURSE_SUCCESS, result: result });
@@ -97,7 +101,11 @@ function* deleteCriteaCourse(payload) {
 /////////////////////////////////////////////////////////////////////////////
 function* fetchCriteriasModule(payload) {
     try {
-        let endpoint = `${config.API_URL}/modun_criteria/all_admin`;
+        let khoa_hoc_id = '';
+        if (payload.params?.khoa_hoc_id !== undefined) {
+            khoa_hoc_id = payload.params?.khoa_hoc_id;
+        }
+        let endpoint = `${config.API_URL}/modun_criteria/all_admin?khoa_hoc_id=${khoa_hoc_id}&pageIndex=${payload.params?.pageIndex}&pageSize=${payload.params?.pageSize}`;
         const response = yield call(getApiAuth, endpoint);
         const result = yield response.data;
         yield put({ type: actions.criteria.GET_CRITERIAS_MODULE_SUCCESS, result: result });
@@ -205,7 +213,11 @@ function* deleteCriteaModule(payload) {
 ///////////////////////////////////////////////////////////
 function* fetchCriteriasThematic(payload) {
     try {
-        let endpoint = `${config.API_URL}/thematic_criteria/all_admin`;
+        let khoa_hoc_id = '';
+        if (payload.params?.khoa_hoc_id !== undefined) {
+            khoa_hoc_id = payload.params?.khoa_hoc_id;
+        }
+        let endpoint = `${config.API_URL}/thematic_criteria/all_admin?khoa_hoc_id=${khoa_hoc_id}&pageIndex=${payload.params?.pageIndex}&pageSize=${payload.params?.pageSize}`;
         const response = yield call(getApiAuth, endpoint);
         const result = yield response.data;
         yield put({ type: actions.criteria.GET_CRITERIAS_THEMATIC_SUCCESS, result: result });
@@ -319,7 +331,11 @@ function* deleteCriteaThematic(payload) {
 /////////////////////////////////////////////////////////////////////////////
 function* fetchCriteriasOnline(payload) {
     try {
-        let endpoint = `${config.API_URL}/online_criteria/all_admin`;
+        let khoa_hoc_id = '';
+        if (payload.params?.khoa_hoc_id !== undefined) {
+            khoa_hoc_id = payload.params?.khoa_hoc_id;
+        }
+        let endpoint = `${config.API_URL}/online_criteria/all_admin?khoa_hoc_id=${khoa_hoc_id}&pageIndex=${payload.params?.pageIndex}&pageSize=${payload.params?.pageSize}`;
         const response = yield call(getApiAuth, endpoint);
         const result = yield response.data;
         yield put({ type: actions.criteria.GET_CRITERIAS_ONLINE_SUCCESS, result: result });

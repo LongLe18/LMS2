@@ -16,8 +16,6 @@ import LoadingCustom from "components/parts/loading/Loading";
 // hooks
 import useScrollToTop from "hooks/useScrollToTop";
 
-// import Slider from "components/common/Slider";
-
 const PracticeMainPage = (props) => {
   const dispatch = useDispatch();
   const params = useParams();

@@ -48,7 +48,6 @@ const ModuleCate = (props) => {
 
     useEffect(() => {
       dispatch(partActions.filterModule({ idCourse: '', status: filter.trang_thai, search: filter.search, start: filter.start, end: filter.end}));
-      dispatch(courseActions.getCourses({ idkct: '', status: '', search: '' }));
       dispatch(programmeAction.getProgrammes({ status: '' }));
       dispatch(majorActions.getMajors());
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -194,7 +193,6 @@ const ModuleCate = (props) => {
       },
 
       onRemove(e) {
-        console.log(e);
         setState({ ...state, fileImg: '' });
       },
     };
@@ -225,7 +223,6 @@ const ModuleCate = (props) => {
       },
       
       onRemove(e) {
-        console.log(e);
         setState({ ...state, fileVid: '' });
       },
     };
@@ -248,22 +245,22 @@ const ModuleCate = (props) => {
     const renderProgramme = () => {
       let options = [];
         if (programmes.status === 'success') {
-            options = programmes.data.map((programme) => (
-                <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
-            ))
+          options = programmes.data.filter((programme) => programme.loai_kct === 2).map((programme) => (
+              <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
+          ))
         }
         return (
             <Select
-                showSearch={false}
-                placeholder="Chọn khung chương trình"
-                onChange={(kct_id) => dispatch(courseActions.getCourses({ idkct: kct_id, status: '', search: '' }))}
+              showSearch={false}
+              placeholder="Chọn khung chương trình"
+              onChange={(kct_id) => dispatch(courseActions.getCourses({ idkct: kct_id, status: '', search: '' }))}
             >
             {options}
             </Select>
       );
     };
 
-    const renderParents = () => {
+    const renderCourses = () => {
       let options = [];
       if (courses.status === 'success') {
         options = courses.data.map((course) => (
@@ -451,11 +448,9 @@ const ModuleCate = (props) => {
           </Row>
 
           {/* {loading && <Loading />} */}
-          {data.length > 0 && 
-            <div>
-              <Table className="table-striped-rows" columns={columns} dataSource={data} />
-            </div>
-          }                              
+          <div>
+            <Table className="table-striped-rows" columns={columns} dataSource={data} />
+          </div>
           {error && notification.error({
             message: 'Thông báo',
             description: 'Lấy dữ liệu module thất bại',
@@ -492,7 +487,7 @@ const ModuleCate = (props) => {
                         >
                           <Input placeholder="Nhập tên lĩnh vực"/>
                         </Form.Item>
-                        <Form.Item initialValue={1}
+                        <Form.Item
                             className="input-col"
                             label="Khung chương trình"
                             name="khung_ct_id"
@@ -505,8 +500,8 @@ const ModuleCate = (props) => {
                             >
                                 {renderProgramme()}
                         </Form.Item>
-                        <Form.Item className="input-col" label="Khóa học" name="khoa_hoc_id" initialValue={state.courseId} rules={[]}>
-                            {renderParents()}
+                        <Form.Item className="input-col" label="Khóa học" name="khoa_hoc_id" rules={[]}>
+                            {renderCourses()}
                         </Form.Item>
                         <Form.Item className="input-col" label="Mô tả" name="mo_ta" rules={[]}>
                             <TextArea placeholder="Nhập mô tả"/>

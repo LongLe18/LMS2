@@ -271,8 +271,32 @@ const StatisticExam = (props) => {
         setPageIndex(page);
     };
       
-      const onShowSizeChange = (current, pageSize) => {
+    const onShowSizeChange = (current, pageSize) => {
         setPageSize(pageSize);
+    };
+
+    const exportReportSummanry = async () => {
+        const token = localStorage.getItem('userToken');
+        try {
+            const response = await axios.get(config.API_URL + `/student_exam/export-report?ngay_bat_dau=${filter.start}&ngay_ket_thuc=${filter.end}`, {
+                headers: { Authorization: `Bearer ${token}` },
+                responseType: 'blob',
+            });
+
+            // Create a URL for the Blob and trigger a download
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'baocaoTonghop.xlsx'); // or any other extension
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        } catch (error) {
+            notification.error({
+                message: 'Lỗi',
+                description: 'Có lỗi xảy ra khi tải báo cáo',
+            })
+        }
     };
 
     return (
@@ -296,25 +320,26 @@ const StatisticExam = (props) => {
                         {renderCourse()}
                         {renderExams()}
                         <ExcelFile element={<Button type='primary'>Trích xuất file</Button>} filename={props.title || ''}>
-                        <ExcelSheet data={data} name={'Thống kê điểm'}>
-                            <ExcelColumn label="Họ tên" value="ho_ten"/>
-                            <ExcelColumn label="Số điện thoại" value="sdt"/>
-                            <ExcelColumn label="Quê quán" value="tinh"/>
-                            <ExcelColumn label="Trường học" value="truong_hoc"/>
-                            <ExcelColumn label="Số câu đúng" value={"so_cau_tra_loi_dung"}/>
-                            <ExcelColumn label="Số câu sai" value={"so_cau_tra_loi_sai"}/>
-                            <ExcelColumn label="Điểm phần 1" value={"diem_phan_1"}/>
-                            <ExcelColumn label="Điểm phần 2" value={"diem_phan_2"}/>
-                            <ExcelColumn label="Điểm phần 3" value={"diem_phan_3"}/>
-                            <ExcelColumn label="Điểm phần 4" value={"diem_phan_4"}/>
-                            <ExcelColumn label="Điểm" value="diem_so"/>
-                            <ExcelColumn label="Xếp hạng" value={(col) => (col.diem_so >= 9.5 && col.diem_so <= 10) ? "Xuất sắc" 
-                                    : (col.diem_so >= 8.0 && col.diem_so < 9.5) ? 'Giỏi' 
-                                    : (col.diem_so >= 7.0 && col.diem_so < 8.0) ? 'Khá' 
-                                    : (col.diem_so >= 5.0 && col.diem_so < 7.0) ? 'Trung binh' : 'Dưới trung bình'}/>
-                            <ExcelColumn label="Ngày thi" value={(col) => moment(col.ngay_thi).utc(7).format(config.DATE_FORMAT)}/>
-                        </ExcelSheet>
-                    </ExcelFile>
+                            <ExcelSheet data={data} name={'Thống kê điểm'}>
+                                <ExcelColumn label="Họ tên" value="ho_ten"/>
+                                <ExcelColumn label="Số điện thoại" value="sdt"/>
+                                <ExcelColumn label="Quê quán" value="tinh"/>
+                                <ExcelColumn label="Trường học" value="truong_hoc"/>
+                                <ExcelColumn label="Số câu đúng" value={"so_cau_tra_loi_dung"}/>
+                                <ExcelColumn label="Số câu sai" value={"so_cau_tra_loi_sai"}/>
+                                <ExcelColumn label="Điểm phần 1" value={"diem_phan_1"}/>
+                                <ExcelColumn label="Điểm phần 2" value={"diem_phan_2"}/>
+                                <ExcelColumn label="Điểm phần 3" value={"diem_phan_3"}/>
+                                <ExcelColumn label="Điểm phần 4" value={"diem_phan_4"}/>
+                                <ExcelColumn label="Điểm" value="diem_so"/>
+                                <ExcelColumn label="Xếp hạng" value={(col) => (col.diem_so >= 9.5 && col.diem_so <= 10) ? "Xuất sắc" 
+                                        : (col.diem_so >= 8.0 && col.diem_so < 9.5) ? 'Giỏi' 
+                                        : (col.diem_so >= 7.0 && col.diem_so < 8.0) ? 'Khá' 
+                                        : (col.diem_so >= 5.0 && col.diem_so < 7.0) ? 'Trung binh' : 'Dưới trung bình'}/>
+                                <ExcelColumn label="Ngày thi" value={(col) => moment(col.ngay_thi).utc(7).format(config.DATE_FORMAT)}/>
+                            </ExcelSheet>
+                        </ExcelFile>
+                        <Button type='primary' style={{marginLeft: 8}} onClick={exportReportSummanry}>Tải báo cáo tổng hợp</Button>
                     </Col>
                 </Row>
             </Col>

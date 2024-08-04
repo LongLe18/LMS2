@@ -197,7 +197,7 @@ const ExamAdminPage = () => {
           // Redirect view for edit
           render: (de_thi_id, de_thi) => (
             <Col>
-              <Link to={ de_thi.loai_de_thi_id === 4 ? `/admin/onlineExam/detail/${de_thi.de_thi_id}`  : `/admin/exam/detail/${de_thi.de_thi_id}` } type="button" className="ant-btn ant-btn-round ant-btn-primary" 
+              <Link to={ de_thi.loai_de_thi_id === 4 ? `/admin/onlineExam/detail/${de_thi.de_thi_id}?loai_de_thi=ONLUYEN`  : `/admin/exam/detail/${de_thi.de_thi_id}?loai_de_thi=ONLUYEN` } type="button" className="ant-btn ant-btn-round ant-btn-primary" 
                 style={{display: de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}}
                 >Xem
               </Link>
@@ -488,6 +488,9 @@ const ExamAdminPage = () => {
                       <UploadOutlined />
                     </p>
                     <p className="ant-upload-text bold">Click hoặc kéo file đề thi vào đây</p>
+                    <p className="ant-upload-hint">
+                      Định dạng file Docx
+                    </p>
                 </Dragger>
             </Form.Item>
             <Form.Item className="button-col" style={{marginBottom: 0}}>
@@ -715,15 +718,15 @@ const ExamAdminPage = () => {
     }));
   }
 
-// event đổi pageSize
-const onShowSizeChange = (current, pageSize) => {
-  setPageSize(pageSize)
-};
+  // event đổi pageSize
+  const onShowSizeChange = (current, pageSize) => {
+    setPageSize(pageSize)
+  };
 
-// event đổi pageIndex
-const onChange = page => {
-  setPageIndex(page - 1);
-};
+  // event đổi pageIndex
+  const onChange = page => {
+    setPageIndex(page - 1);
+  };
 
   return (
     <div className="content">

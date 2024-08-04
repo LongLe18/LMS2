@@ -587,7 +587,11 @@ const OnlineExamDetailPage = () => {
                 notification.success({
                     message: 'Xuất bản đề thi thành công.',
                 });   
-                history.push('/admin/question/exam');
+                if (new URLSearchParams(history.location.search).get('loai_de_thi') === 'DGNL') {
+                    history.push('/admin/question/examDgnl');
+                } else {
+                    history.push('/admin/question/exam');
+                }
             }
         };
 
@@ -666,10 +670,10 @@ const OnlineExamDetailPage = () => {
                                                         label="Tên đề thi"
                                                         name="ten_de_thi"
                                                         rules={[
-                                                        {
-                                                            required: true,
-                                                            message: 'Tên đề thi là trường bắt buộc',
-                                                        },
+                                                            {
+                                                                required: true,
+                                                                message: 'Tên đề thi là trường bắt buộc',
+                                                            },
                                                         ]}
                                                     >
                                                         <Input placeholder="Tên đề thi"/>
@@ -793,7 +797,7 @@ const OnlineExamDetailPage = () => {
                                                                 <Row>
                                                                     <Col xl={4}>
                                                                         <Form.Item className="label">
-                                                                            <span style={{ color: '#000', fontWeight: 600 }}>Hình ảnh câu hỏi</span>
+                                                                            <span style={{ color: '#000' }}>Hình ảnh câu hỏi</span>
                                                                         </Form.Item>
                                                                     </Col>
                                                                     <Col xl={20} key={`key${index}`}>

@@ -432,7 +432,7 @@ const ExamCourseDetail = () => {
                                 <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question_${index_cauhoi}`}></img>
                             ) : (
                                 item.split('$').map((item2, index2) => {
-                                    return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold'))) ? (
+                                    return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
                                         <MathJax.Node key={index2} formula={item2} />
                                     ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\underline')) ?
                                         (
@@ -441,7 +441,11 @@ const ExamCourseDetail = () => {
                                         (
                                             <div key={index2} style={{fontWeight: 700}}>{item2.split('\\bold{')[1].split('}')[0]}</div>
                                         )
-                                    : (
+                                    : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\italic')) ?
+                                        (
+                                            <div key={index2} style={{fontStyle: 'italic'}}>{item2.split('\\italic{')[1].split('}')[0]}</div>
+                                        )
+                                    :(
                                         <div key={index2} >{item2}</div>
                                     );
                                 })
@@ -894,7 +898,7 @@ const ExamCourseDetail = () => {
                                                 <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question2_${index_cauhoi}`}></img>
                                             ) : (
                                                 item.split('$').map((item2, index2) => {
-                                                    return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold'))) ? (
+                                                    return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
                                                         <MathJax.Node key={index2} formula={item2} />
                                                     ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\underline')) ?
                                                         (
@@ -903,7 +907,11 @@ const ExamCourseDetail = () => {
                                                         (
                                                             <div key={index2} style={{fontWeight: 700}}>{item2.split('\\bold{')[1].split('}')[0]}</div>
                                                         )
-                                                    : (
+                                                    : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\italic')) ?
+                                                        (
+                                                            <div key={index2} style={{fontStyle: 'italic'}}>{item2.split('\\italic{')[1].split('}')[0]}</div>
+                                                        )
+                                                    :(
                                                         <div key={index2} >{item2}</div>
                                                     );
                                                 })
@@ -993,7 +1001,7 @@ const ExamCourseDetail = () => {
                                                                         <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question3_${index_cauhoi}`}></img>
                                                                     ) : (
                                                                         item.split('$').map((item2, index2) => {
-                                                                            return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold'))) ? (
+                                                                            return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
                                                                                 <MathJax.Node key={index2} formula={item2} />
                                                                             ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\underline')) ?
                                                                                 (
@@ -1002,7 +1010,11 @@ const ExamCourseDetail = () => {
                                                                                 (
                                                                                     <div key={index2} style={{fontWeight: 700}}>{item2.split('\\bold{')[1].split('}')[0]}</div>
                                                                                 )
-                                                                            : (
+                                                                            : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\italic')) ?
+                                                                                (
+                                                                                    <div key={index2} style={{fontStyle: 'italic'}}>{item2.split('\\italic{')[1].split('}')[0]}</div>
+                                                                                )
+                                                                            :(
                                                                                 <div key={index2} >{item2}</div>
                                                                             );
                                                                         })
@@ -1063,7 +1075,7 @@ const ExamCourseDetail = () => {
                                                                     <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question4_${index_cauhoi}`}></img>
                                                                 ) : (
                                                                     item.split('$').map((item2, index2) => {
-                                                                        return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold'))) ? (
+                                                                        return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
                                                                             <MathJax.Node key={index2} formula={item2} />
                                                                         ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\underline')) ?
                                                                             (
@@ -1072,7 +1084,11 @@ const ExamCourseDetail = () => {
                                                                             (
                                                                                 <div key={index2} style={{fontWeight: 700}}>{item2.split('\\bold{')[1].split('}')[0]}</div>
                                                                             )
-                                                                        : (
+                                                                        : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\italic')) ?
+                                                                            (
+                                                                                <div key={index2} style={{fontStyle: 'italic'}}>{item2.split('\\italic{')[1].split('}')[0]}</div>
+                                                                            )
+                                                                        :(
                                                                             <div key={index2} >{item2}</div>
                                                                         );
                                                                     })

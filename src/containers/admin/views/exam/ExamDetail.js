@@ -733,7 +733,11 @@ const ExamDetailPage = () => {
                 notification.success({
                     message: 'Xuất bản đề thi thành công.',
                 });   
-                history.push('/admin/question/exam');
+                if (new URLSearchParams(history.location.search).get('loai_de_thi') === 'DGNL') {
+                    history.push('/admin/question/examDgnl');
+                } else {
+                    history.push('/admin/question/exam');
+                }
             }
         };
 
@@ -1323,13 +1327,13 @@ const ExamDetailPage = () => {
                                                 type="primary"
                                                 onClick={() =>
                                                     Modal.confirm({
-                                                    title: 'Xuất bản đề thi',
-                                                    content: 'Bạn có chắc chắn muốn xuất bản đề thi này không?',
-                                                    okText: 'Có',
-                                                    cancelText: 'Không',
-                                                    onOk: () => {
-                                                        handlePublishExam();
-                                                    },
+                                                        title: 'Xuất bản đề thi',
+                                                        content: 'Bạn có chắc chắn muốn xuất bản đề thi này không?',
+                                                        okText: 'Có',
+                                                        cancelText: 'Không',
+                                                        onOk: () => {
+                                                            handlePublishExam();
+                                                        },
                                                     })
                                                 }
                                                 >

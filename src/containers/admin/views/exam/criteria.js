@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 
 // component
-import { Row, Col, Table, notification, Button, Space, Form, InputNumber, Select, Modal } from 'antd';
+import { Row, Col, Table, notification, Button, Space, Form, InputNumber, Select, Modal, Tabs, Pagination } from 'antd';
 import LoadingCustom from 'components/parts/loading/Loading';
 import AppFilter from 'components/common/AppFilter';
-import { PlusOutlined } from '@ant-design/icons';
-import { ExclamationCircleOutlined, } from '@ant-design/icons';
+import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 // redux
 import * as criteriaAction from '../../../../redux/actions/criteria';
 import * as courseAction from '../../../../redux/actions/course';
@@ -16,6 +15,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 const { Option } = Select;
 const { confirm } = Modal;
+const { TabPane } = Tabs;
 
 const Criteria = () => {
     const [form] = Form.useForm();
@@ -40,9 +40,15 @@ const Criteria = () => {
         khoa_hoc_id: '',
         mo_dun_id: '',
         idCriteria: '',
+        activeTab: '1'
+    });
+    const [filter, setFilter] = useState({
+        khoa_hoc_id: '',
     });
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isModalVisibleOnline, setIsModalVisibleOnline] = useState(false);
+    const [pageSize, setPageSize] = useState(10);
+    const [pageIndex, setPageIndex] = useState(1);
 
     const handleNumberExamChange = (value) => {
         setNumberOfItems(value);
@@ -92,12 +98,8 @@ const Criteria = () => {
     // const loadingthematics = useSelector(state => state.thematic.listbyId.loading);
 
     useEffect(() => {
-        dispatch(criteriaAction.getCriteriasCourse());
-        dispatch(criteriaAction.getCriteriasOnline());
-        dispatch(criteriaAction.getCriteriasModule());
-        dispatch(criteriaAction.getCriteriasThematic());
+        dispatch(criteriaAction.getCriteriasCourse({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
         dispatch(courseAction.getCourses({ idkct: '', status: '', search: '' }));
-
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const columns = [
@@ -106,6 +108,9 @@ const Criteria = () => {
             dataIndex: 'ten_khoa_hoc',
             key: 'ten_khoa_hoc',
             responsive: ['md'],
+            render: (tcdth_khoa_hoc_id, tieu_chi) => (
+                <>{tieu_chi.khoa_hoc?.ten_khoa_hoc}</>
+            ),
         },
         {
             title: 'Số câu hỏi',
@@ -241,6 +246,9 @@ const Criteria = () => {
             dataIndex: 'ten_khoa_hoc',
             key: 'ten_khoa_hoc',
             responsive: ['md'],
+            render: (tcdth_khoa_hoc_id, tieu_chi) => (
+                <>{tieu_chi.khoa_hoc?.ten_khoa_hoc}</>
+            ),
         },
         {
             title: 'Số phần',
@@ -346,11 +354,71 @@ const Criteria = () => {
         },
     ];
 
-    if (criteriaCourse.status === 'success' && criteriaModule.status === 'success' && criteriaThematic.status) {
+    if (criteriaCourse.status === 'success' ) {
         criteriaCourse.data.map((item, index) => dataCriteriaCourse.push({...item, 'key': index}));
-        criteriaModule.data.map((item, index) => dataCriteriaModule.push({...item, 'key': index}));
-        criteriaThematic.data.map((item, index) => dataCriteriaThematic.push({...item, 'key': index}));
+    };
+
+    if (criteriaOnline.status === 'success') {
         criteriaOnline.data.map((item, index) => dataCriteriaOnline.push({...item, 'key': index}));
+    };
+    
+    if (criteriaModule.status === 'success') {
+        criteriaModule.data.map((item, index) => dataCriteriaModule.push({...item, 'key': index}));
+    };
+
+    if (criteriaThematic.status === 'success') {
+        criteriaThematic.data.map((item, index) => dataCriteriaThematic.push({...item, 'key': index}));
+    };
+
+    useEffect(() => {
+        setPageIndex(1);
+        setFilter({...filter, khoa_hoc_id: '' });
+        switch(state.activeTab) {
+            case '1': // tiêu chí đề tổng hợp
+                dispatch(criteriaAction.getCriteriasCourse({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
+                break;
+            case '2': // tiêu chí đề mô đun
+                dispatch(criteriaAction.getCriteriasModule({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
+                break;
+            case '3': // tiêu chí đề chuyên đề
+                dispatch(criteriaAction.getCriteriasThematic({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
+                break;
+            case '4': // tiêu chí đề online
+                dispatch(criteriaAction.getCriteriasOnline({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
+                break;
+            default:
+                break;
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [state.activeTab]);
+    
+    useEffect(() => {
+        switch(state.activeTab) {
+            case '1': // tiêu chí đề tổng hợp
+                dispatch(criteriaAction.getCriteriasCourse({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
+                break;
+            case '2': // tiêu chí đề mô đun
+                dispatch(criteriaAction.getCriteriasModule({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
+                break;
+            case '3': // tiêu chí đề chuyên đề
+                dispatch(criteriaAction.getCriteriasThematic({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
+                break;
+            case '4': // tiêu chí đề online
+                dispatch(criteriaAction.getCriteriasOnline({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
+                break;
+            default:
+                break;
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filter.khoa_hoc_id]);
+
+    const onFilterChange = (field, value) => {
+        setFilter((state) => ({ ...state, [field]: value }));  
+    };
+    
+    // event đổi tab
+    const onChangeTab = (value) => {
+        setState({...state, activeTab: value});
     };
 
     const EditCriteriaCourse = (id) => {
@@ -420,7 +488,7 @@ const Criteria = () => {
             onOk() {
                 const callback = (res) => {
                     if (res.statusText === 'OK' && res.status === 200) {
-                        dispatch(criteriaAction.getCriteriasCourse());
+                        dispatch(criteriaAction.getCriteriasCourse({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
                         notification.success({
                             message: 'Thành công',
                             description: 'Xóa tiêu chí thành công',
@@ -446,7 +514,7 @@ const Criteria = () => {
             onOk() {
                 const callback = (res) => {
                     if (res.statusText === 'OK' && res.status === 200) {
-                    dispatch(criteriaAction.getCriteriasModule());         
+                        dispatch(criteriaAction.getCriteriasModule({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex })); 
                         notification.success({
                             message: 'Thành công',
                             description: 'Xóa tiêu chí thành công',
@@ -472,7 +540,7 @@ const Criteria = () => {
             onOk() {
                 const callback = (res) => {
                     if (res.statusText === 'OK' && res.status === 200) {
-                        dispatch(criteriaAction.getCriteriasThematic());
+                        dispatch(criteriaAction.getCriteriasThematic({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
                         notification.success({
                             message: 'Thành công',
                             description: 'Xóa tiêu chí thành công',
@@ -493,9 +561,9 @@ const Criteria = () => {
         const callback = (res) => {
             if (res.status === 200 && res.statusText === 'OK') {
                 form.resetFields();
-                if (course) dispatch(criteriaAction.getCriteriasCourse());
-                else if (module) dispatch(criteriaAction.getCriteriasModule());
-                else if (thematic) dispatch(criteriaAction.getCriteriasThematic());
+                if (course) dispatch(criteriaAction.getCriteriasCourse({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
+                else if (module) dispatch(criteriaAction.getCriteriasModule({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
+                else if (thematic) dispatch(criteriaAction.getCriteriasThematic({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
                 if (!require.isEdit) {
                     notification.success({
                         message: 'Thành công',
@@ -562,11 +630,12 @@ const Criteria = () => {
         }   
     };
 
+    // function tạo/cập nhật tiêu chí online
     const createOrupdateCriteriaOnline = (values) => {
         const callback = (res) => {
             if (res.status === 200 && res.statusText === 'OK') {
                 formOnline.resetFields();
-                dispatch(criteriaAction.getCriteriasOnline());
+                dispatch(criteriaAction.getCriteriasOnline({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
                 if (!require.isEdit) {
                     notification.success({
                         message: 'Thành công',
@@ -625,6 +694,7 @@ const Criteria = () => {
         }   
     };
 
+    // xoá tiêu chí online
     const DeleteCriteriaOnline = (id) => {
         confirm({
             icon: <ExclamationCircleOutlined />,
@@ -634,7 +704,7 @@ const Criteria = () => {
             onOk() {
                 const callback = (res) => {
                     if (res.statusText === 'OK' && res.status === 200) {
-                        dispatch(criteriaAction.getCriteriasOnline());
+                        dispatch(criteriaAction.getCriteriasOnline({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
                         notification.success({
                             message: 'Thành công',
                             description: 'Xóa tiêu chí thành công',
@@ -694,25 +764,6 @@ const Criteria = () => {
             </Select>
         );
     };
-
-    // const renderThematics = () => {
-    //     let options = [];
-    //     if (thematics.status === 'success') {
-    //         options = thematics.data.thematics.map((thematic) => (
-    //             <Option key={thematic.chuyen_de_id} value={thematic.chuyen_de_id} >{thematic.ten_chuyen_de}</Option>
-    //         ))
-    //     }
-    //     return (
-    //         <Select
-    //             showSearch={false} value={state.courseId}
-    //             loading={loadingthematics}
-    //             onChange={(khoa_hoc_id) => setState({khoa_hoc_id, ...state, isChanged: true })}
-    //             placeholder="Chọn chuyên đề"
-    //         >
-    //             {options}
-    //         </Select>
-    //     );
-    // };
     
     const renderModal = () => {
         return(
@@ -734,7 +785,7 @@ const Criteria = () => {
                                         },
                                     ]}
                                 >
-                                    <InputNumber placeholder="" style={{width: "100%"}}/>
+                                    <InputNumber placeholder="Nhập số câu hỏi" style={{width: "100%"}}/>
                                 </Form.Item>
                                 <Form.Item
                                     className="input-col"
@@ -747,7 +798,7 @@ const Criteria = () => {
                                         },
                                     ]}
                                 >
-                                    <InputNumber placeholder="" style={{width: "100%"}}/>
+                                    <InputNumber placeholder="Nhập thời gian" style={{width: "100%"}}/>
                                 </Form.Item>
                                 
                             </Col>
@@ -763,7 +814,7 @@ const Criteria = () => {
                                         },
                                     ]}
                                 >
-                                    <InputNumber placeholder="" style={{width: "100%"}}/>
+                                    <InputNumber placeholder="Nhập số lần thi tối đa được phép thi" style={{width: "100%"}}/>
                                 </Form.Item>
                                 <Form.Item
                                     className="input-col"
@@ -776,7 +827,7 @@ const Criteria = () => {
                                         },
                                     ]}
                                 >
-                                    <InputNumber placeholder="" style={{width: "100%"}}/>
+                                    <InputNumber placeholder="Nhập yêu cầu đạt đề thi" style={{width: "100%"}}/>
                                 </Form.Item>
                                 {/* <Form.Item style={{display: require.thematic ? '' : 'none'}}
                                     className="input-col"
@@ -853,7 +904,7 @@ const Criteria = () => {
                                         },
                                     ]}
                                 >
-                                    <InputNumber placeholder="" style={{width: "100%"}} max={4} min={1} onChange={handleNumberExamChange}/>
+                                    <InputNumber placeholder="Nhập số phần thi" style={{width: "100%"}} max={4} min={1} onChange={handleNumberExamChange}/>
                                 </Form.Item>
                             </Col>
                             
@@ -871,7 +922,7 @@ const Criteria = () => {
                                             },
                                         ]}
                                     >
-                                        <InputNumber placeholder="" style={{width: "100%"}}/>
+                                        <InputNumber placeholder="Nhập số câu hỏi đề thi" style={{width: "100%"}}/>
                                     </Form.Item>
                                 </Col>
                                 <Col xl={8} sm={24} xs={24} >
@@ -886,7 +937,7 @@ const Criteria = () => {
                                             },
                                         ]}
                                     >
-                                        <InputNumber placeholder="" style={{width: "100%"}}/>
+                                        <InputNumber placeholder="Nhập thời gian thi" style={{width: "100%"}}/>
                                     </Form.Item>   
                                 </Col>
                                 <Col xl={8} sm={24} xs={24} >
@@ -901,7 +952,7 @@ const Criteria = () => {
                                             },
                                         ]}
                                     >
-                                        <InputNumber placeholder="" style={{width: "100%"}}/>
+                                        <InputNumber placeholder="Nhập yêu cầu đạt" style={{width: "100%"}}/>
                                     </Form.Item>
                                 </Col>
                                 </>
@@ -932,119 +983,192 @@ const Criteria = () => {
         )
     }
 
+    // event đổi page Index
+    const onChangePage = (page) => {
+        setPageIndex(page);
+        switch(state.activeTab) {
+            case '1': // tiêu chí đề tổng hợp
+                dispatch(criteriaAction.getCriteriasCourse({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: page }));
+                break;
+            case '2': // tiêu chí đề mô đun
+                dispatch(criteriaAction.getCriteriasModule({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: page }));
+                break;
+            case '3': // tiêu chí đề chuyên đề
+                dispatch(criteriaAction.getCriteriasThematic({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: page }));
+                break;
+            case '4': // tiêu chí đề online
+                dispatch(criteriaAction.getCriteriasOnline({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: page }));
+                break;
+            default:
+                break;
+        }
+    };
+
+    // event đổi page Size
+    const onChangePageSize = (current, pageSize) => {
+        setPageSize(pageSize);
+        switch(state.activeTab) {
+            case '1': // tiêu chí đề tổng hợp
+                dispatch(criteriaAction.getCriteriasCourse({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
+                break;
+            case '2': // tiêu chí đề mô đun
+                dispatch(criteriaAction.getCriteriasModule({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
+                break;
+            case '3': // tiêu chí đề chuyên đề
+                dispatch(criteriaAction.getCriteriasThematic({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
+                break;
+            case '4': // tiêu chí đề online
+                dispatch(criteriaAction.getCriteriasOnline({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
+                break;
+            default:
+                break;
+        }
+    };
+
     return (
         <>
         {(loadingCourse && loadingModule && loadingThematic && loadingOnline) && <LoadingCustom />}
-        {(criteriaCourse.status === 'success' && criteriaModule.status === 'success' && criteriaThematic.status === 'success') &&
             <div className='content'>
                 <Helmet>
                     <title>Quản lý tiêu chí đề thi</title>
                 </Helmet>
-                <Row className="app-main">
-                    <Col xl={24} className="body-content">
-                        <AppFilter
-                            title="Tiêu chí đề thi tổng hợp"
+
+                <Tabs defaultActiveKey={state.activeTab} activeKey={state.activeTab} onChange={onChangeTab}>
+                    <TabPane tab="Tiêu chí đề thi tổng hợp" key="1">
+                        <Row className="app-main">
+                            <Col xl={24} className="body-content">
+                                <AppFilter
+                                    title={"Tiêu chí đề thi tổng hợp"}
+                                    isShowCourse={true}
+                                    courses={courses.data}
+                                    onFilterChange={(field, value) => onFilterChange(field, value)}
+                                />
+                            </Col>
+                        </Row>
+                        <Row className="select-action-group" gutter={[8, 8]}>
+                            <Col xl={12} sm={12} xs={24}></Col>
+                            <Col xl={12} sm={12} xs={24} className="right-actions">
+                                <Button shape="round" type="primary" icon={<PlusOutlined />} className=" btn-action" onClick={() => {
+                                        form.resetFields();
+                                        showModal();
+                                        setCourse(true);
+                                        setModule(false);
+                                        setThematic(false);
+                                        setRequire({...state, course: true, module: false, thematic: false, isEdit: false});
+                                }}>
+                                    Thêm mới tiêu chí
+                                </Button>
+                            </Col>
+                        </Row>
+                        <Table className="table-striped-rows" columns={columns} dataSource={dataCriteriaCourse} pagination={false}></Table>
+                        <br/>
+                        <Pagination current={pageIndex} onChange={onChangePage} 
+                            total={criteriaCourse?.data?.totalCount} onShowSizeChange={onChangePageSize} 
+                            showSizeChanger defaultPageSize={pageSize}
                         />
-                    </Col>
-                </Row>
-                <Row className="select-action-group" gutter={[8, 8]}>
-                    <Col xl={12} sm={12} xs={24}></Col>
-                    <Col xl={12} sm={12} xs={24} className="right-actions">
-                        <Button shape="round" type="primary" icon={<PlusOutlined />} className=" btn-action" onClick={() => {
-                                form.resetFields();
-                                showModal();
-                                setCourse(true);
-                                setModule(false);
-                                setThematic(false);
-                                setRequire({...state, course: true, module: false, thematic: false, isEdit: false});
-                        }}>
-                            Thêm mới tiêu chí
-                        </Button>
-                    </Col>
-                </Row>
-                <Table className="table-striped-rows" columns={columns} dataSource={dataCriteriaCourse}></Table>
-
-                <Row className="app-main">
-                    <Col xl={24} className="body-content">
-                        <Row>
-                            <Col xl={24} sm={24} xs={24}>
+                    </TabPane>
+                    <TabPane tab="Tiêu chí đề thi mô đun" key="2">
+                        <Row className="app-main">
+                            <Col xl={24} className="body-content">
                                 <AppFilter
-                                    title="Tiêu chí đề thi mô đun"
+                                    title={"Tiêu chí đề thi mô đun"}
+                                    isShowCourse={true}
+                                    courses={courses.data}
+                                    onFilterChange={(field, value) => onFilterChange(field, value)}
                                 />
                             </Col>
                         </Row>
-                    </Col>
-                </Row>
-                <Row className="select-action-group" gutter={[8, 8]}>
-                    <Col xl={12} sm={12} xs={24}></Col>
-                    <Col xl={12} sm={12} xs={24} className="right-actions">
-                        <Button shape="round" type="primary" icon={<PlusOutlined />} className=" btn-action" onClick={() => {
-                            showModal();
-                            form.resetFields();
-                            setCourse(false);
-                            setModule(true);
-                            setThematic(false);
-                            setRequire({...state, course: true, module: true, thematic: false, isEdit: false});
+                        <Row className="select-action-group" gutter={[8, 8]}>
+                            <Col xl={12} sm={12} xs={24}></Col>
+                            <Col xl={12} sm={12} xs={24} className="right-actions">
+                                <Button shape="round" type="primary" icon={<PlusOutlined />} className=" btn-action" onClick={() => {
+                                    showModal();
+                                    form.resetFields();
+                                    setCourse(false);
+                                    setModule(true);
+                                    setThematic(false);
+                                    setRequire({...state, course: true, module: true, thematic: false, isEdit: false});
 
-                        }}>
-                            Thêm mới tiêu chí
-                        </Button>
-                    </Col>
-                </Row>
-                <Table className="table-striped-rows" columns={columns2} dataSource={dataCriteriaModule}></Table>
-
-                <Row className="app-main">
-                    <Col xl={24} className="body-content">
-                        <Row>
-                            <Col xl={24} sm={24} xs={24}>
+                                }}>
+                                    Thêm mới tiêu chí
+                                </Button>
+                            </Col>
+                        </Row>
+                        <Table className="table-striped-rows" columns={columns2} dataSource={dataCriteriaModule} pagination={false}></Table>
+                        <br/>
+                        <Pagination current={pageIndex} onChange={onChangePage} 
+                            total={criteriaModule?.data?.totalCount} onShowSizeChange={onChangePageSize} 
+                            showSizeChanger defaultPageSize={pageSize}
+                        />
+                    </TabPane>
+                    <TabPane tab="Tiêu chí đề thi chuyên đề" key="3">
+                        <Row className="app-main">
+                            <Col xl={24} className="body-content">
                                 <AppFilter
-                                    title="Tiêu chí đề thi chuyên đề"
+                                    title={"Tiêu chí đề thi chuyên đề"}
+                                    isShowCourse={true}
+                                    courses={courses.data}
+                                    onFilterChange={(field, value) => onFilterChange(field, value)}
                                 />
                             </Col>
                         </Row>
-                    </Col>
-                </Row>
-                <Row className="select-action-group" gutter={[8, 8]}>
-                    <Col xl={12} sm={12} xs={24}></Col>
-                    <Col xl={12} sm={12} xs={24} className="right-actions">
-                        <Button shape="round" type="primary" icon={<PlusOutlined />} className=" btn-action" onClick={() => {
-                            showModal();
-                            form.resetFields();
-                            setCourse(false);
-                            setModule(false);
-                            setThematic(true);
-                            setRequire({...state, course: true, module: true, thematic: true, isEdit: false});
-                        }}>
-                            Thêm mới tiêu chí
-                        </Button>
-                    </Col>
-                </Row>
-                <Table className="table-striped-rows" columns={columns3} dataSource={dataCriteriaThematic}></Table>
-                    
-                <Row className="app-main">
-                    <Col xl={24} className="body-content">
-                        <Row>
-                            <Col xl={24} sm={24} xs={24}>
-                                <AppFilter
-                                    title="Tiêu chí đề thi online"
-                                />
+                        <Row className="select-action-group" gutter={[8, 8]}>
+                            <Col xl={12} sm={12} xs={24}></Col>
+                            <Col xl={12} sm={12} xs={24} className="right-actions">
+                                <Button shape="round" type="primary" icon={<PlusOutlined />} className=" btn-action" onClick={() => {
+                                    showModal();
+                                    form.resetFields();
+                                    setCourse(false);
+                                    setModule(false);
+                                    setThematic(true);
+                                    setRequire({...state, course: true, module: true, thematic: true, isEdit: false});
+                                }}>
+                                    Thêm mới tiêu chí
+                                </Button>
                             </Col>
                         </Row>
-                    </Col>
-                </Row>
-                <Row className="select-action-group" gutter={[8, 8]}>
-                    <Col xl={12} sm={12} xs={24}></Col>
-                    <Col xl={12} sm={12} xs={24} className="right-actions">
-                        <Button shape="round" type="primary" icon={<PlusOutlined />} className=" btn-action" onClick={() => {
-                            showModalOnline();
-                            formOnline.resetFields();
-                            setRequire({...state, isEdit: false});
-                        }}>
-                            Thêm mới tiêu chí
-                        </Button>
-                    </Col>
-                </Row>
-                <Table className="table-striped-rows" columns={columns4} dataSource={dataCriteriaOnline}></Table>
+                        <Table className="table-striped-rows" columns={columns3} dataSource={dataCriteriaThematic} pagination={false}></Table>
+                        <br/>
+                        <Pagination current={pageIndex} onChange={onChangePage} 
+                            total={criteriaThematic?.data?.totalCount} onShowSizeChange={onChangePageSize} 
+                            showSizeChanger defaultPageSize={pageSize}
+                        />
+                    </TabPane>
+                    <TabPane tab="Tiêu chí đề thi online" key="4">
+                        <Row className="app-main">
+                            <Col xl={24} className="body-content">
+                                <Row>
+                                    <Col xl={24} sm={24} xs={24}>
+                                        <AppFilter
+                                            title={"Tiêu chí đề thi online"}
+                                            isShowCourse={true}
+                                            courses={courses.data}
+                                            onFilterChange={(field, value) => onFilterChange(field, value)}
+                                        />
+                                    </Col>
+                                </Row>
+                            </Col>
+                        </Row>
+                        <Row className="select-action-group" gutter={[8, 8]}>
+                            <Col xl={12} sm={12} xs={24}></Col>
+                            <Col xl={12} sm={12} xs={24} className="right-actions">
+                                <Button shape="round" type="primary" icon={<PlusOutlined />} className=" btn-action" onClick={() => {
+                                    showModalOnline();
+                                    formOnline.resetFields();
+                                    setRequire({...state, isEdit: false});
+                                }}>
+                                    Thêm mới tiêu chí
+                                </Button>
+                            </Col>
+                        </Row>
+                        <Table className="table-striped-rows" columns={columns4} dataSource={dataCriteriaOnline} pagination={false}></Table>
+                        <br/>
+                        <Pagination current={pageIndex} onChange={onChangePage} 
+                            total={criteriaOnline?.totalCount} onShowSizeChange={onChangePageSize} 
+                            showSizeChanger defaultPageSize={pageSize}
+                        />
+                    </TabPane>
+                </Tabs>
 
                 <Modal visible={isModalVisible}  mask={true} centered={true} className="cra-exam-modal" wrapClassName="cra-exam-modal-container"
                     onOk={handleOk} 
@@ -1066,7 +1190,6 @@ const Criteria = () => {
                 </Modal>
 
             </div>
-        }
         </>
     )
 }

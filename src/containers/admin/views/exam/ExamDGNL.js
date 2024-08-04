@@ -166,7 +166,7 @@ const ExamDGNLAdminPage = () => {
       // Redirect view for edit
       render: (de_thi_id, de_thi) => (
         <Col>
-          <Link to={ de_thi.loai_de_thi_id === 4 ? `/admin/onlineExam/detail/${de_thi.de_thi_id}`  : `/admin/exam/detail/${de_thi.de_thi_id}` } type="button" className="ant-btn ant-btn-round ant-btn-primary" 
+          <Link to={ de_thi.loai_de_thi_id === 4 ? `/admin/onlineExam/detail/${de_thi.de_thi_id}?loai_de_thi=DGNL`  : `/admin/exam/detail/${de_thi.de_thi_id}?loai_de_thi=DGNL` } type="button" className="ant-btn ant-btn-round ant-btn-primary" 
             style={{display: de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}}
             >Xem
           </Link>
@@ -404,7 +404,7 @@ const ExamDGNLAdminPage = () => {
                   <Form.Item label='Tên đề thi' name="ten_de_thi" rules={[{ required: true, message: 'Tên đề thi là bắt buộc'}]}>
                       <Input size="normal" placeholder="Tên đề thi" />
                   </Form.Item>
-                  <Form.Item label="Loại đề thi" name="loai_de_thi_id" rules={[{ required: true, message: 'Loại đề thi là bắt buộc'}]}>
+                  <Form.Item label="Loại đề thi" name="loai_de_thi_id" initialValue={3} rules={[{ required: true, message: 'Loại đề thi là bắt buộc'}]}>
                       {renderTypeExams()}
                   </Form.Item>
                   <Form.Item label="Khung" name="kct_id" rules={[{ required: state.showCourse, message: 'Khung chương trình là bắt buộc'}]}
@@ -489,6 +489,9 @@ const ExamDGNLAdminPage = () => {
                       <UploadOutlined />
                     </p>
                     <p className="ant-upload-text bold">Click hoặc kéo file đề thi vào đây</p>
+                    <p className="ant-upload-hint">
+                      Định dạng file Docx
+                    </p>
                 </Dragger>
             </Form.Item>
             <Form.Item className="button-col" style={{marginBottom: 0}}>

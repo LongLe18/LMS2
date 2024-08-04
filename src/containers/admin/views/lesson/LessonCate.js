@@ -99,7 +99,7 @@ const LessonCate = () => {
       dispatch(lessonActions.filterLessons({ idCourse: '', idModule: '', idThematic: '', status: '', search: '', 
       start: '', end: ''}));
       dispatch(programmeAction.getProgrammes({ status: '' }));
-      dispatch(courseActions.getCourses({ idkct: '', status: '', search: '' }));
+      // dispatch(courseActions.getCourses({ idkct: '', status: '', search: '' }));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     if (lessons.status === 'success') {
@@ -145,13 +145,14 @@ const LessonCate = () => {
     const renderProgramme = () => {
       let options = [];
         if (programmes.status === 'success') {
-            options = programmes.data.map((programme) => (
+            options = programmes.data.filter((programme) => programme.loai_kct === 2).map((programme) => (
                 <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
             ))
         }
         return (
             <Select
-                showSearch={false}
+                showSearch={true}
+                filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
                 placeholder="Chọn khung chương trình"
                 onChange={(kct_id) => dispatch(courseActions.getCourses({ idkct: kct_id, status: '', search: '' }))}
             >
@@ -169,7 +170,8 @@ const LessonCate = () => {
       }
       return (
         <Select
-          showSearch={false}
+          showSearch={true}
+          filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
           loading={loadingCourses}
           onChange={(khoa_hoc_id) => {
             dispatch(moduleActions.getModulesByIdCourse({ idCourse: khoa_hoc_id }))
@@ -190,8 +192,9 @@ const LessonCate = () => {
       }
       return (
         <Select
-          showSearch={false}
+          showSearch={true}
           loading={loadingModules}
+          filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
           onChange={(mo_dun_id) => {
             dispatch(thematicActions.getThematicsByIdModule({ idModule: mo_dun_id }))
           }}
@@ -359,19 +362,7 @@ const LessonCate = () => {
                             >
                               <Input placeholder="Tên bài giảng"/>
                             </Form.Item>
-                            <Form.Item
-                              className="input-col"
-                              label="Mô đun"
-                              name="mo_dun"
-                              rules={[
-                                {
-                                  required: true,
-                                  message: 'Mô đun là bắt buộc',
-                                },
-                              ]}
-                            >
-                              {renderModules()}
-                            </Form.Item>   
+                             
                             <Form.Item
                             initialValue={"video"}
                               className="input-col"
@@ -386,18 +377,18 @@ const LessonCate = () => {
                             >
                               {renderLessionCategories()}
                             </Form.Item>
-                            <Form.Item initialValue={1}
-                                    className="input-col"
-                                    label="Khung chương trình"
-                                    name="khung_ct_id"
-                                    rules={[
-                                        {
-                                          required: true,
-                                          message: 'Khung chương trình là trường bắt buộc.',
-                                        },
-                                    ]}
-                                    >
-                                        {renderProgramme()}
+                            <Form.Item
+                              className="input-col"
+                              label="Khung chương trình"
+                              name="khung_ct_id"
+                              rules={[
+                                  {
+                                    required: true,
+                                    message: 'Khung chương trình là trường bắt buộc.',
+                                  },
+                              ]}
+                            >
+                              {renderProgramme()}
                             </Form.Item>
                           </Col>
                           <Col xl={12} sm={12} xs={24}>
@@ -416,6 +407,19 @@ const LessonCate = () => {
                             </Form.Item>   
                             <Form.Item
                               className="input-col"
+                              label="Mô đun"
+                              name="mo_dun"
+                              rules={[
+                                {
+                                  required: true,
+                                  message: 'Mô đun là bắt buộc',
+                                },
+                              ]}
+                            >
+                              {renderModules()}
+                            </Form.Item>  
+                            <Form.Item
+                              className="input-col"
                               label="Chuyên đề"
                               name="chuyen_de"
                               rules={[
@@ -427,19 +431,19 @@ const LessonCate = () => {
                             >
                               {renderThematics()}
                             </Form.Item>   
-                            <Form.Item className="input-col" label="Chọn pdf / video" name="bai_giang">
-                              <Dragger {...propsImage} maxCount={1}
-                                listType="picture"
-                                className="upload-list-inline"
-                              >
-                                <p className="ant-upload-drag-icon">
-                                  <UploadOutlined />
-                                </p>
-                                <p className="ant-upload-text bold">Click chọn file hoặc video bài giảng vào đây</p>
-                              </Dragger>
-                            </Form.Item>                           
                           </Col>
                         </Row>
+                        <Form.Item className="input-col" label="Chọn pdf / video" name="bai_giang">
+                          <Dragger {...propsImage} maxCount={1}
+                            listType="picture"
+                            className="upload-list-inline"
+                          >
+                            <p className="ant-upload-drag-icon">
+                              <UploadOutlined />
+                            </p>
+                            <p className="ant-upload-text bold">Click chọn file hoặc video bài giảng vào đây</p>
+                          </Dragger>
+                        </Form.Item> 
                         <Form.Item className="input-col" label="Mô tả" name="mo_ta" rules={[]}>
                           <TextArea rows={6} placeholder="Mô tả"/>
                         </Form.Item>

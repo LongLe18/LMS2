@@ -7,7 +7,8 @@ import AppFilter from 'components/common/AppFilter';
 import ReactExport from "react-export-excel";
 
 // antd
-import { Table, Tag, Button, Row, Col, notification, Space, Form, Input, Avatar, Upload, message, Select, DatePicker, Pagination, Modal } from 'antd';
+import { Table, Tag, Button, Row, Col, notification, Space, Form, Input, Avatar, 
+  Upload, message, Select, DatePicker, Pagination, Modal } from 'antd';
 import { UploadOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
 // redux

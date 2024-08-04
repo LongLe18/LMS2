@@ -77,7 +77,6 @@ const ThematicCate = () => {
             form.resetFields();
           }
         }));
-      dispatch(courseActions.getCourses({ idkct: '', status: '', search: '' }));
       dispatch(programmeActions.getProgrammes({ status: '' }));
       dispatch(majorActions.getClass());
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -189,18 +188,19 @@ const ThematicCate = () => {
     const renderProgramme = () => {
       let options = [];
         if (programmes.status === 'success') {
-            options = programmes.data.map((programme) => (
+            options = programmes.data.filter((programme) => programme.loai_kct === 2).map((programme) => (
                 <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
             ))
         }
         return (
-            <Select
-                showSearch={false}
-                placeholder="Chọn khung chương trình"
-                onChange={(kct_id) => dispatch(courseActions.getCourses({ idkct: kct_id, status: '', search: '' }))}
-            >
-            {options}
-            </Select>
+        <Select
+          showSearch={true}
+          filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
+          placeholder="Chọn khung chương trình"
+          onChange={(kct_id) => dispatch(courseActions.getCourses({ idkct: kct_id, status: '', search: '' }))}
+        >
+        {options}
+        </Select>
       );
     };
 
@@ -230,8 +230,9 @@ const ThematicCate = () => {
       }
       return (
         <Select
-          showSearch={false}
+          showSearch={true}
           loading={loadingCourses}
+          filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
           onChange={(khoa_hoc_id) => {
             dispatch(partActions.getModulesByIdCourse({ idCourse: khoa_hoc_id }));
           }}
@@ -384,32 +385,26 @@ const ThematicCate = () => {
                   <Col span={24} className="body-content">
                       <Row>
                           <Col xl={24} sm={24} xs={24} className="table-cates">
-                              <Row>
-                                  <Col xl={20} sm={16} xs={24}>
-                                  <AppFilter
-                                      title={"Danh sách chuyên đề"}
-                                      isShowCourse={true}
-                                      isShowModule={true}
-                                      isShowThematic={false}
-                                      isShowStatus={true}
-                                      isShowSearchBox={true}
-                                      isShowDatePicker={false}
-                                      isRangeDatePicker={false}
-                                      courses={courses.data}
-                                      onFilterChange={(field, value) => onFilterChange(field, value)}
-                                  />
-                                  </Col>
-                              </Row>
+                              <AppFilter
+                                  title={"Danh sách chuyên đề"}
+                                  isShowCourse={true}
+                                  isShowModule={true}
+                                  isShowThematic={false}
+                                  isShowStatus={true}
+                                  isShowSearchBox={true}
+                                  isShowDatePicker={false}
+                                  isRangeDatePicker={false}
+                                  courses={courses.data}
+                                  onFilterChange={(field, value) => onFilterChange(field, value)}
+                              />
                           </Col>
                       </Row>
                   </Col>
               </Row>
               {/* {loading && <Loading />} */}
-              {data.length > 0 && 
-                <div>
-                  <Table className="table-striped-rows" columns={columns} dataSource={data} />
-                </div>
-              }
+              <div>
+                <Table className="table-striped-rows" columns={columns} dataSource={data} />
+              </div>
               {error && notification.error({
                 message: 'Thông báo',
                 description: 'Lấy dữ liệu chuyên đề thất bại',
@@ -434,7 +429,7 @@ const ThematicCate = () => {
                                   >
                                       <Input placeholder="Nhập tên chuyên đề"/>
                               </Form.Item>
-                              <Form.Item className="input-col" initialValue={1} label="Khung chương trình" name="kct_id" rules={[]} >
+                              <Form.Item className="input-col" label="Khung chương trình" name="kct_id" rules={[]} >
                                   {renderProgramme()}
                               </Form.Item>
                               <Form.Item className="input-col" label="Khóa học" name="khoa_hoc_id" rules={[]} >
@@ -446,7 +441,10 @@ const ThematicCate = () => {
                               <Form.Item className="input-col" label="Lớp học" name="lop_id" rules={[]} >
                                   {renderClasses()}
                               </Form.Item>
-                              <Form.Item className="input-col" label="Trạng thái (Thêm mới mặc định là đang hoạt động)" name="trang_thai" rules={[]}>
+                              <Form.Item className="input-col" 
+                                label="Trạng thái (Thêm mới mặc định là đang hoạt động)" name="trang_thai" rules={[]}
+                                initialValue={true}
+                              >
                                   {renderStatus()}
                               </Form.Item>
                               <Form.Item className="input-col" label="Mô tả" name="mo_ta" rules={[]} >

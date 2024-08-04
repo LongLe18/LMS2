@@ -106,8 +106,8 @@ const ProgramPage = () => {
             key: 'loai_kct',
             responsive: ['md'],
             render: (loai_kct) => (
-                <Tag color={loai_kct === 0 ? 'green' : 'orange'} key={loai_kct}>
-                {loai_kct === 1 ? "Thi thử Online" : "Đánh giá năng lực"}
+                <Tag color={loai_kct === 0 ? 'green' : loai_kct === 1 ? 'orange' : 'blue'} key={loai_kct}>
+                    {loai_kct === 1 ? "Thi thử Online" : loai_kct === 0 ? "Đánh giá năng lực" : 'Ôn luyện'}
                 </Tag>
             ),
         },
