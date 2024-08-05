@@ -847,11 +847,11 @@ const publish = async (req, res) => {
             await Exam.update(
                 {
                     xuat_ban: false,
-                    trang_thai: false,
                 },
                 {
                     where: {
                         de_mau: true,
+                        khoa_hoc_id: exam.khoa_hoc_id
                     },
                 }
             );
