@@ -53,7 +53,6 @@ const MainPageUser = (props) => {
         });
     }
     
-    
     const renderCourses = () => {
         return (
             <div className="list-course-cate">        

@@ -795,19 +795,19 @@ const ExamDetailPage = () => {
                                                     </Col>
                                                     <Col xl={7} sm={12} xs={24}>
                                                         <Form.Item label="Khóa học" name="khoa_hoc_id"  
-                                                            initialValue={exam.data.khoa_hoc_id !== null ? exam.data.khoa_hoc_id : ''}>
+                                                            initialValue={exam.data.khoa_hoc_id !== null ? exam.data.khoa_hoc_id : null}>
                                                             {renderCourse()}
                                                         </Form.Item>
                                                     </Col>
                                                     <Col xl={7} sm={12} xs={24}>
                                                         <Form.Item label="Mô đun" name="mo_dun_id"
-                                                            initialValue={exam.data.mo_dun_id !== null ? exam.data.mo_dun_id : ''}>
+                                                            initialValue={exam.data.mo_dun_id !== null ? exam.data.mo_dun_id : null}>
                                                             {renderModule()}
                                                         </Form.Item>
                                                     </Col>
                                                     <Col xl={7} sm={12} xs={24}>
                                                         <Form.Item label="Chuyên đề" name="chuyen_de_id"
-                                                            initialValue={exam.data.chuyen_de_id !== null ? exam.data.chuyen_de_id : ''}>
+                                                            initialValue={exam.data.chuyen_de_id !== null ? exam.data.chuyen_de_id : null}>
                                                             {renderThematic()}
                                                         </Form.Item>
                                                     </Col>
@@ -1060,43 +1060,29 @@ const ExamDetailPage = () => {
                                                         </Row>
                                                         <Row>
                                                             <Col xl={4}>
-                                                                <Form.Item className="label">
-                                                                    <span style={{ color: '#ff4d4f' }}>*</span>Mô đun/Học phần
-                                                                </Form.Item>
+                                                                <Form.Item className="label">Mô đun/Học phần</Form.Item>
                                                             </Col>
                                                             <Col xl={8}>
                                                                 <Form.Item                                            
-                                                                    initialValue={exam.data.mo_dun_id !== null ? exam.data.mo_dun_id : ''}
+                                                                    initialValue={exam.data.mo_dun_id !== null ? exam.data.mo_dun_id : null}
                                                                     className="input-col"
                                                                     label=""
                                                                     name="mo_dun_id_2"
-                                                                    rules={[
-                                                                        {
-                                                                            required: true,
-                                                                            message: 'Mô đun/Học phần là trường bắt buộc',
-                                                                        },
-                                                                    ]}
+                                                                    rules={[]}
                                                                 >
                                                                     {renderModule2()}
                                                                 </Form.Item>
                                                             </Col>
                                                             <Col xl={4}>
-                                                                <Form.Item className="label">
-                                                                    <span style={{ color: '#ff4d4f' }}>*</span>Chuyên đề
-                                                                </Form.Item>
+                                                                <Form.Item className="label">Chuyên đề</Form.Item>
                                                             </Col>
                                                             <Col xl={8}>
                                                                 <Form.Item
-                                                                    initialValue={exam.data.chuyen_de_id !== null ? exam.data.chuyen_de_id : ''}
+                                                                    initialValue={exam.data.chuyen_de_id !== null ? exam.data.chuyen_de_id : null}
                                                                     className="input-col"
                                                                     label=""
                                                                     name="chuyen_de_id_2"
-                                                                    rules={[
-                                                                    {
-                                                                        required: true,
-                                                                        message: 'Chuyên đề là trường bắt buộc',
-                                                                    },
-                                                                    ]}
+                                                                    rules={[]}
                                                                 >
                                                                     {renderThematic2()}
                                                                 </Form.Item>
@@ -1163,7 +1149,7 @@ const ExamDetailPage = () => {
                                                                             <Col xl={20}>
                                                                                 <Form.Item {...restField} name={[name, 'tieu_de']} rules={[{ required: !state.showTuLuan, message: 'Bạn chưa nhập nội dung đáp án' }]}>
                                                                                     <TextEditorWidget
-                                                                                        value={currentQuestion.dap_an[key].tieu_de}
+                                                                                        valueParent={currentQuestion.dap_an[key].tieu_de}
                                                                                         placeholder="Thêm nội dung đáp án"
                                                                                         onChange={(val) => {
                                                                                             let dap_an = [...currentQuestion.dap_an];
@@ -1198,7 +1184,7 @@ const ExamDetailPage = () => {
                                                                                     style={{display: !state.showTextTuLuan ? '' : 'none'}}
                                                                                 >
                                                                                     <TextEditorWidget 
-                                                                                        value={currentQuestion.dap_an_tu_luan[key].tieu_de}
+                                                                                        valueParent={currentQuestion.dap_an_tu_luan[key].tieu_de}
                                                                                         placeholder="Thêm nội dung đáp án"
                                                                                         onChange={(val) => {
                                                                                             let dap_an_tu_luan = [...currentQuestion.dap_an_tu_luan];
@@ -1244,7 +1230,7 @@ const ExamDetailPage = () => {
                                                                 >
                                                                     <TextEditorWidget
                                                                         disabled={state.trang_thai === 'active'}
-                                                                        value={currentQuestion.loi_giai}
+                                                                        valueParent={currentQuestion.loi_giai}
                                                                         placeholder="Thêm nội dung lời giải"
                                                                         onChange={(val) => setCurrentQuestion({ ...currentQuestion, loi_giai: val })}
                                                                         isSimple={true}
@@ -1254,7 +1240,7 @@ const ExamDetailPage = () => {
                                                                     style={{display: state.showTextTuLuan2 ? '' : 'none'}}
                                                                 >
                                                                     <TextEditorWidget 
-                                                                        value={currentQuestion.loi_giai}
+                                                                        valueParent={currentQuestion.loi_giai}
                                                                         placeholder="Thêm nội dung lời giải"
                                                                         onChange={(val) => setCurrentQuestion({ ...currentQuestion, loi_giai: val })}
                                                                         isSimple={true}

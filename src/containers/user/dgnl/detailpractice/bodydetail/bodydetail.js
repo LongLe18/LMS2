@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { get } from 'lodash';
 import { useHistory } from 'react-router-dom';
+import './body.css'
 // helper
 import axios from "axios";
 import Hashids from "hashids";
@@ -12,7 +13,7 @@ import * as lessonActions from '../../../../../redux/actions/lesson';
 import * as examActions from '../../../../../redux/actions/exam';
 import LoadingCustom from 'components/parts/loading/Loading';
 
-import { Button, Row, Col, } from "reactstrap";
+import { Button, Row, } from "reactstrap";
 
 // component
 import ContentDetailPage from "../contentdetail/contentdetail";
@@ -100,39 +101,68 @@ const BodyDetailPage = (props) => {
                         if (index < 0) {
                             return (
                                 <Panel header={ten_chuyen_de} key={chuyen_de_id}>
-                                    <Button color="info" className="btn-primary nap-lesson" type="button" title={mo_ta} style={{height: 55, maxHeight: 55}}
-                                        onClick={() => { OnHandleThematic(chuyen_de_id) }}>{ten_chuyen_de}
-                                    </Button>
-                                    <p>test</p>
+                                    <div className="btn-thematic" onClick={() => { 
+                                            OnHandleThematic(chuyen_de_id)
+                                        }} 
+                                    >
+                                        VIDEO BÀI GIẢNG
+                                    </div>
+                                    <div className="btn-thematic" onClick={() => { 
+                                            OnHandleThematic(chuyen_de_id)
+                                        }} 
+                                    >
+                                        BÀI GIẢNG (PDF)
+                                    </div>
+                                    <div className="btn-thematic" onClick={() => { 
+                                            OnHandleThematic(chuyen_de_id)
+                                        }} 
+                                    >
+                                        BÀI KIỂM TRA
+                                    </div>
                                 </Panel>
-                    
-                                // <Col md="2" key={chuyen_de_id}>
-                                //     <Button color="info" className="btn-primary nap-lesson" type="button" title={mo_ta} style={{height: 55, maxHeight: 55}}
-                                //         onClick={() => { OnHandleThematic(chuyen_de_id) }}>{ten_chuyen_de}
-                                //     </Button>
-                                // </Col>     
                             )
                         } else {
                             return (
-                                // <Col md="2" key={chuyen_de_id}>
-                                //     <Button color="info" className="btn-primary nap-lesson" type="button" title={mo_ta} 
-                                //         onClick={() => { 
-                                //             if (existCourse) {
-                                //                 OnHandleThematic(chuyen_de_id)
-                                //             } else {
-                                //                 notification.error({
-                                //                     message: 'Thông báo',
-                                //                     description: 'Bạn chưa đăng ký khóa học này',
-                                //                 });
-                                //             }
-                                //         }}>{ten_chuyen_de}
-                                //     </Button>
-                                // </Col> 
                                 <Panel header={ten_chuyen_de} key={chuyen_de_id}>
-                                    {/* <Button color="info" className="btn-primary nap-lesson" type="text" style={{height: 55, maxHeight: 55}}
-                                        onClick={() => { OnHandleThematic(chuyen_de_id) }}>{ten_chuyen_de}
-                                    </Button> */}
-                                    <div onClick={() => { OnHandleThematic(chuyen_de_id) }}>test</div>
+                                    <div className="btn-thematic" onClick={() => { 
+                                            if (existCourse) {
+                                                OnHandleThematic(chuyen_de_id)
+                                            } else {
+                                                notification.error({
+                                                    message: 'Thông báo',
+                                                    description: 'Bạn chưa đăng ký khóa học này',
+                                                });
+                                            }
+                                        }} 
+                                    >
+                                        VIDEO BÀI GIẢNG
+                                    </div>
+                                    <div className="btn-thematic" onClick={() => { 
+                                            if (existCourse) {
+                                                OnHandleThematic(chuyen_de_id)
+                                            } else {
+                                                notification.error({
+                                                    message: 'Thông báo',
+                                                    description: 'Bạn chưa đăng ký khóa học này',
+                                                });
+                                            }
+                                        }} 
+                                    >
+                                        BÀI GIẢNG (PDF)
+                                    </div>
+                                    <div className="btn-thematic" onClick={() => { 
+                                            if (existCourse) {
+                                                OnHandleThematic(chuyen_de_id)
+                                            } else {
+                                                notification.error({
+                                                    message: 'Thông báo',
+                                                    description: 'Bạn chưa đăng ký khóa học này',
+                                                });
+                                            }
+                                        }} 
+                                    >
+                                        BÀI KIỂM TRA
+                                    </div>
                                 </Panel>
                             )
                         }                                    
@@ -185,7 +215,10 @@ const BodyDetailPage = (props) => {
                 message: get(errorLesson, 'response.data.error', 'Tải dữ liệu bài giảng thất bại: ' + errorLesson.response.data.message),
             })}    
             <br/>
-            {(idThematic !== 0 && lesson.status === 'success' && (lesson.data.video.length > 0 || lesson.data.pdf != null)) && <ContentDetailPage props={lesson} idThematic={idThematic} idModule={props.id} idCourse={props.idCourse}></ContentDetailPage>}
+            {(idThematic !== 0 && lesson.status === 'success' && 
+                (lesson.data.video.length > 0 || lesson.data.pdf != null)) && 
+                    <ContentDetailPage props={lesson} idThematic={idThematic} idModule={props.id} idCourse={props.idCourse}></ContentDetailPage>
+            }
         </>
     )
 }

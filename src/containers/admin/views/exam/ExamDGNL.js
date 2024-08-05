@@ -23,7 +23,6 @@ import { useSelector, useDispatch } from "react-redux";
 import * as examActions from '../../../../redux/actions/exam';
 import * as courseActions from '../../../../redux/actions/course';
 import * as moduleActions from '../../../../redux/actions/part';
-import * as thematicActions from '../../../../redux/actions/thematic';
 import * as typeExamActions from '../../../../redux/actions/typeExam';
 import * as programmeActions from '../../../../redux/actions/programme';
 import * as majorActions from '../../../../redux/actions/major';
@@ -52,8 +51,6 @@ const ExamDGNLAdminPage = () => {
 
     const typeExams = useSelector(state => state.typeExam.list.result);
     const courses = useSelector(state => state.course.list.result);
-    const modules = useSelector(state => state.part.list.result);
-    const thematics = useSelector(state => state.thematic.listbyId.result);
     const majors = useSelector(state => state.major.list.result);
 
     const [filter, setFilter] = useState({
@@ -147,6 +144,15 @@ const ExamDGNLAdminPage = () => {
       render: (loai_de_thi_id) => (
         <span>{loai_de_thi_id === 1 ? 'Đề thi chuyên đề' : loai_de_thi_id === 2 ? 'Đề thi mô-đun' : loai_de_thi_id === 3 ? 'Đề thi tổng hợp' : 'Đề thi theo phần'}</span>
       )
+    },
+    {
+      title: 'Khóa học',
+      dataIndex: 'khoa_hoc',
+      key: 'khoa_hoc',
+      responsive: ['md'],
+      render: (khoa_hoc) => (
+        khoa_hoc?.ten_khoa_hoc
+      ),
     },
     {
       title: 'Ngày tạo',
@@ -353,92 +359,45 @@ const ExamDGNLAdminPage = () => {
       );
   }
 
-  const renderModule = () => {
-      let options = [];
-      if (modules.status === 'success') {
-        options = modules.data.map((type) => (
-          <Option key={type.mo_dun_id} value={type.mo_dun_id} >{type.ten_mo_dun}</Option>
-        ))
-      }
-      return (
-        <Select
-          showSearch={false}
-          placeholder="Chọn mô đun"
-          onChange={(mo_dun_id) => {
-              dispatch(thematicActions.getThematicsByIdModule({ idModule: mo_dun_id }))
-          }}
-        >
-          {options}
-        </Select>
-      );
-  };
-
-  const renderThematic = () => {
-      let options = [];
-      if (thematics.status === 'success') {
-        options = thematics.data.thematics.map((thematic) => (
-          <Option key={thematic.chuyen_de_id} value={thematic.chuyen_de_id} >{thematic.ten_chuyen_de}</Option>
-        ))
-      }
-      return (
-        <Select
-          showSearch={false}
-          placeholder="Chọn mô đun"
-        >
-          {options}
-        </Select>
-      );
-  };
-
   const renderAddModal = () => {
       return (
           <>
-              <h2 className="form-title">Tạo đề thi</h2>
-              <Form form={form} className="login-form app-form" name="login-form" onFinish={createExam}
-                  labelCol={{
-                      span: 6,
-                  }} >
-                  <Form.Item label='Mã đề thi' name="de_thi_ma" rules={[{ required: true, message: 'Mã đề thi là bắt buộc'}]}>
-                      <Input size="normal" placeholder="Tên đề thi" />
-                  </Form.Item>
-                  <Form.Item label='Tên đề thi' name="ten_de_thi" rules={[{ required: true, message: 'Tên đề thi là bắt buộc'}]}>
-                      <Input size="normal" placeholder="Tên đề thi" />
-                  </Form.Item>
-                  <Form.Item label="Loại đề thi" name="loai_de_thi_id" initialValue={3} rules={[{ required: true, message: 'Loại đề thi là bắt buộc'}]}>
-                      {renderTypeExams()}
-                  </Form.Item>
-                  <Form.Item label="Khung" name="kct_id" rules={[{ required: state.showCourse, message: 'Khung chương trình là bắt buộc'}]}
-                  style={{display: state.showCourse ? '' : 'none'}}>
-                      {renderProgramme()}
-                  </Form.Item>
-                  <Form.Item label="Khóa học" name="khoa_hoc_id" rules={[{ required: state.showCourse, message: 'Khóa học là bắt buộc' }]}
-                      style={{display: state.showCourse ? '' : 'none'}}>
-                      {renderCourse()}
-                  </Form.Item>
-                  <Form.Item label="Mô đun" name="mo_dun_id" rules={[{ required: state.showModule, message: 'Mô đun là bắt buộc' }]}
-                      style={{display: state.showModule ? '' : 'none'}}>
-                      {renderModule()}
-                  </Form.Item>
-                  <Form.Item label="Chuyên đề" name="chuyen_de_id" rules={[{ required: state.showThematic, message: 'Chuyên đề là bắt buộc' }]}
-                      style={{display: state.showThematic ? '' : 'none'}}>
-                      {renderThematic()}
-                  </Form.Item>
-                  <Form.Item className="input-col" label="Hình đại diện" name="anh_dai_dien" rules={[]}>
-                      <Dragger {...propsImage} maxCount={1}
-                          listType="picture"
-                          className="upload-list-inline"
-                      >
-                          <p className="ant-upload-drag-icon">
-                          <UploadOutlined />
-                          </p>
-                          <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
-                      </Dragger>
-                  </Form.Item>
-                  <Form.Item className="button-col" style={{marginBottom: 0}}>
-                      <Button shape="round" type="primary" htmlType="submit" >Tạo đề thi</Button>
-                  </Form.Item>
-              </Form>
-          </>
+            <h2 className="form-title">Tạo đề thi</h2>
+            <Form form={form} className="login-form app-form" name="login-form" onFinish={createExam}
+                labelCol={{
+                    span: 6,
+                }} >
+                <Form.Item label='Mã đề thi' name="de_thi_ma" rules={[{ required: true, message: 'Mã đề thi là bắt buộc'}]}>
+                    <Input size="normal" placeholder="Tên đề thi" />
+                </Form.Item>
+                <Form.Item label='Tên đề thi' name="ten_de_thi" rules={[{ required: true, message: 'Tên đề thi là bắt buộc'}]}>
+                    <Input size="normal" placeholder="Tên đề thi" />
+                </Form.Item>
+                <Form.Item label="Loại đề thi" name="loai_de_thi_id" initialValue={3} rules={[{ required: true, message: 'Loại đề thi là bắt buộc'}]}>
+                    {renderTypeExams()}
+                </Form.Item>
+                <Form.Item label="Khung" name="kct_id" rules={[{ required: true, message: 'Khung chương trình là bắt buộc'}]}>
+                  {renderProgramme()}
+                </Form.Item>
+                <Form.Item label="Khóa học" name="khoa_hoc_id" rules={[{ required: true, message: 'Khóa học là bắt buộc' }]}>
+                  {renderCourse()}
+                </Form.Item>
+                <Form.Item className="input-col" label="Hình đại diện" name="anh_dai_dien" rules={[]}>
+                    <Dragger {...propsImage} maxCount={1}
+                        listType="picture"
+                        className="upload-list-inline"
+                    >
+                        <p className="ant-upload-drag-icon">
+                        <UploadOutlined />
+                        </p>
+                        <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
+                    </Dragger>
+                </Form.Item>
+                <Form.Item className="button-col" style={{marginBottom: 0}}>
+                    <Button shape="round" type="primary" htmlType="submit" >Tạo đề thi</Button>
+                </Form.Item>
+            </Form>
+        </>
       )
   };
 
@@ -569,7 +528,7 @@ const ExamDGNLAdminPage = () => {
     dispatch(examActions.filterExamDGNL({ idCourse: filter.khoa_hoc_id, kct_id: filter.kct_id, 
       status: filter.trang_thai, publish: tabs, pageIndex: pageIndex, pageSize: pageSize 
     }));
-}, [pageIndex, pageSize]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [pageIndex, pageSize]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const createExam = (values) => {
       const callback = (res) => {
@@ -726,7 +685,7 @@ const ExamDGNLAdminPage = () => {
                             title="Quản lý đề mẫu ĐGNL"
                             isShowCourse={true}
                             isShowStatus={true}
-                            isShowSearchBox={true}
+                            isShowSearchBox={false}
                             courses={courses.data}
                             onFilterChange={(field, value) => onFilterChange(field, value)}
                           />
