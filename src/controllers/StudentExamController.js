@@ -139,8 +139,17 @@ const postCreatev2 = async (req, res) => {
             de_mau: true,
             xuat_ban: true,
             trang_thai: true,
+            khoa_hoc_id
         },
     });
+
+    if(!sampleExam){
+        return res.status(404).send({
+            status: 'error',
+            data: null,
+            message: 'Đề mẫu của khóa học không tồn tại',
+        });
+    }
 
     const exam = await Exam.create({
         ten_de_thi: 'THI ĐÁNH GIÁ NĂNG LỰC',
@@ -150,7 +159,7 @@ const postCreatev2 = async (req, res) => {
         kct_id: 1,
         khoa_hoc_id,
         loai_de_thi_id: 4,
-        de_mau_id: sampleExam.id,
+        de_mau_id: sampleExam.de_thi_id,
     });
 
     let criteria = await OnlineCriteria.findOne({
@@ -171,8 +180,8 @@ const postCreatev2 = async (req, res) => {
     await sequelize.query(
         `
         INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
-            SELECT cau_hoi_id, ${exam.de_thi_id}, 1 FROM cau_hoi
-            WHERE chuyen_nganh_id = 1 AND kct_id = 1 AND de_thi_id = ${sampleExam.id}
+            SELECT cau_hoi_id, ${exam.dataValues.de_thi_id}, 1 FROM cau_hoi
+            WHERE chuyen_nganh_id = 1 AND kct_id = 1 AND de_thi_id = ${sampleExam.de_thi_id}
             ORDER BY RAND() LIMIT ${criteria.so_cau_hoi_phan_1}
     `,
         {
@@ -184,8 +193,8 @@ const postCreatev2 = async (req, res) => {
     await sequelize.query(
         `
             INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
-                SELECT cau_hoi_id, ${exam.de_thi_id}, 2 FROM cau_hoi
-                WHERE chuyen_nganh_id = 7 AND kct_id = 1 AND de_thi_id = ${sampleExam.id}
+                SELECT cau_hoi_id, ${exam.dataValues.de_thi_id}, 2 FROM cau_hoi
+                WHERE chuyen_nganh_id = 7 AND kct_id = 1 AND de_thi_id = ${sampleExam.de_thi_id}
                 ORDER BY trich_doan_id DESC, RAND()
                 LIMIT ${criteria.so_cau_hoi_phan_2}
         `,
@@ -199,8 +208,8 @@ const postCreatev2 = async (req, res) => {
         await sequelize.query(
             `
         INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
-            SELECT cau_hoi_id, ${exam.de_thi_id}, 3 FROM cau_hoi
-            WHERE chuyen_nganh_id = 5 AND kct_id = 1 AND de_thi_id = ${sampleExam.id}
+            SELECT cau_hoi_id, ${exam.dataValues.de_thi_id}, 3 FROM cau_hoi
+            WHERE chuyen_nganh_id = 5 AND kct_id = 1 AND de_thi_id = ${sampleExam.de_thi_id}
             ORDER BY trich_doan_id DESC, RAND()
             LIMIT ${criteria.so_cau_hoi_phan_3}
     `,
@@ -225,8 +234,8 @@ const postCreatev2 = async (req, res) => {
             await sequelize.query(
                 `
                         INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
-                            SELECT cau_hoi_id, ${exam.de_thi_id}, 3 FROM cau_hoi
-                            WHERE chuyen_nganh_id = :chuyen_nganh_id AND kct_id = 1 AND de_thi_id = ${sampleExam.id}
+                            SELECT cau_hoi_id, ${exam.dataValues.de_thi_id}, 3 FROM cau_hoi
+                            WHERE chuyen_nganh_id = :chuyen_nganh_id AND kct_id = 1 AND de_thi_id = ${sampleExam.de_thi_id}
                             ORDER BY RAND() LIMIT ${so_cau_hoi_tung_chuyen_nganh}
                     `,
                 {
@@ -240,9 +249,9 @@ const postCreatev2 = async (req, res) => {
         await sequelize.query(
             `
                     INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
-                        SELECT cau_hoi_id, ${exam.de_thi_id}, 3 FROM cau_hoi
+                        SELECT cau_hoi_id, ${exam.dataValues.de_thi_id}, 3 FROM cau_hoi
                         WHERE chuyen_nganh_id IN (${chuyen_nganh_ids}) AND kct_id = 1 AND de_thi_id = ${
-                sampleExam.id
+                sampleExam.de_thi_id
             }
                         AND cau_hoi_id NOT IN (SELECT cau_hoi_id
                         WHERE de_thi_id = ${exam.de_thi_id})
@@ -259,7 +268,7 @@ const postCreatev2 = async (req, res) => {
 
     const studentExam = await StudentExam.create({
         ...rest,
-        de_thi_id: exam.de_thi_id,
+        de_thi_id: exam.dataValues.de_thi_id,
         hoc_vien_id: req.userId,
     });
 
