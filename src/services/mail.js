@@ -107,7 +107,7 @@ const sendMail = async (content, option) => {
                                 <li><p><span style="color: black">Mật khẩu: ${content.password}</span></p></li>
                             </ul>
                         </div>
-                        <p><span style="color: black">Bạn hãy đăng nhập ${api.login_url} bằng tài khoản nêu trên.</p>
+                        <p><span style="color: black">Bạn hãy đăng nhập https://hsaplus.edu.vn/auth/giaovien bằng tài khoản nêu trên.</p>
                         <p><span style="color: black">Trân trọng!</p>
                     </div>
                     <hr/>

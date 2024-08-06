@@ -168,6 +168,8 @@ Question.belongsTo(Majoring, { foreignKey: 'chuyen_nganh_id', constraints: false
 Exam.hasOne(OnlineCriteria, { foreignKey: 'khoa_hoc_id', sourceKey: 'khoa_hoc_id', constraints: false});
 OnlineCriteria.belongsTo(Exam, { foreignKey: 'khoa_hoc_id', targetKey: 'khoa_hoc_id', constraints: false});
 
+Student.belongsTo(Province, { foreignKey: 'ttp_id', constraints: false});
+
 module.exports = {
     Course,
     Lesson,
