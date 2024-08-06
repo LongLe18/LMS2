@@ -9,6 +9,7 @@
     ThematicCriteria,
     StudentExam,
     OnlineCriteria,
+    Course,
 } = require('../models');
 const { Op } = require('sequelize');
 const sequelize = require('../utils/db');
@@ -51,9 +52,12 @@ const getExamOnline = async (req, res) => {
 // lấy danh sách đề thi đánh giá năng lực
 const getExamDGNL = async (req, res) => {
     const { count, rows } = await Exam.findAndCountAll({
-        include: {
+        include: [{
             model: OnlineCriteria,
-        },
+        },{
+                model: Course,
+                attributes: ['ten_khoa_hoc'], // Include the ten_khoa_hoc field
+        }],
         where: {
             ...(req.query.kct_id && { kct_id: req.query.kct_id }),
             ...(req.query.trang_thai && { trang_thai: req.query.trang_thai }),
