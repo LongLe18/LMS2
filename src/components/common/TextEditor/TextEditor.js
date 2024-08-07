@@ -47,7 +47,6 @@ const TextEditorWidget = (props) => {
         editorHtml: '',
         viewEditor: '',
         theme: 'snow',
-        isChanged: false,
         fileImg: ''
     });
     
@@ -65,7 +64,6 @@ const TextEditorWidget = (props) => {
         },
   
         onChange(info) {
-            
             if (info.file.status === 'done') {
                 quillRef.current.focus();
                 setState({ ...state, fileImg: info.file.originFileObj });
@@ -99,19 +97,6 @@ const TextEditorWidget = (props) => {
     const [math, setMath] = useState({
         visible: false,
     });
-
-    const handleChange = (html) => {
-        let value = '';
-        const divContentRegex = /<div[^>]*>(.*?)<\/div>/g;
-        const matches = html.match(divContentRegex);
-        if (matches) {
-            matches.forEach((match) => {
-                const content = match.replace(/<\/?div[^>]*>/g, ''); // Remove <div> tags
-                if (content.trim() !== '<br>') value += content.trim() + '\n';
-            });
-        };
-        setState({ ...state, editorHtml: html, viewEditor: value, isChanged: true })
-    };
 
     const formats = ['header', 'font', 'color', 'align', 'size', 'bold', 'italic', 'underline', 'strike', 'blockquote', 'list', 'bullet', 'indent', 'link', 'image', 'video', 'formula', 'width'];
 
@@ -152,12 +137,12 @@ const TextEditorWidget = (props) => {
     
     useEffect(() => {
         let value = props.valueParent?.split('\n').join('<br>');
-        setState({ ...state, editorHtml: value, viewEditor: props.valueParent, isChanged: false });
+        setState({ ...state, editorHtml: value, viewEditor: props.valueParent });
     }, [props.valueParent]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         if (text !== '') {
-            setState({ ...state, editorHtml: `${state.editorHtml} ${text}`, isChanged: true });
+            setState({ ...state, editorHtml: `${state.editorHtml} ${text}` });
             setText('');
         }
     }, [text]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -173,13 +158,25 @@ const TextEditorWidget = (props) => {
                 ${props.isMinHeight300 ? 'min-height-300' : ''}
                 ${props.isMinHeight500 ? 'min-height-500' : ''}
             `}
-                onMouseLeave={() => {props.onChange(state.viewEditor)}}
+                onMouseLeave={() => {
+                    let html = quillRef.current.getEditor().root.innerHTML;
+                    let value = '';
+                    const divContentRegex = /<div[^>]*>(.*?)<\/div>/g;
+                    const matches = html.match(divContentRegex);
+                    if (matches) {
+                        matches.forEach((match) => {
+                            const content = match.replace(/<\/?div[^>]*>/g, ''); // Remove <div> tags
+                            if (content.trim() !== '<br>') value += content.trim() + '\n';
+                        });
+                    };
+                    setState({ ...state, editorHtml: html, viewEditor: value })
+                    props.onChange(value)
+                }}
             >
                 {!props.disabled && (
                     <ReactQuill
                         ref={quillRef}
-                        theme={state.theme}
-                        onChange={handleChange}
+                        theme='snow'
                         value={state.editorHtml || ''}
                         formats={formats}
                         modules={modules}
@@ -563,35 +560,44 @@ const TextEditorWidget = (props) => {
                     <div className="form-math">
                         <div className="math-item">
                             <MathJax.Provider>
-                                {props.valueParent?.split('\n').map((item, index_cauhoi) => 
-                                
-                                    (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                        <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question_${index_cauhoi}`} key={`key${index_cauhoi}`}></img>
-                                    ) 
-                                    : (
-                                        item.split('$').map((item2, index2) => {
-                                            return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
-                                                <MathJax.Node key={index2} formula={item2} />
-                                            ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\underline')) ?
-                                                (
-                                                    <div key={index2} style={{textDecoration: 'underline'}}>{item2.split('\\underline{')[1].split('}')[0]}</div>
-                                                )
-                                            : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\bold')) ?
-                                                (
-                                                    <div key={index2} style={{fontWeight: 700}}>{item2.split('\\bold{')[1].split('}')[0]}</div>
-                                                )
-                                            : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\italic')) ?
-                                                (
-                                                    <div key={index2} style={{fontStyle: 'italic'}}>{item2.split('\\italic{')[1].split('}')[0]}</div>
-                                                )
-                                            : (item2.indexOf('includegraphics') !== -1 && item2?.match(regexImg) !== null && item2?.match(regexImg).length > 1) ? (
-                                                <img src={config.API_URL + `/${item2?.match(regexImg)[1]}`} alt={`img_question_${index2}`} key={`key${index2}`}></img>
+                                {props.valueParent?.split('\n').map((item, index_cauhoi) => {
+                                    return (
+                                        <div className='math-item-content'>
+                                        {
+                                            (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
+                                                <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question_${index_cauhoi}`} key={`key${index_cauhoi}`}></img>
                                             ) 
-                                            : ( 
-                                                <div key={index2}>{item2}</div>
-                                            );
-                                        })
+                                            : (
+                                                item.split('$').map((item2, index2) => {
+                                                    return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
+                                                        <MathJax.Node key={index2} formula={item2} />
+                                                    ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\underline')) ?
+                                                        (
+                                                            <div key={index2} style={{textDecoration: 'underline'}}>{item2.split('\\underline{')[1].split('}')[0]}</div>
+                                                        )
+                                                    : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\bold')) ?
+                                                        (
+                                                            <div key={index2} style={{fontWeight: 700}}>{item2.split('\\bold{')[1].split('}')[0]}</div>
+                                                        )
+                                                    : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\italic')) ?
+                                                        (
+                                                            <div key={index2} style={{fontStyle: 'italic'}}>{item2.split('\\italic{')[1].split('}')[0]}</div>
+                                                        )
+                                                    : (item2.indexOf('includegraphics') !== -1 && item2?.match(regexImg) !== null && item2?.match(regexImg).length > 1) ? (
+                                                        <img src={config.API_URL + `/${item2?.match(regexImg)[1]}`} alt={`img_question_${index2}`} key={`key${index2}`}></img>
+                                                    ) 
+                                                    : ( 
+                                                        <div key={index2}>{item2}</div>
+                                                    );
+                                                })
+                                            )
+                                        }
+                                        </div>
                                     )
+                                }
+                                
+                                
+                                    
                                 )}
                             </MathJax.Provider>
                         </div>

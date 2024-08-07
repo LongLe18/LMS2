@@ -15,7 +15,7 @@ import Hashids from 'hashids';
 import useFetch from "hooks/useFetch";
 
 // component
-import { Layout, Row, Col, Button } from 'antd';
+import { Layout, Row, Col, Button, Collapse } from 'antd';
 import CarouselCustom from 'components/parts/Carousel/Carousel';
 import NoRecord from "components/common/NoRecord";
 
@@ -24,7 +24,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import * as receiptAction from '../../../../redux/actions/receipt';
 import * as courseAction from '../../../../redux/actions/course';
 
-const {Content} = Layout;
+const { Content } = Layout;
+const { Panel } = Collapse;
+
+
 const CoursesUser = (props) => {
     const dataInit = [];
     const dispatch = useDispatch();
@@ -33,7 +36,6 @@ const CoursesUser = (props) => {
     const coursesUser = useSelector(state => state.receipt.listUser.result);
     const courses = useSelector(state => state.course.list.result);
     const [courseOfUser] = useFetch(`/student/list/course`);
-
 
     useEffect(() => {
         dispatch(receiptAction.getRECEIPTsUser({ status: 1 }));
@@ -54,6 +56,10 @@ const CoursesUser = (props) => {
             return null;
         })
     };
+
+    if (courseOfUser.length > 0) {
+        console.log(courseOfUser);
+    }
 
     // Chuyển sang view thi online đối với khung chương trình có loại - thi online
     // const requestExamOnline = (idCourse) => {
@@ -95,78 +101,112 @@ const CoursesUser = (props) => {
                         <b></b>
                     </h2>
                     {(courseOfUser.length > 0) ? (
-                        <Row gutter={[16, 16]} className="list-cate-items">
-                            {courseOfUser.map((cate, index) => {
-                                return (
-                                    <Col xl={5} sm={12} xs={12} className="course-cate-row" key={cate.khoa_hoc_id}>
-                                        <div className="course-cate-box">
-                                            <div className="image-box">
-                                                {cate.loai_kct === 1 
-                                                ?
-                                                    // <Button className='btn-enter-online-course' onClick={() => requestExamOnline(cate.khoa_hoc_id)}>
-                                                    //     <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
-                                                    // </Button>
-                                                    <Link to={`/luyen-tap/kiem-tra/${hashids.encode(cate.khoa_hoc_id)}`}>
-                                                        <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
-                                                    </Link>
-                                                : cate.loai_kct === 0 ? // đánh giá năng lực
-                                                    <Link to={`/luyen-tap/danh-gia-nang-luc/${hashids.encode(cate.khoa_hoc_id)}`}>
-                                                        <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
-                                                    </Link>
-                                                :
-                                                    <Link to={`/luyen-tap/luyen-tap/${hashids.encode(cate.khoa_hoc_id)}`}>
-                                                        <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
-                                                    </Link>
-                                                }
-                                            </div>
-                                            <div className="box-text">
-                                                {cate.loai_kct === 1
-                                                ?
-                                                    // <Button className='btn-enter-online-course' onClick={() => requestExamOnline(cate.khoa_hoc_id)}>
-                                                    //     {cate.ten_khoa_hoc}
-                                                    // </Button>
-                                                    <h3 className="course-cate-title">
-                                                        <Link to={`/luyen-tap/kiem-tra/${hashids.encode(cate.khoa_hoc_id)}`}>{cate.ten_khoa_hoc}</Link>
-                                                    </h3>
-                                                : cate.loai_kct === 0 ? // đánh giá năng lực
-                                                    <h3 className="course-cate-title">
-                                                        <Link to={`/luyen-tap/danh-gia-nang-luc/${hashids.encode(cate.khoa_hoc_id)}`}>{cate.ten_khoa_hoc}</Link>
-                                                    </h3>
-                                                :
-                                                    <h3 className="course-cate-title">
-                                                        <Link to={`/luyen-tap/luyen-tap/${hashids.encode(cate.khoa_hoc_id)}`}>{cate.ten_khoa_hoc}</Link>
-                                                    </h3>
-                                                }
-                                                <p className="course-cate-description">
-                                                    {/* <span>Ngày bắt đầu: {moment(cate.ngay_bat_dau).format(config.DATE_FORMAT_SHORT)}</span>
-                                                    <span>Ngày kết thúc: {moment(cate.ngay_ket_thuc).format(config.DATE_FORMAT_SHORT)}</span> */}
-                                                    {cate.loai_kct === 1
-                                                    ?
-                                                        <Link to={`/luyen-tap/kiem-tra/${hashids.encode(cate.khoa_hoc_id)}`}>
-                                                            <Button type="primary" className="mt-2 mb-2" style={{borderRadius: 6}}>
-                                                                Bắt đầu thi
-                                                            </Button>
-                                                        </Link>
-                                                    : cate.loai_kct === 0 ? // đánh giá năng lực
+                        <Collapse defaultActiveKey={['0']} accordion style={{background: 'transparent'}}>
+                            <Panel header={'Đánh giá năng lực'} className='collapse-course'>
+                                <Row gutter={[16, 16]} className="list-cate-items">
+                                    {courseOfUser.filter((course) => course.loai_kct === 0).map((cate, index) => {
+                                        return (
+                                            <Col xl={5} sm={12} xs={12} className="course-cate-row" key={cate.khoa_hoc_id}>
+                                                <div className="course-cate-box">
+                                                    <div className="image-box">
                                                         <Link to={`/luyen-tap/danh-gia-nang-luc/${hashids.encode(cate.khoa_hoc_id)}`}>
-                                                            <Button type="primary" className="mt-2 mb-2" style={{borderRadius: 6}}>
-                                                                Bắt đầu thi
-                                                            </Button>
+                                                            <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
                                                         </Link>
-                                                    :
+                                                    </div>
+                                                    <div className="box-text">
+                                                            {/* <Button className='btn-enter-online-course' onClick={() => requestExamOnline(cate.khoa_hoc_id)}>
+                                                                {cate.ten_khoa_hoc}
+                                                            </Button> */}                                                        
+                                                            <h3 className="course-cate-title">
+                                                                <Link to={`/luyen-tap/danh-gia-nang-luc/${hashids.encode(cate.khoa_hoc_id)}`}>{cate.ten_khoa_hoc}</Link>
+                                                            </h3>                                                        
+                                                        <p className="course-cate-description">
+                                                            {/* <span>Ngày bắt đầu: {moment(cate.ngay_bat_dau).format(config.DATE_FORMAT_SHORT)}</span>
+                                                            <span>Ngày kết thúc: {moment(cate.ngay_ket_thuc).format(config.DATE_FORMAT_SHORT)}</span> */}
+                                                            
+                                                            <Link to={`/luyen-tap/danh-gia-nang-luc/${hashids.encode(cate.khoa_hoc_id)}`}>
+                                                                <Button type="primary" className="mt-2 mb-2" style={{borderRadius: 6}}>
+                                                                    Bắt đầu thi
+                                                                </Button>
+                                                            </Link>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </Col>
+                                        )
+                                    })}
+                                </Row>
+                            </Panel>
+                            <Panel header={'Thi thử Online'} className='collapse-course'>
+                                <Row gutter={[16, 16]} className="list-cate-items">
+                                    {courseOfUser.filter((course) => course.loai_kct === 1).map((cate, index) => {
+                                        return (
+                                            <Col xl={5} sm={12} xs={12} className="course-cate-row" key={cate.khoa_hoc_id}>
+                                                <div className="course-cate-box">
+                                                    <div className="image-box">
+                                                        {/* <Button className='btn-enter-online-course' onClick={() => requestExamOnline(cate.khoa_hoc_id)}>
+                                                            <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
+                                                        </Button> */}
+                                                        <Link to={`/luyen-tap/kiem-tra/${hashids.encode(cate.khoa_hoc_id)}`}>
+                                                            <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
+                                                        </Link>
+                                                    </div>
+                                                    <div className="box-text">
+                                                            {/* <Button className='btn-enter-online-course' onClick={() => requestExamOnline(cate.khoa_hoc_id)}>
+                                                                {cate.ten_khoa_hoc}
+                                                            </Button> */}
+                                                            <h3 className="course-cate-title">
+                                                                <Link to={`/luyen-tap/kiem-tra/${hashids.encode(cate.khoa_hoc_id)}`}>{cate.ten_khoa_hoc}</Link>
+                                                            </h3>
+                                                        
+                                                        <p className="course-cate-description">
+                                                            {/* <span>Ngày bắt đầu: {moment(cate.ngay_bat_dau).format(config.DATE_FORMAT_SHORT)}</span>
+                                                            <span>Ngày kết thúc: {moment(cate.ngay_ket_thuc).format(config.DATE_FORMAT_SHORT)}</span> */}
+                                                            <Link to={`/luyen-tap/kiem-tra/${hashids.encode(cate.khoa_hoc_id)}`}>
+                                                                <Button type="primary" className="mt-2 mb-2" style={{borderRadius: 6}}>
+                                                                    Bắt đầu thi
+                                                                </Button>
+                                                            </Link>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </Col>
+                                        )
+                                    })}
+                                </Row>
+                            </Panel>
+                            <Panel header={'Ôn luyện ĐGNL'} className='collapse-course'>
+                                <Row gutter={[16, 16]} className="list-cate-items">
+                                    {courseOfUser.filter((course) => course.loai_kct === 2).map((cate, index) => {
+                                        return (
+                                            <Col xl={5} sm={12} xs={12} className="course-cate-row" key={cate.khoa_hoc_id}>
+                                                <div className="course-cate-box">
+                                                    <div className="image-box">
                                                         <Link to={`/luyen-tap/luyen-tap/${hashids.encode(cate.khoa_hoc_id)}`}>
-                                                            <Button type="primary" className="mt-2 mb-2" style={{borderRadius: 6}}>
-                                                                Bắt đầu học
-                                                            </Button>
+                                                            <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
                                                         </Link>
-                                                    }
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </Col>
-                                )
-                            })}
-                        </Row>
+                                                    </div>
+                                                    <div className="box-text">
+                                                        <h3 className="course-cate-title">
+                                                            <Link to={`/luyen-tap/luyen-tap/${hashids.encode(cate.khoa_hoc_id)}`}>{cate.ten_khoa_hoc}</Link>
+                                                        </h3>
+                                                        <p className="course-cate-description">
+                                                            {/* <span>Ngày bắt đầu: {moment(cate.ngay_bat_dau).format(config.DATE_FORMAT_SHORT)}</span>
+                                                            <span>Ngày kết thúc: {moment(cate.ngay_ket_thuc).format(config.DATE_FORMAT_SHORT)}</span> */}
+                                                            <Link to={`/luyen-tap/luyen-tap/${hashids.encode(cate.khoa_hoc_id)}`}>
+                                                                <Button type="primary" className="mt-2 mb-2" style={{borderRadius: 6}}>
+                                                                    Bắt đầu học
+                                                                </Button>
+                                                            </Link>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </Col>
+                                        )
+                                    })}
+                                </Row>
+                            </Panel>
+                        </Collapse>
                     ): 
                         <NoRecord title={'Bạn chưa mua khóa học nào'} subTitle={''}/>
                     }

@@ -263,7 +263,10 @@ function AppFilter(props) {
               <br/>
               {props.isShowSearchBox && (
                 <Col md={3} xs={24} xl={5}>
-                  <Search placeholder={props.placeholder ? props.placeholder : "Tìm kiếm theo tên"} onChange={(e) => props.onFilterChange('search', e.target.value)} style={{width:"90%"}}/>
+                  <Search placeholder={props.placeholder ? props.placeholder : "Tìm kiếm theo tên"} 
+                    onChange={(e) => props.onFilterChange('search', e.target.value)} style={{width:"90%"}}
+                    allowClear
+                  />
                 </Col>
               )}
               {props.isSearchProvinces && (

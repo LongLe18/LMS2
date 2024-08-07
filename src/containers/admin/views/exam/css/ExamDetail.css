@@ -102,6 +102,7 @@
   
   .question-items .item .header-question .point {
     color: #990000;
+    margin-left: 6px;
     font-weight: lighter;
   }
   

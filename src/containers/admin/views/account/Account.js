@@ -106,21 +106,21 @@ const AccountPage = () => {
 
     const getProvince = () => {
       axios.get(config.API_URL + '/province', )
-          .then(
-              res => {
+        .then(
+            res => {
 
-                  if (res.status === 200 && res.statusText === 'OK') {
-                      res.data.data.push({ten: 'Tất cả', ttp_id: ''});
-                      setProvinces(res.data.data);
-                  } else {
-                      notification.error({
-                          message: 'Lỗi',
-                          description: 'Có lỗi xảy ra khi lấy dữ liệu',
-                      })
-                  }
-              }
-          )
-          .catch(error => notification.error({ message: error.message }));
+                if (res.status === 200 && res.statusText === 'OK') {
+                    res.data.data.push({ten: 'Tất cả', ttp_id: ''});
+                    setProvinces(res.data.data);
+                } else {
+                    notification.error({
+                        message: 'Lỗi',
+                        description: 'Có lỗi xảy ra khi lấy dữ liệu',
+                    })
+                }
+            }
+        )
+        .catch(error => notification.error({ message: error.message }));
     }
 
     useEffect(() => {
@@ -687,7 +687,7 @@ const AccountPage = () => {
                               },
                           ]}
                           >
-                              <Input placeholder="Nhập họ và tên"/>
+                          <Input placeholder="Nhập họ và tên"/>
                       </Form.Item>
                       <Form.Item
                           className="input-col"

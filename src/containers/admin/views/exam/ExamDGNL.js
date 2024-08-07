@@ -553,22 +553,12 @@ const ExamDGNLAdminPage = () => {
       formData.append('ten_de_thi', values.ten_de_thi);
       formData.append('mo_ta', values.mo_ta !== undefined ? values.mo_ta : '' );
       formData.append('loai_de_thi_id', values.loai_de_thi_id);
+      formData.append('khoa_hoc_id', values.khoa_hoc_id);
       formData.append('kct_id', values.kct_id);
       formData.append('de_mau', 1); // Tạo đề mẫu cho ĐGNL
       if (values.de_thi_ma !== undefined) {
         formData.append('de_thi_ma', values.de_thi_ma !== undefined ? values.de_thi_ma : '');
       }
-
-      if (state.showModule && state.showCourse && state.showThematic) {
-        formData.append('khoa_hoc_id', values.khoa_hoc_id);
-        formData.append('mo_dun_id', values.mo_dun_id);
-        formData.append('chuyen_de_id', values.chuyen_de_id);
-      }
-      else if (state.showModule && state.showCourse) {
-        formData.append('khoa_hoc_id', values.khoa_hoc_id);
-        formData.append('mo_dun_id', values.mo_dun_id);
-      }
-      else if (state.showCourse) formData.append('khoa_hoc_id', values.khoa_hoc_id);
       
       if (state.fileImg !== '')
           formData.append('anh_dai_dien', state.fileImg !== undefined ? state.fileImg : '');

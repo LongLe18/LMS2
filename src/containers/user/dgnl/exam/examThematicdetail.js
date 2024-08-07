@@ -123,8 +123,7 @@ const ExamThematicViewPage = (props) => {
         const subcallback = (res) => {
             const callback = (subres) => {
                 if (subres.status === 200 && subres.statusText === 'OK')
-                    console.log(subres);
-                    // history.push(`/luyen-tap/lam-kiem-tra/${idModule}/${moment().toNow()}/${params.id}/${subres.data.data.de_thi_id}/${subres.data.data.dthv_id}/${params.idCourse}`);
+                    history.push(`/luyen-tap/lam-kiem-tra/${idModule}/${moment().toNow()}/${params.id}/${subres.data.data.de_thi_id}/${subres.data.data.dthv_id}/${params.idCourse}`);
             };
 
             if (res.response) {

@@ -188,7 +188,6 @@ const ContentDetailPage = (props) => {
         }
     }
     
-
     const OnRenderVideo = (link) => {
         setVideo(config.API_URL +  link);
         if (link === null) {

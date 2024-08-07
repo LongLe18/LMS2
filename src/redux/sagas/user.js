@@ -372,7 +372,7 @@ function* createTeacher(payload) {
     }
   } catch (error) {
     yield put({ type: actions.user.CREATE_TEACHER_FAILED, error });
-    let messageError = error.response.status === 403 ? error.response.data : '';
+    let messageError = error.response.status === 403 ? error.response.data : error.response.data.message;
     notification.error({
       message: get(error, 'response.data.error', 'Tạo mới giáo viên thất bại ' + messageError),
     });
@@ -390,7 +390,7 @@ function* createStaff(payload) {
     }
   } catch (error) {
     yield put({ type: actions.user.CREATE_STAFF_FAILED, error });
-    let messageError = error.response.status === 403 ? error.response.data : '';
+    let messageError = error.response.status === 403 ? error.response.data : error.response.data.message;
     notification.error({
       message: get(error, 'response.data.error', 'Tạo mới nhân viên thất bại ' + messageError),
     });

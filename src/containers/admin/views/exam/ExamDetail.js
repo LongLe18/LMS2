@@ -10,7 +10,8 @@ import './css/ExamDetail.css'
 import { Row, Col, Form, Steps, Tabs, Modal,
     Input, Upload, message, Result,
     Select, Image, Button, notification, Radio } from 'antd';
-import { UploadOutlined, SaveOutlined, RightOutlined, LeftOutlined, CloseOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { UploadOutlined, SaveOutlined, RightOutlined, 
+    LeftOutlined, CloseOutlined, ExclamationCircleOutlined, TeamOutlined } from '@ant-design/icons';
 import LoadingCustom from 'components/parts/loading/Loading';
 import TextEditorWidget from 'components/common/TextEditor/TextEditor';
 
@@ -580,8 +581,8 @@ const ExamDetailPage = () => {
         formQuestionData.append('mdch_id', values.muc_do_cau_hoi);
         formQuestionData.append('diem', values.diem);
         formQuestionData.append('loi_giai', values.loi_giai);
-        formQuestionData.append('mo_dun_id', values.mo_dun_id_2);
-        formQuestionData.append('chuyen_de_id', values.chuyen_de_id_2);
+        if (values.mo_dun_id_2 !== '') formQuestionData.append('mo_dun_id', values.mo_dun_id_2);
+        if (values.chuyen_de_id_2 !== '') formQuestionData.append('chuyen_de_id', values.chuyen_de_id_2);
         formQuestionData.append('cot_tren_hang', values.kieu_hien_thi_dap_an);
         formQuestionData.append('chuyen_nganh_id', values.chuyen_nganh_id);
 
@@ -670,7 +671,8 @@ const ExamDetailPage = () => {
                 >
                     <CloseOutlined
                         title="Xóa câu hỏi"
-                        onClick={() => {
+                        onClick={(e) => {
+                            e.stopPropagation();
                             questionForm.setFieldsValue(defaultQuestion);
                             Modal.confirm({
                                 title: 'Xóa câu hỏi',
@@ -686,6 +688,7 @@ const ExamDetailPage = () => {
                         Câu {index + 1} 
                         <span className="point">
                             {/* [{question.cau_hoi.diem} điểm]  */}
+                            {majors.data.filter((marjor) => marjor.chuyen_nganh_id === question.cau_hoi.chuyen_nganh_id)[0].ten_chuyen_nganh}
                             {question.cau_hoi.loai_cau_hoi === 2 && 'Câu hỏi đúng sai'}
                         </span>
                     </div>
@@ -856,8 +859,26 @@ const ExamDetailPage = () => {
                                 </Form>
                             </TabPane>
                         
-
                             <TabPane tab="Tạo câu hỏi" key="step_1">
+                                <Row gutter={[16, 16]} style={{marginBottom: 12}}>
+                                    {majors.data.map((major) => (
+                                        <Col xl={4} lg={6} md={12} sm={12} xs={24}>
+                                            <div className="dashboard-stat stat-user">
+                                                <div className="visual"><TeamOutlined /></div>
+                                                <div className="detail">
+                                                    <div className="number">
+                                                        <span>{exam.data.cau_hoi_de_this.filter((cau_hoi) => cau_hoi.cau_hoi.chuyen_nganh_id === major.chuyen_nganh_id).length}</span>
+                                                    </div>
+                                                    <div className="dashboard-stat stat-user">
+                                                        <div className="desc">
+                                                        {major.ten_chuyen_nganh} <RightOutlined />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Col>
+                                    ))}
+                                </Row>  
                                 <Form layout="vertical" className="QuestionForm" onFinish={handleSaveQuestion} form={questionForm} initialValues={defaultQuestion}>
                                     <Row gutter={25}>
                                         <Col xl={18} sm={24} xs={24} className="left-content">
@@ -1143,13 +1164,13 @@ const ExamDetailPage = () => {
                                                                         <Row key={key} style={{display: !state.showTuLuan ? '' : 'none'}}>
                                                                             <Col xl={4}>
                                                                                 <Form.Item {...restField} rules={[]} className="label">
-                                                                                    <span style={{ color: '#ff4d4f' }}>*</span> {currentQuestion.dap_an[key].label}
+                                                                                    <span style={{ color: '#ff4d4f' }}>*</span> {currentQuestion?.dap_an[key]?.label}
                                                                                 </Form.Item>
                                                                             </Col>
                                                                             <Col xl={20}>
                                                                                 <Form.Item {...restField} name={[name, 'tieu_de']} rules={[{ required: !state.showTuLuan, message: 'Bạn chưa nhập nội dung đáp án' }]}>
                                                                                     <TextEditorWidget
-                                                                                        valueParent={currentQuestion.dap_an[key].tieu_de}
+                                                                                        valueParent={currentQuestion?.dap_an[key]?.tieu_de}
                                                                                         placeholder="Thêm nội dung đáp án"
                                                                                         onChange={(val) => {
                                                                                             let dap_an = [...currentQuestion.dap_an];
@@ -1176,7 +1197,7 @@ const ExamDetailPage = () => {
                                                                         <Row key={key} style={{display: state.showTuLuan ? '' : 'none' }}>
                                                                             <Col xl={4}>
                                                                                 <Form.Item {...restField} rules={[]} className="label">
-                                                                                    <span style={{ color: '#ff4d4f' }}>*</span> {currentQuestion.dap_an_tu_luan[key].label}
+                                                                                    <span style={{ color: '#ff4d4f' }}>*</span> {currentQuestion?.dap_an_tu_luan[key]?.label}
                                                                                 </Form.Item>
                                                                             </Col>
                                                                             <Col xl={20}>
@@ -1184,7 +1205,7 @@ const ExamDetailPage = () => {
                                                                                     style={{display: !state.showTextTuLuan ? '' : 'none'}}
                                                                                 >
                                                                                     <TextEditorWidget 
-                                                                                        valueParent={currentQuestion.dap_an_tu_luan[key].tieu_de}
+                                                                                        valueParent={currentQuestion?.dap_an_tu_luan[key]?.tieu_de}
                                                                                         placeholder="Thêm nội dung đáp án"
                                                                                         onChange={(val) => {
                                                                                             let dap_an_tu_luan = [...currentQuestion.dap_an_tu_luan];

@@ -122,16 +122,16 @@
   }
   
   .form-math .math-item {
-    flex: 1;
-    margin: 0 6px;
+    /* flex: 1;
 
-    width: 100%;
-    margin: 25px 0;
     align-items: center;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    clear: both;
+    clear: both; */
+
+    width: 100%;
+    margin: 25px 6px;
     min-height: 50px;
     border: 1px solid #dfd4ff;
     padding: 12px;
@@ -139,7 +139,18 @@
     border-radius: 10px;
     background: #f1f1f1;
   }
-  
+
+  .form-math .math-item .math-item-content {
+    font-size: 20px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    grid-gap: 10px;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
   .form-math .math-item>div {
     margin-right: 6px;
   }

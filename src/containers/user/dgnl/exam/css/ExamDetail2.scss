@@ -34,6 +34,14 @@
 }
 
 .question-list .title-exam {
+  width: 100%;
+  margin: 25px 6px;
+  min-height: 50px;
+  font-size: 24px;
+  user-select: none;
+}
+
+.question-list .title-exam .title-exam-content {
   font-size: 20px;
   display: flex;
   flex-direction: row;
@@ -252,13 +260,16 @@
   margin-top: 8px;
   display: inline-block;
   padding-left: 46px;
-  font-size: 18px;
+  font-size: 20px;
   text-align: left;
   .underline {
     text-decoration: underline;
   }
   .bold {
     font-weight: 700;
+  }
+  .italic {
+    font-style: italic;
   }
 }
 
@@ -542,6 +553,20 @@
 }
 
 .help-answer {
+  width: 100%;
+  margin: 25px 6px;
+  min-height: 50px;
+  font-size: 24px;
+}
+
+.option-answer {
+  width: 100%;
+  margin-left: 6px;
+  min-height: 50px;
+  font-size: 20px;
+}
+
+.help-answer .help-answer-content, .option-answer .option-answer-content {
   font-size: 20px;
   display: flex;
   flex-direction: row;

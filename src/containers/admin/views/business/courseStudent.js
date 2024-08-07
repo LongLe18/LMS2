@@ -235,6 +235,7 @@ const CourseStudentPage = (props) => {
     };
 
     const StudentOfCourse = (id) => {
+        setFilter({ ...filter, search: ''});
         setState({...state, activeTab: "2", idCourse: id });
         dispatch(courseActions.getStudentOfCourse({ idCourse: id, province: filter.tinh, search: filter.search }));
     };
@@ -245,6 +246,7 @@ const CourseStudentPage = (props) => {
     }, [pageIndex, pageSize]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const RemainStudentOfCourse = (id) => {
+        setFilter({ ...filter, search: ''});
         setState({...state, activeTab: "3", idCourse: id });
         dispatch(courseActions.getRemainStudentOfCourse({ idCourse: id, province: filter.tinh, search: filter.search, pageIndex: pageIndex - 1, pageSize: pageSize }));
     };
@@ -331,7 +333,7 @@ const CourseStudentPage = (props) => {
                 });
             }
         };
-  
+        
         if (selectedRowKeys.length === 0) {
             notification.warning({
                 message: 'Thông báo',

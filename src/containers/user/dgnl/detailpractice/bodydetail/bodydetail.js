@@ -96,7 +96,7 @@ const BodyDetailPage = (props) => {
                     <h3 className="red-text bold">CHƯƠNG TRÌNH HỌC</h3>
                 </div>
 
-                <Collapse defaultActiveKey={['1']} accordion>
+                <Collapse defaultActiveKey={['0']} accordion>
                     { thematics.status === "success" && thematicsFilter.map(({ chuyen_de_id, ten_chuyen_de, mo_ta, ten_lop }, index) => { 
                         if (index < 0) {
                             return (

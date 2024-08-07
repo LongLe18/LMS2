@@ -24,7 +24,6 @@ const MainPageUser = (props) => {
     const programmeCourses = useSelector(state => state.programme.courses.result);
 
     useEffect(() => {
-        
         dispatch(programmeAction.getProgrammeCourses());
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
     
