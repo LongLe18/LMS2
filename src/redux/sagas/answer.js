@@ -79,7 +79,7 @@ function* createAnswer(payload) {
 
 function* editAnswer(payload) {
     try {
-        let endpoint = config.API_URL + `/answer`;
+        let endpoint = config.API_URL + `/answer?de_thi_id=${payload.params.de_thi_id}`;
         const response = yield call(putApiAuth, endpoint, payload.params.formData); 
         const result = yield response;
         yield put({ type: actions.answer.EDIT_ANSWER_SUCCESS, result: result });

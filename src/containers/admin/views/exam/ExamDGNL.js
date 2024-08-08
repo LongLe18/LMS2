@@ -176,7 +176,7 @@ const ExamDGNLAdminPage = () => {
             style={{display: de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}}
             >Xem
           </Link>
-          {de_thi.trang_thai === 0 ?
+          {de_thi.trang_thai === false ?
               <Tooltip title={`Mở khóa đề thi`} color="#2db7f5" placement="bottom">
                   <Button shape="round" type="primary" 
                   onClick={() => changeStatus(de_thi_id, de_thi.trang_thai)} style={{display: !de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}} icon={<UnlockOutlined />}>
@@ -319,7 +319,7 @@ const ExamDGNLAdminPage = () => {
   const renderCourse = () => {
       let options = [];
       if (courses.status === 'success') {
-        options = courses.data.map((type) => (
+        options = courses.data.filter((course) => course.trang_thai === 1).map((type) => (
           <Option key={type.khoa_hoc_id} value={type.khoa_hoc_id} >{type.ten_khoa_hoc}</Option>
         ))
       }
@@ -345,7 +345,7 @@ const ExamDGNLAdminPage = () => {
   const renderExam = () => {
     let options = [];
       if (exams.status === 'success') {
-        options = exams.data.map((exam) => (
+        options = exams.data.filter((exam) => exam.xuat_ban === false).map((exam) => (
           <Option key={exam.de_thi_id} value={exam.de_thi_id} >{exam.ten_de_thi}</Option>
         ))
       }
@@ -482,7 +482,7 @@ const ExamDGNLAdminPage = () => {
       }
     ).then(
       res => {
-        if (res.statusText === 'OK' && res.status === 200) {
+        if (res.statusText === 'OK' && res.status === 200 && res.data.status === 'success') {
           formFastExam.resetFields();
           dispatch(examActions.filterExamDGNL({ idCourse: filter.khoa_hoc_id, kct_id: filter.kct_id, 
             status: filter.trang_thai, publish: tabs, pageIndex: pageIndex, pageSize: pageSize 
@@ -494,10 +494,11 @@ const ExamDGNLAdminPage = () => {
           setIsModalFastVisible(false);
           setSpinning(false);
         } else {
-            notification.error({
-                message: 'Thông báo',
-                description: 'Thêm đề thi mới thất bại. Xin vui lòng kiểm tra lại tiêu chí đề',
-            })
+          notification.error({
+            message: 'Thêm đề thi mới thất bại.',
+            description: `Lỗi ${res?.data?.detail}.Xin vui lòng kiểm tra đề`,
+          })
+          setSpinning(false);
         }
       }
     )
@@ -676,7 +677,7 @@ const ExamDGNLAdminPage = () => {
                             isShowCourse={true}
                             isShowStatus={true}
                             isShowSearchBox={false}
-                            courses={courses.data}
+                            courses={courses.data.filter((course) => course.loai_kct === 0)}
                             onFilterChange={(field, value) => onFilterChange(field, value)}
                           />
                         }

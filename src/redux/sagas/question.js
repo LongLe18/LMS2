@@ -80,7 +80,7 @@ function* createQuestion(payload) {
 
 function* editQuestion(payload) {
     try {
-        let endpoint = config.API_URL + `/question/${payload.params.idQuestion}`;
+        let endpoint = config.API_URL + `/question/${payload.params.idQuestion}?de_thi_id=${payload.params.de_thi_id}`;
         const response = yield call(putApiAuth, endpoint, payload.params.formData); 
         const result = yield response;
         yield put({ type: actions.quesiton.EDIT_QUESTION_SUCCESS, result: result });

@@ -537,7 +537,7 @@ const ExamDetailPage = () => {
                             answer.append(`noi_dung_dap_an1`, values.dap_an_tu_luan[0].tieu_de)
                             answer.append('dap_an_id1', question.data.dap_ans[0].dap_an_id)
                         }
-                        dispatch(answerActions.editANSWER({ formData: answer }, subCallBack2));
+                        dispatch(answerActions.editANSWER({ formData: answer, de_thi_id: id }, subCallBack2));
                     } else { // đổi loại câu hỏi
                         if (values.loai_cau_hoi === 1 || values.loai_cau_hoi === 2) { // Tự luận -> Trắc nghiệm
                             // Xoá đáp án hiện có
@@ -581,8 +581,8 @@ const ExamDetailPage = () => {
         formQuestionData.append('mdch_id', values.muc_do_cau_hoi);
         formQuestionData.append('diem', values.diem);
         formQuestionData.append('loi_giai', values.loi_giai);
-        if (values.mo_dun_id_2 !== '') formQuestionData.append('mo_dun_id', values.mo_dun_id_2);
-        if (values.chuyen_de_id_2 !== '') formQuestionData.append('chuyen_de_id', values.chuyen_de_id_2);
+        if (values.mo_dun_id_2 !== '' && values.mo_dun_id_2 !== null && values.mo_dun_id_2 !== undefined) formQuestionData.append('mo_dun_id', values.mo_dun_id_2);
+        if (values.chuyen_de_id_2 !== '' && values.chuyen_de_id_2 !== null && values.chuyen_de_id_2 !== undefined) formQuestionData.append('chuyen_de_id', values.chuyen_de_id_2);
         formQuestionData.append('cot_tren_hang', values.kieu_hien_thi_dap_an);
         formQuestionData.append('chuyen_nganh_id', values.chuyen_nganh_id);
 
@@ -591,7 +591,7 @@ const ExamDetailPage = () => {
         if (values.trich_doan !== '')
             formQuestionData.append('trich_doan_id', values.trich_doan);    
         if (state.isEdit) {
-            dispatch(questionActions.editQuestion({ idQuestion: state.idQuestion, formData: formQuestionData }, callback));        
+            dispatch(questionActions.editQuestion({ idQuestion: state.idQuestion, formData: formQuestionData, de_thi_id: id }, callback));        
         } else {
             dispatch(questionActions.createQuestion(formQuestionData, callback));         
         }
@@ -861,7 +861,7 @@ const ExamDetailPage = () => {
                         
                             <TabPane tab="Tạo câu hỏi" key="step_1">
                                 <Row gutter={[16, 16]} style={{marginBottom: 12}}>
-                                    {majors.data.map((major) => (
+                                    {majors?.data.map((major) => (
                                         <Col xl={4} lg={6} md={12} sm={12} xs={24}>
                                             <div className="dashboard-stat stat-user">
                                                 <div className="visual"><TeamOutlined /></div>

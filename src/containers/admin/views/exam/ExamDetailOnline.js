@@ -525,7 +525,7 @@ const OnlineExamDetailPage = () => {
                             answer.append(`noi_dung_dap_an1`, values.dap_an_tu_luan[0].tieu_de)
                             answer.append('dap_an_id1', question.data.dap_ans[0].dap_an_id)
                         }
-                        dispatch(answerActions.editANSWER({ formData: answer }, subCallBack2));
+                        dispatch(answerActions.editANSWER({ formData: answer, de_thi_id: id  }, subCallBack2));
                     } else { // đổi loại câu hỏi
                         if (values.loai_cau_hoi === 1 || values.loai_cau_hoi === 2) { // Tự luận -> Trắc nghiệm
                             // Xoá đáp án hiện có
@@ -577,7 +577,7 @@ const OnlineExamDetailPage = () => {
         if (values.trich_doan !== '')
             formQuestionData.append('trich_doan_id', values.trich_doan);    
         if (state.isEdit) {
-            dispatch(questionActions.editQuestion({ idQuestion: state.idQuestion, formData: formQuestionData }, callback));        
+            dispatch(questionActions.editQuestion({ idQuestion: state.idQuestion, formData: formQuestionData, de_thi_id: id }, callback));        
         } else {
             dispatch(questionActions.createQuestion(formQuestionData, callback));         
         }
