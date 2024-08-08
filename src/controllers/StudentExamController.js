@@ -138,7 +138,6 @@ const postCreatev2 = async (req, res) => {
         where: {
             de_mau: true,
             xuat_ban: true,
-            trang_thai: true,
             khoa_hoc_id
         },
     });
@@ -155,6 +154,7 @@ const postCreatev2 = async (req, res) => {
         ten_de_thi: 'THI ĐÁNH GIÁ NĂNG LỰC',
         tong_diem: 150,
         xuat_ban: true,
+        trang_thai: true,
         kct_id: 1,
         khoa_hoc_id,
         loai_de_thi_id: 4,
@@ -166,14 +166,6 @@ const postCreatev2 = async (req, res) => {
             khoa_hoc_id: khoa_hoc_id,
         },
     });
-    if (!criteria) {
-        res.status(404).send({
-            status: 'error',
-            data: null,
-            message: 'no criteria',
-        });
-        return;
-    }
 
     // phần 1
     await sequelize.query(
