@@ -155,7 +155,6 @@ const postCreatev2 = async (req, res) => {
         ten_de_thi: 'THI ĐÁNH GIÁ NĂNG LỰC',
         tong_diem: 150,
         xuat_ban: true,
-        trang_thai: true,
         kct_id: 1,
         khoa_hoc_id,
         loai_de_thi_id: 4,
