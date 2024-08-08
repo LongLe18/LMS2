@@ -8,7 +8,7 @@ const getAll = async (req, res) => {
         where: {
             ...filter,
         },
-        limit: 100
+        limit: 100,
     });
     res.status(200).send({
         status: 'success',
@@ -41,14 +41,7 @@ const postCreate = async (req, res) => {
             cau_hoi_id: req.body.cau_hoi_id,
             ...(req.files &&
                 req.files.tep_dinh_kem1 && {
-                    tep_dinh_kem: req.files.tep_dinh_kem1
-                        .map(
-                            (item) =>
-                                item.destination.replace('public', '') +
-                                '/' +
-                                item.filename
-                        )
-                        .join(','),
+                    noi_dung_dap_an: `${req.body.noi_dung_dap_an1} ${req.body.tep_dinh_kem1}`,
                 }),
         });
     }
@@ -62,14 +55,7 @@ const postCreate = async (req, res) => {
             cau_hoi_id: req.body.cau_hoi_id,
             ...(req.files &&
                 req.files.tep_dinh_kem2 && {
-                    tep_dinh_kem: req.files.tep_dinh_kem2
-                        .map(
-                            (item) =>
-                                item.destination.replace('public', '') +
-                                '/' +
-                                item.filename
-                        )
-                        .join(','),
+                    noi_dung_dap_an: `${req.body.noi_dung_dap_an2} ${req.body.tep_dinh_kem2}`,
                 }),
         });
     }
@@ -83,14 +69,7 @@ const postCreate = async (req, res) => {
             cau_hoi_id: req.body.cau_hoi_id,
             ...(req.files &&
                 req.files.tep_dinh_kem3 && {
-                    tep_dinh_kem: req.files.tep_dinh_kem3
-                        .map(
-                            (item) =>
-                                item.destination.replace('public', '') +
-                                '/' +
-                                item.filename
-                        )
-                        .join(','),
+                    noi_dung_dap_an: `${req.body.noi_dung_dap_an3} ${req.body.tep_dinh_kem3}`,
                 }),
         });
     }
@@ -104,14 +83,7 @@ const postCreate = async (req, res) => {
             cau_hoi_id: req.body.cau_hoi_id,
             ...(req.files &&
                 req.files.tep_dinh_kem4 && {
-                    tep_dinh_kem: req.files.tep_dinh_kem4
-                        .map(
-                            (item) =>
-                                item.destination.replace('public', '') +
-                                '/' +
-                                item.filename
-                        )
-                        .join(','),
+                    noi_dung_dap_an: `${req.body.noi_dung_dap_an4} ${req.body.tep_dinh_kem4}`,
                 }),
         });
     }
@@ -137,62 +109,6 @@ const getUpdate = async (req, res) => {
 
 const putUpdate = async (req, res) => {
     try {
-        if (req.files['tep_dinh_kem1']) {
-            const answer = await Answer.findOne({
-                where: {
-                    dap_an_id: req.body.dap_an_id1,
-                },
-                raw: true,
-            });
-            if (answer.tep_dinh_kem) {
-                for (const tep_dinh_kem of answer.tep_dinh_kem.split(',')) {
-                    if (fs.existsSync(`public${tep_dinh_kem}`))
-                        fs.unlinkSync(`public${tep_dinh_kem}`);
-                }
-            }
-        }
-        if (req.files['tep_dinh_kem2']) {
-            const answer = await Answer.findOne({
-                where: {
-                    dap_an_id: req.body.dap_an_id2,
-                },
-                raw: true,
-            });
-            if (answer.tep_dinh_kem) {
-                for (const tep_dinh_kem of answer.tep_dinh_kem.split(',')) {
-                    if (fs.existsSync(`public${tep_dinh_kem}`))
-                        fs.unlinkSync(`public${tep_dinh_kem}`);
-                }
-            }
-        }
-        if (req.files['tep_dinh_kem3']) {
-            const answer = await Answer.findOne({
-                where: {
-                    dap_an_id: req.body.dap_an_id3,
-                },
-                raw: true,
-            });
-            if (answer.tep_dinh_kem) {
-                for (const tep_dinh_kem of answer.tep_dinh_kem.split(',')) {
-                    if (fs.existsSync(`public${tep_dinh_kem}`))
-                        fs.unlinkSync(`public${tep_dinh_kem}`);
-                }
-            }
-        }
-        if (req.files['tep_dinh_kem4']) {
-            const answer = await Answer.findOne({
-                where: {
-                    dap_an_id: req.body.dap_an_id4,
-                },
-                raw: true,
-            });
-            if (answer.tep_dinh_kem) {
-                for (const tep_dinh_kem of answer.tep_dinh_kem.split(',')) {
-                    if (fs.existsSync(`public${tep_dinh_kem}`))
-                        fs.unlinkSync(`public${tep_dinh_kem}`);
-                }
-            }
-        }
         if (!req.body.dap_an_dung1) {
             req.body.dap_an_dung1 = 0;
         }
@@ -202,14 +118,7 @@ const putUpdate = async (req, res) => {
                 dap_an_dung: req.body.dap_an_dung1,
                 ...(req.files &&
                     req.files.tep_dinh_kem1 && {
-                        tep_dinh_kem: req.files.tep_dinh_kem1
-                            .map(
-                                (item) =>
-                                    item.destination.replace('public', '') +
-                                    '/' +
-                                    item.filename
-                            )
-                            .join(','),
+                        noi_dung_dap_an: `${req.body.noi_dung_dap_an1} ${req.body.tep_dinh_kem1}`,
                     }),
             },
             {
@@ -218,7 +127,8 @@ const putUpdate = async (req, res) => {
                 },
             }
         );
-        if (req.body.loai_cau_hoi === '1') { // câu hỏi trắc nghiệm
+        if (req.body.loai_cau_hoi === '1') {
+            // câu hỏi trắc nghiệm
             if (!req.body.dap_an_dung2) {
                 req.body.dap_an_dung2 = 0;
             }
@@ -228,14 +138,7 @@ const putUpdate = async (req, res) => {
                     dap_an_dung: req.body.dap_an_dung2,
                     ...(req.files &&
                         req.files.tep_dinh_kem2 && {
-                            tep_dinh_kem: req.files.tep_dinh_kem2
-                                .map(
-                                    (item) =>
-                                        item.destination.replace('public', '') +
-                                        '/' +
-                                        item.filename
-                                )
-                                .join(','),
+                            noi_dung_dap_an: `${req.body.noi_dung_dap_an2} ${req.body.tep_dinh_kem2}`,
                         }),
                 },
                 {
@@ -253,14 +156,7 @@ const putUpdate = async (req, res) => {
                     dap_an_dung: req.body.dap_an_dung3,
                     ...(req.files &&
                         req.files.tep_dinh_kem3 && {
-                            tep_dinh_kem: req.files.tep_dinh_kem3
-                                .map(
-                                    (item) =>
-                                        item.destination.replace('public', '') +
-                                        '/' +
-                                        item.filename
-                                )
-                                .join(','),
+                            noi_dung_dap_an: `${req.body.noi_dung_dap_an3} ${req.body.tep_dinh_kem3}`,
                         }),
                 },
                 {
@@ -278,14 +174,7 @@ const putUpdate = async (req, res) => {
                     dap_an_dung: req.body.dap_an_dung4,
                     ...(req.files &&
                         req.files.tep_dinh_kem4 && {
-                            tep_dinh_kem: req.files.tep_dinh_kem4
-                                .map(
-                                    (item) =>
-                                        item.destination.replace('public', '') +
-                                        '/' +
-                                        item.filename
-                                )
-                                .join(','),
+                            noi_dung_dap_an: `${req.body.noi_dung_dap_an4} ${req.body.tep_dinh_kem4}`,
                         }),
                 },
                 {
@@ -316,9 +205,12 @@ const deleteByIdQuestion = async (req, res) => {
             cau_hoi_id: req.params.id,
         },
         raw: true,
-    })
-    answers.forEach(async answer => {
-        if (answer.noi_dung_dap_an&&fs.existsSync(`public${answer.noi_dung_dap_an}`))
+    });
+    answers.forEach(async (answer) => {
+        if (
+            answer.noi_dung_dap_an &&
+            fs.existsSync(`public${answer.noi_dung_dap_an}`)
+        )
             fs.unlinkSync(`public${answer.noi_dung_dap_an}`);
         if (answer.tep_dinh_kem) {
             for (const tep_dinh_kem of answer.tep_dinh_kem.split(',')) {
@@ -331,13 +223,13 @@ const deleteByIdQuestion = async (req, res) => {
                 dap_an_id: answer.dap_an_id,
             },
         });
-    })
+    });
     res.status(200).send({
         status: 'success',
         data: null,
         message: 'deleted',
     });
-}
+};
 
 const forceDelete = async (req, res) => {
     const answer = await Answer.findOne({
@@ -357,7 +249,7 @@ const forceDelete = async (req, res) => {
             dap_an_id: req.params.id,
         },
     });
-    
+
     res.status(200).send({
         status: 'success',
         data: null,

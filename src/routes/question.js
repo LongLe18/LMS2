@@ -3,20 +3,20 @@ const router = express.Router();
 const { tryCatch } = require('../middlewares/tryCatch');
 const questionController = require('../controllers/QuestionController');
 const { authToken, authRole } = require('../middlewares/auth');
-const { upload } = require('../middlewares/upload2');
+const { uploadWordMedia } = require('../middlewares/upload4');
 
 router.post(
     '/create', authToken, authRole([2], 6),
-    upload.fields([
-        { name: 'tep_dinh_kem_noi_dung', maxCount: 10 },
-        { name: 'tep_dinh_kem_loi_giai', maxCount: 10 },
+    uploadWordMedia.fields([
+        { name: 'tep_dinh_kem_noi_dung', maxCount: 1 },
+        { name: 'tep_dinh_kem_loi_giai', maxCount: 1 },
     ]),
     tryCatch(questionController.postCreate)
 );
 //router.get('/:id/edit', authToken, authRole([2], 6), tryCatch(questionController.getUpdate));
 router.put(
     '/:id', authToken, authRole([2], 6), 
-    upload.fields([
+    uploadWordMedia.fields([
         { name: 'tep_dinh_kem_noi_dung', maxCount: 10 },
         { name: 'tep_dinh_kem_loi_giai', maxCount: 10 },
     ]),

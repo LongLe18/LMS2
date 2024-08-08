@@ -108,25 +108,11 @@ const postCreate = async (req, res) => {
         ...rest,
         ...(req.files &&
             req.files.tep_dinh_kem_noi_dung && {
-                tep_dinh_kem_noi_dung: req.files.tep_dinh_kem_noi_dung
-                    .map(
-                        (item) =>
-                            item.destination.replace('public', '') +
-                            '/' +
-                            item.filename
-                    )
-                    .join(','),
+                noi_dung: `${req.body.noi_dung} ${req.body.tep_dinh_kem_noi_dung}`,
             }),
         ...(req.files &&
             req.files.tep_dinh_kem_loi_giai && {
-                tep_dinh_kem_loi_giai: req.files.tep_dinh_kem_loi_giai
-                    .map(
-                        (item) =>
-                            item.destination.replace('public', '') +
-                            '/' +
-                            item.filename
-                    )
-                    .join(','),
+                loi_giai: `${req.body.loi_giai} ${req.body.tep_dinh_kem_loi_giai}`,
             }),
     });
     res.status(200).send({
@@ -137,59 +123,16 @@ const postCreate = async (req, res) => {
 };
 
 const putUpdate = async (req, res) => {
-    if (req.files) {
-        const question = await Question.findOne({
-            where: {
-                cau_hoi_id: req.params.id,
-            },
-        });
-        if (
-            req.files['tep_dinh_kem_noi_dung'] &&
-            question.tep_dinh_kem_noi_dung
-        ) {
-            for (const tep_dinh_kem_noi_dung of question.tep_dinh_kem_noi_dung.split(
-                ','
-            )) {
-                if (fs.existsSync(`public${tep_dinh_kem_noi_dung}`))
-                    fs.unlinkSync(`public${tep_dinh_kem_noi_dung}`);
-            }
-        }
-        if (
-            req.files['tep_dinh_kem_loi_giai'] &&
-            question.tep_dinh_kem_loi_giai
-        ) {
-            for (const tep_dinh_kem_loi_giai of question.tep_dinh_kem_loi_giai.split(
-                ','
-            )) {
-                if (fs.existsSync(`public${tep_dinh_kem_loi_giai}`))
-                    fs.unlinkSync(`public${tep_dinh_kem_loi_giai}`);
-            }
-        }
-    }
     await Question.update(
         {
             ...req.body,
             ...(req.files &&
                 req.files.tep_dinh_kem_noi_dung && {
-                    tep_dinh_kem_noi_dung: req.files.tep_dinh_kem_noi_dung
-                        .map(
-                            (item) =>
-                                item.destination.replace('public', '') +
-                                '/' +
-                                item.filename
-                        )
-                        .join(','),
+                    noi_dung: `${req.body.noi_dung} ${req.body.tep_dinh_kem_noi_dung}`,
                 }),
             ...(req.files &&
                 req.files.tep_dinh_kem_loi_giai && {
-                    tep_dinh_kem_loi_giai: req.files.tep_dinh_kem_loi_giai
-                        .map(
-                            (item) =>
-                                item.destination.replace('public', '') +
-                                '/' +
-                                item.filename
-                        )
-                        .join(','),
+                    loi_giai: `${req.body.loi_giai} ${req.body.tep_dinh_kem_loi_giai}`,
                 }),
         },
         {

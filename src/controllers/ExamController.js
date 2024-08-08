@@ -52,18 +52,23 @@ const getExamOnline = async (req, res) => {
 // lấy danh sách đề thi đánh giá năng lực
 const getExamDGNL = async (req, res) => {
     const { count, rows } = await Exam.findAndCountAll({
-        include: [{
-            model: OnlineCriteria,
-        },{
+        include: [
+            {
+                model: OnlineCriteria,
+            },
+            {
                 model: Course,
                 attributes: ['ten_khoa_hoc'], // Include the ten_khoa_hoc field
-        }],
+            },
+        ],
         where: {
             ...(req.query.kct_id && { kct_id: req.query.kct_id }),
             ...(req.query.trang_thai && { trang_thai: req.query.trang_thai }),
             ...(req.query.xuat_ban && { xuat_ban: req.query.xuat_ban }),
-            ...(req.query.khoa_hoc_id && { khoa_hoc_id: req.query.khoa_hoc_id }),
-            de_mau: true
+            ...(req.query.khoa_hoc_id && {
+                khoa_hoc_id: req.query.khoa_hoc_id,
+            }),
+            de_mau: true,
         },
         offset:
             (Number(req.query.pageIndex || 1) - 1) *
@@ -375,28 +380,66 @@ const getAll_admin = async (req, res) => {
 
 const getById = async (req, res) => {
     let exam = await Exam.findOne({
-        include: {
-            model: ExamQuestion,
-            include: {
-                model: Question,
-                include: [
-                    {
-                        model: Answer,
-                    },
-                    {
-                        model: Exceprt,
-                    },
-                ],
-            },
-        },
         where: {
             de_thi_id: req.params.id,
         },
-        order: [
-            [sequelize.col('phan'), 'ASC'],
-            [sequelize.col('dap_an_id'), 'ASC'],
-        ],
     });
+    if (exam.de_mau) {
+        exam = await Exam.findOne({
+            include: {
+                model: ExamQuestion,
+                include: {
+                    model: Question,
+                    include: [
+                        {
+                            model: Answer,
+                        },
+                        {
+                            model: Exceprt,
+                        },
+                    ],
+                },
+            },
+            where: {
+                de_thi_id: req.params.id,
+            },
+            order: [
+                [
+                    sequelize.literal(
+                        `FIELD(chuyen_nganh_id, ${[1, 7, 3, 4, 6, 8, 9].join(
+                            ', '
+                        )})`
+                    ),
+                ],
+                [sequelize.col('dap_an_id'), 'ASC'],
+            ],
+        });
+    } else {
+        exam = await Exam.findOne({
+            include: {
+                model: ExamQuestion,
+                include: {
+                    model: Question,
+                    include: [
+                        {
+                            model: Answer,
+                        },
+                        {
+                            model: Exceprt,
+                        },
+                    ],
+                },
+            },
+            where: {
+                de_thi_id: req.params.id,
+            },
+            order: [
+                [sequelize.col('phan'), 'ASC'],
+                [sequelize.col('dap_an_id'), 'ASC'],
+            ],
+        });
+    }
+
     let criteria;
     if (exam) {
         if (exam.loai_de_thi_id == 1) {
@@ -829,7 +872,7 @@ const putUpdate = async (req, res) => {
 
 const publish = async (req, res) => {
     const exam = await Exam.findOne({
-        attributes: ['xuat_ban', 'de_mau'],
+        attributes: ['xuat_ban', 'de_mau', 'khoa_hoc_id'],
         where: {
             de_thi_id: req.params.id,
         },
@@ -848,17 +891,41 @@ const publish = async (req, res) => {
         );
     } else {
         if (exam.de_mau) {
-            await Exam.update(
+            const condition = await sequelize.query(
+                `
+                SELECT ((SELECT COUNT(*) FROM cau_hoi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 1) >= 50
+                AND (SELECT COUNT(*) FROM cau_hoi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 7) >= 50
+                AND (SELECT COUNT(*) FROM cau_hoi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 3) >= 17
+                AND (SELECT COUNT(*) FROM cau_hoi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 4) >= 17
+                AND (SELECT COUNT(*) FROM cau_hoi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 5) >= 17
+                AND (SELECT COUNT(*) FROM cau_hoi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 6) >= 17
+                AND (SELECT COUNT(*) FROM cau_hoi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 8) >= 17
+                AND (SELECT COUNT(*) FROM cau_hoi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 9) >= 17
+                AND (SELECT COUNT(*) FROM cau_hoi WHERE de_thi_id = :de_thi_id) >= 150) AS bool`,
                 {
-                    xuat_ban: false,
-                },
-                {
-                    where: {
-                        de_mau: true,
-                        khoa_hoc_id: exam.khoa_hoc_id
-                    },
+                    replacements: { de_thi_id: Number(req.params.id) },
+                    type: sequelize.QueryTypes.SELECT,
                 }
             );
+            if (condition[0].bool) {
+                await Exam.update(
+                    {
+                        xuat_ban: false,
+                    },
+                    {
+                        where: {
+                            de_mau: true,
+                            khoa_hoc_id: exam.khoa_hoc_id,
+                        },
+                    }
+                );
+            } else {
+                return res.status(404).send({
+                    status: 'error',
+                    data: null,
+                    message: 'Số lượng câu hỏi chưa đủ yêu cầu',
+                });
+            }
         }
 
         let tong_diem = 0;
@@ -1015,6 +1082,7 @@ const reuse = async (req, res) => {
             'khoa_hoc_id',
             'mo_dun_id',
             'chuyen_de_id',
+            'de_mau',
         ],
     });
     const examNew = await Exam.create({
