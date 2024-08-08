@@ -897,7 +897,7 @@ const publish = async (req, res) => {
                 AND (SELECT COUNT(*) FROM cau_hoi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 7) >= 50
                 AND (SELECT COUNT(*) FROM cau_hoi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 3) >= 17
                 AND (SELECT COUNT(*) FROM cau_hoi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 4) >= 17
-                AND (SELECT COUNT(*) FROM cau_hoi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 5) >= 17
+                AND (SELECT COUNT(*) FROM cau_hoi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 5) >= 0
                 AND (SELECT COUNT(*) FROM cau_hoi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 6) >= 17
                 AND (SELECT COUNT(*) FROM cau_hoi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 8) >= 17
                 AND (SELECT COUNT(*) FROM cau_hoi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 9) >= 17
@@ -1079,6 +1079,7 @@ const reuse = async (req, res) => {
             'tong_diem',
             'anh_dai_dien',
             'loai_de_thi_id',
+            'kct_id',
             'khoa_hoc_id',
             'mo_dun_id',
             'chuyen_de_id',
