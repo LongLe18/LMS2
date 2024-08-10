@@ -893,15 +893,15 @@ const publish = async (req, res) => {
         if (exam.de_mau) {
             const condition = await sequelize.query(
                 `
-                SELECT ((SELECT COUNT(*) FROM cau_hoi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 1) >= 50
-                AND (SELECT COUNT(*) FROM cau_hoi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 7) >= 50
-                AND (SELECT COUNT(*) FROM cau_hoi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 3) >= 17
-                AND (SELECT COUNT(*) FROM cau_hoi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 4) >= 17
-                AND (SELECT COUNT(*) FROM cau_hoi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 5) >= 0
-                AND (SELECT COUNT(*) FROM cau_hoi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 6) >= 17
-                AND (SELECT COUNT(*) FROM cau_hoi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 8) >= 17
-                AND (SELECT COUNT(*) FROM cau_hoi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 9) >= 17
-                AND (SELECT COUNT(*) FROM cau_hoi WHERE de_thi_id = :de_thi_id) >= 150) AS bool`,
+                SELECT ((SELECT COUNT(*) FROM cau_hoi_de_thi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 1) >= 50
+                AND (SELECT COUNT(*) FROM cau_hoi_de_thi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 7) >= 50
+                AND (SELECT COUNT(*) FROM cau_hoi_de_thi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 3) >= 17
+                AND (SELECT COUNT(*) FROM cau_hoi_de_thi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 4) >= 17
+                AND (SELECT COUNT(*) FROM cau_hoi_de_thi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 5) >= 50
+                AND (SELECT COUNT(*) FROM cau_hoi_de_thi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 6) >= 17
+                AND (SELECT COUNT(*) FROM cau_hoi_de_thi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 8) >= 17
+                AND (SELECT COUNT(*) FROM cau_hoi_de_thi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 9) >= 17
+                AND (SELECT COUNT(*) FROM cau_hoi_de_thi WHERE de_thi_id = :de_thi_id) >= 150) AS bool`,
                 {
                     replacements: { de_thi_id: Number(req.params.id) },
                     type: sequelize.QueryTypes.SELECT,
@@ -1123,6 +1123,7 @@ const reuse = async (req, res) => {
         examQuestionNews.push({
             de_thi_id: examNew.de_thi_id,
             cau_hoi_id: examQuestionOld.cau_hoi_id,
+            chuyen_nganh_id: examQuestionOld.chuyen_nganh_id
         });
     }
     await ExamQuestion.bulkCreate(examQuestionNews);
