@@ -406,7 +406,7 @@ const getById = async (req, res) => {
             order: [
                 [
                     sequelize.literal(
-                        `FIELD(chuyen_nganh_id, ${[1, 7, 3, 4, 6, 8, 9].join(
+                        `FIELD(cau_hoi_de_this.chuyen_nganh_id, ${[1, 7, 3, 4, 6, 8, 9].join(
                             ', '
                         )})`
                     ),
