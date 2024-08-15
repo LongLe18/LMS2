@@ -910,7 +910,7 @@ const publish = async (req, res) => {
             if (condition[0].bool) {
                 await Exam.update(
                     {
-                        xuat_ban: false,
+                        trang_thai: false,
                     },
                     {
                         where: {
