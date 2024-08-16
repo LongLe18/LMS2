@@ -143,6 +143,9 @@
   margin-top: 20px;
 };
 
+.descripion-intro {
+  display: flex;
+}
 /*tablet pro*/
 
 @media only screen and (max-width: 1080px) {

@@ -27,9 +27,7 @@ const BusinessPage = () => {
     const courses = useSelector(state => state.course.list.result);
 
     useEffect(() => {
-        if (idKCT === '8') window.location.href = '/ielts';
-        else dispatch(courseAction.getCourses({ idkct: idKCT, status: 1, search: '' }))
-        
+        dispatch(courseAction.getCourses({ idkct: idKCT, status: 1, search: '' }))
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     if (courses.status === 'success') {
@@ -49,7 +47,7 @@ const BusinessPage = () => {
                     <CarouselCustom />
                     <h2 className="section-title section-title-center">
                     <b></b>
-                        {(courses.status === 'success' && data.length > 0) && <span className="section-title-main">{data[0].ten_khung_ct}</span>}
+                        {(courses.status === 'success' && data.length > 0) && <span className="section-title-main" style={{color: 'green'}}>{data[0].ten_khung_ct}</span>}
                         <b></b>
                     </h2>
                     {data.length > 0 && (

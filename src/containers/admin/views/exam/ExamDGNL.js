@@ -243,6 +243,12 @@ const ExamDGNLAdminPage = () => {
         const isDocx = file.type === 'application/msword' || file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
         if (!isDocx) {
           message.error(`${file.name} có định dạng không phải là file docx`);
+          return false;
+        }
+        // check dung lượng file trên 250kb => không cho upload
+        if (file.size > 250000) {
+          message.error(`${file.name} dung lượng file quá lớn`);
+          return false;
         }
         return isDocx || Upload.LIST_IGNORE;
       },
@@ -463,7 +469,7 @@ const ExamDGNLAdminPage = () => {
     
   // Tạo nhanh đề thi
   const createFastExam = async (values) => {
-    if (state.fileImg === '') {
+    if (state.fileImg === '' || state.fileImg === undefined || state.fileImg === null) {
       notification.warning({
         message: 'Thông báo',
         description: 'Bạn chưa upload file',
@@ -478,6 +484,7 @@ const ExamDGNLAdminPage = () => {
       config.API_LATEX + `/${values.de_thi_id}/uploadfile`,
       formData, 
       {
+        timeout: 1800000,
         headers: { "content-type": "multipart/form-data", Authorization: `Bearer ${localStorage.getItem('userToken')}`, },
       }
     ).then(

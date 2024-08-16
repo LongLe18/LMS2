@@ -81,7 +81,7 @@ const ExamPage = (props) => {
                 <Row className="logo" align={'middle'}>
                     <Col xs={{ span: 24 }} lg={{ span: 4 }}>
                         <div className="logo">
-                            <Avatar shape="square" size={130} src={require('assets/rank/Logo.png').default} />
+                            <Avatar shape="square" size={130} src={require('assets/img/logo/vnu-cet-logo.png').default} />
                         </div>
                     </Col>
                     <Col xs={{ span: 22, offset: 1 }} lg={{ span: 10, offset: 4}}>
@@ -91,42 +91,39 @@ const ExamPage = (props) => {
                 </Row>
                 <div className="content-page">
                     <span style={{fontWeight: 600, fontSize: 16}}>Hướng dẫn làm bài</span>
-                    <div style={{fontSize: 16}}>
-                        Bài thi ĐGNL học sinh THPT (HSA) gồm 03 phân. Các câu hỏi thi được đánh số lằn lượt từ 1 đến 150 gồm câu hỏi trắc nghiệm khách quan bốn lựa chọn từ các phương án
-                        A, B, C hoặc D và câu hỏi điền đáp án. Trường hợp bài thi có thêm câu hỏi thử nghiệm (không tính điểm) thì tỗng số câu hỏi không quá 150 câu. Mỗi câu hỏi trắc nghiệm có một đáp án duy nhất. Thí sinh chọn đáp án bằng cách <span style={{color: 'red'}}>nhấp chuột trái máy tính</span> vào ô đáp án, máy tính sẽ tự đông ghi nhận và hiển thị thành ô tròn màu xanh. 
-                        Trường hợp bạn chọn câu trả lời lằn thứ nhất và muốn chọn lại câu trả lời thì đưa con trỏ chuột máy tính đến đáp án mới và nhấp chuột trái. Ô tròn màu xanh mới sẽ được ghi nhận và ô tròn cũ sẽ trở lại trạng thái ban đầu, <span style={{color: 'red'}}>KHÔNG nhấp chuột máy tính quá 2.000 lượt</span> trong suốt quá trình làm bài thi. Thí sinh có thễ bắm chuột vào <span style={{color: 'red'}}>biểu tượng CHK</span> ở góc trên bên phải màn hình đễ kiểm tra ghi nhận của các câu hỏi đã trả lời. Thí sinh được quay lại làm lại câu hỏi trong cùng 1 phân, không thê quay lại
-                        làm câu hỏi của phân thi <span style={{color: 'red'}}>đã kết thúc.</span>
+                    <div style={{fontSize: 16, textAlign: 'justify'}}>
+                        Bài thi ĐGNL học sinh THPT (HSA) gồm 03 phần. Các câu hỏi thi được đánh số lằn lượt từ 1 đến 150 gồm câu hỏi trắc nghiệm khách quan bốn lựa chọn từ các phương án
+                        A, B, C hoặc D và câu hỏi điền đáp án. Trường hợp bài thi có thêm câu hỏi thử nghiệm (không tính điểm) thì tỗng số câu hỏi không quá 153 câu. Mỗi câu hỏi trắc nghiệm có một đáp án duy nhất. Thí sinh chọn đáp án bằng cách <span style={{color: 'red'}}>nhấp chuột trái máy tính</span> vào ô đáp án (o), máy tính sẽ tự đông ghi nhận và hiển thị thành ô tròn màu xanh (•). 
+                        Trường hợp bạn chọn câu trả lời lằn thứ nhất và muốn chọn lại câu trả lời thì đưa con trỏ chuột máy tính đến đáp án mới và nhấp chuột trái. Ô tròn màu xanh mới (•) sẽ được ghi nhận và ô tròn cũ sẽ trở lại trạng thái ban đầu (o), <span style={{color: 'red'}}>KHÔNG nhấp chuột máy tính quá 2.000 lượt</span> trong suốt quá trình làm bài thi. Thí sinh có thễ bắm chuột vào <span style={{color: 'red'}}>biểu tượng CHK</span> ở góc trên bên phải màn hình đễ kiểm tra ghi nhận của các câu hỏi đã trả lời. Thí sinh được quay lại làm lại câu hỏi trong cùng 1 phần, không thê quay lại
+                        làm câu hỏi của phần thi <span style={{color: 'red'}}>đã kết thúc.</span>
                         <br/>
-                        Đối với các <span style={{color: 'red'}}>câu hỏi điền đáp án</span>, thí sinh nhập <span style={{color: 'red'}}>đáp án vào ô trống dạng số nguyên dương, nguyên âm</span> (không có dấu cách giữa dầu - và chữ số, ví dụ đúng: -3) <span style={{color: 'red'}}>hoặc phân số tối giản</span> (ví dụ: 3/4), <span style={{color: 'red'}}>không nhập chữ số thập phân, không nhập đơn vị vào ô đáp án</span>. Mỗi câu trả lời đúng được 01 điểm, câu trả lời sai hoặc không trả lời được 0 điểm. Hãy thận trọng trước khi lựa chọn đáp án.
+                        Đối với các <span style={{color: 'red'}}>câu hỏi điền đáp án</span>, thí sinh nhập <span style={{color: 'red'}}>đáp án vào ô trống dạng số nguyên dương, nguyên âm</span> (không có dấu cách giữa dấu - và chữ số, ví dụ đúng: -3) <span style={{color: 'red'}}>hoặc phân số tối giản</span> (ví dụ: 3/4), <span style={{color: 'red'}}>không nhập chữ số thập phân, không nhập đơn vị vào ô đáp án</span>. Mỗi câu trả lời đúng được 01 điểm, câu trả lời sai hoặc không trả lời được 0 điểm. <span style={{color: 'red'}}>Hãy thận trọng trước khi lựa chọn đáp án.</span>
                         <br/>
                         <br/>
-                        Theo điều 6, khoản 2 của Quy chế thi, bài thi ĐGNL là <span style={{color: 'red'}}>KHÔNG PHÚC KHẢO</span> nên thí sinh bình tĩnh <span style={{color: 'red'}}>đọc kỹ câu hỏi thi, KIẾM TRA cần thận điểm từng phản và ĐIỂM TỎNG bài thi</span> sau khi nộp bài. Nếu có bất kỳ ý kiến thắc mắc về câu hỏi thi, điểm bài thi, công tác tố chức thi... phải thực hiện tại phòng thi bằng cách thông báo cho cán bộ coi thi/Hội đồng thi trước khi ra khỏi phòng thi. Các kiến nghị, thắc mắc của thí sinh sau khi đã <span style={{color: 'red'}}>rời khỏi phòng thi sẽ KHÔNG ĐƯỢC xem xét giải quyết.</span>
+                        Theo điều 6, khoản 2 của Quy chế thi, bài thi ĐGNL là <span style={{color: 'red'}}>KHÔNG PHÚC KHẢO</span> nên thí sinh bình tĩnh <span style={{color: 'red'}}>đọc kỹ câu hỏi thi, KIẾM TRA cần thận điểm từng phản và ĐIỂM TỔNG bài thi</span> sau khi nộp bài. Nếu có bất kỳ ý kiến thắc mắc về câu hỏi thi, điểm bài thi, công tác tố chức thi... phải thực hiện tại phòng thi bằng cách thông báo cho cán bộ coi thi/Hội đồng thi trước khi ra khỏi phòng thi. Các kiến nghị, thắc mắc của thí sinh sau khi đã <span style={{color: 'red'}}>rời khỏi phòng thi sẽ KHÔNG ĐƯỢC xem xét giải quyết.</span>
                         <br/>
-                        <span style={{fontWeight: 600}}>Cam kết thỏa thuận:</span>
                         <br/>
+                        <span style={{fontWeight: 600, fontSize: 18, color: 'green'}}>Cam kết thỏa thuận:</span>
                         <br/>
                         Câu hỏi thi ĐGNL/đề thi là tài sản của Trung tâm Khảo thí ĐHQGHN. Thí sinh tham dự kỳ thi ĐGNL có trách nhiệm bảo quản câu hỏi thi ĐGNL/ đề thi; KHÔNG được phép sao chép một phản hay toàn bộ câu hỏi thi ĐGNL (dạng chữ viết, hình ảnh, âm thanh, video/clip...) 
                         chuyễn cho người khác dưới mọi hình thức trong quá trình làm bài thi và cả khi đã kết thúc ca thi, 
                         KHÔNG được phép mang các tài liệu/tài sản của Trung tâm Khảo thí ra khỏi phòng thi/khu vực thi. 
                         Thí sinh <span style={{color: 'red'}}>KHÔNG được phép tiết lộ, chia sẻ một phản hay toàn bộ dữ kiện của đẻ thi/câu hỏi thi ĐGNL</span> 
                         (dạng hình ảnh,âm thanh, video/clip, chữ viết...) với cá nhân, tỗ chứ khác, trên các phương tiện đại chúng khi chưa có sự đồng ý của Trung tâm Khảo thí ĐHQGHN sau kỳ thi. 
-                        Thí sinh vi phạm sẽ <span style={{color: 'red'}}>bị đình chỉ thi, hủy tất cả các kết quả điểm bài thi ĐGNL; dừng và hủy toàn bộ đăng ký (nếu có)</span>. 
+                        Thí sinh vi phạm <span style={{color: 'red'}}>sẽ bị đình chỉ thi, hủy tất cả các kết quả điểm bài thi ĐGNL; dừng và hủy toàn bộ đăng ký (nếu có)</span>. 
                         Trung tâm Khảo thí ĐHQGHN sẽ <span style={{color: 'red'}}>thông báo thí sinh bị đình chỉ thi tới Trường THPT, Sở Giáo dục & Đào tạo, các trường đại học....</span>
                         <br/>
                         <br/>
-                        <span style={{fontWeight: 600}}>Trách nhiệm của thí sinh:</span>
-                        <br/>
+                        <span style={{fontWeight: 600, fontSize: 18, color: 'green'}}>Trách nhiệm của thí sinh:</span>
                         <br/>
                         Tự chịu trách nhiệm về những vật dụng được phép mang vào phòng thi. Kiểm tra chính xác thông tin cá nhân hiến thị trên màn hình sau đăng nhập.
-                        <br/>
                         <br/>
                         KHÔNG tự ý đăng nhập, tự ý thoát khỏi chương trình thi, tự ý thoát ra khỏi tài khoản thi trong suốt quá trình làm bài thi, KHÔNG được khởi động lại màn hình, máy tính, đường truyền bằng bắt cứ hình thức nào; 
                         KHÔNG được tắt máy tính khi chưa được CBCT cho phép, 
                         KHÔNG sử dụng bắt cứ một chương trình nào cài đặt trên máy tính trong thời gian thi; 
-                        KHÔNG được rời phòng thi trong suốt thời gian làm bài thi
+                        KHÔNG được rời phòng thi trong suốt thời gian làm bài thi.
                         <br/>
-                        <br/>
-                        Nộp lại tất cả các tờ giấy nháp thi (đã sử dụng, chưa sử dụng), nộp lại Phiếu tài khoản cho CBCT và kiểm tra CCCD trước khi rời phòng thi
+                        Nộp lại tất cả các tờ giấy nháp thi (đã sử dụng, chưa sử dụng), nộp lại Phiếu tài khoản cho CBCT và kiểm tra CCCD trước khi rời phòng thi.
 
                     </div>
                     <p className="block-action text-center mt-4">

@@ -18,10 +18,12 @@ import AuthModal from 'components/common/auth/AuthModal';
 import AppBreadCrumb from "components/parts/breadcrumb/AppBreadCrumb";
 import NoRecord from 'components/common/NoRecord';
 import LoadingCustom from "components/parts/loading/Loading"
-import { Layout, Row, Col, Modal, Button, notification, Input, Alert, Upload, message, List, Comment, Space, Timeline } from 'antd';
+import { Layout, Row, Col, Modal, Button, notification, Input, Alert, Upload, 
+    message, List, Comment, Space, Timeline } from 'antd';
 import { InfoCircleOutlined, CommentOutlined, UploadOutlined, DownloadOutlined } from '@ant-design/icons';
 import TextEditorWidget2 from 'components/common/TextEditor/TextEditor2';
 import MathJax from 'react-mathjax';
+import alat from 'assets/alat.pdf'
 
 // redux
 import { useSelector, useDispatch } from 'react-redux';
@@ -49,6 +51,7 @@ const ExamOnlineDetail = () => {
     const [isDoing, setIsDoing] = useState(true);
     const [help, setHelp] = useState([]);
     const [commnetOpen, setCommentOpen] = useState([]);
+    const [isDetail, setIsDetail] = useState(false);
     const [comment, setComment] = useState('');
     const [countSection, setCountSection] = useState(3600);
     const [results, setResults] = useState([]);
@@ -505,29 +508,24 @@ const ExamOnlineDetail = () => {
                 <span className="answer-label">{renderAnswerKey(index)}</span>
                 <div className="answer-content">             
                     <MathJax.Provider>
-                        {answer.noi_dung_dap_an.split('\n').map((item, index_cauhoi) => 
-                            item.indexOf('includegraphics') !== -1 ? (
-                                <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></img>
-                            ) : (
-                                item.split('$').map((item2, index2) => {
-                                    return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
-                                        <MathJax.Node key={index2} formula={item2} />
-                                    ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\underline')) ?
-                                        (
-                                            <div key={index2} style={{textDecoration: 'underline'}}>{item2.split('\\underline{')[1].split('}')[0]}</div>
-                                    ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\bold')) ?
-                                        (
-                                            <div key={index2} style={{fontWeight: 700}}>{item2.split('\\bold{')[1].split('}')[0]}</div>
-                                        )
-                                    : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\italic')) ?
-                                        (
-                                            <div key={index2} style={{fontStyle: 'italic'}}>{item2.split('\\italic{')[1].split('}')[0]}</div>
-                                        )
-                                    :(
-                                        <div key={index2} style={{paddingRight: 4}}>{item2}</div>
-                                    );
-                                })
-                            )
+                        {answer.noi_dung_dap_an.split('\n').map((item, index_cauhoi) => {
+                            return (
+                                <div className="help-answer-content" key={index_cauhoi}> 
+                                {
+                                    (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
+                                        <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></img>
+                                    ) : (
+                                        item.split('$').map((item2, index2) => {
+                                            return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
+                                                <MathJax.Node key={index2} formula={item2} />
+                                            ) : (
+                                                <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                            )
+                                        })
+                                    )
+                                }
+                                </div>
+                            )}
                         )}
                     </MathJax.Provider>
                 </div>
@@ -560,29 +558,24 @@ const ExamOnlineDetail = () => {
                         <span className="right-answer">Đáp án đúng {question?.cau_hoi?.dap_an_dungs?.map((item) => renderAnswerKey(item)).join(', ')}</span>
                         : <span className="right-answer">Đáp án đúng: 
                             <MathJax.Provider>
-                                {question.cau_hoi.dap_ans[0].noi_dung_dap_an.split('\n').map((item, index_cauhoi) =>
-                                    (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                        <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></img>
-                                    ) : (
-                                        item.split('$').map((item2, index2) => {
-                                            return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
-                                                <MathJax.Node key={index2} formula={item2} />
-                                            ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\underline')) ?
-                                                (
-                                                    <div key={index2} style={{textDecoration: 'underline'}}>{item2.split('\\underline{')[1].split('}')[0]}</div>
-                                            ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\bold')) ?
-                                                (
-                                                    <div key={index2} style={{fontWeight: 700}}>{item2.split('\\bold{')[1].split('}')[0]}</div>
-                                                )
-                                            : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\italic')) ?
-                                                (
-                                                    <div key={index2} style={{fontStyle: 'italic'}}>{item2.split('\\italic{')[1].split('}')[0]}</div>
-                                                )
-                                            :(
-                                                <div key={index2} >{item2}</div>
-                                            );
-                                        })
-                                    )
+                                {question.cau_hoi.dap_ans[0].noi_dung_dap_an.split('\n').map((item, index_cauhoi) => {
+                                    return (
+                                        <div key={index_cauhoi}> 
+                                        {
+                                            (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
+                                                <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></img>
+                                            ) : (
+                                                item.split('$').map((item2, index2) => {
+                                                    return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
+                                                        <MathJax.Node key={index2} formula={item2} />
+                                                    ) : (
+                                                        <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                    )
+                                                })
+                                            )
+                                        }
+                                        </div>
+                                    )}
                                 )}
                             </MathJax.Provider>
                         </span>
@@ -622,6 +615,7 @@ const ExamOnlineDetail = () => {
             dispatch(commentAction.getSUBCCOMMENTs({ idComment: binh_luan_id }, callback));
     };
 
+    // Xử lý khi chuyển phần thi
     const handleNextSectionExam = () => {
         // Tính bằng giây 
         // if (countSection > (1/3) * exam.data[`thoi_gian_phan_${state.sectionExam}`] * 60) {
@@ -651,7 +645,15 @@ const ExamOnlineDetail = () => {
                     <div>
                         Thời gian còn <span style={{fontWeight: 700}}>({timeLeftInMinutes} phút {timeLeftInSeconds} giây)</span>.
                     </div>
+                    
                     <div>Đề thi phần tiếp theo sẽ hiện thị sau 30 giây. Bạn hãy sẵn có thể để vào làm bài</div>
+                    {localStorage.getItem('mon_thi').split(',').includes('9') &&
+                        <div style={{width: '100%', textAlign: 'center'}}>
+                        <Button type="primary" danger style={{borderRadius: 8}}>
+                            <a href={alat} target='_blank' rel='noopener noreferrer'>ALAT Địa lý Việt Nam</a>
+                        </Button>
+                    </div>
+                    }
                     <div style={{color: 'red', fontWeight: 700}}>
                         Lưu ý: Bài làm phần này sẽ tự động nộp và bạn không thể sửa được nữa
                     </div>
@@ -1138,137 +1140,207 @@ const ExamOnlineDetail = () => {
                                             Chúc mừng bạn đã hoàn thành <span>{exam.data.ten_de_thi}</span>
                                             </b>
                                         </p>
+                                        {course?.data.loai_kct === 0 &&
+                                            <p className="size-18">
+                                                Thí sinh kiểm tra lại toàn bộ đề thi đã trả lời, ghi nhớ 
+                                                <span style={{color: 'red', margin: '0 4px'}}>
+                                                    ĐIỂM BÀI THI
+                                                </span>
+                                                trước khi rời phòng thi
+                                            </p>
+                                        }
                                     </div>
-                                    <div className="body-result">
-                                        <div className="total_point mb-4">
-                                            <p>
-                                            <label className="point-label"> ĐIỂM SỐ</label>
-                                            <b className="point font-weight-5">{examUser.data.ket_qua_diem}/{exam.data.tong_diem}</b>
-                                            </p>
-                                        </div>
-                                        <div className="total_point">
-                                            <p className='font-weight-5'>
-                                                Thời gian làm:{' '}
-                                                <b>
-                                                    {examUser.data.thoi_gian_lam_bai}
-                                                </b>
-                                            </p>
-                                        </div>
-                                        <Timeline>
-                                            {Array.from({ length: exam.data.so_phan }).map((_, index) => {
-                                                const startIndex = index === 0 ? 0 : Array.from({ length: index }).reduce((sum, _, i) => sum + exam.data[`so_cau_hoi_phan_${i + 1}`], 0);
-                                                const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${index + 1}`];
-                                                const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
-                                                const number = partQuestions.map((question, index) => {
-                                                    let number = 0;
-                                                    if (!isDoing && examUser.status === 'success') {
-                                                        if (examUser.data.dap_an_da_chons) {
-                                                            let currentSubmitAnswer = examUser.data.dap_an_da_chons.find((item) => item.cau_hoi_id === question.cau_hoi.cau_hoi_id);
-                                                            if (question.cau_hoi.dap_an_dungs && currentSubmitAnswer !== undefined) {
-                                                                if (question.cau_hoi.loai_cau_hoi === 1 || question.cau_hoi.loai_cau_hoi === 2) { // Câu trắc nghiệm
-                                                                    let answerRight = convertAnswer(question.cau_hoi.dap_an_dungs);
-                                                                    if (currentSubmitAnswer && answerRight === currentSubmitAnswer.ket_qua_chon) {
-                                                                        number = number + 1;
-                                                                    } 
-                                                                } else { // Câu tự luận
-                                                                    if (currentSubmitAnswer && question.cau_hoi.dap_ans[0].noi_dung_dap_an === (currentSubmitAnswer?.noi_dung_tra_loi)?.toLowerCase()) {
-                                                                        number = number + 1;
-                                                                    } 
+                                    {course?.data.loai_kct === 0 ?
+                                        <>
+                                            <Row className='title-section' justify={'center'}>
+                                                <Col xs={{ span: 22, offset: 1 }} lg={{ span: 16 }}>
+                                                    {Array.from({ length: exam.data.so_phan }).map((_, index) => {
+                                                        return (
+                                                            <div className={`section-${index}`} style={{margin: '12px 0px'}}>Phần {index + 1}: {index === 0 ? `Tư duy định lượng (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)` 
+                                                                : index === 1 ? `Tư duy định tính (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)`
+                                                                : `Khoa học (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)`}</div>
+                                                        )
+                                                    })}
+                                                    <div className={"section-sum"} style={{margin: '12px 0px'}}>Tổng điểm</div>
+                                                </Col>
+                                                <Col xs={{ span: 22, offset: 1 }} lg={{ span: 3, }}>
+                                                    {Array.from({ length: exam.data.so_phan }).map((_, index) => {
+                                                        const startIndex = index === 0 ? 0 : Array.from({ length: index }).reduce((sum, _, i) => sum + exam.data[`so_cau_hoi_phan_${i + 1}`], 0);
+                                                        const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${index + 1}`];
+                                                        const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
+                                                        const number = partQuestions.map((question, index) => {
+                                                            let number = 0;
+                                                            if (!isDoing && examUser.status === 'success') {
+                                                                if (examUser.data.dap_an_da_chons) {
+                                                                    let currentSubmitAnswer = examUser.data.dap_an_da_chons.find((item) => item.cau_hoi_id === question.cau_hoi.cau_hoi_id);
+                                                                    if (question.cau_hoi.dap_an_dungs && currentSubmitAnswer !== undefined) {
+                                                                        if (question.cau_hoi.loai_cau_hoi === 1 || question.cau_hoi.loai_cau_hoi === 2) { // Câu trắc nghiệm
+                                                                            let answerRight = convertAnswer(question.cau_hoi.dap_an_dungs);
+                                                                            if (currentSubmitAnswer && answerRight === currentSubmitAnswer.ket_qua_chon) {
+                                                                                number = number + 1;
+                                                                            } 
+                                                                        } else { // Câu tự luận
+                                                                            if (currentSubmitAnswer && question.cau_hoi.dap_ans[0].noi_dung_dap_an === (currentSubmitAnswer?.noi_dung_tra_loi)?.toLowerCase()) {
+                                                                                number = number + 1;
+                                                                            } 
+                                                                        }
+                                                                    }
                                                                 }
                                                             }
-                                                        }
-                                                    }
-                                                    return number;
-                                                })
-                                                return (
-                                                    <>
-                                                    {course.kct_id === 1 ? 
-                                                        <div className='title-section' >
-                                                                <div className={`section-${index}`} style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
-                                                                    <div style={{padding: 0}}>
-                                                                        Phần {index + 1}: {index === 0 ? `Tư duy định lượng: ` 
-                                                                        : index === 1 ? `Tư duy định tính: `
-                                                                        : `Khoa học:`}
-                                                                    </div>
-                                                                    <div style={{padding: 0}}>
-                                                                        {number.reduce((partialSum, a) => partialSum + a, 0)}
-                                                                    </div>
+                                                            return number;
+                                                        })
+                                                        return (
+                                                            <div className={`section-${index}`} style={{margin: '12px 0px'}}>{number.reduce((partialSum, a) => partialSum + a, 0)}</div>
+                                                        )
+                                                    })}
+                                                    <div className={`section-sum`} style={{margin: '12px 0px'}}>{examUser.data.ket_qua_diem}</div>
+                                                </Col>
+                                            </Row>
+                                            <div style={{fontSize: 22, textAlign: 'center', marginBottom: 12}}>Click vào đây để 
+                                                <Button type="text" onClick={() => setIsDetail(true)}
+                                                    style={{fontSize: 22, color: '#2e66ad'}}
+                                                >
+                                                    XEM CHI TIẾT
+                                                </Button> 
+                                                đáp án và lời giải
+                                            </div>
+                                        </>
+                                    :
+                                        <>
+                                            <div className="body-result">
+                                                <div className="total_point mb-4">
+                                                    <p>
+                                                    <label className="point-label"> ĐIỂM BÀI LÀM CỦA BẠN</label>
+                                                    <b className="point font-weight-5">{examUser.data.ket_qua_diem}/{exam.data.tong_diem}</b>
+                                                    </p>
+                                                </div>
+                                                <div className="total_point">
+                                                    <p className='font-weight-5'>
+                                                        Thời gian làm:{' '}
+                                                        <b>
+                                                            {examUser.data.thoi_gian_lam_bai}
+                                                        </b>
+                                                    </p>
+                                                </div>
+                                                <Timeline>
+                                                    {Array.from({ length: exam.data.so_phan }).map((_, index) => {
+                                                        const startIndex = index === 0 ? 0 : Array.from({ length: index }).reduce((sum, _, i) => sum + exam.data[`so_cau_hoi_phan_${i + 1}`], 0);
+                                                        const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${index + 1}`];
+                                                        const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
+                                                        const number = partQuestions.map((question, index) => {
+                                                            let number = 0;
+                                                            if (!isDoing && examUser.status === 'success') {
+                                                                if (examUser.data.dap_an_da_chons) {
+                                                                    let currentSubmitAnswer = examUser.data.dap_an_da_chons.find((item) => item.cau_hoi_id === question.cau_hoi.cau_hoi_id);
+                                                                    if (question.cau_hoi.dap_an_dungs && currentSubmitAnswer !== undefined) {
+                                                                        if (question.cau_hoi.loai_cau_hoi === 1 || question.cau_hoi.loai_cau_hoi === 2) { // Câu trắc nghiệm
+                                                                            let answerRight = convertAnswer(question.cau_hoi.dap_an_dungs);
+                                                                            if (currentSubmitAnswer && answerRight === currentSubmitAnswer.ket_qua_chon) {
+                                                                                number = number + 1;
+                                                                            } 
+                                                                        } else { // Câu tự luận
+                                                                            if (currentSubmitAnswer && question.cau_hoi.dap_ans[0].noi_dung_dap_an === (currentSubmitAnswer?.noi_dung_tra_loi)?.toLowerCase()) {
+                                                                                number = number + 1;
+                                                                            } 
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                            return number;
+                                                        })
+                                                        return (
+                                                            <>
+                                                            {course?.data.loai_kct === 0 ? 
+                                                                <div className='title-section' >
+                                                                        <div className={`section-${index}`} style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                                                                            <div style={{padding: 0}}>
+                                                                                Phần {index + 1}: {index === 0 ? `Tư duy định lượng: ` 
+                                                                                : index === 1 ? `Tư duy định tính: `
+                                                                                : `Khoa học:`}
+                                                                            </div>
+                                                                            <div style={{padding: 0}}>
+                                                                                {number.reduce((partialSum, a) => partialSum + a, 0)}
+                                                                            </div>
+                                                                        </div>
                                                                 </div>
-                                                        </div>
-                                                        :
-                                                        <Timeline.Item key={index + 1} style={{paddingBottom: index + 1 === exam.data.so_phan ? 0 : 20, fontWeight: 600}}>
-                                                            Điểm thi phần {index + 1}: {number.reduce((partialSum, a) => partialSum + a, 0)} / {exam.data[`so_cau_hoi_phan_${index + 1}`]} = {(number.reduce((partialSum, a) => partialSum + a, 0) / exam.data[`so_cau_hoi_phan_${index + 1}`] * 100).toFixed(0)} %
-                                                        </Timeline.Item>
-                                                    }
-                                                    </>
-                                                )
-                                            })}
-                                        </Timeline>
-                                    </div>
-                                    <div className="body-evaluation">
-                                        <h5 style={{fontWeight: 700, textAlign: 'center'}}>Kết quả đánh giá</h5>
-                                        <Timeline>
-                                            {Array.from({ length: exam.data.so_phan }).map((_, index) => {
-                                                const startIndex = index === 0 ? 0 : Array.from({ length: index }).reduce((sum, _, i) => sum + exam.data[`so_cau_hoi_phan_${i + 1}`], 0);
-                                                const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${index + 1}`];
-                                                const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
-                                                // số câu đúng của từng phần
-                                                const number = partQuestions.map((question, index) => {
-                                                    let number = 0;
-                                                    if (!isDoing && examUser.status === 'success') {
-                                                        if (examUser.data.dap_an_da_chons) {
-                                                            let currentSubmitAnswer = examUser.data.dap_an_da_chons.find((item) => item.cau_hoi_id === question.cau_hoi.cau_hoi_id);
-                                                            if (question.cau_hoi.dap_an_dungs && currentSubmitAnswer !== undefined) {
-                                                                if (question.cau_hoi.loai_cau_hoi === 1 || question.cau_hoi.loai_cau_hoi === 2) { // Câu trắc nghiệm
-                                                                    let answerRight = convertAnswer(question.cau_hoi.dap_an_dungs);
-                                                                    if (currentSubmitAnswer && answerRight === currentSubmitAnswer.ket_qua_chon) {
-                                                                        number = number + 1;
-                                                                    } 
-                                                                } else { // Câu tự luận
-                                                                    if (currentSubmitAnswer && question.cau_hoi.dap_ans[0].noi_dung_dap_an === (currentSubmitAnswer?.noi_dung_tra_loi)?.toLowerCase()) {
-                                                                        number = number + 1;
-                                                                    } 
+                                                                :
+                                                                <Timeline.Item key={index + 1} style={{paddingBottom: index + 1 === exam.data.so_phan ? 0 : 20, fontWeight: 600}}>
+                                                                    Điểm thi phần {index + 1}: {number.reduce((partialSum, a) => partialSum + a, 0)} / {exam.data[`so_cau_hoi_phan_${index + 1}`]} = {(number.reduce((partialSum, a) => partialSum + a, 0) / exam.data[`so_cau_hoi_phan_${index + 1}`] * 100).toFixed(0)} %
+                                                                </Timeline.Item>
+                                                            }
+                                                            </>
+                                                        )
+                                                    })}
+                                                </Timeline>
+                                            </div>
+                                            <div className="body-evaluation">
+                                                <h5 style={{fontWeight: 700, textAlign: 'center'}}>Kết quả đánh giá</h5>
+                                                <Timeline>
+                                                    {Array.from({ length: exam.data.so_phan }).map((_, index) => {
+                                                        const startIndex = index === 0 ? 0 : Array.from({ length: index }).reduce((sum, _, i) => sum + exam.data[`so_cau_hoi_phan_${i + 1}`], 0);
+                                                        const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${index + 1}`];
+                                                        const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
+                                                        // số câu đúng của từng phần
+                                                        const number = partQuestions.map((question, index) => {
+                                                            let number = 0;
+                                                            if (!isDoing && examUser.status === 'success') {
+                                                                if (examUser.data.dap_an_da_chons) {
+                                                                    let currentSubmitAnswer = examUser.data.dap_an_da_chons.find((item) => item.cau_hoi_id === question.cau_hoi.cau_hoi_id);
+                                                                    if (question.cau_hoi.dap_an_dungs && currentSubmitAnswer !== undefined) {
+                                                                        if (question.cau_hoi.loai_cau_hoi === 1 || question.cau_hoi.loai_cau_hoi === 2) { // Câu trắc nghiệm
+                                                                            let answerRight = convertAnswer(question.cau_hoi.dap_an_dungs);
+                                                                            if (currentSubmitAnswer && answerRight === currentSubmitAnswer.ket_qua_chon) {
+                                                                                number = number + 1;
+                                                                            } 
+                                                                        } else { // Câu tự luận
+                                                                            if (currentSubmitAnswer && question.cau_hoi.dap_ans[0].noi_dung_dap_an === (currentSubmitAnswer?.noi_dung_tra_loi)?.toLowerCase()) {
+                                                                                number = number + 1;
+                                                                            } 
+                                                                        }
+                                                                    }
                                                                 }
                                                             }
-                                                        }
-                                                    }
-                                                    return number;
-                                                });
-                                                // Đánh giá của phần tương ứng
-                                                const evaluationsTemp = evaluations?.data?.filter((item) => item.phan_thi === index + 1);
-                                                // Kiểm tra số câu đúng của từng phần và lấy ra đánh giá tương ứng
-                                                const evaluation = evaluationsTemp?.map((item) => {
-                                                    let evaluation = '';
-                                                    if (number.reduce((partialSum, a) => partialSum + a, 0) === 0) {
-                                                        if (item.cau_bat_dau <= number.reduce((partialSum, a) => partialSum + a, 0) && number.reduce((partialSum, a) => partialSum + a, 0) <= item.cau_ket_thuc) {
-                                                            evaluation = item?.danh_gia;
-                                                        }
-                                                    } else {
-                                                        if (item.cau_bat_dau <= number.reduce((partialSum, a) => partialSum + a, 0) && number.reduce((partialSum, a) => partialSum + a, 0) <= item.cau_ket_thuc) {
-                                                            evaluation = item?.danh_gia;
-                                                        }
-                                                    }
-                                                    return evaluation;
-                                                });
-                                                return (
-                                                    <Timeline.Item key={index + 1} style={{paddingBottom: index + 1 === exam.data.so_phan ? 0 : 20, fontWeight: 600}}>
-                                                        <div style={{whiteSpace: 'pre-line'}}>Nhận xét đánh phần {index + 1}: <br/>{evaluation?.filter((item) => item !== '')[0]?.split('-').filter((item) => item !== '').join('\n')}</div>
-                                                    </Timeline.Item>
-                                                )
-                                            })}
-                                        </Timeline>
+                                                            return number;
+                                                        });
+                                                        // Đánh giá của phần tương ứng
+                                                        const evaluationsTemp = evaluations?.data?.filter((item) => item.phan_thi === index + 1);
+                                                        // Kiểm tra số câu đúng của từng phần và lấy ra đánh giá tương ứng
+                                                        const evaluation = evaluationsTemp?.map((item) => {
+                                                            let evaluation = '';
+                                                            if (number.reduce((partialSum, a) => partialSum + a, 0) === 0) {
+                                                                if (item.cau_bat_dau <= number.reduce((partialSum, a) => partialSum + a, 0) && number.reduce((partialSum, a) => partialSum + a, 0) <= item.cau_ket_thuc) {
+                                                                    evaluation = item?.danh_gia;
+                                                                }
+                                                            } else {
+                                                                if (item.cau_bat_dau <= number.reduce((partialSum, a) => partialSum + a, 0) && number.reduce((partialSum, a) => partialSum + a, 0) <= item.cau_ket_thuc) {
+                                                                    evaluation = item?.danh_gia;
+                                                                }
+                                                            }
+                                                            return evaluation;
+                                                        });
+                                                        return (
+                                                            <Timeline.Item key={index + 1} style={{paddingBottom: index + 1 === exam.data.so_phan ? 0 : 20, fontWeight: 600}}>
+                                                                <div style={{whiteSpace: 'pre-line'}}>Nhận xét đánh phần {index + 1}: <br/>{evaluation?.filter((item) => item !== '')[0]?.split('-').filter((item) => item !== '').join('\n')}</div>
+                                                            </Timeline.Item>
+                                                        )
+                                                    })}
+                                                </Timeline>
+                                            </div>
+                                        </>
+                                    }                               
+                                </div>
+                                {course?.data.loai_kct !== 0 &&
+                                    <div className="block-action">
+                                        {/* <Button type="default" size="large" className="dowload-exam-button" onClick={() => doExamAgain()}>
+                                            <FileOutlined />
+                                            Làm lại bài thi
+                                        </Button> */}
+                                        <Button type="primary" size="large" className="dowload-exam-button" onClick={() => downloadReport()}>
+                                            <DownloadOutlined />
+                                            Tải kết quả đánh giá
+                                        </Button>
                                     </div>
-                                </div>
-                                <div className="block-action">
-                                    {/* <Button type="default" size="large" className="dowload-exam-button" onClick={() => doExamAgain()}>
-                                        <FileOutlined />
-                                        Làm lại bài thi
-                                    </Button> */}
-                                    <Button type="primary" size="large" className="dowload-exam-button" onClick={() => downloadReport()}>
-                                        <DownloadOutlined />
-                                        Tải kết quả đánh giá
-                                    </Button>
-                                </div>
+                                }
                             </div>
                         )}
                         {(exam.status === 'success' && isDoing) && Array.from({ length: exam.data.so_phan }).map((_, index) => {
@@ -1283,17 +1355,6 @@ const ExamOnlineDetail = () => {
 
                                                 let regex = /\\begin{center}\\includegraphics\[scale = 0\.5\]{(.*?)}\\end{center}/;
                                                 
-                                                let doan_trichs = question.cau_hoi?.trich_doan?.noi_dung?.split('$').map((doan_trich) => {
-                                                    if (doan_trich.includes('\\underline')) {
-                                                        doan_trich = '<span class="underline">' + doan_trich.split('\\underline{')[1].split('}')[0] + '</span>';
-                                                    } else if (doan_trich.includes('\\bold')) {
-                                                        doan_trich = '<span class="bold">' + doan_trich.split('\\bold{')[1].split('}')[0] + '</span>';
-                                                    } else if (doan_trich.includes('\\italic')) {
-                                                        doan_trich = '<span class="italic">' + doan_trich.split('\\italic{')[1].split('}')[0] + '</span>';
-                                                    }
-                                                    return doan_trich
-                                                })
-
                                                 return (
                                                     <>
                                                         {(question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom !== undefined && question.cau_hoi.exceprtTo !== undefined) &&
@@ -1305,11 +1366,25 @@ const ExamOnlineDetail = () => {
                                                                 <br/>
                                                                 <div className="answer-content" style={{paddingLeft: '20px', fontSize: 18}}> 
                                                                     <MathJax.Provider>
-                                                                        <div style={{whiteSpace: 'pre-line'}} dangerouslySetInnerHTML={{ __html: doan_trichs?.join('') }}></div>
-                                                                        {question.cau_hoi?.trich_doan?.noi_dung?.split('\n').map((item, index_cauhoi) =>
-                                                                            item.indexOf('includegraphics') !== -1 && (
-                                                                                <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question_${index_cauhoi}`}></img>
-                                                                            ) 
+                                                                        {question.cau_hoi?.trich_doan?.noi_dung?.split('\n').map((item, index_cauhoi) => {
+                                                                            return (
+                                                                                <div className="title-exam-content" key={index_cauhoi}>
+                                                                                    {
+                                                                                        (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
+                                                                                            <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question_${index_cauhoi}`}></img>
+                                                                                        ) : 
+                                                                                        (
+                                                                                            <div>{item.split('$').map((item2, index2) => {
+                                                                                                return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
+                                                                                                    <MathJax.Node key={index2} formula={item2} />
+                                                                                                ) : (
+                                                                                                    <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                                                                )
+                                                                                            })}</div>
+                                                                                        )
+                                                                                    }
+                                                                                </div>
+                                                                            )}
                                                                         )}
                                                                     </MathJax.Provider>
                                                                 </div>
@@ -1330,28 +1405,17 @@ const ExamOnlineDetail = () => {
                                                                         return (
                                                                             <div className="title-exam-content" key={index_cauhoi}>
                                                                                 {
-                                                                                    (item.indexOf('includegraphics') !== -1 && item !== '' && item?.match(regex) !== null && item?.match(regex).length >= 2) ? (
+                                                                                    (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
                                                                                         <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question2_${index_cauhoi}`}></img>
-                                                                                    ) : (
-                                                                                        item.split('$').map((item2, index2) => {
+                                                                                    ) : 
+                                                                                    (
+                                                                                        <div>{item.split('$').map((item2, index2) => {
                                                                                             return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
                                                                                                 <MathJax.Node key={index2} formula={item2} />
-                                                                                            ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\underline')) ?
-                                                                                                (
-                                                                                                    <div key={index2} style={{textDecoration: 'underline'}}>{item2.split('\\underline{')[1].split('}')[0]}</div>
-                                                                                                )
-                                                                                            : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\bold')) ?
-                                                                                                (
-                                                                                                    <div key={index2} style={{fontWeight: 700}}>{item2.split('\\bold{')[1].split('}')[0]}</div>
-                                                                                                )
-                                                                                            : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\italic')) ?
-                                                                                                (
-                                                                                                    <div key={index2} style={{fontStyle: 'italic'}}>{item2.split('\\italic{')[1].split('}')[0]}</div>
-                                                                                                )
-                                                                                            :(
-                                                                                                <div key={index2} >{item2}</div>
-                                                                                            );
-                                                                                        })
+                                                                                            ) : (
+                                                                                                <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                                                            )
+                                                                                        })}</div>
                                                                                     )
                                                                                 }
                                                                             </div>
@@ -1438,26 +1502,15 @@ const ExamOnlineDetail = () => {
                                                                                                                 {
                                                                                                                     (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
                                                                                                                         <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question3_${index_cauhoi}`}></img>
-                                                                                                                    ) : (
-                                                                                                                        item.split('$').map((item2, index2) => {
+                                                                                                                    ) : 
+                                                                                                                    (
+                                                                                                                        <div>{item.split('$').map((item2, index2) => {
                                                                                                                             return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
                                                                                                                                 <MathJax.Node key={index2} formula={item2} />
-                                                                                                                            ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\underline')) ?
-                                                                                                                                (
-                                                                                                                                    <div key={index2} style={{textDecoration: 'underline'}}>{item2.split('\\underline{')[1].split('}')[0]}</div>
-                                                                                                                                )
-                                                                                                                            : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\bold')) ?
-                                                                                                                                (
-                                                                                                                                    <div key={index2} style={{fontWeight: 700}}>{item2.split('\\bold{')[1].split('}')[0]}</div>
-                                                                                                                                )
-                                                                                                                            : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\italic')) ?
-                                                                                                                                (
-                                                                                                                                    <div key={index2} style={{fontStyle: 'italic'}}>{item2.split('\\italic{')[1].split('}')[0]}</div>
-                                                                                                                                )
-                                                                                                                            :(
-                                                                                                                                <div key={index2} >{item2}</div>
-                                                                                                                            );
-                                                                                                                        })
+                                                                                                                            ) : (
+                                                                                                                                <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                                                                                            )
+                                                                                                                        })}</div>
                                                                                                                     )
                                                                                                                 }
                                                                                                             </div>
@@ -1478,34 +1531,13 @@ const ExamOnlineDetail = () => {
                                                 )
                                             } else return null;
                                         })}
-
-                                        {/* {index >= 2 && 
-                                            <p className="block-action text-center mt-0">
-                                                <a className="ant-btn ant-btn-primary ant-btn-lg join-exam-button" href={alat} target='_blank' rel='noopener noreferrer'
-                                                    style={{borderRadius: 8, backgroundColor: 'rgba(0, 115, 8, 0.92)', borderColor: 'rgba(0, 115, 8, 0.92)'}}
-                                                >
-                                                    Mở alat địa lý
-                                                </a>
-                                            </p>
-                                        } */}
                                     </>
                                 )
                             } else return null;
                         })}
-                        {(exam.status === 'success' && !isDoing) && exam.data.cau_hoi_de_this.map((question, ParentIndex) => {
+                        {(exam.status === 'success' && !isDoing && ((course?.data.loai_kct === 0 && isDetail) || course?.data.loai_kct !== 0)) && exam.data.cau_hoi_de_this.map((question, ParentIndex) => {
                             
                             let regex = /\\begin{center}\\includegraphics\[scale = 0\.5\]{(.*?)}\\end{center}/;
-
-                            let doan_trichs = question.cau_hoi?.trich_doan?.noi_dung?.split('$').map((doan_trich) => {
-                                if (doan_trich.includes('\\underline')) {
-                                    doan_trich = '<span class="underline">' + doan_trich.split('\\underline{')[1].split('}')[0] + '</span>';
-                                } else if (doan_trich.includes('\\bold')) {
-                                    doan_trich = '<span class="bold">' + doan_trich.split('\\bold{')[1].split('}')[0] + '</span>';
-                                } else if (doan_trich.includes('\\italic')) {
-                                    doan_trich = '<span class="italic">' + doan_trich.split('\\italic{')[1].split('}')[0] + '</span>';
-                                }
-                                return doan_trich
-                            })
 
                             return (
                                 <>
@@ -1518,11 +1550,25 @@ const ExamOnlineDetail = () => {
                                             <br/>
                                             <div className="answer-content" style={{paddingLeft: '20px'}}>             
                                                 <MathJax.Provider>
-                                                    <div style={{whiteSpace: 'pre-line'}} dangerouslySetInnerHTML={{ __html: doan_trichs.join('') }}></div>
-                                                    {question.cau_hoi?.trich_doan?.noi_dung?.split('\n').map((item, index) =>
-                                                        item.indexOf('includegraphics') !== -1 && (
-                                                            <img src={config.API_URL + `/${item.match(regex)[1]}`} alt="img"></img>
-                                                        ) 
+                                                    {question.cau_hoi?.trich_doan?.noi_dung?.split('\n').map((item, index_cauhoi) => {
+                                                        return (
+                                                            <div className="title-exam-content" key={index_cauhoi}>
+                                                                {
+                                                                    (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
+                                                                        <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></img>
+                                                                    ) : 
+                                                                    (
+                                                                        <div>{item.split('$').map((item2, index2) => {
+                                                                            return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
+                                                                                <MathJax.Node key={index2} formula={item2} />
+                                                                            ) : (
+                                                                                <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                                            )
+                                                                        })}</div>
+                                                                    )
+                                                                }
+                                                            </div>
+                                                        )}
                                                     )}
                                                 </MathJax.Provider>
                                             </div>
@@ -1546,25 +1592,15 @@ const ExamOnlineDetail = () => {
                                                             {
                                                                 (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
                                                                     <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question4_${index_cauhoi}`}></img>
-                                                                ) : (
-                                                                    item.split('$').map((item2, index2) => {
+                                                                ) : 
+                                                                (
+                                                                    <div>{item.split('$').map((item2, index2) => {
                                                                         return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
                                                                             <MathJax.Node key={index2} formula={item2} />
-                                                                        ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\underline')) ?
-                                                                            (
-                                                                                <div key={index2} style={{textDecoration: 'underline'}}>{item2.split('\\underline{')[1].split('}')[0]}</div>
-                                                                        ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\bold')) ?
-                                                                            (
-                                                                                <div key={index2} style={{fontWeight: 700}}>{item2.split('\\bold{')[1].split('}')[0]}</div>
-                                                                            )
-                                                                        : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\italic')) ?
-                                                                            (
-                                                                                <div key={index2} style={{fontStyle: 'italic'}}>{item2.split('\\italic{')[1].split('}')[0]}</div>
-                                                                            )
-                                                                        :(
-                                                                            <div key={index2} >{item2}</div>
-                                                                        );
-                                                                    })
+                                                                        ) : (
+                                                                            <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                                        )
+                                                                    })}</div>
                                                                 )
                                                             }
                                                         </div>
@@ -1619,25 +1655,15 @@ const ExamOnlineDetail = () => {
                                                                                         {
                                                                                             (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
                                                                                                 <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question5_${index_cauhoi}`}></img>
-                                                                                            ) : (
-                                                                                                item.split('$').map((item2, index2) => {
+                                                                                            ) : 
+                                                                                            (
+                                                                                                <div>{item.split('$').map((item2, index2) => {
                                                                                                     return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
                                                                                                         <MathJax.Node key={index2} formula={item2} />
-                                                                                                    ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\underline')) ?
-                                                                                                        (
-                                                                                                            <div key={index2} style={{textDecoration: 'underline'}}>{item2.split('\\underline{')[1].split('}')[0]}</div>
-                                                                                                    ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\bold')) ?
-                                                                                                        (
-                                                                                                            <div key={index2} style={{fontWeight: 700}}>{item2.split('\\bold{')[1].split('}')[0]}</div>
-                                                                                                        )
-                                                                                                    : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\italic')) ?
-                                                                                                        (
-                                                                                                            <div key={index2} style={{fontStyle: 'italic'}}>{item2.split('\\italic{')[1].split('}')[0]}</div>
-                                                                                                        )
-                                                                                                    :(
-                                                                                                        <div key={index2} >{item2}</div>
-                                                                                                    );
-                                                                                                })
+                                                                                                    ) : (
+                                                                                                        <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                                                                    )
+                                                                                                })}</div>
                                                                                             )
                                                                                         }
                                                                                     </div>
@@ -1696,31 +1722,20 @@ const ExamOnlineDetail = () => {
                                                                 <MathJax.Provider>
                                                                     {question.cau_hoi.loi_giai.split('\n').map((item, index_cauhoi) => {
                                                                         return (
-                                                                            <div className="help-answer-content" key={index_cauhoi}>
-                                                                                {
-                                                                                    (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                                                        <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question6_${index_cauhoi}`}></img>
-                                                                                    ) : (
-                                                                                        item.split('$').map((item2, index2) => {
-                                                                                            return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
-                                                                                                <MathJax.Node key={index2} formula={item2} />
-                                                                                            ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\underline')) ?
-                                                                                                (
-                                                                                                    <div key={index2} style={{textDecoration: 'underline'}}>{item2.split('\\underline{')[1].split('}')[0]}</div>
-                                                                                            ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\bold')) ?
-                                                                                                (
-                                                                                                    <div key={index2} style={{fontWeight: 700}}>{item2.split('\\bold{')[1].split('}')[0]}</div>
-                                                                                                )
-                                                                                            : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\italic')) ?
-                                                                                                (
-                                                                                                    <div key={index2} style={{fontStyle: 'italic'}}>{item2.split('\\italic{')[1].split('}')[0]}</div>
-                                                                                                )
-                                                                                            :(
-                                                                                                <div key={index2} >{item2}</div>
-                                                                                            );
-                                                                                        })
-                                                                                    )
-                                                                                }
+                                                                            <div className="help-answer-content" key={index_cauhoi}> 
+                                                                            {
+                                                                                (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
+                                                                                    <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question6_${index_cauhoi}`}></img>
+                                                                                ) : (
+                                                                                    item.split('$').map((item2, index2) => {
+                                                                                        return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
+                                                                                            <MathJax.Node key={index2} formula={item2} />
+                                                                                        ) : (
+                                                                                            <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                                                        )
+                                                                                    })
+                                                                                )
+                                                                            }
                                                                             </div>
                                                                         )}
                                                                     )}
@@ -1870,7 +1885,7 @@ const ExamOnlineDetail = () => {
                             )
                         } else return null;
                     })}
-                    {!isDoing && renderHistoryExamSidebar()}
+                    {(!isDoing && ((course?.data.loai_kct === 0 && isDetail) || course?.data.loai_kct !== 0)) && renderHistoryExamSidebar()}
                 </Row>
             </>
         )

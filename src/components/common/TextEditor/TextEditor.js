@@ -562,42 +562,24 @@ const TextEditorWidget = (props) => {
                             <MathJax.Provider>
                                 {props.valueParent?.split('\n').map((item, index_cauhoi) => {
                                     return (
-                                        <div className='math-item-content'>
+                                        <div className="math-item-content" key={index_cauhoi}> 
                                         {
                                             (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
                                                 <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question_${index_cauhoi}`} key={`key${index_cauhoi}`}></img>
-                                            ) 
-                                            : (
+                                            ) : (
                                                 item.split('$').map((item2, index2) => {
                                                     return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
                                                         <MathJax.Node key={index2} formula={item2} />
-                                                    ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\underline')) ?
-                                                        (
-                                                            <div key={index2} style={{textDecoration: 'underline'}}>{item2.split('\\underline{')[1].split('}')[0]}</div>
-                                                        )
-                                                    : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\bold')) ?
-                                                        (
-                                                            <div key={index2} style={{fontWeight: 700}}>{item2.split('\\bold{')[1].split('}')[0]}</div>
-                                                        )
-                                                    : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\italic')) ?
-                                                        (
-                                                            <div key={index2} style={{fontStyle: 'italic'}}>{item2.split('\\italic{')[1].split('}')[0]}</div>
-                                                        )
-                                                    : (item2.indexOf('includegraphics') !== -1 && item2?.match(regexImg) !== null && item2?.match(regexImg).length > 1) ? (
+                                                    ) : (item2.indexOf('includegraphics') !== -1 && item2?.match(regexImg) !== null && item2?.match(regexImg).length > 1) ? (
                                                         <img src={config.API_URL + `/${item2?.match(regexImg)[1]}`} alt={`img_question_${index2}`} key={`key${index2}`}></img>
-                                                    ) 
-                                                    : ( 
-                                                        <div key={index2}>{item2}</div>
-                                                    );
+                                                    ) : (
+                                                        <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                    )
                                                 })
                                             )
                                         }
                                         </div>
-                                    )
-                                }
-                                
-                                
-                                    
+                                    )}
                                 )}
                             </MathJax.Provider>
                         </div>

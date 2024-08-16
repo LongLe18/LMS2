@@ -503,7 +503,7 @@ const ExamAdminPage = () => {
     
   // Tạo nhanh đề thi
   const createFastExam = async (values) => {
-    if (state.fileImg === '') {
+    if (state.fileImg === '' || state.fileImg === undefined || state.fileImg === null) {
       notification.warning({
         message: 'Thông báo',
         description: 'Bạn chưa upload file',
@@ -517,6 +517,7 @@ const ExamAdminPage = () => {
       config.API_LATEX + `/${values.de_thi_id}/uploadfile`,
       formData, 
       {
+        timeout: 1800000,
         headers: { "content-type": "multipart/form-data", Authorization: `Bearer ${localStorage.getItem('userToken')}`, },
       }
     ).then(

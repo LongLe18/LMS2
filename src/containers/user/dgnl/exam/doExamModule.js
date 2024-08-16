@@ -519,31 +519,26 @@ const ExamModuleDetail = () => {
         return (
             <div className={`answer ${!isDoing && (isWrong && !answer.dap_an_dung) ? 'incorrect' : ''} ${!isDoing && answer.dap_an_dung ? 'correct' : ''}`}>
                 <span className="answer-label">{renderAnswerKey(index)}</span>
-                <div className="answer-content">             
+                <div className="answer-content">
                     <MathJax.Provider>
-                        {answer.noi_dung_dap_an.split('\n').map((item, index_cauhoi) =>
-                            (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null)? (
-                                <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question_${index_cauhoi}`}></img>
-                            ) : (
-                                item.split('$').map((item2, index2) => {
-                                    return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
-                                        <MathJax.Node key={index2} formula={item2} />
-                                    ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\underline')) ?
-                                        (
-                                            <div key={index2} style={{textDecoration: 'underline'}}>{item2.split('\\underline{')[1].split('}')[0]}</div>
-                                    ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\bold')) ?
-                                        (
-                                            <div key={index2} style={{fontWeight: 700}}>{item2.split('\\bold{')[1].split('}')[0]}</div>
-                                        )
-                                    : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\italic')) ?
-                                        (
-                                            <div key={index2} style={{fontStyle: 'italic'}}>{item2.split('\\italic{')[1].split('}')[0]}</div>
-                                        )
-                                    :(
-                                        <div key={index2} >{item2}</div>
-                                    );
-                                })
-                            )
+                        {answer.noi_dung_dap_an.split('\n').map((item, index_cauhoi) => {
+                            return (
+                                <div className="help-answer-content" key={index_cauhoi}> 
+                                {
+                                    (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
+                                        <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question_${index_cauhoi}`}></img>
+                                    ) : (
+                                        item.split('$').map((item2, index2) => {
+                                            return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
+                                                <MathJax.Node key={index2} formula={item2} />
+                                            ) : (
+                                                <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                            )
+                                        })
+                                    )
+                                }
+                                </div>
+                            )}
                         )}
                     </MathJax.Provider>
                 </div>
@@ -575,7 +570,7 @@ const ExamModuleDetail = () => {
                 <p className="result-exam-item">
                     {(question.cau_hoi.loai_cau_hoi === 1 || question.cau_hoi.loai_cau_hoi === 2) ?
                         <span className="right-answer">Đáp án đúng {question.cau_hoi.dap_an_dungs.map((item) => renderAnswerKey(item)).join(', ')}</span>
-                        : <span className="right-answer">Đáp án đúng: {question.cau_hoi.dap_ans[0].noi_dung_dap_an}</span>
+                        : <span className="right-answer" dangerouslySetInnerHTML={{ __html: `Đáp án đúng: ${question.cau_hoi.dap_ans[0].noi_dung_dap_an}` }}></span>
                     }
                 </p>
             );
@@ -862,33 +857,36 @@ const ExamModuleDetail = () => {
                     
                     let regex = /\\begin{center}\\includegraphics\[scale = 0\.5\]{(.*?)}\\end{center}/;
 
-                    let doan_trichs = question.cau_hoi?.trich_doan?.noi_dung?.split('$').map((doan_trich) => {
-                        if (doan_trich.includes('\\underline')) {
-                            doan_trich = '<span class="underline">' + doan_trich.split('\\underline{')[1].split('}')[0] + '</span>';
-                        } else if (doan_trich.includes('\\bold')) {
-                            doan_trich = '<span class="bold">' + doan_trich.split('\\bold{')[1].split('}')[0] + '</span>';
-                        } else if (doan_trich.includes('\\italic')) {
-                            doan_trich = '<span class="italic">' + doan_trich.split('\\italic{')[1].split('}')[0] + '</span>';
-                        }
-                        return doan_trich
-                    })
-
                     return (
                         <>
                             {(question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom !== undefined && question.cau_hoi.exceprtTo !== undefined) &&
                                 <>
                                     {(question.cau_hoi.exceprtFrom === question.cau_hoi.exceprtTo) 
-                                    ? <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi {question.cau_hoi.exceprtFrom + 1}</span>
-                                    : <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi từ {question.cau_hoi.exceprtFrom + 1} đến {question.cau_hoi.exceprtTo + 1}</span>
+                                        ? <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi {question.cau_hoi.exceprtFrom + 1}</span>
+                                        : <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi từ {question.cau_hoi.exceprtFrom + 1} đến {question.cau_hoi.exceprtTo + 1}</span>
                                     }
                                     <br/>
                                     <div className="answer-content" style={{paddingLeft: '20px'}}>             
                                         <MathJax.Provider>
-                                            <div style={{whiteSpace: 'pre-line'}} dangerouslySetInnerHTML={{ __html: doan_trichs.join('') }}></div>
-                                            {question.cau_hoi?.trich_doan?.noi_dung?.split('\n').map((item, index) =>
-                                                item.indexOf('includegraphics') !== -1 && (
-                                                    <img src={config.API_URL + `/${item.match(regex)[1]}`} alt="img"></img>
-                                                ) 
+                                            {question.cau_hoi?.trich_doan?.noi_dung?.split('\n').map((item, index_cauhoi) => {
+                                                return (
+                                                    <div className="title-exam-content" key={index_cauhoi}>
+                                                        {
+                                                            (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
+                                                                <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></img>
+                                                            ) : 
+                                                            (
+                                                                <div>{item.split('$').map((item2, index2) => {
+                                                                    return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
+                                                                        <MathJax.Node key={index2} formula={item2} />
+                                                                    ) : (
+                                                                        <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                                    )
+                                                                })}</div>
+                                                            )
+                                                        }
+                                                    </div>
+                                                )}
                                             )}
                                         </MathJax.Provider>
                                     </div>
@@ -912,25 +910,15 @@ const ExamModuleDetail = () => {
                                                     {
                                                         (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
                                                             <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question2_${index_cauhoi}`}></img>
-                                                        ) : (
-                                                            item.split('$').map((item2, index2) => {
+                                                        ) : 
+                                                        (
+                                                            <div>{item.split('$').map((item2, index2) => {
                                                                 return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
                                                                     <MathJax.Node key={index2} formula={item2} />
-                                                                ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\underline')) ?
-                                                                    (
-                                                                        <div key={index2} style={{textDecoration: 'underline'}}>{item2.split('\\underline{')[1].split('}')[0]}</div>
-                                                                ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\bold')) ?
-                                                                    (
-                                                                        <div key={index2} style={{fontWeight: 700}}>{item2.split('\\bold{')[1].split('}')[0]}</div>
-                                                                    )
-                                                                : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\italic')) ?
-                                                                    (
-                                                                        <div key={index2} style={{fontStyle: 'italic'}}>{item2.split('\\italic{')[1].split('}')[0]}</div>
-                                                                    )
-                                                                :(
-                                                                    <div key={index2} >{item2}</div>
-                                                                );
-                                                            })
+                                                                ) : (
+                                                                    <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                                )
+                                                            })}</div>
                                                         )
                                                     }
                                                 </div>
@@ -1021,25 +1009,15 @@ const ExamModuleDetail = () => {
                                                                                 {
                                                                                     (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
                                                                                         <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question3_${index_cauhoi}`}></img>
-                                                                                    ) : (
-                                                                                        item.split('$').map((item2, index2) => {
+                                                                                    ) : 
+                                                                                    (
+                                                                                        <div>{item.split('$').map((item2, index2) => {
                                                                                             return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
                                                                                                 <MathJax.Node key={index2} formula={item2} />
-                                                                                            ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\underline')) ?
-                                                                                                (
-                                                                                                    <div key={index2} style={{textDecoration: 'underline'}}>{item2.split('\\underline{')[1].split('}')[0]}</div>
-                                                                                            ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\bold')) ?
-                                                                                                (
-                                                                                                    <div key={index2} style={{fontWeight: 700}}>{item2.split('\\bold{')[1].split('}')[0]}</div>
-                                                                                                )
-                                                                                            : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\italic')) ?
-                                                                                                (
-                                                                                                    <div key={index2} style={{fontStyle: 'italic'}}>{item2.split('\\italic{')[1].split('}')[0]}</div>
-                                                                                                )
-                                                                                            :(
-                                                                                                <div key={index2} >{item2}</div>
-                                                                                            );
-                                                                                        })
+                                                                                            ) : (
+                                                                                                <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                                                            )
+                                                                                        })}</div>
                                                                                     )
                                                                                 }
                                                                             </div>
@@ -1097,31 +1075,20 @@ const ExamModuleDetail = () => {
                                                         <MathJax.Provider>
                                                             {question.cau_hoi.loi_giai.split('\n').map((item, index_cauhoi) => {
                                                                 return (
-                                                                    <div className="help-answer-content" key={index_cauhoi}>
-                                                                        {
-                                                                            (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                                                <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question4_${index_cauhoi}`}></img>
-                                                                            ) : (
-                                                                                item.split('$').map((item2, index2) => {
-                                                                                    return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
-                                                                                        <MathJax.Node key={index2} formula={item2} />
-                                                                                    ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\underline')) ?
-                                                                                        (
-                                                                                            <div key={index2} style={{textDecoration: 'underline'}}>{item2.split('\\underline{')[1].split('}')[0]}</div>
-                                                                                    ) : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\bold')) ?
-                                                                                        (
-                                                                                            <div key={index2} style={{fontWeight: 700}}>{item2.split('\\bold{')[1].split('}')[0]}</div>
-                                                                                        )
-                                                                                    : (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && item2.includes('\\italic')) ?
-                                                                                        (
-                                                                                            <div key={index2} style={{fontStyle: 'italic'}}>{item2.split('\\italic{')[1].split('}')[0]}</div>
-                                                                                        )
-                                                                                    :(
-                                                                                        <div key={index2} >{item2}</div>
-                                                                                    );
-                                                                                })
-                                                                            )
-                                                                        }
+                                                                    <div className="help-answer-content" key={index_cauhoi}> 
+                                                                    {
+                                                                        (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
+                                                                            <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question4_${index_cauhoi}`}></img>
+                                                                        ) : (
+                                                                            item.split('$').map((item2, index2) => {
+                                                                                return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
+                                                                                    <MathJax.Node key={index2} formula={item2} />
+                                                                                ) : (
+                                                                                    <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                                                )
+                                                                            })
+                                                                        )
+                                                                    }
                                                                     </div>
                                                                 )}
                                                             )}

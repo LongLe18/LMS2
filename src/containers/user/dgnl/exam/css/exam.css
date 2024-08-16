@@ -138,6 +138,7 @@
   color: #333333;
 }
 
+
 .list-exam-box-archive .content-category-archive ul li a:hover {
   color: #3da844;
   text-decoration: underline;
@@ -334,6 +335,10 @@
   .ant-table {
     font-size: 20px;
   }
+}
+
+.text-black {
+  color: #000 !important;
 }
 
 .ant-steps-item-title, .ant-radio-wrapper {

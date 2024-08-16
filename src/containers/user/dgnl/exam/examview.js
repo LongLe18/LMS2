@@ -247,7 +247,7 @@ const ExamViewPage = (props) => {
                 <div className="content-page" style={{fontSize: 16}}>
                     <span style={{fontSize: 18, color: 'green', fontWeight: 600}}>Tiến trình làm bài thi trên máy tính</span>
                     <br/>
-                    <span>Khi BẮT ĐẦU lảm bải, màn hình máy tính sẽ hiển thị phần thi thứ nhất:</span>
+                    <span>Khi BẮT ĐẦU làm bài, màn hình máy tính sẽ hiển thị phần thi thứ nhất:</span>
                     <br/>
 
                     <div style={{fontStyle: 'italic'}}><span style={{fontWeight: 700}}>Phần 1</span>: Tư duy định lượng</div>

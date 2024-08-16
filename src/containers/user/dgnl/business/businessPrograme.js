@@ -303,7 +303,7 @@ const BusinessProgramePage = (props) => {
                         <Col Col xl={24} md={24} xs={24}>
                             <h2 className="section-title section-title-center">
                             <b></b>
-                                {(courses.status === 'success' && data.length > 0) && <span className="section-title-main">{data[0].ten_khung_ct}</span>}
+                                {(courses.status === 'success' && data.length > 0) && <span className="section-title-main" style={{color: 'green'}}>{data[0].ten_khung_ct}</span>}
                                 <b></b>
                             </h2>
                             {data.length > 0 && (

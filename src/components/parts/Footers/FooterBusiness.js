@@ -41,7 +41,7 @@ const FooterBusiness = (props) => {
                 <>
                     <h2 className="section-title section-title-center">
                         <b></b>
-                        <span className="section-title-main">Các Khóa học khác</span>
+                        <span className="section-title-main" style={{color: 'green'}}>Các Khóa học khác</span>
                         <b></b>
                     </h2>
                     {dataInit.length > 0 && (
@@ -82,7 +82,7 @@ const FooterBusiness = (props) => {
                 <>
                     <h2 className="section-title section-title-center">
                         <b></b>
-                        <span className="section-title-main">Các Khóa học liên quan</span>
+                        <span className="section-title-main" style={{color: 'green'}}>Các Khóa học liên quan</span>
                         <b></b>
                     </h2>
                     {dataInit.length > 0 && (

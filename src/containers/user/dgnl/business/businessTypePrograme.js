@@ -4,18 +4,19 @@ import './css/business.css';
 import './css/Testimonials.css';
 
 import { Helmet } from 'react-helmet';
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+// import Hashids from 'hashids';
 
 // helper
 import defaultImage from 'assets/img/default.jpg';
 import config from '../../../../configs/index';
 // import moment from "moment";
-import useFetch from "hooks/useFetch";
+// import useFetch from "hooks/useFetch";
 
 // component
 import { Layout, Row, Col, Button, Input, Select, Form, Menu } from 'antd';
 import CarouselCustom from 'components/parts/Carousel/Carousel';
-import CardSlider from 'components/parts/CardSlider/CardSlier';
+// import CardSlider from 'components/parts/CardSlider/CardSlier';
 import { BookOutlined, BarsOutlined, } from '@ant-design/icons';
 
 // redux
@@ -27,11 +28,13 @@ import Statisic from "components/parts/statisic/Statisic";
 const { Content } = Layout;
 const { Option } = Select;
 
-const CoursesPage = (props) => {
+const BusinessTypeProgramePage = (props) => {
+    const idTypeKCT = useParams().idTypeKCT;
+    // const hashids = new Hashids();
     // eslint-disable-next-line no-unused-vars
     const [dataInit, setDataInit] = useState([]);
     const [dataSearch, setDataSearch] = useState([]);
-    const [courseOfUser] = useFetch(`/student/list/course`);
+    // const [courseOfUser] = useFetch(`/student/list/course`);
     
     const dispatch = useDispatch();
 
@@ -207,68 +210,6 @@ const CoursesPage = (props) => {
                         </Row>
                         <Statisic />
 
-                        <Row gutter={12} style={{marginTop: 12}} className="trang-chu">
-                            <Col xl={8} md={12} xs={24}>
-                                <div className="intro-trang-chu" style={{display: 'flex'}}>
-                                    <img alt="..."  style={{borderRadius: 6}}
-                                        className="img-no-padding img-responsive"
-                                        src={require("assets/img/trang-chu-1.png").default}
-                                    />
-                                    <div className="descripion-intro">
-                                        <h4>Kiểm tra</h4>
-                                        <h6 style={{textTransform: 'uppercase', color: 'green'}}>Đánh giá đầu vào</h6>
-                                        <span className='descripion'>Tham gia các kì thi thử sức và làm quen với các hình thức thi mới nhất trên nền tảng công nghệ hiện đại</span>
-                                        <Button type="primary" style={{borderRadius: 8}} size={'large'} 
-                                            onClick={() => document.getElementById("testEntrance").scrollIntoView({
-                                                behavior: "smooth"
-                                            })}
-                                        >
-                                            Chi tiết
-                                        </Button>
-                                    </div>
-                                </div>
-                            </Col>
-                            <Col xl={8} md={12} xs={24}>
-                                <div className="intro-trang-chu" style={{display: 'flex'}}>
-                                    <img alt="..."  style={{borderRadius: 6}}
-                                        className="img-no-padding img-responsive"
-                                        src={require("assets/img/trang-chu-2.png").default}
-                                    />
-                                    <div className="descripion-intro">
-                                        <h4>Kiểm tra</h4>
-                                        <h6 style={{textTransform: 'uppercase', color: 'green'}}>Đánh giá năng lực</h6>
-                                        <span className='descripion'>Cung cấp thông tin đầy đủ về các khoá học, bài giảng, bài thi và lộ trình học tập chất lượng</span>
-                                        <Button type="primary" style={{borderRadius: 8}} size={'large'} 
-                                            onClick={() => document.getElementById("testCapacity").scrollIntoView({
-                                                behavior: "smooth"
-                                            })}
-                                        >
-                                            Chi tiết
-                                        </Button>
-                                    </div>
-                                </div>
-                            </Col>
-                            <Col xl={8} md={12} xs={24}>
-                                <div className="intro-trang-chu" style={{display: 'flex'}}>
-                                    <img alt="..."  style={{borderRadius: 6}}
-                                        className="img-no-padding img-responsive"
-                                        src={require("assets/img/trang-chu-3.png").default}
-                                    />
-                                    <div className="descripion-intro">
-                                        <h4>Học liệu</h4>
-                                        <h6 style={{textTransform: 'uppercase', color: 'green'}}>Online</h6>
-                                        <span className='descripion'>Đẩy đủ các giáo trình học, sách ôn luyện từ đơn giản tới nâng cao bám sát chương trình HỌC & THI</span>
-                                        <Button type="primary" style={{borderRadius: 8}} size={'large'} 
-                                            onClick={() => document.getElementById("study").scrollIntoView({
-                                                behavior: "smooth"
-                                            })}
-                                        >
-                                            Chi tiết
-                                        </Button>
-                                    </div>
-                                </div>
-                            </Col>
-                        </Row>
                         <br/>
                         
                         <Row>
@@ -347,31 +288,68 @@ const CoursesPage = (props) => {
                             </>
                         )}
                         
-                        {localStorage.getItem('userToken') && 
-                            <div>
-                                <h3 className="section-title section-title-center" 
-                                    style={{justifyContent: 'center', textTransform: 'uppercase', color: 'green', marginTop: 12, fontWeight: 700}}
-                                >
-                                    CÁC KHÓA HỌC ĐÃ ĐĂNG KÝ
-                                </h3>
-                                <div className="main-section">
-                                    <div className="header-section">
-                                        <h3 className="section-title section-title-center" style={{marginBottom: 0, marginTop: 0}}>
-                                            <span className="section-title-main">CÁC KHÓA HỌC ĐÃ ĐĂNG KÝ</span>
-                                        </h3>
-                                        <Link style={{borderRadius: 8, margin: '12px 15px'}} className="ant-btn ant-btn-default ant-btn-lg"
-                                            to={`/luyen-tap/nguoi-dung/khoa-hoc`}
-                                        >
-                                            Xem tất cả {'>'}
-                                        </Link>
-                                    </div>
-                                    {courseOfUser.length > 0 && <CardSlider courses={courseOfUser}/>}
-                                </div>
-                            </div>
-                        }
+                        <Row gutter={16}>
+                            {
+                                typeProgramme.filter((type) => type.id === Number(idTypeKCT)).map((item, index) => {
+                                    return (
+                                        <Col Col xl={24} md={24} xs={24}>
+                                            <h2 className="section-title section-title-center">
+                                                <span className="section-title-main" style={{color: 'green'}}>{item.name}</span>
+                                            </h2>
+                                            <Row gutter={[16, 16]} className="list-cate-items">
+                                                {courses.status === 'success' && courses.data.filter(course => course.loai_kct === item.id).map((cate, index) => {
+                                                    return (
+                                                        <Col xl={5} sm={12} xs={12} className="course-cate-row" key={cate.key}>
+                                                            <div className="course-cate-box">
+                                                                <div className="image-box">
 
-                        {(courses.status === 'success' && programmes.status === 'success' && programmes.data.length > 0) && 
-                            typeProgramme.map((item, index) => {
+                                                                    <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>
+                                                                        <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
+                                                                    </Link>
+                                                                </div>
+                                                                <div className="box-text pb-1">
+                                                                    {typeProgramme === 1 
+                                                                    ?
+                                                                        <>
+                                                                            <h3 className="course-cate-title">
+                                                                                <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>{cate.ten_khoa_hoc}</Link>
+                                                                            </h3>
+                                                                            <p className="course-cate-description">
+                                                                                <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`} >
+                                                                                    <Button type="primary" style={{margin: '12px 0 12px 0', fontSize: 12, borderRadius: 4}}>
+                                                                                        Chi tiết
+                                                                                    </Button>
+                                                                                </Link>
+                                                                            </p>
+                                                                        </>
+                                                                    :
+                                                                        <>
+                                                                            <h3 className="course-cate-title">
+                                                                                <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>{cate.ten_khoa_hoc}</Link>
+                                                                            </h3>
+                                                                            <p className="course-cate-description">
+                                                                                <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`} >
+                                                                                    <Button type="primary" style={{margin: '12px 0 12px 0', fontSize: 12, borderRadius: 4}}>
+                                                                                        Chi tiết
+                                                                                    </Button>
+                                                                                </Link>
+                                                                            </p>
+                                                                        </>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </Col>
+                                                    )
+                                                })}
+                                            </Row>
+                                        </Col>
+                                    )
+                                })
+                            }
+                        </Row>
+                    
+                        {/* {(courses.status === 'success' && programmes.status === 'success' && programmes.data.length > 0) && 
+                            typeProgramme.filter((type) => type.id === idTypeKCT).map((item, index) => {
                                 return (
                                     <div>
                                         <h3 className="section-title section-title-center" 
@@ -381,13 +359,13 @@ const CoursesPage = (props) => {
                                         </h3>
                                         <div key={index} className="main-section" id={item.idElement}>
                                             <div className="header-section">
-                                                <h3 className="section-title section-title-center" style={{marginBottom: 0, marginTop: 0}}>
+                                                <h3 className="section-title section-title-center" style={{marginBottom: 0}}>
                                                     <span className="section-title-main">{item.name}</span>
                                                 </h3>
                                                 <Link style={{borderRadius: 8, margin: '12px 15px'}} className="ant-btn ant-btn-default ant-btn-lg"
-                                                    to={`/luyen-tap/loai-chuong-trinh/${item.id}`}
+                                                    to={`/luyen-tap/chuong-trinh/${khoa_hoc_id}`}
                                                 >
-                                                    Xem tất cả {'>'}
+                                                    Xem tất cả >
                                                 </Link>
                                             </div>
                                             {programmes.data.length > 0 && <CardSlider courses={courses.data.filter(course => course.loai_kct === item.id)} id={index }/>}
@@ -395,7 +373,7 @@ const CoursesPage = (props) => {
                                     </div>
                                 )
                             })
-                        }
+                        } */}
                     </div>
                 </div>
                 
@@ -417,4 +395,4 @@ const CoursesPage = (props) => {
     )
 }
 
-export default CoursesPage;
+export default BusinessTypeProgramePage;

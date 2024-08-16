@@ -99,7 +99,7 @@ const MainPageUser = (props) => {
 
                     <Row gutter={12} style={{marginTop: 12}}>
                         <Col xl={8} md={12} xs={24}>
-                            <div className="intro-trang-chu">
+                            <div className="intro-trang-chu" style={{display: 'flex'}}>
                                 <img alt="..."  style={{borderRadius: 6}}
                                     className="img-no-padding img-responsive"
                                     src={require("assets/img/trang-chu-1.png").default}
@@ -115,14 +115,14 @@ const MainPageUser = (props) => {
                             </div>
                         </Col>
                         <Col xl={8} md={12} xs={24}>
-                            <div className="intro-trang-chu">
+                            <div className="intro-trang-chu" style={{display: 'flex'}}>
                                 <img alt="..."  style={{borderRadius: 6}}
                                     className="img-no-padding img-responsive"
                                     src={require("assets/img/trang-chu-2.png").default}
                                 />
                                 <div className="descripion-intro">
                                     <h4>Sách - Tài liệu</h4>
-                                    <span className='descripion'>Đầy đủ giáo trình học, sách ôn luyện từ đơn giản tới nâng cao bám sát chương trình HỌC & THI</span>
+                                    <span className='descripion'>Đầy đủ giáo trình học, sách ôn luyện từ đơn giản tới nâng cao bám sát chương trình</span>
                                     <Button type="primary" style={{borderRadius: 8}} size={'large'} 
                                         onClick={() => window.location.href = 'https://enno.edu.vn/sach/'}>
                                         Tham khảo
@@ -131,7 +131,7 @@ const MainPageUser = (props) => {
                             </div>
                         </Col>
                         <Col xl={8} md={12} xs={24}>
-                            <div className="intro-trang-chu">
+                            <div className="intro-trang-chu" style={{display: 'flex'}}>
                                 <img alt="..."  style={{borderRadius: 6}}
                                     className="img-no-padding img-responsive"
                                     src={require("assets/img/trang-chu-3.png").default}

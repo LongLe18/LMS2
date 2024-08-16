@@ -112,19 +112,33 @@
   .section-0 {
     background: #d4ad00;
     border-color: #d4ad00;
+    text-align: center;
     color: #b60505;
+    text-transform: uppercase;
   }
 
   .section-1 {
     background: #2222ffc2;
     border-color: #2222ffc2;
+    text-align: center;
+    text-transform: uppercase;
     color: #fff;
   }
 
   .section-2 {
     background: #b60505;
     border-color: #b60505;
+    text-align: center;
     color: #d4ad00;
+    text-transform: uppercase;
+  }
+
+  .section-sum {
+    text-transform: uppercase;
+    color: #fff;
+    background: #d09e80;
+    text-align: center;
+    border-color: #d09e80;
   }
 }
 

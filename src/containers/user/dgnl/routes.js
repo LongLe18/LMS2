@@ -19,6 +19,7 @@ import ExamViewDGNL from './exam/examViewDGNL';
 // business
 import BusinessPage from './business/business';
 import BusinessProgramePage from './business/businessPrograme';
+import BusinessTypeProgramePage from './business/businessTypePrograme';
 import IntroCoursePage from './business/detailCourse';
 import CoursesPage from './business/businessCourses';
 import CartPage from './business/cart';
@@ -162,6 +163,13 @@ const routes = [
         exact: true,
         hidden: true,
         render: (props) => <BusinessProgramePage {...props}/>,
+    },
+    {
+        id: 'businessPrograme',
+        path: '/luyen-tap/loai-chuong-trinh/:idTypeKCT',
+        exact: true,
+        hidden: true,
+        render: (props) => <BusinessTypeProgramePage {...props}/>,
     },
     {
         id: 'introduceCourse',
