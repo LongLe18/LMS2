@@ -89,7 +89,7 @@ const CheckOutPage = (props) => {
                     subTitle={subTitle()}
                     extra={
                         <Button type="primary">
-                            <Link to="/luyen-tap/kinh-doanh-khoa-hoc">Tiếp tục mua khóa học</Link>
+                            <Link to="/luyen-tap/trang-chu">Tiếp tục mua khóa học</Link>
                         </Button>
                     }
                 />

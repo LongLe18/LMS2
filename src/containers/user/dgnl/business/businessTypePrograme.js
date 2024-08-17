@@ -44,8 +44,8 @@ const BusinessTypeProgramePage = (props) => {
     const programmeCourses = useSelector(state => state.programme.courses.result);
 
     const typeProgramme = [
-        { id: 0, name: 'Kiểm tra Đánh giá đầu vào', idElement: 'testEntrance' },
-        { id: 1, name: 'Kiểm tra Đánh giá năng lực', idElement: 'testCapacity' },
+        { id: 0, name: 'Kiểm tra Đánh giá năng lực', idElement: 'testCapacity' },
+        { id: 1, name: 'Kiểm tra Đánh giá đầu vào', idElement: 'testEntrance' },
         { id: 2, name: 'Học liệu', idElement: 'study' },
     ];
     

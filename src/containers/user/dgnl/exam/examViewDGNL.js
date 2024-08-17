@@ -363,7 +363,7 @@ const ExamViewDGNL = (props) => {
                             <Avatar shape="square" size={130} src={require('assets/img/logo/vnu-cet-logo.png').default} />
                         </div>
                     </Col>
-                    <Col xs={{ span: 22, offset: 1 }} lg={{ span: 16, offset: 4}}>
+                    <Col xs={{ span: 22, offset: 1 }} lg={{ span: 16, }} style={{textAlign: 'center'}}>
                         <h4 style={{color: "red", fontWeight: 500, fontSize: 30}}>Chào mừng bạn tham gia kỳ thi thử ĐGNL ĐHQGHN (HSA)</h4>
                         <h4 style={{fontWeight: 500}}>Kỳ thi đánh giá năng lực học sinh THPT</h4>
                     </Col>

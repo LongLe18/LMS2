@@ -190,7 +190,7 @@ const CartPage = (props) => {
                                 </Col>
                                 <div className="detail-footer">
                                     <Button type="primary" danger size='large' onClick={() => payment()}>Thanh toán</Button>
-                                    <Link to={'/luyen-tap/kinh-doanh-khoa-hoc'}>Tiếp tục mua khóa học</Link>
+                                    <Link to={'/luyen-tap/trang-chu'}>Tiếp tục mua khóa học</Link>
                                 </div>
                             </Row>   
                         </Col>

@@ -303,7 +303,7 @@ const HistoryExam = () => {
                                                                     <img src={config.API_URL + `/${item.match(regex)[1]}`} alt="img"></img>
                                                                 ) : 
                                                                 (
-                                                                    <div>{item.split('$').map((item2, index2) => {
+                                                                    <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
                                                                         return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
                                                                             <MathJax.Node key={index2} formula={item2} />
                                                                         ) : (
@@ -339,7 +339,7 @@ const HistoryExam = () => {
                                                                 <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img${index_cauhoi}`}></img>
                                                             ) : 
                                                             (
-                                                                <div>{item.split('$').map((item2, index2) => {
+                                                                <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
                                                                     return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
                                                                         <MathJax.Node key={index2} formula={item2} />
                                                                     ) : (
@@ -403,7 +403,7 @@ const HistoryExam = () => {
                                                                                             <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question3_${index_cauhoi}`}></img>
                                                                                         ) : 
                                                                                         (
-                                                                                            <div>{item.split('$').map((item2, index2) => {
+                                                                                            <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
                                                                                                 return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
                                                                                                     <MathJax.Node key={index2} formula={item2} />
                                                                                                 ) : (

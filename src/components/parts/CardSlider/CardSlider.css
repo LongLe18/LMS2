@@ -19,8 +19,8 @@
 }
 
 .card {
-    max-width: 230px;
-    min-width: 230px;
+    max-width: 255px;
+    min-width: 255px;
     margin: 0 10px;
     padding: 10px;
     background-color: #f0f0f0;

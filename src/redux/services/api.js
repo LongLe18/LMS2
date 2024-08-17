@@ -77,7 +77,7 @@ export function getApi(url) {
                 notification.error({
                     message: 'Phiên đăng nhập của bạn đã hết hạn.',
                 });
-                // window.location.replace(`${window.location.origin}/luyen-tap/kinh-doanh-khoa-hoc`)
+                // window.location.replace(`${window.location.origin}/luyen-tap/trang-chu`)
                 return Promise.resolve({});
             }
         } else if (error.request) {

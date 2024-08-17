@@ -2,8 +2,9 @@ import React from 'react';
 import './CardSlider.css';
 import config from '../../../configs/index';
 import { Link } from "react-router-dom";
+import { RightOutlined, LeftOutlined } from '@ant-design/icons';
 
-const Card = ({ ten_khoa_hoc, anh_dai_dien, mo_ta, khoa_hoc_id }) => {
+const Card = ({ ten_khoa_hoc, anh_dai_dien, khoa_hoc_id }) => {
   return (
         <div className="card">
             <div className="image-box">
@@ -15,7 +16,7 @@ const Card = ({ ten_khoa_hoc, anh_dai_dien, mo_ta, khoa_hoc_id }) => {
                 <h3 className="course-cate-title">
                     <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${khoa_hoc_id}`} style={{color: 'green'}}>{ten_khoa_hoc}</Link>
                 </h3>
-                <p>{mo_ta}</p>
+                {/* <p>{mo_ta}</p> */}
             </div>
         </div>
     );
@@ -24,23 +25,23 @@ const Card = ({ ten_khoa_hoc, anh_dai_dien, mo_ta, khoa_hoc_id }) => {
 const CardSlider = ({ courses, id }) => {
 
     const scrollLeft = () => {
-        document.querySelector(`#cards-container-${id}`).scrollBy({ left: -230, behavior: 'smooth' });
+        document.querySelector(`#cards-container-${id}`).scrollBy({ left: -255, behavior: 'smooth' });
     };
       
     const scrollRight = () => {
         // scroll right
-        document.querySelector(`#cards-container-${id}`).scrollBy({ left: 230, behavior: 'smooth' });
+        document.querySelector(`#cards-container-${id}`).scrollBy({ left: 255, behavior: 'smooth' });
     };
 
     return (
         <div className="card-slider">
-            <button className="scroll-button left" onClick={scrollLeft}>{'<'}</button>
+            <button className="scroll-button left" onClick={scrollLeft}><LeftOutlined style={{fontSize: 14}}/></button>
             <div className="cards-container" id={`cards-container-${id}`}>
-                {courses.map((course, index) => (
+                {courses?.map((course, index) => (
                     <Card key={index} {...course} />
                 ))}
             </div>
-            <button className="scroll-button right" onClick={scrollRight}>{'>'}</button>
+            <button className="scroll-button right" onClick={scrollRight}><RightOutlined style={{fontSize: 14}}/></button>
         </div>
     );
 };

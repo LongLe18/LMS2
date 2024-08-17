@@ -362,7 +362,7 @@ function IndexHeader(props) {
                         />
                       }>
                         {/* Note: Chỉ điều hướng vơi menu Khóa học */}
-                        <a onClick={(e) => window.location.href = config.BASE_URL + '/luyen-tap/kinh-doanh-khoa-hoc'}> 
+                        <a onClick={(e) => window.location.href = config.BASE_URL + '/luyen-tap/trang-chu'}> 
                             {ten_menu}
                             <DownOutlined />
                         </a>
@@ -499,7 +499,7 @@ function IndexHeader(props) {
                         />
                       }>
                         {/* Note: Chỉ điều hướng vơi menu Khóa học */}
-                        <a className="nav__mobile-link" style={{width: '100%'}} onClick={(e) => window.location.href = config.BASE_URL + '/luyen-tap/kinh-doanh-khoa-hoc'}> 
+                        <a className="nav__mobile-link" style={{width: '100%'}} onClick={(e) => window.location.href = config.BASE_URL + '/luyen-tap/trang-chu'}> 
                             {ten_menu}
                             <DownOutlined />
                         </a>

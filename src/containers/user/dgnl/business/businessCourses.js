@@ -16,7 +16,7 @@ import useFetch from "hooks/useFetch";
 import { Layout, Row, Col, Button, Input, Select, Form, Menu } from 'antd';
 import CarouselCustom from 'components/parts/Carousel/Carousel';
 import CardSlider from 'components/parts/CardSlider/CardSlier';
-import { BookOutlined, BarsOutlined, } from '@ant-design/icons';
+import { BookOutlined, BarsOutlined, RightOutlined } from '@ant-design/icons';
 
 // redux
 import { useSelector, useDispatch } from 'react-redux';
@@ -40,9 +40,9 @@ const CoursesPage = (props) => {
     const programmes = useSelector(state => state.programme.list.result);
     const programmeCourses = useSelector(state => state.programme.courses.result);
 
-    const typeProgramme = [
-        { id: 0, name: 'Kiểm tra Đánh giá đầu vào', idElement: 'testEntrance' },
-        { id: 1, name: 'Kiểm tra Đánh giá năng lực', idElement: 'testCapacity' },
+    const typeProgrammes = [
+        { id: 0, name: 'Kiểm tra Đánh giá năng lực', idElement: 'testCapacity' },
+        { id: 1, name: 'Kiểm tra Đánh giá đầu vào', idElement: 'testEntrance' },
         { id: 2, name: 'Học liệu', idElement: 'study' },
     ];
     
@@ -169,251 +169,248 @@ const CoursesPage = (props) => {
     
     const renderCourses = () => {
         return (
-            <>      
-                <div className="list-course-cate">        
-                    <div className="wraper wraper-list-course-cate-index">
-                        <Row gutter={16} style={{margin: '18px 0'}}>
-                            <Col xl={5} md={4} xs={4} style={{paddingLeft: 0}}>
-                                {(programmeCourses.status === 'success' && items.length > 0) &&
-                                    <Menu style={{borderRadius: 6}}
-                                        mode="vertical"
-                                        theme="light"
-                                        defaultSelectedKeys={['1']}
+            <div className="list-course-cate">        
+                <div className="wraper wraper-list-course-cate-index">
+                    <Row gutter={16} style={{margin: '18px 0'}}>
+                        <Col xl={5} md={4} xs={4} style={{paddingLeft: 0}}>
+                            {(programmeCourses.status === 'success' && items.length > 0) &&
+                                <Menu style={{borderRadius: 6}}
+                                    mode="vertical"
+                                    theme="light"
+                                    defaultSelectedKeys={['1']}
+                                >
+                                    <Menu.Item style={{background: '#3da844', marginTop: 0, borderTopRightRadius: 6, borderTopLeftRadius: 6}}
+                                        icon={<BarsOutlined style={{color: '#fff'}}/>}
                                     >
-                                        <Menu.Item style={{background: '#3da844', marginTop: 0, borderTopRightRadius: 6, borderTopLeftRadius: 6}}
-                                            icon={<BarsOutlined style={{color: '#fff'}}/>}
-                                        >
-                                            <span style={{fontWeight: 600, color: "#fff"}}>Các khóa học</span>
-                                        </Menu.Item>
-                                        {items.map((item, index) => {
-                                            return (
-                                                <Menu.SubMenu title={item.label} key={Number(index)} icon={item.icon}>
-                                                    {item.children?.map((child, index) => {
-                                                        return (
-                                                            <Menu.Item key={child.key}>
-                                                                <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${child.key}`}>{child.label}</Link>
-                                                            </Menu.Item>
-                                                        )
-                                                    })}
-                                                </Menu.SubMenu>
-                                            )
-                                        })}
-                                    </Menu>
-                                }
-                            </Col> 
-                            <Col xl={19} md={20} xs={20}>
-                                <CarouselCustom />
-                            </Col>
-                        </Row>
-                        <Statisic />
-
-                        <Row gutter={12} style={{marginTop: 12}} className="trang-chu">
-                            <Col xl={8} md={12} xs={24}>
-                                <div className="intro-trang-chu" style={{display: 'flex'}}>
-                                    <img alt="..."  style={{borderRadius: 6}}
-                                        className="img-no-padding img-responsive"
-                                        src={require("assets/img/trang-chu-1.png").default}
-                                    />
-                                    <div className="descripion-intro">
-                                        <h4>Kiểm tra</h4>
-                                        <h6 style={{textTransform: 'uppercase', color: 'green'}}>Đánh giá đầu vào</h6>
-                                        <span className='descripion'>Tham gia các kì thi thử sức và làm quen với các hình thức thi mới nhất trên nền tảng công nghệ hiện đại</span>
-                                        <Button type="primary" style={{borderRadius: 8}} size={'large'} 
-                                            onClick={() => document.getElementById("testEntrance").scrollIntoView({
-                                                behavior: "smooth"
-                                            })}
-                                        >
-                                            Chi tiết
-                                        </Button>
-                                    </div>
-                                </div>
-                            </Col>
-                            <Col xl={8} md={12} xs={24}>
-                                <div className="intro-trang-chu" style={{display: 'flex'}}>
-                                    <img alt="..."  style={{borderRadius: 6}}
-                                        className="img-no-padding img-responsive"
-                                        src={require("assets/img/trang-chu-2.png").default}
-                                    />
-                                    <div className="descripion-intro">
-                                        <h4>Kiểm tra</h4>
-                                        <h6 style={{textTransform: 'uppercase', color: 'green'}}>Đánh giá năng lực</h6>
-                                        <span className='descripion'>Cung cấp thông tin đầy đủ về các khoá học, bài giảng, bài thi và lộ trình học tập chất lượng</span>
-                                        <Button type="primary" style={{borderRadius: 8}} size={'large'} 
-                                            onClick={() => document.getElementById("testCapacity").scrollIntoView({
-                                                behavior: "smooth"
-                                            })}
-                                        >
-                                            Chi tiết
-                                        </Button>
-                                    </div>
-                                </div>
-                            </Col>
-                            <Col xl={8} md={12} xs={24}>
-                                <div className="intro-trang-chu" style={{display: 'flex'}}>
-                                    <img alt="..."  style={{borderRadius: 6}}
-                                        className="img-no-padding img-responsive"
-                                        src={require("assets/img/trang-chu-3.png").default}
-                                    />
-                                    <div className="descripion-intro">
-                                        <h4>Học liệu</h4>
-                                        <h6 style={{textTransform: 'uppercase', color: 'green'}}>Online</h6>
-                                        <span className='descripion'>Đẩy đủ các giáo trình học, sách ôn luyện từ đơn giản tới nâng cao bám sát chương trình HỌC & THI</span>
-                                        <Button type="primary" style={{borderRadius: 8}} size={'large'} 
-                                            onClick={() => document.getElementById("study").scrollIntoView({
-                                                behavior: "smooth"
-                                            })}
-                                        >
-                                            Chi tiết
-                                        </Button>
-                                    </div>
-                                </div>
-                            </Col>
-                        </Row>
-                        <br/>
-                        
-                        <Row>
-                            <Col span={24} className="filter-todo">
-                                <Form layout="vertical" form={form} autoComplete="off" onFinish={search}>
-                                    <Row justify="center" gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                                        <Col xl={6} md={6} xs={24}>
-                                            <Form.Item 
-                                                initialValue={''}
-                                                className="input-col"
-                                                name="kct_id"
-                                                rules={[]} >
-                                                    {renderProgramme()}
-                                            </Form.Item>  
-                                        </Col>
-                                        <Col xl={6} md={6} xs={24}>
-                                            <Form.Item 
-                                                className="input-col"
-                                                initialValue={''}
-                                                name="linh_vuc_id"
-                                                rules={[]} >
-                                                    {renderLinhVuc()}
-                                            </Form.Item>  
-                                        </Col>
-                                        <Col xl={6} md={6} xs={24}>
-                                            <Form.Item 
-                                                className="input-col"
-                                                name="ten_khoa_hoc"
-                                                rules={[]} >
-                                                    <Input placeholder="Nhập tên khóa học"/>
-                                            </Form.Item>  
-                                        </Col>
-                                        <Col xl={2} md={6} xs={24} style={{textAlign: 'center'}}>
-                                            <Button type="primary" htmlType="submit" style={{borderRadius: 6}}>Tìm kiếm</Button>
-                                        </Col>
-                                    </Row>
-                                </Form>
-                            </Col>
-                        </Row>
-
-                        {dataSearch.length > 0 && (
-                            <>
-                                <h2 className="section-title section-title-center">
-                                    <b></b>
-                                    <span className="section-title-main">KẾT QUẢ TÌM KIẾM</span>
-                                    <b></b>
-                                </h2>
-                                <Row gutter={[16, 16]} className="list-cate-items">
-                                    {dataSearch.map((cate, index) => {
+                                        <span style={{fontWeight: 600, color: "#fff"}}>Các khóa học</span>
+                                    </Menu.Item>
+                                    {items.map((item, index) => {
                                         return (
-                                            <Col xl={6} sm={12} xs={12} className="course-cate-row" key={cate.khoa_hoc_id}>
-                                                <div className="course-cate-box">
-                                                    <div className="image-box">
-                                                        <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>
-                                                            <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
-                                                        </Link>
-                                                    </div>
-                                                    <div className="box-text">
-                                                        <h3 className="course-cate-title">
-                                                            <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>{cate.ten_khoa_hoc}</Link>
-                                                        </h3>
-                                                        <p className="course-cate-description">
-                                                            {/* Ngày bắt đầu: {moment(cate.ngay_bat_dau).format(config.DATE_FORMAT_SHORT)} */}
-                                                            <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`} >
-                                                                <Button type="primary" style={{margin: '12px 0 12px 0', fontSize: 12, borderRadius: 4}}>
-                                                                    Chi tiết
-                                                                </Button>
-                                                            </Link>
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </Col>
+                                            <Menu.SubMenu title={item.label} key={Number(index)} icon={item.icon}>
+                                                {item.children?.map((child, index) => {
+                                                    return (
+                                                        <Menu.Item key={child.key}>
+                                                            <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${child.key}`}>{child.label}</Link>
+                                                        </Menu.Item>
+                                                    )
+                                                })}
+                                            </Menu.SubMenu>
                                         )
                                     })}
-                                </Row>
-                            </>
-                        )}
-                        
-                        {localStorage.getItem('userToken') && 
-                            <div>
-                                <h3 className="section-title section-title-center" 
-                                    style={{justifyContent: 'center', textTransform: 'uppercase', color: 'green', marginTop: 12, fontWeight: 700}}
-                                >
-                                    CÁC KHÓA HỌC ĐÃ ĐĂNG KÝ
-                                </h3>
-                                <div className="main-section">
-                                    <div className="header-section">
-                                        <h3 className="section-title section-title-center" style={{marginBottom: 0, marginTop: 0}}>
-                                            <span className="section-title-main">CÁC KHÓA HỌC ĐÃ ĐĂNG KÝ</span>
-                                        </h3>
-                                        <Link style={{borderRadius: 8, margin: '12px 15px'}} className="ant-btn ant-btn-default ant-btn-lg"
-                                            to={`/luyen-tap/nguoi-dung/khoa-hoc`}
-                                        >
-                                            Xem tất cả {'>'}
-                                        </Link>
-                                    </div>
-                                    {courseOfUser.length > 0 && <CardSlider courses={courseOfUser}/>}
+                                </Menu>
+                            }
+                        </Col> 
+                        <Col xl={19} md={20} xs={20}>
+                            <CarouselCustom />
+                        </Col>
+                    </Row>
+                    <Statisic />
+
+                    <Row gutter={12} style={{marginTop: 12}} className="trang-chu">
+                        <Col xl={8} md={12} xs={24}>
+                            <div className="intro-trang-chu" style={{display: 'flex'}}>
+                                <img alt="..."  style={{borderRadius: 6}}
+                                    className="img-no-padding img-responsive"
+                                    src={require("assets/img/trang-chu-1.png").default}
+                                />
+                                <div className="descripion-intro">
+                                    <h4>Kiểm tra</h4>
+                                    <h6 style={{textTransform: 'uppercase', color: 'green'}}>Đánh giá đầu vào</h6>
+                                    <span className='descripion'>Tham gia các kì thi thử sức và làm quen với các hình thức thi mới nhất trên nền tảng công nghệ hiện đại</span>
+                                    <Button type="primary" style={{borderRadius: 8}} size={'large'} 
+                                        onClick={() => document.getElementById("testEntrance").scrollIntoView({
+                                            behavior: "smooth"
+                                        })}
+                                    >
+                                        Chi tiết
+                                    </Button>
                                 </div>
                             </div>
-                        }
+                        </Col>
+                        <Col xl={8} md={12} xs={24}>
+                            <div className="intro-trang-chu" style={{display: 'flex'}}>
+                                <img alt="..."  style={{borderRadius: 6}}
+                                    className="img-no-padding img-responsive"
+                                    src={require("assets/img/trang-chu-2.png").default}
+                                />
+                                <div className="descripion-intro">
+                                    <h4>Kiểm tra</h4>
+                                    <h6 style={{textTransform: 'uppercase', color: 'green'}}>Đánh giá năng lực</h6>
+                                    <span className='descripion'>Cung cấp thông tin đầy đủ về các khoá học, bài giảng, bài thi và lộ trình học tập chất lượng</span>
+                                    <Button type="primary" style={{borderRadius: 8}} size={'large'} 
+                                        onClick={() => document.getElementById("testCapacity").scrollIntoView({
+                                            behavior: "smooth"
+                                        })}
+                                    >
+                                        Chi tiết
+                                    </Button>
+                                </div>
+                            </div>
+                        </Col>
+                        <Col xl={8} md={12} xs={24}>
+                            <div className="intro-trang-chu" style={{display: 'flex'}}>
+                                <img alt="..."  style={{borderRadius: 6}}
+                                    className="img-no-padding img-responsive"
+                                    src={require("assets/img/trang-chu-3.png").default}
+                                />
+                                <div className="descripion-intro">
+                                    <h4>Học liệu</h4>
+                                    <h6 style={{textTransform: 'uppercase', color: 'green'}}>Online</h6>
+                                    <span className='descripion'>Đẩy đủ các giáo trình học, sách ôn luyện từ đơn giản tới nâng cao bám sát chương trình HỌC & THI</span>
+                                    <Button type="primary" style={{borderRadius: 8}} size={'large'} 
+                                        onClick={() => document.getElementById("study").scrollIntoView({
+                                            behavior: "smooth"
+                                        })}
+                                    >
+                                        Chi tiết
+                                    </Button>
+                                </div>
+                            </div>
+                        </Col>
+                    </Row>
+                    <br/>
+                    
+                    <Row>
+                        <Col span={24} className="filter-todo">
+                            <Form layout="vertical" form={form} autoComplete="off" onFinish={search}>
+                                <Row justify="center" gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+                                    <Col xl={6} md={6} xs={24}>
+                                        <Form.Item 
+                                            initialValue={''}
+                                            className="input-col"
+                                            name="kct_id"
+                                            rules={[]} >
+                                                {renderProgramme()}
+                                        </Form.Item>  
+                                    </Col>
+                                    <Col xl={6} md={6} xs={24}>
+                                        <Form.Item 
+                                            className="input-col"
+                                            initialValue={''}
+                                            name="linh_vuc_id"
+                                            rules={[]} >
+                                                {renderLinhVuc()}
+                                        </Form.Item>  
+                                    </Col>
+                                    <Col xl={6} md={6} xs={24}>
+                                        <Form.Item 
+                                            className="input-col"
+                                            name="ten_khoa_hoc"
+                                            rules={[]} >
+                                                <Input placeholder="Nhập tên khóa học"/>
+                                        </Form.Item>  
+                                    </Col>
+                                    <Col xl={2} md={6} xs={24} style={{textAlign: 'center'}}>
+                                        <Button type="primary" htmlType="submit" style={{borderRadius: 6}}>Tìm kiếm</Button>
+                                    </Col>
+                                </Row>
+                            </Form>
+                        </Col>
+                    </Row>
 
-                        {(courses.status === 'success' && programmes.status === 'success' && programmes.data.length > 0) && 
-                            typeProgramme.map((item, index) => {
-                                return (
-                                    <div>
-                                        <h3 className="section-title section-title-center" 
-                                            style={{justifyContent: 'center', textTransform: 'uppercase', color: 'green', marginTop: 12, fontWeight: 700}}
-                                        >
-                                            {item.name}
-                                        </h3>
-                                        <div key={index} className="main-section" id={item.idElement}>
-                                            <div className="header-section">
-                                                <h3 className="section-title section-title-center" style={{marginBottom: 0, marginTop: 0}}>
-                                                    <span className="section-title-main">{item.name}</span>
-                                                </h3>
-                                                <Link style={{borderRadius: 8, margin: '12px 15px'}} className="ant-btn ant-btn-default ant-btn-lg"
-                                                    to={`/luyen-tap/loai-chuong-trinh/${item.id}`}
-                                                >
-                                                    Xem tất cả {'>'}
-                                                </Link>
+                    {dataSearch.length > 0 && (
+                        <>
+                            <h2 className="section-title section-title-center">
+                                <b></b>
+                                <span className="section-title-main">KẾT QUẢ TÌM KIẾM</span>
+                                <b></b>
+                            </h2>
+                            <Row gutter={[16, 16]} className="list-cate-items">
+                                {dataSearch.map((cate, index) => {
+                                    return (
+                                        <Col xl={6} sm={12} xs={12} className="course-cate-row" key={cate.khoa_hoc_id}>
+                                            <div className="course-cate-box">
+                                                <div className="image-box">
+                                                    <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>
+                                                        <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
+                                                    </Link>
+                                                </div>
+                                                <div className="box-text">
+                                                    <h3 className="course-cate-title">
+                                                        <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>{cate.ten_khoa_hoc}</Link>
+                                                    </h3>
+                                                    <p className="course-cate-description">
+                                                        {/* Ngày bắt đầu: {moment(cate.ngay_bat_dau).format(config.DATE_FORMAT_SHORT)} */}
+                                                        <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`} >
+                                                            <Button type="primary" style={{margin: '12px 0 12px 0', fontSize: 12, borderRadius: 4}}>
+                                                                Chi tiết
+                                                            </Button>
+                                                        </Link>
+                                                    </p>
+                                                </div>
                                             </div>
-                                            {programmes.data.length > 0 && <CardSlider courses={courses.data.filter(course => course.loai_kct === item.id)} id={index }/>}
+                                        </Col>
+                                    )
+                                })}
+                            </Row>
+                        </>
+                    )}
+                    
+                    {localStorage.getItem('userToken') && 
+                        <div>
+                            <h3 className="section-title section-title-center" 
+                                style={{justifyContent: 'center', textTransform: 'uppercase', color: 'green', marginTop: 12, fontWeight: 700}}
+                            >
+                                CÁC KHÓA HỌC ĐÃ ĐĂNG KÝ
+                            </h3>
+                            <div className="main-section">
+                                <div className="header-section">
+                                    <h3 className="section-title section-title-center" style={{marginBottom: 0, marginTop: 0}}>
+                                        <span className="section-title-main">CÁC KHÓA HỌC ĐÃ ĐĂNG KÝ</span>
+                                    </h3>
+                                    <Link style={{borderRadius: 8, margin: '12px 15px', display: 'flex', alignItems: 'center', padding: '0px 16px'}} 
+                                        className="ant-btn ant-btn-default ant-btn-lg"
+                                        to={`/luyen-tap/nguoi-dung/khoa-hoc`}
+                                    >
+                                        Xem tất cả <RightOutlined style={{marginLeft: 8}}/>
+                                    </Link>
+                                </div>
+                                {courseOfUser.length > 0 && <CardSlider courses={courseOfUser}/>}
+                            </div>
+                        </div>
+                    }
+
+                    {(courses.status === 'success' && programmes.status === 'success' && programmes.data.length > 0) && 
+                        typeProgrammes.map((item, index) => {
+                            return (
+                                <div key={index}>
+                                    <h3 className="section-title section-title-center" 
+                                        style={{justifyContent: 'center', textTransform: 'uppercase', color: 'green', marginTop: 12, fontWeight: 700}}
+                                    >
+                                        {item.name}
+                                    </h3>
+                                    <div className="main-section" id={item.idElement}>
+                                        <div className="header-section">
+                                            <h3 className="section-title section-title-center" style={{marginBottom: 0, marginTop: 0}}>
+                                                <span className="section-title-main">{item.name}</span>
+                                            </h3>
+                                            <Link style={{borderRadius: 8, margin: '12px 15px', display: 'flex', alignItems: 'center', padding: '0px 16px'}} 
+                                                className="ant-btn ant-btn-default ant-btn-lg"
+                                                to={`/luyen-tap/loai-chuong-trinh/${item.id}`}
+                                            >
+                                                Xem tất cả <RightOutlined style={{marginLeft: 8}}/>
+                                            </Link>
                                         </div>
+                                        {programmes.data.length > 0 && <CardSlider courses={courses.data.filter(course => course.loai_kct === item.id)} id={index }/>}
                                     </div>
-                                )
-                            })
-                        }
-                    </div>
+                                </div>
+                            )
+                        })
+                    }
                 </div>
-                
-            </>
+            </div>
         )
     };
 
     return (
-        <>
-            <Layout className="main-app">
-                <Helmet>
-                    <title>Danh sách khóa học</title>
-                </Helmet>
-                <Content className="app-content ">
-                    {renderCourses()}
-                </Content>
-            </Layout>
-        </>
+        <Layout className="main-app">
+            <Helmet>
+                <title>Danh sách khóa học</title>
+            </Helmet>
+            <Content className="app-content ">
+                {renderCourses()}
+            </Content>
+        </Layout>
     )
 }
 

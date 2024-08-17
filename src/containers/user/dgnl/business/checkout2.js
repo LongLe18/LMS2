@@ -18,7 +18,7 @@ const CheckOutPage2 = (props) => {
                     subTitle={<h5>Đơn hàng thanh toán của bạn đã được ghi nhận. Chúng tôi sẽ xử lý trong thời gian sớm nhất</h5>}
                     extra={
                         <Button type="primary">
-                            <Link to="/luyen-tap/kinh-doanh-khoa-hoc">Tiếp tục mua khóa học</Link>
+                            <Link to="/luyen-tap/trang-chu">Tiếp tục mua khóa học</Link>
                         </Button>
                     }
                 />

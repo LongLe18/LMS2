@@ -57,7 +57,7 @@ const IntroCoursePage = () => {
     const [existCourse, setExistCourse] = useState(false);
 
     const userToken = localStorage.getItem('userToken');
-    let breadcrumbs = [{ title: 'Trang chủ', link: `/luyen-tap/trang-chu` }, { title: 'Khóa học', link: '/luyen-tap/kinh-doanh-khoa-hoc' }];
+    let breadcrumbs = [{ title: 'Trang chủ', link: `/luyen-tap/trang-chu` }, { title: 'Khóa học', link: '/luyen-tap/trang-chu' }];
     
     const getCourseOfUser = () => {
         axios.get(config.API_URL + `/student/list/course`, { headers: {Authorization: `Bearer ${localStorage.getItem('userToken')}`,} 
@@ -333,7 +333,7 @@ const IntroCoursePage = () => {
                                             <strong>Đăng ký học ngay</strong>
                                             <span>Gọi điện xác nhận đăng ký học</span>
                                         </Link> */}
-                                        <Link to='#' className='devvn_buy_now' onClick={() => {window.location.href = '/luyen-tap/kinh-doanh-khoa-hoc'}}>
+                                        <Link to='#' className='devvn_buy_now' onClick={() => {window.location.href = '/luyen-tap/trang-chu'}}>
                                             <strong>LIÊN HỆ ĐỂ NHẬN THÔNG TIN CHI TIẾT</strong>
                                             <span>Liên hệ qua zalo, số điện thoại để được tư vấn</span>
                                         </Link>
@@ -355,7 +355,7 @@ const IntroCoursePage = () => {
                                 }                             
                                 <div className='product_meta'>
                                     <span className="posted_in">Danh mục: 
-                                        <Link to={'/luyen-tap/kinh-doanh-khoa-hoc'} rel="tag">Khóa học</Link>
+                                        <Link to={'/luyen-tap/trang-chu'} rel="tag">Khóa học</Link>
                                         , 
                                         <Link to={"https://luyenthidgnl.vn/danh-muc-khoa-hoc/hoc-truc-tuyen/"} rel="tag">Học trực tuyến</Link>
                                     </span>

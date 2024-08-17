@@ -28,16 +28,16 @@ import CoursesUser from './business/coursesUser';
 import ReceiptUserPage from './business/receiptUser';
 import CheckOutPage from './business/checkout';
 import CheckOutPage2 from './business/checkout2';
-import MainPageUser from './business/mainPage';
+// import MainPageUser from './business/mainPage';
 
 const routes = [
-    {
-        id: "trang-chu",
-        path: "/luyen-tap/trang-chu",
-        exact: true,
-        hidden: true,
-        render: (props) => <MainPageUser {...props}/>,
-    },
+    // {
+    //     id: "trang-chu",
+    //     path: "/luyen-tap/trang-chu",
+    //     exact: true,
+    //     hidden: true,
+    //     render: (props) => <MainPageUser {...props}/>,
+    // },
     {
         id: "luyen-tap",
         path: "/luyen-tap/luyen-tap/:id",
@@ -180,7 +180,7 @@ const routes = [
     },
     {
         id: 'introduceCourse',
-        path: '/luyen-tap/kinh-doanh-khoa-hoc',
+        path: '/luyen-tap/trang-chu',
         exact: true,
         hidden: true,
         render: (props) => <CoursesPage {...props}/>,                                                                                              
