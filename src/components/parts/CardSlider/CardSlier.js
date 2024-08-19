@@ -25,12 +25,12 @@ const Card = ({ ten_khoa_hoc, anh_dai_dien, khoa_hoc_id }) => {
 const CardSlider = ({ courses, id }) => {
 
     const scrollLeft = () => {
-        document.querySelector(`#cards-container-${id}`).scrollBy({ left: -255, behavior: 'smooth' });
+        document.querySelector(`#cards-container-${id}`).scrollBy({ left: -275, behavior: 'smooth' });
     };
       
     const scrollRight = () => {
         // scroll right
-        document.querySelector(`#cards-container-${id}`).scrollBy({ left: 255, behavior: 'smooth' });
+        document.querySelector(`#cards-container-${id}`).scrollBy({ left: 275, behavior: 'smooth' });
     };
 
     return (

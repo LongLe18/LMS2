@@ -649,10 +649,10 @@ const ExamOnlineDetail = () => {
                     <div>Đề thi phần tiếp theo sẽ hiện thị sau 30 giây. Bạn hãy sẵn có thể để vào làm bài</div>
                     {localStorage.getItem('mon_thi').split(',').includes('9') &&
                         <div style={{width: '100%', textAlign: 'center'}}>
-                        <Button type="primary" danger style={{borderRadius: 8}}>
-                            <a href={alat} target='_blank' rel='noopener noreferrer'>ALAT Địa lý Việt Nam</a>
-                        </Button>
-                    </div>
+                            <Button type="primary" danger style={{borderRadius: 8}}>
+                                <a href={alat} target='_blank' rel='noopener noreferrer'>ALAT Địa lý Việt Nam</a>
+                            </Button>
+                        </div>
                     }
                     <div style={{color: 'red', fontWeight: 700}}>
                         Lưu ý: Bài làm phần này sẽ tự động nộp và bạn không thể sửa được nữa
@@ -1129,7 +1129,7 @@ const ExamOnlineDetail = () => {
                         })}
                     </Row>
                 </div>
-                <Row className="question-content">
+                <Row className="question-content" gutter={[16]}>
                     <Col span={18}>
                         {(!isDoing && examUser.status === 'success') &&(
                             <div className="history-header">
@@ -1531,6 +1531,13 @@ const ExamOnlineDetail = () => {
                                                 )
                                             } else return null;
                                         })}
+                                        {(localStorage.getItem('mon_thi').split(',').includes('9') && index === 2) &&
+                                            <div style={{width: '100%', textAlign: 'center', marginBottom: 12}}>
+                                                <Button type="primary" danger style={{borderRadius: 8}}>
+                                                    <a href={alat} target='_blank' rel='noopener noreferrer'>ALAT Địa lý Việt Nam</a>
+                                                </Button>
+                                            </div>
+                                        }
                                     </>
                                 )
                             } else return null;
@@ -1906,7 +1913,7 @@ const ExamOnlineDetail = () => {
                             <AuthModal />
                         </div>
                         <AppBreadCrumb list={breadcrumbs} hidden={false} />
-                        <div className="wraper" style={{ padding: '0 48px' }}>{renderExam()}</div>
+                        <div className="wraper" style={{ padding: '0' }}>{renderExam()}</div>
                     </Content>
                 </Layout>
             }

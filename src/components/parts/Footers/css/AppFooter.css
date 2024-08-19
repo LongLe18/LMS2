@@ -151,7 +151,7 @@
 @media only screen and (max-width: 1080px) {
   .app-footer {
     background-size: contain;
-    background-color: transparent;
+    background-color: #3da844;
   }
   .app-footer .main-footer {
     padding: 20px;

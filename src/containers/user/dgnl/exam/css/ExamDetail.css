@@ -123,7 +123,7 @@
     margin: 3px 6px;
   }
   
-  @media screen and (max-width: 1400px) {
+  @media screen and (max-width: 1200px) {
     .exam-page .question-content {
       height: 430px;
     }

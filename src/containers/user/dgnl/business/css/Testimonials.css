@@ -222,9 +222,13 @@
     border-radius: 12px;
     margin-bottom: 12px;
     display: flex;
-    padding: 24px;
+    padding: 16px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 
+    img {
+      width: 180px;
+    }
+    
     .descripion-intro {
       margin-left: 24px;
       display: flex !important;
@@ -267,7 +271,45 @@
   .list-our-team .image-box img {
     width: 40%;
   }
-}
 
-@media only screen and (max-width: 480px) {
+  .trang-chu {
+    .intro-trang-chu {
+      flex-direction: column;
+      align-items: center;
+      background: #fff;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      display: flex;
+      padding: 16px;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  
+      img {
+        width: 80%;
+      }
+      
+      .descripion-intro {
+        margin-left: 24px;
+        display: flex !important;
+        flex-direction: column;
+        font-size: 18px;
+        align-items: center;
+
+        .descripion {
+          margin: 8px 0px;
+          color: #5c5959;
+        }
+  
+        button {
+          width: 80%;
+          background: rgb(250,143,3);
+          background: linear-gradient(90deg, rgba(250,143,3,1) 0%, rgba(251,177,2,1) 39%, rgba(255,175,0,1) 100%);
+          border-image-source: linear-gradient(90deg, rgba(250,143,3,1) 0%, rgba(251,177,2,1) 39%, rgba(255,175,0,1) 100%);
+        }
+      }
+    }
+  }
+
+  .section-title {
+    font-size: 18px;
+  }
 }

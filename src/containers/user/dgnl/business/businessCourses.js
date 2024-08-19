@@ -172,7 +172,7 @@ const CoursesPage = (props) => {
             <div className="list-course-cate">        
                 <div className="wraper wraper-list-course-cate-index">
                     <Row gutter={16} style={{margin: '18px 0'}}>
-                        <Col xl={5} md={4} xs={4} style={{paddingLeft: 0}}>
+                        <Col xl={5} md={24} xs={24} style={{paddingLeft: 0, marginBottom: 12}}>
                             {(programmeCourses.status === 'success' && items.length > 0) &&
                                 <Menu style={{borderRadius: 6}}
                                     mode="vertical"
@@ -200,7 +200,7 @@ const CoursesPage = (props) => {
                                 </Menu>
                             }
                         </Col> 
-                        <Col xl={19} md={20} xs={20}>
+                        <Col xl={19} md={24} xs={24}>
                             <CarouselCustom />
                         </Col>
                     </Row>
@@ -216,7 +216,7 @@ const CoursesPage = (props) => {
                                 <div className="descripion-intro">
                                     <h4>Kiểm tra</h4>
                                     <h6 style={{textTransform: 'uppercase', color: 'green'}}>Đánh giá đầu vào</h6>
-                                    <span className='descripion'>Tham gia các kì thi thử sức và làm quen với các hình thức thi mới nhất trên nền tảng công nghệ hiện đại</span>
+                                    <span className='descripion'>Tham gia các kì thi thử sức và làm quen với các hình thức thi mới nhất trên nền tảng công nghệ</span>
                                     <Button type="primary" style={{borderRadius: 8}} size={'large'} 
                                         onClick={() => document.getElementById("testEntrance").scrollIntoView({
                                             behavior: "smooth"
@@ -256,7 +256,7 @@ const CoursesPage = (props) => {
                                 <div className="descripion-intro">
                                     <h4>Học liệu</h4>
                                     <h6 style={{textTransform: 'uppercase', color: 'green'}}>Online</h6>
-                                    <span className='descripion'>Đẩy đủ các giáo trình học, sách ôn luyện từ đơn giản tới nâng cao bám sát chương trình HỌC & THI</span>
+                                    <span className='descripion'>Đẩy đủ các giáo trình học, sách ôn luyện từ đơn giản tới nâng cao bám sát chương trình</span>
                                     <Button type="primary" style={{borderRadius: 8}} size={'large'} 
                                         onClick={() => document.getElementById("study").scrollIntoView({
                                             behavior: "smooth"
