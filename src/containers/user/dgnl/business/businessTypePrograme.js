@@ -44,9 +44,9 @@ const BusinessTypeProgramePage = (props) => {
     const programmeCourses = useSelector(state => state.programme.courses.result);
 
     const typeProgramme = [
-        { id: 0, name: 'Kiểm tra Đánh giá năng lực', idElement: 'testCapacity' },
-        { id: 1, name: 'Kiểm tra Đánh giá đầu vào', idElement: 'testEntrance' },
-        { id: 2, name: 'Học liệu', idElement: 'study' },
+        { id: 1, name: 'Kiểm tra trình độ đầu vào', name2: 'Kiểm tra trình độ đầu vào Online', idElement: 'testEntrance', description: 'Bài kiểm tra được xây dựng bởi đội ngũ các Thầy Cô uy tín, nhiều năm kinh \n nghiệm giảng dạy nhằm đánh giá đúng trình độ đầu vào của mỗi HS' },
+        { id: 0, name: 'Thi thử DDGNL - ĐGTD', name2: 'Thi thử ĐGNL - ĐHQGHN (HSA), ĐGTD - ĐHBK (TSA) Online', idElement: 'testCapacity', description: 'Trải nghiệm làm bài thi ĐGNL ĐHQGHN (HSA) và ĐGTD (TSA) trên phần mềm thi thử \n giống như khi làm bài HSA - TSA trên thực tế ở tổ chức tại ĐHQGHN, ĐHBK ...' },
+        { id: 2, name: 'Khóa luyện thi hàng đầu', name2: 'Luyện thi ĐGNL (HSA), ĐGTD (TSA)', idElement: 'study', description: 'Được xây dựng và thiết kế bởi đội ngũ giáo viên, chuyên gia uy tín hàng đầu đến từ ĐHQGHN, ĐHSP HN, ĐHBK ...' },
     ];
     
     useEffect(() => {
@@ -182,7 +182,7 @@ const BusinessTypeProgramePage = (props) => {
                                     theme="light"
                                     defaultSelectedKeys={['1']}
                                 >
-                                    <Menu.Item style={{background: '#3da844', marginTop: 0, borderTopRightRadius: 6, borderTopLeftRadius: 6}}
+                                    <Menu.Item style={{background: 'rgb(40, 157, 40)', marginTop: 0, borderTopRightRadius: 6, borderTopLeftRadius: 6}}
                                         icon={<BarsOutlined style={{color: '#fff'}}/>}
                                     >
                                         <span style={{fontWeight: 600, color: "#fff"}}>Các khóa học</span>
@@ -292,9 +292,15 @@ const BusinessTypeProgramePage = (props) => {
                             typeProgramme.filter((type) => type.id === Number(idTypeKCT)).map((item, index) => {
                                 return (
                                     <Col Col xl={24} md={24} xs={24}>
-                                        <h2 className="section-title section-title-center">
-                                            <span className="section-title-main" style={{color: 'green'}}>{item.name}</span>
-                                        </h2>
+                                        <h3 className="section-title section-title-center" style={{marginTop: 24}}>
+                                            <b></b>
+                                            <span style={{justifyContent: 'center', textTransform: 'uppercase', 
+                                                color: 'rgb(21, 87, 21)', fontWeight: 700, margin: '0 15px'}}
+                                            >
+                                                {item.name}
+                                            </span>
+                                            <b></b>
+                                        </h3>
                                         <Row gutter={[16, 16]} className="list-cate-items">
                                             {courses.status === 'success' && courses.data.filter(course => course.loai_kct === item.id).map((cate, index) => {
                                                 return (
@@ -307,34 +313,16 @@ const BusinessTypeProgramePage = (props) => {
                                                                 </Link>
                                                             </div>
                                                             <div className="box-text pb-1">
-                                                                {typeProgramme === 1 
-                                                                ?
-                                                                    <>
-                                                                        <h3 className="course-cate-title">
-                                                                            <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>{cate.ten_khoa_hoc}</Link>
-                                                                        </h3>
-                                                                        <p className="course-cate-description">
-                                                                            <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`} >
-                                                                                <Button type="primary" style={{margin: '12px 0 12px 0', fontSize: 12, borderRadius: 4}}>
-                                                                                    Chi tiết
-                                                                                </Button>
-                                                                            </Link>
-                                                                        </p>
-                                                                    </>
-                                                                :
-                                                                    <>
-                                                                        <h3 className="course-cate-title">
-                                                                            <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>{cate.ten_khoa_hoc}</Link>
-                                                                        </h3>
-                                                                        <p className="course-cate-description">
-                                                                            <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`} >
-                                                                                <Button type="primary" style={{margin: '12px 0 12px 0', fontSize: 12, borderRadius: 4}}>
-                                                                                    Chi tiết
-                                                                                </Button>
-                                                                            </Link>
-                                                                        </p>
-                                                                    </>
-                                                                }
+                                                                <h3 className="course-cate-title">
+                                                                    <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>{cate.ten_khoa_hoc}</Link>
+                                                                </h3>
+                                                                <p className="course-cate-description">
+                                                                    <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`} >
+                                                                        <Button type="primary" style={{margin: '12px 0 12px 0', fontSize: 12, borderRadius: 4}}>
+                                                                            Chi tiết
+                                                                        </Button>
+                                                                    </Link>
+                                                                </p>
                                                             </div>
                                                         </div>
                                                     </Col>

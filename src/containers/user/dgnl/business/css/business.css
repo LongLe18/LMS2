@@ -250,3 +250,11 @@
     display: block;
   }
   
+  .menu-course {
+    border-radius: 6px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1) !important;
+  }
+  .ant-menu-title-content {
+    color: rgb(24, 98, 24);
+    font-weight: 600;
+  }

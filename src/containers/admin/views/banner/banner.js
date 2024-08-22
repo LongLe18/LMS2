@@ -657,7 +657,7 @@ const BannerCoursePage = (props) => {
                                 <Form.Item className="button-col">
                                     <Space>
                                         <Button shape="round" type="primary" htmlType="submit" >
-                                        {(state.isEditDoc && DocEditAds.status === 'success' && DocEditAds) ? 'Cập nhật' : 'Thêm mới'}   
+                                            {(state.isEditDoc && DocEditAds.status === 'success' && DocEditAds) ? 'Cập nhật' : 'Thêm mới'}   
                                         </Button>
                                         {(state.isEditDoc && DocEditAds.status === 'success' && DocEditAds) 
                                         ?  <Button shape="round" type="danger" onClick={() => cancelEditDoc()} > 

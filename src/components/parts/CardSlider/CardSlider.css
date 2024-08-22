@@ -4,7 +4,7 @@
     align-items: center;
     overflow: hidden;
     width: 100%;
-    padding: 20px 12px;
+    padding: 20px 0px;
     margin-bottom: 8px;
 }
   
@@ -19,12 +19,12 @@
 }
 
 .card {
-    max-width: 215px;
-    min-width: 215px;
-    margin: 0 10px;
+    max-width: 252px;
+    min-width: 252px;
+    margin: 0 4px;
     padding: 10px;
     background-color: #f0f0f0;
-    border-radius: 8px;
+    border-radius: 20px;
     border: solid 1px green;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     cursor: pointer;
@@ -32,12 +32,12 @@
     .image-box img {
         width: 100%;
         height: auto;
-        min-height: 150px;
+        max-height: 140px;
     }
     .image-box {
         width: 100%; 
         overflow: hidden;
-        border-radius: 4px;
+        border-radius: 20px;
     }
 }
   

@@ -127,6 +127,7 @@ const ExamViewDGNL = (props) => {
         dispatch(majorActions.getMajors());
         dispatch(courseActions.getCourse({ id: hashids.decode(idCourse) }));
         dispatch(programmeAction.getProgrammeCourses());
+        
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     function getItem(label, icon, key, children, type) {
@@ -155,6 +156,10 @@ const ExamViewDGNL = (props) => {
     }
 
     const renderPages = () => {
+        document.getElementById("main-content")?.scrollIntoView({
+            behavior: "smooth"
+        })
+        
         return (
             <div className="list-course-cate">        
                 <div className="wraper wraper-list-course-cate-index" style={{maxWidth: 1600}}>
@@ -195,7 +200,7 @@ const ExamViewDGNL = (props) => {
                         
                     <Statisic />
 
-                    <Row>
+                    <Row id="main-content">
                         <Col xl={18} md={24} xs={24}>
                             <Row style={{margin: '18px 0'}}>
                                 <Col xl={24} md={20} xs={20}>

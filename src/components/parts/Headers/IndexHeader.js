@@ -286,7 +286,7 @@ function IndexHeader(props) {
                               message: 'Thông báo',
                               description: 'Đăng nhập thành công.',
                             }); 
-                            window.location.reload();
+                            window.location.href = '/luyen-tap/nguoi-dung/khoa-hoc';
                         }        
                       } else {
                         notification.warning({

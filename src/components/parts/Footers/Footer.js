@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 // css
 import './css/AppFooter.css';
 // helper
-import boCongThuong from 'assets/img/bo-cong-thuong.png';
+import boCongThuong from 'assets/img/logo/bo-cong-thuong.png';
 // component
 import { Row, Col, Button } from 'antd';
 import { FacebookOutlined, YoutubeOutlined, PhoneOutlined } from '@ant-design/icons';

@@ -16,7 +16,7 @@ import useFetch from "hooks/useFetch";
 import { Layout, Row, Col, Button, Input, Select, Form, Menu } from 'antd';
 import CarouselCustom from 'components/parts/Carousel/Carousel';
 import CardSlider from 'components/parts/CardSlider/CardSlier';
-import { BookOutlined, BarsOutlined, RightOutlined } from '@ant-design/icons';
+import { BookOutlined, BarsOutlined, RightOutlined, StarOutlined } from '@ant-design/icons';
 
 // redux
 import { useSelector, useDispatch } from 'react-redux';
@@ -41,9 +41,9 @@ const CoursesPage = (props) => {
     const programmeCourses = useSelector(state => state.programme.courses.result);
 
     const typeProgrammes = [
-        { id: 1, name: 'Kiểm tra Đánh giá đầu vào', idElement: 'testEntrance' },
-        { id: 0, name: 'Kiểm tra Đánh giá năng lực', idElement: 'testCapacity' },
-        { id: 2, name: 'Học liệu', idElement: 'study' },
+        { id: 1, name: 'Kiểm tra trình độ đầu vào', name2: 'Kiểm tra trình độ đầu vào Online', idElement: 'testEntrance', description: 'Bài kiểm tra được xây dựng bởi đội ngũ các Thầy Cô uy tín, nhiều năm kinh \n nghiệm giảng dạy nhằm đánh giá đúng trình độ đầu vào của mỗi HS' },
+        { id: 0, name: 'Thi thử DDGNL - ĐGTD', name2: 'Thi thử ĐGNL - ĐHQGHN (HSA), ĐGTD - ĐHBK (TSA) Online', idElement: 'testCapacity', description: 'Trải nghiệm làm bài thi ĐGNL ĐHQGHN (HSA) và ĐGTD (TSA) trên phần mềm thi thử \n giống như khi làm bài HSA - TSA trên thực tế ở tổ chức tại ĐHQGHN, ĐHBK ...' },
+        { id: 2, name: 'Khóa luyện thi hàng đầu', name2: 'Luyện thi ĐGNL (HSA), ĐGTD (TSA)', idElement: 'study', description: 'Được xây dựng và thiết kế bởi đội ngũ giáo viên, chuyên gia uy tín hàng đầu đến từ ĐHQGHN, ĐHSP HN, ĐHBK ...' },
     ];
     
     useEffect(() => {
@@ -174,12 +174,12 @@ const CoursesPage = (props) => {
                     <Row gutter={16} style={{margin: '18px 0'}}>
                         <Col xl={6} md={24} xs={24} style={{paddingLeft: 0, marginBottom: 12}}>
                             {(programmeCourses.status === 'success' && items.length > 0) &&
-                                <Menu style={{borderRadius: 6, boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)'}}
+                                <Menu className="menu-course" 
                                     mode="vertical"
                                     theme="light"
                                     defaultSelectedKeys={['1']}
                                 >
-                                    <Menu.Item style={{background: '#3da844', marginTop: 0, borderTopRightRadius: 6, borderTopLeftRadius: 6}}
+                                    <Menu.Item style={{background: 'rgb(40, 157, 40)', marginTop: 0, borderTopRightRadius: 6, borderTopLeftRadius: 6}}
                                         icon={<BarsOutlined style={{color: '#fff'}}/>}
                                     >
                                         <span style={{fontWeight: 600, color: "#fff"}}>Các khóa học</span>
@@ -189,7 +189,7 @@ const CoursesPage = (props) => {
                                             <Menu.SubMenu title={item.label} key={Number(index)} icon={item.icon}>
                                                 {item.children?.map((child, index) => {
                                                     return (
-                                                        <Menu.Item key={child.key}>
+                                                        <Menu.Item key={child.key} >
                                                             <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${child.key}`}>{child.label}</Link>
                                                         </Menu.Item>
                                                     )
@@ -222,7 +222,7 @@ const CoursesPage = (props) => {
                                             behavior: "smooth"
                                         })}
                                     >
-                                        Chi tiết
+                                        Chi tiết ...
                                     </Button>
                                 </div>
                             </div>
@@ -236,13 +236,13 @@ const CoursesPage = (props) => {
                                 <div className="descripion-intro">
                                     <h4 style={{fontSize: 22}}>Kiểm tra</h4>
                                     <h6 style={{textTransform: 'uppercase', color: 'green'}}>ĐGNL HSA - TSA</h6>
-                                    <span className='descripion'>Trải nghiệm làm bài thi HSA trên phần mềm thi thử giống như tham gia kỳ thi HSA thực tổ chức tại ĐHQGHN</span>
+                                    <span className='descripion'>Trải nghiệm làm bài thi HSA trên phần mềm thi thử giống như tham gia kỳ thi HSA thực tế</span>
                                     <Button type="primary" style={{borderRadius: 8}} size={'large'} 
                                         onClick={() => document.getElementById("testCapacity").scrollIntoView({
                                             behavior: "smooth"
                                         })}
                                     >
-                                        Chi tiết
+                                        Chi tiết ...
                                     </Button>
                                 </div>
                             </div>
@@ -262,7 +262,7 @@ const CoursesPage = (props) => {
                                             behavior: "smooth"
                                         })}
                                     >
-                                        Chi tiết
+                                        Chi tiết ...
                                     </Button>
                                 </div>
                             </div>
@@ -351,7 +351,13 @@ const CoursesPage = (props) => {
                             <h3 className="section-title section-title-center" 
                                 style={{justifyContent: 'center', textTransform: 'uppercase', color: 'green', marginTop: 24, fontWeight: 700}}
                             >
-                                CÁC KHÓA HỌC ĐÃ ĐĂNG KÝ
+                                <b></b>
+                                <span style={{justifyContent: 'center', textTransform: 'uppercase', 
+                                            color: 'rgb(21, 87, 21)', fontWeight: 700, margin: '0 15px'}}
+                                        >
+                                    CÁC KHÓA HỌC ĐÃ ĐĂNG KÝ
+                                </span>
+                                <b></b>
                             </h3>
                             <div className="main-section">
                                 <div className="header-section">
@@ -383,10 +389,18 @@ const CoursesPage = (props) => {
                                         </span>
                                         <b></b>
                                     </h3>
+                                    <div className="description-course">
+                                        <div dangerouslySetInnerHTML={{__html: item.description}} className="description-course-item"></div>
+                                        <div>
+                                            <StarOutlined style={{margin: '0 24px 24px 0', color: 'orange', fontSize: 24}}/>
+                                            <StarOutlined style={{margin: '0 24px 24px 0', color: 'orange', fontSize: 24}}/>
+                                            <StarOutlined style={{margin: '0 24px 24px 0', color: 'orange', fontSize: 24}}/>
+                                        </div>
+                                    </div>
                                     <div className="main-section">
                                         <div className="header-section">
                                             <h3 className="section-title section-title-center" style={{marginBottom: 0, marginTop: 0}}>
-                                                <span className="section-title-main">{item.name}</span>
+                                                <span className="section-title-main">{item.name2}</span>
                                             </h3>
                                             <Link style={{borderRadius: 8, margin: '12px 15px', display: 'flex', alignItems: 'center', padding: '0px 16px'}} 
                                                 className="ant-btn ant-btn-default ant-btn-lg"

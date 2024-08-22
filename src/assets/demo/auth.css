@@ -35,7 +35,7 @@ body {
 
 .app-auth {
   /* background: url('../img/bg_main.png') no-repeat; */
-  background: url('../img/test.jpg') no-repeat;
+  background: url('../img/auth_bg.jpg') no-repeat;
   background-repeat: no-repeat;
   background-size: cover !important;
   display: block;

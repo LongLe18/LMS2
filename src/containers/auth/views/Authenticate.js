@@ -1,7 +1,7 @@
 import { Layout, Row, Col } from 'antd';
 
 const { Content } = Layout;
-const background = '/assets/img/logo/bg-auth-1645538676740.jpg';
+const background = '/assets/img/auth_bg.jpg';
 
 const Auth = (props) => {
     return (
