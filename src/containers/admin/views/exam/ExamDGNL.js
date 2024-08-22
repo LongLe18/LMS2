@@ -245,8 +245,8 @@ const ExamDGNLAdminPage = () => {
           message.error(`${file.name} có định dạng không phải là file docx`);
           return false;
         }
-        // check dung lượng file trên 250kb => không cho upload
-        if (file.size > 250000) {
+        // check dung lượng file trên 5mb => không cho upload
+        if (file.size > 5242880) {
           message.error(`${file.name} dung lượng file quá lớn`);
           return false;
         }

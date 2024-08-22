@@ -41,8 +41,8 @@ const CoursesPage = (props) => {
     const programmeCourses = useSelector(state => state.programme.courses.result);
 
     const typeProgrammes = [
-        { id: 0, name: 'Kiểm tra Đánh giá năng lực', idElement: 'testCapacity' },
         { id: 1, name: 'Kiểm tra Đánh giá đầu vào', idElement: 'testEntrance' },
+        { id: 0, name: 'Kiểm tra Đánh giá năng lực', idElement: 'testCapacity' },
         { id: 2, name: 'Học liệu', idElement: 'study' },
     ];
     
@@ -172,9 +172,9 @@ const CoursesPage = (props) => {
             <div className="list-course-cate">        
                 <div className="wraper wraper-list-course-cate-index">
                     <Row gutter={16} style={{margin: '18px 0'}}>
-                        <Col xl={5} md={24} xs={24} style={{paddingLeft: 0, marginBottom: 12}}>
+                        <Col xl={6} md={24} xs={24} style={{paddingLeft: 0, marginBottom: 12}}>
                             {(programmeCourses.status === 'success' && items.length > 0) &&
-                                <Menu style={{borderRadius: 6}}
+                                <Menu style={{borderRadius: 6, boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)'}}
                                     mode="vertical"
                                     theme="light"
                                     defaultSelectedKeys={['1']}
@@ -200,7 +200,7 @@ const CoursesPage = (props) => {
                                 </Menu>
                             }
                         </Col> 
-                        <Col xl={19} md={24} xs={24}>
+                        <Col xl={18} md={24} xs={24}>
                             <CarouselCustom />
                         </Col>
                     </Row>
@@ -211,10 +211,10 @@ const CoursesPage = (props) => {
                             <div className="intro-trang-chu" style={{display: 'flex'}}>
                                 <img alt="..."  style={{borderRadius: 6}}
                                     className="img-no-padding img-responsive"
-                                    src={require("assets/img/trang-chu-1.png").default}
+                                    src={require("assets/img/trang-chu-3.png").default}
                                 />
                                 <div className="descripion-intro">
-                                    <h4>Kiểm tra</h4>
+                                    <h4 style={{fontSize: 22}}>Kiểm tra</h4>
                                     <h6 style={{textTransform: 'uppercase', color: 'green'}}>Đánh giá đầu vào</h6>
                                     <span className='descripion'>Tham gia các kì thi thử sức và làm quen với các hình thức thi mới nhất trên nền tảng công nghệ</span>
                                     <Button type="primary" style={{borderRadius: 8}} size={'large'} 
@@ -234,9 +234,9 @@ const CoursesPage = (props) => {
                                     src={require("assets/img/trang-chu-2.png").default}
                                 />
                                 <div className="descripion-intro">
-                                    <h4>Kiểm tra</h4>
-                                    <h6 style={{textTransform: 'uppercase', color: 'green'}}>Đánh giá năng lực</h6>
-                                    <span className='descripion'>Cung cấp thông tin đầy đủ về các khoá học, bài giảng, bài thi và lộ trình học tập chất lượng</span>
+                                    <h4 style={{fontSize: 22}}>Kiểm tra</h4>
+                                    <h6 style={{textTransform: 'uppercase', color: 'green'}}>ĐGNL HSA - TSA</h6>
+                                    <span className='descripion'>Trải nghiệm làm bài thi HSA trên phần mềm thi thử giống như tham gia kỳ thi HSA thực tổ chức tại ĐHQGHN</span>
                                     <Button type="primary" style={{borderRadius: 8}} size={'large'} 
                                         onClick={() => document.getElementById("testCapacity").scrollIntoView({
                                             behavior: "smooth"
@@ -251,12 +251,12 @@ const CoursesPage = (props) => {
                             <div className="intro-trang-chu" style={{display: 'flex'}}>
                                 <img alt="..."  style={{borderRadius: 6}}
                                     className="img-no-padding img-responsive"
-                                    src={require("assets/img/trang-chu-3.png").default}
+                                    src={require("assets/img/trang-chu-1.png").default}
                                 />
                                 <div className="descripion-intro">
-                                    <h4>Học liệu</h4>
-                                    <h6 style={{textTransform: 'uppercase', color: 'green'}}>Online</h6>
-                                    <span className='descripion'>Đẩy đủ các giáo trình học, sách ôn luyện từ đơn giản tới nâng cao bám sát chương trình</span>
+                                    <h4 style={{fontSize: 22}}>Khoá luyện thi</h4>
+                                    <h6 style={{textTransform: 'uppercase', color: 'green'}}>Online - offline</h6>
+                                    <span className='descripion'>Cung cấp thông tin đầy đủ về các khóa học, bài giảng chất lượng và lộ trình học tập mới nhất</span>
                                     <Button type="primary" style={{borderRadius: 8}} size={'large'} 
                                         onClick={() => document.getElementById("study").scrollIntoView({
                                             behavior: "smooth"
@@ -349,7 +349,7 @@ const CoursesPage = (props) => {
                     {localStorage.getItem('userToken') && 
                         <div>
                             <h3 className="section-title section-title-center" 
-                                style={{justifyContent: 'center', textTransform: 'uppercase', color: 'green', marginTop: 12, fontWeight: 700}}
+                                style={{justifyContent: 'center', textTransform: 'uppercase', color: 'green', marginTop: 24, fontWeight: 700}}
                             >
                                 CÁC KHÓA HỌC ĐÃ ĐĂNG KÝ
                             </h3>
@@ -373,13 +373,17 @@ const CoursesPage = (props) => {
                     {(courses.status === 'success' && programmes.status === 'success' && programmes.data.length > 0) && 
                         typeProgrammes.map((item, index) => {
                             return (
-                                <div key={index}>
-                                    <h3 className="section-title section-title-center" 
-                                        style={{justifyContent: 'center', textTransform: 'uppercase', color: 'green', marginTop: 12, fontWeight: 700}}
-                                    >
-                                        {item.name}
+                                <div key={index} id={item.idElement}>
+                                    <h3 className="section-title section-title-center" style={{marginTop: 24}}>
+                                        <b></b>
+                                        <span style={{justifyContent: 'center', textTransform: 'uppercase', 
+                                            color: 'rgb(21, 87, 21)', fontWeight: 700, margin: '0 15px'}}
+                                        >
+                                            {item.name}
+                                        </span>
+                                        <b></b>
                                     </h3>
-                                    <div className="main-section" id={item.idElement}>
+                                    <div className="main-section">
                                         <div className="header-section">
                                             <h3 className="section-title section-title-center" style={{marginBottom: 0, marginTop: 0}}>
                                                 <span className="section-title-main">{item.name}</span>

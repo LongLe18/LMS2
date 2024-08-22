@@ -333,7 +333,7 @@ function IndexHeader(props) {
       </Container>
       <div id="wide-nav" className="header-bottom wide-nav nav-dark hide-for-medium">
         <NavLink to="/luyen-tap/trang-chu">
-          <img alt="..."  style={{maxHeight: '60px'}} className="img-no-padding img-responsive"
+          <img alt="..."  style={{maxHeight: '50px'}} className="img-no-padding img-responsive"
             src={require("assets/rank/enno.png").default}
           />
         </NavLink>

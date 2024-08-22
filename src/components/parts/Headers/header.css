@@ -1,11 +1,12 @@
-/* .header-page {
-    position: sticky;
-    overflow: hidden;
-    top: 0;
-    width: 100%;
-    z-index: 1000;
+.header-page {
+    /* position: sticky; */
+    background: #fff;
+    /* overflow: hidden; */
+    /* top: 0; */
+    /* width: 100%; */
+    /* z-index: 1000; */
 
-    .logined {
+    /* .logined {
         color: #141ED2 !important;
-    }
-} */
+    } */
+}

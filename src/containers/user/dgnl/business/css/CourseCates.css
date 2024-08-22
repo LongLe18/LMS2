@@ -16,7 +16,7 @@
 
 .list-course-cate {
   margin-bottom: 10px;
-  background: #EBEBEB;
+  background: #F5F5F5;
 }
 .list-course-cate .list-post-items {
   margin-top: 25px;
@@ -141,7 +141,7 @@
 }
 /*tablet pro*/
 .wraper-list-course-cate-index {
-  background-color: #EBEBEB;
+  background-color: #F5F5F5;
 }
 
 .collapse-course .ant-collapse-content {

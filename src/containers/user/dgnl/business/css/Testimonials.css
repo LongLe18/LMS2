@@ -70,7 +70,7 @@
 }
 
 .header-section {
-  background: green;
+  background: rgb(24, 98, 24);
   border-radius: 8px 8px 0px 0px;
   display: flex;
   justify-content: space-between;
@@ -83,6 +83,7 @@
   display: flex;
   flex-flow: row wrap;
   align-items: center;
+
 }
 
 .section-title b {
@@ -90,8 +91,7 @@
   -ms-flex: 1;
   flex: 1;
   height: 2px;
-  opacity: 0.1;
-  background-color: currentColor;
+  background-color: rgb(40, 156, 40);
 }
 
 .section-title-main {
@@ -222,11 +222,13 @@
     border-radius: 12px;
     margin-bottom: 12px;
     display: flex;
+    align-items: center;
     padding: 16px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 
     img {
-      width: 180px;
+      width: 150px;
+      height: 150px;
     }
     
     .descripion-intro {
