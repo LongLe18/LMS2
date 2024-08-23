@@ -92,7 +92,6 @@ const BannerCoursePage = (props) => {
         },
   
         onRemove(e) {
-            console.log(e);
             setState({ ...state, fileImgDoc: '' });
         },
     };
@@ -291,7 +290,6 @@ const BannerCoursePage = (props) => {
             dataDocAds.push({ ...item, key: index });
             return null;
         });
-        formDoc.resetFields();
     }
 
     if (CourseAds.status === 'success') {
@@ -299,7 +297,6 @@ const BannerCoursePage = (props) => {
             dataCourseAds.push({ ...item, key: index });
             return null;
         });
-        formCourse.resetFields();
     }
 
     if (TeacherAds.status === 'success') {
@@ -307,7 +304,6 @@ const BannerCoursePage = (props) => {
             dataTeacherAds.push({ ...item, key: index });
             return null;
         });
-        formTeacher.resetFields();
     }
 
     const renderDocument = () => {
@@ -346,12 +342,10 @@ const BannerCoursePage = (props) => {
         document.getElementsByClassName('cate-form-block')[0].scrollIntoView();
     };
 
-    useEffect(() => {
-        if (DocEditAds.status === 'success') {         
-            let temp = { ...DocEditAds.data, trang_thai_id: DocEditAds.data.trang_thai };
-            formDoc.setFieldsValue(temp);
-        }
-    }, [DocEditAds]);  // eslint-disable-line react-hooks/exhaustive-deps
+    if (DocEditAds.status === 'success') {         
+        let temp = { ...DocEditAds.data, trang_thai_id: DocEditAds.data.trang_thai };
+        formDoc.setFieldsValue(temp);
+    }
 
     const addAdsDoc = (values) => {
         const callback = (res) => {
@@ -419,8 +413,8 @@ const BannerCoursePage = (props) => {
     const renderCourse = () => {
         let options = [];
         if (courses.status === 'success') {
-            options = courses.data.map((course) => (
-            <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
+            options = courses.data.filter((course) => course.loai_kct === 2).map((course) => (
+                <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
             ))
         }
         return (
@@ -600,6 +594,35 @@ const BannerCoursePage = (props) => {
         });
     };
 
+    const propsImage = {
+        name: 'file',
+        action: '#',
+  
+        beforeUpload: file => {
+            const isPNG = file.type === 'image/png' || file.type === 'image/jpeg';
+            if (!isPNG) {
+                    message.error(`${file.name} có định dạng không phải là png/jpg`);
+            }
+            return isPNG || Upload.LIST_IGNORE;
+        },
+  
+        onChange(info) {
+            setState({ ...state, fileImg: info.file.originFileObj });
+        },
+  
+        async customRequest(options) {
+            const { onSuccess } = options;
+        
+            setTimeout(() => {
+                onSuccess("ok");
+            }, 0);
+        },
+  
+        onRemove(e) {
+            setState({ ...state, fileImg: '' });
+        },
+    };
+
     return (
         <div className='content'>
             <br/>
@@ -649,7 +672,7 @@ const BannerCoursePage = (props) => {
                                         className="upload-list-inline"
                                     >
                                         <p className="ant-upload-drag-icon">
-                                        <UploadOutlined />
+                                            <UploadOutlined />
                                         </p>
                                         <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
                                     </Dragger>

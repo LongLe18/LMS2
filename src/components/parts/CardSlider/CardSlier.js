@@ -3,18 +3,19 @@ import './CardSlider.css';
 import config from '../../../configs/index';
 import { Link } from "react-router-dom";
 import { RightOutlined, LeftOutlined } from '@ant-design/icons';
+import Hashids from 'hashids';
 
-const Card = ({ ten_khoa_hoc, anh_dai_dien, khoa_hoc_id }) => {
-  return (
+const Card = ({ ten_khoa_hoc, anh_dai_dien, khoa_hoc_id, link }) => {
+    return (
         <div className="card">
             <div className="image-box">
-                <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${khoa_hoc_id}`}>
+                <Link to={link}>
                     <img src={anh_dai_dien ? config.API_URL + `${anh_dai_dien}` : require('assets/img/default.jpg').default} alt={ten_khoa_hoc} />
                 </Link>
             </div>
             <div className="card-content">
                 <h3 className="course-cate-title">
-                    <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${khoa_hoc_id}`} style={{color: 'green'}}>{ten_khoa_hoc}</Link>
+                    <Link to={link} style={{color: 'green'}}>{ten_khoa_hoc}</Link>
                 </h3>
                 {/* <p>{mo_ta}</p> */}
             </div>
@@ -22,7 +23,8 @@ const Card = ({ ten_khoa_hoc, anh_dai_dien, khoa_hoc_id }) => {
     );
 };
 
-const CardSlider = ({ courses, id }) => {
+const CardSlider = ({ courses, id, link }) => {
+    const hashids = new Hashids();
 
     const scrollLeft = () => {
         document.querySelector(`#cards-container-${id}`).scrollBy({ left: -275, behavior: 'smooth' });
@@ -38,7 +40,7 @@ const CardSlider = ({ courses, id }) => {
             <button className="scroll-button left" onClick={scrollLeft}><LeftOutlined style={{fontSize: 14}}/></button>
             <div className="cards-container" id={`cards-container-${id}`}>
                 {courses?.map((course, index) => (
-                    <Card key={index} {...course} />
+                    <Card key={index} {...course} link={link + `${hashids.encode(course.khoa_hoc_id)}`}/>
                 ))}
             </div>
             <button className="scroll-button right" onClick={scrollRight}><RightOutlined style={{fontSize: 14}}/></button>

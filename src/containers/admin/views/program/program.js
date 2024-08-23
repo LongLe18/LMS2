@@ -56,7 +56,6 @@ const ProgramPage = () => {
         },
   
         onRemove(e) {
-            console.log(e);
             setState({ ...state, fileImg: '' });
         },
     };

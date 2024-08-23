@@ -18,6 +18,9 @@ import useFetch from "hooks/useFetch";
 import { Layout, Row, Col, Button } from 'antd';
 import CarouselCustom from 'components/parts/Carousel/Carousel';
 import NoRecord from "components/common/NoRecord";
+import { StarOutlined, RightOutlined } from '@ant-design/icons';
+import CardSlider from 'components/parts/CardSlider/CardSlier';
+import SideBarComponent from "../mainpractice/sidebar/SideBar";
 
 // redux
 import { useSelector, useDispatch } from 'react-redux';
@@ -36,10 +39,10 @@ const CoursesUser = (props) => {
     const courses = useSelector(state => state.course.list.result);
     const [courseOfUser] = useFetch(`/student/list/course`);
 
-    const typeProgramme = [
-        { id: 0, name: 'Kiểm tra Đánh giá năng lực', idElement: 'testCapacity' },
-        { id: 1, name: 'Kiểm tra Đánh giá đầu vào', idElement: 'testEntrance' },
-        { id: 2, name: 'Học liệu', idElement: 'study' },
+    const typeProgrammes = [
+        { id: 1, name: 'Kiểm tra trình độ đầu vào', name2: 'Kiểm tra trình độ đầu vào Online', idElement: 'testEntrance', description: 'Bài kiểm tra được xây dựng bởi đội ngũ các Thầy Cô uy tín, nhiều năm kinh \n nghiệm giảng dạy nhằm đánh giá đúng trình độ đầu vào của mỗi HS' },
+        { id: 0, name: 'Thi thử DDGNL - ĐGTD', name2: 'Thi thử ĐGNL - ĐHQGHN (HSA), ĐGTD - ĐHBK (TSA) Online', idElement: 'testCapacity', description: 'Trải nghiệm làm bài thi ĐGNL ĐHQGHN (HSA) và ĐGTD (TSA) trên phần mềm thi thử \n giống như khi làm bài HSA - TSA trên thực tế ở tổ chức tại ĐHQGHN, ĐHBK ...' },
+        { id: 2, name: 'Khóa luyện thi hàng đầu', name2: 'Luyện thi ĐGNL (HSA), ĐGTD (TSA)', idElement: 'study', description: 'Được xây dựng và thiết kế bởi đội ngũ giáo viên, chuyên gia uy tín hàng đầu đến từ ĐHQGHN, ĐHSP HN, ĐHBK ...' },
     ];
 
     useEffect(() => {
@@ -93,147 +96,138 @@ const CoursesUser = (props) => {
 
     const renderCourses = () => {
         return (
-            <div className="list-course-cate">
-                <div className="wraper wraper-list-course-cate-index">
-                    <CarouselCustom />
-                    <div className="section-title-main" style={{textAlign: 'center'}}>
-                        <h4 style={{color: 'green', fontWeight: 500}}>CÁC NỘI DUNG BẠN ĐÃ ĐĂNG KÝ HỌC & LUYỆN THI TẠI TRUNG TÂM ENNO</h4>
-                    </div>
-                    <h2 className="section-title section-title-center">
-                        <b></b>
-                            <span className="section-title-main" style={{color: 'green'}}>KHÓA HỌC CỦA BẠN</span>
-                        <b></b>
-                    </h2>
-                    {(courseOfUser.length > 0) ? (
-                        typeProgramme.map((item, index) => {
-                            return (
-                                <div key={index} className="main-section" id={item.idElement}>
+            <Row className='wraper wraper-list-course-cate-index' style={{marginTop: '30px'}}>
+                <Col span={18} className="list-course-content">
+                    <div className="list-course-cate">
+                        <div className="wraper wraper-list-course-cate-index">
+                            <div className="section-title-main" style={{textAlign: 'center'}}>
+                                <h4 style={{color: 'rgb(169, 0, 0)', fontWeight: 500}}>CÁC NỘI DUNG BẠN ĐÃ ĐĂNG KÝ HỌC & LUYỆN THI TẠI TRUNG TÂM ENNO</h4>
+                            </div>
+                            
+                            {(courseOfUser.length > 0) ? (
+                                typeProgrammes.map((item, index) => {
+                                    return (
+                                        <div key={index} id={item.idElement}>
+                                            <h3 className="section-title section-title-center" style={{marginTop: 24}}>
+                                                <b></b>
+                                                <span style={{justifyContent: 'center', textTransform: 'uppercase', 
+                                                    color: 'rgb(21, 87, 21)', fontWeight: 700, margin: '0 15px'}}
+                                                >
+                                                    {item.name}
+                                                </span>
+                                                <b></b>
+                                            </h3>
+                                            <div className="description-course">
+                                                <div>
+                                                    <StarOutlined style={{margin: '0 24px 24px 0', color: 'orange', fontSize: 24}}/>
+                                                    <StarOutlined style={{margin: '0 24px 24px 0', color: 'orange', fontSize: 24}}/>
+                                                    <StarOutlined style={{margin: '0 24px 24px 0', color: 'orange', fontSize: 24}}/>
+                                                </div>
+                                            </div>
+                                            <div key={index} className="main-section" id={item.idElement}>
+                                                <div className="header-section">
+                                                    <h3 className="section-title section-title-center" style={{marginBottom: 0, marginTop: 0}}>
+                                                        <span className="section-title-main">{item.name2}</span>
+                                                    </h3>
+                                                    <Link style={{borderRadius: 8, margin: '12px 15px', display: 'flex', alignItems: 'center', padding: '0px 16px'}} 
+                                                        className="ant-btn ant-btn-default ant-btn-lg"
+                                                        to={`/luyen-tap/loai-chuong-trinh/${item.id}`}
+                                                    >
+                                                        Xem tất cả <RightOutlined style={{marginLeft: 8}}/>
+                                                    </Link>
+                                                </div>
+                                                {item.id === 0 ?
+                                                    <CardSlider id={index} 
+                                                        courses={courseOfUser.filter((course) => course.loai_kct === item.id)} 
+                                                        link={`/luyen-tap/danh-gia-nang-luc/`}
+                                                    />
+                                                    : item.id === 1 ?
+                                                    <CardSlider id={index} 
+                                                        courses={courseOfUser.filter((course) => course.loai_kct === item.id && course.loai_kct === 1)} 
+                                                        link={`/luyen-tap/kiem-tra/`}
+                                                    />
+                                                    :
+                                                    <CardSlider id={index} 
+                                                        courses={courseOfUser.filter((course) => course.loai_kct === item.id && course.loai_kct === 2)} 
+                                                        link={`/luyen-tap/luyen-tap/`}
+                                                    />
+                                                }                        
+                                            </div>
+                                        </div>
+                                    )
+                                })
+                            ): 
+                                <NoRecord title={'Bạn chưa mua khóa học nào'} subTitle={''}/>
+                            }
+                            {/* Tài liệu */}
+                            <div >
+                                <h3 className="section-title section-title-center" style={{marginTop: 24}}>
+                                    <b></b>
+                                    <span style={{justifyContent: 'center', textTransform: 'uppercase', 
+                                        color: 'rgb(21, 87, 21)', fontWeight: 700, margin: '0 15px'}}
+                                    >
+                                        sách - giáo trình - học liệu
+                                    </span>
+                                    <b></b>
+                                </h3>
+                                <div className="description-course">
+                                    <div>
+                                        <StarOutlined style={{margin: '0 24px 24px 0', color: 'orange', fontSize: 24}}/>
+                                        <StarOutlined style={{margin: '0 24px 24px 0', color: 'orange', fontSize: 24}}/>
+                                        <StarOutlined style={{margin: '0 24px 24px 0', color: 'orange', fontSize: 24}}/>
+                                    </div>
+                                </div>
+                                <div className="main-section">
                                     <div className="header-section">
                                         <h3 className="section-title section-title-center" style={{marginBottom: 0, marginTop: 0}}>
-                                            <span className="section-title-main">{item.name}</span>
+                                            <span className="section-title-main">Sách - Giáo trình - Học liệu</span>
                                         </h3>
                                     </div>
-                                    <Row gutter={[16, 16]} className="list-cate-items">
-                                        {courseOfUser.filter((course) => course.loai_kct === item.id).map((cate, index) => {
-                                            return (
-                                                <Col xl={5} sm={12} xs={12} className="course-cate-row" key={cate.khoa_hoc_id}>
-                                                    <div className="course-cate-box">
-                                                        <div className="image-box">
-                                                            { cate.loai_kct === 0 ?
-                                                                <Link to={`/luyen-tap/danh-gia-nang-luc/${hashids.encode(cate.khoa_hoc_id)}`}>
-                                                                    <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
-                                                                </Link>
-                                                                : cate.loai_kct === 1 ?
-                                                                    <Link to={`/luyen-tap/kiem-tra/${hashids.encode(cate.khoa_hoc_id)}`}>
+                                    {dataInit.length > 0 ? (
+                                        <Row gutter={[16, 16]} className="list-cate-items">
+                                            {coursesUser.data.map((cate, index) => {
+                                                if (cate.loai_san_pham === 'Tài liệu') {
+                                                    return (
+                                                        <Col xl={6} sm={12} xs={12} className="course-cate-row" key={cate.san_pham_id}>
+                                                            <div className="course-cate-box">
+                                                                <div className="image-box">
+                                                                    <Link to={`/luyen-tap/luyen-tap/${hashids.encode(cate.san_pham_id)}`}>
                                                                         <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
                                                                     </Link>
-                                                                :   <Link to={`/luyen-tap/luyen-tap/${hashids.encode(cate.khoa_hoc_id)}`}>
-                                                                        <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
-                                                                    </Link>
-                                                            }
-                                                        </div>
-                                                        <div className="box-text">
-                                                                {/* <Button className='btn-enter-online-course' onClick={() => requestExamOnline(cate.khoa_hoc_id)}>
-                                                                    {cate.ten_khoa_hoc}
-                                                                </Button> */}                                                        
-                                                                { cate.loai_kct === 0 ?
+                                                                </div>
+                                                                <div className="box-text">
                                                                     <h3 className="course-cate-title">
-                                                                        <Link to={`/luyen-tap/danh-gia-nang-luc/${hashids.encode(cate.khoa_hoc_id)}`}>{cate.ten_khoa_hoc}</Link>
+                                                                        <Link to={`/luyen-tap/luyen-tap/${hashids.encode(cate.san_pham_id)}`}>{cate.ten_san_pham}</Link>
                                                                     </h3>
-                                                                    : cate.loai_kct === 1 ?
-                                                                        <h3 className="course-cate-title">
-                                                                            <Link to={`/luyen-tap/kiem-tra/${hashids.encode(cate.khoa_hoc_id)}`}>{cate.ten_khoa_hoc}</Link>
-                                                                        </h3>    
-                                                                    :   <h3 className="course-cate-title">
-                                                                            <Link to={`/luyen-tap/luyen-tap/${hashids.encode(cate.khoa_hoc_id)}`}>{cate.ten_khoa_hoc}</Link>
-                                                                        </h3>                                  
-                                                                }
-                                                            <p className="course-cate-description">
-                                                                {/* <span>Ngày bắt đầu: {moment(cate.ngay_bat_dau).format(config.DATE_FORMAT_SHORT)}</span>
-                                                                <span>Ngày kết thúc: {moment(cate.ngay_ket_thuc).format(config.DATE_FORMAT_SHORT)}</span> */}
-                                                                
-                                                                { cate.loai_kct === 0 ?
-                                                                    <Link to={`/luyen-tap/danh-gia-nang-luc/${hashids.encode(cate.khoa_hoc_id)}`}>
-                                                                        <Button type="primary" className="mt-2 mb-2" style={{borderRadius: 6}}>
-                                                                            Bắt đầu thi
-                                                                        </Button>
-                                                                    </Link>
-                                                                    : cate.loai_kct === 1 ?
-                                                                        <Link to={`/luyen-tap/kiem-tra/${hashids.encode(cate.khoa_hoc_id)}`}>
-                                                                            <Button type="primary" className="mt-2 mb-2" style={{borderRadius: 6}}>
-                                                                                Bắt đầu thi
+                                                                    <p className="course-cate-description">
+                                                                        {/* <span>Ngày bắt đầu: {moment(cate.ngay_bat_dau).format(config.DATE_FORMAT_SHORT)}</span>
+                                                                        <span>Ngày kết thúc: {moment(cate.ngay_ket_thuc).format(config.DATE_FORMAT_SHORT)}</span> */}
+                                                                        <Link to={`/luyen-tap/luyen-tap/${hashids.encode(cate.san_pham_id)}`}>
+                                                                            <Button type="primary">
+                                                                                Bắt đầu xem
                                                                             </Button>
                                                                         </Link>
-                                                                    :   <Link to={`/luyen-tap/luyen-tap/${hashids.encode(cate.khoa_hoc_id)}`}>
-                                                                            <Button type="primary" className="mt-2 mb-2" style={{borderRadius: 6}}>
-                                                                                Bắt đầu học
-                                                                            </Button>
-                                                                        </Link>
-                                                                }
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </Col>
-                                            )
-                                        })}
-                                    </Row>
-                                </div>
-                            )
-                        })
-                    ): 
-                        <NoRecord title={'Bạn chưa mua khóa học nào'} subTitle={''}/>
-                    }
-                    {/* Tài liệu */}
-                    <h2 className="section-title section-title-center">
-                        <b></b>
-                            <span className="section-title-main" style={{color: 'green'}}>TÀI LIỆU CỦA BẠN</span>
-                        <b></b>
-                    </h2>
-                    {dataInit.length > 0 ? (
-                        <div kclassName="main-section">
-                            <div className="header-section">
-                                <h3 className="section-title section-title-center" style={{marginBottom: 0, marginTop: 0}}>
-                                    <span className="section-title-main">Tài liệu</span>
-                                </h3>
-                            </div>
-                            <Row gutter={[16, 16]} className="list-cate-items">
-                                {coursesUser.data.map((cate, index) => {
-                                    if (cate.loai_san_pham === 'Tài liệu') {
-                                        return (
-                                            <Col xl={6} sm={12} xs={12} className="course-cate-row" key={cate.san_pham_id}>
-                                                <div className="course-cate-box">
-                                                    <div className="image-box">
-                                                        <Link to={`/luyen-tap/luyen-tap/${hashids.encode(cate.san_pham_id)}`}>
-                                                            <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
-                                                        </Link>
-                                                    </div>
-                                                    <div className="box-text">
-                                                        <h3 className="course-cate-title">
-                                                            <Link to={`/luyen-tap/luyen-tap/${hashids.encode(cate.san_pham_id)}`}>{cate.ten_san_pham}</Link>
-                                                        </h3>
-                                                        <p className="course-cate-description">
-                                                            {/* <span>Ngày bắt đầu: {moment(cate.ngay_bat_dau).format(config.DATE_FORMAT_SHORT)}</span>
-                                                            <span>Ngày kết thúc: {moment(cate.ngay_ket_thuc).format(config.DATE_FORMAT_SHORT)}</span> */}
-                                                            <Link to={`/luyen-tap/luyen-tap/${hashids.encode(cate.san_pham_id)}`}>
-                                                                <Button type="primary">
-                                                                    Bắt đầu xem
-                                                                </Button>
-                                                            </Link>
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </Col>
-                                        )
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </Col>
+                                                    )
+                                                }
+                                                return null; 
+                                            })}
+                                        </Row>
+                                    ): <NoRecord title={'Bạn chưa mua tài liệu nào'} subTitle={''}/>
                                     }
-                                    return null; 
-                                })}
-                            </Row>
+                                </div>
+                            </div>
+
                         </div>
-                    ): 
-                        <NoRecord title={'Bạn chưa mua tài liệu nào'} subTitle={''}/>
-                    }
-                </div>
-            </div>
+                    </div>
+                </Col>
+                <Col span={6} className="list-course-advertisement">
+                    <SideBarComponent />
+                </Col>
+            </Row>
         )
     }
     return (

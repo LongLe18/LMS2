@@ -38,13 +38,47 @@ const FooterBusiness = (props) => {
         <footer className="footer list-course-cate">
             <div className="wraper wraper-list-course-cate-index" style={{borderRadius: 6}}>
                 {props.course ? 
-                <>
-                    <h2 className="section-title section-title-center">
+                <>  
+                    <h3 className="section-title section-title-center" style={{marginTop: 24}}>
                         <b></b>
-                        <span className="section-title-main" style={{color: 'green'}}>Các Khóa học khác</span>
+                        <span style={{justifyContent: 'center', textTransform: 'uppercase', 
+                            color: 'rgb(21, 87, 21)', fontWeight: 700, margin: '0 15px'}}
+                        >
+                            Các khoá học khác
+                        </span>
                         <b></b>
-                    </h2>
+                    </h3>
                     {dataInit.length > 0 && (
+                        // <div >
+                            // <h3 className="section-title section-title-center" style={{marginTop: 24}}>
+                            //     <b></b>
+                            //     <span style={{justifyContent: 'center', textTransform: 'uppercase', 
+                            //         color: 'rgb(21, 87, 21)', fontWeight: 700, margin: '0 15px'}}
+                            //     >
+                            //         Các khoá học khác
+                            //     </span>
+                            //     <b></b>
+                            // </h3>
+                        //     <div className="main-section">
+                        //         <div className="header-section">
+                        //             <h3 className="section-title section-title-center" style={{marginBottom: 0, marginTop: 0}}>
+                        //                 <span className="section-title-main">Các khoá học khác</span>
+                        //             </h3>
+                        //             <Link style={{borderRadius: 8, margin: '12px 15px', display: 'flex', alignItems: 'center', padding: '0px 16px'}} 
+                        //                 className="ant-btn ant-btn-default ant-btn-lg"
+                        //                 to={`/luyen-tap/trang-chu`}
+                        //             >
+                        //                 Xem tất cả <RightOutlined style={{marginLeft: 8}}/>
+                        //             </Link>
+                        //         </div>
+                        //         {dataInit.length > 0 && 
+                        //             <CardSlider
+                        //                 courses={dataInit.slice(4)} 
+                        //                 link={`/luyen-tap/gioi-thieu-khoa-hoc/`}
+                        //             />
+                        //         }
+                        //     </div>
+                        // </div>
                         <Row gutter={[16, 16]} className="list-cate-items">
                             {dataInit.map((cate, index) => {
                                 if (index >= 4) 

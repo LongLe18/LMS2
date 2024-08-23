@@ -66,7 +66,7 @@ const IntroCoursePage = () => {
                 res => {
                     if (res.status === 200 && res.statusText === 'OK') {
                         res.data.data.map(course => {
-                            if (course.khoa_hoc_id === Number(idCourse)) {
+                            if (course.khoa_hoc_id === Number(hashids.decode(idCourse))) {
                                 setExistCourse(true);
                             }
                             return null;
@@ -91,7 +91,7 @@ const IntroCoursePage = () => {
             showModal();
             return;
         }
-        axios.get(config.API_URL + `/exam/onlineExam?khoa_hoc_id=${idCourse}`, { headers: {Authorization: `Bearer ${localStorage.getItem('userToken')}`,} 
+        axios.get(config.API_URL + `/exam/onlineExam?khoa_hoc_id=${hashids.decode(idCourse)}`, { headers: {Authorization: `Bearer ${localStorage.getItem('userToken')}`,} 
         })
             .then(
                 res => {
@@ -100,7 +100,7 @@ const IntroCoursePage = () => {
                         if (data.length > 0) {
                             const randomIndex = Math.floor(Math.random() * data.length);
                             const randomlySelectedElement = data[randomIndex];
-                            history.push(`/luyen-tap/xem/${hashids.encode(randomlySelectedElement.de_thi_id)}/${hashids.encode(idCourse)}`)
+                            history.push(`/luyen-tap/xem/${hashids.encode(randomlySelectedElement.de_thi_id)}/${idCourse}`)
                         }
                         else {
                             notification.warning({
@@ -133,9 +133,9 @@ const IntroCoursePage = () => {
             }
         };
         
-        dispatch(descriptionCourseAction.getDescriptionCourse({ id: idCourse }));
-        dispatch(courseAction.getCourse({ id: idCourse }));
-        dispatch(discountAction.getDiscountByCourse({ idCourse: idCourse }, callback));
+        dispatch(descriptionCourseAction.getDescriptionCourse({ id: hashids.decode(idCourse) }));
+        dispatch(courseAction.getCourse({ id: hashids.decode(idCourse) }));
+        dispatch(discountAction.getDiscountByCourse({ idCourse: hashids.decode(idCourse) }, callback));
         if (userToken) {
             getCourseOfUser();
         }
@@ -267,7 +267,9 @@ const IntroCoursePage = () => {
                     <div className='product-main'>
                         <Row className='product__mobile'>
                             <Col span={12} className="product-img">
-                                <img src={course.data.anh_dai_dien !== null ? config.API_URL + course.data.anh_dai_dien : defaultImage} alt="Ảnh đại diện" />
+                                <img style={{borderRadius: 12}}
+                                    src={course.data.anh_dai_dien !== null ? config.API_URL + course.data.anh_dai_dien : defaultImage} alt="Ảnh đại diện" 
+                                />
                             </Col>
                             <Col span={12} className='product-info summary entry-summary col col-fit product-summary'>
                                 <h1 className='product-title product_title entry-title'>
@@ -343,10 +345,23 @@ const IntroCoursePage = () => {
                                                 <span>Bạn có muốn thi thử khóa học?</span>
                                             </Button>
                                         :
-                                            <Link to={`/luyen-tap/luyen-tap/${hashids.encode(idCourse)}`} className='devvn_buy_now'>
-                                                <strong>Thi thử</strong>
+                                            // <Link to={`/luyen-tap/luyen-tap/${hashids.encode(idCourse)}`} className='devvn_buy_now'>
+                                            //     <strong>Thi thử</strong>
+                                            //     <span>Bạn có muốn thi thử khóa học?</span>
+                                            // </Link>
+                                            <Button onClick={() => {
+                                                if (localStorage.getItem('userToken')) {
+                                                    history.push(`/luyen-tap/nguoi-dung/khoa-hoc`);
+                                                } else {
+                                                    notification.error({
+                                                        message: 'Thông báo',
+                                                        description: 'Bạn chưa đăng ký tài khoản, vui lòng đăng ký để vào học',
+                                                    });
+                                                }
+                                            }} className='devvn_buy_now'>
+                                                <strong style={{fontWeight: 400}}>Thi thử</strong>
                                                 <span>Bạn có muốn thi thử khóa học?</span>
-                                            </Link>
+                                            </Button>
                                         }
                                     </>
                                 :   <Link to="#" className='devvn_exist_now' onClick={(event) => event.preventDefault()}>

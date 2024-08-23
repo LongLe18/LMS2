@@ -371,7 +371,7 @@ const CoursesPage = (props) => {
                                         Xem tất cả <RightOutlined style={{marginLeft: 8}}/>
                                     </Link>
                                 </div>
-                                {courseOfUser.length > 0 && <CardSlider courses={courseOfUser}/>}
+                                {courseOfUser.length > 0 && <CardSlider courses={courseOfUser} link={`/luyen-tap/gioi-thieu-khoa-hoc/`}/>}
                             </div>
                         </div>
                     }
@@ -409,7 +409,12 @@ const CoursesPage = (props) => {
                                                 Xem tất cả <RightOutlined style={{marginLeft: 8}}/>
                                             </Link>
                                         </div>
-                                        {programmes.data.length > 0 && <CardSlider courses={courses.data.filter(course => course.loai_kct === item.id)} id={index }/>}
+                                        {programmes.data.length > 0 && 
+                                            <CardSlider id={index} 
+                                                courses={courses.data.filter(course => course.loai_kct === item.id)} 
+                                                link={`/luyen-tap/gioi-thieu-khoa-hoc/`}
+                                            />
+                                        }
                                     </div>
                                 </div>
                             )

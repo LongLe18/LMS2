@@ -51,34 +51,6 @@ const ExamViewDGNL = (props) => {
               note: `Phần tự chọn, thí sinh lựa chọn các câu hỏi thuộc 3 trong 5 chủ đề (môn học)`,
         },
     ];
-    
-    const dataSource2 = [
-        {
-            key: '1',
-            content: `Động học, Động lực học, Công, Năng lượng và công suất, Động lượng, Chuyển động tròn, Biến dạng của vật rắn, Dao động, Sóng, Điện, Từ, Vật lý nhiệt, Hạt nhân và phóng xạ, Thí nghiệm/thực hành...`,
-            field: `Vật lý`,
-        },
-        {
-            key: '2',
-            content: `Bảng tuần hoàn các nguyên tố hóa học, Liên kết hóa học, Năng lượng hóa học, Động hóa học, Điện hóa học, Hóa học vô cơ và các nguyên tố, Đại cương kim loại, Phức chất hóa học, Các dãy hidrocacbon, Dẫn xuất halogen - alcohol - phenol, Các hợp chất carnonyl, Chất béo (ester - lipid), Carbohydrate, Hợp chất chứa dị tố nitơ, lưu huỳnh, Hợp chất polymer, Thí nghiệm/thực hành...`,
-            field: `Hóa học`,
-        },
-        {
-            key: '3',
-            content: `Các cấp độ tổ chức của thế giới sống, Sinh học tế bào, Vi sinh vật và virus, Sinh học cơ thể, Di truyền học, Tiến hóa, Sinh thái học và môi trường, Sinh học phân tử, Kiểm soát sinh học, Thí nghiệm/thực hành...`,
-            field: `Sinh học`,
-        },
-        {
-            key: '4',
-            content: `Lịch sử thế giới cận đại và hiện đại, Lịch sử Đông Nam Á, Lịch sử Việt Nam cận - hiện đại, Lịch sử Việt Nam và một số chuyên đề danh nhân lịch sử, quá trình hội nhập quốc tế của Việt Nam...`,
-            field: `Lịch sử`,
-        },
-        {
-            key: '5',
-            content: `Địa lý đại cương, Địa lý kinh tế - xã hội thế giới, Địa lý Việt Nam (tự nhiên, dân cư, chuyển dịch cơ cấu kinh tế, các ngành kinh tế, các vùng kinh tế) và một số chuyên đề thiên tai và các biện pháp phòng chống, phát triển làng nghề...`,
-            field: `Địa lý`,
-        },
-    ];
 
     const columns = [
         {
@@ -90,19 +62,6 @@ const ExamViewDGNL = (props) => {
           title: 'Ghi chú',
           dataIndex: 'note',
           key: 'note',
-        },
-    ];
-
-    const columns2 = [
-        {
-          title: 'Lĩnh vực',
-          dataIndex: 'field',
-          key: 'field',
-        },
-        {
-          title: 'Nội dung',
-          dataIndex: 'content',
-          key: 'content',
         },
     ];
 
@@ -241,28 +200,14 @@ const ExamViewDGNL = (props) => {
                                             <span style={{fontWeight: 700}}>Phần 2 (bắt buộc):</span> Ngôn ngữ - Văn học được hoàn thành trong 60 phút gồm 50 câu hỏi trắc nghiệm sử dụng ngữ liệu liên quan đến nhiều lĩnh vực trong đời sống như văn học, ngôn ngữ (từ vựng, ngữ pháp, hoạt động giao tiếp, sự phát triển của ngôn ngữ và các biến thể ngôn ngữ, hành văn), văn hóa, xã hội, lịch sử, địa lý, nghệ thuật, v.v… Ngữ liệu được lựa chọn trong hoặc ngoài chương trình giáo dục phổ thông.
                                         </div>
                                         <div style={{fontSize: 20, marginTop: 6}}>
-                                            <span style={{fontWeight: 700}}>Phần 3 (tự chọn):</span> Khoa học thiết kế thời gian là 60 phút gồm 50 câu hỏi trắc nghiệm và điền đáp án. Thí sinh lựa chọn 3 trong 5 chủ đề thuộc lĩnh vực:
+                                            <span style={{fontWeight: 700}}>Phần 3 (tự chọn):</span> Khoa học thiết kế thời gian là 60 phút gồm 50 câu hỏi trắc nghiệm và điền đáp án. Thí sinh lựa chọn 3 trong 5 chủ đề thuộc lĩnh vực: Hóa học, Sinh học, Vật lý, Địa lý, Lịch sử
                                         </div>
-                                        <Table className='table-structure' dataSource={dataSource2} columns={columns2} pagination={false}/>
-                                        <div style={{fontSize: 20, marginTop: 6}}>
-                                            <span>Đề thi tham khảo của bài thi Đánh giá năng lực năm 2025 dự kiến công bố trong tháng 8 năm 2024.</span>
-                                        </div>
-                                        <span></span>
-                                        <div style={{textAlign: 'center'}}>
-                                            <img style={{marginTop: 12}} src={require('assets/img/cau-truc-de-thi-dgnl-ha-noi-2025-2.png').default} alt='banner1'/>
-                                        </div>
-                                        <h5 style={{marginTop: 8, fontWeight: 500}}>GHI CHÚ:</h5>
-                                        <div style={{fontSize: 20}}>
-                                            Đây là đề thi mô phỏng được hsaphus.edu.vn xây dựng dựa trên thông tin mới nhất ĐHQG vừa công bố.
-                                        </div>
-                                        <div style={{fontSize: 20}}>
-                                            Đề thi đầy đủ theo đúng cấu trúc về số lượng môn, số lượng câu hỏi, định dạng.
-                                        </div>
+                                        
                                     </div>
-                                    <div style={{textAlign: 'center', marginTop: 12}}>
+                                    <div style={{textAlign: 'center', marginTop: 12, height: 50}}>
                                         <Button type="primary" size="large" className="join-exam-button" 
                                             onClick={() => setIsJoinExam(1)}
-                                            style={{borderRadius: 8, backgroundColor: 'rgb(229 100 19 / 92%)', borderColor: 'rgb(229 100 19 / 92%)'}}
+                                            style={{borderRadius: 8, backgroundColor: 'rgb(229 100 19 / 92%)', borderColor: 'rgb(229 100 19 / 92%)', width: '20%'}}
                                         >
                                             Tham gia thi
                                         </Button>
@@ -271,13 +216,13 @@ const ExamViewDGNL = (props) => {
                             }
                         </Col>
                         <Col xl={6} style={{padding: "0", textAlign: 'center'}}>
-                            <SideBarComponent/>
                             <Button type="primary" size="large" className="join-exam-button" 
                                 onClick={() => setIsJoinExam(1)}
-                                style={{borderRadius: 8, backgroundColor: 'rgb(229 100 19 / 92%)', borderColor: 'rgb(229 100 19 / 92%)', marginTop: 12}}
+                                style={{borderRadius: 8, backgroundColor: 'rgb(229 100 19 / 92%)', borderColor: 'rgb(229 100 19 / 92%)', marginBottom: 12, width: '80%', fontWeight: 700}}
                             >
-                                Tham gia thi
+                                Tham gia thi thử ngay
                             </Button>
+                            <SideBarComponent/>
                         </Col>
                     </Row>
                 </div>
@@ -290,7 +235,7 @@ const ExamViewDGNL = (props) => {
         return (
             <Spin spinning={spinning}  tip="Đang xử lý tạo đề thi. Quá trình này sẽ mất thời gian, bạn xin vui lòng chờ">
                 <div className="form-exam" style={{fontSize: 20}}>
-                    <h5 className="textCenter">Đề trải nghiệm Đánh giá năng lực Hà Nội</h5>
+                    <h5 className="textCenter" style={{textTransform: 'uppercase', color: 'rgb(169, 0, 0)'}}>Chào mừng bạn tham gia kỳ thi ĐGNL ĐHQGHN (HSA)</h5>
                     <h6 className="textCenter" style={{color: '#747474'}}>Để các em có thể làm bài trải nghiệm và định hình được kiểu ra đề.</h6>
                     <h6 className="textCenter" style={{fontWeight: 700, marginTop: 12}}>Bài thi gồm có</h6>
                     <Steps style={{alignItems: 'center'}}
