@@ -11,7 +11,7 @@ import { Layout, Row, Col, Carousel, Table, Steps, Radio,
     Checkbox, Button, notification, Spin, Menu, Avatar } from 'antd';
 import Statisic from "components/parts/statisic/Statisic";
 import CarouselCustom from 'components/parts/Carousel/Carousel';
-import { BookOutlined, BarsOutlined, } from '@ant-design/icons';
+import { BookOutlined, BarsOutlined, QuestionCircleOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import SideBarComponent from "../mainpractice/sidebar/SideBar";
 
 // redux
@@ -235,22 +235,31 @@ const ExamViewDGNL = (props) => {
         return (
             <Spin spinning={spinning}  tip="Đang xử lý tạo đề thi. Quá trình này sẽ mất thời gian, bạn xin vui lòng chờ">
                 <div className="form-exam" style={{fontSize: 20}}>
-                    <h5 className="textCenter" style={{textTransform: 'uppercase', color: 'rgb(169, 0, 0)'}}>Chào mừng bạn tham gia kỳ thi ĐGNL ĐHQGHN (HSA)</h5>
-                    <h6 className="textCenter" style={{color: '#747474'}}>Để các em có thể làm bài trải nghiệm và định hình được kiểu ra đề.</h6>
-                    <h6 className="textCenter" style={{fontWeight: 700, marginTop: 12}}>Bài thi gồm có</h6>
+                    <div className="title-main">
+                        <div style={{color: '#F5F5F5'}}>testtesttesttesttesttesttesttesttest</div>
+                        <h5 className="textCenter" style={{textTransform: 'uppercase', color: 'rgb(169, 0, 0) !important'}}>Chào mừng bạn tham gia kỳ thi ĐGNL ĐHQGHN (HSA)</h5>
+                        <img alt="hsa" src={require('assets/img/logo/logo-hsa.png').default} style={{width: '15%'}}/>
+                    </div>
+                    <div style={{display: 'flex', justifyContent: 'center'}}>
+                        <div className="description-title">
+                            <span className="textCenter" style={{marginRight: 12}}><QuestionCircleOutlined /> Bài thi gồm 150 câu</span>
+                            <span><ClockCircleOutlined /> 195 phút</span>
+                        </div>
+                    </div>
+                    <h6 style={{margin: '24px 0px 12px 0px', color: 'rgb(24, 98, 24)', fontWeight: 700}}>Cấu trúc bài thi</h6>
                     <Steps style={{alignItems: 'center'}}
                         progressDot
                         current={2}
                         direction="vertical"
                         items={[
                             {
-                                title: 'Toán học và xử lý số liệu (50 câu)',
+                                title: 'Phần 1: Tư duy định lượng (Toán học và xử lý số liệu) - 75 phút',
                             },
                             {
-                                title: 'Văn học - Ngôn ngữ (50 câu)',
+                                title: 'Phần 2: Tư duy định tính (Văn học - Ngôn ngữ) - 60 phút',
                             },
                             {
-                                title: type === 5 ? 'Tự chọn (50 câu) : Tiếng Anh' : 'Tự chọn (50 câu) : Khoa học',
+                                title: type === 5 ? 'Phần 3: Tiếng Anh - 60 phút' : 'Phần 3: Khoa học - 60 phút',
                             },
                         ]}
                     />
@@ -283,7 +292,8 @@ const ExamViewDGNL = (props) => {
                     }
 
                     <p className="block-action text-center mt-4">
-                        <Button type="primary" size="large" className="join-exam-button" style={{borderRadius: 8, backgroundColor: 'rgba(0, 115, 8, 0.92)', borderColor: 'rgba(0, 115, 8, 0.92)'}}
+                        <Button type="primary" size="large" className="join-exam-button" 
+                            style={{borderRadius: 8, backgroundColor: 'rgb(229 100 19 / 92%)', borderColor: 'rgb(229 100 19 / 92%)', width: '10%'}}
                             onClick={() => {
                                 // Nếu không chọn Tiếng Anh thì phải Chọn đủ 3 môn học
                                 if (type !== 5 && subjects.length < 3) {
@@ -296,7 +306,7 @@ const ExamViewDGNL = (props) => {
                                 setIsJoinExam(2);
                             }}
                         >
-                            Làm bài thi
+                            Bắt đầu
                         </Button>
                     </p>
                 </div>
@@ -319,14 +329,14 @@ const ExamViewDGNL = (props) => {
                     </Col>
                 </Row>
                 <div className="content-page">
-                    <span style={{fontWeight: 600, fontSize: 18, color: 'green'}}>Hướng dẫn làm bài</span>
-                    <div style={{fontSize: 16, textAlign: 'justify'}}>
+                    <span style={{fontWeight: 600, fontSize: 20, color: 'green'}}>Hướng dẫn làm bài</span>
+                    <div style={{fontSize: 20, textAlign: 'justify'}}>
                         Bài thi ĐGNL học sinh THPT (HSA) gồm 03 phần. Các câu hỏi thi được đánh số lằn lượt từ 1 đến 150 gồm câu hỏi trắc nghiệm khách quan bốn lựa chọn từ các phương án
                         A, B, C hoặc D và câu hỏi điền đáp án. Trường hợp bài thi có thêm câu hỏi thử nghiệm (không tính điểm) thì tỗng số câu hỏi không quá 153 câu. Mỗi câu hỏi trắc nghiệm có một đáp án duy nhất. Thí sinh chọn đáp án bằng cách <span style={{color: 'red'}}>nhấp chuột trái máy tính</span> vào ô đáp án (o), máy tính sẽ tự đông ghi nhận và hiển thị thành ô tròn màu xanh (•). 
                         Trường hợp bạn chọn câu trả lời lằn thứ nhất và muốn chọn lại câu trả lời thì đưa con trỏ chuột máy tính đến đáp án mới và nhấp chuột trái. Ô tròn màu xanh mới (•) sẽ được ghi nhận và ô tròn cũ sẽ trở lại trạng thái ban đầu (o), <span style={{color: 'red'}}>KHÔNG nhấp chuột máy tính quá 2.000 lượt</span> trong suốt quá trình làm bài thi. Thí sinh có thễ bắm chuột vào <span style={{color: 'red'}}>biểu tượng CHK</span> ở góc trên bên phải màn hình đễ kiểm tra ghi nhận của các câu hỏi đã trả lời. Thí sinh được quay lại làm lại câu hỏi trong cùng 1 phần, không thê quay lại
                         làm câu hỏi của phần thi <span style={{color: 'red'}}>đã kết thúc.</span>
                         <br/>
-                        Đối với các <span style={{color: 'red'}}>câu hỏi điền đáp án</span>, thí sinh nhập <span style={{color: 'red'}}>đáp án vào ô trống dạng số nguyên dương, nguyên âm</span> (không có dấu cách giữa dấu - và chữ số, ví dụ đúng: -3) <span style={{color: 'red'}}>hoặc phân số tối giản</span> (ví dụ: 3/4), <span style={{color: 'red'}}>không nhập chữ số thập phân, không nhập đơn vị vào ô đáp án</span>. Mỗi câu trả lời đúng được 01 điểm, câu trả lời sai hoặc không trả lời được 0 điểm. <span style={{color: 'red'}}>Hãy thận trọng trước khi lựa chọn đáp án.</span>
+                        <span style={{background: 'yellow'}}>Đối với các <span style={{color: 'red'}}>câu hỏi điền đáp án</span>, thí sinh nhập <span style={{color: 'red'}}>đáp án vào ô trống dạng số nguyên dương, nguyên âm</span> (không có dấu cách giữa dấu - và chữ số, ví dụ đúng: -3) <span style={{color: 'red'}}>hoặc phân số tối giản</span> (ví dụ: 3/4), <span style={{color: 'red'}}>không nhập chữ số thập phân, không nhập đơn vị vào ô đáp án</span>. Mỗi câu trả lời đúng được 01 điểm, câu trả lời sai hoặc không trả lời được 0 điểm. <span style={{color: 'red'}}>Hãy thận trọng trước khi lựa chọn đáp án.</span></span>
                         <br/>
                         <br/>
                         Theo điều 6, khoản 2 của Quy chế thi, bài thi ĐGNL là <span style={{color: 'red'}}>KHÔNG PHÚC KHẢO</span> nên thí sinh bình tĩnh <span style={{color: 'red'}}>đọc kỹ câu hỏi thi, KIẾM TRA cần thận điểm từng phản và ĐIỂM TỔNG bài thi</span> sau khi nộp bài. Nếu có bất kỳ ý kiến thắc mắc về câu hỏi thi, điểm bài thi, công tác tố chức thi... phải thực hiện tại phòng thi bằng cách thông báo cho cán bộ coi thi/Hội đồng thi trước khi ra khỏi phòng thi. Các kiến nghị, thắc mắc của thí sinh sau khi đã <span style={{color: 'red'}}>rời khỏi phòng thi sẽ KHÔNG ĐƯỢC xem xét giải quyết.</span>
@@ -356,11 +366,12 @@ const ExamViewDGNL = (props) => {
 
                     </div>
                     <p className="block-action text-center mt-4">
-                        <Button type="primary" size="large" className="join-exam-button" style={{borderRadius: 8, backgroundColor: 'rgba(0, 115, 8, 0.92)', borderColor: 'rgba(0, 115, 8, 0.92)'}}
+                        <Button type="primary" size="large" className="join-exam-button" 
+                            style={{borderRadius: 8, backgroundColor: 'rgb(229 100 19 / 92%)', borderColor: 'rgb(229 100 19 / 92%)', width: '10%'}}
                             onClick={() => {
                                 const data = {
                                     "khoa_hoc_id": hashids.decode(idCourse)[0],
-                                    "chuyen_nganh_ids": type === 5 ? type : subjects.join(', ')
+                                    "chuyen_nganh_ids": type === 5 ? type.toString() : subjects.join(', ')
                                 };
                                 localStorage.setItem('mon_thi', subjects.join(', '));
                                 // Tạo đề thi

@@ -37,10 +37,10 @@ const ReviewExamPage = () => {
 
     const renderHistoryExamSidebar = () => {
         return (
-            <Col span={6}>
+            <Col span={2}>
                 {exam.status === 'success' &&
                     <div className="exam-right-content" style={{ position: 'sticky', top: '0px' }}>
-                        <div className="topbar-exam">
+                        {/* <div className="topbar-exam">
                             <p className="mg-0">
                             <b>Số câu hỏi</b>
                             <span className="white-spread-under"></span>
@@ -48,7 +48,7 @@ const ReviewExamPage = () => {
                                 <span style={{ color: '#373636' }}>{exam.data.cau_hoi_de_this.length}</span>
                                 </b>
                             </p>
-                        </div>
+                        </div> */}
                         <div className="exam-right-info">
                             <p className="mg-0 color-blue text-center title-list-q">
                                 <b>Câu hỏi</b>
@@ -57,7 +57,7 @@ const ReviewExamPage = () => {
                                 {exam.status === 'success' && exam.data.cau_hoi_de_this.map((question, index) => {
                                     return (
                                         <li key={index + 1} className='right-answer'>
-                                            <a href={`#${index + 1}`}>{index + 1}</a>
+                                            <a href={`#${index}`}>{index + 1}</a> . 
                                         </li>
                                     );
                                 })}
@@ -174,8 +174,8 @@ const ReviewExamPage = () => {
     const renderExam = () => {
         if (error) return <NoRecord subTitle="Không tìm thấy đề thi." />;
         return (
-            <Row className="question-content">
-                <Col span={18}>
+            <Row className="question-content" style={{margin: '0 24px'}}>
+                <Col span={22}>
                     {(exam.status === 'success') &&(
                         <div className="history-header">
                             <div className="summury-result">
@@ -245,7 +245,7 @@ const ReviewExamPage = () => {
                                 }               
                                 <div className="question-list" key={ParentIndex}>
                                     <div className="question-info" id={`${ParentIndex + 1}`}>
-                                        <b style={{fontSize: "22px", color: "#2e66ad"}}>Câu {ParentIndex + 1} 
+                                    <b style={{fontSize: "22px", color: "#fff", backgroundColor: 'green'}}>Câu {ParentIndex + 1}. 
                                             {/* <span className="point">[{question.cau_hoi.diem} điểm]</span> */}
                                             <span style={{display: question.cau_hoi.loai_cau_hoi === 2 ? 'block' : 'none'}} className="point">[Câu trắc nghiệm đúng sai]</span>
                                         </b>
@@ -432,7 +432,7 @@ const ReviewExamPage = () => {
                     <div className="header-exam">
                         <h1>{exam.data.ten_de_thi}</h1>
                     </div>
-                    <div className="wraper">{renderExam()}</div>
+                    <div class="wraper-exam"  style={{ padding: '0' }}>{renderExam()}</div>
                 </Content>
                 </Layout>
             }

@@ -227,6 +227,7 @@ const ExamOnlineDetail = () => {
         dispatch(courseActions.getCourse({ id: hashids.decode(params.idCourse) }));
     }, [params.idExam, params.idExamUser]) // eslint-disable-line react-hooks/exhaustive-deps
     
+    // cập nhập đáp án câu hỏi tự luận
     useMemo(() => {
         if (textAnswer !== null && localStorage.getItem('question') !== null) {
             dispatch(answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, 
@@ -585,6 +586,34 @@ const ExamOnlineDetail = () => {
         }
     };
 
+    // Hàm xử lý chuyển đổi từ response BE: đáp án đã chọn -> A/B/C/D hiển thị lên giao diện
+    const convertAnswerKey = (question) => {
+        let key = '';
+        if (!isDoing && examUser.status === 'success') {
+            if (examUser.data.dap_an_da_chons) {
+                let currentSubmitAnswer = examUser.data.dap_an_da_chons.find((item) => (item.cau_hoi_id === question.cau_hoi_id && item.ket_qua_chon !== '0000'));
+                if (question.dap_an_dungs && currentSubmitAnswer !== undefined) {
+                    if (question.loai_cau_hoi === 1 || question.loai_cau_hoi === 2) { // Câu trắc nghiệm
+                        let ket_qua_arr = [];
+                        Array.from(currentSubmitAnswer.ket_qua_chon).forEach((ket_qua, index) => {
+                            if (index === 0 && ket_qua === '1') ket_qua_arr.push('A');
+                            else if (index === 1 && ket_qua === '1') ket_qua_arr.push('B');
+                            else if (index === 2 && ket_qua === '1') ket_qua_arr.push('C');
+                            else if (index === 3 && ket_qua === '1') ket_qua_arr.push('D');
+                            return null;
+                        });
+                        key = ket_qua_arr.join(', ');
+                    } else if (question.loai_cau_hoi === 0) { // Câu tự luận
+                        key = currentSubmitAnswer.noi_dung_tra_loi;
+                    }
+                } else {
+                    key = ' - ';
+                }
+            } 
+        }
+        return key;
+    }
+
     const renderMoreSubComment = (binh_luan_id) => {
         const callback = (res) => {
             if (res.status === 'success') {
@@ -755,6 +784,7 @@ const ExamOnlineDetail = () => {
         }
     }
 
+    // hàm xử lý chọn đáp án
     const onChooseAnswer = (question, answerKey, index, answered) => {
         if (isDoing) { // Nếu đang làm bài
             let isAnswered = answered.find((item) => item.cau_hoi_id === question.cau_hoi_id);
@@ -1010,11 +1040,10 @@ const ExamOnlineDetail = () => {
 
     const renderHistoryExamSidebar = () => {
         return (
-            <Col span={6}>
+            <Col span={2}>
                 {examUser.status === 'success' &&
-
                     <div className="exam-right-content" style={{ position: 'sticky', top: '100px' }}>
-                        <div className="topbar-exam">
+                        {/* <div className="topbar-exam">
                             <p className="mg-0">
                             <b style={{fontSize: 18}}>Số câu đã làm</b>
                             <span className="white-spread-under"></span>
@@ -1035,7 +1064,7 @@ const ExamOnlineDetail = () => {
                                 {`Chưa chọn: `}
                                 <b>{exam.data.cau_hoi_de_this.length - results.length}</b>
                             </p>
-                        </div>
+                        </div> */}
                         <div className="exam-right-info">
                             <p className="mg-0 color-blue text-center title-list-q">
                                 <b style={{fontSize: 18}}>Câu hỏi</b>
@@ -1044,7 +1073,7 @@ const ExamOnlineDetail = () => {
                                 {exam.status === 'success' && exam.data.cau_hoi_de_this.map((question, index) => {
                                     return (
                                         <li key={index + 1} className={isCorrectAnswer(question.cau_hoi)}>
-                                            <a href={`#${index}`}>{index + 1}</a>
+                                            <a href={`#${index}`}>{index + 1}</a> . <span>{convertAnswerKey(question.cau_hoi)}</span>
                                         </li>
                                     );
                                 })}
@@ -1072,13 +1101,12 @@ const ExamOnlineDetail = () => {
         return (
             <>  
                 <div className='section-question'>
-                    <Row justify={'space-between'}>
-                        <Col>{getCurrentDate()}</Col>
-                        <Col style={{display: 'flex'}}>
-                            <div style={{marginRight: 12}}>Họ và tên: {JSON.parse(localStorage.getItem('userInfo')).ho_ten}</div>
-                            <div>Tài khoản: {JSON.parse(localStorage.getItem('userInfo')).email}</div>
+                    <Row justify={'space-between'} style={{marginBottom: 12}}>
+                        <Col style={{color: '#525252', fontSize: 20}}>{getCurrentDate()}</Col>
+                        <Col style={{display: 'flex', padding: 4, background: '#00adff', fontSize: 16, borderRadius: 4}}>
+                            {(isDoing && state.sectionExam === 1) ? 'PHẦN 1: TƯ DUY ĐỊNH LƯỢNG' : (isDoing && state.sectionExam === 2) ? 'PHẦN 2: TƯ DUY ĐỊNH TÍNH' : 'PHẦN 3: KHOA HỌC'}
                         </Col>
-                        <Col><b style={{ color: '#fff', fontSize: 20 }}>{secondsToMinutes(countSection)}</b></Col>
+                        <Col><b style={{ color: '#525252', fontSize: 20 }}>{secondsToMinutes(countSection)}</b></Col>
                     </Row>
                     <Row className='list-questions' justify={'center'}>
                         {isDoing && Array.from({ length: exam.data.so_phan }).map((_, index) => {
@@ -1104,7 +1132,7 @@ const ExamOnlineDetail = () => {
                             } else return null;
                         })}
                     </Row>
-                    <Row className='list-questions' justify={'center'} style={{background: '#f0f0f0'}}>
+                    {/* <Row className='list-questions' justify={'center'} style={{background: '#f0f0f0'}}>
                     {isDoing && Array.from({ length: exam.data.so_phan }).map((_, index) => {
                             if (index + 1 === state.sectionExam) {
                                 const startIndex = index === 0 ? 0 : Array.from({ length: index }).reduce((sum, _, i) => sum + exam.data[`so_cau_hoi_phan_${i + 1}`], 0);
@@ -1127,10 +1155,10 @@ const ExamOnlineDetail = () => {
                                 )
                             } else return null;
                         })}
-                    </Row>
+                    </Row> */}
                 </div>
-                <Row className="question-content" gutter={[16]}>
-                    <Col span={18}>
+                <Row className="question-content" gutter={[16]} style={{margin: '0 24px'}}>
+                    <Col span={22}>
                         {(!isDoing && examUser.status === 'success') &&(
                             <div className="history-header">
                                 <div className="summury-result">
@@ -1392,7 +1420,7 @@ const ExamOnlineDetail = () => {
                                                         }
                                                         <div className="question-list" key={ParentIndex}>
                                                             <div className="question-info" id={`${ParentIndex + 1}`}>
-                                                                <b style={{fontSize: "22px", color: "#2e66ad"}}>Câu {ParentIndex + 1} 
+                                                                <b style={{fontSize: "22px", color: "#fff", backgroundColor: 'green'}}>Câu {ParentIndex + 1}. 
                                                                     {/* <span className="point">[{question.cau_hoi.diem} điểm]</span> */}
                                                                     <span style={{display: question.cau_hoi.loai_cau_hoi === 2 ? 'block' : 'none'}} className="point">[Câu trắc nghiệm đúng sai]</span>
                                                                 </b>
@@ -1584,7 +1612,7 @@ const ExamOnlineDetail = () => {
                                     <div className="question-list" key={ParentIndex}>
                                         
                                         <div className="question-info" id={`${ParentIndex + 1}`}>
-                                            <b style={{fontSize: "22px", color: "#2e66ad"}}>Câu {ParentIndex + 1} 
+                                            <b style={{fontSize: "22px", color: "#fff", backgroundColor: 'green'}}>Câu {ParentIndex + 1}. 
                                                 {/* <span className="point">[{question.cau_hoi.diem} điểm]</span> */}
                                                 {/* <span className="point">[Mức độ: {renderLevelQuestion(question.cau_hoi.mdch_id)}]</span> */}
                                             </b>
@@ -1834,15 +1862,16 @@ const ExamOnlineDetail = () => {
                             )
                         })}
                     </Col>
+                    
                     {isDoing && Array.from({ length: exam.data.so_phan }).map((_, index) => {
                         if (index + 1 === state.sectionExam) {
                             const startIndex = index === 0 ? 0 : Array.from({ length: index }).reduce((sum, _, i) => sum + exam.data[`so_cau_hoi_phan_${i + 1}`], 0);
                             const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${state.sectionExam}`];
                             const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
                             return (
-                                <Col span={6}>
-                                    <div className="exam-right-content" style={{ position: 'sticky', top: '100px' }}>
-                                        <div className="topbar-exam">
+                                <Col span={2}>
+                                    <div className="exam-right-content" >
+                                        {/* <div className="topbar-exam">
                                             <p className="mg-0">
                                                 <b style={{fontSize: 16}}>Thời gian </b>
                                                 <span className="white-spread-upper"></span>
@@ -1856,37 +1885,21 @@ const ExamOnlineDetail = () => {
                                                     <span style={{ color: '#373636' }}>{`${results.length}/${exam.data[`so_cau_hoi_phan_${state.sectionExam}`]}`}</span>
                                                 </b>
                                             </p>
-                                        </div>
+                                        </div> */}
                                         <div className="exam-right-info">
-                                            <p className="mg-0 color-blue text-center title-list-q"><b>Câu hỏi</b></p>
+                                            <p className="mg-0 title-list-q" style={{textAlign: 'left !important'}}><b>Trả lời của bạn</b></p>
+                                            <span style={{fontSize: 18, color: '#ff8100cc', padding: '12px 12px 0px 12px'}}>------</span>
                                             <ul>
                                                 {partQuestions.map((question, index) => {
                                                     const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
                                                     return (
-                                                        // <li key={index + 1} className={`item ${isAnswered ? 'active' : ''}`}>
                                                         <li key={index + 1} className={`item ${((isAnswered && isAnswered.dap_an?.length !== 0) || (isAnswered && question?.cau_hoi?.loai_cau_hoi === 2)) ? 'active' : ''}`}>
-                                                            <a href={`#${index}`}>{index + 1}</a>
+                                                            <a href={`#${index}`}>{index + 1}. </a> <span>{isAnswered ? (isAnswered.loai_dap_an ? isAnswered?.dap_an?.join(', '): isAnswered.noi_dung) : '-'}</span>
                                                         </li>
                                                     );
                                                 })}
                                             </ul>
                                         </div>
-                                        <p className="text-center">
-                                            {(state.sectionExam === exam.data.so_phan) ?
-                                                <button className="btn-onclick submit-exam" onClick={() => submit()}>
-                                                    <b>Nộp bài thi</b>
-                                                </button>
-                                            :
-                                                <button className="btn-onclick submit-exam" onClick={() => handleNextSectionExam()}>
-                                                    <b>Phần tiếp theo</b>
-                                                </button>
-                                            }
-                                            {(state.sectionExam > 1 && !isDoing) &&
-                                                <button className="btn-onclick submit-exam" onClick={() => handlePrevSectionExam()}>
-                                                    <b>Phần thi trước</b>
-                                                </button>
-                                            }
-                                        </p>
                                     </div>
                                 </Col>
                             )
@@ -1894,6 +1907,24 @@ const ExamOnlineDetail = () => {
                     })}
                     {(!isDoing && ((course?.data.loai_kct === 0 && isDetail) || course?.data.loai_kct !== 0)) && renderHistoryExamSidebar()}
                 </Row>
+                {isDoing && 
+                    <p className="text-center">
+                        {(state.sectionExam === exam.data.so_phan) ?
+                            <button className="btn-onclick submit-exam" onClick={() => submit()}>
+                                <b>Nộp bài thi</b>
+                            </button>
+                        :
+                            <button className="btn-onclick submit-exam" onClick={() => handleNextSectionExam()}>
+                                <b>Phần tiếp theo</b>
+                            </button>
+                        }
+                        {(state.sectionExam > 1 && !isDoing) &&
+                            <button className="btn-onclick submit-exam" onClick={() => handlePrevSectionExam()}>
+                                <b>Phần thi trước</b>
+                            </button>
+                        }
+                    </p> 
+                }
             </>
         )
     }
@@ -1913,7 +1944,7 @@ const ExamOnlineDetail = () => {
                             <AuthModal />
                         </div>
                         <AppBreadCrumb list={breadcrumbs} hidden={false} />
-                        <div className="wraper" style={{ padding: '0' }}>{renderExam()}</div>
+                        <div class="wraper-exam"  style={{ padding: '0' }}>{renderExam()}</div>
                     </Content>
                 </Layout>
             }

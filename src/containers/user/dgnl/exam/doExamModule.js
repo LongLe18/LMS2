@@ -214,6 +214,34 @@ const ExamModuleDetail = () => {
         breadcrumbs.push({ title: 'Đề thi', link: '#' }, { title: exam.data.ten_de_thi, link: `#` });
     }
 
+    // Hàm xử lý chuyển đổi từ response BE: đáp án đã chọn -> A/B/C/D hiển thị lên giao diện
+    const convertAnswerKey = (question) => {
+        let key = '';
+        if (!isDoing && examUser.status === 'success') {
+            if (examUser.data.dap_an_da_chons) {
+                let currentSubmitAnswer = examUser.data.dap_an_da_chons.find((item) => (item.cau_hoi_id === question.cau_hoi_id && item.ket_qua_chon !== '0000'));
+                if (question.dap_an_dungs && currentSubmitAnswer !== undefined) {
+                    if (question.loai_cau_hoi === 1 || question.loai_cau_hoi === 2) { // Câu trắc nghiệm
+                        let ket_qua_arr = [];
+                        Array.from(currentSubmitAnswer.ket_qua_chon).forEach((ket_qua, index) => {
+                            if (index === 0 && ket_qua === '1') ket_qua_arr.push('A');
+                            else if (index === 1 && ket_qua === '1') ket_qua_arr.push('B');
+                            else if (index === 2 && ket_qua === '1') ket_qua_arr.push('C');
+                            else if (index === 3 && ket_qua === '1') ket_qua_arr.push('D');
+                            return null;
+                        });
+                        key = ket_qua_arr.join(', ');
+                    } else if (question.loai_cau_hoi === 0) { // Câu tự luận
+                        key = currentSubmitAnswer.noi_dung_tra_loi;
+                    }
+                } else {
+                    key = ' - ';
+                }
+            } 
+        }
+        return key;
+    }
+
     const getAnswerCols = (type) => {
         if (type === 1) return 24;
         else if (type === 2) return 12;
@@ -349,11 +377,10 @@ const ExamModuleDetail = () => {
 
     const renderHistoryExamSidebar = () => {
         return (
-            <Col span={6}>
+            <Col span={2}>
                 {examUser.status === 'success' &&
-
                     <div className="exam-right-content" style={{ position: 'sticky', top: '0px' }}>
-                        <div className="topbar-exam">
+                        {/* <div className="topbar-exam">
                             <p className="mg-0">
                             <b style={{fontSize: 18}}>Số câu đã làm</b>
                             <span className="white-spread-under"></span>
@@ -374,7 +401,7 @@ const ExamModuleDetail = () => {
                                 {`Chưa chọn: `}
                                 <b>{exam.data.cau_hoi_de_this.length - results.length}</b>
                             </p>
-                        </div>
+                        </div> */}
                         <div className="exam-right-info">
                             <p className="mg-0 color-blue text-center title-list-q">
                                 <b style={{fontSize: 18}}>Câu hỏi</b>
@@ -383,7 +410,7 @@ const ExamModuleDetail = () => {
                                 {exam.status === 'success' && exam.data.cau_hoi_de_this.map((question, index) => {
                                     return (
                                         <li key={index + 1} className={isCorrectAnswer(question.cau_hoi)}>
-                                            <a href={`#${index + 1}`}>{index + 1}</a>
+                                            <a href={`#${index}`}>{index + 1}</a> . <span>{convertAnswerKey(question.cau_hoi)}</span>
                                         </li>
                                     );
                                 })}
@@ -397,9 +424,9 @@ const ExamModuleDetail = () => {
 
     const renderDoingExamSidebar = () => {
         return (
-            <Col span={6}>
+            <Col span={2}>
                 <div className="exam-right-content" style={{ position: 'sticky', top: '0px' }}>
-                    <div className="topbar-exam">
+                    {/* <div className="topbar-exam">
                         <p className="mg-0">
                         <b style={{fontSize: 16}}>Thời gian </b>
                         <span className="white-spread-upper"></span>
@@ -413,27 +440,21 @@ const ExamModuleDetail = () => {
                             <span style={{ color: '#373636' }}>{`${results.length}/${exam.data.cau_hoi_de_this.length}`}</span>
                         </b>
                         </p>
-                    </div>
+                    </div> */}
                     <div className="exam-right-info">
-                        <p className="mg-0 color-blue text-center title-list-q">
-                        <b>Câu hỏi</b>
-                        </p>
+                        <p className="mg-0 title-list-q" style={{textAlign: 'left !important'}}><b>Trả lời của bạn</b></p>
+                        <span style={{fontSize: 18, color: '#ff8100cc', padding: '12px 12px 0px 12px'}}>------</span>
                         <ul>
                             {exam.status === 'success' && exam.data.cau_hoi_de_this.map((question, index) => {
                                 const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
                                 return (
                                     <li key={index + 1} className={`item ${((isAnswered && isAnswered.dap_an?.length !== 0) || (isAnswered && question?.cau_hoi?.loai_cau_hoi === 2)) ? 'active' : ''}`}>
-                                    <a href={`#${index + 1}`}>{index + 1}</a>
-                                </li>
+                                        <a href={`#${index}`}>{index + 1}. </a> <span>{isAnswered ? (isAnswered.loai_dap_an ? isAnswered?.dap_an?.join(', '): isAnswered.noi_dung) : '-'}</span>
+                                    </li>
                                 );
                             })}
                         </ul>
                     </div>
-                    <p className="text-center">
-                        <button className="btn-onclick submit-exam" onClick={() => submit()}>
-                            <b>Nộp bài</b>
-                        </button>
-                    </p>
                 </div>
             </Col>
         );
@@ -809,71 +830,108 @@ const ExamModuleDetail = () => {
         if (error) return <NoRecord subTitle="Không tìm thấy đề thi." />;
 
         return (
-            <Row className="question-content">
-                <Col span={18}>
-                {(!isDoing && examUser.status === 'success') &&(
-                    <div className="history-header">
-                        <div className="summury-result">
-                            <div className="head-result">
-                                <p className="size-18 color-blue">
-                                    <b>
-                                    Chúc mừng bạn đã hoàn thành <span>{exam.data.ten_de_thi}</span>
-                                    </b>
-                                </p>
-                            </div>
-                            <div className="body-result">
-                                <div className="total_point">
-                                    <p>
-                                    <label className="point-label"> ĐIỂM SỐ</label>
-                                    <b className="point font-weight-5">{examUser.data.ket_qua_diem}/{exam.data.tong_diem}</b>
-                                    </p>
-                                </div>
-                                <div className="total_point">
-                                    <p className='font-weight-5'>
-                                        Thời gian làm:{' '}
+            <>
+                <Row className="question-content" style={{margin: '0 24px'}}>
+                    <Col span={22}>
+                    {(!isDoing && examUser.status === 'success') &&(
+                        <div className="history-header">
+                            <div className="summury-result">
+                                <div className="head-result">
+                                    <p className="size-18 color-blue">
                                         <b>
-                                            {examUser.data.thoi_gian_lam_bai}
+                                        Chúc mừng bạn đã hoàn thành <span>{exam.data.ten_de_thi}</span>
                                         </b>
                                     </p>
                                 </div>
+                                <div className="body-result">
+                                    <div className="total_point">
+                                        <p>
+                                        <label className="point-label"> ĐIỂM SỐ</label>
+                                        <b className="point font-weight-5">{examUser.data.ket_qua_diem}/{exam.data.tong_diem}</b>
+                                        </p>
+                                    </div>
+                                    <div className="total_point">
+                                        <p className='font-weight-5'>
+                                            Thời gian làm:{' '}
+                                            <b>
+                                                {examUser.data.thoi_gian_lam_bai}
+                                            </b>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="block-action">
+                                {/* <Button type="default" size="large" className="dowload-exam-button" onClick={() => doExamAgain()}>
+                                    <Icon component={() => <img className="dowload-exam-right-icon" src={docIcon} alt="..." />} />
+                                    Làm lại bài thi
+                                </Button> */}
+
+                                <Link to={`/luyen-tap/mo-dun/xem/${params.idmodule}/${hashids.encode(params.id)}/${params.idCourse}`}>
+                                    <Button type="default" size="large" className="dowload-exam-button">
+                                        <Icon component={() => <img className="dowload-exam-icon" src={adope} alt="...1" /> } onClick={() => history.push(`/luyen-tap/mo-dun/xem/${params.idmodule}/${hashids.encode(params.id)}/${params.idCourse}`)} />
+                                        Lịch sử làm bài
+                                    </Button>
+                                </Link>
                             </div>
                         </div>
-                        <div className="block-action">
-                            {/* <Button type="default" size="large" className="dowload-exam-button" onClick={() => doExamAgain()}>
-                                <Icon component={() => <img className="dowload-exam-right-icon" src={docIcon} alt="..." />} />
-                                Làm lại bài thi
-                            </Button> */}
+                    )}
+                    {exam.status === 'success' && exam.data.cau_hoi_de_this.map((question, ParentIndex) => {
+                        
+                        let regex = /\\begin{center}\\includegraphics\[scale = 0\.5\]{(.*?)}\\end{center}/;
 
-                            <Link to={`/luyen-tap/mo-dun/xem/${params.idmodule}/${hashids.encode(params.id)}/${params.idCourse}`}>
-                                <Button type="default" size="large" className="dowload-exam-button">
-                                    <Icon component={() => <img className="dowload-exam-icon" src={adope} alt="...1" /> } onClick={() => history.push(`/luyen-tap/mo-dun/xem/${params.idmodule}/${hashids.encode(params.id)}/${params.idCourse}`)} />
-                                    Lịch sử làm bài
-                                </Button>
-                            </Link>
-                        </div>
-                    </div>
-                )}
-                {exam.status === 'success' && exam.data.cau_hoi_de_this.map((question, ParentIndex) => {
-                    
-                    let regex = /\\begin{center}\\includegraphics\[scale = 0\.5\]{(.*?)}\\end{center}/;
-
-                    return (
-                        <>
-                            {(question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom !== undefined && question.cau_hoi.exceprtTo !== undefined) &&
-                                <>
-                                    {(question.cau_hoi.exceprtFrom === question.cau_hoi.exceprtTo) 
-                                        ? <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi {question.cau_hoi.exceprtFrom + 1}</span>
-                                        : <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi từ {question.cau_hoi.exceprtFrom + 1} đến {question.cau_hoi.exceprtTo + 1}</span>
-                                    }
-                                    <br/>
-                                    <div className="answer-content" style={{paddingLeft: '20px'}}>             
+                        return (
+                            <>
+                                {(question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom !== undefined && question.cau_hoi.exceprtTo !== undefined) &&
+                                    <>
+                                        {(question.cau_hoi.exceprtFrom === question.cau_hoi.exceprtTo) 
+                                            ? <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi {question.cau_hoi.exceprtFrom + 1}</span>
+                                            : <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi từ {question.cau_hoi.exceprtFrom + 1} đến {question.cau_hoi.exceprtTo + 1}</span>
+                                        }
+                                        <br/>
+                                        <div className="answer-content" style={{paddingLeft: '20px'}}>             
+                                            <MathJax.Provider>
+                                                {question.cau_hoi?.trich_doan?.noi_dung?.split('\n').map((item, index_cauhoi) => {
+                                                    return (
+                                                        <div className="title-exam-content" key={index_cauhoi}>
+                                                            {
+                                                                (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
+                                                                    <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></img>
+                                                                ) : 
+                                                                (
+                                                                    <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
+                                                                        return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
+                                                                            <MathJax.Node key={index2} formula={item2} />
+                                                                        ) : (
+                                                                            <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                                        )
+                                                                    })}</div>
+                                                                )
+                                                            }
+                                                        </div>
+                                                    )}
+                                                )}
+                                            </MathJax.Provider>
+                                        </div>
+                                    </>
+                                }
+                                <div className="question-list" key={ParentIndex}>
+                                    
+                                    <div className="question-info" id={`${ParentIndex + 1}`}>
+                                        <b style={{fontSize: "22px", color: "#fff", backgroundColor: 'green'}}>Câu {ParentIndex + 1}. 
+                                            {/* <span className="point">[{question.cau_hoi.diem} điểm]</span> */}
+                                            <span style={{display: question.cau_hoi.loai_cau_hoi === 2 ? 'block' : 'none'}} className="point">[Câu trắc nghiệm đúng sai]</span>
+                                        </b>
+                                        <ul className="action-links"></ul>
+                                    </div>
+                            
+                                    <div className="title-exam">
                                         <MathJax.Provider>
-                                            {question.cau_hoi?.trich_doan?.noi_dung?.split('\n').map((item, index_cauhoi) => {
+                                            {question.cau_hoi.noi_dung.split('\n').map((item, index_cauhoi) => {
                                                 return (
                                                     <div className="title-exam-content" key={index_cauhoi}>
                                                         {
                                                             (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                                <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></img>
+                                                                <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question2_${index_cauhoi}`}></img>
                                                             ) : 
                                                             (
                                                                 <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
@@ -890,53 +948,50 @@ const ExamModuleDetail = () => {
                                             )}
                                         </MathJax.Provider>
                                     </div>
-                                </>
-                            }
-                            <div className="question-list" key={ParentIndex}>
-                                
-                                <div className="question-info" id={`${ParentIndex + 1}`}>
-                                    <b style={{fontSize: "22px", color: "#2e66ad"}}>Câu {ParentIndex + 1} 
-                                        {/* <span className="point">[{question.cau_hoi.diem} điểm]</span> */}
-                                        <span style={{display: question.cau_hoi.loai_cau_hoi === 2 ? 'block' : 'none'}} className="point">[Câu trắc nghiệm đúng sai]</span>
-                                    </b>
-                                    <ul className="action-links"></ul>
-                                </div>
-                        
-                                <div className="title-exam">
-                                    <MathJax.Provider>
-                                        {question.cau_hoi.noi_dung.split('\n').map((item, index_cauhoi) => {
-                                            return (
-                                                <div className="title-exam-content" key={index_cauhoi}>
-                                                    {
-                                                        (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                            <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question2_${index_cauhoi}`}></img>
-                                                        ) : 
-                                                        (
-                                                            <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
-                                                                return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
-                                                                    <MathJax.Node key={index2} formula={item2} />
-                                                                ) : (
-                                                                    <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
-                                                                )
-                                                            })}</div>
-                                                        )
-                                                    }
-                                                </div>
-                                            )}
-                                        )}
-                                    </MathJax.Provider>
-                                </div>
-                                <div className="content-answer-question">
-                                    <Row gutter={[20, 10]} className="multi-choice" style={{rowGap: 0}}>
-                                        {question.cau_hoi.dap_ans.map((answer, index) => {
-                                            const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
-                                            return (
-                                                <Col xs={24} sm={24} md={getAnswerCols(question.cau_hoi.cot_tren_hang)} key={index}>
-                                                    <ul key={index}>
-                                                        {(question.cau_hoi.loai_cau_hoi === 1) ?
-                                                            <li className={`item ${isAnswered && isAnswered.dap_an.includes(renderAnswerKey(index)) ? 'active' : ''}`}>
-                                                                <button  style={{width:"100%"}}
-                                                                    className="btn-onclick"
+                                    <div className="content-answer-question">
+                                        <Row gutter={[20, 10]} className="multi-choice" style={{rowGap: 0}}>
+                                            {question.cau_hoi.dap_ans.map((answer, index) => {
+                                                const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
+                                                return (
+                                                    <Col xs={24} sm={24} md={getAnswerCols(question.cau_hoi.cot_tren_hang)} key={index}>
+                                                        <ul key={index}>
+                                                            {(question.cau_hoi.loai_cau_hoi === 1) ?
+                                                                <li className={`item ${isAnswered && isAnswered.dap_an.includes(renderAnswerKey(index)) ? 'active' : ''}`}>
+                                                                    <button  style={{width:"100%"}}
+                                                                        className="btn-onclick"
+                                                                        onClick={() => {
+                                                                            dispatch(answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, 
+                                                                                (res) => {
+                                                                                    if (res.status === 'success') {
+                                                                                        answers = res.data;
+                                                                                        onChooseAnswer(question, renderAnswerKey(index), index, res.data)   
+                                                                                    }
+                                                                                }
+                                                                            ))
+                                                                        }}
+                                                                    >
+                                                                        {renderAnswer(question.cau_hoi, answer, index)}
+                                                                    </button>
+                                                                </li>
+                                                            : (question.cau_hoi.loai_cau_hoi === 0) ?
+                                                                <li>
+                                                                    <TextArea placeholder='Nhập đáp án' rows={1} style={{width:"35%", marginTop: 12}} disabled={!isDoing} defaultValue={isAnswered !== undefined ? isAnswered.noi_dung : null}
+                                                                        onChange={(e) => {
+                                                                            localStorage.setItem('answerText', null);
+                                                                            localStorage.setItem('question', null);
+                                                                            localStorage.setItem('answerText', e.target.value);
+                                                                            localStorage.setItem('question', JSON.stringify(question));                            
+                                                                        }
+                                                                    }/>
+                                                                </li>
+                                                            :
+                                                            <div className='wrongrightAnswer'>
+                                                                <button id={`button-Right-${index}`}
+                                                                    className={`btn-DS ${isAnswered && isAnswered.ket_qua_chon[index] === '1' ? 'active' : '' } 
+                                                                        ${!isDoing && isCorrectQuestionDungSai(question.cau_hoi, index, true) !== null && !isCorrectQuestionDungSai(question.cau_hoi, index, true)  ? 'incorrect' : ''}
+                                                                        ${!isDoing && isCorrectQuestionDungSai(question.cau_hoi, index, true) !== null && isCorrectQuestionDungSai(question.cau_hoi, index, true) ? 'correct' : ''}`
+                                                                    }
+                                                                    
                                                                     onClick={() => {
                                                                         dispatch(answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, 
                                                                             (res) => {
@@ -948,241 +1003,216 @@ const ExamModuleDetail = () => {
                                                                         ))
                                                                     }}
                                                                 >
-                                                                    {renderAnswer(question.cau_hoi, answer, index)}
+                                                                    <span className="answer-label">Đ</span>
                                                                 </button>
-                                                            </li>
-                                                        : (question.cau_hoi.loai_cau_hoi === 0) ?
-                                                            <li>
-                                                                <TextArea placeholder='Nhập đáp án' rows={1} style={{width:"35%", marginTop: 12}} disabled={!isDoing} defaultValue={isAnswered !== undefined ? isAnswered.noi_dung : null}
-                                                                    onChange={(e) => {
-                                                                        localStorage.setItem('answerText', null);
-                                                                        localStorage.setItem('question', null);
-                                                                        localStorage.setItem('answerText', e.target.value);
-                                                                        localStorage.setItem('question', JSON.stringify(question));                            
+                                                                <button id={`button-Wrong-${index}`}
+                                                                    className={`btn-DS ${isAnswered && isAnswered.ket_qua_chon[index] === '0' ? 'active' : '' }
+                                                                        ${!isDoing && isCorrectQuestionDungSai(question.cau_hoi, index, false) !== null && !isCorrectQuestionDungSai(question.cau_hoi, index, false) ? `incorrect` : ''}
+                                                                        ${!isDoing && isCorrectQuestionDungSai(question.cau_hoi, index, false) !== null && isCorrectQuestionDungSai(question.cau_hoi, index, false) ? 'correct' : ''}`
                                                                     }
-                                                                }/>
-                                                            </li>
-                                                        :
-                                                        <div className='wrongrightAnswer'>
-                                                            <button id={`button-Right-${index}`}
-                                                                className={`btn-DS ${isAnswered && isAnswered.ket_qua_chon[index] === '1' ? 'active' : '' } 
-                                                                    ${!isDoing && isCorrectQuestionDungSai(question.cau_hoi, index, true) !== null && !isCorrectQuestionDungSai(question.cau_hoi, index, true)  ? 'incorrect' : ''}
-                                                                    ${!isDoing && isCorrectQuestionDungSai(question.cau_hoi, index, true) !== null && isCorrectQuestionDungSai(question.cau_hoi, index, true) ? 'correct' : ''}`
-                                                                }
-                                                                
-                                                                onClick={() => {
-                                                                    dispatch(answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, 
-                                                                        (res) => {
-                                                                            if (res.status === 'success') {
-                                                                                answers = res.data;
-                                                                                onChooseAnswer(question, renderAnswerKey(index), index, res.data)   
-                                                                            }
-                                                                        }
-                                                                    ))
-                                                                }}
-                                                            >
-                                                                <span className="answer-label">Đ</span>
-                                                            </button>
-                                                            <button id={`button-Wrong-${index}`}
-                                                                className={`btn-DS ${isAnswered && isAnswered.ket_qua_chon[index] === '0' ? 'active' : '' }
-                                                                    ${!isDoing && isCorrectQuestionDungSai(question.cau_hoi, index, false) !== null && !isCorrectQuestionDungSai(question.cau_hoi, index, false) ? `incorrect` : ''}
-                                                                    ${!isDoing && isCorrectQuestionDungSai(question.cau_hoi, index, false) !== null && isCorrectQuestionDungSai(question.cau_hoi, index, false) ? 'correct' : ''}`
-                                                                }
-                                                                onClick={() => {
-                                                                    dispatch(answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, 
-                                                                        (res) => {
-                                                                            if (res.status === 'success') {
-                                                                                answers = res.data;
-                                                                                onChooseAnswer(question, renderAnswerKey(index), index, res.data);
-                                                                            }
-                                                                        }
-                                                                    ))
-                                                                }}
-                                                            >
-                                                                <span className="answer-label">S</span>
-                                                            </button>
-                                                            <div className="option-answer">
-                                                                <MathJax.Provider>
-                                                                    {answer.noi_dung_dap_an.split('\n').map((item, index_cauhoi) => {
-                                                                        return (
-                                                                            <div className="option-answer-content" key={index_cauhoi}>
-                                                                                {
-                                                                                    (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                                                        <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question3_${index_cauhoi}`}></img>
-                                                                                    ) : 
-                                                                                    (
-                                                                                        <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
-                                                                                            return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
-                                                                                                <MathJax.Node key={index2} formula={item2} />
-                                                                                            ) : (
-                                                                                                <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
-                                                                                            )
-                                                                                        })}</div>
-                                                                                    )
+                                                                    onClick={() => {
+                                                                        dispatch(answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, 
+                                                                            (res) => {
+                                                                                if (res.status === 'success') {
+                                                                                    answers = res.data;
+                                                                                    onChooseAnswer(question, renderAnswerKey(index), index, res.data);
                                                                                 }
-                                                                            </div>
+                                                                            }
+                                                                        ))
+                                                                    }}
+                                                                >
+                                                                    <span className="answer-label">S</span>
+                                                                </button>
+                                                                <div className="option-answer">
+                                                                    <MathJax.Provider>
+                                                                        {answer.noi_dung_dap_an.split('\n').map((item, index_cauhoi) => {
+                                                                            return (
+                                                                                <div className="option-answer-content" key={index_cauhoi}>
+                                                                                    {
+                                                                                        (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
+                                                                                            <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question3_${index_cauhoi}`}></img>
+                                                                                        ) : 
+                                                                                        (
+                                                                                            <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
+                                                                                                return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
+                                                                                                    <MathJax.Node key={index2} formula={item2} />
+                                                                                                ) : (
+                                                                                                    <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                                                                )
+                                                                                            })}</div>
+                                                                                        )
+                                                                                    }
+                                                                                </div>
+                                                                            )}
                                                                         )}
-                                                                    )}
-                                                                </MathJax.Provider>
+                                                                    </MathJax.Provider>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        }
-                                                    </ul>
-                                                </Col>
-                                            )
-                                        })}
-                                    </Row>
-                                    {renderAnswerResult(question)}
-                                </div>
-                                {!isDoing && 
-                                    <div className="question-actions">
-                                        <Button
-                                            type="default"
-                                            shape="round"
-                                            icon={<InfoCircleOutlined />}
-                                            onClick={() => {
-                                                if (!help.includes(question.cau_hoi_id)) {
-                                                    setHelp([...help, question.cau_hoi_id]);
-                                                } else {
-                                                    setHelp(help.filter((cau_hoi_id) => cau_hoi_id !== question.cau_hoi_id));
-                                                }
-                                            }}
-                                        >
-                                            Xem lời giải
-                                        </Button>
-                                        <Button
-                                            type="default"
-                                            shape="round"
-                                            icon={<CommentOutlined />}
-                                            onClick={() => {
-                                                if (!commnetOpen.includes(question.cau_hoi_id)) {
-                                                    setCommentOpen([...commnetOpen, question.cau_hoi_id]);
-                                                } else {
-                                                    setCommentOpen(commnetOpen.filter((cau_hoi_id) => cau_hoi_id !== question.cau_hoi_id));
-                                                }
-                                            }}
-                                        >
-                                            Hỏi đáp / Thảo Luận
-                                        </Button>
-                                        <div className="question-toggle">
-                                        
-                                        {help.includes(question.cau_hoi_id) &&(
-                                            <Alert
-                                                message=""
-                                                type="warning"
-                                                description={
-                                                    <div className="help-answer">
-                                                        <MathJax.Provider>
-                                                            {question.cau_hoi.loi_giai.split('\n').map((item, index_cauhoi) => {
-                                                                return (
-                                                                    <div className="help-answer-content" key={index_cauhoi}> 
-                                                                    {
-                                                                        (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                                            <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question4_${index_cauhoi}`}></img>
-                                                                        ) : (
-                                                                            item.split('$').map((item2, index2) => {
-                                                                                return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
-                                                                                    <MathJax.Node key={index2} formula={item2} />
-                                                                                ) : (
-                                                                                    <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
-                                                                                )
-                                                                            })
-                                                                        )
-                                                                    }
-                                                                    </div>
-                                                                )}
-                                                            )}
-                                                        </MathJax.Provider>
-                                                    </div>
-                                                }
-                                                closable
-                                                onClose={() => setHelp(help.filter((cau_hoi_id) => cau_hoi_id !== question.cau_hoi_id))}
-                                            />
-                                        )}
-
-                                        {commnetOpen.includes(question.cau_hoi_id) && (
-                                            <Alert
-                                                message=""
-                                                type="warning"
-                                                description={
-                                                <div className="comments">
-                                                    {comments.data.filter(item => Number(item.lien_ket_id.split('/')[1]) === question.cau_hoi_id).length > 0 && (
-                                                    <List
-                                                        className="comment-list"
-                                                        itemLayout="horizontal"
-                                                        dataSource={comments.data.filter(item => Number(item.lien_ket_id.split('/')[1]) === question.cau_hoi_id)}
-                                                        renderItem={(item, index) => (
-                                                        <li key={index}>
-                                                            <Comment author={<p style={{fontWeight: 'bold'}}>{item.ten_hoc_vien}</p>} 
-                                                                avatar={item.anh_dai_dien !== null ? config.API_URL + item.anh_dai_dien : defaultImage} 
-                                                                content={<div><div dangerouslySetInnerHTML={{ __html: item.noi_dung }}></div>{item.anh_dinh_kem !== null && <img src={config.API_URL + item.anh_dinh_kem} alt="ảnh bình luận"/>}</div>} 
-                                                                datetime={diff(item.ngay_tao)} 
-                                                                actions={[
-                                                                    <Space>
-                                                                        <Button type='link' onClick={() => replyComment(item.binh_luan_id)}>Phản hồi</Button>
-                                                                        {item.hoc_vien_id === JSON.parse(localStorage.getItem('userInfo')).hoc_vien_id && 
-                                                                        <>
-                                                                            <Button type='link' onClick={() => EditComment(item.binh_luan_id, item.binh_luan_phu_id, false)}>Sửa</Button>
-                                                                            <Button type='link' onClick={() => deleteComment(item.binh_luan_id, item.binh_luan_phu_id, false)}>Xóa</Button>
-                                                                        </>
-                                                                        }
-                                                                        {(item.so_binh_luan_phu > 0 && !state.showSubcomment) &&            
-                                                                            <Button onClick={() => renderMoreSubComment(item.binh_luan_id)} type="link">{item.so_binh_luan_phu} phản hồi</Button> 
-                                                                        }
-                                                                    </Space>
-                                                                ]}
-                                                            >
-                                                            <div id={item.binh_luan_id}></div>
-                                                            </Comment>
-                                                        </li>
-                                                        )}
-                                                    />
-                                                    )}
-
-                                                    <TextEditorWidget2
-                                                        placeholder="Nhập nội dung bình luận..."
-                                                        showToolbar={true}
-                                                        isMinHeight200={true}
-                                                        isSimple={false}
-                                                        value={comment}
-                                                        onChange={(val) => setComment(val)}
-                                                    />
-                                                    <Dragger {...propsImage} maxCount={1}
-                                                        listType="picture"
-                                                        className="upload-list-inline"
-                                                    >
-                                                        <p className="ant-upload-drag-icon"><UploadOutlined /></p>
-                                                        <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
-                                                    </Dragger>
-                                                    <Space>
-                                                        <Button className='mt-2'
-                                                            type="primary"
-                                                            shape="round"
-                                                            onClick={() => {
-                                                                saveComment(question.cau_hoi_id, question.cau_hoi.mo_dun_id, question.cau_hoi.chuyen_de_id);
-                                                            }}
-                                                        >
-                                                        Gửi bình luận
-                                                        </Button>
-                                                        {(state.isReplied || state.isEdit) && <Button type="primary" danger className='mt-2' onClick={() => cancelReplyOrEdit()} shape="round">HỦY</Button>  }
-                                                    </Space>
-                                                </div>
-                                                }
-                                                closable
-                                                onClose={() => setCommentOpen(commnetOpen.filter((cau_hoi_id) => cau_hoi_id !== question.cau_hoi_id))}
-                                            />
-                                        )}
-                                        </div>
+                                                            }
+                                                        </ul>
+                                                    </Col>
+                                                )
+                                            })}
+                                        </Row>
+                                        {renderAnswerResult(question)}
                                     </div>
-                                }
-                            </div>
-                        </>
-                   )
-                })  
+                                    {!isDoing && 
+                                        <div className="question-actions">
+                                            <Button
+                                                type="default"
+                                                shape="round"
+                                                icon={<InfoCircleOutlined />}
+                                                onClick={() => {
+                                                    if (!help.includes(question.cau_hoi_id)) {
+                                                        setHelp([...help, question.cau_hoi_id]);
+                                                    } else {
+                                                        setHelp(help.filter((cau_hoi_id) => cau_hoi_id !== question.cau_hoi_id));
+                                                    }
+                                                }}
+                                            >
+                                                Xem lời giải
+                                            </Button>
+                                            <Button
+                                                type="default"
+                                                shape="round"
+                                                icon={<CommentOutlined />}
+                                                onClick={() => {
+                                                    if (!commnetOpen.includes(question.cau_hoi_id)) {
+                                                        setCommentOpen([...commnetOpen, question.cau_hoi_id]);
+                                                    } else {
+                                                        setCommentOpen(commnetOpen.filter((cau_hoi_id) => cau_hoi_id !== question.cau_hoi_id));
+                                                    }
+                                                }}
+                                            >
+                                                Hỏi đáp / Thảo Luận
+                                            </Button>
+                                            <div className="question-toggle">
+                                            
+                                            {help.includes(question.cau_hoi_id) &&(
+                                                <Alert
+                                                    message=""
+                                                    type="warning"
+                                                    description={
+                                                        <div className="help-answer">
+                                                            <MathJax.Provider>
+                                                                {question.cau_hoi.loi_giai.split('\n').map((item, index_cauhoi) => {
+                                                                    return (
+                                                                        <div className="help-answer-content" key={index_cauhoi}> 
+                                                                        {
+                                                                            (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
+                                                                                <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question4_${index_cauhoi}`}></img>
+                                                                            ) : (
+                                                                                item.split('$').map((item2, index2) => {
+                                                                                    return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
+                                                                                        <MathJax.Node key={index2} formula={item2} />
+                                                                                    ) : (
+                                                                                        <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                                                    )
+                                                                                })
+                                                                            )
+                                                                        }
+                                                                        </div>
+                                                                    )}
+                                                                )}
+                                                            </MathJax.Provider>
+                                                        </div>
+                                                    }
+                                                    closable
+                                                    onClose={() => setHelp(help.filter((cau_hoi_id) => cau_hoi_id !== question.cau_hoi_id))}
+                                                />
+                                            )}
+
+                                            {commnetOpen.includes(question.cau_hoi_id) && (
+                                                <Alert
+                                                    message=""
+                                                    type="warning"
+                                                    description={
+                                                    <div className="comments">
+                                                        {comments.data.filter(item => Number(item.lien_ket_id.split('/')[1]) === question.cau_hoi_id).length > 0 && (
+                                                        <List
+                                                            className="comment-list"
+                                                            itemLayout="horizontal"
+                                                            dataSource={comments.data.filter(item => Number(item.lien_ket_id.split('/')[1]) === question.cau_hoi_id)}
+                                                            renderItem={(item, index) => (
+                                                            <li key={index}>
+                                                                <Comment author={<p style={{fontWeight: 'bold'}}>{item.ten_hoc_vien}</p>} 
+                                                                    avatar={item.anh_dai_dien !== null ? config.API_URL + item.anh_dai_dien : defaultImage} 
+                                                                    content={<div><div dangerouslySetInnerHTML={{ __html: item.noi_dung }}></div>{item.anh_dinh_kem !== null && <img src={config.API_URL + item.anh_dinh_kem} alt="ảnh bình luận"/>}</div>} 
+                                                                    datetime={diff(item.ngay_tao)} 
+                                                                    actions={[
+                                                                        <Space>
+                                                                            <Button type='link' onClick={() => replyComment(item.binh_luan_id)}>Phản hồi</Button>
+                                                                            {item.hoc_vien_id === JSON.parse(localStorage.getItem('userInfo')).hoc_vien_id && 
+                                                                            <>
+                                                                                <Button type='link' onClick={() => EditComment(item.binh_luan_id, item.binh_luan_phu_id, false)}>Sửa</Button>
+                                                                                <Button type='link' onClick={() => deleteComment(item.binh_luan_id, item.binh_luan_phu_id, false)}>Xóa</Button>
+                                                                            </>
+                                                                            }
+                                                                            {(item.so_binh_luan_phu > 0 && !state.showSubcomment) &&            
+                                                                                <Button onClick={() => renderMoreSubComment(item.binh_luan_id)} type="link">{item.so_binh_luan_phu} phản hồi</Button> 
+                                                                            }
+                                                                        </Space>
+                                                                    ]}
+                                                                >
+                                                                <div id={item.binh_luan_id}></div>
+                                                                </Comment>
+                                                            </li>
+                                                            )}
+                                                        />
+                                                        )}
+
+                                                        <TextEditorWidget2
+                                                            placeholder="Nhập nội dung bình luận..."
+                                                            showToolbar={true}
+                                                            isMinHeight200={true}
+                                                            isSimple={false}
+                                                            value={comment}
+                                                            onChange={(val) => setComment(val)}
+                                                        />
+                                                        <Dragger {...propsImage} maxCount={1}
+                                                            listType="picture"
+                                                            className="upload-list-inline"
+                                                        >
+                                                            <p className="ant-upload-drag-icon"><UploadOutlined /></p>
+                                                            <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
+                                                        </Dragger>
+                                                        <Space>
+                                                            <Button className='mt-2'
+                                                                type="primary"
+                                                                shape="round"
+                                                                onClick={() => {
+                                                                    saveComment(question.cau_hoi_id, question.cau_hoi.mo_dun_id, question.cau_hoi.chuyen_de_id);
+                                                                }}
+                                                            >
+                                                            Gửi bình luận
+                                                            </Button>
+                                                            {(state.isReplied || state.isEdit) && <Button type="primary" danger className='mt-2' onClick={() => cancelReplyOrEdit()} shape="round">HỦY</Button>  }
+                                                        </Space>
+                                                    </div>
+                                                    }
+                                                    closable
+                                                    onClose={() => setCommentOpen(commnetOpen.filter((cau_hoi_id) => cau_hoi_id !== question.cau_hoi_id))}
+                                                />
+                                            )}
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </>
+                    )
+                    })  
+                    }
+                    </Col>
+                    {isDoing ? renderDoingExamSidebar() : renderHistoryExamSidebar()}
+                </Row>
+                {isDoing &&
+                    <p className="text-center">
+                        <button className="btn-onclick submit-exam" onClick={() => submit()}>
+                            <b>Nộp bài</b>
+                        </button>
+                    </p>
                 }
-                </Col>
-                {isDoing ? renderDoingExamSidebar() : renderHistoryExamSidebar()}
-            </Row>
+            </>
         )
     };
 
@@ -1202,7 +1232,7 @@ const ExamModuleDetail = () => {
                             <AuthModal />
                         </div>
                         <AppBreadCrumb list={breadcrumbs} hidden={false} />
-                        <div className="wraper" style={{ padding: '0 48px' }}>{renderExam()}</div>
+                        <div class="wraper-exam"  style={{ padding: '0' }}>{renderExam()}</div>
                     </Content>
                 </Layout>
             }

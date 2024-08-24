@@ -57,12 +57,40 @@ const HistoryExam = () => {
         ));
     }, [params.idExam]); // eslint-disable-line react-hooks/exhaustive-deps
     
+    // Hàm xử lý chuyển đổi từ response BE: đáp án đã chọn -> A/B/C/D hiển thị lên giao diện
+    const convertAnswerKey = (question) => {
+        let key = '';
+        if (examUser.status === 'success') {
+            if (examUser.data.dap_an_da_chons) {
+                let currentSubmitAnswer = examUser.data.dap_an_da_chons.find((item) => (item.cau_hoi_id === question.cau_hoi_id && item.ket_qua_chon !== '0000'));
+                if (question.dap_an_dungs && currentSubmitAnswer !== undefined) {
+                    if (question.loai_cau_hoi === 1 || question.loai_cau_hoi === 2) { // Câu trắc nghiệm
+                        let ket_qua_arr = [];
+                        Array.from(currentSubmitAnswer.ket_qua_chon).forEach((ket_qua, index) => {
+                            if (index === 0 && ket_qua === '1') ket_qua_arr.push('A');
+                            else if (index === 1 && ket_qua === '1') ket_qua_arr.push('B');
+                            else if (index === 2 && ket_qua === '1') ket_qua_arr.push('C');
+                            else if (index === 3 && ket_qua === '1') ket_qua_arr.push('D');
+                            return null;
+                        });
+                        key = ket_qua_arr.join(', ');
+                    } else if (question.loai_cau_hoi === 0) { // Câu tự luận
+                        key = currentSubmitAnswer.noi_dung_tra_loi;
+                    }
+                } else {
+                    key = ' - ';
+                }
+            } 
+        }
+        return key;
+    }
+
     const renderHistoryExamSidebar = () => {
         return (
-            <Col span={6}>
+            <Col span={2}>
                 {exam.status === 'success' &&
                     <div className="exam-right-content" style={{ position: 'sticky', top: '0px' }}>
-                        <div className="topbar-exam">
+                        {/* <div className="topbar-exam">
                             <p className="mg-0">
                             <b style={{fontSize: 18}}>Số câu hỏi</b>
                             <span className="white-spread-under"></span>
@@ -83,7 +111,7 @@ const HistoryExam = () => {
                                 {`Chưa chọn: `}
                                 <b>{exam.data.cau_hoi_de_this.length - examUser.data.so_cau_tra_loi_sai - examUser.data.so_cau_tra_loi_dung}</b>
                             </p>
-                        </div>
+                        </div> */}
                         <div className="exam-right-info">
                             <p className="mg-0 color-blue text-center title-list-q">
                                 <b>Câu hỏi</b>
@@ -92,7 +120,7 @@ const HistoryExam = () => {
                                 {exam.status === 'success' && exam.data.cau_hoi_de_this.map((question, index) => {
                                     return (
                                         <li key={index + 1} className={isCorrectAnswer(question.cau_hoi)}>
-                                            <a href={`#${index + 1}`}>{index + 1}</a>
+                                            <a href={`#${index}`}>{index + 1}</a> . <span>{convertAnswerKey(question.cau_hoi)}</span>
                                         </li>
                                     );
                                 })}
@@ -250,8 +278,8 @@ const HistoryExam = () => {
     const renderExam = () => {
         if (error) return <NoRecord subTitle="Không tìm thấy đề thi." />;
         return (
-            <Row className="question-content">
-                <Col span={18}>
+            <Row className="question-content" style={{margin: '0 24px'}}>
+                <Col span={22}>
                     {(exam.status === 'success') &&(
                         <div className="history-header">
                             <div className="summury-result">
@@ -323,7 +351,7 @@ const HistoryExam = () => {
                                 <div className="question-list" key={ParentIndex}>
                                     
                                     <div className="question-info" id={`${ParentIndex + 1}`}>
-                                        <b style={{fontSize: "22px", color: "#2e66ad"}}>Câu {ParentIndex + 1} 
+                                        <b style={{fontSize: "22px", color: "#fff", backgroundColor: 'green'}}>Câu {ParentIndex + 1}. 
                                             <span className="point">[{question.cau_hoi.diem} điểm]</span>
                                         </b>
                                         <ul className="action-links"></ul>
@@ -501,7 +529,7 @@ const HistoryExam = () => {
                     <div className="header-exam">
                         <h1>{exam.data.ten_de_thi}</h1>
                     </div>
-                    <div className="wraper" style={{ padding: '0 48px' }}>{renderExam()}</div>
+                    <div class="wraper-exam"  style={{ padding: '0' }}>{renderExam()}</div>
                 </Content>
                 </Layout>
             }

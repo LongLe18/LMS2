@@ -306,16 +306,32 @@
     background-color: transparent;
     background-image: none;
   }
-
+  
   .form-exam {
     background-color: transparent;
     border: 1px #3da844 solid !important;
     padding: 1em;
     text-align: center;
-  }
 
-  h5 {
-    color: #3da844 !important;
+    .title-main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      h5 {
+        color: rgb(169, 0, 0) !important;
+      }
+    }
+
+    .description-title {
+      color: rgb(24, 98, 24);
+      justify-content: center;
+      display: flex;
+      border: 1px solid #021989;
+      width: 350px;
+      border-radius: 12px;
+      padding: 8px;
+    }
   }
 
   .textCenter {
@@ -323,11 +339,16 @@
   }
 
   .ant-steps-item {
-    width: 23%;
+    width: 30%;
   }
 
   .ant-checkbox-wrapper {
     font-size: 18px !important;
+  }
+
+  .ant-checkbox-inner {
+    width: 20px;
+    height: 20px;
   }
 }
 

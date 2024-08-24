@@ -14,7 +14,7 @@ b {
   font-weight: lighter;
 }
 
-.wraper {
+.wraper-exam {
   width: 100%;
 }
 
@@ -71,13 +71,13 @@ b {
   margin-right: auto;
 }
 
-.wraper.question-list.question-img {
+.wraper-exam.question-list.question-img {
   display: block;
   margin-left: auto;
   margin-right: auto;
 }
 
-.wraper .topbar-exam {
+.wraper-exam .topbar-exam {
   font-size: 18px;
   margin-bottom: 15px;
   border-radius: 8px;
@@ -87,11 +87,11 @@ b {
   color: #464646;
 }
 
-.wraper .question-bottom {
+.wraper-exam .question-bottom {
   text-align: right;
 }
 
-.wraper .question-bottom .spread {
+.wraper-exam .question-bottom .spread {
   width: 1px;
   height: 12px;
   background: #ccc;
@@ -99,12 +99,12 @@ b {
   margin: 0 5px 0 20px;
 }
 
-.wraper .question-content .content-answer-question ul {
+.wraper-exam .question-content .content-answer-question ul {
   margin: 0;
   padding: 0;
 }
 
-.wraper .question-content .content-answer-question ul li {
+.wraper-exam .question-content .content-answer-question ul li {
   // margin: 0px 0 5px 0px;
   // padding: 5px;
   margin: 0;
@@ -119,7 +119,7 @@ b {
   color: blue;
 }
 
-.wraper .question-content .content-answer-question ul li .answer-label {
+.wraper-exam .question-content .content-answer-question ul li .answer-label {
   font-weight: bold;
   position: absolute;
   top: 8px;
@@ -213,9 +213,21 @@ b {
 }
 
 .exam-right-content {
-  width: 300px;
+  // width: 300px;
+  margin-top: 30px;
   float: right;
+  position: sticky;
+  top: 100px;
   // margin-right: -25px;
+}
+
+.right-side-exam {
+  position: fixed;
+  top: 20px;
+  right: 0;
+  width: 200px;
+  padding: 10px;
+  background-color: #00adff;
 }
 
 .topbar-exam .white-spread-upper {
@@ -241,11 +253,12 @@ b {
 }
 
 .exam-right-info .title-list-q {
-  font-size: 18px;
-  background: #e2e2e2;
-  padding: 10px 0 6px;
+  font-size: 16px;
+  background: transparent;
+  padding: 12px 12px 0px 12px;
+  color: #ff8100cc !important;
   cursor: pointer;
-  margin-bottom: 10px;
+  margin-bottom: 0px;
   border-radius: 6px;
 }
 
@@ -293,17 +306,20 @@ b {
 }
 
 .exam-right-info {
-  background-color: #fafafa;
+  background-color: #0c9fe5b3;
+  border-radius: 6px;
   max-height: 550px;
   overflow-y: scroll;
 }
 
 .exam-right-info::-webkit-scrollbar { 
-  display: none;  /* Safari and Chrome */
+  // display: none;  /* Safari and Chrome */
 }
 
 .exam-right-info ul {
   padding: 0 15px;
+  flex-direction: column;
+  display: flex;
 }
 
 .exam-right-info li {
@@ -312,28 +328,39 @@ b {
 
 .exam-right-info ul li a {
   font-size: 18px;
-  color: #757677;
-  background: #f0efef;
-  width: 40px;
-  height: 39px;
   display: inline-block;
-  margin: 10px 5px;
-  border-radius: 54%;
+  color: #183fff;
+  margin: 4px 0px;
+  // padding: 4px 0px 0px;
+  // background: #f0efef;
+  width: 25px;
+  height: 25px;
+  // margin: 10px 5px;
+  border-radius: 50%;
   text-align: center;
+  // border: 1px solid #ccc;
+}
+
+.exam-right-info ul li span {
+  font-size: 18px;
+  display: inline-block;
+  color: red;
+  margin-left: 8px;
   padding: 4px 0px 0px;
-  border: 1px solid #ccc;
+
 }
 
 .exam-right-info ul li.active a {
-  background: #5aa2fb;
-  color: #fff;
-  border: #5aa2fb;
+  // background: #5aa2fb;
+  // color: #fff;
+  // border: #5aa2fb;
 }
 
 .exam-right-info ul li.right-answer a {
-  background: #3da844;
-  color: #fff;
-  border: #3da844;
+  font-size: 16px;
+  // background: #3da844;
+  // color: #fff;
+  // border: #3da844;
 }
 
 .exam-right-info ul li.wrong-answer a {
@@ -345,7 +372,9 @@ b {
 .submit-exam {
   border: none;
   color: #fff !important;
-  background-image: linear-gradient(#5aa2fb, #468de5);
+  // background-image: linear-gradient(#5aa2fb, #468de5);
+  background-color: rgb(229, 100, 19 / 92%);
+  border-color: rgb(229, 100, 19 / 92%);
   padding: 8px 34px;
   display: inline-block;
   margin: 15px 0;
@@ -673,7 +702,7 @@ b {
   color: #fff;
   margin: 12px 0px;
   padding: 12px;
-  background: #0f63b0;
+  background: #c9c9c9;
   border-radius: 6px;
   font-size: 18px;
   position: sticky;
@@ -683,7 +712,11 @@ b {
 
 .list-questions {
   .item {
-    margin: 0px 12px;
+    border-radius: 50%;
+    text-align: center;
+    height: 30px;
+    width: 30px;
+    background: grey;
     a {
       color: #fff;
     }

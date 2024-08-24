@@ -278,7 +278,7 @@ const ExamViewPage = (props) => {
                 </div>
                 <p className="block-action text-center mt-0">
                     <Button type="primary" size="large" className="join-exam-button" onClick={() => goExam()} 
-                        style={{borderRadius: 8, backgroundColor: 'rgba(0, 115, 8, 0.92)', borderColor: 'rgba(0, 115, 8, 0.92)'}}
+                        style={{borderRadius: 8, backgroundColor: 'rgb(229 100 19 / 92%)', borderColor: 'rgb(229 100 19 / 92%)', width: '10%'}}
                     >
                         Làm bài thi
                     </Button>
