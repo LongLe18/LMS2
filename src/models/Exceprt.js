@@ -15,6 +15,9 @@ const trichdoan = sequelize.define(
         tep_dinh_kem: {
             type: DataTypes.STRING,
         },
+        loai_trich_doan_id: {
+            type: DataTypes.INTEGER,
+        },
         nguoi_tao: {
             type: DataTypes.STRING,
         },
