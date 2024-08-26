@@ -17,7 +17,8 @@ import useDebounce from 'hooks/useDebounce';
 import AuthModal from 'components/common/auth/AuthModal';
 import AppBreadCrumb from "components/parts/breadcrumb/AppBreadCrumb";
 import NoRecord from 'components/common/NoRecord';
-import { Layout, Row, Col, Modal, Button, notification, Input, Alert, Upload, message, List, Comment, Space } from 'antd';
+import { Layout, Row, Col, Modal, Button, notification, Input, Alert, Upload, 
+    Image, message, List, Comment, Space } from 'antd';
 import { InfoCircleOutlined, CommentOutlined, UploadOutlined } from '@ant-design/icons';
 import LoadingCustom from 'components/parts/loading/Loading';
 import TextEditorWidget2 from 'components/common/TextEditor/TextEditor2';
@@ -455,12 +456,12 @@ const ExamCourseDetail = () => {
                 <span className="answer-label">{renderAnswerKey(index)}</span>
                 <div className="answer-content">             
                     <MathJax.Provider>
-                        {answer.noi_dung_dap_an.split('\n').map((item, index_cauhoi) => {
+                        {answer.noi_dung_dap_an.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
                             return (
                                 <div className="help-answer-content" key={index_cauhoi}> 
                                 {
                                     (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                        <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question_${index_cauhoi}`}></img>
+                                        <Image src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question_${index_cauhoi}`}></Image>
                                     ) : (
                                         item.split('$').map((item2, index2) => {
                                             return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
@@ -513,32 +514,10 @@ const ExamCourseDetail = () => {
 
     const renderHistoryExamSidebar = () => {
         return (
-            <Col span={2}>
+            <Col span={3}>
                 {examUser.status === 'success' &&
 
                     <div className="exam-right-content" style={{ position: 'sticky', top: '0px' }}>
-                        {/* <div className="topbar-exam">
-                            <p className="mg-0">
-                            <b style={{fontSize: 18}}>Số câu đã làm</b>
-                            <span className="white-spread-under"></span>
-                                <b style={{ color: '#fff', fontSize: 24 }}>
-                                <span style={{ color: '#373636' }}>{results.length} / {exam.data.cau_hoi_de_this.length}</span>
-                                </b>
-                            </p>
-                        </div>
-                        <div className="result-question body-result-right">
-                            <p className="sum-result">
-                                <span className="aw_correct"></span>
-                                {`Đúng: `}
-                                <b>{examUser.data.so_cau_tra_loi_dung !== null ? examUser.data.so_cau_tra_loi_dung : '0'}</b>
-                                <span className="aw_not_correct"></span>
-                                {`Sai: `}
-                                <b>{examUser.data.so_cau_tra_loi_dung !== null ? results.length - examUser.data.so_cau_tra_loi_dung : '0' }</b>
-                                <span></span>
-                                {`Chưa chọn: `}
-                                <b>{exam.data.cau_hoi_de_this.length - results.length}</b>
-                            </p>
-                        </div> */}
                         <div className="exam-right-info">
                             <p className="mg-0 color-blue text-center title-list-q">
                                 <b style={{fontSize: 18}}>Câu hỏi</b>
@@ -547,7 +526,18 @@ const ExamCourseDetail = () => {
                                 {exam.status === 'success' && exam.data.cau_hoi_de_this.map((question, index) => {
                                     return (
                                         <li key={index + 1} className={isCorrectAnswer(question.cau_hoi)}>
-                                            <a href={`#${index}`}>{index + 1}</a> . <span>{convertAnswerKey(question.cau_hoi)}</span>
+                                            <button style={{borderRadius: 8}}
+                                                onClick={() => {
+                                                    const element = document?.getElementById(index + 1);
+                                                    const offset = 120; // height of your fixed header
+                                                    const y = element.getBoundingClientRect().top + window.pageYOffset - offset;
+
+                                                    window.scrollTo({ top: y, behavior: "smooth" });
+                                                }}
+                                            >
+                                                {index + 1}. 
+                                            </button>
+                                            <span>{convertAnswerKey(question.cau_hoi)}</span>
                                         </li>
                                     );
                                 })}
@@ -561,23 +551,8 @@ const ExamCourseDetail = () => {
 
     const renderDoingExamSidebar = () => {
         return (
-            <Col span={2}>
+            <Col span={3}>
                 <div className="exam-right-content" style={{ position: 'sticky', top: '0px' }}>
-                    {/* <div className="topbar-exam">
-                        <p className="mg-0">
-                        <b style={{fontSize: 16}}>Thời gian </b>
-                        <span className="white-spread-upper"></span>
-                        <b style={{ color: '#fff', fontSize: 20 }}>{secondsToMinutes(count)}</b>
-                        </p>
-            
-                        <p className="mg-0">
-                        <b style={{fontSize: 16}}>Số câu đã làm</b>
-                        <span className="white-spread-under"></span>
-                        <b style={{ color: '#fff', fontSize: 24 }}>
-                            <span style={{ color: '#373636' }}>{`${results.length}/${exam.data.cau_hoi_de_this.length}`}</span>
-                        </b>
-                        </p>
-                    </div> */}
                     <div className="exam-right-info">
                         <p className="mg-0 title-list-q" style={{textAlign: 'left !important'}}><b>Trả lời của bạn</b></p>
                         <span style={{fontSize: 18, color: '#ff8100cc', padding: '12px 12px 0px 12px'}}>------</span>
@@ -586,7 +561,18 @@ const ExamCourseDetail = () => {
                                 const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
                                 return (
                                 <li key={index + 1} className={`item ${((isAnswered && isAnswered.dap_an?.length !== 0) || (isAnswered && question?.cau_hoi?.loai_cau_hoi === 2)) ? 'active' : ''}`}>
-                                    <a href={`#${index}`}>{index + 1}. </a> <span>{isAnswered ? (isAnswered.loai_dap_an ? isAnswered?.dap_an?.join(', '): isAnswered.noi_dung) : '-'}</span>
+                                    <button style={{borderRadius: 8}}
+                                        onClick={() => {
+                                            const element = document?.getElementById(index + 1);
+                                            const offset = 120; // height of your fixed header
+                                            const y = element.getBoundingClientRect().top + window.pageYOffset - offset;
+
+                                            window.scrollTo({ top: y, behavior: "smooth" });
+                                        }}
+                                    >
+                                        {index + 1}. 
+                                    </button>
+                                    <span>{isAnswered ? (isAnswered.loai_dap_an ? isAnswered?.dap_an?.join(', '): isAnswered.noi_dung) : '-'}</span>
                                 </li>
                                 );
                             })}
@@ -776,7 +762,7 @@ const ExamCourseDetail = () => {
                     (
                         <Comment author={<p style={{fontWeight: 'bold'}}>{item.ho_ten}</p>} 
                             avatar={item.anh_dai_dien !== null ? config.API_URL + item.anh_dai_dien : defaultImage} 
-                            content={<div><div dangerouslySetInnerHTML={{ __html: item.noi_dung }}></div>{item.anh_dinh_kem !== null && <img src={config.API_URL + item.anh_dinh_kem} alt="ảnh bình luận"/>}</div>} 
+                            content={<div><div dangerouslySetInnerHTML={{ __html: item.noi_dung }}></div>{item.anh_dinh_kem !== null && <Image src={config.API_URL + item.anh_dinh_kem} alt="ảnh bình luận"/>}</div>} 
                             datetime={diff(item.ngay_tao)} 
                             actions={[
                                 <Space>
@@ -830,8 +816,8 @@ const ExamCourseDetail = () => {
 
         return (
             <>
-                <Row className="question-content" style={{margin: '0 24px'}}>
-                    <Col span={22}>
+                <Row className="question-content" style={{margin: '0 68px'}}>
+                    <Col span={21}>
                     {(!isDoing && examUser.status === 'success') &&(
                         <div className="history-header">
                             <div className="summury-result">
@@ -881,12 +867,12 @@ const ExamCourseDetail = () => {
                                         <br/>
                                         <div className="answer-content" style={{paddingLeft: '20px'}}>             
                                             <MathJax.Provider>
-                                                {question.cau_hoi?.trich_doan?.noi_dung?.split('\n').map((item, index_cauhoi) => {
+                                                {question.cau_hoi?.trich_doan?.noi_dung?.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
                                                     return (
                                                         <div className="title-exam-content" key={index_cauhoi}>
                                                             {
                                                                 (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                                    <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></img>
+                                                                    <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}><Image src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></Image></div>
                                                                 ) : 
                                                                 (
                                                                     <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
@@ -918,12 +904,12 @@ const ExamCourseDetail = () => {
 
                                     <div className="title-exam">
                                         <MathJax.Provider>
-                                            {question.cau_hoi.noi_dung.split('\n').map((item, index_cauhoi) => {
+                                            {question.cau_hoi.noi_dung.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
                                                 return (
                                                     <div className="title-exam-content" key={index_cauhoi}>
                                                         {
                                                             (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                                <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question2_${index_cauhoi}`}></img>
+                                                                <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}><Image src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question2_${index_cauhoi}`}></Image></div>
                                                             ) : 
                                                             (
                                                                 <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
@@ -1018,12 +1004,12 @@ const ExamCourseDetail = () => {
                                                                 </button>
                                                                 <div className="option-answer">
                                                                     <MathJax.Provider>
-                                                                        {answer.noi_dung_dap_an.split('\n').map((item, index_cauhoi) => {
+                                                                        {answer.noi_dung_dap_an.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
                                                                             return (
                                                                                 <div className="option-answer-content" key={index_cauhoi}>
                                                                                     {
                                                                                         (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                                                            <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question3_${index_cauhoi}`}></img>
+                                                                                            <Image src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question3_${index_cauhoi}`}></Image>
                                                                                         ) : 
                                                                                         (
                                                                                             <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
@@ -1089,12 +1075,12 @@ const ExamCourseDetail = () => {
                                                     description={
                                                         <div className="help-answer">
                                                             <MathJax.Provider>
-                                                                {question.cau_hoi.loi_giai.split('\n').map((item, index_cauhoi) => {
+                                                                {question.cau_hoi.loi_giai.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
                                                                     return (
                                                                         <div className="help-answer-content" key={index_cauhoi}> 
                                                                         {
                                                                             (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                                                <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_answer_question_${index_cauhoi}`}></img>
+                                                                                <Image src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_answer_question_${index_cauhoi}`}></Image>
                                                                             ) : (
                                                                                 item.split('$').map((item2, index2) => {
                                                                                     return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
@@ -1131,7 +1117,7 @@ const ExamCourseDetail = () => {
                                                             <li key={index}>
                                                                 <Comment author={<p style={{fontWeight: 'bold'}}>{item.ten_hoc_vien}</p>} 
                                                                     avatar={item.anh_dai_dien !== null ? config.API_URL + item.anh_dai_dien : defaultImage} 
-                                                                    content={<div><div dangerouslySetInnerHTML={{ __html: item.noi_dung }}></div>{item.anh_dinh_kem !== null && <img src={config.API_URL + item.anh_dinh_kem} alt="ảnh bình luận"/>}</div>} 
+                                                                    content={<div><div dangerouslySetInnerHTML={{ __html: item.noi_dung }}></div>{item.anh_dinh_kem !== null && <Image src={config.API_URL + item.anh_dinh_kem} alt="ảnh bình luận"/>}</div>} 
                                                                     datetime={diff(item.ngay_tao)} 
                                                                     actions={[
                                                                         <Space>

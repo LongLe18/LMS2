@@ -16,7 +16,7 @@ import useFetch from "hooks/useFetch";
 
 // component
 import { Layout, Row, Col, Button } from 'antd';
-import CarouselCustom from 'components/parts/Carousel/Carousel';
+// import CarouselCustom from 'components/parts/Carousel/Carousel';
 import NoRecord from "components/common/NoRecord";
 import { StarOutlined, RightOutlined } from '@ant-design/icons';
 import CardSlider from 'components/parts/CardSlider/CardSlier';
@@ -41,7 +41,7 @@ const CoursesUser = (props) => {
 
     const typeProgrammes = [
         { id: 1, name: 'Kiểm tra trình độ đầu vào', name2: 'Kiểm tra trình độ đầu vào Online', idElement: 'testEntrance', description: 'Bài kiểm tra được xây dựng bởi đội ngũ các Thầy Cô uy tín, nhiều năm kinh \n nghiệm giảng dạy nhằm đánh giá đúng trình độ đầu vào của mỗi HS' },
-        { id: 0, name: 'Thi thử DDGNL - ĐGTD', name2: 'Thi thử ĐGNL - ĐHQGHN (HSA), ĐGTD - ĐHBK (TSA) Online', idElement: 'testCapacity', description: 'Trải nghiệm làm bài thi ĐGNL ĐHQGHN (HSA) và ĐGTD (TSA) trên phần mềm thi thử \n giống như khi làm bài HSA - TSA trên thực tế ở tổ chức tại ĐHQGHN, ĐHBK ...' },
+        { id: 0, name: 'Thi thử ĐGNL - ĐGTD', name2: 'Thi thử ĐGNL - ĐHQGHN (HSA), ĐGTD - ĐHBK (TSA) Online', idElement: 'testCapacity', description: 'Trải nghiệm làm bài thi ĐGNL ĐHQGHN (HSA) và ĐGTD (TSA) trên phần mềm thi thử \n giống như khi làm bài HSA - TSA trên thực tế ở tổ chức tại ĐHQGHN, ĐHBK ...' },
         { id: 2, name: 'Khóa luyện thi hàng đầu', name2: 'Luyện thi ĐGNL (HSA), ĐGTD (TSA)', idElement: 'study', description: 'Được xây dựng và thiết kế bởi đội ngũ giáo viên, chuyên gia uy tín hàng đầu đến từ ĐHQGHN, ĐHSP HN, ĐHBK ...' },
     ];
 
@@ -97,7 +97,7 @@ const CoursesUser = (props) => {
     const renderCourses = () => {
         return (
             <Row className='wraper wraper-list-course-cate-index' style={{marginTop: '30px'}}>
-                <Col span={18} className="list-course-content">
+                <Col span={19} className="list-course-content">
                     <div className="list-course-cate">
                         <div className="wraper wraper-list-course-cate-index">
                             <div className="section-title-main" style={{textAlign: 'center'}}>
@@ -224,7 +224,7 @@ const CoursesUser = (props) => {
                         </div>
                     </div>
                 </Col>
-                <Col span={6} className="list-course-advertisement">
+                <Col span={5} className="list-course-advertisement">
                     <SideBarComponent />
                 </Col>
             </Row>

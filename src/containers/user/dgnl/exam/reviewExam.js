@@ -8,7 +8,7 @@ import MathJax from 'react-mathjax';
 
 // component
 import LoadingCustom from 'components/parts/loading/Loading';
-import { Layout, Row, Col, Button, notification, Input, Alert } from 'antd';
+import { Layout, Row, Col, Button, notification, Input, Alert, Image } from 'antd';
 import NoRecord from 'components/common/NoRecord';
 import { InfoCircleOutlined } from '@ant-design/icons';
 
@@ -37,18 +37,9 @@ const ReviewExamPage = () => {
 
     const renderHistoryExamSidebar = () => {
         return (
-            <Col span={2}>
+            <Col span={3}>
                 {exam.status === 'success' &&
                     <div className="exam-right-content" style={{ position: 'sticky', top: '0px' }}>
-                        {/* <div className="topbar-exam">
-                            <p className="mg-0">
-                            <b>Số câu hỏi</b>
-                            <span className="white-spread-under"></span>
-                                <b style={{ color: '#fff', fontSize: 24 }}>
-                                <span style={{ color: '#373636' }}>{exam.data.cau_hoi_de_this.length}</span>
-                                </b>
-                            </p>
-                        </div> */}
                         <div className="exam-right-info">
                             <p className="mg-0 color-blue text-center title-list-q">
                                 <b>Câu hỏi</b>
@@ -57,7 +48,17 @@ const ReviewExamPage = () => {
                                 {exam.status === 'success' && exam.data.cau_hoi_de_this.map((question, index) => {
                                     return (
                                         <li key={index + 1} className='right-answer'>
-                                            <a href={`#${index}`}>{index + 1}</a> . 
+                                            <button style={{borderRadius: 8}}
+                                                onClick={() => {
+                                                    const element = document?.getElementById(index + 1);
+                                                    const offset = 120; // height of your fixed header
+                                                    const y = element.getBoundingClientRect().top + window.pageYOffset - offset;
+
+                                                    window.scrollTo({ top: y, behavior: "smooth" });
+                                                }}
+                                            >
+                                                {index + 1}. 
+                                            </button>
                                         </li>
                                     );
                                 })}
@@ -84,12 +85,12 @@ const ReviewExamPage = () => {
                 <span className="answer-label">{renderAnswerKey(index)}</span>
                 <div className="answer-content">             
                     <MathJax.Provider>
-                        {answer.noi_dung_dap_an.split('\n').map((item, index_cauhoi) => {
+                        {answer.noi_dung_dap_an.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
                             return (
                                 <div className="help-answer-content" key={index_cauhoi}> 
                                 {
                                     (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                        <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_answer_question_${index_cauhoi}`}></img>
+                                        <Image src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_answer_question_${index_cauhoi}`}></Image>
                                     ) : (
                                         item.split('$').map((item2, index2) => {
                                             return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
@@ -174,8 +175,8 @@ const ReviewExamPage = () => {
     const renderExam = () => {
         if (error) return <NoRecord subTitle="Không tìm thấy đề thi." />;
         return (
-            <Row className="question-content" style={{margin: '0 24px'}}>
-                <Col span={22}>
+            <Row className="question-content" style={{margin: '0 68px'}}>
+                <Col span={21}>
                     {(exam.status === 'success') &&(
                         <div className="history-header">
                             <div className="summury-result">
@@ -217,14 +218,14 @@ const ReviewExamPage = () => {
                                             : <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi từ {question.cau_hoi.exceprtFrom + 1} đến {question.cau_hoi.exceprtTo + 1}</span>
                                         }
                                         <br/>
-                                        <div className="answer-content" style={{paddingLeft: '20px'}}>             
+                                        <div className="answer-content" style={{paddingLeft: '0px'}}>             
                                             <MathJax.Provider>
-                                                {question.cau_hoi?.trich_doan?.noi_dung?.split('\n').map((item, index_cauhoi) => {
+                                                {question.cau_hoi?.trich_doan?.noi_dung?.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
                                                     return (
                                                         <div className="title-exam-content" key={index_cauhoi}>
                                                             {
                                                                 (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                                    <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></img>
+                                                                    <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}><Image src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></Image></div>
                                                                 ) : 
                                                                 (
                                                                     <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
@@ -259,7 +260,7 @@ const ReviewExamPage = () => {
                                                     <div className="title-exam-content" key={index_cauhoi}>
                                                         {
                                                             (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                                <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></img>
+                                                                <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}><Image src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></Image></div>
                                                             ) : 
                                                             (
                                                                 <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
@@ -325,12 +326,12 @@ const ReviewExamPage = () => {
                                                                         </button>
                                                                         <div className="option-answer">
                                                                             <MathJax.Provider>
-                                                                                {answer.noi_dung_dap_an.split('\n').map((item, index_cauhoi) => {
+                                                                                {answer.noi_dung_dap_an.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
                                                                                     return (
                                                                                         <div className="option-answer-content" key={index_cauhoi}>
                                                                                             {
                                                                                                 (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                                                                    <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></img>
+                                                                                                    <Image src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></Image>
                                                                                                 ) : 
                                                                                                 (
                                                                                                     <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
@@ -382,12 +383,12 @@ const ReviewExamPage = () => {
                                                 description={
                                                     <div className="help-answer">
                                                         <MathJax.Provider>
-                                                            {question.cau_hoi.loi_giai.split('\n').map((item, index_cauhoi) => {
+                                                            {question.cau_hoi.loi_giai.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
                                                                 return (
                                                                     <div className="help-answer-content" key={index_cauhoi}> 
                                                                     {
                                                                         (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                                            <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_answer_question_${index_cauhoi}`}></img>
+                                                                            <Image src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_answer_question_${index_cauhoi}`}></Image>
                                                                         ) : (
                                                                             item.split('$').map((item2, index2) => {
                                                                                 return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (

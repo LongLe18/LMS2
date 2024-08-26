@@ -229,7 +229,7 @@ const ExamViewPage = (props) => {
                             <Avatar shape="square" size={130} src={require('assets/img/logo/vnu-cet-logo.png').default} />
                         </div>
                     </Col>
-                    <Col xs={{ span: 22, offset: 1 }} lg={{ span: 9, offset: 4}}>
+                    <Col xs={{ span: 22, offset: 1 }} lg={{ span: 11, offset: 3}}>
                         <h4 style={{fontWeight: 500, fontSize: 30, textAlign: 'center'}}>Kỳ thi đánh giá năng lực học sinh trung học phổ thông</h4>
                     </Col>
                 </Row>
@@ -278,7 +278,7 @@ const ExamViewPage = (props) => {
                 </div>
                 <p className="block-action text-center mt-0">
                     <Button type="primary" size="large" className="join-exam-button" onClick={() => goExam()} 
-                        style={{borderRadius: 8, backgroundColor: 'rgb(229 100 19 / 92%)', borderColor: 'rgb(229 100 19 / 92%)', width: '10%'}}
+                        style={{borderRadius: 8, backgroundColor: 'rgb(229 100 19 / 92%)', borderColor: 'rgb(229 100 19 / 92%)'}}
                     >
                         Làm bài thi
                     </Button>

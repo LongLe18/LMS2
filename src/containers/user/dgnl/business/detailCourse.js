@@ -359,8 +359,8 @@ const IntroCoursePage = () => {
                                                     });
                                                 }
                                             }} className='devvn_buy_now'>
-                                                <strong style={{fontWeight: 400}}>Thi thử</strong>
-                                                <span>Bạn có muốn thi thử khóa học?</span>
+                                                <strong style={{fontWeight: 400}}>Thi thử / Học thử</strong>
+                                                <span>Bạn có muốn thi thử / học thử ?</span>
                                             </Button>
                                         }
                                     </>
@@ -395,7 +395,7 @@ const IntroCoursePage = () => {
                     <div className='product-info-detail'>
                         <div className='content-detail'>
                             <h4 className='title-content-detail uppercase'>
-                                <CrownFilled style={{marginRight: '10px'}} /> Giới thiệu khóa học
+                                <CrownFilled style={{marginRight: '10px'}} /> Giới thiệu chung
                             </h4>
                             <div className='info-item'>
                                 <ul>
@@ -423,7 +423,7 @@ const IntroCoursePage = () => {
                         </div>
                         <div className="content-detail">
                                 <h4 className="title-content-detail uppercase">
-                                    <StarFilled style={{marginRight: '10px'}}/> Mục tiêu và cam kết khóa học
+                                    <StarFilled style={{marginRight: '10px'}}/> Mục tiêu và cam kết
                                 </h4>
                                 <div className="info-item">
                                     <ul>

@@ -7,7 +7,7 @@ import MathJax from 'react-mathjax';
 
 // component
 import LoadingCustom from 'components/parts/loading/Loading';
-import { Layout, Row, Col, Button, notification, Input, Alert } from 'antd';
+import { Layout, Row, Col, Button, notification, Input, Alert, Image } from 'antd';
 import NoRecord from 'components/common/NoRecord';
 import { InfoCircleOutlined } from '@ant-design/icons';
 
@@ -87,31 +87,9 @@ const HistoryExam = () => {
 
     const renderHistoryExamSidebar = () => {
         return (
-            <Col span={2}>
+            <Col span={3}>
                 {exam.status === 'success' &&
                     <div className="exam-right-content" style={{ position: 'sticky', top: '0px' }}>
-                        {/* <div className="topbar-exam">
-                            <p className="mg-0">
-                            <b style={{fontSize: 18}}>Số câu hỏi</b>
-                            <span className="white-spread-under"></span>
-                                <b style={{ color: '#fff', fontSize: 24 }}>
-                                <span style={{ color: '#373636' }}>{exam.data.cau_hoi_de_this.length}</span>
-                                </b>
-                            </p>
-                        </div>
-                        <div className="result-question body-result-right">
-                            <p className="sum-result">
-                                <span className="aw_correct"></span>
-                                {`Đúng: `}
-                                <b>{examUser.data.so_cau_tra_loi_dung}</b>
-                                <span className="aw_not_correct"></span>
-                                {`Sai: `}
-                                <b>{examUser.data.so_cau_tra_loi_sai }</b>
-                                <span></span>
-                                {`Chưa chọn: `}
-                                <b>{exam.data.cau_hoi_de_this.length - examUser.data.so_cau_tra_loi_sai - examUser.data.so_cau_tra_loi_dung}</b>
-                            </p>
-                        </div> */}
                         <div className="exam-right-info">
                             <p className="mg-0 color-blue text-center title-list-q">
                                 <b>Câu hỏi</b>
@@ -120,7 +98,18 @@ const HistoryExam = () => {
                                 {exam.status === 'success' && exam.data.cau_hoi_de_this.map((question, index) => {
                                     return (
                                         <li key={index + 1} className={isCorrectAnswer(question.cau_hoi)}>
-                                            <a href={`#${index}`}>{index + 1}</a> . <span>{convertAnswerKey(question.cau_hoi)}</span>
+                                            <button style={{borderRadius: 8}}
+                                                onClick={() => {
+                                                    const element = document?.getElementById(index + 1);
+                                                    const offset = 120; // height of your fixed header
+                                                    const y = element.getBoundingClientRect().top + window.pageYOffset - offset;
+
+                                                    window.scrollTo({ top: y, behavior: "smooth" });
+                                                }}
+                                            >
+                                                {index + 1}. 
+                                            </button>
+                                            <span>{convertAnswerKey(question.cau_hoi)}</span>
                                         </li>
                                     );
                                 })}
@@ -211,12 +200,12 @@ const HistoryExam = () => {
                 <span className="answer-label">{renderAnswerKey(index)}</span>
                 <div className="answer-content">             
                 <MathJax.Provider>
-                    {answer.noi_dung_dap_an.split('\n').map((item, index_cauhoi) => {
+                    {answer.noi_dung_dap_an.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
                         return (
                             <div className="help-answer-content" key={index_cauhoi}> 
                             {
                                 (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                    <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question_${index_cauhoi}`}></img>
+                                    <Image src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question_${index_cauhoi}`}></Image>
                                 ) : (
                                     item.split('$').map((item2, index2) => {
                                         return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
@@ -279,7 +268,7 @@ const HistoryExam = () => {
         if (error) return <NoRecord subTitle="Không tìm thấy đề thi." />;
         return (
             <Row className="question-content" style={{margin: '0 24px'}}>
-                <Col span={22}>
+                <Col span={21}>
                     {(exam.status === 'success') &&(
                         <div className="history-header">
                             <div className="summury-result">
@@ -323,12 +312,12 @@ const HistoryExam = () => {
                                         <br/>
                                         <div className="answer-content" style={{paddingLeft: '20px'}}>             
                                             <MathJax.Provider>
-                                                {question.cau_hoi?.trich_doan?.noi_dung?.split('\n').map((item, index_cauhoi) => {
+                                                {question.cau_hoi?.trich_doan?.noi_dung?.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
                                                     return (
                                                         <div className="title-exam-content" key={index_cauhoi}>
                                                             {
                                                                 (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                                    <img src={config.API_URL + `/${item.match(regex)[1]}`} alt="img"></img>
+                                                                    <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}><Image src={config.API_URL + `/${item.match(regex)[1]}`} alt="img"></Image></div>
                                                                 ) : 
                                                                 (
                                                                     <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
@@ -359,12 +348,12 @@ const HistoryExam = () => {
 
                                     <div className="title-exam">
                                         <MathJax.Provider>
-                                            {question.cau_hoi.noi_dung.split('\n').map((item, index_cauhoi) => {
+                                            {question.cau_hoi.noi_dung.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
                                                 return (
                                                     <div className="title-exam-content" key={index_cauhoi}>
                                                         {
                                                             (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                                <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img${index_cauhoi}`}></img>
+                                                                <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}><Image src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img${index_cauhoi}`}></Image></div>
                                                             ) : 
                                                             (
                                                                 <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
@@ -423,12 +412,12 @@ const HistoryExam = () => {
                                                                 </button>
                                                                 <div className="option-answer">
                                                                     <MathJax.Provider>
-                                                                        {answer.noi_dung_dap_an.split('\n').map((item, index_cauhoi) => {
+                                                                        {answer.noi_dung_dap_an.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
                                                                             return (
                                                                                 <div className="option-answer-content" key={index_cauhoi}>
                                                                                     {
                                                                                         (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                                                            <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question3_${index_cauhoi}`}></img>
+                                                                                            <Image src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question3_${index_cauhoi}`}></Image>
                                                                                         ) : 
                                                                                         (
                                                                                             <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
@@ -479,12 +468,12 @@ const HistoryExam = () => {
                                                 description={
                                                     <div className="help-answer">
                                                         <MathJax.Provider>
-                                                            {question.cau_hoi.loi_giai.split('\n').map((item, index_cauhoi) => {
+                                                            {question.cau_hoi.loi_giai.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
                                                                 return (
                                                                     <div className="help-answer-content" key={index_cauhoi}> 
                                                                     {
                                                                         (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                                            <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img${index_cauhoi}`}></img>
+                                                                            <Image src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img${index_cauhoi}`}></Image>
                                                                         ) : (
                                                                             item.split('$').map((item2, index2) => {
                                                                                 return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (

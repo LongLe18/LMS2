@@ -39,8 +39,8 @@ b {
 
 .question-list .title-exam {
   width: 100%;
-  margin: 25px 0px;
-  min-height: 50px;
+  margin: 0px;
+  // min-height: 50px;
   font-size: 24px;
   user-select: none;
 }
@@ -52,7 +52,7 @@ b {
   flex-wrap: wrap;
   gap: 10px;
   align-items: center;
-  margin-bottom: 12px;
+  // margin-bottom: 12px;
 }
 
 .question-list img {
@@ -213,7 +213,7 @@ b {
 }
 
 .exam-right-content {
-  // width: 300px;
+  width: 75%;
   margin-top: 30px;
   float: right;
   position: sticky;
@@ -273,7 +273,8 @@ b {
 .answer-content {
   margin: 0;
   margin-top: 8px;
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
   padding-left: 46px;
   font-size: 20px;
   text-align: left;
@@ -326,9 +327,11 @@ b {
   display: inline-block;
 }
 
-.exam-right-info ul li a {
+.exam-right-info ul li button {
   font-size: 18px;
   display: inline-block;
+  background: transparent;
+  border: none;
   color: #183fff;
   margin: 4px 0px;
   // padding: 4px 0px 0px;
@@ -345,7 +348,7 @@ b {
   font-size: 18px;
   display: inline-block;
   color: red;
-  margin-left: 8px;
+  margin-left: 24px;
   padding: 4px 0px 0px;
 
 }

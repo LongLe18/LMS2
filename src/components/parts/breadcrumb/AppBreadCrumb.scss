@@ -23,11 +23,18 @@
 
 .wraper {
   margin: auto;
-  max-width: 1300px;
+  max-width: 1400px;
 }
 
 @media screen and (max-width: 46.1875em) {
   .cra-breadcrumb {
     padding: 13px 13px 5px;
+  }
+}
+
+@media only screen and (min-width: 1025px) and (max-width: 1700px) {
+  .wraper {
+    margin: auto;
+    max-width: 1100px;
   }
 }

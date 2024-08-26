@@ -31,7 +31,7 @@ function Statisic() {
               <div className="icon-box-img">
                 <img src={teacher} className="box-icon" alt="teacher" />
               </div>
-              <h3 className="statisic-description">Giảng viên chất lượng trình độ cao</h3>
+              <h3 className="statisic-description">Giảng viên nhiệt tình và chất lượng trình độ cao</h3>
             </div>
           </Col>
           <Col xl={6} sm={12} xs={12} className="statisic-row">

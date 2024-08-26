@@ -19,7 +19,7 @@ import AppBreadCrumb from "components/parts/breadcrumb/AppBreadCrumb";
 import NoRecord from 'components/common/NoRecord';
 import LoadingCustom from "components/parts/loading/Loading"
 import { Layout, Row, Col, Modal, Button, notification, Input, Alert, Upload, 
-    message, List, Comment, Space, Timeline } from 'antd';
+    message, List, Comment, Space, Timeline, Image } from 'antd';
 import { InfoCircleOutlined, CommentOutlined, UploadOutlined, DownloadOutlined } from '@ant-design/icons';
 import TextEditorWidget2 from 'components/common/TextEditor/TextEditor2';
 import MathJax from 'react-mathjax';
@@ -514,7 +514,7 @@ const ExamOnlineDetail = () => {
                                 <div className="help-answer-content" key={index_cauhoi}> 
                                 {
                                     (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                        <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></img>
+                                        <Image src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></Image>
                                     ) : (
                                         item.split('$').map((item2, index2) => {
                                             return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
@@ -564,7 +564,7 @@ const ExamOnlineDetail = () => {
                                         <div key={index_cauhoi}> 
                                         {
                                             (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></img>
+                                                <Image src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></Image>
                                             ) : (
                                                 item.split('$').map((item2, index2) => {
                                                     return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
@@ -622,7 +622,7 @@ const ExamOnlineDetail = () => {
                     (
                         <Comment author={<p style={{fontWeight: 'bold'}}>{item.ho_ten}</p>} 
                             avatar={item.anh_dai_dien !== null ? config.API_URL + item.anh_dai_dien : defaultImage} 
-                            content={<div><div dangerouslySetInnerHTML={{ __html: item.noi_dung }}></div>{item.anh_dinh_kem !== null && <img src={config.API_URL + item.anh_dinh_kem} alt="ảnh bình luận"/>}</div>} 
+                            content={<div><div dangerouslySetInnerHTML={{ __html: item.noi_dung }}></div>{item.anh_dinh_kem !== null && <Image src={config.API_URL + item.anh_dinh_kem} alt="ảnh bình luận"/>}</div>} 
                             datetime={diff(item.ngay_tao)} 
                             actions={[
                                 <Space>
@@ -1157,8 +1157,8 @@ const ExamOnlineDetail = () => {
                         })}
                     </Row> */}
                 </div>
-                <Row className="question-content" gutter={[16]} style={{margin: '0 24px'}}>
-                    <Col span={22}>
+                <Row className="question-content" gutter={[16]} style={{margin: '0 68px'}}>
+                    <Col span={21}>
                         {(!isDoing && examUser.status === 'success') &&(
                             <div className="history-header">
                                 <div className="summury-result">
@@ -1392,14 +1392,14 @@ const ExamOnlineDetail = () => {
                                                                 : <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi từ {ParentIndex + 1} đến {question.cau_hoi.exceprtTo - (partQuestions.length * (state.sectionExam - 1)) + 1}</span>
                                                                 }
                                                                 <br/>
-                                                                <div className="answer-content" style={{paddingLeft: '20px', fontSize: 18}}> 
+                                                                <div className="answer-content" style={{paddingLeft: '0px', fontSize: 18}}> 
                                                                     <MathJax.Provider>
-                                                                        {question.cau_hoi?.trich_doan?.noi_dung?.split('\n').map((item, index_cauhoi) => {
+                                                                        {question.cau_hoi?.trich_doan?.noi_dung?.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
                                                                             return (
                                                                                 <div className="title-exam-content" key={index_cauhoi}>
                                                                                     {
                                                                                         (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                                                            <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question_${index_cauhoi}`}></img>
+                                                                                            <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}><Image src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question_${index_cauhoi}`}></Image></div>
                                                                                         ) : 
                                                                                         (
                                                                                             <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
@@ -1434,7 +1434,7 @@ const ExamOnlineDetail = () => {
                                                                             <div className="title-exam-content" key={index_cauhoi}>
                                                                                 {
                                                                                     (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                                                        <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question2_${index_cauhoi}`}></img>
+                                                                                        <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}><Image src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question2_${index_cauhoi}`}></Image></div>
                                                                                     ) : 
                                                                                     (
                                                                                         <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
@@ -1529,7 +1529,7 @@ const ExamOnlineDetail = () => {
                                                                                                             <div className="option-answer-content" key={index_cauhoi}>
                                                                                                                 {
                                                                                                                     (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                                                                                        <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question3_${index_cauhoi}`}></img>
+                                                                                                                        <Image src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question3_${index_cauhoi}`}></Image>
                                                                                                                     ) : 
                                                                                                                     (
                                                                                                                         <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
@@ -1583,14 +1583,14 @@ const ExamOnlineDetail = () => {
                                             : <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi từ {question.cau_hoi.exceprtFrom + 1} đến {question.cau_hoi.exceprtTo + 1}</span>
                                             }
                                             <br/>
-                                            <div className="answer-content" style={{paddingLeft: '20px'}}>             
+                                            <div className="answer-content" style={{paddingLeft: '0px'}}>             
                                                 <MathJax.Provider>
-                                                    {question.cau_hoi?.trich_doan?.noi_dung?.split('\n').map((item, index_cauhoi) => {
+                                                    {question.cau_hoi?.trich_doan?.noi_dung?.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
                                                         return (
                                                             <div className="title-exam-content" key={index_cauhoi}>
                                                                 {
                                                                     (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                                        <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></img>
+                                                                        <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}><Image src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></Image></div>
                                                                     ) : 
                                                                     (
                                                                         <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
@@ -1626,7 +1626,7 @@ const ExamOnlineDetail = () => {
                                                         <div className="title-exam-content" key={index_cauhoi}>
                                                             {
                                                                 (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                                    <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question4_${index_cauhoi}`}></img>
+                                                                    <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}><Image src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question4_${index_cauhoi}`}></Image></div>
                                                                 ) : 
                                                                 (
                                                                     <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
@@ -1689,7 +1689,7 @@ const ExamOnlineDetail = () => {
                                                                                     <div className="option-answer-content" key={index_cauhoi}>
                                                                                         {
                                                                                             (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                                                                <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question5_${index_cauhoi}`}></img>
+                                                                                                <Image src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question5_${index_cauhoi}`}></Image>
                                                                                             ) : 
                                                                                             (
                                                                                                 <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
@@ -1760,7 +1760,7 @@ const ExamOnlineDetail = () => {
                                                                             <div className="help-answer-content" key={index_cauhoi}> 
                                                                             {
                                                                                 (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                                                    <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question6_${index_cauhoi}`}></img>
+                                                                                    <Image src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question6_${index_cauhoi}`}></Image>
                                                                                 ) : (
                                                                                     item.split('$').map((item2, index2) => {
                                                                                         return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
@@ -1797,7 +1797,7 @@ const ExamOnlineDetail = () => {
                                                                 <li key={index}>
                                                                     <Comment author={<p style={{fontWeight: 'bold'}}>{item.ten_hoc_vien}</p>} 
                                                                         avatar={item.anh_dai_dien !== null ? config.API_URL + item.anh_dai_dien : defaultImage} 
-                                                                        content={<div><div dangerouslySetInnerHTML={{ __html: item.noi_dung }}></div>{item.anh_dinh_kem !== null && <img src={config.API_URL + item.anh_dinh_kem} alt="ảnh bình luận"/>}</div>} 
+                                                                        content={<div><div dangerouslySetInnerHTML={{ __html: item.noi_dung }}></div>{item.anh_dinh_kem !== null && <Image src={config.API_URL + item.anh_dinh_kem} alt="ảnh bình luận"/>}</div>} 
                                                                         datetime={diff(item.ngay_tao)} 
                                                                         actions={[
                                                                             <Space>
@@ -1869,23 +1869,8 @@ const ExamOnlineDetail = () => {
                             const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${state.sectionExam}`];
                             const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
                             return (
-                                <Col span={2}>
+                                <Col span={3} style={{padding: 0}}>
                                     <div className="exam-right-content" >
-                                        {/* <div className="topbar-exam">
-                                            <p className="mg-0">
-                                                <b style={{fontSize: 16}}>Thời gian </b>
-                                                <span className="white-spread-upper"></span>
-                                                <b style={{ color: '#fff', fontSize: 20 }}>{secondsToMinutes(countSection)}</b>
-                                            </p>
-                                
-                                            <p className="mg-0">
-                                                <b style={{fontSize: 16}}>Số câu đã làm</b>
-                                                <span className="white-spread-under"></span>
-                                                <b style={{ color: '#fff', fontSize: 24 }}>
-                                                    <span style={{ color: '#373636' }}>{`${results.length}/${exam.data[`so_cau_hoi_phan_${state.sectionExam}`]}`}</span>
-                                                </b>
-                                            </p>
-                                        </div> */}
                                         <div className="exam-right-info">
                                             <p className="mg-0 title-list-q" style={{textAlign: 'left !important'}}><b>Trả lời của bạn</b></p>
                                             <span style={{fontSize: 18, color: '#ff8100cc', padding: '12px 12px 0px 12px'}}>------</span>
@@ -1894,7 +1879,18 @@ const ExamOnlineDetail = () => {
                                                     const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
                                                     return (
                                                         <li key={index + 1} className={`item ${((isAnswered && isAnswered.dap_an?.length !== 0) || (isAnswered && question?.cau_hoi?.loai_cau_hoi === 2)) ? 'active' : ''}`}>
-                                                            <a href={`#${index}`}>{index + 1}. </a> <span>{isAnswered ? (isAnswered.loai_dap_an ? isAnswered?.dap_an?.join(', '): isAnswered.noi_dung) : '-'}</span>
+                                                            <button style={{borderRadius: 8}}
+                                                                onClick={() => {
+                                                                    const element = document?.getElementById(index + 1);
+                                                                    const offset = 120; // height of your fixed header
+                                                                    const y = element.getBoundingClientRect().top + window.pageYOffset - offset;
+
+                                                                    window.scrollTo({ top: y, behavior: "smooth" });
+                                                                }}
+                                                            >
+                                                                {index + 1}. 
+                                                            </button>
+                                                            <span>{isAnswered ? (isAnswered.loai_dap_an ? isAnswered?.dap_an?.join(', '): isAnswered.noi_dung) : '-'}</span>
                                                         </li>
                                                     );
                                                 })}

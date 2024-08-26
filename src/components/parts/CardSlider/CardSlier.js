@@ -27,12 +27,12 @@ const CardSlider = ({ courses, id, link }) => {
     const hashids = new Hashids();
 
     const scrollLeft = () => {
-        document.querySelector(`#cards-container-${id}`).scrollBy({ left: -275, behavior: 'smooth' });
+        document.querySelector(`#cards-container-${id}`).scrollBy({ left: -272, behavior: 'smooth' });
     };
       
     const scrollRight = () => {
         // scroll right
-        document.querySelector(`#cards-container-${id}`).scrollBy({ left: 275, behavior: 'smooth' });
+        document.querySelector(`#cards-container-${id}`).scrollBy({ left: 272, behavior: 'smooth' });
     };
 
     return (

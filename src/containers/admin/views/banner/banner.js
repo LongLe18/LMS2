@@ -594,34 +594,34 @@ const BannerCoursePage = (props) => {
         });
     };
 
-    const propsImage = {
-        name: 'file',
-        action: '#',
+    // const propsImage = {
+    //     name: 'file',
+    //     action: '#',
   
-        beforeUpload: file => {
-            const isPNG = file.type === 'image/png' || file.type === 'image/jpeg';
-            if (!isPNG) {
-                    message.error(`${file.name} có định dạng không phải là png/jpg`);
-            }
-            return isPNG || Upload.LIST_IGNORE;
-        },
+    //     beforeUpload: file => {
+    //         const isPNG = file.type === 'image/png' || file.type === 'image/jpeg';
+    //         if (!isPNG) {
+    //                 message.error(`${file.name} có định dạng không phải là png/jpg`);
+    //         }
+    //         return isPNG || Upload.LIST_IGNORE;
+    //     },
   
-        onChange(info) {
-            setState({ ...state, fileImg: info.file.originFileObj });
-        },
+    //     onChange(info) {
+    //         setState({ ...state, fileImg: info.file.originFileObj });
+    //     },
   
-        async customRequest(options) {
-            const { onSuccess } = options;
+    //     async customRequest(options) {
+    //         const { onSuccess } = options;
         
-            setTimeout(() => {
-                onSuccess("ok");
-            }, 0);
-        },
+    //         setTimeout(() => {
+    //             onSuccess("ok");
+    //         }, 0);
+    //     },
   
-        onRemove(e) {
-            setState({ ...state, fileImg: '' });
-        },
-    };
+    //     onRemove(e) {
+    //         setState({ ...state, fileImg: '' });
+    //     },
+    // };
 
     return (
         <div className='content'>
