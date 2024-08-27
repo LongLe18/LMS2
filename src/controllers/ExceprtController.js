@@ -2,13 +2,30 @@ const { Exceprt } = require('../models');
 const fs = require('fs');
 
 const getAll = async (req, res) => {
-    const excperts = await Exceprt.findAll({
-        order: [['ngay_tao', 'DESC']],
-        limit: 50,
+    const { count, rows } = await Exceprt.findAndCountAll({
+        where: {
+            ...(req.query.id && {
+                id: req.query.id,
+            }),
+        },
+        offset:
+            (Number(req.query.pageIndex || 1) - 1) *
+            Number(req.query.pageSize || 10),
+        limit: Number(req.query.pageSize || 10),
+        order: [
+            req.query.sortBy
+                ? req.query.sortBy.split(',')
+                : ['ngay_tao', 'DESC'],
+        ],
     });
+
     res.status(200).send({
         status: 'success',
-        data: excperts,
+        data: rows,
+        pageIndex: Number(req.query.pageIndex || 1),
+        pageSize: Number(req.query.pageSize || 10),
+        totalCount: count,
+        totalPage: Math.ceil(count / Number(req.query.pageSize || 10)),
         message: null,
     });
 };
