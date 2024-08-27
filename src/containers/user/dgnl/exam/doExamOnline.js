@@ -264,7 +264,7 @@ const ExamOnlineDetail = () => {
                     setCountSection((preCount) => preCount - 1);
                 }, 1000);
                 setResults([]); 
-
+                window.scrollTo({ top: 0, behavior: "smooth" });
                 instance.destroy();
             }
         });
@@ -695,7 +695,6 @@ const ExamOnlineDetail = () => {
                 else {
                     countDown();
                     clearInterval(timerId?.current); // Dừng đếm thời gian section
-
                     timeOut = setTimeout(() => {
                         sessionStorage.setItem('section', state.sectionExam + 1);
                         sessionStorage.setItem('timeStartSection', new Date().getTime());
@@ -708,6 +707,7 @@ const ExamOnlineDetail = () => {
                             setCountSection((preCount) => preCount - 1);
                         }, 1000);
                         setResults([]); 
+                        window.scrollTo({ top: 0, behavior: "smooth" });
                     }, 30000);
                 }
             },
@@ -1121,7 +1121,18 @@ const ExamOnlineDetail = () => {
                                             if (!isAnswered) {
                                                 return (
                                                     <div key={index + 1} className={`item`}>
-                                                        <a href={`#${index + 1}`}>{index + 1}</a>
+                                                        {/* <a href={`#${index + 1}`}>{index + 1}</a> */}
+                                                        <button
+                                                            onClick={() => {
+                                                                const element = document?.getElementById(index + 1);
+                                                                const offset = 120; // height of your fixed header
+                                                                const y = element.getBoundingClientRect().top + window.pageYOffset - offset;
+
+                                                                window.scrollTo({ top: y, behavior: "smooth" });
+                                                            }}
+                                                        >
+                                                            {index + 1}
+                                                        </button>
                                                     </div>
                                                 );
                                             }

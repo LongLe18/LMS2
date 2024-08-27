@@ -27,12 +27,33 @@ const CardSlider = ({ courses, id, link }) => {
     const hashids = new Hashids();
 
     const scrollLeft = () => {
-        document.querySelector(`#cards-container-${id}`).scrollBy({ left: -272, behavior: 'smooth' });
+        const container = document.querySelector(`#cards-container-${id}`);
+    
+        const containerWidth = container.offsetWidth;
+        if (containerWidth <= 480) {
+            container.scrollBy({ left: -350, behavior: 'smooth' });
+        } else if (containerWidth > 480 && containerWidth <= 768) {
+            container.scrollBy({ left: -320, behavior: 'smooth' });
+        } else if (containerWidth > 480 && containerWidth <= 768) {
+            container.scrollBy({ left: -266, behavior: 'smooth' });
+        } else if (containerWidth >= 1700) {
+            container.scrollBy({ left: -278, behavior: 'smooth' });
+        }
     };
       
     const scrollRight = () => {
-        // scroll right
-        document.querySelector(`#cards-container-${id}`).scrollBy({ left: 272, behavior: 'smooth' });
+        const container = document.querySelector(`#cards-container-${id}`);
+    
+        const containerWidth = container.offsetWidth;
+        if (containerWidth <= 480) {
+            container.scrollBy({ left: 350, behavior: 'smooth' });
+        } else if (containerWidth > 480 && containerWidth <= 768) {
+            container.scrollBy({ left: 320, behavior: 'smooth' });
+        } else if (containerWidth > 480 && containerWidth <= 768) {
+            container.scrollBy({ left: 266, behavior: 'smooth' });
+        } else if (containerWidth >= 1700) {
+            container.scrollBy({ left: 278, behavior: 'smooth' });
+        }
     };
 
     return (

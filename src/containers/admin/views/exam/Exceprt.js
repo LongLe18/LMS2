@@ -6,9 +6,8 @@ import MathJax from 'react-mathjax';
 import './css/exceprt.css';
 
 // component
-import { Row, Col, Table, notification, Button, Space, Form, Input, Modal } from 'antd';
+import { Row, Col, Table, notification, Button, Space, Form, Input, Modal, Pagination } from 'antd';
 import LoadingCustom from 'components/parts/loading/Loading';
-import AppFilter from 'components/common/AppFilter';
 import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
 // redux
@@ -16,7 +15,7 @@ import * as exceprtAction from '../../../../redux/actions/exceprt';
 import { useSelector, useDispatch } from "react-redux"; 
 
 // const { Dragger } = Upload;
-const { TextArea } = Input;
+const { TextArea, Search } = Input;
 
 const Exceprt = (props) => {
     const dispatch = useDispatch();
@@ -26,14 +25,18 @@ const Exceprt = (props) => {
     const exceprts = useSelector(state => state.exceprt.list.result);
     const loading = useSelector(state => state.exceprt.list.loading);
 
+    const [pageSize, setPageSize] = useState(10);
+    const [pageIndex, setPageIndex] = useState(1);
+
     const [isEdit, setIsEdit] = useState(false);
     const [state, setState] = useState({
         idExceprt: '',
-        fileImg: ''
+        fileImg: '',
+        search: ''
     });
 
     useEffect(() => {
-        dispatch(exceprtAction.getExceprts());
+        dispatch(exceprtAction.getExceprts({ pageSize: pageSize, pageIndex: pageIndex, id: '' }));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     if (exceprts.status === 'success') {
@@ -52,6 +55,12 @@ const Exceprt = (props) => {
     }
 
     const columns = [
+        {
+            title: 'ID trích đoạn',
+            dataIndex: 'trich_doan_id',
+            key: 'trich_doan_id',
+            responsive: ['md'],
+        },
         {
             title: 'Nội dung',
             dataIndex: 'noi_dung',
@@ -180,23 +189,33 @@ const Exceprt = (props) => {
         else dispatch(exceprtAction.editEXCEPRT({ id: state.idExceprt, formData: formData }, callback));
     };
 
+    const onChange = (page) => {
+        setPageIndex(page);
+    };
+
+    const onShowSizeChange = (current, pageSize) => {
+        setPageSize(pageSize);
+    };
+
+    useEffect(() => {
+        dispatch(exceprtAction.getExceprts({ pageSize: pageSize, pageIndex: pageIndex, id: state.search }));
+    }, [pageIndex, pageSize]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    const onFilterChange = (field, value) => {
+        setPageIndex(1);
+        setState({...state, search: value});
+    };
+
     return (
         <>
             {loading && <LoadingCustom/>}
             <div className='content'>
                 <Row className="app-main">
                     <Col xl={24} className="body-content">
-                        <AppFilter
-                            title="Trích đoạn đề thi"
-                            // isShowCourse={true}
-                            // isShowModule={true}
-                            // isShowThematic={true}
-                            // isShowStatus={true}
-                            // isShowSearchBox={true}
-                            // isShowDatePicker={true}
-                            // isRangeDatePicker={true}
-                            // courses={courses.data}
-                            // onFilterChange={(field, value) => onFilterChange(field, value)}
+                        <h5>Trích đoạn đề thi</h5>
+                        <Search placeholder={"Tìm kiếm theo ID đoạn trích"} 
+                            onChange={(e) => onFilterChange('search', e.target.value)} style={{width:"20%"}}
+                            allowClear
                         />
                     </Col>
                 </Row>
@@ -215,7 +234,12 @@ const Exceprt = (props) => {
                     </Col>
                 </Row>
                 {exceprts.status === 'success' &&
-                    <Table className="table-striped-rows" columns={columns} dataSource={data}></Table>
+                    <>
+                        <Table className="table-striped-rows" columns={columns} dataSource={data} pagination={false}></Table>
+                        <br/>
+                        <Pagination current={pageIndex} onChange={onChange} total={exceprts.totalCount} onShowSizeChange={onShowSizeChange} showSizeChanger defaultPageSize={pageSize}/>
+                        <br/>
+                    </>
                 }
 
                 <Row>

@@ -332,6 +332,16 @@
     }
   }
 
+  .description-course {
+    .description-course-item {
+      width: 100%;
+    }
+  }
+  
+  .header-section {
+    flex-direction: column;
+  }
+  
   .section-title {
     font-size: 18px;
   }

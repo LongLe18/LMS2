@@ -718,10 +718,11 @@ b {
     border-radius: 50%;
     text-align: center;
     height: 30px;
-    width: 30px;
     background: grey;
-    a {
+    button {
       color: #fff;
+      background: transparent;
+      border: none;
     }
   }
 }

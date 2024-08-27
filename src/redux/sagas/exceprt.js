@@ -7,7 +7,7 @@ import { get } from 'lodash';
 
 function* fetchExcerpts(payload) {
     try {
-        let endpoint = `${config.API_URL}/exceprt`;
+        let endpoint = `${config.API_URL}/exceprt?pageSize=${payload.params.pageSize}&pageIndex=${payload.params.pageIndex}&id=${payload.params.id}`;
         const response = yield call(getApiAuth, endpoint);
         const result = yield response.data;
         yield put({ type: actions.exceprt.GET_EXCEPRTS_SUCCESS, result: result });
