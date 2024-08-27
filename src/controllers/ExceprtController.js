@@ -1,12 +1,16 @@
 const { Exceprt } = require('../models');
+const { Op } = require("sequelize");
 const fs = require('fs');
 
 const getAll = async (req, res) => {
     const { count, rows } = await Exceprt.findAndCountAll({
         where: {
-            ...(req.query.id && {
-                id: req.query.id,
+            ...(req.query.trich_doan_id && {
+                trich_doan_id: req.query.trich_doan_id,
             }),
+            loai_trich_doan_id: {
+                [Op.not]: 0
+            }
         },
         offset:
             (Number(req.query.pageIndex || 1) - 1) *
