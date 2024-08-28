@@ -143,7 +143,7 @@ const ExamDetailPage = () => {
         dispatch(typeExamActions.getTypes());
         dispatch(courseActions.getCourses({ idkct: '', status: '', search: '' }));
         dispatch(questionActions.getQuestionsExam({ idQuestion: '', idExam: id }));
-        dispatch(exceprtActions.getExceprts());
+        dispatch(exceprtActions.getExceprts({ pageSize: 1000000000, pageIndex: 1, id: '' }));
         dispatch(majorActions.getMajors()); // request chuyên ngành
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 

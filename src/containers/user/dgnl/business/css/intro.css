@@ -281,6 +281,10 @@ li {
     flex: 1 0 auto;
 }
 
+strong {
+    font-weight: 600;
+}
+
 .has-border {
     border: 2px solid #3da844;
     padding: 15px 30px 30px;

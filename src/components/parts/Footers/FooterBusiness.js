@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams, useHistory } from "react-router-dom";
+import Hashids from 'hashids';
 
 // component
 import { Row, Col, Button } from 'antd';
@@ -17,6 +18,7 @@ const FooterBusiness = (props) => {
     const [dataInit, setdataInit] = useState([]);
     let history = useHistory();
     const idTypeCourse = useParams().idKCT;
+    const hashids = new Hashids();
     
     const dispatch = useDispatch();
     
@@ -87,21 +89,21 @@ const FooterBusiness = (props) => {
                                         <Col xl={6} sm={12} xs={12} className="course-cate-row" key={cate.khoa_hoc_id}>
                                             <div className="course-cate-box">
                                                 <div className="image-box">
-                                                    <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>
+                                                    <a href={`/luyen-tap/gioi-thieu-khoa-hoc/${hashids.encode(cate.khoa_hoc_id)}`}>
                                                         <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
-                                                    </Link>
+                                                    </a>
                                                 </div>
                                                 <div className="box-text" style={{paddingBottom: 8}}>
                                                     <h3 className="course-cate-title">
-                                                        <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>{cate.ten_khoa_hoc}</Link>
+                                                        <a href={`/luyen-tap/gioi-thieu-khoa-hoc/${hashids.encode(cate.khoa_hoc_id)}`}>{cate.ten_khoa_hoc}</a>
                                                     </h3>
                                                     <p className="course-cate-description">
                                                         {/* Ngày bắt đầu: {moment(cate.ngay_bat_dau).format(config.DATE_FORMAT_SHORT)} */}
-                                                        <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>
-                                                            <Button style={{borderRadius: 6}} type="primary" onClick={() => history.push(`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`)}>
+                                                        <a href={`/luyen-tap/gioi-thieu-khoa-hoc/${hashids.encode(cate.khoa_hoc_id)}`}>
+                                                            <Button style={{borderRadius: 6}} type="primary" onClick={() => history.push(`/luyen-tap/gioi-thieu-khoa-hoc/${hashids.encode(cate.khoa_hoc_id)}`)}>
                                                                 Xem chi tiết
                                                             </Button>
-                                                        </Link>
+                                                        </a>
                                                     </p>
                                                 </div>
                                             </div>

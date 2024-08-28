@@ -463,7 +463,7 @@ const IntroCoursePage = () => {
                             </h4>
                             <div className="info-item">
                                 Để có thông tin và tư vấn chi tiết về học phí đối với mỗi khóa học các bậc phụ huynh và các em học sinh hãy gọi theo số Hotline: 
-                                <br/><a href="tel:0243754649">XXXX XXX XXX</a> hoặc <Link to="#">Click vào đây để nhận được tư vấn trực tiếp</Link>
+                                <a href="tel:1900633234">1900.633.234</a> hoặc <Link to="#">Click vào đây để nhận được tư vấn trực tiếp</Link>
                             </div>
                         </div>   
                     </div>

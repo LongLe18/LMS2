@@ -54,7 +54,7 @@ function* createDescriptionCourse(payload) {
         yield put({ type: actions.description.CREATE_DESCRIPTION_COURSE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
         notification.error({
-            message: get(error, 'response.data.error', 'Thêm khóa học mới thất bại ' + messageError),
+            message: get(error, 'response.data.error', 'Thêm mô tả khóa học mới thất bại: Mô tả khoá học này đã tồn tại ' + messageError),
         });
     }
 }

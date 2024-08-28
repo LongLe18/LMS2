@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import config from '../../../../configs/index';
 import defaultImage from 'assets/img/default.jpg';
 import moment from "moment";
+import Hashids from 'hashids';
 
 // component
 import AppFilter from "components/common/AppFilter";
@@ -26,6 +27,7 @@ const BussinessCourses = (props) => {
     
     const dispatch = useDispatch();
     const [form] = Form.useForm();
+    const hashids = new Hashids();
 
     const [state, setState] = useState({
         idDescription: 1,
@@ -102,7 +104,7 @@ const BussinessCourses = (props) => {
     ];
 
     const goToDetail = (id) => {
-        window.open(config.BASE_URL + `/luyen-tap/gioi-thieu-khoa-hoc/${id}`, '_blank');
+        window.open(config.BASE_URL + `/luyen-tap/gioi-thieu-khoa-hoc/${hashids.encode(id)}`, '_blank');
     }
 
     useEffect(() => {

@@ -34,10 +34,10 @@ const CardSlider = ({ courses, id, link }) => {
             container.scrollBy({ left: -350, behavior: 'smooth' });
         } else if (containerWidth > 480 && containerWidth <= 768) {
             container.scrollBy({ left: -320, behavior: 'smooth' });
-        } else if (containerWidth > 480 && containerWidth <= 768) {
-            container.scrollBy({ left: -266, behavior: 'smooth' });
+        } else if (containerWidth > 768 && containerWidth <= 1700) {
+            container.scrollBy({ left: -280, behavior: 'smooth' });
         } else if (containerWidth >= 1700) {
-            container.scrollBy({ left: -278, behavior: 'smooth' });
+            container.scrollBy({ left: -298, behavior: 'smooth' });
         }
     };
       
@@ -45,14 +45,15 @@ const CardSlider = ({ courses, id, link }) => {
         const container = document.querySelector(`#cards-container-${id}`);
     
         const containerWidth = container.offsetWidth;
+        console.log(containerWidth);
         if (containerWidth <= 480) {
             container.scrollBy({ left: 350, behavior: 'smooth' });
         } else if (containerWidth > 480 && containerWidth <= 768) {
             container.scrollBy({ left: 320, behavior: 'smooth' });
-        } else if (containerWidth > 480 && containerWidth <= 768) {
-            container.scrollBy({ left: 266, behavior: 'smooth' });
-        } else if (containerWidth >= 1700) {
-            container.scrollBy({ left: 278, behavior: 'smooth' });
+        } else if (containerWidth > 768 && containerWidth <= 1700) {
+            container.scrollBy({ left: 280, behavior: 'smooth' });
+        } else if (containerWidth > 1700) {
+            container.scrollBy({ left: 298, behavior: 'smooth' });
         }
     };
 

@@ -13,6 +13,7 @@ import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 // redux
 import * as exceprtAction from '../../../../redux/actions/exceprt';
 import { useSelector, useDispatch } from "react-redux"; 
+import useDebounce from 'hooks/useDebounce';
 
 // const { Dragger } = Upload;
 const { TextArea, Search } = Input;
@@ -34,6 +35,8 @@ const Exceprt = (props) => {
         fileImg: '',
         search: ''
     });
+
+    const searchValue = useDebounce(state.search, 250);
 
     useEffect(() => {
         dispatch(exceprtAction.getExceprts({ pageSize: pageSize, pageIndex: pageIndex, id: '' }));
@@ -146,7 +149,7 @@ const Exceprt = (props) => {
             onOk() {
                 const callback = (res) => {
                     if (res.statusText === 'OK' && res.status === 200) {
-                        dispatch(exceprtAction.getExceprts());
+                        dispatch(exceprtAction.getExceprts({ pageSize: pageSize, pageIndex: pageIndex, id: state.search }));
                         notification.success({
                             message: 'Thành công',
                             description: 'Xóa trích đoạn thành công',
@@ -171,7 +174,7 @@ const Exceprt = (props) => {
                     message: 'Thành công',
                     description: state.isEdit ? 'Sửa thông tin trích đoạn thành công' : 'Thêm trích đoạn mới thành công', 
                 });
-                dispatch(exceprtAction.getExceprts());
+                dispatch(exceprtAction.getExceprts({ pageSize: pageSize, pageIndex: pageIndex, id: state.search }));
             } else {
                 notification.error({
                     message: 'Thông báo',
@@ -200,6 +203,11 @@ const Exceprt = (props) => {
     useEffect(() => {
         dispatch(exceprtAction.getExceprts({ pageSize: pageSize, pageIndex: pageIndex, id: state.search }));
     }, [pageIndex, pageSize]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+        setPageIndex(1); // reset page index
+        dispatch(exceprtAction.getExceprts({ pageSize: pageSize, pageIndex: 1, id: state.search }));
+      }, [searchValue]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const onFilterChange = (field, value) => {
         setPageIndex(1);
