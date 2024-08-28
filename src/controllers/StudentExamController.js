@@ -123,20 +123,20 @@ const postCreate = async (req, res) => {
         ...req.body,
         hoc_vien_id: req.userId,
     });
-    await sequelize.query(
-        `
-        INSERT INTO dap_an_da_chon (cau_hoi_id, dthv_id)
-            SELECT cau_hoi_id, :dthv_id FROM cau_hoi_de_thi
-            WHERE de_thi_id = :de_thi_id
-    `,
-        {
-            type: sequelize.QueryTypes.INSERT,
-            replacements: {
-                dthv_id: Number(studentExam.dthv_id),
-                de_thi_id: Number(req.body.de_thi_id),
-            },
-        }
-    );
+    // await sequelize.query(
+    //     `
+    //     INSERT INTO dap_an_da_chon (cau_hoi_id, dthv_id)
+    //         SELECT cau_hoi_id, :dthv_id FROM cau_hoi_de_thi
+    //         WHERE de_thi_id = :de_thi_id
+    // `,
+    //     {
+    //         type: sequelize.QueryTypes.INSERT,
+    //         replacements: {
+    //             dthv_id: Number(studentExam.dthv_id),
+    //             de_thi_id: Number(req.body.de_thi_id),
+    //         },
+    //     }
+    // );
     res.status(200).send({
         status: 'success',
         data: studentExam,

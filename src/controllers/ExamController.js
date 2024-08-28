@@ -11,6 +11,7 @@
     OnlineCriteria,
     Course,
     SelectedAnswer,
+    ExceprtType,
 } = require('../models');
 const { Op } = require('sequelize');
 const sequelize = require('../utils/db');
@@ -427,6 +428,9 @@ const getById = async (req, res) => {
                         },
                         {
                             model: Exceprt,
+                            include: {
+                                model: ExceprtType,
+                            },
                         },
                         {
                             ...(req.query.dthv_id && {
@@ -599,9 +603,9 @@ const getByIdv2 = async (req, res) => {
                 phan: 2,
             },
         });
-        if ( count === 0)
+        if (count === 0)
             await sequelize.query(
-               `
+                `
                 INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
                     SELECT cau_hoi_id, :de_thi_id, 2 FROM cau_hoi
                     WHERE chuyen_nganh_id = 7 AND kct_id = 1

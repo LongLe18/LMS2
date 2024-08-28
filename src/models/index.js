@@ -44,6 +44,7 @@ const Token = require('./Token');
 const CourseStudent = require('./CourseStudent');
 const Province = require('./Province');
 const Evaluate = require('./Evaluate');
+const ExceprtType = require('./ExceprtType');
 
 //khoa ngoai khoahoc
 Program.hasMany(Course, { foreignKey: 'kct_id', constraints: false });
@@ -170,6 +171,9 @@ OnlineCriteria.belongsTo(Exam, { foreignKey: 'khoa_hoc_id', targetKey: 'khoa_hoc
 
 Student.belongsTo(Province, { foreignKey: 'ttp_id', constraints: false});
 
+ExceprtType.hasMany(Exceprt, { foreignKey: 'loai_trich_doan_id', constraints: false});
+Exceprt.belongsTo(ExceprtType, { foreignKey: 'loai_trich_doan_id', constraints: false});
+
 module.exports = {
     Course,
     Lesson,
@@ -217,4 +221,5 @@ module.exports = {
     CourseStudent,
     Province,
     Evaluate,
+    ExceprtType
 };
