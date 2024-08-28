@@ -8,6 +8,8 @@ const session = require('express-session');
 var https = require('https');
 var http = require('http');
 var fs = require('fs');
+const security = require('./utils/security');
+const studentExamController = require('./controllers/StudentExamController');
 
 require('dotenv').config();
 
@@ -38,7 +40,40 @@ route(app);
 // );
 
 // Create an HTTP service.
-http.createServer(app).listen(process.env.port || 3000);
+const server = http.createServer(app);
+
+const io = require('socket.io')(server, {
+    cors: {
+        origin: '*',
+        methods: ['GET', 'POST'],
+        allowedHeaders: ['Authorization'],
+        credentials: true,
+    },
+});
+
+io.use((socket, next) => {
+    const token = socket.handshake.auth.token;
+    const decoded = security.verifyToken(token);
+
+    if (!decoded) {
+        return next(new Error('Authentication error'));
+    }
+
+    socket.user = decoded;
+    next();
+});
+io.on('connection', (socket) => {
+    socket.on('update exam', async (data) => {
+        const result = await studentExamController.putUpdatev2(
+            data,
+            socket.user.userId,
+            socket.handshake.query.dthv_id
+        );
+        socket.emit('response exam', result);
+    });
+});
+
+server.listen(process.env.port || 3000);
 // Create an HTTPS service identical to the HTTP service.
 // https.createServer(options, app).listen(process.env.port || 3000,()=>{
 //      console.log(`Server is running at port ${process.env.port || 3000}`)

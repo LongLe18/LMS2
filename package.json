@@ -31,7 +31,8 @@
     "passport": "^0.6.0",
     "passport-google-oauth20": "^2.0.0",
     "pizzip": "^3.1.7",
-    "sequelize": "^6.20.1"
+    "sequelize": "^6.20.1",
+    "socket.io": "^4.7.5"
   },
   "devDependencies": {
     "nodemon": "^2.0.16"

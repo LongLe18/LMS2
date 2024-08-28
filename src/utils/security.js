@@ -10,8 +10,13 @@ const generateToken = (data, expiresIn) => {
 };
 
 const verifyToken = (token) => {
-    const data = jwt.verify(token, process.env.AUTH_TOKEN_SECRET);
-    return data;
+    try {
+        const data = jwt.verify(token, process.env.AUTH_TOKEN_SECRET);
+        return data;
+    } catch (err) {
+        console.log(err);
+        return null;
+    }
 };
 
 const generateRefreshToken = (data) => {
@@ -20,7 +25,10 @@ const generateRefreshToken = (data) => {
 };
 
 const hashPassword = (password) => {
-    return bcrypt.hashSync(password, bcrypt.genSaltSync(Number(process.env.SALT_ROUNDS) || 8));
+    return bcrypt.hashSync(
+        password,
+        bcrypt.genSaltSync(Number(process.env.SALT_ROUNDS) || 8)
+    );
 };
 
 const comparePassword = (hashPassword, password) => {
@@ -59,15 +67,18 @@ const generatePassword = () => {
     // }
     return charset;
 };
-const makeid=(length)=>{
-    var result           = '';
-    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+const makeid = (length) => {
+    var result = '';
+    var characters =
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     var charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    for (var i = 0; i < length; i++) {
+        result += characters.charAt(
+            Math.floor(Math.random() * charactersLength)
+        );
     }
     return result;
-}
+};
 
 module.exports = {
     generateToken,
@@ -76,5 +87,5 @@ module.exports = {
     hashPassword,
     comparePassword,
     generatePassword,
-    makeid
+    makeid,
 };

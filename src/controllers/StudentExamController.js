@@ -123,6 +123,20 @@ const postCreate = async (req, res) => {
         ...req.body,
         hoc_vien_id: req.userId,
     });
+    await sequelize.query(
+        `
+        INSERT INTO dap_an_da_chon (cau_hoi_id, dthv_id)
+            SELECT cau_hoi_id, :dthv_id FROM cau_hoi_de_thi
+            WHERE de_thi_id = :de_thi_id
+    `,
+        {
+            type: sequelize.QueryTypes.INSERT,
+            replacements: {
+                dthv_id: Number(studentExam.dthv_id),
+                de_thi_id: Number(req.body.de_thi_id),
+            },
+        }
+    );
     res.status(200).send({
         status: 'success',
         data: studentExam,
@@ -130,7 +144,7 @@ const postCreate = async (req, res) => {
     });
 };
 
-// Dùng cho thi đánh giá năng lực mới
+// Dùng cho thi đánh giá năng lực mới ->. không dùng
 const postCreatev2 = async (req, res) => {
     const { khoa_hoc_id, chuyen_nganh_ids, ...rest } = req.body;
 
@@ -138,11 +152,11 @@ const postCreatev2 = async (req, res) => {
         where: {
             de_mau: true,
             xuat_ban: true,
-            khoa_hoc_id
+            khoa_hoc_id,
         },
     });
 
-    if(!sampleExam){
+    if (!sampleExam) {
         return res.status(404).send({
             status: 'error',
             data: null,
@@ -240,7 +254,9 @@ const postCreatev2 = async (req, res) => {
         await sequelize.query(
             `
                     INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
-                        SELECT cau_hoi_id, ${exam.dataValues.de_thi_id}, 3 FROM cau_hoi
+                        SELECT cau_hoi_id, ${
+                            exam.dataValues.de_thi_id
+                        }, 3 FROM cau_hoi
                         WHERE chuyen_nganh_id IN (${chuyen_nganh_ids}) AND kct_id = 1 AND de_thi_id = ${
                 sampleExam.de_thi_id
             }
@@ -405,6 +421,50 @@ const putUpdate = async (req, res) => {
     });
 };
 
+const putUpdatev2 = async (data, hoc_vien_id, dthv_id) => {
+    try {
+        const studentExam = await StudentExam.findOne({ where: { dthv_id } });
+        if (!studentExam) {
+            return 'Student exam not found';
+        }
+        if (studentExam.hoc_vien_id != hoc_vien_id) {
+            return 'Student id not match';
+        }
+        await studentExam.update({
+            thoi_gian_lam_bai: data.thoi_gian_lam_bai,
+        });
+        await sequelize.query(
+            `
+         UPDATE dap_an_da_chon
+            SET ket_qua_chon = CASE 
+                ${data.dap_an_da_chons.map((item) => {
+                    return `WHEN dadc_id = ${item.dadc_id} THEN '${
+                        item.ket_qua_chon ?? ''
+                    }'`;
+                })}
+            END,
+            noi_dung_tra_loi = CASE 
+                 ${data.dap_an_da_chons.map((item) => {
+                     return `WHEN dadc_id = ${item.dadc_id} THEN '${
+                         item.noi_dung_tra_loi ?? ''
+                     }'`;
+                 })}
+            END
+            WHERE dthv_id = :dthv_id
+     `,
+            {
+                replacements: {
+                    dthv_id: Number(dthv_id),
+                },
+            }
+        );
+        return 'saved exam';
+    } catch (err) {
+        console.log(err);
+        return 'error';
+    }
+};
+
 const forceDelete = async (req, res) => {
     await StudentExam.destroy({
         where: {
@@ -563,4 +623,5 @@ module.exports = {
     clearAll,
     exportReport,
     postCreatev2,
+    putUpdatev2,
 };
