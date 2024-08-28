@@ -398,6 +398,9 @@ const getById = async (req, res) => {
                         },
                         {
                             model: Exceprt,
+                            include: {
+                                model: ExceprtType,
+                            },
                         },
                     ],
                 },
@@ -417,7 +420,7 @@ const getById = async (req, res) => {
             ],
         });
     } else {
-        exam = await Exam.findOne({
+        let queryOptions = {
             include: {
                 model: ExamQuestion,
                 include: {
@@ -432,12 +435,6 @@ const getById = async (req, res) => {
                                 model: ExceprtType,
                             },
                         },
-                        {
-                            ...(req.query.dthv_id && {
-                                model: SelectedAnswer,
-                                where: { dthv_id: Number(req.query.dthv_id) },
-                            }),
-                        },
                     ],
                 },
             },
@@ -448,7 +445,17 @@ const getById = async (req, res) => {
                 [sequelize.col('phan'), 'ASC'],
                 [sequelize.col('dap_an_id'), 'ASC'],
             ],
-        });
+        };
+
+        // Nếu có dthv_id trong query, thêm điều kiện SelectedAnswer
+        if (req.query.dthv_id) {
+            queryOptions.include.include.include.push({
+                model: SelectedAnswer,
+                where: { dthv_id: Number(req.query.dthv_id) },
+            });
+        }
+        console.log(queryOptions)
+        exam = await Exam.findOne(queryOptions);
     }
 
     let criteria;

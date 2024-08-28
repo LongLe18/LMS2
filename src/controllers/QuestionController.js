@@ -1,4 +1,4 @@
-const { Question, Answer, Majoring } = require('../models');
+const { Question, Answer, Majoring, ExamQuestion } = require('../models');
 const fs = require('fs');
 const { Op } = require('sequelize');
 const sequelize = require('../utils/db');
@@ -181,6 +181,11 @@ const forceDelete = async (req, res) => {
         }
 
         await Question.destroy({
+            where: {
+                cau_hoi_id: req.params.id,
+            },
+        });
+        await ExamQuestion.destroy({
             where: {
                 cau_hoi_id: req.params.id,
             },
