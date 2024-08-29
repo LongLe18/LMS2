@@ -1,7 +1,7 @@
 const ENV = 'prod';
 const BASE_URL = ''
 const API_URL_DEV = 'http://localhost:8080';
-const API_URL_PROD = 'https://enno-hsaplus.edu.vn:3004';
+const API_URL_PROD = 'https://hsaplus.edu.vn:3003';
 const DATE_FORMAT = 'HH:mm DD/MM/YYYY';
 const DATE_FORMAT_SHORT = 'DD/MM/YYYY';
 const SHOW_DATE_FORMAT = 'D MMMM YYYY, HH:mm';
