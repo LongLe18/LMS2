@@ -1040,7 +1040,7 @@ const ExamOnlineDetail = () => {
 
     const renderHistoryExamSidebar = () => {
         return (
-            <Col span={2}>
+            <Col span={3}>
                 {examUser.status === 'success' &&
                     <div className="exam-right-content" style={{ position: 'sticky', top: '100px' }}>
                         {/* <div className="topbar-exam">
@@ -1101,47 +1101,55 @@ const ExamOnlineDetail = () => {
         return (
             <>  
                 <div className='section-question'>
-                    <Row justify={'space-between'} style={{marginBottom: 12}}>
-                        <Col style={{color: '#525252', fontSize: 20}}>{getCurrentDate()}</Col>
-                        <Col style={{display: 'flex', padding: 4, background: '#00adff', fontSize: 16, borderRadius: 4}}>
-                            {(isDoing && state.sectionExam === 1) ? 'PHẦN 1: TƯ DUY ĐỊNH LƯỢNG' : (isDoing && state.sectionExam === 2) ? 'PHẦN 2: TƯ DUY ĐỊNH TÍNH' : 'PHẦN 3: KHOA HỌC'}
+                    <Row>
+                        <Col span={2}>
+                            <img src={require('assets/img/logo/logo-vnu.png').default} width={68}  style={{marginLeft: 12}} alt="logo-vnu"/>
                         </Col>
-                        <Col><b style={{ color: '#525252', fontSize: 20 }}>{secondsToMinutes(countSection)}</b></Col>
-                    </Row>
-                    <Row className='list-questions' justify={'center'}>
-                        {isDoing && Array.from({ length: exam.data.so_phan }).map((_, index) => {
-                            if (index + 1 === state.sectionExam) {
-                                const startIndex = index === 0 ? 0 : Array.from({ length: index }).reduce((sum, _, i) => sum + exam.data[`so_cau_hoi_phan_${i + 1}`], 0);
-                                const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${state.sectionExam}`];
-                                const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
-                                return (
-                                    <>
-                                        {partQuestions.map((question, index) => {
-                                            const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
-                                            if (!isAnswered) {
-                                                return (
-                                                    <div key={index + 1} className={`item`}>
-                                                        {/* <a href={`#${index + 1}`}>{index + 1}</a> */}
-                                                        <button
-                                                            onClick={() => {
-                                                                const element = document?.getElementById(index + 1);
-                                                                const offset = 120; // height of your fixed header
-                                                                const y = element.getBoundingClientRect().top + window.pageYOffset - offset;
+                        <Col span={22}>
+                            <Row justify={'space-between'} style={{marginBottom: 12}}>
+                                
+                                <Col style={{fontSize: 24, color: 'rgb(255, 48, 7)'}}>{getCurrentDate()}</Col>
+                                <Col style={{display: 'flex', padding: 4, background: '#1890ff', fontSize: 16, borderRadius: 4}}>
+                                    {(isDoing && state.sectionExam === 1) ? 'PHẦN 1: TƯ DUY ĐỊNH LƯỢNG' : (isDoing && state.sectionExam === 2) ? 'PHẦN 2: TƯ DUY ĐỊNH TÍNH' : 'PHẦN 3: KHOA HỌC'}
+                                </Col>
+                                <Col><span style={{ fontSize: 24, color: 'rgb(255, 48, 7)' }}>{secondsToMinutes(countSection)}</span></Col>
+                            </Row>
+                            <Row className='list-questions' justify={'center'}>
+                                {isDoing && Array.from({ length: exam.data.so_phan }).map((_, index) => {
+                                    if (index + 1 === state.sectionExam) {
+                                        const startIndex = index === 0 ? 0 : Array.from({ length: index }).reduce((sum, _, i) => sum + exam.data[`so_cau_hoi_phan_${i + 1}`], 0);
+                                        const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${state.sectionExam}`];
+                                        const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
+                                        return (
+                                            <>
+                                                {partQuestions.map((question, index) => {
+                                                    const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
+                                                    if (!isAnswered) {
+                                                        return (
+                                                            <div key={index + 1} className={`item`}>
+                                                                {/* <a href={`#${index + 1}`}>{index + 1}</a> */}
+                                                                <button
+                                                                    onClick={() => {
+                                                                        const element = document?.getElementById(index + 1);
+                                                                        const offset = 120; // height of your fixed header
+                                                                        const y = element.getBoundingClientRect().top + window.pageYOffset - offset;
 
-                                                                window.scrollTo({ top: y, behavior: "smooth" });
-                                                            }}
-                                                        >
-                                                            {index + 1}
-                                                        </button>
-                                                    </div>
-                                                );
-                                            }
-                                            return null;
-                                        })}
-                                    </>
-                                )
-                            } else return null;
-                        })}
+                                                                        window.scrollTo({ top: y, behavior: "smooth" });
+                                                                    }}
+                                                                >
+                                                                    {index + 1}
+                                                                </button>
+                                                            </div>
+                                                        );
+                                                    }
+                                                    return null;
+                                                })}
+                                            </>
+                                        )
+                                    } else return null;
+                                })}
+                            </Row>
+                        </Col>
                     </Row>
                     {/* <Row className='list-questions' justify={'center'} style={{background: '#f0f0f0'}}>
                     {isDoing && Array.from({ length: exam.data.so_phan }).map((_, index) => {
@@ -1398,9 +1406,9 @@ const ExamOnlineDetail = () => {
                                                     <>
                                                         {(question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom !== undefined && question.cau_hoi.exceprtTo !== undefined) &&
                                                             <>
-                                                                {(question.cau_hoi.exceprtFrom === question.cau_hoi.exceprtTo) 
-                                                                ? <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi {ParentIndex + 1}</span>
-                                                                : <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi từ {ParentIndex + 1} đến {question.cau_hoi.exceprtTo - (partQuestions.length * (state.sectionExam - 1)) + 1}</span>
+                                                                {(question.cau_hoi?.trich_doan?.loai_trich_doan?.loai_trich_doan_id === 0) 
+                                                                    ? <span className="exceprt-label">{question.cau_hoi?.trich_doan?.loai_trich_doan?.noi_dung}</span>
+                                                                    : <span className="exceprt-label">{`${question.cau_hoi?.trich_doan?.loai_trich_doan?.noi_dung} ${ParentIndex + 1}`} đến {question.cau_hoi.exceprtTo - (partQuestions.length * (state.sectionExam - 1)) + 1}</span>
                                                                 }
                                                                 <br/>
                                                                 <div className="answer-content" style={{paddingLeft: '0px', fontSize: 18}}> 
@@ -1589,9 +1597,9 @@ const ExamOnlineDetail = () => {
                                 <>
                                     {(question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom !== undefined && question.cau_hoi.exceprtTo !== undefined) &&
                                         <>
-                                            {(question.cau_hoi.exceprtFrom === question.cau_hoi.exceprtTo) 
-                                            ? <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi {question.cau_hoi.exceprtFrom + 1}</span>
-                                            : <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi từ {question.cau_hoi.exceprtFrom + 1} đến {question.cau_hoi.exceprtTo + 1}</span>
+                                            {(question.cau_hoi?.trich_doan?.loai_trich_doan?.loai_trich_doan_id === 0) 
+                                                ? <span className="exceprt-label">{question.cau_hoi?.trich_doan?.loai_trich_doan?.noi_dung}</span>
+                                                : <span className="exceprt-label">{`${question.cau_hoi?.trich_doan?.loai_trich_doan?.noi_dung} ${question?.cau_hoi.exceprtFrom + 1}`} đến {question?.cau_hoi.exceprtTo + 1}</span>
                                             }
                                             <br/>
                                             <div className="answer-content" style={{paddingLeft: '0px'}}>             
@@ -1884,7 +1892,7 @@ const ExamOnlineDetail = () => {
                                     <div className="exam-right-content" >
                                         <div className="exam-right-info">
                                             <p className="mg-0 title-list-q" style={{textAlign: 'left !important'}}><b>Trả lời của bạn</b></p>
-                                            <span style={{fontSize: 18, color: '#ff8100cc', padding: '12px 12px 0px 12px'}}>------</span>
+                                            <span style={{fontSize: 20, color: 'rgb(255, 48, 7)', padding: '12px 12px 0px 12px'}}>-------------</span>
                                             <ul>
                                                 {partQuestions.map((question, index) => {
                                                     const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
@@ -1946,7 +1954,8 @@ const ExamOnlineDetail = () => {
                     </Helmet>
                     <Content className="app-content">
                         <div className="header-exam">
-                            <h1>{exam.data.ten_de_thi} - Phần {state.sectionExam}</h1>
+                            {/* <h1>{exam.data.ten_de_thi} - Phần {state.sectionExam}</h1> */}
+                            <h1 style={{color: 'rgb(255, 48, 7)'}}>Bài thì thử ĐGNL ĐHQGHN (HSA) 2024 - Phần {state.sectionExam}</h1>
                             <h4>Mã đề: {exam.data.de_thi_id}</h4>
                             <AuthModal />
                         </div>

@@ -269,26 +269,28 @@ const SampleQuestion = (props) => {
                                     <div className="body-question">
                                         <div className="answer-detail">
                                             <MathJax.Provider>
-                                                {question.noi_dung.split('\n').map((item, index_cauhoi) => {
+                                                {question.noi_dung.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
                                                     return (
-                                                        <div key={index_cauhoi}> 
-                                                        {
-                                                            (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                                <img src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question_${index_cauhoi}`}></img>
-                                                            ) : (
-                                                                item.split('$').map((item2, index2) => {
-                                                                    return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
-                                                                        <MathJax.Node key={index2} formula={item2} />
-                                                                    ) : (
-                                                                        <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
-                                                                    )
-                                                                })
-                                                            )
-                                                        }
+                                                        <div className="title-exam-content" key={index_cauhoi}>
+                                                            {
+                                                                (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
+                                                                    <img src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></img>
+                                                                ) : 
+                                                                (
+                                                                    <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
+                                                                        return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
+                                                                            <MathJax.Node key={index2} formula={item2} />
+                                                                        ) : (
+                                                                            <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                                        )
+                                                                    })}</div>
+                                                                )
+                                                            }
                                                         </div>
                                                     )}
                                                 )}
                                             </MathJax.Provider>
+                                            
                                         </div>
                                     </div>
                                 </div>  

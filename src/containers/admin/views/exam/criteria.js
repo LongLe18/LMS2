@@ -724,9 +724,15 @@ const Criteria = () => {
     const renderCourses = () => {
         let options = [];
         if (courses.status === 'success') {
-            options = courses.data.map((course) => (
-                <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
-            ))
+            if (state.activeTab === '4') {
+                options = courses.data.filter((item) => item.loai_kct !== 0).map((course) => (
+                    <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
+                ))
+            } else {
+                options = courses.data.map((course) => (
+                    <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
+                ))
+            }
         }
         return (
             <Select

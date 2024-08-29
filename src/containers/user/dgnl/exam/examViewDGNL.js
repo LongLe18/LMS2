@@ -236,79 +236,82 @@ const ExamViewDGNL = (props) => {
             <Spin spinning={spinning}  tip="Đang xử lý tạo đề thi. Quá trình này sẽ mất thời gian, bạn xin vui lòng chờ">
                 <div className="form-exam" style={{fontSize: 20}}>
                     <div className="title-main">
-                        <div style={{color: '#F5F5F5'}}>testtesttesttesttesttesttesttesttest</div>
-                        <h5 className="textCenter" style={{textTransform: 'uppercase', color: 'rgb(169, 0, 0) !important'}}>Chào mừng bạn tham gia kỳ thi ĐGNL ĐHQGHN (HSA)</h5>
+                        <img alt="hsa" src={require('assets/img/logo/logo-hsa.png').default} style={{width: '15%'}}/>
+                        <span className="textCenter" style={{textTransform: 'uppercase', color: 'rgb(255, 48, 7)', fontSize: 34}}>Chào mừng bạn tham gia kỳ thi ĐGNL ĐHQGHN (HSA)</span>
                         <img alt="hsa" src={require('assets/img/logo/logo-hsa.png').default} style={{width: '15%'}}/>
                     </div>
-                    <div style={{display: 'flex', justifyContent: 'center'}}>
-                        <div className="description-title">
-                            <span className="textCenter" style={{marginRight: 12}}><QuestionCircleOutlined /> Bài thi gồm 150 câu</span>
-                            <span><ClockCircleOutlined /> 195 phút</span>
+
+                    <div style={{width: '80%', padding: 12, border: 'rgb(45, 116, 219) solid 2px', borderRadius: 6, boxShadow: '0 0 15px rgba(0, 0, 0, 0.1)'}}>
+                        <div style={{display: 'flex', justifyContent: 'center'}}>
+                            <div className="description-title">
+                                <span className="textCenter" style={{marginRight: 12}}><QuestionCircleOutlined /> Bài thi gồm 150 câu</span>
+                                <span><ClockCircleOutlined /> 195 phút</span>
+                            </div>
                         </div>
-                    </div>
-                    <h6 style={{margin: '24px 0px 12px 0px', color: 'rgb(24, 98, 24)', fontWeight: 700}}>Cấu trúc bài thi</h6>
-                    <Steps style={{alignItems: 'center'}}
-                        progressDot
-                        current={2}
-                        direction="vertical"
-                        items={[
-                            {
-                                title: 'Phần 1: Tư duy định lượng (Toán học và xử lý số liệu) - 75 phút',
-                            },
-                            {
-                                title: 'Phần 2: Tư duy định tính (Văn học - Ngôn ngữ) - 60 phút',
-                            },
-                            {
-                                title: type === 5 ? 'Phần 3: Tiếng Anh - 60 phút' : 'Phần 3: Khoa học - 60 phút',
-                            },
-                        ]}
-                    />
-                    <Radio.Group onChange={onChangeType} value={type}>
-                        <Radio value={1}>Khoa học</Radio>
-                        <Radio value={5}>Tiếng Anh</Radio>
-                    </Radio.Group>
-                    {type === 1 && 
-                        <>
-                            <h6 style={{marginTop: 12}}>Bạn hãy chọn 3 môn phía dưới:</h6>
-                        
-                            <Checkbox.Group style={{ width: '100%', display: 'flex', justifyContent: 'center' }} onChange={onChangeSubject} value={subjects}>
-                                <Row style={{width: '10%', textAlign: 'left'}}>
-                                    {majors.status === 'success' && 
-                                        majors.data.map((major) => {
+                        <h6 style={{margin: '24px 0px 12px 0px', color: 'rgb(24, 98, 24)', fontWeight: 700, fontSize: 26}}>Cấu trúc bài thi</h6>
+                        <Steps style={{alignItems: 'center'}}
+                            progressDot
+                            current={2}
+                            direction="vertical"
+                            items={[
+                                {
+                                    title: 'Phần 1: Tư duy định lượng (Toán học và xử lý số liệu) - 75 phút',
+                                },
+                                {
+                                    title: 'Phần 2: Tư duy định tính (Văn học - Ngôn ngữ) - 60 phút',
+                                },
+                                {
+                                    title: type === 5 ? 'Phần 3: Tiếng Anh - 60 phút' : 'Phần 3: Khoa học - 60 phút',
+                                },
+                            ]}
+                        />
+                        <Radio.Group onChange={onChangeType} value={type}>
+                            <Radio value={1}>Khoa học</Radio>
+                            <Radio value={5}>Tiếng Anh</Radio>
+                        </Radio.Group>
+                        {type === 1 && 
+                            <>
+                                <h6 style={{marginTop: 12, fontSize: 24}}>Bạn hãy chọn 3 môn phía dưới:</h6>
+                            
+                                <Checkbox.Group style={{ width: '100%', display: 'flex', justifyContent: 'center' }} onChange={onChangeSubject} value={subjects}>
+                                    <Row style={{width: '10%', textAlign: 'left'}}>
+                                        {majors.status === 'success' && 
+                                            majors.data.map((major) => {
 
-                                            if (major.chuyen_nganh_id !== 1 && major.chuyen_nganh_id !== 7 && major.chuyen_nganh_id !== 5) {
-                                                return (
-                                                    <Col span={24}>
-                                                        <Checkbox value={major.chuyen_nganh_id} checked={true}>{major.ten_chuyen_nganh}</Checkbox>
-                                                    </Col>
-                                                )
-                                            }
-                                            return null;
-                                        })
+                                                if (major.chuyen_nganh_id !== 1 && major.chuyen_nganh_id !== 7 && major.chuyen_nganh_id !== 5) {
+                                                    return (
+                                                        <Col span={24}>
+                                                            <Checkbox value={major.chuyen_nganh_id} checked={true}>{major.ten_chuyen_nganh}</Checkbox>
+                                                        </Col>
+                                                    )
+                                                }
+                                                return null;
+                                            })
+                                        }
+                                    </Row>
+                                </Checkbox.Group>
+                            </>
+                        }
+
+                        <p className="block-action text-center mt-4">
+                            <Button type="primary" size="large" className="join-exam-button" 
+                                style={{borderRadius: 8, backgroundColor: 'rgb(229 100 19 / 92%)', borderColor: 'rgb(229 100 19 / 92%)', width: '10%'}}
+                                onClick={() => {
+                                    // Nếu không chọn Tiếng Anh thì phải Chọn đủ 3 môn học
+                                    if (type !== 5 && subjects.length < 3) {
+                                        notification.error({
+                                            message: 'Thông báo',
+                                            description: 'Vui lòng chọn đủ 3 môn học mà bạn muốn thi'
+                                        });
+                                        return;
                                     }
-                                </Row>
-                            </Checkbox.Group>
-                        </>
-                    }
-
-                    <p className="block-action text-center mt-4">
-                        <Button type="primary" size="large" className="join-exam-button" 
-                            style={{borderRadius: 8, backgroundColor: 'rgb(229 100 19 / 92%)', borderColor: 'rgb(229 100 19 / 92%)', width: '10%'}}
-                            onClick={() => {
-                                // Nếu không chọn Tiếng Anh thì phải Chọn đủ 3 môn học
-                                if (type !== 5 && subjects.length < 3) {
-                                    notification.error({
-                                        message: 'Thông báo',
-                                        description: 'Vui lòng chọn đủ 3 môn học mà bạn muốn thi'
-                                    });
-                                    return;
-                                }
-                                setIsJoinExam(2);
-                            }}
-                        >
-                            Bắt đầu
-                        </Button>
-                    </p>
+                                    setIsJoinExam(2);
+                                }}
+                            >
+                                Bắt đầu
+                            </Button>
+                        </p>
+                    </div>
                 </div>
             </Spin>
         )

@@ -16,7 +16,7 @@ import useFetch from "hooks/useFetch";
 import { Layout, Row, Col, Button, Input, Select, Form, Menu } from 'antd';
 import CarouselCustom from 'components/parts/Carousel/Carousel';
 import CardSlider from 'components/parts/CardSlider/CardSlier';
-import { BookOutlined, BarsOutlined, RightOutlined, StarOutlined } from '@ant-design/icons';
+import { BookOutlined, BarsOutlined, RightOutlined, StarOutlined, MenuOutlined } from '@ant-design/icons';
 
 // redux
 import { useSelector, useDispatch } from 'react-redux';
@@ -352,9 +352,10 @@ const CoursesPage = (props) => {
                                 style={{justifyContent: 'center', textTransform: 'uppercase', color: 'green', marginTop: 24, fontWeight: 700}}
                             >
                                 <b></b>
+                                <MenuOutlined style={{color: 'rgb(21, 87, 21)', fontSize: 20, marginLeft: 6}}/>
                                 <span style={{justifyContent: 'center', textTransform: 'uppercase', 
-                                            color: 'rgb(21, 87, 21)', fontWeight: 700, margin: '0 15px'}}
-                                        >
+                                    color: 'rgb(21, 87, 21)', fontWeight: 700, margin: '0 15px'}}
+                                >
                                     CÁC KHÓA HỌC ĐÃ ĐĂNG KÝ
                                 </span>
                                 <b></b>
@@ -380,8 +381,9 @@ const CoursesPage = (props) => {
                         typeProgrammes.map((item, index) => {
                             return (
                                 <div key={index} id={item.idElement}>
-                                    <h3 className="section-title section-title-center" style={{marginTop: 24}}>
+                                    <h3 className="section-title section-title-center" style={{marginTop: 24, marginBottom: 6}}>
                                         <b></b>
+                                        <MenuOutlined style={{color: 'rgb(21, 87, 21)', fontSize: 20, marginLeft: 6}}/>
                                         <span style={{justifyContent: 'center', textTransform: 'uppercase', 
                                             color: 'rgb(21, 87, 21)', fontWeight: 700, margin: '0 15px'}}
                                         >
@@ -392,9 +394,9 @@ const CoursesPage = (props) => {
                                     <div className="description-course">
                                         <div dangerouslySetInnerHTML={{__html: item.description}} className="description-course-item"></div>
                                         <div>
-                                            <StarOutlined style={{margin: '0 24px 24px 0', color: 'orange', fontSize: 24}}/>
-                                            <StarOutlined style={{margin: '0 24px 24px 0', color: 'orange', fontSize: 24}}/>
-                                            <StarOutlined style={{margin: '0 24px 24px 0', color: 'orange', fontSize: 24}}/>
+                                            <StarOutlined style={{margin: '0 12px 12px 0', color: '#ff6c00', fontSize: 24}}/>
+                                            <StarOutlined style={{margin: '0 12px 12px 0', color: '#ff6c00', fontSize: 24}}/>
+                                            <StarOutlined style={{margin: '0 12px 12px 0', color: '#ff6c00', fontSize: 24}}/>
                                         </div>
                                     </div>
                                     <div className="main-section">

@@ -2,7 +2,7 @@
 @import 'assets/demo/exam.css';
 
 .main-app {
-  background: #fff;
+  background: #fff !important;
 }
 
 b {
@@ -30,7 +30,7 @@ b {
   overflow: hidden;
   width: 100%;
   margin-bottom: 20px;
-  border: 2px solid #2e66ad !important;
+  border: 2px solid rgb(40, 156, 40) !important;
 }
 
 .question-list .title-exam div {
@@ -213,7 +213,7 @@ b {
 }
 
 .exam-right-content {
-  width: 75%;
+  width: 100%;
   margin-top: 30px;
   float: right;
   position: sticky;
@@ -253,10 +253,10 @@ b {
 }
 
 .exam-right-info .title-list-q {
-  font-size: 16px;
+  font-size: 20px;
   background: transparent;
   padding: 12px 12px 0px 12px;
-  color: #ff8100cc !important;
+  color: rgb(255, 48, 7) !important;
   cursor: pointer;
   margin-bottom: 0px;
   border-radius: 6px;
@@ -309,7 +309,7 @@ b {
 .exam-right-info {
   background-color: #0c9fe5b3;
   border-radius: 6px;
-  max-height: 550px;
+  max-height: 1000px;
   overflow-y: scroll;
 }
 

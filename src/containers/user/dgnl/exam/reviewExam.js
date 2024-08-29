@@ -213,9 +213,9 @@ const ReviewExamPage = () => {
                             <>
                                 {(question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom !== undefined && question.cau_hoi.exceprtTo !== undefined) &&
                                     <>  
-                                        {(question.cau_hoi.exceprtFrom === question.cau_hoi.exceprtTo) 
-                                            ? <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi {question.cau_hoi.exceprtFrom + 1}</span>
-                                            : <span className="exceprt-label">Đọc đoạn trích sau đây và trả lời cho câu hỏi từ {question.cau_hoi.exceprtFrom + 1} đến {question.cau_hoi.exceprtTo + 1}</span>
+                                        {(question.cau_hoi?.trich_doan?.loai_trich_doan?.loai_trich_doan_id === 0) 
+                                            ? <span className="exceprt-label">{question.cau_hoi?.trich_doan?.loai_trich_doan?.noi_dung}</span>
+                                            : <span className="exceprt-label">{`${question.cau_hoi?.trich_doan?.loai_trich_doan?.noi_dung} ${question.cau_hoi.exceprtFrom + 1}`} đến {question.cau_hoi.exceprtTo + 1}</span>
                                         }
                                         <br/>
                                         <div className="answer-content" style={{paddingLeft: '0px'}}>             
@@ -255,7 +255,7 @@ const ReviewExamPage = () => {
 
                                     <div className="title-exam">
                                         <MathJax.Provider>
-                                            {question.cau_hoi.noi_dung.split('\n').map((item, index_cauhoi) => {
+                                            {question.cau_hoi.noi_dung.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
                                                 return (
                                                     <div className="title-exam-content" key={index_cauhoi}>
                                                         {

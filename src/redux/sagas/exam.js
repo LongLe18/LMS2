@@ -196,7 +196,7 @@ function* publishExam(payload) {
         }
     } catch (error) {
         yield put({ type: actions.exam.GET_PUBLISH_FAILED, error: error });
-        let messageError = error.response.status === 403 ? error.response.data : '';
+        let messageError = error.response.status === 403 ? error.response.data : error.response.data.message;
         notification.error({
             message: get(error, 'response.data.error', 'Xuất bản đề thi đã thất bại ' + messageError),
         });

@@ -312,6 +312,9 @@
     border: 1px #3da844 solid !important;
     padding: 1em;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
     .title-main {
       display: flex;
@@ -339,11 +342,11 @@
   }
 
   .ant-steps-item {
-    width: 30%;
+    width: 50%;
   }
 
   .ant-checkbox-wrapper {
-    font-size: 18px !important;
+    font-size: 24px !important;
   }
 
   .ant-checkbox-inner {
@@ -363,7 +366,7 @@
 }
 
 .ant-steps-item-title, .ant-radio-wrapper {
-  font-size: 18px;
+  font-size: 24px;
 }
 /*tablet*/
 
@@ -374,3 +377,5 @@
 
 @media only screen and (max-width: 480px) {
 }
+
+

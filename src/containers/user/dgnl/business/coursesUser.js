@@ -18,7 +18,7 @@ import useFetch from "hooks/useFetch";
 import { Layout, Row, Col, Button } from 'antd';
 // import CarouselCustom from 'components/parts/Carousel/Carousel';
 import NoRecord from "components/common/NoRecord";
-import { StarOutlined, RightOutlined } from '@ant-design/icons';
+import { StarOutlined, RightOutlined, MenuOutlined } from '@ant-design/icons';
 import CardSlider from 'components/parts/CardSlider/CardSlier';
 import SideBarComponent from "../mainpractice/sidebar/SideBar";
 
@@ -101,15 +101,16 @@ const CoursesUser = (props) => {
                     <div className="list-course-cate">
                         <div className="wraper wraper-list-course-cate-index">
                             <div className="section-title-main" style={{textAlign: 'center'}}>
-                                <h4 style={{color: 'rgb(169, 0, 0)', fontWeight: 500}}>CÁC NỘI DUNG BẠN ĐÃ ĐĂNG KÝ HỌC & LUYỆN THI TẠI TRUNG TÂM ENNO</h4>
+                                <h4 style={{color: 'rgb(255, 16, 16)', fontWeight: 600, fontSize: 40}}>CÁC NỘI DUNG BẠN ĐÃ ĐĂNG KÝ HỌC & LUYỆN THI TẠI TRUNG TÂM</h4>
                             </div>
                             
                             {(courseOfUser.length > 0) ? (
                                 typeProgrammes.map((item, index) => {
                                     return (
                                         <div key={index} id={item.idElement}>
-                                            <h3 className="section-title section-title-center" style={{marginTop: 24}}>
+                                            <h3 className="section-title section-title-center" style={{marginTop: 24, marginBottom: 0}}>
                                                 <b></b>
+                                                <MenuOutlined style={{color: 'rgb(21, 87, 21)', fontSize: 20, marginLeft: 6}}/>
                                                 <span style={{justifyContent: 'center', textTransform: 'uppercase', 
                                                     color: 'rgb(21, 87, 21)', fontWeight: 700, margin: '0 15px'}}
                                                 >
@@ -119,9 +120,9 @@ const CoursesUser = (props) => {
                                             </h3>
                                             <div className="description-course">
                                                 <div>
-                                                    <StarOutlined style={{margin: '0 24px 24px 0', color: 'orange', fontSize: 24}}/>
-                                                    <StarOutlined style={{margin: '0 24px 24px 0', color: 'orange', fontSize: 24}}/>
-                                                    <StarOutlined style={{margin: '0 24px 24px 0', color: 'orange', fontSize: 24}}/>
+                                                    <StarOutlined style={{margin: '0 12px 12px 0', color: '#ff6c00', fontSize: 24}}/>
+                                                    <StarOutlined style={{margin: '0 12px 12px 0', color: '#ff6c00', fontSize: 24}}/>
+                                                    <StarOutlined style={{margin: '0 12px 12px 0', color: '#ff6c00', fontSize: 24}}/>
                                                 </div>
                                             </div>
                                             <div key={index} className="main-section" id={item.idElement}>
@@ -161,8 +162,9 @@ const CoursesUser = (props) => {
                             }
                             {/* Tài liệu */}
                             <div >
-                                <h3 className="section-title section-title-center" style={{marginTop: 24}}>
+                                <h3 className="section-title section-title-center" style={{marginTop: 24, marginBottom: 6}}>
                                     <b></b>
+                                    <MenuOutlined style={{color: 'rgb(21, 87, 21)', fontSize: 20, marginLeft: 6}}/>
                                     <span style={{justifyContent: 'center', textTransform: 'uppercase', 
                                         color: 'rgb(21, 87, 21)', fontWeight: 700, margin: '0 15px'}}
                                     >
@@ -172,9 +174,9 @@ const CoursesUser = (props) => {
                                 </h3>
                                 <div className="description-course">
                                     <div>
-                                        <StarOutlined style={{margin: '0 24px 24px 0', color: 'orange', fontSize: 24}}/>
-                                        <StarOutlined style={{margin: '0 24px 24px 0', color: 'orange', fontSize: 24}}/>
-                                        <StarOutlined style={{margin: '0 24px 24px 0', color: 'orange', fontSize: 24}}/>
+                                        <StarOutlined style={{margin: '0 12px 12px 0', color: '#ff6c00', fontSize: 24}}/>
+                                        <StarOutlined style={{margin: '0 12px 12px 0', color: '#ff6c00', fontSize: 24}}/>
+                                        <StarOutlined style={{margin: '0 12px 12px 0', color: '#ff6c00', fontSize: 24}}/>
                                     </div>
                                 </div>
                                 <div className="main-section">

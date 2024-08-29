@@ -115,6 +115,15 @@
     text-align: center;
   }
   
+  .question-items .title-exam-content {
+    font-size: 20px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+  }
+
   .footer-question {
     text-align: center;
     margin-bottom: 20px;
