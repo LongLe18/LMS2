@@ -480,7 +480,7 @@ const OnlineExamDetailPage = () => {
         const callback = (res) => {
             if (res.status === 200) {   
                 if (!state.isEdit) {
-                    const questionExam = { cau_hoi_id: res.data.data.cau_hoi_id, de_thi_id: id }
+                    const questionExam = { cau_hoi_id: res.data.data.cau_hoi_id, de_thi_id: id, chuyen_nganh_id: values.chuyen_nganh_id }
                     dispatch(questionActions.createQuestionExam(questionExam, subCallBack));             
                     
                     const answer = new FormData();

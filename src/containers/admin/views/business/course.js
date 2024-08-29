@@ -249,7 +249,8 @@ const BussinessCourses = (props) => {
                                         return null;
                                     });
                                 }
-                                setState({...state, dataCourse: temp})
+                                setState({...state, dataCourse: temp});
+                                window.location.reload();
                             }
                             dispatch(descriptionAction.getDescriptionCourses({}, subCallback)) 
                         };
@@ -285,178 +286,176 @@ const BussinessCourses = (props) => {
     };
     
     return (
-        <>
-            <div className="content">
-                <Row className="app-main">
-                    <Col xl={24} className="body-content">
-                        <Row>
-                            <Col xl={24} sm={24} xs={24}>
-                                <AppFilter
-                                title="Danh sách khóa học"
-                                isShowCourse={false}
-                                isShowModule={false}
-                                isShowThematic={false}
-                                isShowStatus={true}
-                                isShowSearchBox={true}
-                                isShowDatePicker={true}
-                                isRangeDatePicker={true}
-                                courses={courses.data}
-                                onFilterChange={(field, value) => onFilterChange(field, value)}
+        <div className="content">
+            <Row className="app-main">
+                <Col xl={24} className="body-content">
+                    <Row>
+                        <Col xl={24} sm={24} xs={24}>
+                            <AppFilter
+                            title="Danh sách khóa học"
+                            isShowCourse={false}
+                            isShowModule={false}
+                            isShowThematic={false}
+                            isShowStatus={true}
+                            isShowSearchBox={true}
+                            isShowDatePicker={true}
+                            isRangeDatePicker={true}
+                            courses={courses.data}
+                            onFilterChange={(field, value) => onFilterChange(field, value)}
+                            />
+                        </Col>
+                    </Row>
+                </Col>
+            </Row>
+            {state.dataCourse.length > 0 && 
+                <Table className="table-striped-rows" columns={columns} dataSource={state.dataCourse} />
+            }
+            <Row>
+                <Col xl={24} sm={24} xs={24} className="cate-form-block">
+                    {loading && <LoadingCustom/>}  
+                    {(state.isEdit && description.status === 'success' && description) ? <h5>Sửa thông tin mô tả khóa học</h5> : <h5>Thêm mới mô tả khóa học</h5>}  
+                    <Form layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={submitForm}>  
+                        <Form.Item initialValue={1}
+                            className="input-col"
+                            label="Khung chương trình"
+                            name="kct_id"
+                            rules={[
+                                {
+                                required: true,
+                                message: 'Khung chương trình là trường bắt buộc.',
+                                },
+                            ]}
+                            >
+                                {renderProgrammes()}
+                        </Form.Item>
+                        <Form.Item
+                            className="input-col"
+                            label="Khóa học"
+                            name="khoa_hoc_id"
+                            rules={[
+                                {
+                                required: true,
+                                message: 'Khóa học là trường bắt buộc.',
+                                },
+                            ]}
+                            >
+                                {renderCourses()}
+                        </Form.Item>
+                        <Form.Item
+                            className="input-col"
+                            label="Mô tả chung"
+                            name="mo_ta_chung"
+                            rules={[]}
+                            >
+                                <TextEditorWidget2
+                                    placeholder="Mô tả khóa học"
+                                    showToolbar={true}
+                                    isMinHeight200={true}
+                                    isSimple={false}
                                 />
-                            </Col>
-                        </Row>
-                    </Col>
-                </Row>
-                {state.dataCourse.length > 0 && 
-                    <Table className="table-striped-rows" columns={columns} dataSource={state.dataCourse} />
-                }
-                <Row>
-                    <Col xl={24} sm={24} xs={24} className="cate-form-block">
-                        {loading && <LoadingCustom/>}  
-                        {(state.isEdit && description.status === 'success' && description) ? <h5>Sửa thông tin mô tả khóa học</h5> : <h5>Thêm mới mô tả khóa học</h5>}  
-                        <Form layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={submitForm}>  
-                            <Form.Item initialValue={1}
-                                className="input-col"
-                                label="Khung chương trình"
-                                name="kct_id"
-                                rules={[
-                                    {
-                                    required: true,
-                                    message: 'Khung chương trình là trường bắt buộc.',
-                                    },
-                                ]}
-                                >
-                                    {renderProgrammes()}
-                            </Form.Item>
-                            <Form.Item
-                                className="input-col"
-                                label="Khóa học"
-                                name="khoa_hoc_id"
-                                rules={[
-                                    {
-                                    required: true,
-                                    message: 'Khóa học là trường bắt buộc.',
-                                    },
-                                ]}
-                                >
-                                    {renderCourses()}
-                            </Form.Item>
-                            <Form.Item
-                                className="input-col"
-                                label="Mô tả chung"
-                                name="mo_ta_chung"
-                                rules={[]}
-                                >
-                                    <TextEditorWidget2
-                                        placeholder="Mô tả khóa học"
-                                        showToolbar={true}
-                                        isMinHeight200={true}
-                                        isSimple={false}
-                                    />
-                            </Form.Item>
-                            <Form.Item
-                                className="input-col"
-                                label="Giới thiệu Khóa học"
-                                name="gioi_thieu"
-                                rules={[]}
-                                >
-                                    <TextEditorWidget2
-                                        placeholder="Giới thiệu khóa học"
-                                        showToolbar={true}
-                                        isMinHeight200={true}
-                                        isSimple={false}
-                                    />
-                            </Form.Item>         
-                            <Form.Item
-                                className="input-col"
-                                label="Hình thức đào tạo"
-                                name="hinh_thuc_dao_tao"
-                                rules={[]}
-                                >
-                                    <TextEditorWidget2
-                                        placeholder="Hình thức đào tạo"
-                                        showToolbar={true}
-                                        isMinHeight200={true}
-                                        isSimple={false}
-                                    />
-                            </Form.Item>
-                            <Form.Item
-                                className="input-col"
-                                label="Mục tiêu cam kết"
-                                name="muc_tieu_cam_ket"
-                                rules={[]}
-                                >
-                                    <TextEditorWidget2
-                                        placeholder="Mục tiêu cam kết"
-                                        showToolbar={true}
-                                        isMinHeight200={true}
-                                        isSimple={false}
-                                    />
-                            </Form.Item>
-                            <Form.Item
-                                className="input-col"
-                                label="Đối tượng"
-                                name="doi_tuong"
-                                rules={[]}
-                                >
-                                    <TextEditorWidget2
-                                        placeholder="Đối tượng"
-                                        showToolbar={true}
-                                        isMinHeight200={true}
-                                        isSimple={false}
-                                    />
-                            </Form.Item>
-                            <Form.Item
-                                className="input-col"
-                                label="Nội dung chi tiết"
-                                name="noi_dung_chi_tiet"
-                                rules={[]}
-                                >
-                                    <TextEditorWidget2
-                                        placeholder="Nội dung chi tiết"
-                                        showToolbar={true}
-                                        isMinHeight200={true}
-                                        isSimple={false}
-                                    />
-                            </Form.Item>
-                            <Form.Item
-                                className="input-col"
-                                label="Xếp lớp thời gian"
-                                name="xep_lop_thoi_gian"
-                                rules={[]}
-                                >
-                                    <TextEditorWidget2
-                                        placeholder="Xếp lớp thời gian"
-                                        showToolbar={true}
-                                        isMinHeight200={true}
-                                        isSimple={false}
-                                    />
-                            </Form.Item>
-                            <Form.Item
-                                className="input-col"
-                                label="Giá gốc (Nhập liền không dấu. Ví dụ: 10000)"
-                                name="gia_goc"
-                                rules={[]}
-                                >
-                                    <Input placeholder='Giá gốc'/>
-                            </Form.Item>
-                            <Form.Item className="button-col">
-                                <Space>
-                                    <Button shape="round" type="primary" htmlType="submit" >
-                                        {(state.isEdit && description.status === 'success' && description) ? 'Cập nhật' : 'Thêm mới'}   
+                        </Form.Item>
+                        <Form.Item
+                            className="input-col"
+                            label="Giới thiệu Khóa học"
+                            name="gioi_thieu"
+                            rules={[]}
+                            >
+                                <TextEditorWidget2
+                                    placeholder="Giới thiệu khóa học"
+                                    showToolbar={true}
+                                    isMinHeight200={true}
+                                    isSimple={false}
+                                />
+                        </Form.Item>         
+                        <Form.Item
+                            className="input-col"
+                            label="Hình thức đào tạo"
+                            name="hinh_thuc_dao_tao"
+                            rules={[]}
+                            >
+                                <TextEditorWidget2
+                                    placeholder="Hình thức đào tạo"
+                                    showToolbar={true}
+                                    isMinHeight200={true}
+                                    isSimple={false}
+                                />
+                        </Form.Item>
+                        <Form.Item
+                            className="input-col"
+                            label="Mục tiêu cam kết"
+                            name="muc_tieu_cam_ket"
+                            rules={[]}
+                            >
+                                <TextEditorWidget2
+                                    placeholder="Mục tiêu cam kết"
+                                    showToolbar={true}
+                                    isMinHeight200={true}
+                                    isSimple={false}
+                                />
+                        </Form.Item>
+                        <Form.Item
+                            className="input-col"
+                            label="Đối tượng"
+                            name="doi_tuong"
+                            rules={[]}
+                            >
+                                <TextEditorWidget2
+                                    placeholder="Đối tượng"
+                                    showToolbar={true}
+                                    isMinHeight200={true}
+                                    isSimple={false}
+                                />
+                        </Form.Item>
+                        <Form.Item
+                            className="input-col"
+                            label="Nội dung chi tiết"
+                            name="noi_dung_chi_tiet"
+                            rules={[]}
+                            >
+                                <TextEditorWidget2
+                                    placeholder="Nội dung chi tiết"
+                                    showToolbar={true}
+                                    isMinHeight200={true}
+                                    isSimple={false}
+                                />
+                        </Form.Item>
+                        <Form.Item
+                            className="input-col"
+                            label="Xếp lớp thời gian"
+                            name="xep_lop_thoi_gian"
+                            rules={[]}
+                            >
+                                <TextEditorWidget2
+                                    placeholder="Xếp lớp thời gian"
+                                    showToolbar={true}
+                                    isMinHeight200={true}
+                                    isSimple={false}
+                                />
+                        </Form.Item>
+                        <Form.Item
+                            className="input-col"
+                            label="Giá gốc (Nhập liền không dấu. Ví dụ: 10000)"
+                            name="gia_goc"
+                            rules={[]}
+                            >
+                                <Input placeholder='Giá gốc'/>
+                        </Form.Item>
+                        <Form.Item className="button-col">
+                            <Space>
+                                <Button shape="round" type="primary" htmlType="submit" >
+                                    {(state.isEdit && description.status === 'success' && description) ? 'Cập nhật' : 'Thêm mới'}   
+                                </Button>
+                                {(state.isEdit && description.status === 'success' && description) 
+                                ?   <Button shape="round" type="danger" onClick={() => cancelEdit()} > 
+                                        Hủy bỏ
                                     </Button>
-                                    {(state.isEdit && description.status === 'success' && description) 
-                                    ?   <Button shape="round" type="danger" onClick={() => cancelEdit()} > 
-                                            Hủy bỏ
-                                        </Button>
-                                    : ''}    
-                                </Space>    
-                            </Form.Item>
-                        </Form>
-                    </Col>
-                </Row>
-            </div>
-        </>
+                                : ''}    
+                            </Space>    
+                        </Form.Item>
+                    </Form>
+                </Col>
+            </Row>
+        </div>
     )
 };
 

@@ -411,7 +411,11 @@ const CoursesPage = (props) => {
                                         </div>
                                         {programmes.data.length > 0 && 
                                             <CardSlider id={index} 
-                                                courses={courses.data.filter(course => course.loai_kct === item.id)} 
+                                                courses={courses.data.filter(course => course.loai_kct === item.id).sort((a, b) => {
+                                                    if (a.ten_khoa_hoc < b.ten_khoa_hoc) return -1;
+                                                    if (a.ten_khoa_hoc > b.ten_khoa_hoc) return 1;
+                                                    return 0;
+                                                })} 
                                                 link={`/luyen-tap/gioi-thieu-khoa-hoc/`}
                                             />
                                         }

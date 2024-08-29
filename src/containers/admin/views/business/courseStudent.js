@@ -264,7 +264,8 @@ const CourseStudentPage = (props) => {
                         notification.success({
                             message: 'Thành công',
                             description: 'Xóa học viên thành công',
-                        })
+                        });
+                        dispatch(courseActions.getCourseStudent({ search: filter.search }));
                     } else {
                         notification.error({
                             message: 'Thông báo',
@@ -298,9 +299,10 @@ const CourseStudentPage = (props) => {
         const callback = (res) => {
             if (res.status === 200 && res.statusText === 'OK' && res.data.status === 'success') {
                     notification.success({
-                    message: 'Thành công',
-                    description: 'Thêm học viên vào khóa học thành công', 
-                });
+                        message: 'Thành công',
+                        description: 'Thêm học viên vào khóa học thành công', 
+                    });
+                    dispatch(courseActions.getCourseStudent({ search: filter.search }));
                 if (state.activeTab === '3')
                     dispatch(courseActions.getRemainStudentOfCourse({ idCourse: state.idCourse, province: filter.tinh, search: filter.search, pageIndex: pageIndex - 1, pageSize: pageSize }));
             } else {
@@ -348,52 +350,50 @@ const CourseStudentPage = (props) => {
     };
 
     return (
-        <>
-            <div className='content'>
-                <Col xl={24} className="body-content">
-                    <Row className="app-main">
-                        <Col xl={24} sm={24} xs={24}>
-                            <AppFilter
-                                title="Quản lý khóa học - học viên"
-                                isShowSearchBox={true}
-                                isSearchProvinces={state.activeTab === '2' ||  state.activeTab === '3' ? true : false}
-                                provinces={province.length > 0 ? province: []}
-                                onFilterChange={(field, value) => onFilterChange(field, value)}
-                            />
-                        </Col>
-                    </Row>
-                    {(state.activeTab === '2' && dataDetail.length > 0) && 
-                        <ExcelFile element={<Button type='primary'>Trích xuất file</Button>} filename={'Danh sách học viên'}>
-                            <ExcelSheet data={dataDetail} name={'Danh sách học viên'}>
-                                <ExcelColumn label="Họ tên" value="ho_ten"/>
-                                <ExcelColumn label="Email" value="email"/>
-                                <ExcelColumn label="Số điện thoại" value="sdt"/>
-                                <ExcelColumn label="Trường học" value="truong_hoc"/>
-                                <ExcelColumn label="Tỉnh/Thành phố" value="tinh"/>
-                            </ExcelSheet>
-                        </ExcelFile>
-                    }
-                    {state.activeTab === '3' &&
-                        <Button onClick={() => onSubmitAddListStudentToCourse()} type="primary">Thêm học viên</Button>
-                    }
-                </Col>
-                <Tabs defaultActiveKey={state.activeTab} activeKey={state.activeTab} onChange={onChangeTab}>
-                    <TabPane tab="Quản lý khóa học - học viên" key="1">
-                        <Table className="table-striped-rows" columns={columns} dataSource={data} />
-                    </TabPane>
-                    <TabPane tab="Chi tiết khóa học" disabled key="2">
-                            <Table className="table-striped-rows" columns={columns2} dataSource={dataDetail} />
-                    </TabPane>
-                    <TabPane tab="Thêm học viên" disabled key="3">
-                        <>
-                            <Table className="table-striped-rows" columns={columns3} dataSource={remainData} pagination={false} rowSelection={rowSelection}/>
-                            <br/>
-                            <Pagination current={pageIndex} onChange={onChange} total={remainStudentofCourse.count} onShowSizeChange={onShowSizeChange} defaultPageSize={pageSize}/>
-                        </>
-                    </TabPane>
-                </Tabs>  
-            </div>
-        </>
+        <div className='content'>
+            <Col xl={24} className="body-content">
+                <Row className="app-main">
+                    <Col xl={24} sm={24} xs={24}>
+                        <AppFilter
+                            title="Quản lý khóa học - học viên"
+                            isShowSearchBox={true}
+                            isSearchProvinces={state.activeTab === '2' ||  state.activeTab === '3' ? true : false}
+                            provinces={province.length > 0 ? province: []}
+                            onFilterChange={(field, value) => onFilterChange(field, value)}
+                        />
+                    </Col>
+                </Row>
+                {(state.activeTab === '2' && dataDetail.length > 0) && 
+                    <ExcelFile element={<Button type='primary'>Trích xuất file</Button>} filename={'Danh sách học viên'}>
+                        <ExcelSheet data={dataDetail} name={'Danh sách học viên'}>
+                            <ExcelColumn label="Họ tên" value="ho_ten"/>
+                            <ExcelColumn label="Email" value="email"/>
+                            <ExcelColumn label="Số điện thoại" value="sdt"/>
+                            <ExcelColumn label="Trường học" value="truong_hoc"/>
+                            <ExcelColumn label="Tỉnh/Thành phố" value="tinh"/>
+                        </ExcelSheet>
+                    </ExcelFile>
+                }
+                {state.activeTab === '3' &&
+                    <Button onClick={() => onSubmitAddListStudentToCourse()} type="primary">Thêm học viên</Button>
+                }
+            </Col>
+            <Tabs defaultActiveKey={state.activeTab} activeKey={state.activeTab} onChange={onChangeTab}>
+                <TabPane tab="Quản lý khóa học - học viên" key="1">
+                    <Table className="table-striped-rows" columns={columns} dataSource={data} />
+                </TabPane>
+                <TabPane tab="Chi tiết khóa học" disabled key="2">
+                        <Table className="table-striped-rows" columns={columns2} dataSource={dataDetail} />
+                </TabPane>
+                <TabPane tab="Thêm học viên" disabled key="3">
+                    <>
+                        <Table className="table-striped-rows" columns={columns3} dataSource={remainData} pagination={false} rowSelection={rowSelection}/>
+                        <br/>
+                        <Pagination current={pageIndex} onChange={onChange} total={remainStudentofCourse.totalCount} onShowSizeChange={onShowSizeChange} defaultPageSize={pageSize}/>
+                    </>
+                </TabPane>
+            </Tabs>  
+        </div>
     )
 };
 
