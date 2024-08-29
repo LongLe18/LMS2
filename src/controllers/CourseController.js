@@ -103,7 +103,7 @@ const getAddStudents = async (req, res) => {
                 ttp_id: Number(req.query.tinh),
             }),
             ...(req.query.ten_hoc_vien && {
-                ten_hoc_vien: req.query.ten_hoc_vien,
+                ho_ten: req.query.ten_hoc_vien,
             }),
             hoc_vien_id: {
                 [Op.notIn]: studentIds.map((item) => item.hoc_vien_id),

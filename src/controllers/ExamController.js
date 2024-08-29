@@ -454,7 +454,6 @@ const getById = async (req, res) => {
                 where: { dthv_id: Number(req.query.dthv_id) },
             });
         }
-        console.log(queryOptions)
         exam = await Exam.findOne(queryOptions);
     }
 
