@@ -97,9 +97,9 @@ const CoursesUser = (props) => {
     const renderCourses = () => {
         return (
             <Row className='wraper wraper-list-course-cate-index' style={{marginTop: '30px'}}>
-                <Col span={19} className="list-course-content">
+                <Col span={20} className="list-course-content">
                     <div className="list-course-cate">
-                        <div className="wraper wraper-list-course-cate-index">
+                        <div className="wraper wraper-list-course-cate-index" style={{padding: 12}}>
                             <div className="section-title-main" style={{textAlign: 'center'}}>
                                 <h4 style={{color: 'rgb(255, 16, 16)', fontWeight: 600, fontSize: 32}}>CÁC NỘI DUNG BẠN ĐÃ ĐĂNG KÝ HỌC & LUYỆN THI TẠI TRUNG TÂM</h4>
                             </div>
@@ -226,7 +226,7 @@ const CoursesUser = (props) => {
                         </div>
                     </div>
                 </Col>
-                <Col span={5} className="list-course-advertisement">
+                <Col span={4} className="list-course-advertisement" style={{paddingRight: 12}}>
                     <SideBarComponent />
                 </Col>
             </Row>

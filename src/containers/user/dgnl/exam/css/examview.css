@@ -56,7 +56,7 @@
 .block-action .join-exam-button {
   background: #f96935;
   color: #fff;
-  margin-left: 10px;
+  /* margin-left: 10px; */
 }
 
 .block-action .select-form {

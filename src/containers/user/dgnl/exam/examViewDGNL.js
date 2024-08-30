@@ -160,7 +160,7 @@ const ExamViewDGNL = (props) => {
                     <Statisic />
 
                     <Row id="main-content">
-                        <Col xl={18} md={24} xs={24}>
+                        <Col xl={19} md={24} xs={24} style={{paddingRight: 12}}>
                             <Row style={{margin: '18px 0'}}>
                                 <Col xl={24} md={20} xs={20}>
                                     <Carousel autoplay style={{marginBottom: 12}}>
@@ -215,7 +215,7 @@ const ExamViewDGNL = (props) => {
                                 </>
                             }
                         </Col>
-                        <Col xl={6} style={{padding: "0", textAlign: 'center'}}>
+                        <Col xl={5} style={{padding: "0", textAlign: 'center'}}>
                             <Button type="primary" size="large" className="join-exam-button" 
                                 onClick={() => setIsJoinExam(1)}
                                 style={{borderRadius: 8, backgroundColor: 'rgb(229 100 19 / 92%)', borderColor: 'rgb(229 100 19 / 92%)', marginBottom: 12, width: '80%', fontWeight: 700}}
@@ -234,8 +234,8 @@ const ExamViewDGNL = (props) => {
         // Form chọn các môn thi 
         return (
             <Spin spinning={spinning}  tip="Đang xử lý tạo đề thi. Quá trình này sẽ mất thời gian, bạn xin vui lòng chờ">
-                <div className="form-exam" style={{fontSize: 20}}>
-                    <div className="title-main">
+                <div className="form-exam" style={{fontSize: 20, display: 'flex', alignItems: 'center'}}>
+                    <div className="title-main" style={{display: 'flex', alignItems: 'center', marginBottom: 12}}>
                         <img alt="hsa" src={require('assets/img/logo/logo-hsa.png').default} style={{width: '15%'}}/>
                         <span className="textCenter" style={{textTransform: 'uppercase', color: 'rgb(255, 48, 7)', fontSize: 34}}>Chào mừng bạn tham gia kỳ thi ĐGNL ĐHQGHN (HSA)</span>
                         <img alt="hsa" src={require('assets/img/logo/logo-hsa.png').default} style={{width: '15%'}}/>

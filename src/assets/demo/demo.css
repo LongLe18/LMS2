@@ -888,7 +888,7 @@ body, html {
 }
 
 .slider {
-  width: 80%;
+  width: 100%;
   background-color: #bfe1ee;
   padding: 0;
 }
@@ -978,7 +978,7 @@ body, html {
 }
 
 span.widget-title{
-  width: 80%;
+  width: 100%;
   font-size: 14px;
   letter-spacing: 0;
   font-weight: bold;
@@ -994,7 +994,7 @@ span.widget-title{
 .widget ul {
   margin: 0;
   padding: 0;
-  width: 80%;
+  width: 100%;
 }
 
 .product-categories {

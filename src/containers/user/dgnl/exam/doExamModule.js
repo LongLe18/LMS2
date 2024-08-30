@@ -869,8 +869,10 @@ const ExamModuleDetail = () => {
                             <>
                                 {(question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom !== undefined && question.cau_hoi.exceprtTo !== undefined) &&
                                     <>
-                                        {(question.cau_hoi?.trich_doan?.loai_trich_doan?.loai_trich_doan_id !== 0) &&
-                                            <span className="exceprt-label">{`${question.cau_hoi?.trich_doan?.loai_trich_doan?.noi_dung} ${question.cau_hoi.exceprtFrom + 1}`} đến {question.cau_hoi.exceprtTo + 1}</span>
+                                        {(question.cau_hoi?.trich_doan?.loai_trich_doan_id !== 0) &&
+                                            <>
+                                                <span className="exceprt-label">{`${question.cau_hoi?.trich_doan?.loai_trich_doan?.noi_dung} ${question.cau_hoi.exceprtFrom + 1}`} đến {question.cau_hoi.exceprtTo + 1}</span>
+                                            </>
                                         }
 
                                         <br/>
