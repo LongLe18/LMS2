@@ -6,7 +6,7 @@ import Hashids from "hashids";
 import axios from "axios";
 
 // css
-import './css/exam.css';
+import './css/examConfirm.css';
 import { formatedDate } from "helpers/common.helper";
 import { CalendarOutlined, UserOutlined } from '@ant-design/icons';
 

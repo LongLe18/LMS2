@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet';
 import { useParams, useHistory, Link } from 'react-router-dom';
 import axios from 'axios';
 import Hashids from "hashids";
-import './css/exam.css';
+// import './css/examConfirm.css';
 import config from '../../../../configs/index';
 
 // component

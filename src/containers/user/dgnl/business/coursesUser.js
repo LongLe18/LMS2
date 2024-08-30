@@ -101,7 +101,7 @@ const CoursesUser = (props) => {
                     <div className="list-course-cate">
                         <div className="wraper wraper-list-course-cate-index">
                             <div className="section-title-main" style={{textAlign: 'center'}}>
-                                <h4 style={{color: 'rgb(255, 16, 16)', fontWeight: 600, fontSize: 40}}>CÁC NỘI DUNG BẠN ĐÃ ĐĂNG KÝ HỌC & LUYỆN THI TẠI TRUNG TÂM</h4>
+                                <h4 style={{color: 'rgb(255, 16, 16)', fontWeight: 600, fontSize: 32}}>CÁC NỘI DUNG BẠN ĐÃ ĐĂNG KÝ HỌC & LUYỆN THI TẠI TRUNG TÂM</h4>
                             </div>
                             
                             {(courseOfUser.length > 0) ? (
