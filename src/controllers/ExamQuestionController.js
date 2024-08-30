@@ -1,4 +1,4 @@
-const { ExamQuestion } = require('../models');
+const { ExamQuestion, Question } = require('../models');
 
 const getAll = async (req, res) => {
     const examQuestions = await ExamQuestion.findAll({limit: 100});
@@ -65,11 +65,22 @@ const putUpdate = async (req, res) => {
 };
 
 const forceDelete = async (req, res) => {
+    const examQuestion = await ExamQuestion.findOne({
+        where: {
+            chdt_id: req.params.id,
+        },
+    });
     await ExamQuestion.destroy({
         where: {
             chdt_id: req.params.id,
         },
     });
+    await Question.destroy({
+        where: {
+            cau_hoi_id: examQuestion.cau_hoi_id,
+            de_thi_id: examQuestion.de_thi_id
+        },
+    })
     res.status(200).send({
         status: 'success',
         data: null,
