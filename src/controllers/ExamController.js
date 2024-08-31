@@ -1124,6 +1124,7 @@ const reuse = async (req, res) => {
             'mo_dun_id',
             'chuyen_de_id',
             'de_mau',
+            'chuyen_nganh_id',
         ],
     });
     const examNew = await Exam.create({
