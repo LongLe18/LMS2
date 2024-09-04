@@ -858,7 +858,7 @@ const ExamCourseDetail = () => {
 
                         return (
                             <>
-                                {(question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom !== undefined && question.cau_hoi.exceprtTo !== undefined) &&
+                                {((question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom !== undefined && question.cau_hoi.exceprtTo !== undefined) || (question.cau_hoi?.trich_doan?.loai_trich_doan_id === 0)) &&
                                     <>
                                         {(question.cau_hoi?.trich_doan?.loai_trich_doan_id !== 0) &&
                                             <>

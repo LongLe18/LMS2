@@ -208,17 +208,17 @@ const ReviewExamPage = () => {
                     )}
                     {exam.status === 'success' && exam.data.cau_hoi_de_this.map((question, ParentIndex) => {
                         let regex = /\\begin{center}\\includegraphics\[scale = 0\.5\]{(.*?)}\\end{center}/;
-                        
+                        console.log(question.cau_hoi?.trich_doan?.loai_trich_doan_id, ParentIndex)
                         return (
                             <>
-                                {(question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom !== undefined && question.cau_hoi.exceprtTo !== undefined) &&
+                                {((question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom !== undefined && question.cau_hoi.exceprtTo !== undefined) || (question.cau_hoi?.trich_doan?.loai_trich_doan_id === 0)) &&
                                     <>  
                                         {(question.cau_hoi?.trich_doan?.loai_trich_doan_id !== 0) &&
                                             <>
                                                 <span className="exceprt-label">{`${question.cau_hoi?.trich_doan?.loai_trich_doan?.noi_dung} ${question.cau_hoi.exceprtFrom + 1}`} đến {question.cau_hoi.exceprtTo + 1}</span>
                                                 <br/>
                                             </>
-                                        }
+                                        } 
                                         <div className="answer-content" style={{paddingLeft: '0px'}}>             
                                             <MathJax.Provider>
                                                 {question.cau_hoi?.trich_doan?.noi_dung?.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
