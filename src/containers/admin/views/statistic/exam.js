@@ -119,7 +119,7 @@ const StatisticExam = (props) => {
                 showSearch={true}
                 placeholder="Chọn khóa học"
                 onChange={(khoa_hoc_id) => {
-                    dispatch(examActions.filterExam({ idCourse: khoa_hoc_id, idModule: '', idThematic: '', status: '', search: '', 
+                    dispatch(examActions.filterExam({ offset: 0, limit: 100000, idCourse: khoa_hoc_id, idModule: '', idThematic: '', status: '', search: '', 
                         start: '', end: '', idType: '', publish: '1' }));
                 }}
             >

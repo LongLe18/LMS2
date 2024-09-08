@@ -1408,7 +1408,11 @@ const ExamOnlineDetail = () => {
                                                             <>
                                                                 {(question.cau_hoi?.trich_doan?.loai_trich_doan_id !== 0) &&
                                                                     <>
-                                                                        <span className="exceprt-label">{`${question.cau_hoi?.trich_doan?.loai_trich_doan?.noi_dung} ${ParentIndex + 1}`} đến {question.cau_hoi.exceprtTo - (partQuestions.length * (state.sectionExam - 1)) + 1}</span>
+                                                                        <span className="exceprt-label">
+                                                                            {`${question.cau_hoi?.trich_doan?.loai_trich_doan?.noi_dung} ${ParentIndex + 1}`} 
+                                                                            {question.cau_hoi.chuyen_nganh_id === 5 ? ' to ' : ' đến '}    
+                                                                            {question.cau_hoi.exceprtTo - (partQuestions.length * (state.sectionExam - 1)) + 1}
+                                                                        </span>
                                                                         <br/>
                                                                     </>
                                                                 }
@@ -1600,7 +1604,11 @@ const ExamOnlineDetail = () => {
                                         <>
                                             {(question.cau_hoi?.trich_doan?.loai_trich_doan_id !== 0) &&
                                                 <>
-                                                    <span className="exceprt-label">{`${question.cau_hoi?.trich_doan?.loai_trich_doan?.noi_dung} ${question?.cau_hoi.exceprtFrom + 1}`} đến {question?.cau_hoi.exceprtTo + 1}</span>
+                                                    <span className="exceprt-label">
+                                                        {`${question.cau_hoi?.trich_doan?.loai_trich_doan?.noi_dung} ${question?.cau_hoi.exceprtFrom + 1}`} 
+                                                        {question.cau_hoi.chuyen_nganh_id === 5 ? ' to ' : ' đến '}    
+                                                        {question?.cau_hoi.exceprtTo + 1}
+                                                    </span>
                                                     <br/>
                                                 </>
                                             }

@@ -177,7 +177,7 @@ const ExamViewDGNL = (props) => {
                                         <h5 className="text-black" style={{fontWeight: 500}}>MỤC ĐÍCH BÀI THI TRẢI NGHIỆM</h5>
                                         <span style={{fontSize: 20, fontWeight: 500}}>Giúp thí sinh làm quen với định dạng bài thi Đánh giá năng lực, trải nghiệm ngân hàng câu hỏi phong phú, sẵn sàng kiến thức và tâm lý cho kỳ thi chính thức.</span>
                                         <h5 style={{marginTop: 8, fontWeight: 500, color: 'green'}}>CẤU TRÚC BÀI THI</h5>
-                                        <Table className='table-structure' style={{ whiteSpace: 'break-spaces', textAlign: 'left', fontSize: 20}} dataSource={dataSource} columns={columns} pagination={false}/>;
+                                        <Table className='table-structure' style={{ whiteSpace: 'break-spaces', textAlign: 'left', fontSize: 20}} dataSource={dataSource} columns={columns} pagination={false}/>
                                         <h5 yle={{fontWeight: 500}}>CHI TIẾT CẤU TRÚC:</h5>
                                         <div style={{fontSize: 20}}>
                                             Về hình thức, bài thi ĐGNL năm 2025 điều chỉnh chủ yếu ở phần 3 và cách đặt câu hỏi. Sau khi hoàn thành hai phần thi đầu, phần thi thứ 3 thí sinh sẽ được lựa chọn 3 trong 5 chủ đề thuộc lĩnh vực Lý, Hóa, Sinh, Sử, Địa để hoàn thành bài thi trong thời gian 195 phút (không kể thời gian bù thêm cho câu hỏi thử nghiệm).
