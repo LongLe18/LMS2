@@ -283,28 +283,28 @@ const getAll_admin = async (req, res) => {
             tieu_chi_de_chuyen_de.thoi_gian FROM de_thi LEFT JOIN khoa_hoc ON de_thi.khoa_hoc_id=khoa_hoc.khoa_hoc_id LEFT JOIN 
             mo_dun ON de_thi.mo_dun_id=mo_dun.mo_dun_id LEFT JOIN chuyen_de ON chuyen_de.chuyen_de_id=de_thi.chuyen_de_id 
             LEFT JOIN tieu_chi_de_chuyen_de ON de_thi.mo_dun_id=tieu_chi_de_chuyen_de.mo_dun_id LEFT JOIN loai_de_thi ON 
-            loai_de_thi.loai_de_thi_id=de_thi.loai_de_thi_id WHERE de_thi.loai_de_thi_id=1 AND ${filter} AND de_thi.kct_id <> 1
+            loai_de_thi.loai_de_thi_id=de_thi.loai_de_thi_id WHERE de_thi.loai_de_thi_id=1 AND ${filter} AND (de_thi.kct_id <> 1 OR de_thi.kct_id IS NULL)
         ) 
         UNION (
             SELECT de_thi.de_thi_id, de_thi.anh_dai_dien, de_thi.ten_de_thi, de_thi.trang_thai, de_thi.ngay_tao, loai_de_thi.mo_ta, loai_de_thi.loai_de_thi_id,
             de_thi.de_mau, khoa_hoc.ten_khoa_hoc, mo_dun.ten_mo_dun, 'No' AS ten_chuyen_de, de_thi.xuat_ban, tieu_chi_de_mo_dun.so_cau_hoi, 
             tieu_chi_de_mo_dun.thoi_gian FROM de_thi LEFT JOIN khoa_hoc ON de_thi.khoa_hoc_id=khoa_hoc.khoa_hoc_id 
             LEFT JOIN mo_dun ON de_thi.mo_dun_id=mo_dun.mo_dun_id LEFT JOIN tieu_chi_de_mo_dun ON de_thi.mo_dun_id=tieu_chi_de_mo_dun.mo_dun_id 
-            LEFT JOIN loai_de_thi ON loai_de_thi.loai_de_thi_id=de_thi.loai_de_thi_id WHERE de_thi.loai_de_thi_id=2 AND ${filter} AND de_thi.kct_id <> 1
+            LEFT JOIN loai_de_thi ON loai_de_thi.loai_de_thi_id=de_thi.loai_de_thi_id WHERE de_thi.loai_de_thi_id=2 AND ${filter} AND (de_thi.kct_id <> 1 OR de_thi.kct_id IS NULL)
         ) 
         UNION (
             SELECT de_thi.de_thi_id, de_thi.anh_dai_dien, de_thi.ten_de_thi, de_thi.trang_thai, de_thi.ngay_tao, loai_de_thi.mo_ta, loai_de_thi.loai_de_thi_id, 
             de_thi.de_mau, khoa_hoc.ten_khoa_hoc, 'No' AS ten_mo_dun, 'No' AS ten_chuyen_de, de_thi.xuat_ban, tieu_chi_de_tong_hop.so_cau_hoi, 
             tieu_chi_de_tong_hop.thoi_gian FROM de_thi LEFT JOIN khoa_hoc ON de_thi.khoa_hoc_id=khoa_hoc.khoa_hoc_id LEFT JOIN tieu_chi_de_tong_hop ON 
             de_thi.khoa_hoc_id=tieu_chi_de_tong_hop.khoa_hoc_id LEFT JOIN loai_de_thi ON loai_de_thi.loai_de_thi_id=de_thi.loai_de_thi_id 
-            WHERE de_thi.loai_de_thi_id=3 AND ${filter} AND de_thi.kct_id <> 1
+            WHERE de_thi.loai_de_thi_id=3 AND ${filter} AND (de_thi.kct_id <> 1 OR de_thi.kct_id IS NULL)
         ) 
         UNION (
             SELECT de_thi.de_thi_id, de_thi.anh_dai_dien, de_thi.ten_de_thi, de_thi.trang_thai, de_thi.ngay_tao, loai_de_thi.mo_ta, loai_de_thi.loai_de_thi_id, 
             de_thi.de_mau, khoa_hoc.ten_khoa_hoc, 'No' AS ten_mo_dun, 'No' AS ten_chuyen_de, de_thi.xuat_ban, tieu_chi_de_thi_online.so_cau_hoi, 
             tieu_chi_de_thi_online.thoi_gian FROM de_thi LEFT JOIN khoa_hoc ON de_thi.khoa_hoc_id=khoa_hoc.khoa_hoc_id LEFT JOIN tieu_chi_de_thi_online ON
             de_thi.khoa_hoc_id=tieu_chi_de_thi_online.khoa_hoc_id LEFT JOIN loai_de_thi ON loai_de_thi.loai_de_thi_id=de_thi.loai_de_thi_id 
-            WHERE de_thi.loai_de_thi_id=4 AND ${filter} AND de_thi.kct_id <> 1)
+            WHERE de_thi.loai_de_thi_id=4 AND ${filter} AND (de_thi.kct_id <> 1 OR de_thi.kct_id IS NULL))
         ) AS exam ORDER BY exam.ten_de_thi ASC`,
         {
             replacements: {
@@ -330,28 +330,28 @@ const getAll_admin = async (req, res) => {
             tieu_chi_de_chuyen_de.thoi_gian FROM de_thi LEFT JOIN khoa_hoc ON de_thi.khoa_hoc_id=khoa_hoc.khoa_hoc_id LEFT JOIN 
             mo_dun ON de_thi.mo_dun_id=mo_dun.mo_dun_id LEFT JOIN chuyen_de ON chuyen_de.chuyen_de_id=de_thi.chuyen_de_id 
             LEFT JOIN tieu_chi_de_chuyen_de ON de_thi.mo_dun_id=tieu_chi_de_chuyen_de.mo_dun_id LEFT JOIN loai_de_thi ON 
-            loai_de_thi.loai_de_thi_id=de_thi.loai_de_thi_id WHERE de_thi.loai_de_thi_id=1 AND ${filter} AND de_thi.kct_id <> 1
+            loai_de_thi.loai_de_thi_id=de_thi.loai_de_thi_id WHERE de_thi.loai_de_thi_id=1 AND ${filter} AND (de_thi.kct_id <> 1 OR de_thi.kct_id IS NULL)
         ) 
         UNION (
             SELECT de_thi.de_thi_id, de_thi.anh_dai_dien, de_thi.ten_de_thi, de_thi.trang_thai, de_thi.ngay_tao, loai_de_thi.mo_ta, loai_de_thi.loai_de_thi_id,
             de_thi.de_mau, khoa_hoc.ten_khoa_hoc, mo_dun.ten_mo_dun, 'No' AS ten_chuyen_de, de_thi.xuat_ban, tieu_chi_de_mo_dun.so_cau_hoi, 
             tieu_chi_de_mo_dun.thoi_gian FROM de_thi LEFT JOIN khoa_hoc ON de_thi.khoa_hoc_id=khoa_hoc.khoa_hoc_id 
             LEFT JOIN mo_dun ON de_thi.mo_dun_id=mo_dun.mo_dun_id LEFT JOIN tieu_chi_de_mo_dun ON de_thi.mo_dun_id=tieu_chi_de_mo_dun.mo_dun_id 
-            LEFT JOIN loai_de_thi ON loai_de_thi.loai_de_thi_id=de_thi.loai_de_thi_id WHERE de_thi.loai_de_thi_id=2 AND ${filter} AND de_thi.kct_id <> 1
+            LEFT JOIN loai_de_thi ON loai_de_thi.loai_de_thi_id=de_thi.loai_de_thi_id WHERE de_thi.loai_de_thi_id=2 AND ${filter} AND (de_thi.kct_id <> 1 OR de_thi.kct_id IS NULL)
         ) 
         UNION (
             SELECT de_thi.de_thi_id, de_thi.anh_dai_dien, de_thi.ten_de_thi, de_thi.trang_thai, de_thi.ngay_tao, loai_de_thi.mo_ta, loai_de_thi.loai_de_thi_id, 
             de_thi.de_mau, khoa_hoc.ten_khoa_hoc, 'No' AS ten_mo_dun, 'No' AS ten_chuyen_de, de_thi.xuat_ban, tieu_chi_de_tong_hop.so_cau_hoi, 
             tieu_chi_de_tong_hop.thoi_gian FROM de_thi LEFT JOIN khoa_hoc ON de_thi.khoa_hoc_id=khoa_hoc.khoa_hoc_id LEFT JOIN tieu_chi_de_tong_hop ON 
             de_thi.khoa_hoc_id=tieu_chi_de_tong_hop.khoa_hoc_id LEFT JOIN loai_de_thi ON loai_de_thi.loai_de_thi_id=de_thi.loai_de_thi_id 
-            WHERE de_thi.loai_de_thi_id=3 AND ${filter} AND de_thi.kct_id <> 1
+            WHERE de_thi.loai_de_thi_id=3 AND ${filter} AND (de_thi.kct_id <> 1 OR de_thi.kct_id IS NULL)
         ) 
         UNION (
             SELECT de_thi.de_thi_id, de_thi.anh_dai_dien, de_thi.ten_de_thi, de_thi.trang_thai, de_thi.ngay_tao, loai_de_thi.mo_ta, loai_de_thi.loai_de_thi_id, 
             de_thi.de_mau, khoa_hoc.ten_khoa_hoc, 'No' AS ten_mo_dun, 'No' AS ten_chuyen_de, de_thi.xuat_ban, tieu_chi_de_thi_online.so_cau_hoi, 
             tieu_chi_de_thi_online.thoi_gian FROM de_thi LEFT JOIN khoa_hoc ON de_thi.khoa_hoc_id=khoa_hoc.khoa_hoc_id LEFT JOIN tieu_chi_de_thi_online ON
             de_thi.khoa_hoc_id=tieu_chi_de_thi_online.khoa_hoc_id LEFT JOIN loai_de_thi ON loai_de_thi.loai_de_thi_id=de_thi.loai_de_thi_id 
-            WHERE de_thi.loai_de_thi_id=4 AND ${filter} AND de_thi.kct_id <> 1)
+            WHERE de_thi.loai_de_thi_id=4 AND ${filter} AND (de_thi.kct_id <> 1 OR de_thi.kct_id IS NULL))
         ) AS exam ORDER BY exam.ten_de_thi ASC LIMIT :offset, :limit`,
         {
             replacements: {
