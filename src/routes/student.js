@@ -12,6 +12,12 @@ router.post(
     upload.single('anh_dai_dien'),
     tryCatch(studentController.postCreate)
 );
+router.post(
+    '/create-by-prefix',
+    authToken,
+    authRole([2], 2),
+    tryCatch(studentController.postCreateMoreByPrefix)
+);
 
 router.post(
     '/adminCreate',
