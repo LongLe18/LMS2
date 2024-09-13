@@ -5,40 +5,41 @@ import './css/Testimonials.css';
 
 import { Helmet } from 'react-helmet';
 import { Link, useParams } from "react-router-dom";
-import Hashids from 'hashids';
 
 // helper
+import Hashids from 'hashids';
 import defaultImage from 'assets/img/default.jpg';
 import config from '../../../../configs/index';
-// import moment from "moment";
-// import useFetch from "hooks/useFetch";
-
 // component
 import { Layout, Row, Col, Button, Input, Select, Form, Menu } from 'antd';
 import CarouselCustom from 'components/parts/Carousel/Carousel';
 // import CardSlider from 'components/parts/CardSlider/CardSlier';
 import { BookOutlined, BarsOutlined, } from '@ant-design/icons';
 
+// hooks
+import useFetch from "hooks/useFetch";
+
 // redux
 import { useSelector, useDispatch } from 'react-redux';
 import * as courseAction from '../../../../redux/actions/course';
 import * as programmeAction from '../../../../redux/actions/programme';
+import * as receiptAction from '../../../../redux/actions/receipt';
 import Statisic from "components/parts/statisic/Statisic";
 
 const { Content } = Layout;
 const { Option } = Select;
 
-const BusinessTypeProgramePage = (props) => {
+const BusinessTypeProgramePageUser = (props) => {
     const idTypeKCT = useParams().idTypeKCT;
     const hashids = new Hashids();
     // eslint-disable-next-line no-unused-vars
     const [dataInit, setDataInit] = useState([]);
     const [dataSearch, setDataSearch] = useState([]);
-    // const [courseOfUser] = useFetch(`/student/list/course`);
     
     const dispatch = useDispatch();
 
     const [form] = Form.useForm();
+    const [courseOfUser] = useFetch(`/student/list/course`);
     const courses = useSelector(state => state.course.list.result);
     const programmes = useSelector(state => state.programme.list.result);
     const programmeCourses = useSelector(state => state.programme.courses.result);
@@ -59,8 +60,9 @@ const BusinessTypeProgramePage = (props) => {
         }));
         dispatch(programmeAction.getProgrammes({ status: '' }));
         dispatch(programmeAction.getProgrammeCourses());
+        dispatch(receiptAction.getRECEIPTsUser({ status: 1 }));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
-    
+
     const renderProgramme = () => {
         let options = [];
         if (programmes.status === 'success') {
@@ -76,25 +78,6 @@ const BusinessTypeProgramePage = (props) => {
             >
                 <Option value='' >Tất cả</Option>
                 {options}
-            </Select>
-        );
-    };
-
-    const renderLinhVuc = () => {
-        // let options = [];
-        // if (programmes.status === 'success') {
-        //     options = programmes.data.map((programme) => (
-        //         <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
-        //     ))
-        // }
-        return (
-            <Select
-                showSearch={false}
-                placeholder="Chọn lĩnh vực"
-                maxTagCount="responsive"
-            >   
-                <Option value='' >Tất cả</Option>
-                {/* {options} */}
             </Select>
         );
     };
@@ -227,15 +210,6 @@ const BusinessTypeProgramePage = (props) => {
                                     <Col xl={6} md={6} xs={24}>
                                         <Form.Item 
                                             className="input-col"
-                                            initialValue={''}
-                                            name="linh_vuc_id"
-                                            rules={[]} >
-                                                {renderLinhVuc()}
-                                        </Form.Item>  
-                                    </Col>
-                                    <Col xl={6} md={6} xs={24}>
-                                        <Form.Item 
-                                            className="input-col"
                                             name="ten_khoa_hoc"
                                             rules={[]} >
                                                 <Input placeholder="Nhập tên khóa học"/>
@@ -302,7 +276,7 @@ const BusinessTypeProgramePage = (props) => {
                                             <b></b>
                                         </h3>
                                         <Row gutter={[16, 16]} className="list-cate-items">
-                                            {courses.status === 'success' && courses.data.filter(course => course.loai_kct === item.id).map((cate, index) => {
+                                            {courseOfUser.filter(course => course.loai_kct === item.id).map((cate, index) => {
                                                 return (
                                                     <Col xl={5} sm={12} xs={12} className="course-cate-row" key={cate.key}>
                                                         <div className="course-cate-box">
@@ -334,33 +308,6 @@ const BusinessTypeProgramePage = (props) => {
                             })
                         }
                     </Row>
-                
-                    {/* {(courses.status === 'success' && programmes.status === 'success' && programmes.data.length > 0) && 
-                        typeProgramme.filter((type) => type.id === idTypeKCT).map((item, index) => {
-                            return (
-                                <div>
-                                    <h3 className="section-title section-title-center" 
-                                        style={{justifyContent: 'center', textTransform: 'uppercase', color: 'green', marginTop: 12, fontWeight: 700}}
-                                    >
-                                        {item.name}
-                                    </h3>
-                                    <div key={index} className="main-section" id={item.idElement}>
-                                        <div className="header-section">
-                                            <h3 className="section-title section-title-center" style={{marginBottom: 0}}>
-                                                <span className="section-title-main">{item.name}</span>
-                                            </h3>
-                                            <Link style={{borderRadius: 8, margin: '12px 15px'}} className="ant-btn ant-btn-default ant-btn-lg"
-                                                to={`/luyen-tap/chuong-trinh/${khoa_hoc_id}`}
-                                            >
-                                                Xem tất cả >
-                                            </Link>
-                                        </div>
-                                        {programmes.data.length > 0 && <CardSlider courses={courses.data.filter(course => course.loai_kct === item.id)} id={index }/>}
-                                    </div>
-                                </div>
-                            )
-                        })
-                    } */}
                 </div>
             </div>
         )
@@ -369,7 +316,7 @@ const BusinessTypeProgramePage = (props) => {
     return (
         <Layout className="main-app">
             <Helmet>
-                <title>Danh sách khóa học</title>
+                <title>Danh sách khóa học của bạn theo </title>
             </Helmet>
             <Content className="app-content ">
                 {renderCourses()}
@@ -378,4 +325,4 @@ const BusinessTypeProgramePage = (props) => {
     )
 }
 
-export default BusinessTypeProgramePage;
+export default BusinessTypeProgramePageUser;

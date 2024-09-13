@@ -132,7 +132,7 @@ const CoursesUser = (props) => {
                                                     </h3>
                                                     <Link style={{borderRadius: 8, margin: '12px 15px', display: 'flex', alignItems: 'center', padding: '0px 16px'}} 
                                                         className="ant-btn ant-btn-default ant-btn-lg"
-                                                        to={`/luyen-tap/loai-chuong-trinh/${item.id}`}
+                                                        to={`/luyen-tap/khoa-hoc-cua-ban/${item.id}`}
                                                     >
                                                         Xem tất cả <RightOutlined style={{marginLeft: 8}}/>
                                                     </Link>
@@ -226,7 +226,7 @@ const CoursesUser = (props) => {
                         </div>
                     </div>
                 </Col>
-                <Col span={4} className="list-course-advertisement" style={{paddingRight: 12}}>
+                <Col span={4} className="list-course-advertisement" >
                     <SideBarComponent />
                 </Col>
             </Row>

@@ -283,7 +283,7 @@ const OnlineExamDetailPage = () => {
                         Câu {index + 1} 
                         <span className="point">
                             {/* [{question.cau_hoi.diem} điểm] */}
-                            {majors.data.filter((marjor) => marjor.chuyen_nganh_id === question.cau_hoi.chuyen_nganh_id)[0].ten_chuyen_nganh}
+                            {majors.data.filter((marjor) => marjor.chuyen_nganh_id === question.cau_hoi.chuyen_nganh_id)[0]?.ten_chuyen_nganh}
                             {question.cau_hoi.loai_cau_hoi === 2 && 'Câu hỏi đúng sai'}
                         </span>
                     </div>
@@ -367,7 +367,7 @@ const OnlineExamDetailPage = () => {
         let options = [];
         if (majors.status === 'success') {
           options = majors.data.map((major) => (
-            <Option key={major.chuyen_nganh_id} value={major.chuyen_nganh_id} >{major.ten_chuyen_nganh}</Option>
+            <Option key={major.chuyen_nganh_id} value={major.chuyen_nganh_id} >{major?.ten_chuyen_nganh}</Option>
           ))
         }
         return (
@@ -758,7 +758,7 @@ const OnlineExamDetailPage = () => {
                                                             </div>
                                                             <div className="dashboard-stat stat-user">
                                                                 <div className="desc">
-                                                                {major.ten_chuyen_nganh} <RightOutlined />
+                                                                {major?.ten_chuyen_nganh} <RightOutlined />
                                                                 </div>
                                                             </div>
                                                         </div>

@@ -3,6 +3,7 @@ import './css/CourseCates.css';
 import './css/business.css';
 import './css/Testimonials.css';
 
+import Hashids from 'hashids';
 import { Helmet } from 'react-helmet';
 import { Link, useParams } from 'react-router-dom';
 // helper
@@ -30,6 +31,7 @@ import Statisic from 'components/parts/statisic/Statisic';
 const { Content } = Layout;
 
 const BusinessProgramePage = (props) => {
+    const hashids = new Hashids();
     const [form] = Form.useForm();
     const captchaRef = useRef(null);
     // let history = useHistory();
@@ -284,7 +286,7 @@ const BusinessProgramePage = (props) => {
                                                 {item.children?.map((child, index) => {
                                                     return (
                                                         <Menu.Item key={child.key}>
-                                                            <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${child.key}`}>{child.label}</Link>
+                                                            <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${hashids.encode(child.key)}`}>{child.label}</Link>
                                                         </Menu.Item>
                                                     )
                                                 })}
@@ -323,7 +325,7 @@ const BusinessProgramePage = (props) => {
                                                             <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
                                                         </Link>
                                                     } */}
-                                                    <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>
+                                                    <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${hashids.encode(cate.khoa_hoc_id)}`}>
                                                         <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
                                                     </Link>
                                                 </div>
@@ -335,12 +337,12 @@ const BusinessProgramePage = (props) => {
                                                                 {cate.ten_khoa_hoc}
                                                             </Button> */}
                                                             <h3 className="course-cate-title">
-                                                                <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>{cate.ten_khoa_hoc}</Link>
+                                                                <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${hashids.encode(cate.khoa_hoc_id)}`}>{cate.ten_khoa_hoc}</Link>
                                                             </h3>
                                                             <p className="course-cate-description">
                                                                 {/* <span>Ngày bắt đầu: {moment(cate.ngay_bat_dau).format(config.DATE_FORMAT_SHORT)}</span>
                                                                 <span>Ngày kết thúc: {moment(cate.ngay_ket_thuc).format(config.DATE_FORMAT_SHORT)}</span> */}
-                                                                <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`} >
+                                                                <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${hashids.encode(cate.khoa_hoc_id)}`} >
                                                                     <Button type="primary" style={{margin: '12px 0 12px 0', fontSize: 12, borderRadius: 4}}>
                                                                         Chi tiết
                                                                     </Button>
@@ -350,12 +352,12 @@ const BusinessProgramePage = (props) => {
                                                     :
                                                         <>
                                                             <h3 className="course-cate-title">
-                                                                <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>{cate.ten_khoa_hoc}</Link>
+                                                                <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${hashids.encode(cate.khoa_hoc_id)}`}>{cate.ten_khoa_hoc}</Link>
                                                             </h3>
                                                             <p className="course-cate-description">
                                                                 <span>Ngày bắt đầu: {moment(cate.ngay_bat_dau).format(config.DATE_FORMAT_SHORT)}</span>
                                                                 <span>Ngày kết thúc: {moment(cate.ngay_ket_thuc).format(config.DATE_FORMAT_SHORT)}</span>
-                                                                <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`} >
+                                                                <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${hashids.encode(cate.khoa_hoc_id)}`} >
                                                                     <Button type="primary" style={{margin: '12px 0 12px 0', fontSize: 12, borderRadius: 4}}>
                                                                         Chi tiết
                                                                     </Button>

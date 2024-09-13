@@ -70,7 +70,7 @@ const ExamAdminPage = () => {
     useEffect(() => {
       dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, 
         idThematic: filter.chuyen_de_id, status: '', search: filter.search, 
-        start: filter.start, end: filter.end, idType: filter.typeId, publish: 1, 
+        start: filter.start, end: filter.end, idType: filter.typeId, publish: 0, 
         offset: pageIndex, limit: pageSize 
       }));
       dispatch(typeExamActions.getTypes());
@@ -85,7 +85,7 @@ const ExamAdminPage = () => {
         showThematic: false,
         onlineExam: false,
     });
-    const [tabs, setTabs] = useState(1);
+    const [tabs, setTabs] = useState(0);
 
     if (exams.status === 'success') {
         exams.data.map((exam, index) => {
@@ -197,10 +197,11 @@ const ExamAdminPage = () => {
           // Redirect view for edit
           render: (de_thi_id, de_thi) => (
             <Col>
-              <Link to={ de_thi.loai_de_thi_id === 4 ? `/admin/onlineExam/detail/${de_thi.de_thi_id}?loai_de_thi=ONLUYEN`  : `/admin/exam/detail/${de_thi.de_thi_id}?loai_de_thi=ONLUYEN` } type="button" className="ant-btn ant-btn-round ant-btn-primary" 
+              <a href={ de_thi.loai_de_thi_id === 4 ? `/admin/onlineExam/detail/${de_thi.de_thi_id}?loai_de_thi=ONLUYEN`  : `/admin/exam/detail/${de_thi.de_thi_id}?loai_de_thi=ONLUYEN` } type="button" className="ant-btn ant-btn-round ant-btn-primary" 
                 style={{display: de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}}
-                >Xem
-              </Link>
+              >
+                Xem
+              </a>
               {de_thi.trang_thai === 0 ?
                   <Tooltip title={`Mở khóa đề thi`} color="#2db7f5" placement="bottom">
                       <Button shape="round" type="primary" 
@@ -415,11 +416,9 @@ const ExamAdminPage = () => {
           <>
               <h2 className="form-title">Tạo đề thi</h2>
               <Form form={form} className="login-form app-form" name="login-form" onFinish={createExam}
-                  labelCol={{
-                      span: 6,
-                  }} >
+                  labelCol={{span: 6,}}>
                   <Form.Item label='Mã đề thi' name="de_thi_ma" rules={[{ required: true, message: 'Mã đề thi là bắt buộc'}]}>
-                      <Input size="normal" placeholder="Tên đề thi" />
+                      <Input size="normal" placeholder="Mã đề thi" />
                   </Form.Item>
                   <Form.Item label='Tên đề thi' name="ten_de_thi" rules={[{ required: true, message: 'Tên đề thi là bắt buộc'}]}>
                       <Input size="normal" placeholder="Tên đề thi" />
@@ -788,24 +787,24 @@ const ExamAdminPage = () => {
 
             </Col>
         </Row>
-        <Tabs defaultActiveKey="1" type="card" onChange={changeTab}>
-            <TabPane tab="Đề đã xuất bản" key="1">
-              <Table className="table-striped-rows" columns={column1} dataSource={data} pagination={false}/>
-              <Pagination style={{marginTop: 12}}
-                showSizeChanger
-                onShowSizeChange={onShowSizeChange}
-                pageSize={pageSize}
-                onChange={onChange}
-                defaultCurrent={pageIndex + 1}
-                total={exams?.total}
-              />
-            </TabPane>
+        <Tabs defaultActiveKey="0" type="card" onChange={changeTab}>
             <TabPane tab="Đề chưa xuất bản" key="0">
               <Table className="table-striped-rows" columns={column1} dataSource={data} pagination={false}/>
               <Pagination style={{marginTop: 12}}
                 showSizeChanger
                 pageSize={pageSize}
                 onShowSizeChange={onShowSizeChange}
+                onChange={onChange}
+                defaultCurrent={pageIndex + 1}
+                total={exams?.total}
+              />
+            </TabPane>
+            <TabPane tab="Đề đã xuất bản" key="1">
+              <Table className="table-striped-rows" columns={column1} dataSource={data} pagination={false}/>
+              <Pagination style={{marginTop: 12}}
+                showSizeChanger
+                onShowSizeChange={onShowSizeChange}
+                pageSize={pageSize}
                 onChange={onChange}
                 defaultCurrent={pageIndex + 1}
                 total={exams?.total}

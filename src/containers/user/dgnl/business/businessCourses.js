@@ -5,6 +5,7 @@ import './css/Testimonials.css';
 
 import { Helmet } from 'react-helmet';
 import { Link } from "react-router-dom";
+import Hashids from 'hashids';
 
 // helper
 import defaultImage from 'assets/img/default.jpg';
@@ -29,6 +30,8 @@ const { Option } = Select;
 
 const CoursesPage = (props) => {
     // eslint-disable-next-line no-unused-vars
+    const hashids = new Hashids();
+
     const [dataInit, setDataInit] = useState([]);
     const [dataSearch, setDataSearch] = useState([]);
     const [courseOfUser] = useFetch(`/student/list/course`);
@@ -190,7 +193,7 @@ const CoursesPage = (props) => {
                                                 {item.children?.map((child, index) => {
                                                     return (
                                                         <Menu.Item key={child.key} >
-                                                            <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${child.key}`}>{child.label}</Link>
+                                                            <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${hashids.encode(child.key)}`}>{child.label}</Link>
                                                         </Menu.Item>
                                                     )
                                                 })}
@@ -310,28 +313,35 @@ const CoursesPage = (props) => {
 
                     {dataSearch.length > 0 && (
                         <>
-                            <h2 className="section-title section-title-center">
+                            <h3 className="section-title section-title-center" 
+                                style={{justifyContent: 'center', textTransform: 'uppercase', color: 'green', marginTop: 24, fontWeight: 700}}
+                            >
                                 <b></b>
-                                <span className="section-title-main">KẾT QUẢ TÌM KIẾM</span>
+                                <MenuOutlined style={{color: 'rgb(21, 87, 21)', fontSize: 20, marginLeft: 6}}/>
+                                <span style={{justifyContent: 'center', textTransform: 'uppercase', 
+                                    color: 'rgb(21, 87, 21)', fontWeight: 700, margin: '0 15px'}}
+                                >
+                                    KẾT QUẢ TÌM KIẾM
+                                </span>
                                 <b></b>
-                            </h2>
+                            </h3>
                             <Row gutter={[16, 16]} className="list-cate-items">
                                 {dataSearch.map((cate, index) => {
                                     return (
                                         <Col xl={6} sm={12} xs={12} className="course-cate-row" key={cate.khoa_hoc_id}>
                                             <div className="course-cate-box">
                                                 <div className="image-box">
-                                                    <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>
+                                                    <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${hashids.encode(cate.khoa_hoc_id)}`}>
                                                         <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
                                                     </Link>
                                                 </div>
                                                 <div className="box-text">
                                                     <h3 className="course-cate-title">
-                                                        <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`}>{cate.ten_khoa_hoc}</Link>
+                                                        <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${hashids.encode(cate.khoa_hoc_id)}`}>{cate.ten_khoa_hoc}</Link>
                                                     </h3>
                                                     <p className="course-cate-description">
                                                         {/* Ngày bắt đầu: {moment(cate.ngay_bat_dau).format(config.DATE_FORMAT_SHORT)} */}
-                                                        <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${cate.khoa_hoc_id}`} >
+                                                        <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${hashids.encode(cate.khoa_hoc_id)}`} >
                                                             <Button type="primary" style={{margin: '12px 0 12px 0', fontSize: 12, borderRadius: 4}}>
                                                                 Chi tiết
                                                             </Button>

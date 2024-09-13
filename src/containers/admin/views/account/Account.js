@@ -8,8 +8,8 @@ import ReactExport from "react-export-excel";
 
 // antd
 import { Table, Tag, Button, Row, Col, notification, Space, Form, Input, Avatar, 
-  Upload, message, Select, DatePicker, Pagination, Modal } from 'antd';
-import { UploadOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+  Upload, message, Select, DatePicker, Pagination, Modal, InputNumber } from 'antd';
+import { UploadOutlined, ExclamationCircleOutlined, EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 
 // redux
 import * as userAction from '../../../../redux/actions/user';
@@ -34,12 +34,14 @@ const AccountPage = () => {
     const [allData, setAllData] = useState([]);
     const [form] = Form.useForm();
     const [form2] = Form.useForm();
+    const [formFastlyCreateModal] = Form.useForm();
 
     const dispatch = useDispatch();
     const [pageIndex, setPageIndex] = useState(1);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [pageSize, setPageSize] = useState(10);
     const [visiable, setVisible] = useState(false);
+    const [visiableFastlyCreateAccount, setVisibleFastlyCreateAccount] = useState(false);
     const [province, setProvinces] = useState([]);
 
     const student = useSelector(state => state.user.user.result);
@@ -624,6 +626,60 @@ const AccountPage = () => {
       document.getElementsByClassName('cate-form-block')[0].scrollIntoView();
     }
 
+    const modalFastlyCreateAccount = () => {
+      return (
+        <Form form={formFastlyCreateModal} className="login-form app-form" name="login-form" onFinish={onSubmitFastlyCreateAccount}>
+          <h3 className="form-title">Tạo nhanh học viên</h3>
+            <Form.Item name="tien_to" label="Tiền tố" rules={[{ required: true, message: 'Bạn chưa nhập tiền tố'}]}>
+              <Input size="normal" placeholder="Tiền tố" />
+            </Form.Item>
+            <Form.Item name="so_luong" label="Số lượng" rules={[{ required: true, message: 'Bạn chưa nhập số lượng'}]}>
+              <InputNumber size="normal" placeholder="Số lượng" />
+            </Form.Item>
+            <Form.Item label="Mật khẩu" name="mat_khau" rules={[
+                { required: true, message: 'Mật khẩu là trường bắt buộc' }, 
+                { pattern: new RegExp(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/), 
+                        message: 'Mật khẩu chưa đúng dạng gồm: Chữ hoa, chữ thường, ký tự đặc biệt, số, ít nhất 8 kí tự' 
+                }
+                ]}
+            >
+                <Input.Password size="normal" placeholder='Mật khẩu' iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)} />
+            </Form.Item>
+            <Form.Item className="center-buttons">
+                <Button type="primary" shape="round" htmlType="submit" className="btn-login">
+                    Thêm
+                </Button>
+            </Form.Item>
+        </Form>
+      )
+    };
+
+    // Hàm call api tạo nhanh tài khoản
+    const onSubmitFastlyCreateAccount = () => {
+      axios.post(config.API_URL + '/student/create-by-prefix', 
+        formFastlyCreateModal.getFieldsValue(), {headers: {
+          Authorization: `Bearer ${localStorage.getItem('userToken')}`
+        }})
+        .then(
+            res => {
+                if (res.status === 200 && res.statusText === 'OK') {
+                  setVisibleFastlyCreateAccount(false);
+                  notification.success({
+                    message: 'Thành công',
+                    description: 'Tạo tài khoản thành công',
+                  });
+                  window.location.reload();
+                } else {
+                  notification.error({
+                      message: 'Lỗi',
+                      description: 'Tạo tài khoản chưa thành công',
+                  })
+                }
+            }
+        )
+        .catch(error => notification.error({ message: error.message }));
+    }
+
     return (
       <div className='content'>
         <Col xl={24} className="body-content">
@@ -645,6 +701,7 @@ const AccountPage = () => {
         </Col>
           <Button style={{marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => showModal()} >Thêm vào khóa học</Button>
           <Button type='primary' onClick={() => exportFile()} style={{marginRight: '10px'}}>Trích xuất file</Button>
+          <Button type='primary' onClick={() => setVisibleFastlyCreateAccount(true)} style={{marginRight: '10px'}}>Tạo nhanh học viên</Button>
           <Button type='primary' onClick={() => addNew()} style={{marginRight: '10px'}}>Thêm học viên mới</Button>
           <span>Số học viên đã chọn: {selectedRowKeys.length}/{students.total}</span>
           <ExcelFile filename={'Quản lý học viên'} element={<Button className='download' style={{display: 'none'}}></Button>}>
@@ -659,14 +716,12 @@ const AccountPage = () => {
               </ExcelSheet>
           </ExcelFile>
         <br/>
-          <>
-            <Table className="table-striped-rows" columns={columns} dataSource={data} pagination={false} rowSelection={rowSelection}/>
-            <br/>
-            <div style={{display: 'flex', alignItems: 'center'}}>
-              <Pagination current={pageIndex} onChange={onChange} total={students.total} onShowSizeChange={onShowSizeChange} showSizeChanger defaultPageSize={pageSize}/>
-              <span style={{marginLeft: '10px'}}>Tổng số học viên: <b>{students.total}</b></span>
-            </div>
-          </>
+          <Table className="table-striped-rows" columns={columns} dataSource={data} pagination={false} rowSelection={rowSelection}/>
+          <br/>
+          <div style={{display: 'flex', alignItems: 'center'}}>
+            <Pagination current={pageIndex} onChange={onChange} total={students.total} onShowSizeChange={onShowSizeChange} showSizeChanger defaultPageSize={pageSize}/>
+            <span style={{marginLeft: '10px'}}>Tổng số học viên: <b>{students.total}</b></span>
+          </div>
           {(errorusers) && notification.error({
               message: 'Thông báo',
               description: 'Lấy dữ liệu thành viên thất bại',
@@ -835,6 +890,22 @@ const AccountPage = () => {
             width={500}
           >
             {modalCourse()}
+          </Modal>
+
+          <Modal
+            className="cra-auth-modal"
+            wrapClassName="cra-auth-modal-container"
+            maskStyle={{ background: 'rgba(0, 0, 0, 0.8)' }}
+            maskClosable={false}
+            footer={null}
+            mask={true}
+            centered={true}
+            visible={visiableFastlyCreateAccount}
+            onOk={() => setVisibleFastlyCreateAccount(false)}
+            onCancel={() => setVisibleFastlyCreateAccount(false)}
+            width={500}
+          >
+            {modalFastlyCreateAccount()}
           </Modal>
       </div>
     )

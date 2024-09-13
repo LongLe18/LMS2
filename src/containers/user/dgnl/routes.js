@@ -28,6 +28,7 @@ import CoursesUser from './business/coursesUser';
 import ReceiptUserPage from './business/receiptUser';
 import CheckOutPage from './business/checkout';
 import CheckOutPage2 from './business/checkout2';
+import BusinessTypeProgramePageUser from './business/businessTypeProgrameUser';
 // import MainPageUser from './business/mainPage';
 
 const routes = [
@@ -170,6 +171,13 @@ const routes = [
         exact: true,
         hidden: true,
         render: (props) => <BusinessTypeProgramePage {...props}/>,
+    },
+    {
+        id: 'businessProgrameUser',
+        path: '/luyen-tap/khoa-hoc-cua-ban/:idTypeKCT',
+        exact: true,
+        hidden: true,
+        render: (props) => <BusinessTypeProgramePageUser {...props}/>,
     },
     {
         id: 'introduceCourse',

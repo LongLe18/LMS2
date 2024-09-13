@@ -60,7 +60,7 @@ const ExamDGNLAdminPage = () => {
         publish: '',
     });
     const searchValue = useDebounce(filter.search, 250);
-    const [tabs, setTabs] = useState(1);
+    const [tabs, setTabs] = useState(0);
 
     useEffect(() => {
       dispatch(typeExamActions.getTypes());
@@ -172,10 +172,11 @@ const ExamDGNLAdminPage = () => {
       // Redirect view for edit
       render: (de_thi_id, de_thi) => (
         <Col>
-          <Link to={ de_thi.loai_de_thi_id === 4 ? `/admin/onlineExam/detail/${de_thi.de_thi_id}?loai_de_thi=DGNL`  : `/admin/exam/detail/${de_thi.de_thi_id}?loai_de_thi=DGNL` } type="button" className="ant-btn ant-btn-round ant-btn-primary" 
+          <a href={ de_thi.loai_de_thi_id === 4 ? `/admin/onlineExam/detail/${de_thi.de_thi_id}?loai_de_thi=DGNL`  : `/admin/exam/detail/${de_thi.de_thi_id}?loai_de_thi=DGNL` } type="button" className="ant-btn ant-btn-round ant-btn-primary" 
             style={{display: de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}}
-            >Xem
-          </Link>
+          >
+            Xem
+          </a>
           {de_thi.trang_thai === false ?
               <Tooltip title={`Mở khóa đề thi`} color="#2db7f5" placement="bottom">
                   <Button shape="round" type="primary" 
@@ -728,24 +729,24 @@ const ExamDGNLAdminPage = () => {
 
             </Col>
         </Row>
-        <Tabs defaultActiveKey="1" type="card" onChange={changeTab}>
-            <TabPane tab="Đề đã xuất bản" key="1">
-              <Table className="table-striped-rows" columns={column1} dataSource={data} pagination={false}/>
-              <Pagination style={{marginTop: 12}}
-                showSizeChanger
-                onShowSizeChange={onShowSizeChange}
-                pageSize={pageSize}
-                onChange={onChange}
-                defaultCurrent={pageIndex}
-                total={exams?.total}
-              />
-            </TabPane>
+        <Tabs defaultActiveKey="0" type="card" onChange={changeTab}>
             <TabPane tab="Đề chưa xuất bản" key="0">
               <Table className="table-striped-rows" columns={column1} dataSource={data} pagination={false}/>
               <Pagination style={{marginTop: 12}}
                 showSizeChanger
                 pageSize={pageSize}
                 onShowSizeChange={onShowSizeChange}
+                onChange={onChange}
+                defaultCurrent={pageIndex}
+                total={exams?.total}
+              />
+            </TabPane>
+            <TabPane tab="Đề đã xuất bản" key="1">
+              <Table className="table-striped-rows" columns={column1} dataSource={data} pagination={false}/>
+              <Pagination style={{marginTop: 12}}
+                showSizeChanger
+                onShowSizeChange={onShowSizeChange}
+                pageSize={pageSize}
                 onChange={onChange}
                 defaultCurrent={pageIndex}
                 total={exams?.total}

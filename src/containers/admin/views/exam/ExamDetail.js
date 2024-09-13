@@ -748,675 +748,673 @@ const ExamDetailPage = () => {
     };
 
     return (
-        <>
-            <div className="content">
-                {loading && <LoadingCustom/>}
-                <Row className="app-main" gutter={25}>
-                    <Col xs={24} className="body-content">
-                        <div className='exam-page'>
-                            <Steps current={currentStep}>
-                                <Step title="Thông tin chung" />
-                                <Step title="Danh sách câu hỏi" />
-                                <Step title="Hoàn thành" />
-                            </Steps>
-                        </div>
-                        <Tabs activeKey={`step_${currentStep}`}>
-                        {(exam && exam.status === 'success' && criteria.status === 'success' && questions.status === 'success') &&         
-                        <>        
-                            <TabPane tab="Thông tin" key="step_0">
-                                <Form layout="vertical" className="ExamForm" onFinish={handleSaveExam} form={form}>
-                                    <Row gutter={25}>
-                                        <Col xl={18} sm={24} xs={24} className="left-content">
-                                            <div className="border-box">
-                                                <Row gutter={25}>
-                                                    <Col xl={24} sm={12} xs={24}>
-                                                        <Form.Item
-                                                            initialValue={exam.data.de_thi_ma}
-                                                            className="input-col"
-                                                            label="Mã đề thi"
-                                                            name="de_thi_ma"
-                                                            rules={[]}
-                                                        >
-                                                            <Input placeholder="Mã đề thi"/>
-                                                        </Form.Item>
-                                                    </Col>
-                                                    <Col xl={24} sm={12} xs={24}>
-                                                        <Form.Item
-                                                            initialValue={exam.data.ten_de_thi}
-                                                            className="input-col"
-                                                            label="Tên đề thi"
-                                                            name="ten_de_thi"
-                                                            rules={[
-                                                            {
-                                                                required: true,
-                                                                message: 'Tên đề thi là trường bắt buộc',
-                                                            },
-                                                            ]}
-                                                        >
-                                                            <Input placeholder="Tên đề thi"/>
-                                                        </Form.Item>
-                                                    </Col>
-                                                    <Col xl={7} sm={12} xs={24}>
-                                                        <Form.Item label="Khóa học" name="khoa_hoc_id"  
-                                                            initialValue={exam.data.khoa_hoc_id !== null ? exam.data.khoa_hoc_id : null}>
-                                                            {renderCourse()}
-                                                        </Form.Item>
-                                                    </Col>
-                                                    <Col xl={7} sm={12} xs={24}>
-                                                        <Form.Item label="Mô đun" name="mo_dun_id"
-                                                            initialValue={exam.data.mo_dun_id !== null ? exam.data.mo_dun_id : null}>
-                                                            {renderModule()}
-                                                        </Form.Item>
-                                                    </Col>
-                                                    <Col xl={7} sm={12} xs={24}>
-                                                        <Form.Item label="Chuyên đề" name="chuyen_de_id"
-                                                            initialValue={exam.data.chuyen_de_id !== null ? exam.data.chuyen_de_id : null}>
-                                                            {renderThematic()}
-                                                        </Form.Item>
-                                                    </Col>
-                                                    <Col xl={24} sm={12} xs={24}>
-                                                        <Form.Item className="input-col" label="Hình đại diện" name="anh_dai_dien" rules={[]}>
-                                                            <Dragger {...propsImage} maxCount={1}
-                                                                listType="picture"
-                                                                className="upload-list-inline"
-                                                            >
-                                                                <p className="ant-upload-drag-icon">
-                                                                <UploadOutlined />
-                                                                </p>
-                                                                <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
-                                                            </Dragger>
-                                                        </Form.Item>
-                                                    </Col>
-                                                    {/*  */}
-                                                </Row>
-                                            </div>
-                                        </Col>         
-                                        <Col xl={6} sm={24} xs={24} className="right-content">
-                                            <div className="border-box">
-                                                <Form.Item
-                                                    initialValue={exam.data.loai_de_thi_id}
-                                                    label="Loại đề thi"
-                                                    className="input-col"
-                                                    name="loai_de_thi_id"
-                                                    rules={[
-                                                    {
-                                                        required: true,
-                                                        message: 'Loại đề thi là trường bắt buộc.',
-                                                    },
-                                                    ]}
-                                                >
-                                                    {renderExamCategories()}
-                                                </Form.Item>
-                                            </div>
-                                            <Image
-                                                width={400}
-                                                height={400}
-                                                src={config.API_URL + exam.data.anh_dai_dien}
-                                                fallback="data:image/png;base64,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"
-                                            />
-                                        </Col>
-                                    </Row>                              
-                                </Form>
-                            </TabPane>
-                        
-                            <TabPane tab="Tạo câu hỏi" key="step_1">
-                                <Row gutter={[16, 16]} style={{marginBottom: 12}}>
-                                    {majors?.data.map((major) => (
-                                        <Col xl={4} lg={6} md={12} sm={12} xs={24}>
-                                            <div className="dashboard-stat stat-user">
-                                                <div className="visual"><TeamOutlined /></div>
-                                                <div className="detail">
-                                                    <div className="number">
-                                                        <span>{exam.data.cau_hoi_de_this.filter((cau_hoi) => cau_hoi.cau_hoi.chuyen_nganh_id === major.chuyen_nganh_id).length}</span>
-                                                    </div>
-                                                    <div className="dashboard-stat stat-user">
-                                                        <div className="desc">
-                                                        {major.ten_chuyen_nganh} <RightOutlined />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </Col>
-                                    ))}
-                                </Row>  
-                                <Form layout="vertical" className="QuestionForm" onFinish={handleSaveQuestion} form={questionForm} initialValues={defaultQuestion}>
-                                    <Row gutter={25}>
-                                        <Col xl={18} sm={24} xs={24} className="left-content">
-                                            <div className="border-box question-content">
-                                                <Row gutter={0}>
-                                                    <Col xl={24} sm={24} xs={24}>
-                                                        {state.isEdit && 
-                                                            <Row>
-                                                                <Col>
-                                                                    <Form.Item className="label"><span style={{color: 'red'}}>Bạn đang cập nhật câu hỏi số {state.indexQuestion} (ID câu hỏi: {state.idQuestion})</span></Form.Item>
-                                                                </Col>
-                                                            </Row>
-                                                        }
-                                                        {/* Section đề bài */}
-                                                        <Col xl={24}>
-                                                            <Form.Item className="label">
-                                                                <span style={{ color: '#000', fontWeight: 600 }}>Nội dung</span>
-                                                            </Form.Item>
-                                                        </Col>
-                                                        <Row>         
-                                                            <Col xl={4}>
-                                                                <Form.Item className="label">
-                                                                    <span style={{ color: '#ff4d4f' }}>*</span>Nội dung câu hỏi
-                                                                </Form.Item>
-                                                            </Col>
-                                                            <Col xl={20}>
-                                                                <Form.Item
-                                                                    className="input-col"
-                                                                    label=""
-                                                                    name="noi_dung"
-                                                                    rules={[
-                                                                        {
-                                                                            required: true,
-                                                                            message: 'Nội dung câu hỏi là trường bắt buộc',
-                                                                        },
-                                                                    ]}
-                                                                >
-                                                                    <TextEditorWidget
-                                                                        disabled={state.defaultExam.trang_thai === false}
-                                                                        valueParent={currentQuestion.noi_dung}
-                                                                        placeholder="Thêm nội dung câu hỏi"
-                                                                        onChange={(val) => setCurrentQuestion({ ...currentQuestion, noi_dung: val })}
-                                                                        // openEditor={(val) => setIsOpenEditor(val)}
-                                                                        isSimple={true} 
-                                                                    />
-                                                                </Form.Item>
-                                                            </Col>
-                                                        </Row>
-                                                        <Row>
-                                                            <Col xl={4}>
-                                                                <Form.Item className="label">
-                                                                    <span style={{ color: '#000', fontWeight: 600 }}>Hình ảnh câu hỏi</span>
-                                                                </Form.Item>
-                                                            </Col>
-                                                            <Col xl={20}>
-                                                                <Form.Item
-                                                                    className="input-col"
-                                                                    label=""
-                                                                    name="tep_dinh_kem_noi_dung"
-                                                                >
-                                                                    <Dragger {...propsImage} style={{width: '90%'}} maxCount={1}>
-                                                                        <p className="ant-upload-drag-icon">
-                                                                            <UploadOutlined />
-                                                                        </p>
-                                                                        <p className="ant-upload-text">Kéo thả hình ảnh tại đây</p>
-                                                                        <p className="ant-upload-hint">
-                                                                            Định dạng hình ảnh JPEG/PNG
-                                                                        </p>
-                                                                    </Dragger>
-                                                                </Form.Item>
-                                                            </Col>
-                                                        </Row>
-                                                        {/* Section tuỳ chọn */}
-                                                        <Col xl={24}>
-                                                            <Form.Item className="label">
-                                                                <span style={{ color: '#000', fontWeight: 600 }}>Tùy chọn câu hỏi</span>
-                                                            </Form.Item>
-                                                        </Col>
-                                                        <Row>
-                                                            <Col xl={4}>
-                                                                <Form.Item className="label">
-                                                                    <span>Tùy chọn thêm</span>
-                                                                </Form.Item>
-                                                            </Col>
-                                                            <Col xl={4}>
-                                                                <Form.Item>
-                                                                    <Button type='primary' onClick={() => history.push('/admin/sample/question/' + id)}>Câu hỏi có sẵn</Button>
-                                                                </Form.Item>
-                                                            </Col>
-                                                            <Col xl={3}>
-                                                                <Form.Item>
-                                                                    <Button type='primary' onClick={showModal}>Trích đoạn</Button>
-                                                                </Form.Item>
-                                                            </Col>
-                                                            <Col xl={3}>
-                                                                <Form.Item className="label">
-                                                                    <span>Trích đoạn</span>
-                                                                </Form.Item>
-                                                            </Col>
-                                                            <Col xl={4}>
-                                                                <Form.Item
-                                                                    initialValue={currentQuestion.trich_doan}
-                                                                    value
-                                                                    className="input-col"
-                                                                    label=""
-                                                                    name="trich_doan"
-                                                                    rules={[]}
-                                                                >
-                                                                    <Input placeholder='Trích đoạn sử dụng'/>
-                                                                </Form.Item>
-                                                            </Col>
-                                                        </Row>
-                                                        <Row>
-                                                            <Col xl={4}>
-                                                                <Form.Item className="label">
-                                                                    <span style={{ color: '#ff4d4f' }}>*</span>Loại câu hỏi
-                                                                </Form.Item>
-                                                            </Col>
-                                                            <Col xl={10}>
-                                                                <Form.Item
-                                                                    className="input-col"
-                                                                    label=""
-                                                                    name="loai_cau_hoi"
-                                                                    rules={[
-                                                                        {
-                                                                            required: true,
-                                                                            message: 'Loại câu hỏi là trường bắt buộc',
-                                                                        },
-                                                                    ]}
-                                                                >
-                                                                    <Radio.Group onChange={(type) => handleChangeType(type)} options={constants.QUESTIONS_TYPES} optionType="button" buttonStyle="solid" />
-                                                                </Form.Item>
-                                                            </Col>
-                                                        </Row>
-                                                        <Row>
-                                                            <Col xl={4}>
-                                                                <Form.Item className="label">
-                                                                    <span style={{ color: '#ff4d4f' }}>*</span>Chuyên ngành
-                                                                </Form.Item>
-                                                            </Col>
-                                                            <Col xl={10}>
-                                                                <Form.Item
-                                                                    className="input-col"
-                                                                    label=""
-                                                                    name="chuyen_nganh_id"
-                                                                    rules={[
-                                                                    {
-                                                                        required: true,
-                                                                        message: 'Chuyên ngành là trường bắt buộc',
-                                                                    },
-                                                                    ]}
-                                                                >
-                                                                    {renderMajor()}
-                                                                </Form.Item>
-                                                            </Col>
-                                                            <Col xl={4}>
-                                                                <Form.Item className="label">
-                                                                    <span style={{ color: '#ff4d4f' }}>*</span>Điểm câu hỏi
-                                                                </Form.Item>
-                                                            </Col>
-                                                            <Col xl={6}>
-                                                                <Form.Item
-                                                                    initialValue={currentQuestion.diem}
-                                                                    className="input-col"
-                                                                    label=""
-                                                                    name="diem"
-                                                                    rules={[
-                                                                        {
-                                                                            required: true,
-                                                                            message: 'Điểm là trường bắt buộc',
-                                                                        },
-                                                                    ]}
-                                                                >
-                                                                    <Input  disabled={state.typeQuestion === 2 ? true : false} placeholder="Nhập điểm câu hỏi" style={{width: '60%'}}/>
-                                                                </Form.Item>
-                                                            </Col>  
-
-                                                        </Row>
-                                                        <Row>
-                                                            <Col xl={4}>
-                                                                <Form.Item className="label">
-                                                                    <span style={{ color: '#ff4d4f' }}>*</span>Mức độ câu hỏi
-                                                                </Form.Item>
-                                                            </Col>
-                                                            <Col xl={20}>
-                                                                <Form.Item
-                                                                    className="input-col"
-                                                                    label=""
-                                                                    name="muc_do_cau_hoi"
-                                                                    rules={[
-                                                                    {
-                                                                        required: true,
-                                                                        message: 'Mức độ câu hỏi là trường bắt buộc',
-                                                                    },
-                                                                    ]}
-                                                                >
-                                                                    <Radio.Group options={constants.QUESTIONS_LEVELS} optionType="button" buttonStyle="solid" />
-                                                                </Form.Item>
-                                                            </Col>
-                                                        </Row>
-                                                        <Row>
-                                                            <Col xl={4}>
-                                                                <Form.Item className="label">Mô đun/Học phần</Form.Item>
-                                                            </Col>
-                                                            <Col xl={8}>
-                                                                <Form.Item                                            
-                                                                    initialValue={exam.data.mo_dun_id !== null ? exam.data.mo_dun_id : null}
-                                                                    className="input-col"
-                                                                    label=""
-                                                                    name="mo_dun_id_2"
-                                                                    rules={[]}
-                                                                >
-                                                                    {renderModule2()}
-                                                                </Form.Item>
-                                                            </Col>
-                                                            <Col xl={4}>
-                                                                <Form.Item className="label">Chuyên đề</Form.Item>
-                                                            </Col>
-                                                            <Col xl={8}>
-                                                                <Form.Item
-                                                                    initialValue={exam.data.chuyen_de_id !== null ? exam.data.chuyen_de_id : null}
-                                                                    className="input-col"
-                                                                    label=""
-                                                                    name="chuyen_de_id_2"
-                                                                    rules={[]}
-                                                                >
-                                                                    {renderThematic2()}
-                                                                </Form.Item>
-                                                            </Col>
-                                                        </Row>
-                                                        <Row style={{display: !state.showTuLuan ? '' : 'none'}}>
-                                                            <Col xl={4}>
-                                                                <Form.Item className="label">
-                                                                    <span style={{ color: '#ff4d4f' }}>*</span>Đáp án đúng
-                                                                </Form.Item>
-                                                            </Col>
-                                                            <Col xl={20}>
-                                                                <Form.Item
-                                                                    className="input-col"
-                                                                    label=""
-                                                                    name="dap_an_dung"
-                                                                    rules={[
-                                                                    {
-                                                                        required: !state.showTuLuan,
-                                                                        message: 'Đáp án đúng là trường bắt buộc',
-                                                                    },
-                                                                    ]}
-                                                                >
-                                                                    {renderAnswer()}
-                                                                </Form.Item>
-                                                            </Col>
-                                                        </Row>
-                                                        <Row>
-                                                            <Col xl={4}>
-                                                                <Form.Item className="label"><span style={{ color: '#ff4d4f' }}>*</span>Hiển thị đáp án</Form.Item>
-                                                            </Col>
-                                                            <Col xl={20}>
-                                                                <Form.Item
-                                                                    className="input-col"
-                                                                    label=""
-                                                                    name="kieu_hien_thi_dap_an"
-                                                                    rules={[
-                                                                    {
-                                                                        required: true,
-                                                                        message: 'Hiển thị đáp án',
-                                                                    },
-                                                                    ]}
-                                                                >
-                                                                    <Radio.Group options={constants.EXAM_ANSWER_VIEW_LIST} disabled={state.trang_thai === 'active'} optionType="button" buttonStyle="solid" />
-                                                                </Form.Item>
-                                                            </Col>
-                                                        </Row>
-                                                        {/* Section Đáp án */}
-                                                        <Col xl={24}>
-                                                            <Form.Item className="label">
-                                                                <span style={{ color: '#000', fontWeight: 600 }}>Tùy chọn đáp án</span>
-                                                            </Form.Item>
-                                                        </Col>
-                                                        <Form.List name="dap_an">
-                                                            {(fields, { add, remove }) => (
-                                                                <div className="group-answers">
-                                                                    {fields.map(({ key, name, ...restField }) => ( // loop dap an 
-                                                                        <Row key={key} style={{display: !state.showTuLuan ? '' : 'none'}}>
-                                                                            <Col xl={4}>
-                                                                                <Form.Item {...restField} rules={[]} className="label">
-                                                                                    <span style={{ color: '#ff4d4f' }}>*</span> {currentQuestion?.dap_an[key]?.label}
-                                                                                </Form.Item>
-                                                                            </Col>
-                                                                            <Col xl={20}>
-                                                                                <Form.Item {...restField} name={[name, 'tieu_de']} rules={[{ required: !state.showTuLuan, message: 'Bạn chưa nhập nội dung đáp án' }]}>
-                                                                                    <TextEditorWidget
-                                                                                        valueParent={currentQuestion?.dap_an[key]?.tieu_de}
-                                                                                        placeholder="Thêm nội dung đáp án"
-                                                                                        onChange={(val) => {
-                                                                                            let dap_an = [...currentQuestion.dap_an];
-                                                                                            dap_an[key] = {
-                                                                                            ...dap_an[key],
-                                                                                            tieu_de: val,
-                                                                                            };
-                                                                                            setCurrentQuestion({ ...currentQuestion, dap_an });
-                                                                                        }}
-                                                                                        isSimple={true}
-                                                                                    />
-                                                                                </Form.Item>
-                                                                            </Col>
-                                                                        </Row>
-                                                                    ))}
-                                                                </div>
-                                                            )}
-                                                        </Form.List>
-                                                        {/* câu hỏi Tự luận */}
-                                                        <Form.List name="dap_an_tu_luan">
-                                                            {(fields, { add, remove }) => (
-                                                                <div className="group-answers">
-                                                                    {fields.map(({ key, name, ...restField }) => ( // loop dap an 
-                                                                        <Row key={key} style={{display: state.showTuLuan ? '' : 'none' }}>
-                                                                            <Col xl={4}>
-                                                                                <Form.Item {...restField} rules={[]} className="label">
-                                                                                    <span style={{ color: '#ff4d4f' }}>*</span> {currentQuestion?.dap_an_tu_luan[key]?.label}
-                                                                                </Form.Item>
-                                                                            </Col>
-                                                                            <Col xl={20}>
-                                                                                <Form.Item {...restField} name={[name, 'tieu_de']} rules={[{ required: !state.showTextTuLuan && state.showTuLuan, message: 'Bạn chưa nhập nội dung đáp án' }]} 
-                                                                                    style={{display: !state.showTextTuLuan ? '' : 'none'}}
-                                                                                >
-                                                                                    <TextEditorWidget 
-                                                                                        valueParent={currentQuestion?.dap_an_tu_luan[key]?.tieu_de}
-                                                                                        placeholder="Thêm nội dung đáp án"
-                                                                                        onChange={(val) => {
-                                                                                            let dap_an_tu_luan = [...currentQuestion.dap_an_tu_luan];
-                                                                                            dap_an_tu_luan[key] = {
-                                                                                                ...dap_an_tu_luan[key],
-                                                                                                tieu_de: val,
-                                                                                            };
-                                                                                            setCurrentQuestion({ ...currentQuestion, dap_an_tu_luan });
-                                                                                        }}
-                                                                                        isSimple={true}
-                                                                                    />
-                                                                                </Form.Item>     
-                                                                                <Form.Item {...restField} name={[name, 'tieu_de']} rules={[{ required: state.showTextTuLuan && state.showTuLuan, message: 'Bạn chưa nhập nội dung đáp án' }]}
-                                                                                    style={{display: state.showTextTuLuan ? '' : 'none'}}
-                                                                                >
-                                                                                    <TextArea placeholder='Nhập nội dung đáp án' 
-                                                                                        value={currentQuestion.dap_an_tu_luan[key].tieu_de}
-                                                                                        onChange={(val) => {
-                                                                                            let dap_an_tu_luan = [...currentQuestion.dap_an_tu_luan];
-                                                                                            dap_an_tu_luan[key] = {
-                                                                                                ...dap_an_tu_luan[key],
-                                                                                                tieu_de: val.target.value,
-                                                                                            };
-                                                                                            setCurrentQuestion({ ...currentQuestion, dap_an_tu_luan });
-                                                                                        }}
-                                                                                    />
-                                                                                </Form.Item>
-                                                                            </Col>
-
-                                                                        </Row>
-                                                                    ))}
-                                                                </div>
-                                                            )}
-                                                        </Form.List>
-
-                                                        <Row>
-                                                            <Col xl={4}>
-                                                                <Form.Item className="label">Lời giải</Form.Item>
-                                                            </Col>
-                                                            <Col xl={20}>
-                                                                <Form.Item className="input-col" label="" name="loi_giai" rules={[]}
-                                                                    style={{display: !state.showTextTuLuan2 ? '' : 'none'}}
-                                                                >
-                                                                    <TextEditorWidget
-                                                                        disabled={state.trang_thai === 'active'}
-                                                                        valueParent={currentQuestion.loi_giai}
-                                                                        placeholder="Thêm nội dung lời giải"
-                                                                        onChange={(val) => setCurrentQuestion({ ...currentQuestion, loi_giai: val })}
-                                                                        isSimple={true}
-                                                                    />  
-                                                                </Form.Item>
-                                                                <Form.Item className="input-col" label="" name="loi_giai" rules={[]}
-                                                                    style={{display: state.showTextTuLuan2 ? '' : 'none'}}
-                                                                >
-                                                                    <TextEditorWidget 
-                                                                        valueParent={currentQuestion.loi_giai}
-                                                                        placeholder="Thêm nội dung lời giải"
-                                                                        onChange={(val) => setCurrentQuestion({ ...currentQuestion, loi_giai: val })}
-                                                                        isSimple={true}
-                                                                    />
-                                                                </Form.Item>
-                                                            </Col>
-                                                        </Row>
-                                                    </Col>
-                                                </Row>
-                                            </div>
-                                            <div className="footer-question">
-                                                <Button
-                                                    type="dash"
-                                                    danger
-                                                    onClick={() => {
-                                                        questionForm.resetFields();
-                                                        questionForm.setFieldsValue(defaultQuestion);
-                                                        setCurrentQuestion(defaultQuestion);
-                                                        setIsOpenEditor(false);
-                                                        setState({ ...state, isEdit: false })
-                                                    }}
-                                                    size="large"
-                                                >
-                                                    {state.isEdit ? 'Hủy bỏ' : 'Làm lại'}
-                                                </Button>
-                                                <Button
-                                                    type="primary"
-                                                    onClick={() => {
-                                                        setIsOpenEditor(false);
-                                                        setTimeout(() => {
-                                                            questionForm.submit();
-                                                        }, 600);
-                                                    }}
-                                                    size="large"
-                                                >
-                                                {state.isEdit ? 'Cập nhật' : 'Thêm mới'}
-                                                </Button>
-                                            </div>
-                                        </Col>
-                                        <Col xl={6} sm={24} xs={24} className="right-content " style={{height: 1000, overflowY: 'scroll'}}>
-                                            <div className="box ">
-                                                <div className="box-body ">
-                                                    <div className="border-box question-list mt-0">
-                                                    <h6 style={{padding: "10px 0 0 10px"}}>
-                                                        Danh sách câu hỏi{' '}
-                                                        <span className="counter">
-                                                        {exam.data.cau_hoi_de_this.length}/{criteria.data.so_cau_hoi}
-                                                        </span>
-                                                    </h6>
-                                                    {renderQuestions()}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </Col>
-                                    </Row>
-                                </Form>
-                            </TabPane>
-                        </>       
-                        }
-                            <TabPane tab="Hoàn thành" key="step_2">
+        <div className="content">
+            {loading && <LoadingCustom/>}
+            <Row className="app-main" gutter={25}>
+                <Col xs={24} className="body-content">
+                    <div className='exam-page'>
+                        <Steps current={currentStep}>
+                            <Step title="Thông tin chung" />
+                            <Step title="Danh sách câu hỏi" />
+                            <Step title="Hoàn thành" />
+                        </Steps>
+                    </div>
+                    <Tabs activeKey={`step_${currentStep}`}>
+                    {(exam && exam.status === 'success' && criteria.status === 'success' && questions.status === 'success') &&         
+                    <>        
+                        <TabPane tab="Thông tin" key="step_0">
+                            <Form layout="vertical" className="ExamForm" onFinish={handleSaveExam} form={form}>
                                 <Row gutter={25}>
-                                    <Col xl={24} sm={24} xs={24} className="left-content">
-                                        <Result
-                                            status="success"
-                                            title="Tạo đề thi mới thành công."
-                                            subTitle="Hãy kiểm tra kỹ trước khi tiến hành xuất bản đề thi, đề thi sau khi xuất bản sẽ không thể được cập nhật thêm."
-                                            extra={[
-                                                <Button onClick={() => setCurrentStep(1)}> Kiểm tra lại</Button>,
-                                                <Button
-                                                type="primary"
-                                                onClick={() =>
-                                                    Modal.confirm({
-                                                        title: 'Xuất bản đề thi',
-                                                        content: 'Bạn có chắc chắn muốn xuất bản đề thi này không?',
-                                                        okText: 'Có',
-                                                        cancelText: 'Không',
-                                                        onOk: () => {
-                                                            handlePublishExam();
+                                    <Col xl={18} sm={24} xs={24} className="left-content">
+                                        <div className="border-box">
+                                            <Row gutter={25}>
+                                                <Col xl={24} sm={12} xs={24}>
+                                                    <Form.Item
+                                                        initialValue={exam.data.de_thi_ma}
+                                                        className="input-col"
+                                                        label="Mã đề thi"
+                                                        name="de_thi_ma"
+                                                        rules={[]}
+                                                    >
+                                                        <Input placeholder="Mã đề thi"/>
+                                                    </Form.Item>
+                                                </Col>
+                                                <Col xl={24} sm={12} xs={24}>
+                                                    <Form.Item
+                                                        initialValue={exam.data.ten_de_thi}
+                                                        className="input-col"
+                                                        label="Tên đề thi"
+                                                        name="ten_de_thi"
+                                                        rules={[
+                                                        {
+                                                            required: true,
+                                                            message: 'Tên đề thi là trường bắt buộc',
                                                         },
-                                                    })
-                                                }
-                                                >
-                                                Xuất bản
-                                                </Button>,
-                                                <Button type="primary" onClick={() => window.open(`/luyen-tap/xem-lai/${hashids.encode(id)}`, "_blank")}>Xem toàn đề</Button>,
-                                            ]}
+                                                        ]}
+                                                    >
+                                                        <Input placeholder="Tên đề thi"/>
+                                                    </Form.Item>
+                                                </Col>
+                                                <Col xl={7} sm={12} xs={24}>
+                                                    <Form.Item label="Khóa học" name="khoa_hoc_id"  
+                                                        initialValue={exam.data.khoa_hoc_id !== null ? exam.data.khoa_hoc_id : null}>
+                                                        {renderCourse()}
+                                                    </Form.Item>
+                                                </Col>
+                                                <Col xl={7} sm={12} xs={24}>
+                                                    <Form.Item label="Mô đun" name="mo_dun_id"
+                                                        initialValue={exam.data.mo_dun_id !== null ? exam.data.mo_dun_id : null}>
+                                                        {renderModule()}
+                                                    </Form.Item>
+                                                </Col>
+                                                <Col xl={7} sm={12} xs={24}>
+                                                    <Form.Item label="Chuyên đề" name="chuyen_de_id"
+                                                        initialValue={exam.data.chuyen_de_id !== null ? exam.data.chuyen_de_id : null}>
+                                                        {renderThematic()}
+                                                    </Form.Item>
+                                                </Col>
+                                                <Col xl={24} sm={12} xs={24}>
+                                                    <Form.Item className="input-col" label="Hình đại diện" name="anh_dai_dien" rules={[]}>
+                                                        <Dragger {...propsImage} maxCount={1}
+                                                            listType="picture"
+                                                            className="upload-list-inline"
+                                                        >
+                                                            <p className="ant-upload-drag-icon">
+                                                            <UploadOutlined />
+                                                            </p>
+                                                            <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
+                                                        </Dragger>
+                                                    </Form.Item>
+                                                </Col>
+                                                {/*  */}
+                                            </Row>
+                                        </div>
+                                    </Col>         
+                                    <Col xl={6} sm={24} xs={24} className="right-content">
+                                        <div className="border-box">
+                                            <Form.Item
+                                                initialValue={exam.data.loai_de_thi_id}
+                                                label="Loại đề thi"
+                                                className="input-col"
+                                                name="loai_de_thi_id"
+                                                rules={[
+                                                {
+                                                    required: true,
+                                                    message: 'Loại đề thi là trường bắt buộc.',
+                                                },
+                                                ]}
+                                            >
+                                                {renderExamCategories()}
+                                            </Form.Item>
+                                        </div>
+                                        <Image
+                                            width={400}
+                                            height={400}
+                                            src={config.API_URL + exam.data.anh_dai_dien}
+                                            fallback="data:image/png;base64,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"
                                         />
                                     </Col>
-                                </Row>
-                            </TabPane>
-                        </Tabs>         
-                        <footer className="footer-exam">
-                            <div className="footer-action">
-                                {currentStep === 0 && (
-                                <>
-                                    <Button type="primary" onClick={() => save()} size="large">
-                                    Cập nhật <SaveOutlined />
-                                    </Button>
-                                    <Button type="primary" onClick={() => next()} size="large">
-                                        Danh sách câu hỏi <RightOutlined />
-                                    </Button>
-                                </>
-                                )}
-                                {currentStep === 1 && (
-                                <>
-                                    <Button type="primary" onClick={() => window.open(`/luyen-tap/xem-lai/${hashids.encode(id)}`, "_blank")} size="large">
-                                        Xem toàn đề
-                                    </Button>
-                                    <Button type="dash" onClick={() => setCurrentStep(0)} size="large">
-                                    <LeftOutlined /> Quay lại
-                                    </Button>
-                                    <Button type="primary" onClick={() => next()} size="large">
-                                    Tiếp theo <RightOutlined />
-                                    </Button>
-                                </>
-                                )}
-                                {currentStep === 2 && (
-                                <>
-                                    <Button type="dash" onClick={() => setCurrentStep(1)} size="large">
-                                    <LeftOutlined /> Quay lại
-                                    </Button>
-                                </>
-                                )}
-                            </div>
-                        </footer>
-                    </Col>
-                </Row>
-                {error && notification.error({
-                    message: 'Thông báo',
-                    description: 'Lấy dữ liệu đề thi thất bại',
-                })}
-                <Modal title="Chọn trích đoạn sử dụng" visible={isModalVisible} onOk={handleOk} width={1200} onCancel={handleCancel}>
-                    {exceprts.status === 'success' && 
-                        exceprts.data.map((exceprt, index) => (
-                            <>
-                                <div className="question-items" key={index}>
-                                    <div className='item' onClick={() => chooseExceprt(exceprt.trich_doan_id)}>
-                                        <div className="header-question">
-                                            Trích đoạn {index + 1}
-                                        </div>
-                                        <div className="body-question">
-                                            <div className="answer-detail">
-                                                <MathJax.Provider>
-                                                    <div style={{whiteSpace: 'pre-line'}} dangerouslySetInnerHTML={{ __html: exceprt.noi_dung }}></div>
-                                                </MathJax.Provider>
+                                </Row>                              
+                            </Form>
+                        </TabPane>
+                    
+                        <TabPane tab="Tạo câu hỏi" key="step_1">
+                            <Row gutter={[16, 16]} style={{marginBottom: 12}}>
+                                {majors?.data.map((major) => (
+                                    <Col xl={4} lg={6} md={12} sm={12} xs={24}>
+                                        <div className="dashboard-stat stat-user">
+                                            <div className="visual"><TeamOutlined /></div>
+                                            <div className="detail">
+                                                <div className="number">
+                                                    <span>{exam.data.cau_hoi_de_this.filter((cau_hoi) => cau_hoi.cau_hoi.chuyen_nganh_id === major.chuyen_nganh_id).length}</span>
+                                                </div>
+                                                <div className="dashboard-stat stat-user">
+                                                    <div className="desc">
+                                                    {major.ten_chuyen_nganh} <RightOutlined />
+                                                    </div>
+                                                </div>
                                             </div>
+                                        </div>
+                                    </Col>
+                                ))}
+                            </Row>  
+                            <Form layout="vertical" className="QuestionForm" onFinish={handleSaveQuestion} form={questionForm} initialValues={defaultQuestion}>
+                                <Row gutter={25}>
+                                    <Col xl={18} sm={24} xs={24} className="left-content">
+                                        <div className="border-box question-content">
+                                            <Row gutter={0}>
+                                                <Col xl={24} sm={24} xs={24}>
+                                                    {state.isEdit && 
+                                                        <Row>
+                                                            <Col>
+                                                                <Form.Item className="label"><span style={{color: 'red'}}>Bạn đang cập nhật câu hỏi số {state.indexQuestion} (ID câu hỏi: {state.idQuestion})</span></Form.Item>
+                                                            </Col>
+                                                        </Row>
+                                                    }
+                                                    {/* Section đề bài */}
+                                                    <Col xl={24}>
+                                                        <Form.Item className="label">
+                                                            <span style={{ color: '#000', fontWeight: 600 }}>Nội dung</span>
+                                                        </Form.Item>
+                                                    </Col>
+                                                    <Row>         
+                                                        <Col xl={4}>
+                                                            <Form.Item className="label">
+                                                                <span style={{ color: '#ff4d4f' }}>*</span>Nội dung câu hỏi
+                                                            </Form.Item>
+                                                        </Col>
+                                                        <Col xl={20}>
+                                                            <Form.Item
+                                                                className="input-col"
+                                                                label=""
+                                                                name="noi_dung"
+                                                                rules={[
+                                                                    {
+                                                                        required: true,
+                                                                        message: 'Nội dung câu hỏi là trường bắt buộc',
+                                                                    },
+                                                                ]}
+                                                            >
+                                                                <TextEditorWidget
+                                                                    disabled={state.defaultExam.trang_thai === false}
+                                                                    valueParent={currentQuestion.noi_dung}
+                                                                    placeholder="Thêm nội dung câu hỏi"
+                                                                    onChange={(val) => setCurrentQuestion({ ...currentQuestion, noi_dung: val })}
+                                                                    // openEditor={(val) => setIsOpenEditor(val)}
+                                                                    isSimple={true} 
+                                                                />
+                                                            </Form.Item>
+                                                        </Col>
+                                                    </Row>
+                                                    <Row>
+                                                        <Col xl={4}>
+                                                            <Form.Item className="label">
+                                                                <span style={{ color: '#000', fontWeight: 600 }}>Hình ảnh câu hỏi</span>
+                                                            </Form.Item>
+                                                        </Col>
+                                                        <Col xl={20}>
+                                                            <Form.Item
+                                                                className="input-col"
+                                                                label=""
+                                                                name="tep_dinh_kem_noi_dung"
+                                                            >
+                                                                <Dragger {...propsImage} style={{width: '90%'}} maxCount={1}>
+                                                                    <p className="ant-upload-drag-icon">
+                                                                        <UploadOutlined />
+                                                                    </p>
+                                                                    <p className="ant-upload-text">Kéo thả hình ảnh tại đây</p>
+                                                                    <p className="ant-upload-hint">
+                                                                        Định dạng hình ảnh JPEG/PNG
+                                                                    </p>
+                                                                </Dragger>
+                                                            </Form.Item>
+                                                        </Col>
+                                                    </Row>
+                                                    {/* Section tuỳ chọn */}
+                                                    <Col xl={24}>
+                                                        <Form.Item className="label">
+                                                            <span style={{ color: '#000', fontWeight: 600 }}>Tùy chọn câu hỏi</span>
+                                                        </Form.Item>
+                                                    </Col>
+                                                    <Row>
+                                                        <Col xl={4}>
+                                                            <Form.Item className="label">
+                                                                <span>Tùy chọn thêm</span>
+                                                            </Form.Item>
+                                                        </Col>
+                                                        <Col xl={4}>
+                                                            <Form.Item>
+                                                                <Button type='primary' onClick={() => history.push('/admin/sample/question/' + id)}>Câu hỏi có sẵn</Button>
+                                                            </Form.Item>
+                                                        </Col>
+                                                        <Col xl={3}>
+                                                            <Form.Item>
+                                                                <Button type='primary' onClick={showModal}>Trích đoạn</Button>
+                                                            </Form.Item>
+                                                        </Col>
+                                                        <Col xl={3}>
+                                                            <Form.Item className="label">
+                                                                <span>Trích đoạn</span>
+                                                            </Form.Item>
+                                                        </Col>
+                                                        <Col xl={4}>
+                                                            <Form.Item
+                                                                initialValue={currentQuestion.trich_doan}
+                                                                value
+                                                                className="input-col"
+                                                                label=""
+                                                                name="trich_doan"
+                                                                rules={[]}
+                                                            >
+                                                                <Input placeholder='Trích đoạn sử dụng'/>
+                                                            </Form.Item>
+                                                        </Col>
+                                                    </Row>
+                                                    <Row>
+                                                        <Col xl={4}>
+                                                            <Form.Item className="label">
+                                                                <span style={{ color: '#ff4d4f' }}>*</span>Loại câu hỏi
+                                                            </Form.Item>
+                                                        </Col>
+                                                        <Col xl={10}>
+                                                            <Form.Item
+                                                                className="input-col"
+                                                                label=""
+                                                                name="loai_cau_hoi"
+                                                                rules={[
+                                                                    {
+                                                                        required: true,
+                                                                        message: 'Loại câu hỏi là trường bắt buộc',
+                                                                    },
+                                                                ]}
+                                                            >
+                                                                <Radio.Group onChange={(type) => handleChangeType(type)} options={constants.QUESTIONS_TYPES} optionType="button" buttonStyle="solid" />
+                                                            </Form.Item>
+                                                        </Col>
+                                                    </Row>
+                                                    <Row>
+                                                        <Col xl={4}>
+                                                            <Form.Item className="label">
+                                                                <span style={{ color: '#ff4d4f' }}>*</span>Chuyên ngành
+                                                            </Form.Item>
+                                                        </Col>
+                                                        <Col xl={10}>
+                                                            <Form.Item
+                                                                className="input-col"
+                                                                label=""
+                                                                name="chuyen_nganh_id"
+                                                                rules={[
+                                                                {
+                                                                    required: true,
+                                                                    message: 'Chuyên ngành là trường bắt buộc',
+                                                                },
+                                                                ]}
+                                                            >
+                                                                {renderMajor()}
+                                                            </Form.Item>
+                                                        </Col>
+                                                        <Col xl={4}>
+                                                            <Form.Item className="label">
+                                                                <span style={{ color: '#ff4d4f' }}>*</span>Điểm câu hỏi
+                                                            </Form.Item>
+                                                        </Col>
+                                                        <Col xl={6}>
+                                                            <Form.Item
+                                                                initialValue={currentQuestion.diem}
+                                                                className="input-col"
+                                                                label=""
+                                                                name="diem"
+                                                                rules={[
+                                                                    {
+                                                                        required: true,
+                                                                        message: 'Điểm là trường bắt buộc',
+                                                                    },
+                                                                ]}
+                                                            >
+                                                                <Input  disabled={state.typeQuestion === 2 ? true : false} placeholder="Nhập điểm câu hỏi" style={{width: '60%'}}/>
+                                                            </Form.Item>
+                                                        </Col>  
+
+                                                    </Row>
+                                                    <Row>
+                                                        <Col xl={4}>
+                                                            <Form.Item className="label">
+                                                                <span style={{ color: '#ff4d4f' }}>*</span>Mức độ câu hỏi
+                                                            </Form.Item>
+                                                        </Col>
+                                                        <Col xl={20}>
+                                                            <Form.Item
+                                                                className="input-col"
+                                                                label=""
+                                                                name="muc_do_cau_hoi"
+                                                                rules={[
+                                                                {
+                                                                    required: true,
+                                                                    message: 'Mức độ câu hỏi là trường bắt buộc',
+                                                                },
+                                                                ]}
+                                                            >
+                                                                <Radio.Group options={constants.QUESTIONS_LEVELS} optionType="button" buttonStyle="solid" />
+                                                            </Form.Item>
+                                                        </Col>
+                                                    </Row>
+                                                    <Row>
+                                                        <Col xl={4}>
+                                                            <Form.Item className="label">Mô đun/Học phần</Form.Item>
+                                                        </Col>
+                                                        <Col xl={8}>
+                                                            <Form.Item                                            
+                                                                initialValue={exam.data.mo_dun_id !== null ? exam.data.mo_dun_id : null}
+                                                                className="input-col"
+                                                                label=""
+                                                                name="mo_dun_id_2"
+                                                                rules={[]}
+                                                            >
+                                                                {renderModule2()}
+                                                            </Form.Item>
+                                                        </Col>
+                                                        <Col xl={4}>
+                                                            <Form.Item className="label">Chuyên đề</Form.Item>
+                                                        </Col>
+                                                        <Col xl={8}>
+                                                            <Form.Item
+                                                                initialValue={exam.data.chuyen_de_id !== null ? exam.data.chuyen_de_id : null}
+                                                                className="input-col"
+                                                                label=""
+                                                                name="chuyen_de_id_2"
+                                                                rules={[]}
+                                                            >
+                                                                {renderThematic2()}
+                                                            </Form.Item>
+                                                        </Col>
+                                                    </Row>
+                                                    <Row style={{display: !state.showTuLuan ? '' : 'none'}}>
+                                                        <Col xl={4}>
+                                                            <Form.Item className="label">
+                                                                <span style={{ color: '#ff4d4f' }}>*</span>Đáp án đúng
+                                                            </Form.Item>
+                                                        </Col>
+                                                        <Col xl={20}>
+                                                            <Form.Item
+                                                                className="input-col"
+                                                                label=""
+                                                                name="dap_an_dung"
+                                                                rules={[
+                                                                {
+                                                                    required: !state.showTuLuan,
+                                                                    message: 'Đáp án đúng là trường bắt buộc',
+                                                                },
+                                                                ]}
+                                                            >
+                                                                {renderAnswer()}
+                                                            </Form.Item>
+                                                        </Col>
+                                                    </Row>
+                                                    <Row>
+                                                        <Col xl={4}>
+                                                            <Form.Item className="label"><span style={{ color: '#ff4d4f' }}>*</span>Hiển thị đáp án</Form.Item>
+                                                        </Col>
+                                                        <Col xl={20}>
+                                                            <Form.Item
+                                                                className="input-col"
+                                                                label=""
+                                                                name="kieu_hien_thi_dap_an"
+                                                                rules={[
+                                                                {
+                                                                    required: true,
+                                                                    message: 'Hiển thị đáp án',
+                                                                },
+                                                                ]}
+                                                            >
+                                                                <Radio.Group options={constants.EXAM_ANSWER_VIEW_LIST} disabled={state.trang_thai === 'active'} optionType="button" buttonStyle="solid" />
+                                                            </Form.Item>
+                                                        </Col>
+                                                    </Row>
+                                                    {/* Section Đáp án */}
+                                                    <Col xl={24}>
+                                                        <Form.Item className="label">
+                                                            <span style={{ color: '#000', fontWeight: 600 }}>Tùy chọn đáp án</span>
+                                                        </Form.Item>
+                                                    </Col>
+                                                    <Form.List name="dap_an">
+                                                        {(fields, { add, remove }) => (
+                                                            <div className="group-answers">
+                                                                {fields.map(({ key, name, ...restField }) => ( // loop dap an 
+                                                                    <Row key={key} style={{display: !state.showTuLuan ? '' : 'none'}}>
+                                                                        <Col xl={4}>
+                                                                            <Form.Item {...restField} rules={[]} className="label">
+                                                                                <span style={{ color: '#ff4d4f' }}>*</span> {currentQuestion?.dap_an[key]?.label}
+                                                                            </Form.Item>
+                                                                        </Col>
+                                                                        <Col xl={20}>
+                                                                            <Form.Item {...restField} name={[name, 'tieu_de']} rules={[{ required: !state.showTuLuan, message: 'Bạn chưa nhập nội dung đáp án' }]}>
+                                                                                <TextEditorWidget
+                                                                                    valueParent={currentQuestion?.dap_an[key]?.tieu_de}
+                                                                                    placeholder="Thêm nội dung đáp án"
+                                                                                    onChange={(val) => {
+                                                                                        let dap_an = [...currentQuestion.dap_an];
+                                                                                        dap_an[key] = {
+                                                                                        ...dap_an[key],
+                                                                                        tieu_de: val,
+                                                                                        };
+                                                                                        setCurrentQuestion({ ...currentQuestion, dap_an });
+                                                                                    }}
+                                                                                    isSimple={true}
+                                                                                />
+                                                                            </Form.Item>
+                                                                        </Col>
+                                                                    </Row>
+                                                                ))}
+                                                            </div>
+                                                        )}
+                                                    </Form.List>
+                                                    {/* câu hỏi Tự luận */}
+                                                    <Form.List name="dap_an_tu_luan">
+                                                        {(fields, { add, remove }) => (
+                                                            <div className="group-answers">
+                                                                {fields.map(({ key, name, ...restField }) => ( // loop dap an 
+                                                                    <Row key={key} style={{display: state.showTuLuan ? '' : 'none' }}>
+                                                                        <Col xl={4}>
+                                                                            <Form.Item {...restField} rules={[]} className="label">
+                                                                                <span style={{ color: '#ff4d4f' }}>*</span> {currentQuestion?.dap_an_tu_luan[key]?.label}
+                                                                            </Form.Item>
+                                                                        </Col>
+                                                                        <Col xl={20}>
+                                                                            <Form.Item {...restField} name={[name, 'tieu_de']} rules={[{ required: !state.showTextTuLuan && state.showTuLuan, message: 'Bạn chưa nhập nội dung đáp án' }]} 
+                                                                                style={{display: !state.showTextTuLuan ? '' : 'none'}}
+                                                                            >
+                                                                                <TextEditorWidget 
+                                                                                    valueParent={currentQuestion?.dap_an_tu_luan[key]?.tieu_de}
+                                                                                    placeholder="Thêm nội dung đáp án"
+                                                                                    onChange={(val) => {
+                                                                                        let dap_an_tu_luan = [...currentQuestion.dap_an_tu_luan];
+                                                                                        dap_an_tu_luan[key] = {
+                                                                                            ...dap_an_tu_luan[key],
+                                                                                            tieu_de: val,
+                                                                                        };
+                                                                                        setCurrentQuestion({ ...currentQuestion, dap_an_tu_luan });
+                                                                                    }}
+                                                                                    isSimple={true}
+                                                                                />
+                                                                            </Form.Item>     
+                                                                            <Form.Item {...restField} name={[name, 'tieu_de']} rules={[{ required: state.showTextTuLuan && state.showTuLuan, message: 'Bạn chưa nhập nội dung đáp án' }]}
+                                                                                style={{display: state.showTextTuLuan ? '' : 'none'}}
+                                                                            >
+                                                                                <TextArea placeholder='Nhập nội dung đáp án' 
+                                                                                    value={currentQuestion.dap_an_tu_luan[key].tieu_de}
+                                                                                    onChange={(val) => {
+                                                                                        let dap_an_tu_luan = [...currentQuestion.dap_an_tu_luan];
+                                                                                        dap_an_tu_luan[key] = {
+                                                                                            ...dap_an_tu_luan[key],
+                                                                                            tieu_de: val.target.value,
+                                                                                        };
+                                                                                        setCurrentQuestion({ ...currentQuestion, dap_an_tu_luan });
+                                                                                    }}
+                                                                                />
+                                                                            </Form.Item>
+                                                                        </Col>
+
+                                                                    </Row>
+                                                                ))}
+                                                            </div>
+                                                        )}
+                                                    </Form.List>
+
+                                                    <Row>
+                                                        <Col xl={4}>
+                                                            <Form.Item className="label">Lời giải</Form.Item>
+                                                        </Col>
+                                                        <Col xl={20}>
+                                                            <Form.Item className="input-col" label="" name="loi_giai" rules={[]}
+                                                                style={{display: !state.showTextTuLuan2 ? '' : 'none'}}
+                                                            >
+                                                                <TextEditorWidget
+                                                                    disabled={state.trang_thai === 'active'}
+                                                                    valueParent={currentQuestion.loi_giai}
+                                                                    placeholder="Thêm nội dung lời giải"
+                                                                    onChange={(val) => setCurrentQuestion({ ...currentQuestion, loi_giai: val })}
+                                                                    isSimple={true}
+                                                                />  
+                                                            </Form.Item>
+                                                            <Form.Item className="input-col" label="" name="loi_giai" rules={[]}
+                                                                style={{display: state.showTextTuLuan2 ? '' : 'none'}}
+                                                            >
+                                                                <TextEditorWidget 
+                                                                    valueParent={currentQuestion.loi_giai}
+                                                                    placeholder="Thêm nội dung lời giải"
+                                                                    onChange={(val) => setCurrentQuestion({ ...currentQuestion, loi_giai: val })}
+                                                                    isSimple={true}
+                                                                />
+                                                            </Form.Item>
+                                                        </Col>
+                                                    </Row>
+                                                </Col>
+                                            </Row>
+                                        </div>
+                                        <div className="footer-question">
+                                            <Button
+                                                type="dash"
+                                                danger
+                                                onClick={() => {
+                                                    questionForm.resetFields();
+                                                    questionForm.setFieldsValue(defaultQuestion);
+                                                    setCurrentQuestion(defaultQuestion);
+                                                    setIsOpenEditor(false);
+                                                    setState({ ...state, isEdit: false })
+                                                }}
+                                                size="large"
+                                            >
+                                                {state.isEdit ? 'Hủy bỏ' : 'Làm lại'}
+                                            </Button>
+                                            <Button
+                                                type="primary"
+                                                onClick={() => {
+                                                    setIsOpenEditor(false);
+                                                    setTimeout(() => {
+                                                        questionForm.submit();
+                                                    }, 600);
+                                                }}
+                                                size="large"
+                                            >
+                                            {state.isEdit ? 'Cập nhật' : 'Thêm mới'}
+                                            </Button>
+                                        </div>
+                                    </Col>
+                                    <Col xl={6} sm={24} xs={24} className="right-content " style={{height: 1000, overflowY: 'scroll'}}>
+                                        <div className="box ">
+                                            <div className="box-body ">
+                                                <div className="border-box question-list mt-0">
+                                                <h6 style={{padding: "10px 0 0 10px"}}>
+                                                    Danh sách câu hỏi{' '}
+                                                    <span className="counter">
+                                                    {exam.data.cau_hoi_de_this.length}/{criteria.data.so_cau_hoi}
+                                                    </span>
+                                                </h6>
+                                                {renderQuestions()}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </Col>
+                                </Row>
+                            </Form>
+                        </TabPane>
+                    </>       
+                    }
+                        <TabPane tab="Hoàn thành" key="step_2">
+                            <Row gutter={25}>
+                                <Col xl={24} sm={24} xs={24} className="left-content">
+                                    <Result
+                                        status="success"
+                                        title="Tạo đề thi mới thành công."
+                                        subTitle="Hãy kiểm tra kỹ trước khi tiến hành xuất bản đề thi, đề thi sau khi xuất bản sẽ không thể được cập nhật thêm."
+                                        extra={[
+                                            <Button onClick={() => setCurrentStep(1)}> Kiểm tra lại</Button>,
+                                            <Button
+                                            type="primary"
+                                            onClick={() =>
+                                                Modal.confirm({
+                                                    title: 'Xuất bản đề thi',
+                                                    content: 'Bạn có chắc chắn muốn xuất bản đề thi này không?',
+                                                    okText: 'Có',
+                                                    cancelText: 'Không',
+                                                    onOk: () => {
+                                                        handlePublishExam();
+                                                    },
+                                                })
+                                            }
+                                            >
+                                            Xuất bản
+                                            </Button>,
+                                            <Button type="primary" onClick={() => window.open(`/luyen-tap/xem-lai/${hashids.encode(id)}`, "_blank")}>Xem toàn đề</Button>,
+                                        ]}
+                                    />
+                                </Col>
+                            </Row>
+                        </TabPane>
+                    </Tabs>         
+                    <footer className="footer-exam">
+                        <div className="footer-action">
+                            {currentStep === 0 && (
+                            <>
+                                <Button type="primary" onClick={() => save()} size="large">
+                                Cập nhật <SaveOutlined />
+                                </Button>
+                                <Button type="primary" onClick={() => next()} size="large">
+                                    Danh sách câu hỏi <RightOutlined />
+                                </Button>
+                            </>
+                            )}
+                            {currentStep === 1 && (
+                            <>
+                                <Button type="primary" onClick={() => window.open(`/luyen-tap/xem-lai/${hashids.encode(id)}`, "_blank")} size="large">
+                                    Xem toàn đề
+                                </Button>
+                                <Button type="dash" onClick={() => setCurrentStep(0)} size="large">
+                                <LeftOutlined /> Quay lại
+                                </Button>
+                                <Button type="primary" onClick={() => next()} size="large">
+                                Tiếp theo <RightOutlined />
+                                </Button>
+                            </>
+                            )}
+                            {currentStep === 2 && (
+                            <>
+                                <Button type="dash" onClick={() => setCurrentStep(1)} size="large">
+                                <LeftOutlined /> Quay lại
+                                </Button>
+                            </>
+                            )}
+                        </div>
+                    </footer>
+                </Col>
+            </Row>
+            {error && notification.error({
+                message: 'Thông báo',
+                description: 'Lấy dữ liệu đề thi thất bại',
+            })}
+            <Modal title="Chọn trích đoạn sử dụng" visible={isModalVisible} onOk={handleOk} width={1200} onCancel={handleCancel}>
+                {exceprts.status === 'success' && 
+                    exceprts.data.map((exceprt, index) => (
+                        <>
+                            <div className="question-items" key={index}>
+                                <div className='item' onClick={() => chooseExceprt(exceprt.trich_doan_id)}>
+                                    <div className="header-question">
+                                        Trích đoạn {index + 1}
+                                    </div>
+                                    <div className="body-question">
+                                        <div className="answer-detail">
+                                            <MathJax.Provider>
+                                                <div style={{whiteSpace: 'pre-line'}} dangerouslySetInnerHTML={{ __html: exceprt.noi_dung }}></div>
+                                            </MathJax.Provider>
                                         </div>
                                     </div>
                                 </div>
-                            </>
-                        ))
-                    }
-                </Modal>
-            </div>
-        </>
+                            </div>
+                        </>
+                    ))
+                }
+            </Modal>
+        </div>
     )
 }
 

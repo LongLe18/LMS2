@@ -45,7 +45,6 @@ const CardSlider = ({ courses, id, link }) => {
         const container = document.querySelector(`#cards-container-${id}`);
     
         const containerWidth = container.offsetWidth;
-        console.log(containerWidth);
         if (containerWidth <= 480) {
             container.scrollBy({ left: 350, behavior: 'smooth' });
         } else if (containerWidth > 480 && containerWidth <= 768) {

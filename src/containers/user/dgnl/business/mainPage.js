@@ -5,6 +5,7 @@ import './css/Testimonials.css';
 
 import { Helmet } from 'react-helmet';
 import { Link } from "react-router-dom";
+import Hashids from 'hashids';
 
 // component
 import { Layout, Row, Col, Menu, Button } from 'antd';
@@ -18,7 +19,7 @@ import Statisic from "components/parts/statisic/Statisic";
 const { Content } = Layout;
 
 const MainPageUser = (props) => {
-    
+    const hashids = new Hashids();
     const dispatch = useDispatch();
 
     const programmeCourses = useSelector(state => state.programme.courses.result);
@@ -75,7 +76,7 @@ const MainPageUser = (props) => {
                                                 {item.children?.map((child, index) => {
                                                     return (
                                                         <Menu.Item key={child.key}>
-                                                            <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${child.key}`}>{child.label}</Link>
+                                                            <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${hashids.encode(child.key)}`}>{child.label}</Link>
                                                         </Menu.Item>
                                                     )
                                                 })}
