@@ -779,6 +779,37 @@ const Criteria = () => {
                     {(course && require.isEdit) ? <h5>Sửa thông tin tiêu chí đề thi tổng hợp</h5> : (module && require.isEdit) ? <h5>Sửa thông tin tiêu chí đề thi mô đun</h5> : (thematic && require.isEdit) ? <h5>Sửa thông tin tiêu chí đề thi chuyên đề</h5> : ''}
                     <Form layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={createCriteria}>
                         <Row gutter={25}>
+                            <Col xl={24} sm={24} xs={24}>
+                                <Form.Item
+                                    className="input-col"
+                                    label="Khóa học"
+                                    name="khoa_hoc_id"
+                                    rules={[
+                                        {
+                                            required: require.course,
+                                            message: 'Khóa học là trường bắt buộc.',
+                                        },
+                                    ]}
+                                >
+                                    {renderCourses()}
+                                </Form.Item>
+                            </Col>
+                            <Col xl={24} sm={24} xs={24}>
+                                <Form.Item style={{display: require.module ? '' : 'none'}}
+                                    className="input-col"
+                                    label="Mô đun"
+                                    name="mo_dun_id"
+                                    rules={[
+                                        {
+                                            required: require.module,
+                                            message: 'Mô đun là trường bắt buộc.',
+                                        },
+                                    ]}
+                                >
+                                    {renderModules()}
+                                </Form.Item>
+                            </Col>
+                            
                             <Col xl={12} sm={24} xs={24} className="left-content">
                                 <Form.Item
                                     className="input-col"
@@ -850,36 +881,7 @@ const Criteria = () => {
                                 </Form.Item> */}
                                 
                             </Col>
-                            <Col xl={24} sm={24} xs={24}>
-                                <Form.Item
-                                    className="input-col"
-                                    label="Khóa học"
-                                    name="khoa_hoc_id"
-                                    rules={[
-                                        {
-                                            required: require.course,
-                                            message: 'Khóa học là trường bắt buộc.',
-                                        },
-                                    ]}
-                                >
-                                    {renderCourses()}
-                                </Form.Item>
-                            </Col>
-                            <Col xl={24} sm={24} xs={24}>
-                                <Form.Item style={{display: require.module ? '' : 'none'}}
-                                    className="input-col"
-                                    label="Mô đun"
-                                    name="mo_dun_id"
-                                    rules={[
-                                        {
-                                            required: require.module,
-                                            message: 'Mô đun là trường bắt buộc.',
-                                        },
-                                    ]}
-                                >
-                                    {renderModules()}
-                                </Form.Item>
-                            </Col>
+                            
                             <Form.Item className="button-col" style={{textAlign: 'right'}}>
                                 {!require.isEdit ? <Button shape="round" type="primary" htmlType="submit" >Thêm mới</Button> : <Button shape="round" type="primary" htmlType="submit" >Cập nhật</Button>}                             
                             </Form.Item>
@@ -964,21 +966,6 @@ const Criteria = () => {
                                 </>
                             ))}
                             
-                            <Col xl={24} sm={24} xs={24}>
-                                <Form.Item
-                                    className="input-col"
-                                    label="Khóa học"
-                                    name="khoa_hoc_id"
-                                    rules={[
-                                        {
-                                            required: require.course,
-                                            message: 'Khóa học là trường bắt buộc.',
-                                        },
-                                    ]}
-                                >
-                                    {renderCourses()}
-                                </Form.Item>
-                            </Col>
                             <Form.Item className="button-col" style={{textAlign: 'right'}}>
                                 {!require.isEdit ? <Button shape="round" type="primary" htmlType="submit" >Thêm mới</Button> : <Button shape="round" type="primary" htmlType="submit" >Cập nhật</Button>}                             
                             </Form.Item>

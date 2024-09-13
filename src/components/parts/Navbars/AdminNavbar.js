@@ -213,7 +213,7 @@ function Header(props) {
               <BarsOutlined />
             </button>
           </div>
-          <NavbarBrand href="/ltdhqg/admin/dashboard">{getBrand()}</NavbarBrand>
+          <NavbarBrand href="/admin/dashboard">{getBrand()}</NavbarBrand>
         </div>
         {/* <NavLink to="/admin/dashboard">
             <img alt="..."  style={{width:'90%'}}

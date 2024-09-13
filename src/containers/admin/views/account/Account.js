@@ -59,7 +59,13 @@ const AccountPage = () => {
           if (!isPNG) {
             message.error(`${file.name} có định dạng không phải là png/jpg`);
           }
-          return isPNG || Upload.LIST_IGNORE;
+          // check dung lượng file trên 1mb => không cho upload
+          let size = true;
+          if (file.size > 1024000) {
+            message.error(`${file.name} dung lượng file quá lớn`);
+            size = false;
+          }
+          return (isPNG && size) || Upload.LIST_IGNORE;
         },
   
         onChange(info) {

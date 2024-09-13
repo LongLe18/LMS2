@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import config from '../../../../configs/index';
 import Hashids from 'hashids';
@@ -124,110 +123,110 @@ const ExamAdminPage = () => {
       setIsModalFastVisible(true);
     };
 
-    const column1 = [
-        {
-            title: 'Ảnh đại diện',
-            dataIndex: 'anh_dai_dien',
-            key: 'anh_dai_dien',
-            responsive: ['lg'],
-            render: (src) => (
-              <Avatar src={src !== null ? config.API_URL + src : defaultImage} size={50} shape='circle' />
-            )
-        },
-        {
-          title: 'Tên đề thi',
-          dataIndex: 'ten_de_thi',
-          key: 'ten_de_thi',
-          responsive: ['md'],
-          sorter: (a, b) => a.ten_de_thi.localeCompare(b.ten_de_thi),
-        },
-        {
-            title: 'Loại đề thi',
-            dataIndex: 'mo_ta',
-            key: 'mo_ta',
-            responsive: ['md'],
-        },
-        {
-            title: 'Khóa học',
-            dataIndex: 'ten_khoa_hoc',
-            key: 'ten_khoa_hoc',
-            responsive: ['md'],
-            width: 300,
-        },
-        {
-          title: 'Mô đun',
-          dataIndex: 'ten_mo_dun',
-          key: 'ten_mo_dun',
-          responsive: ['md'],
-        },
-        {
-          title: 'Chuyên đề',
-          dataIndex: 'ten_chuyen_de',
-          key: 'ten_chuyen_de',
-          responsive: ['md'],
-        },
-        {
-          title: 'Thời gian',
-          dataIndex: 'thoi_gian',
-          key: 'thoi_gian',
-          responsive: ['md'],
-          render: (thoi_gian, de_thi) => (
-            <>
-              <span>Thời gian thi: {thoi_gian} phút</span>
-              <br/>
-              <span>Số câu hỏi: {de_thi.so_cau_hoi}</span>
-            </>
+  const column1 = [
+      {
+          title: 'Ảnh đại diện',
+          dataIndex: 'anh_dai_dien',
+          key: 'anh_dai_dien',
+          responsive: ['lg'],
+          render: (src) => (
+            <Avatar src={src !== null ? config.API_URL + src : defaultImage} size={50} shape='circle' />
           )
-        },     
-        {
-          title: 'Ngày tạo',
-          dataIndex: 'ngay_tao',
-          key: 'ngay_tao',
+      },
+      {
+        title: 'Tên đề thi',
+        dataIndex: 'ten_de_thi',
+        key: 'ten_de_thi',
+        responsive: ['md'],
+        sorter: (a, b) => a.ten_de_thi.localeCompare(b.ten_de_thi),
+      },
+      {
+          title: 'Loại đề thi',
+          dataIndex: 'mo_ta',
+          key: 'mo_ta',
           responsive: ['md'],
-          render: (date) => (
-            moment(date).utc(7).format(config.DATE_FORMAT)
-          ),
-          sorter: (a, b) => moment(a.ngay_tao).unix() - moment(b.ngay_tao).unix()
-        },
-        {
-          title: 'Tùy chọn',
-          key: 'de_thi_id',
-          dataIndex: 'de_thi_id',
-          width: 50,
-          // Redirect view for edit
-          render: (de_thi_id, de_thi) => (
-            <Col>
-              <a href={ de_thi.loai_de_thi_id === 4 ? `/admin/onlineExam/detail/${de_thi.de_thi_id}?loai_de_thi=ONLUYEN`  : `/admin/exam/detail/${de_thi.de_thi_id}?loai_de_thi=ONLUYEN` } type="button" className="ant-btn ant-btn-round ant-btn-primary" 
-                style={{display: de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}}
-              >
-                Xem
-              </a>
-              {de_thi.trang_thai === 0 ?
-                  <Tooltip title={`Mở khóa đề thi`} color="#2db7f5" placement="bottom">
-                      <Button shape="round" type="primary" 
-                      onClick={() => changeStatus(de_thi_id, de_thi.trang_thai)} style={{display: !de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}} icon={<UnlockOutlined />}>
-                    </Button> 
-                  </Tooltip> 
-              : 
-                <Tooltip title={`Khóa đề thi`} color="#2db7f5" placement="bottom">
-                  <Button shape="round" type="danger" 
-                    onClick={() => changeStatus(de_thi_id, de_thi.trang_thai)} style={{display: !de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}} icon={<LockOutlined />}>
+      },
+      {
+          title: 'Khóa học',
+          dataIndex: 'ten_khoa_hoc',
+          key: 'ten_khoa_hoc',
+          responsive: ['md'],
+          width: 300,
+      },
+      {
+        title: 'Mô đun',
+        dataIndex: 'ten_mo_dun',
+        key: 'ten_mo_dun',
+        responsive: ['md'],
+      },
+      {
+        title: 'Chuyên đề',
+        dataIndex: 'ten_chuyen_de',
+        key: 'ten_chuyen_de',
+        responsive: ['md'],
+      },
+      {
+        title: 'Thời gian',
+        dataIndex: 'thoi_gian',
+        key: 'thoi_gian',
+        responsive: ['md'],
+        render: (thoi_gian, de_thi) => (
+          <>
+            <span>Thời gian thi: {thoi_gian} phút</span>
+            <br/>
+            <span>Số câu hỏi: {de_thi.so_cau_hoi}</span>
+          </>
+        )
+      },     
+      {
+        title: 'Ngày tạo',
+        dataIndex: 'ngay_tao',
+        key: 'ngay_tao',
+        responsive: ['md'],
+        render: (date) => (
+          moment(date).utc(7).format(config.DATE_FORMAT)
+        ),
+        sorter: (a, b) => moment(a.ngay_tao).unix() - moment(b.ngay_tao).unix()
+      },
+      {
+        title: 'Tùy chọn',
+        key: 'de_thi_id',
+        dataIndex: 'de_thi_id',
+        width: 50,
+        // Redirect view for edit
+        render: (de_thi_id, de_thi) => (
+          <Col>
+            <a href={ de_thi.loai_de_thi_id === 4 ? `/admin/onlineExam/detail/${de_thi.de_thi_id}?loai_de_thi=ONLUYEN`  : `/admin/exam/detail/${de_thi.de_thi_id}?loai_de_thi=ONLUYEN` } type="button" className="ant-btn ant-btn-round ant-btn-primary" 
+              style={{display: de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}}
+            >
+              Xem
+            </a>
+            {de_thi.trang_thai === 0 ?
+                <Tooltip title={`Mở khóa đề thi`} color="#2db7f5" placement="bottom">
+                    <Button shape="round" type="primary" 
+                    onClick={() => changeStatus(de_thi_id, de_thi.trang_thai)} style={{display: !de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}} icon={<UnlockOutlined />}>
                   </Button> 
                 </Tooltip> 
-              }
-              <Tooltip title={`Xem lại đề`} color="#2db7f5" placement="bottom">
-                <Button shape="round" type="primary" 
-                  onClick={() => window.open(`/luyen-tap/xem-lai/${hashids.encode(de_thi_id)}`, "_blank")} style={{display: !de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}} icon={<EyeOutlined />}>
+            : 
+              <Tooltip title={`Khóa đề thi`} color="#2db7f5" placement="bottom">
+                <Button shape="round" type="danger" 
+                  onClick={() => changeStatus(de_thi_id, de_thi.trang_thai)} style={{display: !de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}} icon={<LockOutlined />}>
                 </Button> 
-              </Tooltip>
-              <Tooltip title={`Sử dụng lại đề`} color="#2db7f5" placement="bottom">
-                <Button shape='round' type='primary' onClick={() => reuseExam(de_thi_id)} style={{backgroundColor: 'green', borderColor: 'green', display: !de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}} icon={<RedoOutlined />}></Button>
-              </Tooltip>
-              <Button shape="round" type="danger" onClick={() => deleteExam(de_thi_id)} style={{marginBottom: '5px'}}>Xóa</Button> 
-            </Col>
-          ),
-        },
-    ];
+              </Tooltip> 
+            }
+            <Tooltip title={`Xem lại đề`} color="#2db7f5" placement="bottom">
+              <Button shape="round" type="primary" 
+                onClick={() => window.open(`/luyen-tap/xem-lai/${hashids.encode(de_thi_id)}`, "_blank")} style={{display: !de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}} icon={<EyeOutlined />}>
+              </Button> 
+            </Tooltip>
+            <Tooltip title={`Sử dụng lại đề`} color="#2db7f5" placement="bottom">
+              <Button shape='round' type='primary' onClick={() => reuseExam(de_thi_id)} style={{backgroundColor: 'green', borderColor: 'green', display: !de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}} icon={<RedoOutlined />}></Button>
+            </Tooltip>
+            <Button shape="round" type="danger" onClick={() => deleteExam(de_thi_id)} style={{marginBottom: '5px'}}>Xóa</Button> 
+          </Col>
+        ),
+      },
+  ];
 
     // props for upload image
   const propsImage = {
@@ -239,7 +238,13 @@ const ExamAdminPage = () => {
           if (!isPNG) {
             message.error(`${file.name} có định dạng không phải là png/jpg`);
           }
-          return isPNG || Upload.LIST_IGNORE;
+          // check dung lượng file trên 1mb => không cho upload
+          let size = true;
+          if (file.size > 1024000) {
+            message.error(`${file.name} dung lượng file quá lớn`);
+            size = false;
+          }
+          return (isPNG && size) || Upload.LIST_IGNORE;
         },
   
         onChange(info) {

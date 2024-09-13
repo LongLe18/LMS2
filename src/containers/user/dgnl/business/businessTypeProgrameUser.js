@@ -40,7 +40,6 @@ const BusinessTypeProgramePageUser = (props) => {
 
     const [form] = Form.useForm();
     const [courseOfUser] = useFetch(`/student/list/course`);
-    const courses = useSelector(state => state.course.list.result);
     const programmes = useSelector(state => state.programme.list.result);
     const programmeCourses = useSelector(state => state.programme.courses.result);
 

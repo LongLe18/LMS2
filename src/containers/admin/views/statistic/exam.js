@@ -139,6 +139,7 @@ const StatisticExam = (props) => {
           <Select style={{marginRight: 10}}
             showSearch={true} value={state.examId}
             placeholder="Chọn đề thi"
+            filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
             onChange={(exam) => {
                 setState({ ...state, examId: exam })
             }}
@@ -191,6 +192,9 @@ const StatisticExam = (props) => {
             dataIndex: 'diem_so',
             key: 'diem_so',
             responsive: ['md'],
+            render: (diem_so) => (
+                diem_so.toFixed(2)
+            )
         },
         {
             title: 'Ngày thi',
