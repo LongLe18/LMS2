@@ -230,39 +230,39 @@ const ExamAdminPage = () => {
 
     // props for upload image
   const propsImage = {
-        name: 'file',
-        action: '#',
-  
-        beforeUpload: file => {
-          const isPNG = file.type === 'image/png' || file.type === 'image/jpeg';
-          if (!isPNG) {
-            message.error(`${file.name} có định dạng không phải là png/jpg`);
-          }
-          // check dung lượng file trên 1mb => không cho upload
-          let size = true;
-          if (file.size > 1024000) {
-            message.error(`${file.name} dung lượng file quá lớn`);
-            size = false;
-          }
-          return (isPNG && size) || Upload.LIST_IGNORE;
-        },
-  
-        onChange(info) {
-          setState({ ...state, fileImg: info.file.originFileObj });
-        },
-  
-        async customRequest(options) {
-          const { onSuccess } = options;
-    
-          setTimeout(() => {
-            onSuccess("ok");
-          }, 0);
-        },
-  
-        onRemove(e) {
-          console.log(e);
-          setState({ ...state, fileImg: '' });
-        },
+    name: 'file',
+    action: '#',
+
+    beforeUpload: file => {
+      const isPNG = file.type === 'image/png' || file.type === 'image/jpeg';
+      if (!isPNG) {
+        message.error(`${file.name} có định dạng không phải là png/jpg`);
+      }
+      // check dung lượng file trên 1mb => không cho upload
+      let size = true;
+      if (file.size > 1024000) {
+        message.error(`${file.name} dung lượng file quá lớn`);
+        size = false;
+      }
+      return (isPNG && size) || Upload.LIST_IGNORE;
+    },
+
+    onChange(info) {
+      setState({ ...state, fileImg: info.file.originFileObj });
+    },
+
+    async customRequest(options) {
+      const { onSuccess } = options;
+
+      setTimeout(() => {
+        onSuccess("ok");
+      }, 0);
+    },
+
+    onRemove(e) {
+      console.log(e);
+      setState({ ...state, fileImg: '' });
+    },
   };
 
   const propsFile = {

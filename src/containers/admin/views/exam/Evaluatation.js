@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import LoadingCustom from 'components/parts/loading/Loading';
 import { Helmet } from 'react-helmet';
 import moment from 'moment';
+import axios from 'axios';
 import config from '../../../../configs/index';
 
 import { Row, Col, Table, Pagination, Space, Button, notification, 
@@ -24,6 +25,7 @@ const EvaluationPage = () => {
     const [pageSize, setPageSize] = useState(10);
     const [idExam, setIdExam] = useState('');
     const [idEvaluation, setIdEvaluation] = useState('');
+    const [numberSection, setNumberSection] = useState(0);
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     const dispatch = useDispatch();
@@ -99,6 +101,25 @@ const EvaluationPage = () => {
         }   
     }
     
+    // lấy số phần thi theo đề thi
+    const getNumberSectionsExam = (idExam) => {
+        axios.get(config.API_URL + `/exam/${idExam}/criteria`, {headers: {Authorization: `Bearer ${localStorage.getItem('userToken')}`}})
+        .then(
+            res => {
+                if (res.status === 200 && res.statusText === 'OK') {
+                    setNumberSection(res.data?.data?.so_phan)
+                } else {
+                    notification.error({
+                        message: 'Lỗi',
+                        description: 'Có lỗi xảy ra khi lấy dữ liệu',
+                    })
+                }
+            }
+        )
+        .catch(error => notification.error({ message: error.message }));
+    }
+
+      
     const renderExams = (onChange = false) => {
         let options = [];
         if (exams.status === 'success') {
@@ -119,6 +140,7 @@ const EvaluationPage = () => {
                         if (value === undefined || value === null) value = '';
                         setIdExam(value)
                     }
+                    getNumberSectionsExam(value);
                 }}
                 placeholder="Chọn đề thi"
             >
@@ -135,6 +157,9 @@ const EvaluationPage = () => {
                     {(idEvaluation === '') ? <h5>Thêm mới đánh giá</h5> : <h5>Sửa thông tin đánh giá</h5>}
                     <Form layout="vertical" className="category-form" form={formEvaluation} autoComplete="off" onFinish={submitForm}>
                         <Row gutter={25}>
+                            <Col xl={24} sm={24} xs={24} style={{marginBottom: 12}}>
+                                Số phần thi: {numberSection}
+                            </Col>
                             <Col xl={24} sm={24} xs={24}>
                                 <Form.Item
                                     className="input-col"
