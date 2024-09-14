@@ -26,6 +26,12 @@ router.get(
     authRole([2], 6),
     tryCatch(examController.getUpdate)
 );
+router.get(
+    '/:id/criteria',
+    authToken,
+    authRole([2], 6),
+    tryCatch(examController.getCriteriaByExamId)
+);
 router.put(
     '/:id',
     authToken,

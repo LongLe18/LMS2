@@ -1222,6 +1222,52 @@ const uploadWordMedia = async (req, res) => {
     });
 };
 
+const getCriteriaByExamId = async(req, res) =>{
+    let exam = await Exam.findOne({
+        where: {
+            de_thi_id: req.params.id,
+        },
+    });
+    if (!exam) {
+        res.status(404).send({
+            status: 'error',
+            message: 'Đề thi không tồn tại!',
+        });
+    }
+
+    let criteria;
+    if (exam.loai_de_thi_id == 1) {
+        criteria = await ThematicCriteria.findOne({
+            where: {
+                mo_dun_id: exam.mo_dun_id,
+            },
+        });
+    } else if (exam.loai_de_thi_id == 2) {
+        criteria = await ModunCriteria.findOne({
+            where: {
+                mo_dun_id: exam.mo_dun_id,
+            },
+        });
+    } else if (exam.loai_de_thi_id == 3) {
+        criteria = await SyntheticCriteria.findOne({
+            where: {
+                khoa_hoc_id: exam.khoa_hoc_id,
+            },
+        });
+    } else if (exam.loai_de_thi_id == 4) {
+        criteria = await OnlineCriteria.findOne({
+            where: {
+                khoa_hoc_id: exam.khoa_hoc_id,
+            },
+        });
+    }
+
+    res.status(200).send({
+        status: 'success',
+        data: criteria,
+    });
+}
+
 module.exports = {
     getExamOnline,
     getSynthetic,
@@ -1241,4 +1287,5 @@ module.exports = {
     uploadWordMedia,
     getByIdv2,
     getExamDGNL,
+    getCriteriaByExamId
 };
