@@ -103,12 +103,17 @@ const getById = async (req, res) => {
 
 const postCreate = async (req, res) => {
     const { cot_tren_hang, noi_dung, ...rest } = req.body;
-    console.log(noi_dung)
-    console.log(noi_dung.replaceAll('\\[', '$').replaceAll('\\]', '$'))
+
     const question = await Question.create({
         ...rest,
         ...(noi_dung && {
-            noi_dung: noi_dung.replaceAll('\\[', '$').replaceAll('\\]', '$'),
+            noi_dung: noi_dung
+                .replaceAll('\\[', '$')
+                .replaceAll('\\]', '$')
+                .replaceAll('{align}', '{matrix}')
+                .replaceAll(/\$(.*?)\$/gs, (match) => {
+                    return match.replaceAll(/\n/g, '');
+                })
         }),
         ...(req.files &&
             req.files.tep_dinh_kem_noi_dung && {
@@ -132,7 +137,13 @@ const putUpdate = async (req, res) => {
         {
             ...rest,
             ...(noi_dung && {
-                noi_dung: noi_dung.replaceAll('\\[', '$').replaceAll('\\]', '$'),
+                noi_dung: noi_dung
+                    .replaceAll('\\[', '$')
+                    .replaceAll('\\]', '$')
+                    .replaceAll('{align}', '{matrix}')
+                    .replaceAll(/\$(.*?)\$/gs, (match) => {
+                        return match.replaceAll(/\n/g, '');
+                    })
             }),
             ...(req.files &&
                 req.files.tep_dinh_kem_noi_dung && {

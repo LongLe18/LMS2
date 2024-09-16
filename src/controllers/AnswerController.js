@@ -36,7 +36,13 @@ const postCreate = async (req, res) => {
     }
     if (req.body.noi_dung_dap_an1) {
         await Answer.create({
-            noi_dung_dap_an: req.body.noi_dung_dap_an1.replaceAll('\\[', '$').replaceAll('\\]', '$'),
+            noi_dung_dap_an: req.body.noi_dung_dap_an1
+                .replaceAll('\\[', '$')
+                .replaceAll('\\]', '$')
+                .replaceAll('{align}', '{matrix}')
+                .replaceAll(/\$(.*?)\$/gs, (match) => {
+                    return match.replaceAll(/\n/g, '');
+                }),
             dap_an_dung: req.body.dap_an_dung1,
             cau_hoi_id: req.body.cau_hoi_id,
             ...(req.files &&
@@ -50,7 +56,13 @@ const postCreate = async (req, res) => {
     }
     if (req.body.noi_dung_dap_an2) {
         await Answer.create({
-            noi_dung_dap_an: req.body.noi_dung_dap_an2.replaceAll('\\[', '$').replaceAll('\\]', '$'),
+            noi_dung_dap_an: req.body.noi_dung_dap_an2
+                .replaceAll('\\[', '$')
+                .replaceAll('\\]', '$')
+                .replaceAll('{align}', '{matrix}')
+                .replaceAll(/\$(.*?)\$/gs, (match) => {
+                    return match.replaceAll(/\n/g, '');
+                }),
             dap_an_dung: req.body.dap_an_dung2,
             cau_hoi_id: req.body.cau_hoi_id,
             ...(req.files &&
@@ -64,7 +76,13 @@ const postCreate = async (req, res) => {
     }
     if (req.body.noi_dung_dap_an3) {
         await Answer.create({
-            noi_dung_dap_an: req.body.noi_dung_dap_an3.replaceAll('\\[', '$').replaceAll('\\]', '$'),
+            noi_dung_dap_an: req.body.noi_dung_dap_an3
+                .replaceAll('\\[', '$')
+                .replaceAll('\\]', '$')
+                .replaceAll('{align}', '{matrix}')
+                .replaceAll(/\$(.*?)\$/gs, (match) => {
+                    return match.replaceAll(/\n/g, '');
+                }),
             dap_an_dung: req.body.dap_an_dung3,
             cau_hoi_id: req.body.cau_hoi_id,
             ...(req.files &&
@@ -78,7 +96,13 @@ const postCreate = async (req, res) => {
     }
     if (req.body.noi_dung_dap_an4) {
         await Answer.create({
-            noi_dung_dap_an: req.body.noi_dung_dap_an4.replaceAll('\\[', '$').replaceAll('\\]', '$'),
+            noi_dung_dap_an: req.body.noi_dung_dap_an4
+                .replaceAll('\\[', '$')
+                .replaceAll('\\]', '$')
+                .replaceAll('{align}', '{matrix}')
+                .replaceAll(/\$(.*?)\$/gs, (match) => {
+                    return match.replaceAll(/\n/g, '');
+                }),
             dap_an_dung: req.body.dap_an_dung4,
             cau_hoi_id: req.body.cau_hoi_id,
             ...(req.files &&
@@ -114,7 +138,13 @@ const putUpdate = async (req, res) => {
         }
         await Answer.update(
             {
-                noi_dung_dap_an: req.body.noi_dung_dap_an1.replaceAll('\\[', '$').replaceAll('\\]', '$'),
+                noi_dung_dap_an: req.body.noi_dung_dap_an1
+                    .replaceAll('\\[', '$')
+                    .replaceAll('\\]', '$')
+                    .replaceAll('{align}', '{matrix}')
+                    .replaceAll(/\$(.*?)\$/gs, (match) => {
+                        return match.replaceAll(/\n/g, '');
+                    }),
                 dap_an_dung: req.body.dap_an_dung1,
                 ...(req.files &&
                     req.files.tep_dinh_kem1 && {
@@ -134,7 +164,13 @@ const putUpdate = async (req, res) => {
             }
             await Answer.update(
                 {
-                    noi_dung_dap_an: req.body.noi_dung_dap_an2.replaceAll('\\[', '$').replaceAll('\\]', '$'),
+                    noi_dung_dap_an: req.body.noi_dung_dap_an2
+                        .replaceAll('\\[', '$')
+                        .replaceAll('\\]', '$')
+                        .replaceAll('{align}', '{matrix}')
+                        .replaceAll(/\$(.*?)\$/gs, (match) => {
+                            return match.replaceAll(/\n/g, '');
+                        }),
                     dap_an_dung: req.body.dap_an_dung2,
                     ...(req.files &&
                         req.files.tep_dinh_kem2 && {
@@ -152,7 +188,13 @@ const putUpdate = async (req, res) => {
             }
             await Answer.update(
                 {
-                    noi_dung_dap_an: req.body.noi_dung_dap_an3.replaceAll('\\[', '$').replaceAll('\\]', '$'),
+                    noi_dung_dap_an: req.body.noi_dung_dap_an3
+                        .replaceAll('\\[', '$')
+                        .replaceAll('\\]', '$')
+                        .replaceAll('{align}', '{matrix}')
+                        .replaceAll(/\$(.*?)\$/gs, (match) => {
+                            return match.replaceAll(/\n/g, '');
+                        }),
                     dap_an_dung: req.body.dap_an_dung3,
                     ...(req.files &&
                         req.files.tep_dinh_kem3 && {
@@ -170,7 +212,13 @@ const putUpdate = async (req, res) => {
             }
             await Answer.update(
                 {
-                    noi_dung_dap_an: req.body.noi_dung_dap_an4.replaceAll('\\[', '$').replaceAll('\\]', '$'),
+                    noi_dung_dap_an: req.body.noi_dung_dap_an4
+                        .replaceAll('\\[', '$')
+                        .replaceAll('\\]', '$')
+                        .replaceAll('{align}', '{matrix}')
+                        .replaceAll(/\$(.*?)\$/gs, (match) => {
+                            return match.replaceAll(/\n/g, '');
+                        }),
                     dap_an_dung: req.body.dap_an_dung4,
                     ...(req.files &&
                         req.files.tep_dinh_kem4 && {

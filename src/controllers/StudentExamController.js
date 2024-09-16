@@ -200,7 +200,7 @@ const postCreatev2 = async (req, res) => {
             INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
                 SELECT cau_hoi_id, ${exam.dataValues.de_thi_id}, 2 FROM cau_hoi
                 WHERE chuyen_nganh_id = 7 AND kct_id = 1 AND de_thi_id = ${sampleExam.de_thi_id}
-                ORDER BY trich_doan_id DESC, RAND()
+                ORDER BY trich_doan_id ASC, RAND()
                 LIMIT ${criteria.so_cau_hoi_phan_2}
         `,
         {
@@ -215,7 +215,7 @@ const postCreatev2 = async (req, res) => {
         INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
             SELECT cau_hoi_id, ${exam.dataValues.de_thi_id}, 3 FROM cau_hoi
             WHERE chuyen_nganh_id = 5 AND kct_id = 1 AND de_thi_id = ${sampleExam.de_thi_id}
-            ORDER BY trich_doan_id DESC
+            ORDER BY cau_hoi_id ASC
             LIMIT ${criteria.so_cau_hoi_phan_3}
     `,
             {
@@ -261,6 +261,7 @@ const postCreatev2 = async (req, res) => {
                 sampleExam.de_thi_id
             }
                         AND cau_hoi_id NOT IN (SELECT cau_hoi_id
+                        FROM cau_hoi_de_thi
                         WHERE de_thi_id = ${exam.de_thi_id})
                         ORDER BY RAND() LIMIT ${
                             criteria.so_cau_hoi_phan_3 -

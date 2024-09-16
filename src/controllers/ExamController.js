@@ -443,6 +443,7 @@ const getById = async (req, res) => {
             },
             order: [
                 [sequelize.col('phan'), 'ASC'],
+                [sequelize.col('chdt_id'), 'ASC'],
                 [sequelize.col('dap_an_id'), 'ASC'],
             ],
         };
@@ -1124,17 +1125,20 @@ const reuse = async (req, res) => {
             'mo_dun_id',
             'chuyen_de_id',
             'de_mau',
-            'de_mau_id'
+            'de_mau_id',
+            'de_thi_ma'
         ],
     });
     const examNew = await Exam.create({
         ...examOld.dataValues,
+        de_thi_ma: `${examOld.de_thi_ma}_NEW`,
+        ten_de_thi: `${examOld.ten_de_thi} NEW`
     });
     let examQuestionOlds = await ExamQuestion.findAll({
         where: {
             de_thi_id: req.params.id,
         },
-        attributes: ['cau_hoi_id'],
+        attributes: ['cau_hoi_id', 'chuyen_nganh_id'],
     });
     let examQuestionNews = [];
     for (const examQuestionOld of examQuestionOlds) {
