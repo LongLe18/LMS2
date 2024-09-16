@@ -147,9 +147,10 @@ b {
 
 .question-content .content-answer-question ul li button .answer.incorrect .answer-label, .wrongrightAnswer .no-thing {
   border: 1px solid #ccc !important;
-  span {
-    color: #000 !important;
-  }
+}
+
+.question-content .content-answer-question ul li button .answer.incorrect .answer-label, .wrongrightAnswer .no-thing span {
+  color: #000 !important;
 }
 
 .question-content .content-answer-question ul li button .answer-label {
@@ -674,22 +675,26 @@ b {
   font-size: 20px;
   font-family: 'SourceSansPro' !important;
 }
+
 .cra-confirm-modal-container {
   line-height: 160%;
-  .confirm-buttons {
-    text-align: center;
-    margin: 10px;
-    button {
-      margin: 0 6px;
-    }
-  }
-  .ant-modal-confirm-btns {
-    display: block;
-    clear: both;
-    width: 100%;
-    text-align: center;
-    margin: 10px 0;
-  }
+}
+
+.cra-confirm-modal-container .confirm-buttons {
+  text-align: center;
+  margin: 10px;
+}
+
+.cra-confirm-modal-container .confirm-buttons button {
+  margin: 0 6px;
+}
+
+.cra-confirm-modal-container .ant-modal-confirm-btns {
+  display: block;
+  clear: both;
+  width: 100%;
+  text-align: center;
+  margin: 10px 0;
 }
 
 .btn-DS {
@@ -713,18 +718,16 @@ b {
   z-index: 99;
 }
 
-.list-questions {
-  .item {
-    border-radius: 50%;
-    text-align: center;
-    height: 30px;
-    background: grey;
-    button {
-      color: #fff;
-      background: transparent;
-      border: none;
-    }
-  }
+.list-questions .item {
+  border-radius: 50%;
+  text-align: center;
+  height: 30px;
+  background: grey;
+}
+.list-questions .item button {
+  color: #fff;
+  background: transparent;
+  border: none;
 }
 
 .MJXc-display {

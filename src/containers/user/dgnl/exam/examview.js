@@ -234,10 +234,10 @@ const ExamViewPage = (props) => {
                     </Col>
                 </Row>
                 <Row className='title-section' justify={'center'}>
-                    <Col xs={{ span: 22, offset: 1 }} lg={{ span: 11, offset: 7 }}>
+                    <Col xs={{ span: 22, offset: 1 }} lg={{ span: 11, offset: 1 }} >
                         {Array.from({ length: exam.data.so_phan }).map((_, index) => {
                             return (
-                                <div className={`section-${index}`}>Phần {index + 1}: {index === 0 ? `Tư duy định lượng (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)` 
+                                <div className={`section-${index} detail-title-section`}>Phần {index + 1}: {index === 0 ? `Tư duy định lượng (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)` 
                                     : index === 1 ? `Tư duy định tính (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)`
                                     : `Khoa học (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)`}</div>
                             )

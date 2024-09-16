@@ -241,6 +241,7 @@ const LessonCate = () => {
     const createLesson = async (values) => {  
       setState({...state, Uploading: true});
 
+      console.log(state.typeLesson, values.loai_bai_giang)
       if (state.typeLesson !== values.loai_bai_giang) {
         notification.error({
           message: 'Cảnh báo',
@@ -364,7 +365,7 @@ const LessonCate = () => {
                             </Form.Item>
                              
                             <Form.Item
-                            initialValue={"video"}
+                              initialValue={"video"}
                               className="input-col"
                               label="Loại bài giảng"
                               name="loai_bai_giang"

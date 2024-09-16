@@ -6,7 +6,7 @@
 
 .list-news-box-single {
   min-height: 100vh;
-  background: #EBEBEB;
+  background: #f5f5f5;
   /* padding-top: 1.5em; */
 }
 
@@ -68,7 +68,7 @@
 }
 
 .post-module .list-news-bg {
-  background-color: #fff;
+  background-color: #f5f5f5;
   border: 1px solid #00bb12;
   border-radius: 20px;
   margin-bottom: 30px;
@@ -101,45 +101,43 @@
   margin-right: 10px;
 }
 
-.title-section {
-  div {
-    border-radius: 6px;
-    margin: 12px;
-    padding: 12px;
-    font-size: 16px;
-  }
+.title-section .detail-title-section {
+  border-radius: 6px;
+  margin: 12px;
+  padding: 12px;
+  font-size: 16px;
+}
 
-  .section-0 {
-    background: #d4ad00;
-    border-color: #d4ad00;
-    text-align: center;
-    color: #b60505;
-    text-transform: uppercase;
-  }
+.title-section .section-0 {
+  background: #d4ad00;
+  border-color: #d4ad00;
+  text-align: center;
+  color: #b60505;
+  text-transform: uppercase;
+}
 
-  .section-1 {
-    background: #2222ffc2;
-    border-color: #2222ffc2;
-    text-align: center;
-    text-transform: uppercase;
-    color: #fff;
-  }
+.title-section .section-1 {
+  background: #2222ffc2;
+  border-color: #2222ffc2;
+  text-align: center;
+  text-transform: uppercase;
+  color: #fff;
+}
 
-  .section-2 {
-    background: #b60505;
-    border-color: #b60505;
-    text-align: center;
-    color: #d4ad00;
-    text-transform: uppercase;
-  }
+.title-section .section-2 {
+  background: #b60505;
+  border-color: #b60505;
+  text-align: center;
+  color: #d4ad00;
+  text-transform: uppercase;
+}
 
-  .section-sum {
-    text-transform: uppercase;
-    color: #fff;
-    background: #d09e80;
-    text-align: center;
-    border-color: #d09e80;
-  }
+.title-section .section-sum {
+  text-transform: uppercase;
+  color: #fff;
+  background: #d09e80;
+  text-align: center;
+  border-color: #d09e80;
 }
 
 @media only screen and (max-width: 480px) {

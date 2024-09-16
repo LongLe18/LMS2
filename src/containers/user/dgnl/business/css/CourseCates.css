@@ -1,13 +1,13 @@
 .list-cate-items {
   margin-top: 30px;
   margin-right: 12px !important;
+}
 
-  .course-cate-box {
-    background-color: transparent;
-    border: solid 1px green;
-    box-shadow: 0px 4px 8px rgba(38, 38, 38, 0.2);
-    border-radius: 8px;
-  }
+.list-cate-items .course-cate-box {
+  background-color: transparent;
+  border: solid 1px green;
+  box-shadow: 0px 4px 8px rgba(38, 38, 38, 0.2);
+  border-radius: 8px;
 }
 
 .list-cate-items .box-text {
@@ -16,7 +16,7 @@
 
 .list-course-cate {
   margin-bottom: 10px;
-  background: #fff;
+  background: #f5f5f5;
 }
 .list-course-cate .list-post-items {
   margin-top: 25px;
@@ -142,7 +142,7 @@
 }
 /*tablet pro*/
 .wraper-list-course-cate-index {
-  background-color: #fff;
+  background-color: #f5f5f5;
 }
 
 .collapse-course .ant-collapse-content {

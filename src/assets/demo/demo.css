@@ -893,6 +893,10 @@ body, html {
   padding: 0;
 }
 
+.app-content {
+  background-color: #f5f5f5;
+}
+
 .flex-left {
   width: 85%;
   margin-right: auto;
