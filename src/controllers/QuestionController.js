@@ -25,7 +25,7 @@ const getByExam = async (req, res) => {
         select * from cau_hoi LEFT JOIN cau_hoi_de_thi ON cau_hoi.cau_hoi_id=cau_hoi_de_thi.cau_hoi_id where ${filter}
     `,
         {
-            replacements: {
+            replaceAllments: {
                 de_thi_id: parseInt(req.query.de_thi_id),
                 limit: parseInt(limit),
             },
@@ -102,10 +102,14 @@ const getById = async (req, res) => {
 };
 
 const postCreate = async (req, res) => {
-    const { cot_tren_hang, ...rest } = req.body;
-
+    const { cot_tren_hang, noi_dung, ...rest } = req.body;
+    console.log(noi_dung)
+    console.log(noi_dung.replaceAll('\\[', '$').replaceAll('\\]', '$'))
     const question = await Question.create({
         ...rest,
+        ...(noi_dung && {
+            noi_dung: noi_dung.replaceAll('\\[', '$').replaceAll('\\]', '$'),
+        }),
         ...(req.files &&
             req.files.tep_dinh_kem_noi_dung && {
                 noi_dung: `${req.body.noi_dung} ${req.body.tep_dinh_kem_noi_dung}`,
@@ -123,9 +127,13 @@ const postCreate = async (req, res) => {
 };
 
 const putUpdate = async (req, res) => {
+    const { noi_dung, ...rest } = req.body;
     await Question.update(
         {
-            ...req.body,
+            ...rest,
+            ...(noi_dung && {
+                noi_dung: noi_dung.replaceAll('\\[', '$').replaceAll('\\]', '$'),
+            }),
             ...(req.files &&
                 req.files.tep_dinh_kem_noi_dung && {
                     noi_dung: `${req.body.noi_dung} ${req.body.tep_dinh_kem_noi_dung}`,
