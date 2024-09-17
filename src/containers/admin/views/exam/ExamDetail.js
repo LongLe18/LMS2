@@ -212,11 +212,9 @@ const ExamDetailPage = () => {
         let options = [];
         if (typeExams.status === 'success') {
             // eslint-disable-next-line array-callback-return
-            options = typeExams.data.map((type) => {
-                if (type.loai_de_thi_id !== 4)
-                    return <Option key={type.loai_de_thi_id} value={type.loai_de_thi_id} >{type.mo_ta}</Option>
-                })
-            return null;
+            options = typeExams.data.filter(type => type !== 4).map((type) => {
+                return <Option key={type.loai_de_thi_id} value={type.loai_de_thi_id} >{type.mo_ta}</Option>
+            })
         }
         return (
           <Select
@@ -694,7 +692,7 @@ const ExamDetailPage = () => {
                         Câu {index + 1} 
                         <span className="point">
                             {/* [{question.cau_hoi.diem} điểm]  */}
-                            {majors.data.filter((marjor) => marjor.chuyen_nganh_id === question.cau_hoi.chuyen_nganh_id)[0].ten_chuyen_nganh}
+                            {majors.data.filter((marjor) => marjor.chuyen_nganh_id === question.cau_hoi?.chuyen_nganh_id)[0]?.ten_chuyen_nganh}
                             {question.cau_hoi.loai_cau_hoi === 2 && 'Câu hỏi đúng sai'}
                         </span>
                     </div>
@@ -766,7 +764,7 @@ const ExamDetailPage = () => {
                         </Steps>
                     </div>
                     <Tabs activeKey={`step_${currentStep}`}>
-                    {(exam && exam.status === 'success' && criteria.status === 'success' && questions.status === 'success') &&         
+                    {(exam && exam.status === 'success' && criteria.status === 'success' && questions.status === 'success' && typeExams.status === 'success') &&         
                     <>        
                         <TabPane tab="Thông tin" key="step_0">
                             <Form layout="vertical" className="ExamForm" onFinish={handleSaveExam} form={form}>

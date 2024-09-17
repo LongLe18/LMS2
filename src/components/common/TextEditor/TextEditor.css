@@ -102,7 +102,7 @@
   }
   
   .math-area .math-item div {
-    /* display: inline-block; */
+    display: inline-block;
     font-family: KaTeX_Math;
   }
   

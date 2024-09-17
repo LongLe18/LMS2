@@ -520,7 +520,7 @@ const ExamOnlineDetail = () => {
                                             return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
                                                 <MathJax.Node key={index2} formula={item2} />
                                             ) : (
-                                                <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                <span style={{fontFamily: 'MJXc-TeX-main-R, MJXc-TeX-main-Rw'}}  dangerouslySetInnerHTML={{ __html: item2 }}></span>
                                             )
                                         })
                                     )

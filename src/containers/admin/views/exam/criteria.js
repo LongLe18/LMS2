@@ -156,6 +156,18 @@ const Criteria = () => {
             dataIndex: 'ten_mo_dun',
             key: 'ten_mo_dun',
             responsive: ['md'],
+            render: (ten_mo_dun, mo_dun) => (
+                mo_dun.mo_dun.ten_mo_dun
+            )
+        },
+        {
+            title: 'Khóa học',
+            dataIndex: 'khoa_hoc',
+            key: 'ten_mo_dun',
+            responsive: ['md'],
+            render: (ten_mo_dun, mo_dun) => (
+                mo_dun.mo_dun.khoa_hoc.ten_khoa_hoc
+            )
         },
         {
             title: 'Số câu hỏi',
@@ -201,6 +213,18 @@ const Criteria = () => {
             dataIndex: 'ten_mo_dun',
             key: 'ten_mo_dun',
             responsive: ['md'],
+            render: (ten_mo_dun, mo_dun) => (
+                mo_dun.mo_dun.ten_mo_dun
+            )
+        },
+        {
+            title: 'Khóa học',
+            dataIndex: 'khoa_hoc',
+            key: 'ten_mo_dun',
+            responsive: ['md'],
+            render: (ten_mo_dun, mo_dun) => (
+                mo_dun.mo_dun.khoa_hoc.ten_khoa_hoc
+            )
         },
         {
             title: 'Số câu hỏi',

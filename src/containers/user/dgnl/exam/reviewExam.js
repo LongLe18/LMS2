@@ -208,7 +208,6 @@ const ReviewExamPage = () => {
                     )}
                     {exam.status === 'success' && exam.data.cau_hoi_de_this.map((question, ParentIndex) => {
                         let regex = /\\begin{center}\\includegraphics\[scale = 0\.5\]{(.*?)}\\end{center}/;
-                        console.log(question.cau_hoi?.trich_doan?.loai_trich_doan_id, ParentIndex)
                         return (
                             <>
                                 {((question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom !== undefined && question.cau_hoi.exceprtTo !== undefined) || (question.cau_hoi?.trich_doan?.loai_trich_doan_id === 0)) &&
@@ -430,16 +429,16 @@ const ReviewExamPage = () => {
         <>
             {loading && <LoadingCustom/>}
             {exam.status === 'success' && 
-                <Layout className={`main-app history-exam`}>
-                <Helmet>
-                    <title>{exam.data.ten_de_thi}</title>
-                </Helmet>
-                <Content className="app-content">
-                    <div className="header-exam">
-                        <h1>{exam.data.ten_de_thi}</h1>
-                    </div>
-                    <div class="wraper-exam"  style={{ padding: '0' }}>{renderExam()}</div>
-                </Content>
+                <Layout className={`main-app history-exam`} >
+                    <Helmet>
+                        <title>{exam.data.ten_de_thi}</title>
+                    </Helmet>
+                    <Content className="app-content">
+                        <div className="header-exam">
+                            <h1>{exam.data.ten_de_thi}</h1>
+                        </div>
+                        <div class="wraper-exam"  style={{ padding: '0' }}>{renderExam()}</div>
+                    </Content>
                 </Layout>
             }
             {error && notification.error({

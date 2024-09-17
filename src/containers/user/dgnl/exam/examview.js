@@ -252,28 +252,28 @@ const ExamViewPage = (props) => {
 
                     <div style={{fontStyle: 'italic'}}><span style={{fontWeight: 700}}>Phần 1</span>: Tư duy định lượng</div>
 
-                    Thí sinh làm lần lượt các câu hỏi. Nếu bạn kết thúc phần 1 trước thời gian quy định. Bạn có thê
-                    chuyên sang phân thi thứ hai. Khi hết thời gian phần 1, máy tinh sẽ tự động chuyên sang phần thi thứ hai.
-                    Nếu phân thi có thêm câu hỏi thử nghiệm, máy tính sẽ cộng thời gian tương ứng đề hoàn thành tất cả các
+                    Thí sinh làm lần lượt các câu hỏi. Nếu bạn kết thúc phần 1 trước thời gian quy định. Bạn có thể
+                    chuyển sang phần thi thứ hai. Khi hết thời gian phần 1, máy tính sẽ tự động chuyển sang phần thi thứ hai.
+                    Nếu phần thi có thêm câu hỏi thử nghiệm, máy tính sẽ cộng thời gian tương ứng đề hoàn thành tất cả các
                     câu hỏi.
                     <br/>
 
                     <div style={{fontStyle: 'italic'}}><span style={{fontWeight: 700}}>Phần 2</span>: Tư duy định tính</div>       
 
-                    Câu hỏi được đánh thứ tự tiếp nói theo thứ tự câu hỏi của phần thi thứ nhất. Nếu bạn kết thúc phần
-                    2 trước thời gian quy định, bạn có thê chuyên sang phản thi thứ ba. Khi hết thời gian quy định, máy tính
-                    sẽ tự động chuyên sang phân thi thứ ba.
+                    Câu hỏi được đánh thứ tự tiếp nối theo thứ tự câu hỏi của phần thi thứ nhất. Nếu bạn kết thúc phần
+                    2 trước thời gian quy định, bạn có thể chuyển sang phần thi thứ ba. Khi hết thời gian quy định, máy tính
+                    sẽ tự động chuyển sang phần thi thứ ba.
                     <br/>
 
                     <div style={{fontStyle: 'italic'}}><span style={{fontWeight: 700}}>Phần 3</span>: Khoa học</div>       
 
 
-                    Câu hỏi được đánh thứ tự tiếp nỗi theo thứ tự câu hỏi của phần thi thứ hai cho đến câu hỏi c
-                    cùng. Nếu bạn kết thúc phần 3 trước thời gian quy định, bạn có thẻ bắm NỘP BÀI đề hoàn thảnh bài thi
+                    Câu hỏi được đánh thứ tự tiếp nối theo thứ tự câu hỏi của phần thi thứ hai cho đến câu hỏi cuối
+                    cùng. Nếu bạn kết thúc phần 3 trước thời gian quy định, bạn có thể bấm NỘP BÀI đề hoàn thành bài thi
                     sớm. Khi hết thời gian theo quy định, máy tính sẽ tự động NỘP BÀI.
                     <br/>
 
-                    Khi KÉT THÚC bài thi, mản hình máy tính sẽ hiển thị kết quả thi của bạn.
+                    Khi KẾT THÚC bài thi, màn hình máy tính sẽ hiển thị kết quả thi của bạn.
 
                 </div>
                 <p className="block-action text-center mt-0">
