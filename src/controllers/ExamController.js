@@ -514,11 +514,11 @@ const getById = async (req, res) => {
     let exceprtTo;
     for (var index1 = 0; index1 < exam.cau_hoi_de_this.length; index1++) {
         dap_an_dungs = [];
-        if (exam.cau_hoi_de_this[index1].cau_hoi.trich_doan_id) {
+        if (exam.cau_hoi_de_this[index1].cau_hoi && exam.cau_hoi_de_this[index1].cau_hoi.trich_doan_id) {
             if (
                 index1 == 0 ||
                 exam.cau_hoi_de_this[index1].cau_hoi.trich_doan_id !=
-                    exam.cau_hoi_de_this[index1 - 1].cau_hoi.trich_doan_id
+                exam.cau_hoi_de_this[index1 - 1].cau_hoi.trich_doan_id
             ) {
                 exceprtFrom = exceprtTo = index1;
                 for (
@@ -642,12 +642,12 @@ const getByIdv2 = async (req, res) => {
                     Number(chuyen_nganh_id) === 3
                         ? criteria.so_cau_hoi_chuyen_nganh_1
                         : Number(chuyen_nganh_id) === 4
-                        ? criteria.so_cau_hoi_chuyen_nganh_2
-                        : Number(chuyen_nganh_id) === 6
-                        ? criteria.so_cau_hoi_chuyen_nganh_3
-                        : Number(chuyen_nganh_id) === 8
-                        ? criteria.so_cau_hoi_chuyen_nganh_4
-                        : criteria.so_cau_hoi_chuyen_nganh_5;
+                            ? criteria.so_cau_hoi_chuyen_nganh_2
+                            : Number(chuyen_nganh_id) === 6
+                                ? criteria.so_cau_hoi_chuyen_nganh_3
+                                : Number(chuyen_nganh_id) === 8
+                                    ? criteria.so_cau_hoi_chuyen_nganh_4
+                                    : criteria.so_cau_hoi_chuyen_nganh_5;
                 so_cau_hoi_phan_3 += so_cau_hoi_chuyen_de;
                 await sequelize.query(
                     `
@@ -672,8 +672,7 @@ const getByIdv2 = async (req, res) => {
                 WHERE chuyen_nganh_id IN (:chuyen_nganh_ids) AND kct_id = 1
                 AND cau_hoi_id NOT IN (SELECT cau_hoi_de_thi
                 WHERE de_thi_id = :de_thi_id)
-                ORDER BY RAND() LIMIT ${
-                    criteria.so_cau_hoi_phan_3 - so_cau_hoi_phan_3
+                ORDER BY RAND() LIMIT ${criteria.so_cau_hoi_phan_3 - so_cau_hoi_phan_3
                 }
         `,
                 {
@@ -726,7 +725,7 @@ const getByIdv2 = async (req, res) => {
             if (
                 index1 == 0 ||
                 exam.cau_hoi_de_this[index1].cau_hoi.trich_doan_id !=
-                    exam.cau_hoi_de_this[index1 - 1].cau_hoi.trich_doan_id
+                exam.cau_hoi_de_this[index1 - 1].cau_hoi.trich_doan_id
             ) {
                 exceprtFrom = exceprtTo = index1;
                 for (
@@ -1040,52 +1039,60 @@ const stateChange = async (req, res) => {
 };
 
 const forceDelete = async (req, res) => {
-    try {
-        const exam = await Exam.findOne({
-            where: {
-                de_thi_id: req.params.id,
-            },
+    const exam = await Exam.findOne({
+        where: {
+            de_thi_id: req.params.id,
+        },
+    });
+    if (
+        exam &&
+        exam.anh_dai_dien &&
+        fs.existsSync(`public${exam.anh_dai_dien}`)
+    )
+        fs.unlinkSync(`public${exam.anh_dai_dien}`);
+    if (fs.existsSync(`public/Picture/word/media/${req.params.id}`)) {
+        fs.rmSync(`public/Picture/word/media/${req.params.id}`, {
+            recursive: true,
+            force: true,
         });
-        if (
-            exam &&
-            exam.anh_dai_dien &&
-            fs.existsSync(`public${exam.anh_dai_dien}`)
-        )
-            fs.unlinkSync(`public${exam.anh_dai_dien}`);
-        if (fs.existsSync(`public/Picture/word/media/${req.params.id}`)) {
-            fs.rmSync(`public/Picture/word/media/${req.params.id}`, {
-                recursive: true,
-                force: true,
-            });
-        }
-        await Exceprt.destroy({
-            where: {
-                de_thi_id: req.params.id,
-            },
-        });
-        await Question.destroy({
-            where: {
-                de_thi_id: req.params.id,
-            },
-        });
-        await Answer.destroy({
-            where: {
-                de_thi_id: req.params.id,
-            },
-        });
-        await Exam.destroy({
-            where: {
-                de_thi_id: req.params.id,
-            },
-        });
-        await ExamQuestion.destroy({
-            where: {
-                de_thi_id: req.params.id,
-            },
-        });
-    } catch (err) {
-        console.log(err);
     }
+    await Exceprt.destroy({
+        where: {
+            de_thi_id: req.params.id,
+        },
+    });
+    await Question.destroy({
+        where: {
+            de_thi_id: req.params.id,
+        },
+    });
+    await Answer.destroy({
+        where: {
+            de_thi_id: req.params.id,
+        },
+    });
+    await Exam.destroy({
+        where: {
+            de_thi_id: req.params.id,
+        },
+    });
+    await ExamQuestion.destroy({
+        where: {
+            de_thi_id: req.params.id,
+        },
+    });
+    await sequelize.query(
+        `
+        DELETE FROM cau_hoi_de_thi WHERE cau_hoi_id IN 
+            (SELECT cau_hoi_id FROM cau_hoi WHERE de_thi_id = :de_thi_id)`,
+        {
+            replacements: {
+                de_thi_id: parseInt(req.params.id),
+            },
+            type: sequelize.QueryTypes.DELETE,
+        }
+    );
+
     res.status(200).send({
         status: 'success',
         data: null,
@@ -1094,19 +1101,19 @@ const forceDelete = async (req, res) => {
 };
 
 const clearAll = async (req, res) => {
-    const exams = await findAll();
-    for (const exam of exams) {
-        if (exam.anh_dai_dien && fs.existsSync(`public${exam.anh_dai_dien}`))
-            fs.unlinkSync(`public${exam.anh_dai_dien}`);
-    }
-    await sequelize.query('DELETE FROM de_thi', {
-        type: sequelize.QueryTypes.DELETE,
-    });
-    res.status(200).send({
-        status: 'success',
-        data: null,
-        message: 'cleared',
-    });
+    // const exams = await findAll();
+    // for (const exam of exams) {
+    //     if (exam.anh_dai_dien && fs.existsSync(`public${exam.anh_dai_dien}`))
+    //         fs.unlinkSync(`public${exam.anh_dai_dien}`);
+    // }
+    // await sequelize.query('DELETE FROM de_thi', {
+    //     type: sequelize.QueryTypes.DELETE,
+    // });
+    // res.status(200).send({
+    //     status: 'success',
+    //     data: null,
+    //     message: 'cleared',
+    // });
 };
 
 const reuse = async (req, res) => {
@@ -1226,7 +1233,7 @@ const uploadWordMedia = async (req, res) => {
     });
 };
 
-const getCriteriaByExamId = async(req, res) =>{
+const getCriteriaByExamId = async (req, res) => {
     let exam = await Exam.findOne({
         where: {
             de_thi_id: req.params.id,

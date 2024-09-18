@@ -113,7 +113,7 @@ const postCreate = async (req, res) => {
                 .replaceAll('{align}', '{matrix}')
                 .replaceAll(/\$(.*?)\$/gs, (match) => {
                     return match.replaceAll(/\n/g, '');
-                })
+                }),
         }),
         ...(req.files &&
             req.files.tep_dinh_kem_noi_dung && {
@@ -143,7 +143,7 @@ const putUpdate = async (req, res) => {
                     .replaceAll('{align}', '{matrix}')
                     .replaceAll(/\$(.*?)\$/gs, (match) => {
                         return match.replaceAll(/\n/g, '');
-                    })
+                    }),
             }),
             ...(req.files &&
                 req.files.tep_dinh_kem_noi_dung && {
@@ -168,50 +168,65 @@ const putUpdate = async (req, res) => {
 };
 
 const forceDelete = async (req, res) => {
-    try {
-        const question = await Question.findOne({
-            where: {
-                cau_hoi_id: req.params.id,
+    const question = await Question.findOne({
+        where: {
+            cau_hoi_id: req.params.id,
+        },
+    });
+    const examPushlished = await sequelize.query(
+        `
+            SELECT DISTINCT de_thi.de_thi_id FROM cau_hoi_de_thi INNER JOIN de_thi
+                ON cau_hoi_de_thi.de_thi_id = de_thi.de_thi_id
+                WHERE cau_hoi_id = :cau_hoi_id AND de_thi.xuat_ban = true`,
+        {
+            replacements: {
+                cau_hoi_id: parseInt(req.params.id),
             },
-        });
-
-        const media =
-            /\\begin{center}\n\\includegraphics\[scale = 0.5]{\s*([\s\S]*?)\s*}\n\\end{center}/g.exec(
-                question.loi_giai
-            );
-        if (media !== null && fs.existsSync(`public/${media[1]}`)) {
-            fs.unlinkSync(`public/${media}`);
+            type: sequelize.QueryTypes.SELECT,
         }
-        if (question.tep_dinh_kem_noi_dung) {
-            for (const tep_dinh_kem_noi_dung of question.tep_dinh_kem_noi_dung.split(
-                ','
-            )) {
-                if (fs.existsSync(`public${tep_dinh_kem_noi_dung}`))
-                    fs.unlinkSync(`public${tep_dinh_kem_noi_dung}`);
-            }
-        }
-        if (question.tep_dinh_kem_loi_giai) {
-            for (const tep_dinh_kem_loi_giai of question.tep_dinh_kem_loi_giai.split(
-                ','
-            )) {
-                if (fs.existsSync(`public${tep_dinh_kem_loi_giai}`))
-                    fs.unlinkSync(`public${tep_dinh_kem_loi_giai}`);
-            }
-        }
-
-        await Question.destroy({
-            where: {
-                cau_hoi_id: req.params.id,
-            },
+    );
+    if (examPushlished.length > 0) {
+        return res.status(400).send({
+            status: 'error',
+            data: null,
+            message: 'Câu hỏi thuộc đề thi đã xuất bản',
         });
-        await ExamQuestion.destroy({
-            where: {
-                cau_hoi_id: req.params.id,
-            },
-        });
-    } catch (err) {
-        console.log(err);
     }
+
+    const media =
+        /\\begin{center}\n\\includegraphics\[scale = 0.5]{\s*([\s\S]*?)\s*}\n\\end{center}/g.exec(
+            question.loi_giai
+        );
+    if (media !== null && fs.existsSync(`public/${media[1]}`)) {
+        fs.unlinkSync(`public/${media}`);
+    }
+    if (question.tep_dinh_kem_noi_dung) {
+        for (const tep_dinh_kem_noi_dung of question.tep_dinh_kem_noi_dung.split(
+            ','
+        )) {
+            if (fs.existsSync(`public${tep_dinh_kem_noi_dung}`))
+                fs.unlinkSync(`public${tep_dinh_kem_noi_dung}`);
+        }
+    }
+    if (question.tep_dinh_kem_loi_giai) {
+        for (const tep_dinh_kem_loi_giai of question.tep_dinh_kem_loi_giai.split(
+            ','
+        )) {
+            if (fs.existsSync(`public${tep_dinh_kem_loi_giai}`))
+                fs.unlinkSync(`public${tep_dinh_kem_loi_giai}`);
+        }
+    }
+
+    await Question.destroy({
+        where: {
+            cau_hoi_id: req.params.id,
+        },
+    });
+    await ExamQuestion.destroy({
+        where: {
+            cau_hoi_id: req.params.id,
+        },
+    });
     res.status(200).send({
         status: 'success',
         data: null,
