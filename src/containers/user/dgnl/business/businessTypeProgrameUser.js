@@ -281,16 +281,16 @@ const BusinessTypeProgramePageUser = (props) => {
                                                         <div className="course-cate-box">
                                                             <div className="image-box">
 
-                                                                <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${hashids.encode(cate.khoa_hoc_id)}`}>
+                                                                <Link to={item.id === 0 ? `/luyen-tap/danh-gia-nang-luc/${hashids.encode(cate.khoa_hoc_id)}` : item.id === 1 ? `/luyen-tap/kiem-tra/${hashids.encode(cate.khoa_hoc_id)}` : `/luyen-tap/luyen-tap/${hashids.encode(cate.khoa_hoc_id)}`}>
                                                                     <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
                                                                 </Link>
                                                             </div>
                                                             <div className="box-text pb-1">
                                                                 <h3 className="course-cate-title">
-                                                                    <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${hashids.encode(cate.khoa_hoc_id)}`}>{cate.ten_khoa_hoc}</Link>
+                                                                    <Link to={item.id === 0 ? `/luyen-tap/danh-gia-nang-luc/${hashids.encode(cate.khoa_hoc_id)}` : item.id === 1 ? `/luyen-tap/kiem-tra/${hashids.encode(cate.khoa_hoc_id)}` : `/luyen-tap/luyen-tap/${hashids.encode(cate.khoa_hoc_id)}`}>{cate.ten_khoa_hoc}</Link>
                                                                 </h3>
                                                                 <p className="course-cate-description">
-                                                                    <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${hashids.encode(cate.khoa_hoc_id)}`} >
+                                                                    <Link to={item.id === 0 ? `/luyen-tap/danh-gia-nang-luc/${hashids.encode(cate.khoa_hoc_id)}` : item.id === 1 ? `/luyen-tap/kiem-tra/${hashids.encode(cate.khoa_hoc_id)}` : `/luyen-tap/luyen-tap/${hashids.encode(cate.khoa_hoc_id)}`}>
                                                                         <Button type="primary" style={{margin: '12px 0 12px 0', fontSize: 12, borderRadius: 4}}>
                                                                             Chi tiết
                                                                         </Button>

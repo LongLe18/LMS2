@@ -131,7 +131,7 @@ const DetailModule = () => {
     const renderProgramme = () => {
         let options = [];
           if (programmes.status === 'success') {
-              options = programmes.data.map((programme) => (
+              options = programmes.data.filter((programme) => programme.loai_kct === 2).map((programme) => (
                   <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
               ))
           }

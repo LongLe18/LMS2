@@ -73,6 +73,15 @@ const ModuleCate = (props) => {
         responsive: ['md'],
       },
       {
+        title: 'Loại mô đun',
+        dataIndex: 'loai_tong_hop',
+        key: 'loai_tong_hop',
+        responsive: ['md'],
+        render: (loai_tong_hop) => (
+          loai_tong_hop === 1 ? 'Phần thi tổng hợp' : loai_tong_hop === 2 ? 'Phần thi mô đun' : 'Phần bài học'
+        )
+      },
+      {
         title: 'Giáo viên',
         dataIndex: 'ten_giao_vien',
         key: 'ten_giao_vien',
@@ -401,7 +410,7 @@ const ModuleCate = (props) => {
     const ChangeStatusModule = (id) => {
       Modal.confirm({
         icon: <ExclamationCircleOutlined />,
-        content: 'Bạn có chắc chán muốn xóa mô đun này?',
+        content: 'Bạn có chắc chán muốn hủy hoạt động mô đun này?',
         okText: 'Đồng ý',
         cancelText: 'Hủy',
         onOk() {

@@ -281,6 +281,7 @@ const AccountPage = () => {
       return (
         <Select 
           showSearch={true} value={state.courseId}
+          filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
           onChange={(khoa_hoc_id) => setState({khoa_hoc_id, ...state })}
           placeholder="Chọn khóa học"
           mode="multiple"
@@ -377,7 +378,7 @@ const AccountPage = () => {
     const DeleteUser = (id, vai_tro) => {
       confirm({
           icon: <ExclamationCircleOutlined />,
-          content: 'Bạn có chắc chắn muốn hủy kích hoạt thành viên này?',
+          content: vai_tro.trang_thai === 1 ? 'Bạn có chắc chắn muốn hủy kích hoạt thành viên này?' : 'Bạn có chắc chắn muốn kích hoạt thành viên này?',
           okText: 'Đồng ý',
           cancelText: 'Hủy',
           onOk() {

@@ -35,7 +35,7 @@ Quill.register('modules/imageResize', ImageResize);
 const TextEditorWidget = (props) => {
     const quillRef = useRef();
     const regex = /\\begin{center}\\includegraphics\[scale = 0\.5\]{(.*?)}\\end{center}/;
-    const regexImg = /\\begin{center}\\includegraphics\[scale&nbsp;=&nbsp;0.5]{(.*?)}\\end{center}/;
+    // const regexImg = /\\begin{center}\\includegraphics\[scale&nbsp;=&nbsp;0.5]{(.*?)}\\end{center}/;
 
     const getBase64 = (img, callback) => {
         const reader = new FileReader();

@@ -277,7 +277,7 @@ const DiscountPage = (props) => {
                         <Row>
                             <Col xl={24} sm={24} xs={24}>
                                 <AppFilter
-                                title="Danh sách khuyễn mãi"
+                                title="Danh sách khuyến mãi"
                                 isShowCourse={true}
                                 isShowModule={false}
                                 isShowThematic={false}

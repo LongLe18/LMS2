@@ -268,7 +268,7 @@ const TeacherPage = () => {
     const DeleteUser = (id, vai_tro) => {
         Modal.confirm({
             icon: <ExclamationCircleOutlined />,
-            content: 'Bạn có chắc chắn muốn hủy kích hoạt thành viên này?',
+            content: vai_tro.trang_thai ? 'Bạn có chắc chắn muốn hủy kích hoạt thành viên này?' : 'Bạn có chắc chắn muốn kích hoạt thành viên này?',
             okText: 'Đồng ý',
             cancelText: 'Hủy',
             onOk() {

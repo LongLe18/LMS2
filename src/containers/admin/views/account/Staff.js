@@ -168,8 +168,8 @@ const StaffPage = () => {
           render: (id, vai_tro) => (
             <Space size="middle">
               <Button  type="button" onClick={() => EditUser(vai_tro)} className="ant-btn ant-btn-round ant-btn-primary">Sửa</Button>
-              {(vai_tro.trang_thai === true) && <Button shape="round" type="danger" onClick={() => DeleteUser(id, vai_tro)}>Tạm dừng</Button>}
-              {(vai_tro.trang_thai === false || vai_tro.trang_thai === 2) && <Button shape="round" type="danger" onClick={() => DeleteUser(id, vai_tro)}>Kích hoạt</Button>}
+              {(vai_tro.trang_thai === 1) && <Button shape="round" type="danger" onClick={() => DeleteUser(id, vai_tro)}>Tạm dừng</Button>}
+              {(vai_tro.trang_thai === 0 || vai_tro.trang_thai === 2) && <Button shape="round" type="danger" onClick={() => DeleteUser(id, vai_tro)}>Kích hoạt</Button>}
             </Space>
           ),
         },
@@ -289,7 +289,7 @@ const StaffPage = () => {
     const DeleteUser = (id, vai_tro) => {
       Modal.confirm({
         icon: <ExclamationCircleOutlined />,
-        content: 'Bạn có chắc chắn muốn hủy kích hoạt thành viên này?',
+        content: vai_tro.trang_thai ? 'Bạn có chắc chắn muốn hủy kích hoạt thành viên này?' : 'Bạn có chắc chắn muốn kích hoạt thành viên này?',
         okText: 'Đồng ý',
         cancelText: 'Hủy',
         onOk() {

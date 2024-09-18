@@ -114,7 +114,7 @@ const BodyDetailPage = (props) => {
                                         BÀI GIẢNG (PDF)
                                     </div>
                                     <div className="btn-thematic" onClick={() => { 
-                                            OnHandleThematic(chuyen_de_id)
+                                            window.location.href = `/luyen-tap/chuyen-de/xem/${hashids.encode(chuyen_de_id)}/${hashids.encode(props.idCourse)}`
                                         }} 
                                     >
                                         BÀI KIỂM TRA
@@ -152,7 +152,7 @@ const BodyDetailPage = (props) => {
                                     </div>
                                     <div className="btn-thematic" onClick={() => { 
                                             if (existCourse) {
-                                                OnHandleThematic(chuyen_de_id)
+                                                window.location.href = `/luyen-tap/chuyen-de/xem/${hashids.encode(chuyen_de_id)}/${hashids.encode(props.idCourse)}`
                                             } else {
                                                 notification.error({
                                                     message: 'Thông báo',
