@@ -894,6 +894,28 @@ const publish = async (req, res) => {
             de_thi_id: req.params.id,
         },
     });
+
+    const questionNotAnswer = await sequelize.query(
+        `
+        SELECT t.cau_hoi_id FROM (SELECT cau_hoi.cau_hoi_id, COUNT(dap_an.dap_an_id) AS count FROM dap_an 
+            INNER JOIN cau_hoi ON dap_an.cau_hoi_id = cau_hoi.cau_hoi_id 
+            INNER JOIN cau_hoi_de_thi ON cau_hoi.cau_hoi_id = cau_hoi_de_thi.cau_hoi_id
+                WHERE dap_an.dap_an_dung = 1 AND cau_hoi_de_thi.de_thi_id = :de_thi_id
+                GROUP BY cau_hoi.cau_hoi_id) t WHERE count = 0`,
+        {
+            replacements: { de_thi_id: Number(req.params.id) },
+            type: sequelize.QueryTypes.SELECT,
+        }
+    )
+
+    if(questionNotAnswer.length>0){
+        res.status(400).send({
+            status: 'error',
+            data: null,
+            message: "Đề thi có câu hỏi chưa có đán án đúng",
+        });
+    }
+
     if (exam.xuat_ban) {
         await Exam.update(
             {
