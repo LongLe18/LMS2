@@ -85,7 +85,13 @@ const DetailLesson = () => {
           if (!isPNG) {
             message.error(`${file.name} có định dạng không phải là application/pdf`);
           }
-          return isPNG || Upload.LIST_IGNORE;
+          // check dung lượng file trên 100mb => không cho upload
+          let size = true;
+          if (file.size > 512000000) {
+              message.error(`${file.name} dung lượng file quá lớn`);
+              size = false;
+          }
+          return (isPNG && size) || Upload.LIST_IGNORE;
         },
   
         onChange(info) {
@@ -117,7 +123,13 @@ const DetailLesson = () => {
           if (!isPNG) {
             message.error(`${file.name} có định dạng không phải là video/mp4`);
           }
-          return isPNG || Upload.LIST_IGNORE;
+          // check dung lượng file trên 100mb => không cho upload
+          let size = true;
+          if (file.size > 512000000) {
+              message.error(`${file.name} dung lượng file quá lớn`);
+              size = false;
+          }
+          return (isPNG && size) || Upload.LIST_IGNORE;
         },
   
         onChange(info) {
@@ -465,8 +477,6 @@ const DetailLesson = () => {
       }
     );
 
-    
-  
     return (
         <>
         {loading && <LoadingCustom />}
@@ -504,7 +514,7 @@ const DetailLesson = () => {
                                         >
                                             {renderLessionCategories()}
                                         </Form.Item>
-                                        <Form.Item className="input-col" label="Khung chương trình" initialValue={1} name="khung_ct_id" rules={[]}>
+                                        <Form.Item className="input-col" label="Khung chương trình" name="kct_id" rules={[]}>
                                             {renderProgramme()}
                                         </Form.Item>
                                         <Form.Item className="input-col" label="Khóa học" name="khoa_hoc_id" rules={[]}>

@@ -48,11 +48,17 @@ const DetailModule = () => {
         action: '#',
   
         beforeUpload: file => {
-          const isPNG = file.type === 'image/png' || file.type === 'image/jpeg';
-          if (!isPNG) {
-            message.error(`${file.name} có định dạng không phải là png/jpg`);
-          }
-          return isPNG || Upload.LIST_IGNORE;
+            const isPNG = file.type === 'image/png' || file.type === 'image/jpeg';
+            if (!isPNG) {
+                message.error(`${file.name} có định dạng không phải là png/jpg`);
+            }
+            // check dung lượng file trên 1mb => không cho upload
+            let size = true;
+            if (file.size > 1024000) {
+                message.error(`${file.name} dung lượng file quá lớn`);
+                size = false;
+            }
+            return (isPNG && size) || Upload.LIST_IGNORE;
         },
   
         onChange(info) {
@@ -79,11 +85,17 @@ const DetailModule = () => {
         action: '#',
   
         beforeUpload: file => {
-          const isPNG = file.type === 'video/mp4';
-          if (!isPNG) {
-            message.error(`${file.name} có định dạng không phải là video/mp4`);
-          }
-          return isPNG || Upload.LIST_IGNORE;
+            const isPNG = file.type === 'video/mp4';
+            if (!isPNG) {
+                message.error(`${file.name} có định dạng không phải là video/mp4`);
+            }
+            // check dung lượng file trên 100mb => không cho upload
+            let size = true;
+            if (file.size > 512000000) {
+                message.error(`${file.name} dung lượng file quá lớn`);
+                size = false;
+            }
+            return (isPNG && size) || Upload.LIST_IGNORE;
         },
   
         onChange(info) {
@@ -152,13 +164,13 @@ const DetailModule = () => {
             options = courses.data.map((course) => (
             <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
             ))
-        }
+        }   
         return (
             <Select
-            showSearch={false} value={state.courseId}
-            loading={loadingcourses}
-            onChange={(khoa_hoc_id) => setState({khoa_hoc_id, ...state, isChanged: true })}
-            placeholder="Chọn khóa học"
+                showSearch={false} value={state.courseId}
+                loading={loadingcourses}
+                onChange={(khoa_hoc_id) => setState({khoa_hoc_id, ...state, isChanged: true })}
+                placeholder="Chọn khóa học"
             >
                 {options}
             </Select>
@@ -300,7 +312,7 @@ const DetailModule = () => {
                                         >
                                             <Input placeholder=""/>
                                         </Form.Item>
-                                        <Form.Item initialValue={1}
+                                        <Form.Item initialValue={module.data.kct_id}
                                           className="input-col"
                                           label="Khung chương trình"
                                           name="khung_ct_id"
