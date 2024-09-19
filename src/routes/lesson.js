@@ -12,7 +12,7 @@ router.post(
 );
 router.post(
     '/upload_videos', authToken, authRole([2], 6), 
-    upload.array('video', 100),
+    upload.array('video', 10),
     tryCatch(lessonController.uploadVideos)
 );
 router.get('/create', authToken, authRole([2], 6), tryCatch(lessonController.getCreate));
