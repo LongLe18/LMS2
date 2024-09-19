@@ -8,7 +8,7 @@ const security = require('../utils/security');
 // const getAllv2 = async (req, res) => {
 //     const lessons = await sequelize.query(
 //         `
-//         SELECT bai_giang.*, chuyen_de.ten_chuyen_de FROM bai_giang LEFT JOIN chuyen_de 
+//         SELECT bai_giang.*, chuyen_de.ten_chuyen_de FROM bai_giang LEFT JOIN chuyen_de
 //         ON bai_giang.chuyen_de_id=chuyen_de.chuyen_de_id ORDER BY bai_giang.chuyen_de_id ASC`,
 //         { type: sequelize.QueryTypes.SELECT }
 //     );
@@ -51,79 +51,85 @@ const security = require('../utils/security');
 //     });
 // };
 
-const getByIDThematic= async (req, res) => {
-    const count=await sequelize.query(`
+const getByIDThematic = async (req, res) => {
+    const count = await sequelize.query(
+        `
         SELECT COUNT(DISTINCT mo_dun.khoa_hoc_id) AS tong FROM chuyen_de JOIN mo_dun ON 
         chuyen_de.mo_dun_id=mo_dun.mo_dun_id JOIN khoa_hoc_hoc_vien ON mo_dun.khoa_hoc_id=khoa_hoc_hoc_vien.khoa_hoc_id
         WHERE khoa_hoc_hoc_vien.hoc_vien_id=:hoc_vien_id AND chuyen_de.chuyen_de_id=:chuyen_de_id`,
         {
             replacements: {
                 hoc_vien_id: parseInt(req.userId),
-                chuyen_de_id: parseInt(req.params.id)
+                chuyen_de_id: parseInt(req.params.id),
             },
-            type: sequelize.QueryTypes.SELECT
-        });
-    if(count[0].tong==0){
+            type: sequelize.QueryTypes.SELECT,
+        }
+    );
+    if (count[0].tong == 0) {
         res.status(401).send({
             status: 'error',
             data: null,
             message: 'Bạn chưa mua khóa học',
         });
-    }else{
-        const lessons= await sequelize.query(`
+    } else {
+        const lessons = await sequelize.query(
+            `
         SELECT bai_giang.* FROM bai_giang WHERE trang_thai=true
         AND loai_bai_giang=:loai_bai_giang
-        AND chuyen_de_id=:chuyen_de_id`, 
-        {
-            replacements:{
-                loai_bai_giang: decodeURI(req.query.loai_bai_giang),
-                chuyen_de_id: parseInt(req.params.id)
-            },
-            type: sequelize.QueryTypes.SELECT
-        });
+        AND chuyen_de_id=:chuyen_de_id`,
+            {
+                replacements: {
+                    loai_bai_giang: decodeURI(req.query.loai_bai_giang),
+                    chuyen_de_id: parseInt(req.params.id),
+                },
+                type: sequelize.QueryTypes.SELECT,
+            }
+        );
         res.status(200).send({
             status: 'success',
             data: lessons,
             message: null,
         });
     }
-}
+};
 
 const getByFilter = async (req, res) => {
     let search = 1;
-    let ngay_tao=1;
-    let trang_thai=1;
-    let chuyen_de_id=1;
-    let mo_dun_id=1;
-    let khoa_hoc_id=1;
+    let ngay_tao = 1;
+    let trang_thai = 1;
+    let chuyen_de_id = 1;
+    let mo_dun_id = 1;
+    let khoa_hoc_id = 1;
     let offset = 0;
-    let limit =100;
-    if(req.query.offset){
-        offset=req.query.offset;
+    let limit = 100;
+    if (req.query.offset) {
+        offset = req.query.offset;
     }
-    if(req.query.limit){
-        limit=req.query.limit;
+    if (req.query.limit) {
+        limit = req.query.limit;
     }
     if (req.query.search) {
         search = 'bai_giang.ten_bai_giang LIKE :search';
     }
-    if (req.query.ngay_bat_dau&&req.query.ngay_ket_thuc) {
-        ngay_tao = 'bai_giang.ngay_tao BETWEEN :ngay_bat_dau AND :ngay_ket_thuc';
+    if (req.query.ngay_bat_dau && req.query.ngay_ket_thuc) {
+        ngay_tao =
+            'bai_giang.ngay_tao BETWEEN :ngay_bat_dau AND :ngay_ket_thuc';
     }
     if (req.query.trang_thai) {
-        trang_thai='bai_giang.trang_thai=:trang_thai';
+        trang_thai = 'bai_giang.trang_thai=:trang_thai';
     }
     if (req.query.chuyen_de_id) {
-        chuyen_de_id='bai_giang.chuyen_de_id=:chuyen_de_id';
+        chuyen_de_id = 'bai_giang.chuyen_de_id=:chuyen_de_id';
     }
     if (req.query.mo_dun_id) {
-        mo_dun_id='chuyen_de.mo_dun_id=:mo_dun_id';
+        mo_dun_id = 'chuyen_de.mo_dun_id=:mo_dun_id';
     }
     if (req.query.khoa_hoc_id) {
-        khoa_hoc_id='mo_dun.khoa_hoc_id=:khoa_hoc_id';
+        khoa_hoc_id = 'mo_dun.khoa_hoc_id=:khoa_hoc_id';
     }
-    const filter=`WHERE ${search} AND ${ngay_tao} AND ${trang_thai} AND ${chuyen_de_id} AND ${mo_dun_id} AND ${khoa_hoc_id}`;
-    const lessons= await sequelize.query(`
+    const filter = `WHERE ${search} AND ${ngay_tao} AND ${trang_thai} AND ${chuyen_de_id} AND ${mo_dun_id} AND ${khoa_hoc_id}`;
+    const lessons = await sequelize.query(
+        `
         SELECT bai_giang.*, chuyen_de.ten_chuyen_de FROM bai_giang JOIN chuyen_de ON bai_giang.chuyen_de_id=chuyen_de.chuyen_de_id 
         JOIN mo_dun ON chuyen_de.mo_dun_id=mo_dun.mo_dun_id ${filter} ORDER BY bai_giang.ngay_tao DESC LIMIT :offset, :limit`,
         {
@@ -136,10 +142,11 @@ const getByFilter = async (req, res) => {
                 mo_dun_id: parseInt(req.query.mo_dun_id),
                 khoa_hoc_id: parseInt(req.query.khoa_hoc_id),
                 limit: parseInt(limit),
-                offset: parseInt(offset)
+                offset: parseInt(offset),
             },
-            type: sequelize.QueryTypes.SELECT
-        });
+            type: sequelize.QueryTypes.SELECT,
+        }
+    );
     res.status(200).send({
         status: 'success',
         data: lessons,
@@ -160,30 +167,37 @@ const getAll = async (req, res) => {
             });
         } else {
             const decodedToken = security.verifyToken(token);
-            const count=await sequelize.query(`
+            const count = await sequelize.query(
+                `
                 SELECT COUNT(DISTINCT mo_dun.khoa_hoc_id) AS tong FROM bai_giang JOIN chuyen_de ON bai_giang.chuyen_de_id=chuyen_de.chuyen_de_id JOIN mo_dun ON 
                 chuyen_de.mo_dun_id=mo_dun.mo_dun_id JOIN khoa_hoc_hoc_vien ON mo_dun.khoa_hoc_id=khoa_hoc_hoc_vien.khoa_hoc_id
                 WHERE khoa_hoc_hoc_vien.hoc_vien_id=:hoc_vien_id AND khoa_hoc_hoc_vien.khoa_hoc_id=:khoa_hoc_id`,
                 {
                     replacements: {
                         hoc_vien_id: parseInt(decodedToken.userId),
-                        khoa_hoc_id: parseInt(req.query.khoa_hoc_id)
+                        khoa_hoc_id: parseInt(req.query.khoa_hoc_id),
                     },
-                    type: sequelize.QueryTypes.SELECT
-                });
-            if (count[0].tong == 0){
-                const firstThematic = await sequelize.query(`
+                    type: sequelize.QueryTypes.SELECT,
+                }
+            );
+            if (count[0].tong == 0) {
+                const firstThematic = await sequelize.query(
+                    `
                 select chuyen_de.chuyen_de_id from chuyen_de JOIN mo_dun ON chuyen_de.mo_dun_id = mo_dun.mo_dun_id
                     JOIN khoa_hoc ON khoa_hoc.khoa_hoc_id = mo_dun.khoa_hoc_id where khoa_hoc.khoa_hoc_id=:khoa_hoc_id
                     and mo_dun.mo_dun_id=:mo_dun_id LIMIT 1`,
-                {
-                    replacements: {
-                        khoa_hoc_id: parseInt(req.query.khoa_hoc_id),
-                        mo_dun_id: parseInt(req.query.mo_dun_id)
-                    },
-                    type: sequelize.QueryTypes.SELECT
-                });
-                if (firstThematic.length > 0 && parseInt(req.query.id) === firstThematic[0].chuyen_de_id) {
+                    {
+                        replacements: {
+                            khoa_hoc_id: parseInt(req.query.khoa_hoc_id),
+                            mo_dun_id: parseInt(req.query.mo_dun_id),
+                        },
+                        type: sequelize.QueryTypes.SELECT,
+                    }
+                );
+                if (
+                    firstThematic.length > 0 &&
+                    parseInt(req.query.id) === firstThematic[0].chuyen_de_id
+                ) {
                     const filter = {};
                     if (req.query.id) {
                         filter.chuyen_de_id = req.query.id;
@@ -194,9 +208,7 @@ const getAll = async (req, res) => {
                             ...filter,
                             loai_bai_giang: 'video',
                         },
-                        order: [
-                            ['ten_bai_giang', 'ASC']
-                        ]
+                        order: [['ten_bai_giang', 'ASC']],
                     });
                     const pdf = await Lesson.findOne({
                         where: {
@@ -211,7 +223,7 @@ const getAll = async (req, res) => {
                             pdf: pdf,
                         },
                         message: null,
-                    });       
+                    });
                 } else {
                     res.status(402).send({
                         status: 'fail',
@@ -219,7 +231,7 @@ const getAll = async (req, res) => {
                         message: 'Bạn chưa mua khóa học',
                     });
                 }
-            } else{
+            } else {
                 const filter = {};
                 if (req.query.id) {
                     filter.chuyen_de_id = req.query.id;
@@ -230,9 +242,7 @@ const getAll = async (req, res) => {
                         ...filter,
                         loai_bai_giang: 'video',
                     },
-                    order: [
-                        ['ten_bai_giang', 'ASC']
-                    ]
+                    order: [['ten_bai_giang', 'ASC']],
                 });
                 const pdf = await Lesson.findOne({
                     where: {
@@ -247,7 +257,7 @@ const getAll = async (req, res) => {
                         pdf: pdf,
                     },
                     message: null,
-                });       
+                });
             }
         }
     } catch (error) {
@@ -256,12 +266,12 @@ const getAll = async (req, res) => {
             data: null,
             message: 'Bạn không có quyền đọc thông tin này ' + error,
         });
-    }  
+    }
 };
 
 //[GET] lesson/:id
 const getById = async (req, res) => {
-    if(req.role==2){
+    if (req.role == 2) {
         const lesson = await Lesson.findOne({
             where: {
                 bai_giang_id: req.params.id,
@@ -272,25 +282,27 @@ const getById = async (req, res) => {
             data: lesson,
             message: null,
         });
-    }else if(req.role==0){
-        const count=await sequelize.query(`
+    } else if (req.role == 0) {
+        const count = await sequelize.query(
+            `
         SELECT COUNT(DISTINCT mo_dun.khoa_hoc_id) AS tong FROM bai_giang JOIN chuyen_de ON bai_giang.chuyen_de_id=chuyen_de.chuyen_de_id JOIN mo_dun ON 
         chuyen_de.mo_dun_id=mo_dun.mo_dun_id JOIN khoa_hoc_hoc_vien ON mo_dun.khoa_hoc_id=khoa_hoc_hoc_vien.khoa_hoc_id
         WHERE khoa_hoc_hoc_vien.hoc_vien_id=:hoc_vien_id AND bai_giang.bai_giang_id=:bai_giang_id`,
-        {
-            replacements: {
-                hoc_vien_id: parseInt(req.userId),
-                bai_giang_id: parseInt(req.params.id)
-            },
-            type: sequelize.QueryTypes.SELECT
-        });
-        if(count[0].tong==0){
+            {
+                replacements: {
+                    hoc_vien_id: parseInt(req.userId),
+                    bai_giang_id: parseInt(req.params.id),
+                },
+                type: sequelize.QueryTypes.SELECT,
+            }
+        );
+        if (count[0].tong == 0) {
             res.status(401).send({
                 status: 'error',
                 data: null,
                 message: 'Bạn chưa mua khóa học',
             });
-        }else{
+        } else {
             const lesson = await Lesson.findOne({
                 where: {
                     bai_giang_id: req.params.id,
@@ -302,7 +314,7 @@ const getById = async (req, res) => {
                 message: null,
             });
         }
-    }else{
+    } else {
         res.status(404).send({
             status: 'error',
             data: null,
@@ -360,16 +372,20 @@ const uploadVideos = async (req, res) => {
 
 //[GET] lesson/:id
 const getUpdate = async (req, res) => {
-    let lesson = await sequelize.query(`
-        SELECT bai_giang.*, chuyen_de.mo_dun_id, mo_dun.khoa_hoc_id FROM bai_giang LEFT JOIN chuyen_de ON
-        bai_giang.chuyen_de_id=chuyen_de.chuyen_de_id LEFT JOIN mo_dun ON mo_dun.mo_dun_id=chuyen_de.mo_dun_id 
-        WHERE bai_giang.bai_giang_id=:bai_giang_id`,
+    let lesson = await sequelize.query(
+        `
+        SELECT bai_giang.*, chuyen_de.mo_dun_id, mo_dun.khoa_hoc_id, khoa_hoc.kct_id
+            FROM bai_giang LEFT JOIN chuyen_de ON bai_giang.chuyen_de_id=chuyen_de.chuyen_de_id 
+            LEFT JOIN mo_dun ON mo_dun.mo_dun_id=chuyen_de.mo_dun_id 
+            LEFT JOIN khoa_hoc ON khoa_hoc.khoa_hoc_id=mo_dun.khoa_hoc_id
+                WHERE bai_giang.bai_giang_id=:bai_giang_id`,
         {
             replacements: {
-                bai_giang_id: req.params.id
+                bai_giang_id: req.params.id,
             },
-            type: sequelize.QueryTypes.SELECT
-        });
+            type: sequelize.QueryTypes.SELECT,
+        }
+    );
     res.status(200).send({
         status: 'success',
         data: lesson[0],
