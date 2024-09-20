@@ -157,7 +157,7 @@ const DetailLesson = () => {
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
-      const callback2 = (res) => {
+      const callback3 = (res) => {
         if (res.status === 'success') {
             form.setFieldsValue(lesson.data);
         } else {
@@ -168,9 +168,9 @@ const DetailLesson = () => {
         }
       };
 
-      const callback = (res) => {
+      const callback2 = (res) => {
         if (res.status === 'success') {
-            dispatch(thematicActions.getThematicsByIdModule({ idModule: lesson.data.mo_dun_id }, callback2));
+            dispatch(thematicActions.getThematicsByIdModule({ idModule: lesson.data.mo_dun_id }, callback3));
         } else {
             notification.error({
                 message: 'Thông báo',
@@ -179,8 +179,19 @@ const DetailLesson = () => {
         }
       };
 
+      const callback = (res) => {
+        if (res.status === 'success') {
+          dispatch(moduleActions.getModulesByIdCourse({ idCourse: lesson.data.khoa_hoc_id }, callback2));
+        } else {
+          notification.error({
+              message: 'Thông báo',
+              description: 'Lấy thông tin thất bại',
+          })
+        }
+      };
+
       if (lesson.status === 'success' && courses.status === 'success') {
-        dispatch(moduleActions.getModulesByIdCourse({ idCourse: lesson.data.khoa_hoc_id }, callback));
+        dispatch(courseActions.getCourses({ idkct: lesson.data.kct_id, status: '', search: '' }, callback));
       }
     }, [lesson]);  // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -211,7 +222,8 @@ const DetailLesson = () => {
       }
       return (
         <Select
-          showSearch={false}
+          showSearch={true}
+          filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
           loading={loadingCourses}
           onChange={(khoa_hoc_id) => {
             dispatch(moduleActions.getModulesByIdCourse({ idCourse: khoa_hoc_id }))
@@ -232,7 +244,8 @@ const DetailLesson = () => {
       }
       return (
         <Select
-          showSearch={false}
+          showSearch={true}
+          filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
           loading={loadingModules}
           onChange={(mo_dun_id) => {
             dispatch(thematicActions.getThematicsByIdModule({ idModule: mo_dun_id }))
@@ -253,7 +266,8 @@ const DetailLesson = () => {
       }
       return (
         <Select
-          showSearch={false}
+          showSearch={true}
+          filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
           loading={loadingThematics}
           onChange={(chuyen_de_id) => {
             setState({...state, thematicId: chuyen_de_id });
@@ -492,42 +506,58 @@ const DetailLesson = () => {
                                             className="input-col"
                                             label="Tên bài giảng"
                                             name="ten_bai_giang"
-                                            rules={[
-                                                {
+                                            rules={[{
                                                 required: true,
                                                 message: 'Tên bài giảng là trường bắt buộc.',
-                                                },
-                                            ]}
+                                              }]}
                                             >
-                                                <Input placeholder=""/>
+                                                <Input placeholder="Nhập tên bài giảng"/>
                                         </Form.Item>
                                         <Form.Item
                                             className="input-col"
                                             label="Loại bài giảng"
                                             name="loai_bai_giang"
-                                            rules={[
-                                            {
+                                            rules={[{
                                                 required: true,
                                                 message: 'Loại bài giảng là bắt buộc',
-                                            },
-                                            ]}
+                                            },]}
                                         >
                                             {renderLessionCategories()}
                                         </Form.Item>
-                                        <Form.Item className="input-col" label="Khung chương trình" name="kct_id" rules={[]}>
-                                            {renderProgramme()}
+                                        <Form.Item className="input-col" label="Khung chương trình" name="kct_id" 
+                                          rules={[{
+                                            required: true,
+                                            message: 'Khung chương trình là trường bắt buộc.',
+                                          }]}
+                                        >
+                                          {renderProgramme()}
                                         </Form.Item>
-                                        <Form.Item className="input-col" label="Khóa học" name="khoa_hoc_id" rules={[]}>
+                                        <Form.Item className="input-col" label="Khóa học" name="khoa_hoc_id" 
+                                          rules={[{
+                                            required: true,
+                                            message: 'Khóa học là trường bắt buộc.',
+                                          }]}
+                                        >
                                             {renderCourses()}
                                         </Form.Item>
-                                        <Form.Item className="input-col" label="Mô đun" name="mo_dun_id" rules={[]}>
+                                        <Form.Item className="input-col" label="Mô đun" name="mo_dun_id" 
+                                          rules={[{
+                                            required: true,
+                                            message: 'Mô đun là trường bắt buộc.',
+                                          }]}
+                                        >
                                             {renderModules()}
                                         </Form.Item>
-                                        <Form.Item className="input-col" label="Chuyên đề" name="chuyen_de_id" rules={[]}>
+                                        <Form.Item className="input-col" label="Chuyên đề" name="chuyen_de_id" 
+                                          rules={[{
+                                            required: true,
+                                            message: 'Chuyên đề là trường bắt buộc.',
+                                          }]}
+                                        >
                                             {renderThematics()}
                                         </Form.Item>
                                         <Form.Item className="input-col" label="Mô tả" name="mo_ta" rules={[]}>
-                                            <TextArea placeholder=""/>
+                                            <TextArea placeholder="Nhập mô tả bài giảng"/>
                                         </Form.Item>
                                         <Form.Item
                                             label="Trạng thái"

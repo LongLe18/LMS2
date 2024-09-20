@@ -291,12 +291,12 @@ const DetailModule = () => {
                                             name="ten_mo_dun"
                                             rules={[
                                                 {
-                                                required: true,
-                                                message: 'Tên chuyên đề là trường bắt buộc.',
+                                                    required: true,
+                                                    message: 'Tên chuyên đề là trường bắt buộc.',
                                                 },
                                             ]}
                                             >
-                                                <Input placeholder=""/>
+                                                <Input placeholder="Nhập tên mô đun"/>
                                         </Form.Item>
                                         <Form.Item
                                         initialValue={module.data.linh_vuc}
@@ -305,22 +305,30 @@ const DetailModule = () => {
                                         name="linh_vuc"
                                         rules={[
                                             {
-                                            required: true,
-                                            message: 'Tên lĩnh vực là trường bắt buộc.',
+                                                required: true,
+                                                message: 'Tên lĩnh vực là trường bắt buộc.',
                                             },
                                         ]}
                                         >
-                                            <Input placeholder=""/>
+                                            <Input placeholder="Nhập tên lĩnh vực"/>
                                         </Form.Item>
                                         <Form.Item initialValue={module.data.kct_id}
-                                          className="input-col"
-                                          label="Khung chương trình"
-                                          name="khung_ct_id"
-                                          rules={[]}
-                                          >
+                                            className="input-col"
+                                            label="Khung chương trình"
+                                            name="khung_ct_id"
+                                            rules={[{
+                                                required: true,
+                                                message: 'Khung chương trình là bắt buộc',
+                                            },]}
+                                        >
                                               {renderProgramme()}
                                         </Form.Item>
-                                        <Form.Item className="input-col" label="Khóa học" name="khoa_hoc" initialValue={module.data.khoa_hoc_id} rules={[]}>
+                                        <Form.Item className="input-col" label="Khóa học" name="khoa_hoc" initialValue={module.data.khoa_hoc_id} 
+                                            rules={[{
+                                                required: true,
+                                                message: 'Khóa học là bắt buộc',
+                                            },]}
+                                        >
                                             {renderParents()}
                                         </Form.Item>
                                         <Form.Item

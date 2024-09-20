@@ -8,7 +8,7 @@ import axios from 'axios';
 import './css/addmodal.scss';
 // antd
 import { Row, Col, Button, Tabs, Table, Avatar, Modal, Form, Input, Select, Upload, 
-  message, notification, Tooltip, Spin, Pagination } from 'antd';
+  message, notification, Tooltip, Spin, Pagination, Tag } from 'antd';
 import { PlusOutlined, UploadOutlined, EyeOutlined, LockOutlined, 
   UnlockOutlined, RedoOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
@@ -177,7 +177,18 @@ const ExamAdminPage = () => {
             <span>Số câu hỏi: {de_thi.so_cau_hoi}</span>
           </>
         )
-      },     
+      },    
+      {
+        title: 'Trạng thái',
+        dataIndex: 'de_thi_id',
+        key: 'de_thi_id',
+        responsive: ['md'],
+        render: (de_thi_id, de_thi) => (
+            <Tag color={!de_thi.xuat_ban ? 'orange' : (de_thi.xuat_ban && de_thi.trang_thai === 0) ? 'red' : (de_thi.xuat_ban && de_thi.trang_thai === 1) && 'green'} key={de_thi_id}>
+                {!de_thi.xuat_ban ? "Chưa xuất bản" : (de_thi.xuat_ban && de_thi.trang_thai === 0) ? "Đã dừng" : (de_thi.xuat_ban && de_thi.trang_thai === 1) && 'Đang hoạt động'}
+            </Tag>
+        ),
+      }, 
       {
         title: 'Ngày tạo',
         dataIndex: 'ngay_tao',
