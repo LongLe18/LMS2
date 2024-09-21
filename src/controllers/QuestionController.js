@@ -118,10 +118,12 @@ const postCreate = async (req, res) => {
         ...(req.files &&
             req.files.tep_dinh_kem_noi_dung && {
                 noi_dung: `${req.body.noi_dung} ${req.body.tep_dinh_kem_noi_dung}`,
+                tep_dinh_kem_noi_dung: req.body.tep_dinh_kem_noi_dung
             }),
         ...(req.files &&
             req.files.tep_dinh_kem_loi_giai && {
                 loi_giai: `${req.body.loi_giai} ${req.body.tep_dinh_kem_loi_giai}`,
+                tep_dinh_kem_loi_giai: req.body.tep_dinh_kem_loi_giai
             }),
     });
     res.status(200).send({
@@ -148,10 +150,12 @@ const putUpdate = async (req, res) => {
             ...(req.files &&
                 req.files.tep_dinh_kem_noi_dung && {
                     noi_dung: `${req.body.noi_dung} ${req.body.tep_dinh_kem_noi_dung}`,
+                    tep_dinh_kem_noi_dung: req.body.tep_dinh_kem_noi_dung
                 }),
             ...(req.files &&
                 req.files.tep_dinh_kem_loi_giai && {
                     loi_giai: `${req.body.loi_giai} ${req.body.tep_dinh_kem_loi_giai}`,
+                    tep_dinh_kem_loi_giai: req.body.tep_dinh_kem_loi_giai
                 }),
         },
         {

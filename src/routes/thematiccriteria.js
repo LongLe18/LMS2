@@ -9,6 +9,7 @@ router.get('/:id/edit', authToken, authRole([2], 6), tryCatch(thematicCriteriaCo
 router.put('/:id', authToken, authRole([2], 6), tryCatch(thematicCriteriaController.putUpdate));
 router.delete('/:id/force', authToken, authRole([2], 6), tryCatch(thematicCriteriaController.forceDelete));
 router.get('/all_admin', authToken, authRole([2], 7), tryCatch(thematicCriteriaController.getAll_admin));
+router.get('/:id/quantity-exam-publish', authToken, authRole([2], 7), tryCatch(thematicCriteriaController.getQuantityExamPublish));
 router.get(
     '/by_thematic/:id',
     tryCatch(thematicCriteriaController.getByThematic)

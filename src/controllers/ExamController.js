@@ -514,11 +514,14 @@ const getById = async (req, res) => {
     let exceprtTo;
     for (var index1 = 0; index1 < exam.cau_hoi_de_this.length; index1++) {
         dap_an_dungs = [];
-        if (exam.cau_hoi_de_this[index1].cau_hoi && exam.cau_hoi_de_this[index1].cau_hoi.trich_doan_id) {
+        if (
+            exam.cau_hoi_de_this[index1].cau_hoi &&
+            exam.cau_hoi_de_this[index1].cau_hoi.trich_doan_id
+        ) {
             if (
                 index1 == 0 ||
                 exam.cau_hoi_de_this[index1].cau_hoi.trich_doan_id !=
-                exam.cau_hoi_de_this[index1 - 1].cau_hoi.trich_doan_id
+                    exam.cau_hoi_de_this[index1 - 1].cau_hoi.trich_doan_id
             ) {
                 exceprtFrom = exceprtTo = index1;
                 for (
@@ -642,12 +645,12 @@ const getByIdv2 = async (req, res) => {
                     Number(chuyen_nganh_id) === 3
                         ? criteria.so_cau_hoi_chuyen_nganh_1
                         : Number(chuyen_nganh_id) === 4
-                            ? criteria.so_cau_hoi_chuyen_nganh_2
-                            : Number(chuyen_nganh_id) === 6
-                                ? criteria.so_cau_hoi_chuyen_nganh_3
-                                : Number(chuyen_nganh_id) === 8
-                                    ? criteria.so_cau_hoi_chuyen_nganh_4
-                                    : criteria.so_cau_hoi_chuyen_nganh_5;
+                        ? criteria.so_cau_hoi_chuyen_nganh_2
+                        : Number(chuyen_nganh_id) === 6
+                        ? criteria.so_cau_hoi_chuyen_nganh_3
+                        : Number(chuyen_nganh_id) === 8
+                        ? criteria.so_cau_hoi_chuyen_nganh_4
+                        : criteria.so_cau_hoi_chuyen_nganh_5;
                 so_cau_hoi_phan_3 += so_cau_hoi_chuyen_de;
                 await sequelize.query(
                     `
@@ -672,7 +675,8 @@ const getByIdv2 = async (req, res) => {
                 WHERE chuyen_nganh_id IN (:chuyen_nganh_ids) AND kct_id = 1
                 AND cau_hoi_id NOT IN (SELECT cau_hoi_de_thi
                 WHERE de_thi_id = :de_thi_id)
-                ORDER BY RAND() LIMIT ${criteria.so_cau_hoi_phan_3 - so_cau_hoi_phan_3
+                ORDER BY RAND() LIMIT ${
+                    criteria.so_cau_hoi_phan_3 - so_cau_hoi_phan_3
                 }
         `,
                 {
@@ -725,7 +729,7 @@ const getByIdv2 = async (req, res) => {
             if (
                 index1 == 0 ||
                 exam.cau_hoi_de_this[index1].cau_hoi.trich_doan_id !=
-                exam.cau_hoi_de_this[index1 - 1].cau_hoi.trich_doan_id
+                    exam.cau_hoi_de_this[index1 - 1].cau_hoi.trich_doan_id
             ) {
                 exceprtFrom = exceprtTo = index1;
                 for (
@@ -906,13 +910,13 @@ const publish = async (req, res) => {
             replacements: { de_thi_id: Number(req.params.id) },
             type: sequelize.QueryTypes.SELECT,
         }
-    )
+    );
 
-    if(questionNotAnswer.length>0){
+    if (questionNotAnswer.length > 0) {
         res.status(400).send({
             status: 'error',
             data: null,
-            message: "Đề thi có câu hỏi chưa có đán án đúng",
+            message: 'Đề thi có câu hỏi chưa có đán án đúng',
         });
     }
 
@@ -1061,6 +1065,19 @@ const stateChange = async (req, res) => {
 };
 
 const forceDelete = async (req, res) => {
+    const examChild = await Exam.findOne({
+        where: {
+            de_cha_id: req.params.id,
+        },
+    });
+    if (examChild) {
+        res.status(400).send({
+            status: 'error',
+            data: null,
+            message: 'Đề thi đang được sử dụng cho đề thi khác!',
+        });
+    }
+
     const exam = await Exam.findOne({
         where: {
             de_thi_id: req.params.id,
@@ -1098,14 +1115,20 @@ const forceDelete = async (req, res) => {
             de_thi_id: req.params.id,
         },
     });
-    await ExamQuestion.destroy({
-        where: {
-            de_thi_id: req.params.id,
-        },
-    });
     await sequelize.query(
         `
         DELETE FROM cau_hoi_de_thi WHERE cau_hoi_id IN 
+            (SELECT cau_hoi_id FROM cau_hoi WHERE de_thi_id = :de_thi_id)`,
+        {
+            replacements: {
+                de_thi_id: parseInt(req.params.id),
+            },
+            type: sequelize.QueryTypes.DELETE,
+        }
+    );
+    await sequelize.query(
+        `
+        DELETE FROM dap_an WHERE cau_hoi_id IN 
             (SELECT cau_hoi_id FROM cau_hoi WHERE de_thi_id = :de_thi_id)`,
         {
             replacements: {
@@ -1155,13 +1178,14 @@ const reuse = async (req, res) => {
             'chuyen_de_id',
             'de_mau',
             'de_mau_id',
-            'de_thi_ma'
+            'de_thi_ma',
         ],
     });
     const examNew = await Exam.create({
         ...examOld.dataValues,
         de_thi_ma: `${examOld.de_thi_ma}_NEW`,
-        ten_de_thi: `${examOld.ten_de_thi} NEW`
+        ten_de_thi: `${examOld.ten_de_thi} NEW`,
+        de_cha_id: examOld.de_thi_id,
     });
     let examQuestionOlds = await ExamQuestion.findAll({
         where: {
@@ -1299,7 +1323,7 @@ const getCriteriaByExamId = async (req, res) => {
         status: 'success',
         data: criteria,
     });
-}
+};
 
 module.exports = {
     getExamOnline,
@@ -1320,5 +1344,5 @@ module.exports = {
     uploadWordMedia,
     getByIdv2,
     getExamDGNL,
-    getCriteriaByExamId
+    getCriteriaByExamId,
 };

@@ -30,6 +30,9 @@ const dethi = sequelize.define(
         khoa_hoc_id: {
             type: DataTypes.INTEGER,
         },
+        de_cha_id: {
+            type: DataTypes.INTEGER,
+        },
         kct_id: {
             type: DataTypes.INTEGER,
         },

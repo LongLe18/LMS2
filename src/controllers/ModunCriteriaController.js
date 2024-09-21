@@ -1,4 +1,4 @@
-const { ModunCriteria, Modun, Course } = require('../models');
+const { ModunCriteria, Modun, Course, Exam } = require('../models');
 const sequelize = require('../utils/db');
 
 const getAll_admin = async (req, res) => {
@@ -136,6 +136,27 @@ const forceDelete = async (req, res) => {
     });
 };
 
+const getQuantityExamPublish = async (req, res) => {
+    const modunCriteria = await ModunCriteria.findOne({
+        where: {
+            tcdmd_khoa_hoc_id: req.params.id,
+        },
+    });
+    const exams = await Exam.findAll({
+        where:{
+            khoa_hoc_id: modunCriteria.khoa_hoc_id,
+            xuat_ban: 1,
+        },
+        attributes: ['de_thi_id', 'ten_de_thi']
+    })
+
+    res.status(200).send({
+        status: 'success',
+        data: exams,
+        message: null,
+    });
+};
+
 module.exports = {
     getAll_admin,
     getById,
@@ -144,4 +165,5 @@ module.exports = {
     getUpdate,
     putUpdate,
     forceDelete,
+    getQuantityExamPublish
 };

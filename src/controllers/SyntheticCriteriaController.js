@@ -1,4 +1,4 @@
-const { SyntheticCriteria, Course } = require('../models');
+const { SyntheticCriteria, Course, Exam } = require('../models');
 const sequelize = require('../utils/db');
 
 const getAll_admin = async (req, res) => {
@@ -98,6 +98,27 @@ const getUpdate = async (req, res) => {
     });
 };
 
+const getQuantityExamPublish = async (req, res) => {
+    const syntheticCriteria = await SyntheticCriteria.findOne({
+        where: {
+            tcdth_khoa_hoc_id: req.params.id,
+        },
+    });
+    const exams = await Exam.findAll({
+        where:{
+            khoa_hoc_id: syntheticCriteria.khoa_hoc_id,
+            xuat_ban: 1,
+        },
+        attributes: ['de_thi_id', 'ten_de_thi']
+    })
+
+    res.status(200).send({
+        status: 'success',
+        data: exams,
+        message: null,
+    });
+};
+
 const putUpdate = async (req, res) => {
     const syntheticCriteria = await SyntheticCriteria.update(
         {
@@ -137,4 +158,5 @@ module.exports = {
     getUpdate,
     putUpdate,
     forceDelete,
+    getQuantityExamPublish
 };
