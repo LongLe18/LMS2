@@ -1208,7 +1208,7 @@ const ExamOnlineDetail = () => {
                                                                 : `Khoa học (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)`}</div>
                                                         )
                                                     })}
-                                                    <div className={"section-sum"} style={{margin: '12px 0px'}}>Tổng điểm</div>
+                                                    <div className={"section-sum detail-title-section"} style={{margin: '12px 0px'}}>Tổng điểm</div>
                                                 </Col>
                                                 <Col xs={{ span: 22, offset: 1 }} lg={{ span: 3, }}>
                                                     {Array.from({ length: exam.data.so_phan }).map((_, index) => {
@@ -1237,10 +1237,10 @@ const ExamOnlineDetail = () => {
                                                             return number;
                                                         })
                                                         return (
-                                                            <div className={`section-${index}`} style={{margin: '12px 0px'}}>{number.reduce((partialSum, a) => partialSum + a, 0)}</div>
+                                                            <div className={`section-${index} detail-title-section`} style={{margin: '12px 0px'}}>{number.reduce((partialSum, a) => partialSum + a, 0)}</div>
                                                         )
                                                     })}
-                                                    <div className={`section-sum`} style={{margin: '12px 0px'}}>{examUser.data.ket_qua_diem}</div>
+                                                    <div className={`section-sum detail-title-section`} style={{margin: '12px 0px'}}>{examUser.data.ket_qua_diem}</div>
                                                 </Col>
                                             </Row>
                                             <div style={{fontSize: 22, textAlign: 'center', marginBottom: 12}}>Click vào đây để 
@@ -1962,7 +1962,7 @@ const ExamOnlineDetail = () => {
                     <Helmet>
                         <title>{exam.data.ten_de_thi}</title>
                     </Helmet>
-                    <Content className="app-content">
+                    <Content className="app-content" style={{background: '#fff'}}>
                         <div className="header-exam">
                             {/* <h1>{exam.data.ten_de_thi} - Phần {state.sectionExam}</h1> */}
                             <h1 style={{color: 'rgb(255, 48, 7)'}}>Bài thì thử ĐGNL ĐHQGHN (HSA) 2024 - Phần {state.sectionExam}</h1>

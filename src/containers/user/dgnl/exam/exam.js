@@ -33,6 +33,7 @@ const ExamPage = (props) => {
 
     const course = useSelector(state => state.course.item.result);
     const examCourse = useSelector(state => state.exam.list.result);
+    const examCourseOnline = useSelector(state => state.exam.listOnline.result);
     const loading = useSelector(state => state.exam.list.loading);
     const error = useSelector(state => state.exam.list.error);
 
@@ -67,13 +68,14 @@ const ExamPage = (props) => {
     useEffect(() => {
         dispatch(courseActions.getCourse({ id: hashids.decode(idCourse) }));
         dispatch(examActions.getExamCourseOnline({ idCourse: hashids.decode(idCourse) }));
+        dispatch(examActions.getExamCourse({ idCourse: hashids.decode(idCourse) }));
         if (userToken) {
             getCourseOfUser();
         }
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
     
     const breadcrumbs = [{ title: 'Đề thi', link: `/luyen-tap/kiem-tra/${idCourse}` }];
-
+    
     // Hàm xử lý nếu kct_id = 1 => Hiển thị form đồng ý quy định thi 
     const renderConfirmExam = (id) => {
         return (
@@ -148,7 +150,7 @@ const ExamPage = (props) => {
     }
 
     const renderExams = () => {
-        const listExams = examCourse.data.map((item, index) => {
+        let listExams = examCourse.data.map((item, index) => {
             if (index <= 0) {
                 return (
                     <Col xl={8} sm={8} xs={24} className="list-exam-row" key={index}>
@@ -218,9 +220,80 @@ const ExamPage = (props) => {
                     </Col>
                 )
             }
-            
         });
         
+        listExams.push(examCourseOnline.data.map((item, index) => {
+            if (index <= 0) {
+                return (
+                    <Col xl={8} sm={8} xs={24} className="list-exam-row" key={index}>
+                        <Card bordered hoverable className="list-exam-box" onClick={() => {
+                            if (course.data.kct_id === 1) {
+                                setIsShowRule(true);
+                                setIdExam(item.de_thi_id)
+                                return;
+                            }
+                            if (userToken) history.push(`/luyen-tap/xem/${hashids.encode(item.de_thi_id)}/${idCourse}`);
+                            else {document.getElementsByClassName('singin')[0].click()}
+                        }}>
+                            <div className="box-image">
+                                <Image preview={false} src={item.anh_dai_dien ? config.API_URL + item.anh_dai_dien : require('assets/img/exam/exam-orange.png').default} />
+                            </div>
+                            <div className="box-text">
+                                <h5 className="list-exam-title-archive">{item.ten_de_thi}</h5>
+                                <Progress percent={100} showInfo={false} strokeColor={"#faad14"} />
+                                <div className="list-author-archive">
+                                    <div className="author">
+                                        <UserOutlined /> <span> Trung tâm đào tạo ENNO</span>
+                                    </div>
+                                    <div className="date">
+                                        <CalendarOutlined /> {formatedDate(item.ngay_tao)}
+                                    </div>
+                                </div>
+                            </div>
+                        </Card>
+                    </Col>
+                )
+            } else {
+                return (
+                    <Col xl={8} sm={8} xs={24} className="list-exam-row" key={index}>
+                        <Card bordered hoverable className="list-exam-box" 
+                            onClick={() => {
+                                if (course.data.kct_id === 1) {
+                                    setIsShowRule(true);
+                                    setIdExam(item.de_thi_id)
+                                    return;
+                                }
+
+                                if (existCourse) {
+                                    history.push(`/luyen-tap/xem/${hashids.encode(item.de_thi_id)}/${idCourse}`);
+                                } else {
+                                    notification.error({
+                                        message: 'Thông báo',
+                                        description: 'Bạn chưa đăng ký khóa học này, vui lòng đăng ký để vào học'
+                                    });
+                                }
+                            }}>
+                            <div className="box-image">
+                                <Image preview={false} src={item.anh_dai_dien ? config.API_URL + item.anh_dai_dien : require('assets/img/exam/exam-orange.png').default} />
+                            </div>
+                            <div className="box-text">
+                                <h5 className="list-exam-title-archive">{item.ten_de_thi}</h5>
+                                <Progress percent={100} showInfo={false} strokeColor={"#faad14"} />
+                                <div className="list-author-archive">
+                                    <div className="author">
+                                        <UserOutlined /> <span> Trung tâm đào tạo ENNO</span>
+                                    </div>
+                                    <div className="date">
+                                        <CalendarOutlined /> {formatedDate(item.ngay_tao)}
+                                    </div>
+                                </div>
+                            </div>
+                        </Card>
+                    </Col>
+                )
+            }
+        }))
+
         if (listExams.length === 0) return <NoRecord />;
 
         return (
@@ -233,7 +306,7 @@ const ExamPage = (props) => {
     return (
         <>
             {loading && <LoadingCustom/>}
-            {(course.status === 'success' && examCourse.status === 'success') &&
+            {(course.status === 'success' && examCourse.status === 'success' && examCourseOnline.status === 'success') &&
                 <Layout className="main-app">
                     <Helmet>
                         <title>Danh sách đề thi</title>
@@ -255,7 +328,7 @@ const ExamPage = (props) => {
                                                     <div className="info">
                                                         <h1 className="archive-title">Danh sách đề thi</h1>
                                                         <p>Giáo viên: Thầy Cô của Trung tâm đào tạo ENNO</p>
-                                                        <p>Số lượng đề thi: {examCourse.data.length}</p>
+                                                        <p>Số lượng đề thi: {examCourse.data.length + examCourseOnline.data.length}</p>
                                                         <p>Kiểm tra thiết bị trước khi làm bài</p>
                                                     </div>
                                                 </div>

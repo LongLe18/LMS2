@@ -169,6 +169,7 @@ const SampleQuestion = (props) => {
                     dispatch(questionActions.getQuestionsByExam({ idExam: de_thi_id }))
                 }}
                 placeholder="Chọn đề thi"
+                filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
             >
                 <Option key={''} value={''}>Tất cả đề thi</Option>
                 {options}

@@ -363,7 +363,8 @@ const ExamModuleDetail = () => {
                 setStartTime(0);
             };
             setIsDoing(false);
-            dispatch(examActions.getExamUser({ id: params.idExamUser }))
+            window.location.reload();
+            dispatch(examActions.getExamUser({ id: params.idExamUser }));
         };
 
         let timePassedInSecond = (new Date().getTime() - startTime) / 1000;
@@ -1217,7 +1218,7 @@ const ExamModuleDetail = () => {
                     <Helmet>
                         <title>{exam.data.ten_de_thi}</title>
                     </Helmet>
-                    <Content className="app-content">
+                    <Content className="app-content" style={{background: '#fff'}}>
                         <div className="header-exam">
                             <h1>{exam.data.ten_de_thi}</h1>
                             <h4>Mã đề: {exam.data.de_thi_id}</h4>

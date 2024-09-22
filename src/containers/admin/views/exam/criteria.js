@@ -12,6 +12,8 @@ import * as courseAction from '../../../../redux/actions/course';
 import * as moduleAction from '../../../../redux/actions/part';
 import * as thematicAction from '../../../../redux/actions/thematic';
 import { useSelector, useDispatch } from "react-redux"; 
+import axios from 'axios';
+import config from '../../../../configs/index';
 
 const { Option } = Select;
 const { confirm } = Modal;
@@ -30,6 +32,7 @@ const Criteria = () => {
     const [course, setCourse] = useState(false);
     const [module, setModule] = useState(false);
     const [thematic, setThematic] = useState(false);
+    const [isPublish, setIsPublish] = useState(false);
     const [require, setRequire] = useState({
         isEdit: false,
         course: false,
@@ -64,6 +67,7 @@ const Criteria = () => {
     
     const handleCancel = () => {
         setIsModalVisible(false);
+        setIsPublish(false);
     };
 
     const showModalOnline = () => {
@@ -76,6 +80,7 @@ const Criteria = () => {
     
     const handleCancelOnline = () => {
         setIsModalVisibleOnline(false);
+        setIsPublish(false);
     };
 
     const criteriaCourse = useSelector(state => state.criteria.listCourse.result);
@@ -157,7 +162,7 @@ const Criteria = () => {
             key: 'ten_mo_dun',
             responsive: ['md'],
             render: (ten_mo_dun, mo_dun) => (
-                mo_dun.mo_dun.ten_mo_dun
+                mo_dun?.mo_dun?.ten_mo_dun
             )
         },
         {
@@ -166,7 +171,7 @@ const Criteria = () => {
             key: 'ten_mo_dun',
             responsive: ['md'],
             render: (ten_mo_dun, mo_dun) => (
-                mo_dun.mo_dun.khoa_hoc.ten_khoa_hoc
+                mo_dun?.mo_dun?.khoa_hoc?.ten_khoa_hoc
             )
         },
         {
@@ -214,7 +219,7 @@ const Criteria = () => {
             key: 'ten_mo_dun',
             responsive: ['md'],
             render: (ten_mo_dun, mo_dun) => (
-                mo_dun.mo_dun.ten_mo_dun
+                mo_dun?.mo_dun?.ten_mo_dun
             )
         },
         {
@@ -223,7 +228,7 @@ const Criteria = () => {
             key: 'ten_mo_dun',
             responsive: ['md'],
             render: (ten_mo_dun, mo_dun) => (
-                mo_dun.mo_dun.khoa_hoc.ten_khoa_hoc
+                mo_dun?.mo_dun?.khoa_hoc?.ten_khoa_hoc
             )
         },
         {
@@ -442,12 +447,53 @@ const Criteria = () => {
     
     // event đổi tab
     const onChangeTab = (value) => {
+        setPageIndex(1);
         setState({...state, activeTab: value});
     };
+
+    // hàm gọi API kiểm tra tiêu chí đã có đề xuất bản hay chưa
+    const checkCriteria = (type, id) => {
+        let url = ''
+        switch (type) {
+            case '1': // tiêu chí đề tổng hợp
+                url = `${config.API_URL}/synthetic_criteria/${id}/quantity-exam-publish`;
+                break;
+            case '2': // tiêu chí đề mô đun
+                url = `${config.API_URL}/modun_criteria/${id}/quantity-exam-publish`
+                break;
+            case '3': // tiêu chí đề chuyên đề
+                url = `${config.API_URL}/thematic_criteria/${id}/quantity-exam-publish`
+                break;
+            case '4': // tiêu chí đề online
+                url = `${config.API_URL}/online_criteria/${id}/quantity-exam-publish`
+                break;
+            default:
+                break;
+        }
+        axios({
+            method: 'get',
+            url,
+            timeout: 1000 * 60 * 5,
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('userToken')}`,
+            },
+        }).then(res => {
+            if (res.status === 200 && res.statusText === 'OK') {
+                if (res.data.data.length > 0) setIsPublish(true);
+            } else {
+                notification.error({
+                    message: 'Lỗi',
+                    description: 'Có lỗi xảy ra khi lấy dữ liệu',
+                })
+            }
+        }).catch(error => notification.error({ message: error.message }));
+    }
+
 
     const EditCriteriaCourse = (id) => {
         const callback = (res) => {
             if (res.status === 'success') {
+                checkCriteria('1', id);  // check tiêu chí đã có đề xuất bản hay chưa
                 form.setFieldsValue(res.data);
                 showModal();
                 setCourse(true);
@@ -463,6 +509,7 @@ const Criteria = () => {
     const EditCriteriaModule = (id) => {
         const callback = (res) => {
             if (res.status === 'success') {
+                checkCriteria('2', id);  // check tiêu chí đã có đề xuất bản hay chưa
                 form.setFieldsValue(res.data);
                 showModal();
                 setCourse(false);
@@ -478,6 +525,7 @@ const Criteria = () => {
     const EditCriteriaThematic = (id) => {
         const callback = (res) => {
             if (res.status === 'success') {
+                checkCriteria('3', id);  // check tiêu chí đã có đề xuất bản hay chưa
                 form.setFieldsValue(res.data);
                 showModal();
                 setCourse(false);
@@ -493,7 +541,8 @@ const Criteria = () => {
     const EditCriteriaOnline = (id) => {
         const callback = (res) => {
             if (res.status === 'success') {
-                setNumberOfItems(res.data.so_phan)
+                checkCriteria('4', id);  // check tiêu chí đã có đề xuất bản hay chưa
+                setNumberOfItems(res.data.so_phan);
                 formOnline.setFieldsValue(res.data);
                 showModalOnline();
                 setRequire({...state, isEdit: true});
@@ -846,7 +895,7 @@ const Criteria = () => {
                                         },
                                     ]}
                                 >
-                                    <InputNumber placeholder="Nhập số câu hỏi" style={{width: "100%"}}/>
+                                    <InputNumber disabled={isPublish} placeholder="Nhập số câu hỏi" style={{width: "100%"}}/>
                                 </Form.Item>
                                 <Form.Item
                                     className="input-col"
@@ -924,6 +973,21 @@ const Criteria = () => {
                     {require.isEdit ? <h5>Sửa thông tin tiêu chí đề thi online</h5> : <h5>Thêm mới tiêu chí đề thi online</h5>}
                     <Form layout="vertical" className="category-form" form={formOnline} autoComplete="off" onFinish={createOrupdateCriteriaOnline}>
                         <Row gutter={25}>
+                            <Col xl={24} sm={24} xs={24}>
+                                <Form.Item
+                                    className="input-col"
+                                    label="Khóa học"
+                                    name="khoa_hoc_id"
+                                    rules={[
+                                        {
+                                            required: require.course,
+                                            message: 'Khóa học là trường bắt buộc.',
+                                        },
+                                    ]}
+                                >
+                                    {renderCourses()}
+                                </Form.Item>
+                            </Col>
                             <Col xl={24} sm={24} xs={24} className="left-content">
                                 <Form.Item
                                     className="input-col"
@@ -936,7 +1000,7 @@ const Criteria = () => {
                                         },
                                     ]}
                                 >
-                                    <InputNumber placeholder="Nhập số phần thi" style={{width: "100%"}} max={4} min={1} onChange={handleNumberExamChange}/>
+                                    <InputNumber disabled={isPublish} placeholder="Nhập số phần thi" style={{width: "100%"}} max={4} min={1} onChange={handleNumberExamChange}/>
                                 </Form.Item>
                             </Col>
                             
@@ -954,7 +1018,7 @@ const Criteria = () => {
                                             },
                                         ]}
                                     >
-                                        <InputNumber placeholder="Nhập số câu hỏi đề thi" style={{width: "100%"}}/>
+                                        <InputNumber disabled={isPublish} placeholder="Nhập số câu hỏi đề thi" style={{width: "100%"}}/>
                                     </Form.Item>
                                 </Col>
                                 <Col xl={8} sm={24} xs={24} >
@@ -1151,7 +1215,7 @@ const Criteria = () => {
                             showSizeChanger defaultPageSize={pageSize}
                         />
                     </TabPane>
-                    <TabPane tab="Tiêu chí đề thi online" key="4">
+                    <TabPane tab="Tiêu chí đề thi theo phần" key="4">
                         <Row className="app-main">
                             <Col xl={24} className="body-content">
                                 <Row>
@@ -1159,7 +1223,7 @@ const Criteria = () => {
                                         <AppFilter
                                             title={"Tiêu chí đề thi online"}
                                             isShowCourse={true}
-                                            courses={courses.data}
+                                            courses={courses.data?.filter((course) => course.loai_kct === 1)}
                                             onFilterChange={(field, value) => onFilterChange(field, value)}
                                         />
                                     </Col>
@@ -1192,7 +1256,8 @@ const Criteria = () => {
                     onCancel={handleCancel}
                     maskStyle={{ background: 'rgba(0, 0, 0, 0.8)' }}
                     maskClosable={false}
-                    footer={null}>
+                    footer={null}
+                >
                     {renderModal()}
                 </Modal>
 
@@ -1202,7 +1267,8 @@ const Criteria = () => {
                     maskStyle={{ background: 'rgba(0, 0, 0, 0.8)' }}
                     maskClosable={false}
                     width={600}
-                    footer={null}>
+                    footer={null}
+                >
                     {renderModalOnline()}
                 </Modal>
 

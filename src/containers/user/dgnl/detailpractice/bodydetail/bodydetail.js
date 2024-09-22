@@ -205,7 +205,7 @@ const BodyDetailPage = (props) => {
                     <Row className="body-detail-button mb-4">
                         <Button color="success" className="btn-primary" type="button" 
                             onClick={() => history.push(`/luyen-tap/kiem-tra-mo-dun/${hashids.encode(props.idCourse)}/${hashids.encode(props.id)}`) }>
-                                Danh sách đề thi
+                                Danh sách đề thi mô đun
                         </Button>
                     </Row>
                 }

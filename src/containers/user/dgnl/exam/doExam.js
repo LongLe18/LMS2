@@ -1215,7 +1215,7 @@ const ExamDetail = () => {
                     <Helmet>
                         <title>{exam.data.ten_de_thi}</title>
                     </Helmet>
-                    <Content className="app-content">
+                    <Content className="app-content" style={{background: '#fff'}}>
                         <div className="header-exam">
                             <h1>{exam.data.ten_de_thi}</h1>
                             <h4>Mã đề: {exam.data.de_thi_id}</h4>

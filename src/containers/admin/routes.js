@@ -213,7 +213,7 @@ const routes = [
     }, {
       parent: "question",
       path: "/admin/question/exam",
-      name: "Đề mẫu",
+      name: "Đề luyện thi",
       icon: <FileTextOutlined />,
       render: (props) => <ExamAdminPage {...props}/>
     }, {

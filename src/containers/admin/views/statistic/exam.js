@@ -118,6 +118,7 @@ const StatisticExam = (props) => {
             <Select style={{marginRight: 10, width: 300}}
                 showSearch={true}
                 placeholder="Chọn khóa học"
+                filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
                 onChange={(khoa_hoc_id) => {
                     dispatch(examActions.filterExam({ offset: 0, limit: 100000, idCourse: khoa_hoc_id, idModule: '', idThematic: '', status: '', search: '', 
                         start: '', end: '', idType: '', publish: '1' }));

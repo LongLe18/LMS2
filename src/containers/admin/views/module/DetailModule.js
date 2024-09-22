@@ -397,9 +397,9 @@ const DetailModule = () => {
                                                     <Radio className="option-payment" value={1}>
                                                         Phần thi tổng hợp
                                                     </Radio>
-                                                    <Radio className="option-payment" value={2}>
+                                                    {/* <Radio className="option-payment" value={2}>
                                                         Phần thi mô đun
-                                                    </Radio>
+                                                    </Radio> */}
                                                     <Radio className="option-payment" value={0}>
                                                         Phần bài học
                                                     </Radio>

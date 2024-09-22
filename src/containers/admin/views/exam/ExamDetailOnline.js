@@ -379,6 +379,7 @@ const OnlineExamDetailPage = () => {
         return (
             <Select
                 showSearch={true}
+                filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
                 placeholder="Chọn Chuyên ngành"
             >
                 {options}

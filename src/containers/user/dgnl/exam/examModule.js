@@ -83,7 +83,7 @@ const ExamModulePage = (props) => {
                             else {document.getElementsByClassName('singin')[0].click()}
                         }}>
                             <div className="box-image">
-                                <Image preview={false} src={config.API_URL + item.anh_dai_dien} />
+                                <Image preview={false} src={item.anh_dai_dien ? config.API_URL + item.anh_dai_dien : require('assets/img/exam/exam-orange.png').default} />
                             </div>
                             <div className="box-text">
                                 <h5 className="list-exam-title-archive">{item.ten_de_thi}</h5>
@@ -115,7 +115,7 @@ const ExamModulePage = (props) => {
                                 }
                             }}>
                             <div className="box-image">
-                                <Image preview={false} src={config.API_URL + item.anh_dai_dien} />
+                                <Image preview={false} src={item.anh_dai_dien ? config.API_URL + item.anh_dai_dien : require('assets/img/exam/exam-orange.png').default} />
                             </div>
                             <div className="box-text">
                                 <h5 className="list-exam-title-archive">{item.ten_de_thi}</h5>

@@ -509,7 +509,12 @@ const ModuleCate = (props) => {
                             >
                                 {renderProgramme()}
                         </Form.Item>
-                        <Form.Item className="input-col" label="Khóa học" name="khoa_hoc_id" rules={[]}>
+                        <Form.Item className="input-col" label="Khóa học" name="khoa_hoc_id" 
+                          rules={[{
+                            required: true,
+                            message: 'Khóa học là bắt buộc',
+                          },]}
+                        >
                             {renderCourses()}
                         </Form.Item>
                         <Form.Item className="input-col" label="Mô tả" name="mo_ta" rules={[]}>
@@ -538,9 +543,9 @@ const ModuleCate = (props) => {
                               <Radio className="option-payment" value={1}>
                                 Phần thi tổng hợp
                               </Radio>
-                              <Radio className="option-payment" value={2}>
+                              {/* <Radio className="option-payment" value={2}>
                                 Phần thi mô đun
-                              </Radio>
+                              </Radio> */}
                               <Radio className="option-payment" value={0}>
                                 Phần bài học
                               </Radio>

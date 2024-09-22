@@ -11,6 +11,11 @@ const initState = {
         result: {},
         error: null,
     },
+    listOnline: {
+        loading: false,
+        result: {},
+        error: null,
+    },
     criteria: {
         loading: false,
         result: {},
@@ -321,17 +326,17 @@ export default function examReducer(state = initState, action) {
         case examActions.GET_EXAM_COURSE_ONLINE_USER:
             return {
                 ...state,
-                list: { ...state.list, loading: true },
+                listOnline: { ...state.list, loading: true },
             };
         case examActions.GET_EXAM_COURSE_ONLINE_USER_SUCCESS:
             return {
                 ...state,
-                list: { ...state.list, loading: false, result: action.result },
+                listOnline: { ...state.list, loading: false, result: action.result },
             };
         case examActions.GET_EXAM_COURSE_ONLINE_USER_FAILED:
             return {
                 ...state,
-                list: { ...state.list, loading: false, error: action.error },
+                listOnline: { ...state.list, loading: false, error: action.error },
             };
         // cho bảng de_thi_hoc_vien
         case examActions.GET_EXAM_USER:

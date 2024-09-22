@@ -78,6 +78,7 @@ const QuestionPage = () => {
           onChange={(chuyen_nganh_id) => {
             setFilter({ ...filter, chuyen_nganh_id: chuyen_nganh_id });
           }}
+          filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
           placeholder="Chọn chuyên ngành"
         >
           {options}
@@ -97,6 +98,7 @@ const QuestionPage = () => {
             <Select style={{width: '100%'}}
               showSearch={true}
               placeholder="Chọn khung chương trình"
+              filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
               onChange={(kct_id) => {
                 setFilter({ ...filter, kct_id: kct_id });
               }}

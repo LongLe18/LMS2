@@ -310,7 +310,7 @@ const ExamAdminPage = () => {
   const renderProgramme = () => {
       let options = [];
       if (programmes.status === 'success') {
-        options = programmes.data.filter((programme) => programme.loai_kct !== 0).map((programme) => (
+        options = programmes.data.filter((programme) => programme.loai_kct === 2).map((programme) => (
             <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
           ))
       }
@@ -325,6 +325,25 @@ const ExamAdminPage = () => {
       );
   };
 
+  // UI khung chương trình cho modal tạo đề thi
+  const renderProgrammesForCreateExam = () => {
+    let options = [];
+    if (programmes.status === 'success') {
+      options = programmes.data.filter((programme) => programme.loai_kct === 1).map((programme) => (
+          <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
+        ))
+    }
+    return (
+      <Select
+          showSearch={false}
+          placeholder="Chọn khung chương trình"
+          onChange={(kct_id) => dispatch(courseActions.getCourses({ idkct: kct_id, status: 1, search: '' }))}
+      >
+        {options}
+      </Select>
+    );
+};
+
   const renderTypeExams = () => {
       let options = [];
       if (typeExams.status === 'success') {
@@ -337,10 +356,12 @@ const ExamAdminPage = () => {
           showSearch={false}
           placeholder="Chọn loại đề thi"
           onChange={(typeId) => {
-              if (typeId === 1) {setState({...state, showThematic: true, showCourse: true, showModule: true, onlineExam: false})}
-              else if (typeId === 2) {setState({...state, showThematic: false, showCourse: true, showModule: true, onlineExam: false})}
-              else if (typeId === 3) {setState({...state, showThematic: false, showCourse: true, showModule: false, onlineExam: false})}
-              else {setState({...state, showThematic: false, showCourse: true, showModule: false, onlineExam: true})}
+              if (typeId === 1) {setState({...state, showThematic: true, showCourse: true, showModule: true, onlineExam: false})} // Loại chuyên đề
+              else if (typeId === 2) {setState({...state, showThematic: false, showCourse: true, showModule: true, onlineExam: false})} // Loại mô đun
+              else if (typeId === 3) {setState({...state, showThematic: false, showCourse: true, showModule: false, onlineExam: false})} // Loại tổng hợp
+              else { // Loại theo phần
+                setState({...state, showThematic: false, showCourse: true, showModule: false, onlineExam: true})
+              } 
           }}
         >
           {options}
@@ -444,7 +465,7 @@ const ExamAdminPage = () => {
                   </Form.Item>
                   <Form.Item label="Khung" name="khung_ct" rules={[{ required: state.showCourse, message: 'Loại đề thi là bắt buộc'}]}
                   style={{display: state.showCourse ? '' : 'none'}}>
-                      {renderProgramme()}
+                      {state.onlineExam ? renderProgrammesForCreateExam() : renderProgramme()}
                   </Form.Item>
                   <Form.Item label="Khóa học" name="khoa_hoc_id" rules={[{ required: state.showCourse, message: 'Khóa học là bắt buộc' }]}
                       style={{display: state.showCourse ? '' : 'none'}}>
