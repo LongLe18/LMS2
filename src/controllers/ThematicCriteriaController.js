@@ -43,6 +43,10 @@ const getAll_admin = async (req, res) => {
 
 const getById = async (req, res) => {
     const thematicCriteria = await ThematicCriteria.findOne({
+        include:{
+            model: Modun,
+            attributes: ['mo_dun_id', 'khoa_hoc_id']
+        },
         where: {
             tcdcd_mo_dun_id: req.params.id,
         },

@@ -43,8 +43,13 @@ const getAll_admin = async (req, res) => {
 
 const getById = async (req, res) => {
     const modunCriteria = await ModunCriteria.findOne({
+        include:{
+            model: Modun,
+            attributes: ['mo_dun_id', 'khoa_hoc_id']
+        },
         where: {
             tcdmd_khoa_hoc_id: req.params.id,
+          
         },
     });
     res.status(200).send({

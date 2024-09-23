@@ -1,4 +1,10 @@
-const { Course, CourseStudent, Program, Student, Province } = require('../models');
+const {
+    Course,
+    CourseStudent,
+    Program,
+    Student,
+    Province,
+} = require('../models');
 const { Op } = require('sequelize');
 const fs = require('fs');
 const sequelize = require('../utils/db');
@@ -94,7 +100,14 @@ const getAddStudents = async (req, res) => {
     );
 
     const { count, rows } = await Student.findAndCountAll({
-        attributes: ['hoc_vien_id', 'ho_ten', 'ngay_sinh', 'gioi_tinh', 'email', 'sdt'],
+        attributes: [
+            'hoc_vien_id',
+            'ho_ten',
+            'ngay_sinh',
+            'gioi_tinh',
+            'email',
+            'sdt',
+        ],
         include: {
             model: Province,
         },
@@ -104,12 +117,12 @@ const getAddStudents = async (req, res) => {
             }),
             ...(req.query.ten_hoc_vien && {
                 ho_ten: {
-                    [Op.like]: `%${req.query.ten_hoc_vien}%`
+                    [Op.like]: `%${req.query.ten_hoc_vien}%`,
                 },
             }),
             hoc_vien_id: {
                 [Op.notIn]: studentIds.map((item) => item.hoc_vien_id),
-            }
+            },
         },
         offset:
             (Number(req.query.pageIndex || 1) - 1) *
@@ -237,13 +250,10 @@ const getThematicOfUserv2 = async (req, res) => {
                     `
                     SELECT COUNT(DISTINCT de_thi.chuyen_de_id) AS chuyen_de_da_hoc FROM de_thi JOIN de_thi_hoc_vien ON 
                     de_thi.de_thi_id=de_thi_hoc_vien.de_thi_id WHERE de_thi_hoc_vien.hoc_vien_id=8 AND de_thi.loai_de_thi_id=1 
-                    AND de_thi.khoa_hoc_id=${
-                        course.khoa_hoc_id
+                    AND de_thi.khoa_hoc_id=${course.khoa_hoc_id
                     } AND de_thi_hoc_vien.dat_yeu_cau=true AND 
-                    DATEDIFF(NOW(), de_thi_hoc_vien.ngay_tao)<${
-                        (index + 1) * 7
-                    } AND DATEDIFF(NOW(), de_thi_hoc_vien.ngay_tao)>=${
-                        index * 7
+                    DATEDIFF(NOW(), de_thi_hoc_vien.ngay_tao)<${(index + 1) * 7
+                    } AND DATEDIFF(NOW(), de_thi_hoc_vien.ngay_tao)>=${index * 7
                     }`,
                     { type: sequelize.QueryTypes.SELECT }
                 );
@@ -288,65 +298,44 @@ const getOfNews = async (req, res) => {
 };
 
 const getByFilter = async (req, res) => {
-    let search = 1;
-    let ngay_bat_dau = 1;
-    let ngay_ket_thuc = 1;
-    let trang_thai = 1;
-    let offset = 0;
-    let limit = 100;
-    if (req.query.offset) {
-        offset = req.query.offset;
-    }
-    if (req.query.limit) {
-        limit = req.query.limit;
-    }
-    if (req.query.search) {
-        search = 'khoa_hoc.ten_khoa_hoc LIKE :search';
-    }
-    if (req.query.ngay_bat_dau) {
-        ngay_bat_dau = `khoa_hoc.ngay_bat_dau BETWEEN '2000-1-1' AND :ngay_bat_dau`;
-    }
-    if (req.query.ngay_ket_thuc) {
-        ngay_ket_thuc = `khoa_hoc.ngay_ket_thuc BETWEEN '2000-1-1' AND :ngay_ket_thuc`;
-    }
-    if (req.query.trang_thai) {
-        trang_thai = 'khoa_hoc.trang_thai=:trang_thai';
-    }
-    let filter = `WHERE ${trang_thai} AND ${ngay_bat_dau} AND ${ngay_ket_thuc} AND ${search}`;
-    const count = await sequelize.query(
-        `
-        SELECT COUNT(*) AS tong FROM khoa_hoc ${filter}`,
-        {
-            replacements: {
-                search: `%${decodeURI(req.query.search)}%`,
-                ngay_bat_dau1: req.query.ngay_bat_dau,
-                ngay_ket_thuc2: req.query.ngay_ket_thuc,
-                trang_thai: parseInt(req.query.trang_thai),
-            },
-            type: sequelize.QueryTypes.SELECT,
-        }
-    );
-    const courses = await sequelize.query(
-        `
-        SELECT khoa_hoc.khoa_hoc_id, khoa_hoc.ten_khoa_hoc, khoa_hoc.anh_dai_dien, khung_chuong_trinh.ten_khung_ct, 
-        khoa_hoc.trang_thai, khoa_hoc.ngay_bat_dau, khoa_hoc.ngay_ket_thuc FROM khoa_hoc LEFT JOIN khung_chuong_trinh ON 
-        khoa_hoc.kct_id=khung_chuong_trinh.kct_id ${filter} ORDER BY khoa_hoc.ngay_tao DESC LIMIT :offset, :limit`,
-        {
-            replacements: {
-                search: `%${decodeURI(req.query.search)}%`,
-                ngay_bat_dau1: req.query.ngay_bat_dau,
-                ngay_ket_thuc2: req.query.ngay_ket_thuc,
-                trang_thai: parseInt(req.query.trang_thai),
-                offset: parseInt(offset),
-                limit: parseInt(limit),
-            },
-            type: sequelize.QueryTypes.SELECT,
-        }
-    );
+    const { count, rows } = await Course.findAndCountAll({
+        include: {
+            model: Program,
+            attributes: ['kct_id', 'ten_khung_ct'],
+        },
+        where: {
+            ...(req.query.search && {
+                ten_khoa_hoc: `%${req.query.search}%`,
+            }),
+            ...(req.query.ngay_bat_dau &&
+                req.query.ngay_ket_thuc && {
+                    ngay_bat_dau: {
+                        [Op.lte]: ngay_ket_thuc 
+                    },
+                    ngay_ket_thuc: {
+                        [Op.gte]: ngay_bat_dau 
+                    }
+            }),
+            ...(req.query.trang_thai && { trang_thai: req.query.trang_thai }),
+        },
+        offset:
+            (Number(req.query.pageIndex || 1) - 1) *
+            Number(req.query.pageSize || 10),
+        limit: Number(req.query.pageSize || 10),
+        order: [
+            req.query.sortBy
+                ? req.query.sortBy.split(',')
+                : ['ngay_tao', 'DESC'],
+        ],
+    });
+
     res.status(200).send({
         status: 'success',
-        data: courses,
-        count: count[0].tong,
+        data: rows,
+        pageIndex: Number(req.query.pageIndex || 1),
+        pageSize: Number(req.query.pageSize || 10),
+        totalCount: count,
+        totalPage: Math.ceil(count / Number(req.query.pageSize || 10)),
         message: null,
     });
 };
