@@ -310,10 +310,10 @@ const getByFilter = async (req, res) => {
             ...(req.query.ngay_bat_dau &&
                 req.query.ngay_ket_thuc && {
                     ngay_bat_dau: {
-                        [Op.lte]: ngay_ket_thuc 
+                        [Op.lte]: req.query.ngay_ket_thuc 
                     },
                     ngay_ket_thuc: {
-                        [Op.gte]: ngay_bat_dau 
+                        [Op.gte]: req.query.ngay_bat_dau 
                     }
             }),
             ...(req.query.trang_thai && { trang_thai: req.query.trang_thai }),
