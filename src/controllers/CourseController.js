@@ -250,10 +250,13 @@ const getThematicOfUserv2 = async (req, res) => {
                     `
                     SELECT COUNT(DISTINCT de_thi.chuyen_de_id) AS chuyen_de_da_hoc FROM de_thi JOIN de_thi_hoc_vien ON 
                     de_thi.de_thi_id=de_thi_hoc_vien.de_thi_id WHERE de_thi_hoc_vien.hoc_vien_id=8 AND de_thi.loai_de_thi_id=1 
-                    AND de_thi.khoa_hoc_id=${course.khoa_hoc_id
+                    AND de_thi.khoa_hoc_id=${
+                        course.khoa_hoc_id
                     } AND de_thi_hoc_vien.dat_yeu_cau=true AND 
-                    DATEDIFF(NOW(), de_thi_hoc_vien.ngay_tao)<${(index + 1) * 7
-                    } AND DATEDIFF(NOW(), de_thi_hoc_vien.ngay_tao)>=${index * 7
+                    DATEDIFF(NOW(), de_thi_hoc_vien.ngay_tao)<${
+                        (index + 1) * 7
+                    } AND DATEDIFF(NOW(), de_thi_hoc_vien.ngay_tao)>=${
+                        index * 7
                     }`,
                     { type: sequelize.QueryTypes.SELECT }
                 );
@@ -305,17 +308,17 @@ const getByFilter = async (req, res) => {
         },
         where: {
             ...(req.query.search && {
-                ten_khoa_hoc: `%${req.query.search}%`,
+                ten_khoa_hoc: { [Op.like]: `%${req.query.search}%` },
             }),
             ...(req.query.ngay_bat_dau &&
                 req.query.ngay_ket_thuc && {
                     ngay_bat_dau: {
-                        [Op.lte]: req.query.ngay_ket_thuc 
+                        [Op.gte]: req.query.ngay_bat_dau,
                     },
                     ngay_ket_thuc: {
-                        [Op.gte]: req.query.ngay_bat_dau 
-                    }
-            }),
+                        [Op.lte]: req.query.ngay_ket_thuc,
+                    },
+                }),
             ...(req.query.trang_thai && { trang_thai: req.query.trang_thai }),
         },
         offset:
