@@ -34,6 +34,7 @@ const BussinessCourses = (props) => {
         isEdit: false,
         dataCourse: [],
     })
+    const [pageIndex, setPageIndex] = useState(1);
 
     const courses = useSelector(state => state.course.list.result);
     const programmes = useSelector(state => state.programme.list.result);
@@ -129,7 +130,7 @@ const BussinessCourses = (props) => {
             };
         }
         dispatch(programmeAction.getProgrammes({ status: '' }));
-        dispatch(courseAction.filterCourses({ status: '', search: filter.search, start: filter.start, end: filter.end}, callback));
+        dispatch(courseAction.filterCourses({ status: '', search: filter.search, start: filter.start, end: filter.end, pageIndex: pageIndex, pageSize: 10000000}, callback));
 
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -166,12 +167,12 @@ const BussinessCourses = (props) => {
 
     useEffect(() => {
         dispatch(courseAction.filterCourses({ status: filter.trang_thai === 2 ? '' : filter.trang_thai, search: filter.search,
-            start: filter.start, end: filter.end }, callbackFilter));
+            start: filter.start, end: filter.end, pageIndex: pageIndex, pageSize: 10000000 }, callbackFilter));
     }, [filter.trang_thai, filter.start, filter.end]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useMemo(() => {
         dispatch(courseAction.filterCourses({ status: filter.trang_thai === 2 ? '' : filter.trang_thai, search: filter.search,
-            start: filter.start, end: filter.end }, callbackFilter));
+            start: filter.start, end: filter.end, pageIndex: pageIndex, pageSize: 10000000 }, callbackFilter));
     }, [searchValue]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const renderProgrammes = () => {
@@ -234,7 +235,7 @@ const BussinessCourses = (props) => {
                 form.resetFields();
                 setState({ ...state, isEdit: false });
                 dispatch(courseAction.filterCourses({ status: filter.trang_thai === 2 ? '' : filter.trang_thai, search: filter.search,
-                    start: filter.start, end: filter.end }, (res) => {
+                    start: filter.start, end: filter.end, pageIndex: pageIndex, pageSize: 10000000 }, (res) => {
                         if (res.status === 'success') {
                             let temp = [];
                             const subCallback = (subRes) => {
@@ -285,6 +286,11 @@ const BussinessCourses = (props) => {
         }
     };
     
+    // event thay đổi trang
+    const onChange = (page) => {
+        setPageIndex(page);
+    };
+
     return (
         <div className="content">
             <Row className="app-main">
@@ -292,16 +298,16 @@ const BussinessCourses = (props) => {
                     <Row>
                         <Col xl={24} sm={24} xs={24}>
                             <AppFilter
-                            title="Danh sách khóa học"
-                            isShowCourse={false}
-                            isShowModule={false}
-                            isShowThematic={false}
-                            isShowStatus={true}
-                            isShowSearchBox={true}
-                            isShowDatePicker={true}
-                            isRangeDatePicker={true}
-                            courses={courses.data}
-                            onFilterChange={(field, value) => onFilterChange(field, value)}
+                                title="Danh sách khóa học"
+                                isShowCourse={false}
+                                isShowModule={false}
+                                isShowThematic={false}
+                                isShowStatus={true}
+                                isShowSearchBox={true}
+                                isShowDatePicker={true}
+                                isRangeDatePicker={true}
+                                courses={courses.data}
+                                onFilterChange={(field, value) => onFilterChange(field, value)}
                             />
                         </Col>
                     </Row>

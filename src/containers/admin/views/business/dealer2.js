@@ -41,7 +41,7 @@ const DealerPage = (props) => {
 
     useEffect(() => {
         dispatch(dealerAction.getDealers({ name: filter.search, idCourse: filter.khoa_hoc_id }));
-        dispatch(courseAction.filterCourses({ status: '', search: '', start: '', end: '' }));
+        dispatch(courseAction.filterCourses({ status: '', search: '', start: '', end: '', pageIndex: 1, pageSize: 100000000 }));
         dispatch(programmeAction.getProgrammes({ status: '' }));
         dispatch(userAction.getTeachers({ idMajor: '', status: '', startDay: '', endDay: '', search: '' }));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps

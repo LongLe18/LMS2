@@ -48,6 +48,29 @@ function AppFilter(props) {
 
     const typeExams = useSelector(state => state.typeExam.list.result);
 
+    const renderProgrammes = () => {
+      const programmes = props.programmes ? props.programmes : [];
+      let options = [];
+      options = programmes.map((programme) => (
+        <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
+      ));
+      return (
+          <Select style={{width:"90%"}}
+              maxTagCount="responsive"
+              showSearch={true}
+              filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
+              allowClear={true}
+              onChange={(value) => {
+                props.onFilterChange('kct_id', value ? value : '');
+              }}
+              placeholder="Danh mục khung chương trình"
+          >
+              <Option key={''} value={''}>Tất cả khung chương trình</Option>
+              {options}
+          </Select>
+      );
+    }
+
     const renderStatus = () => {
       const status = props.status ? props.status : COMMON_STATUS;
       let options = [];
@@ -246,6 +269,11 @@ function AppFilter(props) {
                   )}
                 </Col>
               )}
+              {props.isShowProgramme && 
+                <Col xl={6} md={24} xs={24}>
+                  {renderProgrammes()}
+                </Col>   
+              }
               {props.isShowCourse && (
                 <>
                   <Col xl={6} md={24} xs={24}>

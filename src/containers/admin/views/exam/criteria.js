@@ -274,105 +274,165 @@ const Criteria = () => {
             title: 'Tên khóa học',
             dataIndex: 'ten_khoa_hoc',
             key: 'ten_khoa_hoc',
+            width: 350,
             responsive: ['md'],
             render: (tcdth_khoa_hoc_id, tieu_chi) => (
                 <>{tieu_chi.khoa_hoc?.ten_khoa_hoc}</>
             ),
+            fixed: 'left',
         },
         {
             title: 'Số phần',
             dataIndex: 'so_phan',
             key: 'so_phan',
+            width: 150,
             responsive: ['md'],
         },
         {
             title: 'Tổng số câu hỏi',
             dataIndex: 'so_cau_hoi',
             key: 'so_cau_hoi',
+            width: 150,
             responsive: ['md'],
         },
         {
             title: 'Tổng thời gian thi',
             dataIndex: 'thoi_gian',
             key: 'thoi_gian',
+            width: 150,
             responsive: ['md'],
         },
         {
             title: 'Số câu hỏi phần 1',
             dataIndex: 'so_cau_hoi_phan_1',
             key: 'so_cau_hoi_phan_1',
+            width: 150,
             responsive: ['md'],
         },
         {
             title: 'Yêu cầu phần 1',
             dataIndex: 'yeu_cau_phan_1',
             key: 'yeu_cau_phan_1',
+            width: 150,
             responsive: ['md'],
         },
         {
             title: 'Thời gian phần 1',
             dataIndex: 'thoi_gian_phan_1',
             key: 'thoi_gian_phan_1',
+            width: 150,
             responsive: ['md'],
         },
         {
             title: 'Số câu hỏi phần 2',
             dataIndex: 'so_cau_hoi_phan_2',
             key: 'so_cau_hoi_phan_2',
+            width: 150,
             responsive: ['md'],
         },
         {
             title: 'Yêu cầu phần 2',
             dataIndex: 'yeu_cau_phan_2',
             key: 'yeu_cau_phan_2',
+            width: 150,
             responsive: ['md'],
         },
         {
             title: 'Thời gian phần 2',
             dataIndex: 'thoi_gian_phan_2',
             key: 'thoi_gian_phan_2',
+            width: 150,
             responsive: ['md'],
         },
         {
             title: 'Số câu hỏi phần 3',
             dataIndex: 'so_cau_hoi_phan_3',
             key: 'so_cau_hoi_phan_3',
+            width: 150,
             responsive: ['md'],
         },
         {
             title: 'Yêu cầu phần 3',
             dataIndex: 'yeu_cau_phan_3',
             key: 'yeu_cau_phan_3',
+            width: 150,
             responsive: ['md'],
         },
         {
             title: 'Thời gian phần 3',
             dataIndex: 'thoi_gian_phan_3',
             key: 'thoi_gian_phan_3',
+            width: 150,
             responsive: ['md'],
         },
         {
             title: 'Số câu hỏi phần 4',
             dataIndex: 'so_cau_hoi_phan_4',
             key: 'so_cau_hoi_phan_4',
+            width: 150,
             responsive: ['md'],
         },
         {
             title: 'Yêu cầu phần 4',
             dataIndex: 'yeu_cau_phan_4',
             key: 'yeu_cau_phan_4',
+            width: 150,
             responsive: ['md'],
         },
         {
             title: 'Thời gian phần 4',
             dataIndex: 'thoi_gian_phan_4',
             key: 'thoi_gian_phan_4',
+            width: 150,
+            responsive: ['md'],
+        },
+        {
+            title: 'Số câu hỏi phần 5',
+            dataIndex: 'so_cau_hoi_phan_5',
+            key: 'so_cau_hoi_phan_5',
+            width: 150,
+            responsive: ['md'],
+        },
+        {
+            title: 'Yêu cầu phần 5',
+            dataIndex: 'yeu_cau_phan_5',
+            key: 'yeu_cau_phan_5',
+            width: 150,
+            responsive: ['md'],
+        },
+        {
+            title: 'Thời gian phần 5',
+            dataIndex: 'thoi_gian_phan_5',
+            key: 'thoi_gian_phan_5',
+            width: 150,
+            responsive: ['md'],
+        },
+        {
+            title: 'Số câu hỏi phần 6',
+            dataIndex: 'so_cau_hoi_phan_6',
+            key: 'so_cau_hoi_phan_6',
+            width: 150,
+            responsive: ['md'],
+        },
+        {
+            title: 'Yêu cầu phần 6',
+            dataIndex: 'yeu_cau_phan_6',
+            key: 'yeu_cau_phan_6',
+            width: 150,
+            responsive: ['md'],
+        },
+        {
+            title: 'Thời gian phần 6',
+            dataIndex: 'thoi_gian_phan_6',
+            key: 'thoi_gian_phan_6',
+            width: 150,
             responsive: ['md'],
         },
         {
             title: 'Tùy chọn',
             key: 'idtieu_chi_de_thi_online',
             dataIndex: 'idtieu_chi_de_thi_online',
+            width: 150,
             // Redirect view for edit
             render: (idtieu_chi_de_thi_online) => (
                 <Space size="middle">
@@ -380,6 +440,7 @@ const Criteria = () => {
                 <Button shape="round" type="danger" onClick={() => DeleteCriteriaOnline(idtieu_chi_de_thi_online)} >Xóa</Button> 
                 </Space>
             ),
+            fixed: 'right',
         },
     ];
 
@@ -489,7 +550,6 @@ const Criteria = () => {
         }).catch(error => notification.error({ message: error.message }));
     }
 
-
     const EditCriteriaCourse = (id) => {
         const callback = (res) => {
             if (res.status === 'success') {
@@ -510,6 +570,8 @@ const Criteria = () => {
         const callback = (res) => {
             if (res.status === 'success') {
                 checkCriteria('2', id);  // check tiêu chí đã có đề xuất bản hay chưa
+                form.setFieldValue('khoa_hoc_id', res.data.mo_dun?.khoa_hoc_id);
+                dispatch(moduleAction.getModulesByIdCourse({ idCourse: res.data.mo_dun?.khoa_hoc_id }))
                 form.setFieldsValue(res.data);
                 showModal();
                 setCourse(false);
@@ -526,6 +588,8 @@ const Criteria = () => {
         const callback = (res) => {
             if (res.status === 'success') {
                 checkCriteria('3', id);  // check tiêu chí đã có đề xuất bản hay chưa
+                form.setFieldValue('khoa_hoc_id', res.data.mo_dun?.khoa_hoc_id);
+                dispatch(moduleAction.getModulesByIdCourse({ idCourse: res.data.mo_dun?.khoa_hoc_id }))
                 form.setFieldsValue(res.data);
                 showModal();
                 setCourse(false);
@@ -1000,7 +1064,7 @@ const Criteria = () => {
                                         },
                                     ]}
                                 >
-                                    <InputNumber disabled={isPublish} placeholder="Nhập số phần thi" style={{width: "100%"}} max={4} min={1} onChange={handleNumberExamChange}/>
+                                    <InputNumber disabled={isPublish} placeholder="Nhập số phần thi" style={{width: "100%"}} max={6} min={1} onChange={handleNumberExamChange}/>
                                 </Form.Item>
                             </Col>
                             
@@ -1242,7 +1306,7 @@ const Criteria = () => {
                                 </Button>
                             </Col>
                         </Row>
-                        <Table className="table-striped-rows" columns={columns4} dataSource={dataCriteriaOnline} pagination={false}></Table>
+                        <Table className="table-striped-rows" columns={columns4} dataSource={dataCriteriaOnline} pagination={false} scroll={{ x: 1500, y: 300 }}></Table>
                         <br/>
                         <Pagination current={pageIndex} onChange={onChangePage} 
                             total={criteriaOnline?.totalCount} onShowSizeChange={onChangePageSize} 

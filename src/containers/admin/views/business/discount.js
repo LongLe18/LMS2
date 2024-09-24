@@ -53,7 +53,7 @@ const DiscountPage = (props) => {
             }
         };
 
-        dispatch(courseAction.filterCourses({ status: '', search: '', start: '', end: '' }));
+        dispatch(courseAction.filterCourses({ status: '', search: '', start: '', end: '', pageSize: 10000000, pageIndex: 1 }));
         dispatch(discountAction.getDiscounts({ status: '', idCourse: '' }, callback));
         dispatch(programmeAction.getProgrammes({ status: '' }));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps

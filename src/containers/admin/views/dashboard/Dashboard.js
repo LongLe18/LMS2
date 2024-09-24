@@ -38,7 +38,7 @@ function Dashboard() {
     // dispatch(userAction.getStaffs({ search: '', startDay: '', endDay: '', status: '', pageIndex: 0, pageSize: 100000 }));
     dispatch(userAction.getStudents({ search: '', startDay: '', endDay: '', status: '', pageIndex: 0, pageSize: 100000, province: '' }));
     dispatch(userAction.getTeachers({ idMajor: '', status: '', startDay: '', endDay: '', search: '' }));
-    dispatch(courseAction.filterCourses({ status: '', search: '', start: '', end: ''}));
+    dispatch(courseAction.filterCourses({ status: '', search: '', start: '', end: '', pageIndex: 1, pageSize: 10000000}));
     dispatch(examActions.filterExam({ idCourse: '', idModule: '', idThematic: '', status: '', search: '', 
             start: '', end: '', idType: '', publish: '', offset: '', limit: '1000000' }));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps

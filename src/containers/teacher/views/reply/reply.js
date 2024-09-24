@@ -50,7 +50,7 @@ const ReplyPage = (props) => {
 
     useEffect(() => {
         dispatch(commentAction.getCOMMENTs({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, type: filter.trang_thai }));
-        dispatch(courseAction.filterCourses({ status: '', search: '', start: '', end: '' }));
+        dispatch(courseAction.filterCourses({ status: '', search: '', start: '', end: '', pageSize: 10000000, pageIndex: 1 }));
         if (window.location.href.split('=').length > 1) {
             detailComment(window.location.href.split('=')[1]);
         };

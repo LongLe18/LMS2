@@ -5,7 +5,7 @@ import defaultImage from 'assets/img/default.jpg';
 import moment from "moment";
 // react plugin for creating notifications over the dashboard
 import { Table, Tag, Button, Row, Col, notification, Space, Avatar, Form, Input, 
-  Upload, message, DatePicker, Select, Modal,  } from 'antd';
+  Upload, message, DatePicker, Select, Modal, Pagination } from 'antd';
 import { UploadOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
 // component
@@ -56,6 +56,9 @@ const Course = () => {
           dataIndex: 'ten_khung_ct',
           key: 'ten_khung_ct',
           responsive: ['md'],
+          render: (ten_khung_ct, khoa_hoc) => (
+            khoa_hoc?.khung_chuong_trinh?.ten_khung_ct
+          )
         },
         {
           title: 'Trạng thái',
@@ -63,8 +66,8 @@ const Course = () => {
           key: 'trang_thai',
           responsive: ['md'],
           render: (trang_thai) => (
-            <Tag color={trang_thai === 1 ? 'green' : 'red'} key={trang_thai}>
-              {trang_thai === 1 ? "Đang hoạt động" : "Đã dừng"}
+            <Tag color={trang_thai === true ? 'green' : 'red'} key={trang_thai}>
+              {trang_thai === true ? "Đang hoạt động" : "Đã dừng"}
             </Tag>
           ),
         },
@@ -152,9 +155,10 @@ const Course = () => {
       search: '',
       start: '',
       end: '',
+      kct_id: ''
     });
-
-
+    const [pageIndex, setPageIndex] = useState(1);
+    
     const courses = useSelector(state => state.course.list.result);
     const programmes = useSelector(state => state.programme.list.result);
     // const loading = useSelector(state => state.course.list.loading);
@@ -166,7 +170,7 @@ const Course = () => {
     useEffect(() => {
       dispatch(programmeAction.getProgrammes({ status: '' }));
       dispatch(courseAction.filterCourses({ status: '', search: filter.search, 
-        start: filter.start, end: filter.end}, (res) => {
+        start: filter.start, end: filter.end, pageIndex: pageIndex}, (res) => {
           if (res.status === 'success') {
             res.data = (res.data.map((module, index) => {
               return {...module, 'key': index};
@@ -177,6 +181,18 @@ const Course = () => {
         }));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
     
+    useEffect(() => {
+      dispatch(courseAction.filterCourses({ status: filter.trang_thai === 2 ? '' : filter.trang_thai, search: filter.search,
+        start: filter.start, end: filter.end, kct_id: filter.kct_id, pageIndex: pageIndex }, (res) => {
+          if (res.status === 'success') {
+            res.data = (res.data.map((module, index) => {
+              return {...module, 'key': index};
+            }));
+            setData([...res.data]);
+          }
+      }));
+  }, [pageIndex]); // eslint-disable-line react-hooks/exhaustive-deps
+
     const renderProgramme = () => {
       let options = [];
         if (programmes.status === 'success') {
@@ -217,7 +233,7 @@ const Course = () => {
   
     useEffect(() => {
       dispatch(courseAction.filterCourses({ status: filter.trang_thai === 2 ? '' : filter.trang_thai, search: filter.search,
-        start: filter.start, end: filter.end }, (res) => {
+        start: filter.start, end: filter.end, kct_id: filter.kct_id, pageIndex: pageIndex }, (res) => {
           if (res.status === 'success') {
             res.data = (res.data.map((module, index) => {
               return {...module, 'key': index};
@@ -262,7 +278,7 @@ const Course = () => {
               form.resetFields();
               setState({ ...state, isEdit: false });
               dispatch(courseAction.filterCourses({ status: filter.trang_thai === 2 ? '' : filter.trang_thai, search: filter.search,
-                start: filter.start, end: filter.end }, (res) => {
+                start: filter.start, end: filter.end, pageIndex: pageIndex }, (res) => {
                   if (res.status === 'success') {
                     res.data = (res.data.map((module, index) => {
                       return {...module, 'key': index};
@@ -310,7 +326,7 @@ const Course = () => {
           const callback = (res) => {
             if (res.statusText === 'OK' && res.status === 200) {
               dispatch(courseAction.filterCourses({ status: filter.trang_thai === 2 ? '' : filter.trang_thai, search: filter.search,
-                  start: filter.start, end: filter.end }, (res) => {
+                  start: filter.start, end: filter.end, pageIndex: pageIndex }, (res) => {
                     if (res.status === 'success') {
                       res.data = (res.data.map((module, index) => {
                         return {...module, 'key': index};
@@ -334,6 +350,11 @@ const Course = () => {
       });
     };
 
+    // event thay đổi trang
+    const onChange = (page) => {
+      setPageIndex(page);
+    };
+
     return(
         <div className='content'>
           <Row className="app-main">
@@ -342,6 +363,7 @@ const Course = () => {
                       <Col xl={24} sm={24} xs={24}>
                           <AppFilter
                             title="Danh sách khóa học"
+                            isShowProgramme={true}
                             isShowCourse={false}
                             isShowModule={false}
                             isShowThematic={false}
@@ -350,6 +372,7 @@ const Course = () => {
                             isShowDatePicker={true}
                             isRangeDatePicker={true}
                             courses={courses.data}
+                            programmes={programmes.data}
                             onFilterChange={(field, value) => onFilterChange(field, value)}
                           />
                       </Col>
@@ -358,7 +381,12 @@ const Course = () => {
           </Row>
         {/* {loading && <LoadingCustom/>} */}
             {data.length > 0 && 
-                <Table className="table-striped-rows" columns={columns} dataSource={data} />
+              <>
+                <Table className="table-striped-rows" columns={columns} dataSource={data} pagination={false}/>
+                <br/>
+                <Pagination current={pageIndex} onChange={onChange} total={courses?.totalCount}/>
+                <br/>
+              </>
             }
             {error && notification.error({
                 message: 'Thông báo',
