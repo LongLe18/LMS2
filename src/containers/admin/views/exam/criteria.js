@@ -1185,7 +1185,7 @@ const Criteria = () => {
                                 <AppFilter
                                     title={"Tiêu chí đề thi tổng hợp"}
                                     isShowCourse={true}
-                                    courses={courses.data}
+                                    courses={courses.data?.filter((course) => course.loai_kct !== 1)}
                                     onFilterChange={(field, value) => onFilterChange(field, value)}
                                 />
                             </Col>
@@ -1208,7 +1208,7 @@ const Criteria = () => {
                         <Table className="table-striped-rows" columns={columns} dataSource={dataCriteriaCourse} pagination={false}></Table>
                         <br/>
                         <Pagination current={pageIndex} onChange={onChangePage} 
-                            total={criteriaCourse?.data?.totalCount} onShowSizeChange={onChangePageSize} 
+                            total={criteriaCourse?.totalCount} onShowSizeChange={onChangePageSize} 
                             showSizeChanger defaultPageSize={pageSize}
                         />
                     </TabPane>
@@ -1218,7 +1218,7 @@ const Criteria = () => {
                                 <AppFilter
                                     title={"Tiêu chí đề thi mô đun"}
                                     isShowCourse={true}
-                                    courses={courses.data}
+                                    courses={courses.data?.filter((course) => course.loai_kct !== 1)}
                                     onFilterChange={(field, value) => onFilterChange(field, value)}
                                 />
                             </Col>
@@ -1252,7 +1252,7 @@ const Criteria = () => {
                                 <AppFilter
                                     title={"Tiêu chí đề thi chuyên đề"}
                                     isShowCourse={true}
-                                    courses={courses.data}
+                                    courses={courses.data?.filter((course) => course.loai_kct !== 1)}
                                     onFilterChange={(field, value) => onFilterChange(field, value)}
                                 />
                             </Col>

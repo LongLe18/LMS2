@@ -9,7 +9,7 @@ import Hashids from 'hashids';
 // component
 import AppFilter from "components/common/AppFilter";
 import LoadingCustom from 'components/parts/loading/Loading';
-import { Table, Button, Row, Col, notification, Space, Avatar, Form, Select, Input } from 'antd';
+import { Table, Button, Row, Col, notification, Space, Avatar, Form, Select, Input, Pagination } from 'antd';
 import TextEditorWidget2 from "components/common/TextEditor/TextEditor2";
 
 // redux
@@ -40,12 +40,14 @@ const BussinessCourses = (props) => {
     const programmes = useSelector(state => state.programme.list.result);
 
     const description = useSelector(state => state.descriptionCourse.item.result);
+    const descriptions = useSelector(state => state.descriptionCourse.list.result);
     const loading = useSelector(state => state.descriptionCourse.item.loading);
 
     const [filter, setFilter] = useState({
         trang_thai: 2,
         search: '',
         start: '',
+        kct_id: '',
         end: '',
     });
     const searchValue = useDebounce(filter.search, 250);
@@ -71,6 +73,9 @@ const BussinessCourses = (props) => {
           dataIndex: 'ten_khung_ct',
           key: 'ten_khung_ct',
           responsive: ['md'],
+          render: (ten_khung_ct, description) => (
+            description?.khung_chuong_trinh?.ten_khung_ct
+          )
         },
         {
           title: 'Ngày bắt đầu',
@@ -126,13 +131,36 @@ const BussinessCourses = (props) => {
                     }
                     setState({...state, dataCourse: temp})
                 }
-                dispatch(descriptionAction.getDescriptionCourses({}, subCallback)) 
+                dispatch(descriptionAction.getDescriptionCourses({ pageSize: 10, pageIndex: pageIndex, kct_id: filter.kct_id }, subCallback)) 
             };
         }
         dispatch(programmeAction.getProgrammes({ status: '' }));
-        dispatch(courseAction.filterCourses({ status: '', search: filter.search, start: filter.start, end: filter.end, pageIndex: pageIndex, pageSize: 10000000}, callback));
-
+        dispatch(courseAction.filterCourses({ status: '', search: filter.search, start: filter.start, end: filter.end, pageIndex: 1, pageSize: 10000000}, callback));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    
+    useEffect(() => {
+        const callback = (res) => {
+            let temp = [];
+            if (res.status === 'success') {
+                const subCallback = (subRes) => {
+                    if (subRes.status === 'success') {
+                        res.data.map((item, index) => {
+                            subRes.data.map((subItem, subIntex) => {
+                                if (item.khoa_hoc_id === subItem.khoa_hoc_id) {
+                                    temp.push({...item, key: subIntex})
+                                }
+                                return null;
+                            });
+                            return null;
+                        });
+                    }
+                    setState({...state, dataCourse: temp})
+                }
+                dispatch(descriptionAction.getDescriptionCourses({ pageSize: 10, pageIndex: pageIndex, kct_id: filter.kct_id }, subCallback)) 
+            };
+        }
+        dispatch(courseAction.filterCourses({ status: '', search: filter.search, start: filter.start, end: filter.end, pageIndex: 1, pageSize: 10000000}, callback));
+    }, [pageIndex]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const onFilterChange = (field, value) => {
         if (field === 'ngay') {
@@ -161,18 +189,18 @@ const BussinessCourses = (props) => {
                 }
                 setState({...state, dataCourse: temp})
             }
-            dispatch(descriptionAction.getDescriptionCourses({}, subCallback)) 
+            dispatch(descriptionAction.getDescriptionCourses({ pageSize: 10, pageIndex: pageIndex, kct_id: filter.kct_id }, subCallback)) 
         };
     }
 
     useEffect(() => {
         dispatch(courseAction.filterCourses({ status: filter.trang_thai === 2 ? '' : filter.trang_thai, search: filter.search,
-            start: filter.start, end: filter.end, pageIndex: pageIndex, pageSize: 10000000 }, callbackFilter));
+            start: filter.start, end: filter.end, pageIndex: 1, pageSize: 10000000 }, callbackFilter));
     }, [filter.trang_thai, filter.start, filter.end]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useMemo(() => {
         dispatch(courseAction.filterCourses({ status: filter.trang_thai === 2 ? '' : filter.trang_thai, search: filter.search,
-            start: filter.start, end: filter.end, pageIndex: pageIndex, pageSize: 10000000 }, callbackFilter));
+            start: filter.start, end: filter.end, pageIndex: 1, pageSize: 10000000 }, callbackFilter));
     }, [searchValue]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const renderProgrammes = () => {
@@ -235,7 +263,7 @@ const BussinessCourses = (props) => {
                 form.resetFields();
                 setState({ ...state, isEdit: false });
                 dispatch(courseAction.filterCourses({ status: filter.trang_thai === 2 ? '' : filter.trang_thai, search: filter.search,
-                    start: filter.start, end: filter.end, pageIndex: pageIndex, pageSize: 10000000 }, (res) => {
+                    start: filter.start, end: filter.end, pageIndex: 1, pageSize: 10000000 }, (res) => {
                         if (res.status === 'success') {
                             let temp = [];
                             const subCallback = (subRes) => {
@@ -253,7 +281,7 @@ const BussinessCourses = (props) => {
                                 setState({...state, dataCourse: temp});
                                 window.location.reload();
                             }
-                            dispatch(descriptionAction.getDescriptionCourses({}, subCallback)) 
+                            dispatch(descriptionAction.getDescriptionCourses({ pageSize: 10, pageIndex: pageIndex, kct_id: filter.kct_id }, subCallback)) 
                         };
                     }));
                 notification.success({
@@ -300,12 +328,14 @@ const BussinessCourses = (props) => {
                             <AppFilter
                                 title="Danh sách khóa học"
                                 isShowCourse={false}
+                                isShowProgramme={true}
                                 isShowModule={false}
                                 isShowThematic={false}
                                 isShowStatus={true}
                                 isShowSearchBox={true}
                                 isShowDatePicker={true}
                                 isRangeDatePicker={true}
+                                programmes={programmes.data}
                                 courses={courses.data}
                                 onFilterChange={(field, value) => onFilterChange(field, value)}
                             />
@@ -314,7 +344,12 @@ const BussinessCourses = (props) => {
                 </Col>
             </Row>
             {state.dataCourse.length > 0 && 
-                <Table className="table-striped-rows" columns={columns} dataSource={state.dataCourse} />
+                <>
+                    <Table className="table-striped-rows" columns={columns} dataSource={state.dataCourse} pagination={false}/>
+                    <br/>
+                    <Pagination current={pageIndex} onChange={onChange} total={descriptions?.totalCount} />
+                    <br/>
+                </>
             }
             <Row>
                 <Col xl={24} sm={24} xs={24} className="cate-form-block">

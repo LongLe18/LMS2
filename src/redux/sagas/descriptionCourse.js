@@ -7,7 +7,7 @@ import { get } from 'lodash';
 
 function* fetchDescriptionCourses(payload) {
     try {
-        let endpoint = `${config.API_URL}/course_description`;
+        let endpoint = `${config.API_URL}/course_description?pageSize=${payload.params.pageSize}&pageIndex=${payload.params.pageIndex}&kct_id=${payload.params.kct_id}`;
         const response = yield call(getApi, endpoint);
         const result = yield response.data;
         yield put({ type: actions.description.GET_DESCRIPTION_COURSES_SUCCESS, result: result });

@@ -325,6 +325,25 @@ const ExamAdminPage = () => {
       );
   };
 
+  // UI khung chương trình 
+  const renderProgrammesForCreatFastExam = () => {
+    let options = [];
+    if (programmes.status === 'success') {
+      options = programmes.data.filter((programme) => programme.loai_kct !== 0).map((programme) => (
+          <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
+        ))
+    }
+    return (
+      <Select
+          showSearch={false}
+          placeholder="Chọn khung chương trình"
+          onChange={(kct_id) => dispatch(courseActions.getCourses({ idkct: kct_id, status: 1, search: '' }))}
+      >
+        {options}
+      </Select>
+    );
+};
+
   // UI khung chương trình cho modal tạo đề thi
   const renderProgrammesForCreateExam = () => {
     let options = [];
@@ -507,7 +526,7 @@ const ExamAdminPage = () => {
             labelCol={{span: 6,}} 
           >
             <Form.Item label="Khung" name="khung_ct" rules={[{ required: true, message: 'Loại đề thi là bắt buộc'}]}>
-              {renderProgramme()}
+              {renderProgrammesForCreatFastExam()}
             </Form.Item>
             <Form.Item label="Khóa học" name="khoa_hoc_id" rules={[{ required: true, message: 'Khóa học là bắt buộc' }]}>
               {renderCourse()}
