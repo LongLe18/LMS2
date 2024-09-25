@@ -310,6 +310,9 @@ const getByFilter = async (req, res) => {
             ...(req.query.search && {
                 ten_khoa_hoc: { [Op.like]: `%${req.query.search}%` },
             }),
+            ...(req.query.kct_id && {
+                kct_id: req.query.kct_id,
+            }),
             ...(req.query.ngay_bat_dau &&
                 req.query.ngay_ket_thuc && {
                     ngay_bat_dau: {
