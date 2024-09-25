@@ -174,6 +174,9 @@ Student.belongsTo(Province, { foreignKey: 'ttp_id', constraints: false});
 ExceprtType.hasMany(Exceprt, { foreignKey: 'loai_trich_doan_id', constraints: false});
 Exceprt.belongsTo(ExceprtType, { foreignKey: 'loai_trich_doan_id', constraints: false});
 
+Course.hasOne(CourseDescription, { foreignKey: 'khoa_hoc_id', sourceKey: 'khoa_hoc_id', constraints: false});
+CourseDescription.belongsTo(Course, { foreignKey: 'khoa_hoc_id', targetKey: 'khoa_hoc_id', constraints: false});
+
 module.exports = {
     Course,
     Lesson,

@@ -1,20 +1,42 @@
-const { CourseDescription, DiscountCode } = require('../models');
+const { CourseDescription, DiscountCode, Course, Program } = require('../models');
 const { Op } = require('sequelize');
 
 const getAll = async (req, res) => {
-    let offset = 0;
-    let limit =100;
-    if(req.query.offset){
-        offset=req.query.offset;
-    }
-    if(req.query.limit){
-        limit=req.query.limit;
-    }
-    const courseDescriptions = await CourseDescription.findAll(
-        {offset: parseInt(offset), limit:parseInt(limit)});
+    const { count, rows } = await CourseDescription.findAndCountAll({
+        include: {
+            model: Course,
+            attributes: ['khoa_hoc_id', 'ten_khoa_hoc'],
+            include: {
+                model: Program,
+                attributes: ['kct_id', 'ten_khung_ct'],
+            },
+        },
+        where: {
+            ...(req.query.search && {
+                ten_khoa_hoc: { [Op.like]: `%${req.query.search}%` },
+            }), 
+            ...(req.query.kct_id && {
+                '$khoa_hoc.kct_id$': req.query.kct_id,
+            }),
+        },
+        offset:
+            (Number(req.query.pageIndex || 1) - 1) *
+            Number(req.query.pageSize || 10),
+        limit: Number(req.query.pageSize || 10),
+        order: [
+            req.query.sortBy
+                ? req.query.sortBy.split(',')
+                : ['ngay_tao', 'DESC'],
+        ],
+    });
+
     res.status(200).send({
         status: 'success',
-        data: courseDescriptions,
+        data: rows,
+        pageIndex: Number(req.query.pageIndex || 1),
+        pageSize: Number(req.query.pageSize || 10),
+        totalCount: count,
+        totalPage: Math.ceil(count / Number(req.query.pageSize || 10)),
         message: null,
     });
 };

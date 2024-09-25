@@ -1071,7 +1071,7 @@ const forceDelete = async (req, res) => {
         },
     });
     if (examChild) {
-        res.status(400).send({
+        return res.status(400).send({
             status: 'error',
             data: null,
             message: 'Đề thi đang được sử dụng cho đề thi khác!',
