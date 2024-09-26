@@ -152,6 +152,7 @@ const postCreatev2 = async (req, res) => {
         where: {
             de_mau: true,
             xuat_ban: true,
+            trang_thai: true,
             khoa_hoc_id,
         },
     });

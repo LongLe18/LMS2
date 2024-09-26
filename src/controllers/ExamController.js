@@ -924,6 +924,7 @@ const publish = async (req, res) => {
         await Exam.update(
             {
                 xuat_ban: false,
+                trang_thai: false,
             },
             {
                 where: {
