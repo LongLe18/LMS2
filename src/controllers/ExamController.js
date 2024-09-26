@@ -1046,6 +1046,19 @@ const stateChange = async (req, res) => {
             }
         );
     } else {
+        if(exam.de_mau) {
+            await Exam.update(
+                {
+                    trang_thai: false,
+                },
+                {
+                    where: {
+                        khoa_hoc_id: exam.khoa_hoc_id,
+                    },
+                }
+            );
+        }
+
         await Exam.update(
             {
                 trang_thai: true,
@@ -1186,6 +1199,7 @@ const reuse = async (req, res) => {
         de_thi_ma: `${examOld.de_thi_ma}_NEW`,
         ten_de_thi: `${examOld.ten_de_thi} NEW`,
         de_cha_id: examOld.de_thi_id,
+        ...(examOld.de_mau && { trang_thai: false, xuat_ban: false }),
     });
     let examQuestionOlds = await ExamQuestion.findAll({
         where: {
