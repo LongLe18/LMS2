@@ -12,14 +12,17 @@ const danhgia = sequelize.define(
         de_thi_id: {
             type: DataTypes.INTEGER,
         },
+        khoa_hoc_id: {
+            type: DataTypes.INTEGER,
+        },
         danh_gia: {
             type: DataTypes.STRING,
         },
         cau_bat_dau: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.FLOAT,
         },
         cau_ket_thuc: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.FLOAT,
         },
         phan_thi: {
             type: DataTypes.INTEGER,

@@ -42,36 +42,36 @@ route(app);
 // Create an HTTP service.
 const server = http.createServer(app);
 
-const io = require('socket.io')(server, {
-    cors: {
-        origin: '*',
-        methods: ['GET', 'POST'],
-        allowedHeaders: ['Authorization'],
-        credentials: true,
-    },
-});
+// const io = require('socket.io')(server, {
+//     cors: {
+//         origin: '*',
+//         methods: ['GET', 'POST'],
+//         allowedHeaders: ['Authorization'],
+//         credentials: true,
+//     },
+// });
 
-io.use((socket, next) => {
-    const token = socket.handshake.auth.token;
-    const decoded = security.verifyToken(token);
+// io.use((socket, next) => {
+//     const token = socket.handshake.auth.token;
+//     const decoded = security.verifyToken(token);
 
-    if (!decoded) {
-        return next(new Error('Authentication error'));
-    }
+//     if (!decoded) {
+//         return next(new Error('Authentication error'));
+//     }
 
-    socket.user = decoded;
-    next();
-});
-io.on('connection', (socket) => {
-    socket.on('update exam', async (data) => {
-        const result = await studentExamController.putUpdatev2(
-            data,
-            socket.user.userId,
-            socket.handshake.query.dthv_id
-        );
-        socket.emit('response exam', result);
-    });
-});
+//     socket.user = decoded;
+//     next();
+// });
+// io.on('connection', (socket) => {
+//     socket.on('update exam', async (data) => {
+//         const result = await studentExamController.putUpdatev2(
+//             data,
+//             socket.user.userId,
+//             socket.handshake.query.dthv_id
+//         );
+//         socket.emit('response exam', result);
+//     });
+// });
 
 server.listen(process.env.port || 3000);
 // Create an HTTPS service identical to the HTTP service.

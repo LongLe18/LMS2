@@ -420,7 +420,8 @@ const getById = async (req, res) => {
             ],
         });
     } else {
-        let queryOptions = {
+        // Nếu có dthv_id trong query, thêm điều kiện SelectedAnswer
+        exam = await Exam.findOne({
             include: {
                 model: ExamQuestion,
                 include: {
@@ -446,16 +447,7 @@ const getById = async (req, res) => {
                 [sequelize.col('chdt_id'), 'ASC'],
                 [sequelize.col('dap_an_id'), 'ASC'],
             ],
-        };
-
-        // Nếu có dthv_id trong query, thêm điều kiện SelectedAnswer
-        if (req.query.dthv_id) {
-            queryOptions.include.include.include.push({
-                model: SelectedAnswer,
-                where: { dthv_id: Number(req.query.dthv_id) },
-            });
-        }
-        exam = await Exam.findOne(queryOptions);
+        });
     }
 
     let criteria;
@@ -501,12 +493,10 @@ const getById = async (req, res) => {
                     criteria[`thoi_gian_phan_${i + 1}`];
             }
         } else {
-            res.status(404).send({
+            return res.status(404).send({
                 status: 'error',
-                data: null,
                 message: 'no criteria',
             });
-            return;
         }
     }
     let dap_an_dungs;
@@ -554,6 +544,16 @@ const getById = async (req, res) => {
                 dap_an_dungs;
         }
     }
+
+    if (req.query.dthv_id) {
+        const selectedAnswers = await SelectedAnswer.findAll({
+            where: {
+                dthv_id: req.query.dthv_id,
+            },
+        });
+        exam.dataValues.dap_an_da_chons = selectedAnswers;
+    }
+
     res.status(200).send({
         status: 'success',
         data: exam,
@@ -561,7 +561,7 @@ const getById = async (req, res) => {
     });
 };
 
-// dùng cho thi đánh giá năng lực mới
+// dùng cho thi đánh giá năng lực mới -> không dùng
 const getByIdv2 = async (req, res) => {
     let exam = await Exam.findOne({
         where: {
@@ -951,6 +951,17 @@ const publish = async (req, res) => {
                 }
             );
             if (condition[0].bool) {
+                let criteria = await OnlineCriteria.findOne({
+                    where: {
+                        khoa_hoc_id: exam.khoa_hoc_id,
+                    },
+                });
+                if (!criteria) {
+                    return res.status(400).send({
+                        status: 'error',
+                        message: 'Không tồn tại tiêu chí đề thi',
+                    });
+                }
                 await Exam.update(
                     {
                         xuat_ban: false,
@@ -962,32 +973,9 @@ const publish = async (req, res) => {
                         },
                     }
                 );
-                let criteria = await OnlineCriteria.findOne({
-                    where: {
-                        khoa_hoc_id: exam.khoa_hoc_id,
-                    },
-                });
-                if (!criteria) {
-                    await OnlineCriteria.create({
-                        so_phan: 3,
-                        khoa_hoc_id: exam.khoa_hoc_id,
-                        so_cau_hoi: 50,
-                        thoi_gian: 195,
-                        so_cau_hoi_phan_1: 50,
-                        thoi_gian_phan_1: 75,
-                        yeu_cau_phan_1: 0,
-                        so_cau_hoi_phan_2: 50,
-                        thoi_gian_phan_2: 60,
-                        yeu_cau_phan_2: 0,
-                        so_cau_hoi_phan_3: 50,
-                        thoi_gian_phan_3: 60,
-                        yeu_cau_phan_3: 0,
-                    });
-                }
             } else {
-                return res.status(404).send({
+                return res.status(400).send({
                     status: 'error',
-                    data: null,
                     message: 'Số lượng câu hỏi chưa đủ yêu cầu',
                 });
             }
@@ -1046,7 +1034,7 @@ const stateChange = async (req, res) => {
             }
         );
     } else {
-        if(exam.de_mau) {
+        if (exam.de_mau) {
             await Exam.update(
                 {
                     trang_thai: false,
@@ -1124,6 +1112,11 @@ const forceDelete = async (req, res) => {
         },
     });
     await Exam.destroy({
+        where: {
+            de_thi_id: req.params.id,
+        },
+    });
+    await ExamQuestion.destroy({
         where: {
             de_thi_id: req.params.id,
         },

@@ -16,6 +16,8 @@ const {
     OnlineCriteria,
     ExamQuestion,
     Student,
+    SyntheticCriteria,
+    Province
 } = require('../models');
 const sequelize = require('../utils/db');
 
@@ -74,6 +76,51 @@ const getAll = async (req, res) => {
         status: 'success',
         data: studentExams,
         message: null,
+    });
+};
+
+const getAllDGNL = async (req, res) => {
+    const { count, rows } = await StudentExam.findAndCountAll({
+        include: [
+            {
+                model: Student,
+                attributes: ['hoc_vien_id', 'ho_ten', 'sdt'],
+                include: {
+                    model: Province,
+                    attributes: ['ttp_id', 'ten'],
+                },
+            },
+            {
+                model: Exam,
+                attributes: ['de_thi_id', 'ten_de_thi'],
+            },
+        ],
+        where: {
+            ...(req.query.khoa_hoc_id && {
+                khoa_hoc_id: req.query.khoa_hoc_id,
+            }),
+            '$de_thi.de_mau_id$' : {
+                [Op.not]: null
+            }
+        },
+        offset:
+            (Number(req.query.pageIndex || 1) - 1) *
+            Number(req.query.pageSize || 10),
+        limit: Number(req.query.pageSize || 10),
+        order: [
+            req.query.sortBy
+                ? req.query.sortBy.split(',')
+                : ['ngay_tao', 'DESC'],
+        ],
+    });
+
+    return res.status(200).send({
+        status: 'success',
+        data: rows,
+        pageIndex: Number(req.query.pageIndex || 1),
+        pageSize: Number(req.query.pageSize || 10),
+        totalCount: count,
+        totalPage: Math.ceil(count / Number(req.query.pageSize || 10)),
     });
 };
 
@@ -144,7 +191,7 @@ const postCreate = async (req, res) => {
     });
 };
 
-// Dùng cho thi đánh giá năng lực mới ->. không dùng
+// Dùng cho thi đánh giá năng lực mới
 const postCreatev2 = async (req, res) => {
     const { khoa_hoc_id, chuyen_nganh_ids, ...rest } = req.body;
 
@@ -165,6 +212,18 @@ const postCreatev2 = async (req, res) => {
         });
     }
 
+    let criteria = await OnlineCriteria.findOne({
+        where: {
+            khoa_hoc_id: khoa_hoc_id,
+        },
+    });
+    if (!criteria) {
+        return res.status(404).send({
+            status: 'error',
+            message: 'Chưa tồn tại tiêu chí đề thi',
+        });
+    }
+
     const exam = await Exam.create({
         ten_de_thi: 'THI ĐÁNH GIÁ NĂNG LỰC',
         tong_diem: 150,
@@ -176,18 +235,12 @@ const postCreatev2 = async (req, res) => {
         de_mau_id: sampleExam.de_thi_id,
     });
 
-    let criteria = await OnlineCriteria.findOne({
-        where: {
-            khoa_hoc_id: khoa_hoc_id,
-        },
-    });
-
     // phần 1
     await sequelize.query(
         `
         INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
-            SELECT cau_hoi_id, ${exam.dataValues.de_thi_id}, 1 FROM cau_hoi
-            WHERE chuyen_nganh_id = 1 AND kct_id = 1 AND de_thi_id = ${sampleExam.de_thi_id}
+            SELECT cau_hoi_id, ${exam.dataValues.de_thi_id}, 1 FROM cau_hoi_de_thi
+            WHERE chuyen_nganh_id = 1 AND de_thi_id = ${sampleExam.de_thi_id}
             ORDER BY RAND() LIMIT ${criteria.so_cau_hoi_phan_1}
     `,
         {
@@ -199,9 +252,10 @@ const postCreatev2 = async (req, res) => {
     await sequelize.query(
         `
             INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
-                SELECT cau_hoi_id, ${exam.dataValues.de_thi_id}, 2 FROM cau_hoi
-                WHERE chuyen_nganh_id = 7 AND kct_id = 1 AND de_thi_id = ${sampleExam.de_thi_id}
-                ORDER BY trich_doan_id ASC, RAND()
+                SELECT chdt.cau_hoi_id, ${exam.dataValues.de_thi_id}, 2 FROM cau_hoi_de_thi chdt
+                INNER JOIN cau_hoi ch ON chdt.cau_hoi_id = ch.cau_hoi_id
+                WHERE chdt.chuyen_nganh_id = 7 AND chdt.de_thi_id = ${sampleExam.de_thi_id}
+                ORDER BY ch.trich_doan_id ASC, RAND()
                 LIMIT ${criteria.so_cau_hoi_phan_2}
         `,
         {
@@ -214,8 +268,8 @@ const postCreatev2 = async (req, res) => {
         await sequelize.query(
             `
         INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
-            SELECT cau_hoi_id, ${exam.dataValues.de_thi_id}, 3 FROM cau_hoi
-            WHERE chuyen_nganh_id = 5 AND kct_id = 1 AND de_thi_id = ${sampleExam.de_thi_id}
+            SELECT cau_hoi_id, ${exam.dataValues.de_thi_id}, 3 FROM cau_hoi_de_thi
+            WHERE chuyen_nganh_id = 5 AND de_thi_id = ${sampleExam.de_thi_id}
             ORDER BY cau_hoi_id ASC
             LIMIT ${criteria.so_cau_hoi_phan_3}
     `,
@@ -240,8 +294,8 @@ const postCreatev2 = async (req, res) => {
             await sequelize.query(
                 `
                         INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
-                            SELECT cau_hoi_id, ${exam.dataValues.de_thi_id}, 3 FROM cau_hoi
-                            WHERE chuyen_nganh_id = :chuyen_nganh_id AND kct_id = 1 AND de_thi_id = ${sampleExam.de_thi_id}
+                            SELECT cau_hoi_id, ${exam.dataValues.de_thi_id}, 3 FROM cau_hoi_de_thi
+                            WHERE chuyen_nganh_id = :chuyen_nganh_id AND de_thi_id = ${sampleExam.de_thi_id}
                             ORDER BY RAND() LIMIT ${so_cau_hoi_tung_chuyen_nganh}
                     `,
                 {
@@ -288,6 +342,49 @@ const postCreatev2 = async (req, res) => {
     });
 };
 
+const getByExamId = async (req, res)=>{
+    const studentExam = await StudentExam.findOne({
+        where: {
+            de_thi_id: req.query.de_thi_id,
+            hoc_vien_id: req.userId,
+            thoi_diem_ket_thuc: {
+                [Op.not]: null
+            }
+        },
+        order: [['ngay_tao', 'DESC']]
+    })
+    
+    res.status(200).send({
+        status: 'success',
+        data: studentExam,
+        message: null,
+    });
+}
+
+// dùng cho đánh giá năng lực
+const getByExamIdv2 = async (req, res)=>{
+    const studentExam = await StudentExam.findOne({
+        include: {
+            model: Exam,
+            attributes: ['ten_de_thi', 'de_thi_id'],
+        },
+        where: {
+            '$de_thi.de_mau_id$': req.query.de_mau_id,
+            hoc_vien_id: req.userId,
+            thoi_diem_ket_thuc: {
+                [Op.not]: null
+            }
+        },
+        order: [['ngay_tao', 'DESC']]
+    })
+    
+    res.status(200).send({
+        status: 'success',
+        data: studentExam,
+        message: null,
+    });
+}
+
 const putUpdate = async (req, res) => {
     const selectedAnswers = await SelectedAnswer.findAll({
         include: {
@@ -309,6 +406,10 @@ const putUpdate = async (req, res) => {
     let ket_qua_chons;
     let dap_ans;
     let result;
+    let phan_1 = 0;
+    let phan_2 = 0;
+    let phan_3 = 0;
+
     for (const selectedAnswer of selectedAnswers) {
         result = false;
         if (selectedAnswer.cau_hoi.loai_cau_hoi === 1) {
@@ -320,8 +421,16 @@ const putUpdate = async (req, res) => {
                     (ket_qua_chon, index) =>
                         ket_qua_chon == dap_ans[index].dap_an_dung
                 )
-            )
+            ) {
+                if (selectedAnswer.cau_hoi.chuyen_nganh_id === 1) {
+                    phan_1 += selectedAnswer.cau_hoi.diem;
+                } else if (selectedAnswer.cau_hoi.chuyen_nganh_id === 7) {
+                    phan_2 += selectedAnswer.cau_hoi.diem;
+                } else {
+                    phan_3 += selectedAnswer.cau_hoi.diem;
+                }
                 result = true;
+            }
         } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 2) {
             // Câu trắc nghiệm đúng sai
             const ket_qua_chons = [...selectedAnswer.ket_qua_chon.toString()];
@@ -351,8 +460,16 @@ const putUpdate = async (req, res) => {
                     selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an
                         .trim()
                         .toLowerCase()
-            )
+            ) {
+                if (selectedAnswer.cau_hoi.chuyen_nganh_id === 1) {
+                    phan_1 += selectedAnswer.cau_hoi.diem;
+                } else if (selectedAnswer.cau_hoi.chuyen_nganh_id === 7) {
+                    phan_2 += selectedAnswer.cau_hoi.diem;
+                } else {
+                    phan_3 += selectedAnswer.cau_hoi.diem;
+                }
                 result = true;
+            }
         }
         if (result) {
             ket_qua_diem += parseFloat(selectedAnswer.cau_hoi.diem);
@@ -386,6 +503,12 @@ const putUpdate = async (req, res) => {
                 },
             });
         } else if (exam.loai_de_thi_id == 3) {
+            criteria = await SyntheticCriteria.findOne({
+                where: {
+                    khoa_hoc_id: exam.khoa_hoc_id,
+                },
+            });
+        } else if (exam.loai_de_thi_id == 4) {
             criteria = await OnlineCriteria.findOne({
                 where: {
                     khoa_hoc_id: exam.khoa_hoc_id,
@@ -405,6 +528,9 @@ const putUpdate = async (req, res) => {
     const studentExam = await StudentExam.update(
         {
             ...req.body,
+            ...(exam.de_mau_id && {
+                diem_cac_phan: `${phan_1},${phan_2},${phan_3}`,
+            }),
             ket_qua_diem: ket_qua_diem,
             so_cau_tra_loi_dung: so_cau_tra_loi_dung,
             so_cau_tra_loi_sai: so_cau_tra_loi_sai,
@@ -465,6 +591,24 @@ const putUpdatev2 = async (data, hoc_vien_id, dthv_id) => {
         console.log(err);
         return 'error';
     }
+};
+
+const putUpdatev3 = async (req, res) => {
+    const studentExam = await StudentExam.update(
+        {
+            thoi_gian_lam_bai: req.body.thoi_gian_lam_bai,
+        },
+        {
+            where: {
+                dthv_id: req.params.id,
+            },
+        }
+    );
+    res.status(200).send({
+        status: 'success',
+        data: studentExam,
+        message: null,
+    });
 };
 
 const forceDelete = async (req, res) => {
@@ -626,4 +770,8 @@ module.exports = {
     exportReport,
     postCreatev2,
     putUpdatev2,
+    putUpdatev3,
+    getAllDGNL,
+    getByExamId,
+    getByExamIdv2
 };

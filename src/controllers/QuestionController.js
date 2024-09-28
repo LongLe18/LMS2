@@ -65,7 +65,7 @@ const getAll = async (req, res) => {
         ],
     });
 
-    res.status(200).send({
+    return res.status(200).send({
         status: 'success',
         data: rows,
         pageIndex: Number(req.query.pageIndex || 1),

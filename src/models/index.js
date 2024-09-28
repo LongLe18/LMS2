@@ -160,11 +160,14 @@ Student.hasMany(Comment, { foreignKey: 'hoc_vien_id' , constraints: false});
 SideComment.belongsTo(Comment, { foreignKey: 'binh_luan_id', constraints: false});
 Comment.hasMany(Comment, { foreignKey: 'binh_luan_id', constraints: false});
 
-Evaluate.hasMany(Exam, { foreignKey: 'de_thi_id', constraints: false});
-Exam.belongsTo(Evaluate, { foreignKey: 'de_thi_id', constraints: false});
-
 Majoring.hasMany(Question, { foreignKey: 'chuyen_nganh_id', constraints: false});
 Question.belongsTo(Majoring, { foreignKey: 'chuyen_nganh_id', constraints: false});
+
+Exam.hasMany(Evaluate, { foreignKey: 'de_thi_id', sourceKey: 'de_thi_id', constraints: false});
+Evaluate.belongsTo(Exam, { foreignKey: 'de_thi_id', targetKey: 'de_thi_id', constraints: false});
+
+Course.hasMany(Evaluate, { foreignKey: 'khoa_hoc_id', sourceKey: 'khoa_hoc_id', constraints: false});
+Evaluate.belongsTo(Course, { foreignKey: 'khoa_hoc_id', targetKey: 'khoa_hoc_id', constraints: false});
 
 Exam.hasOne(OnlineCriteria, { foreignKey: 'khoa_hoc_id', sourceKey: 'khoa_hoc_id', constraints: false});
 OnlineCriteria.belongsTo(Exam, { foreignKey: 'khoa_hoc_id', targetKey: 'khoa_hoc_id', constraints: false});

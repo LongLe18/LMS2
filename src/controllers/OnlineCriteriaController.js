@@ -21,7 +21,42 @@ const getAll_admin = async (req, res) => {
                 ? req.query.sortBy.split(',')
                 : ['ngay_tao', 'DESC'],
         ],
-    })
+    });
+
+    res.status(200).send({
+        status: 'success',
+        data: rows,
+        pageIndex: Number(req.query.pageIndex || 1),
+        pageSize: Number(req.query.pageSize || 10),
+        totalCount: count,
+        totalPage: Math.ceil(count / Number(req.query.pageSize || 10)),
+        message: null,
+    });
+};
+
+// đánh giá năng lực
+const getAll_adminv2 = async (req, res) => {
+    const { count, rows } = await OnlineCriteria.findAndCountAll({
+        include: {
+            model: Course,
+            attributes: ['khoa_hoc_id', 'ten_khoa_hoc'],
+        },
+        where: {
+            ...(req.query.khoa_hoc_id && {
+                khoa_hoc_id: req.query.khoa_hoc_id,
+            }),
+            '$khoa_hoc.kct_id$': 1
+        },
+        offset:
+            (Number(req.query.pageIndex || 1) - 1) *
+            Number(req.query.pageSize || 10),
+        limit: Number(req.query.pageSize || 10),
+        order: [
+            req.query.sortBy
+                ? req.query.sortBy.split(',')
+                : ['ngay_tao', 'DESC'],
+        ],
+    });
 
     res.status(200).send({
         status: 'success',
@@ -68,9 +103,8 @@ const postCreate = async (req, res) => {
         },
     });
     if (onlineCriteria) {
-        res.status(404).send({
+        res.status(400).send({
             status: 'fail',
-            data: null,
             message: 'already exist',
         });
         return;
@@ -136,12 +170,12 @@ const getQuantityExamPublish = async (req, res) => {
         },
     });
     const exams = await Exam.findAll({
-        where:{
+        where: {
             khoa_hoc_id: onlineCriteria.khoa_hoc_id,
             xuat_ban: 1,
         },
-        attributes: ['de_thi_id', 'ten_de_thi']
-    })
+        attributes: ['de_thi_id', 'ten_de_thi'],
+    });
 
     res.status(200).send({
         status: 'success',
@@ -158,5 +192,6 @@ module.exports = {
     getUpdate,
     putUpdate,
     forceDelete,
-    getQuantityExamPublish
+    getQuantityExamPublish,
+    getAll_adminv2
 };
