@@ -957,9 +957,20 @@ const publish = async (req, res) => {
                     },
                 });
                 if (!criteria) {
-                    return res.status(400).send({
-                        status: 'error',
-                        message: 'Không tồn tại tiêu chí đề thi',
+                    await OnlineCriteria.create({
+                        so_phan: 3,
+                        khoa_hoc_id: exam.khoa_hoc_id,
+                        so_cau_hoi: 50,
+                        thoi_gian: 195,
+                        so_cau_hoi_phan_1: 50,
+                        thoi_gian_phan_1: 75,
+                        yeu_cau_phan_1: 0,
+                        so_cau_hoi_phan_2: 50,
+                        thoi_gian_phan_2: 60,
+                        yeu_cau_phan_2: 0,
+                        so_cau_hoi_phan_3: 50,
+                        thoi_gian_phan_3: 60,
+                        yeu_cau_phan_3: 0,
                     });
                 }
             } else {
