@@ -12,7 +12,7 @@ router.delete('/:id/force', authToken, authRole([2], 6), tryCatch(studentExamCon
 router.delete('/clear/:id', authToken, authRole([2], 6), tryCatch(studentExamController.clearAll));
 router.get('/user', authToken, tryCatch(studentExamController.getUser));
 router.get('/export-report', authToken, tryCatch(studentExamController.exportReport));
-router.get('/dgnl', tryCatch(studentExamController.getAllDGNL));
+router.get('/dgnl', authToken, tryCatch(studentExamController.getAllDGNL));
 router.get('/by-exam', authToken, tryCatch(studentExamController.getByExamId));
 router.get('/by-exam-dgnl', authToken, tryCatch(studentExamController.getByExamIdv2));
 router.get('/:id', authToken, tryCatch(studentExamController.getById));
