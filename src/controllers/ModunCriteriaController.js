@@ -149,15 +149,16 @@ const getQuantityExamPublish = async (req, res) => {
     });
     const exams = await Exam.findAll({
         where:{
-            khoa_hoc_id: modunCriteria.khoa_hoc_id,
+            mo_dun_id: modunCriteria.mo_dun_id,
             xuat_ban: 1,
+            loai_de_thi_id: 2
         },
         attributes: ['de_thi_id', 'ten_de_thi']
     })
 
     res.status(200).send({
         status: 'success',
-        data: exams,
+        data: exams.length,
         message: null,
     });
 };

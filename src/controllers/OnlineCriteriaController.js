@@ -173,13 +173,14 @@ const getQuantityExamPublish = async (req, res) => {
         where: {
             khoa_hoc_id: onlineCriteria.khoa_hoc_id,
             xuat_ban: 1,
+            loai_de_thi_id: 4,
         },
         attributes: ['de_thi_id', 'ten_de_thi'],
     });
 
     res.status(200).send({
         status: 'success',
-        data: exams,
+        data: exams.length,
         message: null,
     });
 };

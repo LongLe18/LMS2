@@ -962,17 +962,6 @@ const publish = async (req, res) => {
                         message: 'Không tồn tại tiêu chí đề thi',
                     });
                 }
-                await Exam.update(
-                    {
-                        xuat_ban: false,
-                    },
-                    {
-                        where: {
-                            de_mau: true,
-                            khoa_hoc_id: exam.khoa_hoc_id,
-                        },
-                    }
-                );
             } else {
                 return res.status(400).send({
                     status: 'error',
@@ -999,7 +988,7 @@ const publish = async (req, res) => {
             {
                 xuat_ban: true,
                 tong_diem: tong_diem,
-                trang_thai: true,
+                trang_thai: false,
             },
             {
                 where: {
