@@ -97,7 +97,7 @@ const getAllDGNL = async (req, res) => {
         ],
         where: {
             ...(req.query.khoa_hoc_id && {
-                khoa_hoc_id: req.query.khoa_hoc_id,
+                '$de_thi.khoa_hoc_id$': req.query.khoa_hoc_id,
             }),
             '$de_thi.de_mau_id$' : {
                 [Op.not]: null
