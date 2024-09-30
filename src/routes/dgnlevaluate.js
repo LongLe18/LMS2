@@ -9,6 +9,6 @@ router.put('/:id', authToken, authRole([2], 0), tryCatch(dgnlEvaluateController.
 router.delete('/:id', authToken, authRole([2], 0), tryCatch(dgnlEvaluateController.deleteById));
 router.get('/:id/export-report', authToken, tryCatch(dgnlEvaluateController.download));
 router.get('/:id', authToken, tryCatch(dgnlEvaluateController.getById));
-router.get('/',tryCatch(dgnlEvaluateController.getAll));
+router.get('/', authToken, tryCatch(dgnlEvaluateController.getAll));
 
 module.exports = router;
