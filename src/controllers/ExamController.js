@@ -12,6 +12,7 @@
     Course,
     SelectedAnswer,
     ExceprtType,
+    DGNLCriteria,
 } = require('../models');
 const { Op } = require('sequelize');
 const sequelize = require('../utils/db');
@@ -770,85 +771,94 @@ const getByIdv2 = async (req, res) => {
 };
 
 const postCreate = async (req, res) => {
-    try {
-        let exam;
-        if (req.body.de_thi_ma) {
-            exam = await Exam.findOne({
-                where: {
-                    de_thi_ma: req.body.de_thi_ma,
-                },
-            });
-            if (exam) {
-                res.status(404).send({
-                    status: 'error',
-                    data: null,
-                    message: 'Đã tồn tại mã đề',
-                });
-                return;
-            }
-            let criteria;
-            if (req.body.loai_de_thi_id == '1') {
-                criteria = await ThematicCriteria.findOne({
-                    where: {
-                        mo_dun_id: req.body.mo_dun_id,
-                    },
-                });
-            } else if (req.body.loai_de_thi_id == '2') {
-                criteria = await ModunCriteria.findOne({
-                    where: {
-                        mo_dun_id: req.body.mo_dun_id,
-                    },
-                });
-            } else if (req.body.loai_de_thi_id === '3') {
-                criteria = await SyntheticCriteria.findOne({
-                    where: {
-                        khoa_hoc_id: req.body.khoa_hoc_id,
-                    },
-                });
-            } else if (req.body.loai_de_thi_id === '4') {
-                criteria = await OnlineCriteria.findOne({
-                    where: {
-                        khoa_hoc_id: req.body.khoa_hoc_id,
-                    },
-                });
-            } else {
-                res.status(404).send({
-                    status: 'error',
-                    data: null,
-                    message: null,
-                });
-            }
-            if (!criteria) {
-                res.status(404).send({
-                    status: 'fail',
-                    data: '100',
-                    message: 'Chưa có tiêu chí đề thi',
-                });
-            } else {
-                await Exam.create({
-                    ...req.body,
-                });
-
-                res.status(200).send({
-                    status: 'success',
-                    data: exam,
-                    message: null,
-                });
-            }
-        } else {
-            res.status(404).send({
-                status: 'fail',
-                data: null,
-                message: 'Chưa nhập mã đề thi',
-            });
-        }
-    } catch (error) {
-        res.status(404).send({
-            status: 'error',
+    if (!req.body.de_thi_ma) {
+        return res.status(400).send({
+            status: 'fail',
             data: null,
-            message: error,
+            message: 'Chưa nhập mã đề thi',
         });
     }
+
+    let exam = await Exam.findOne({
+        where: {
+            de_thi_ma: req.body.de_thi_ma,
+        },
+    });
+    if (exam) {
+        return res.status(404).send({
+            status: 'error',
+            data: null,
+            message: 'Đã tồn tại mã đề',
+        });
+    }
+
+    let criteria;
+    if (req.body.de_mau) {
+        criteria = await DGNLCriteria.findOne({
+            where: {
+                khoa_hoc_id: req.body.khoa_hoc_id,
+            },
+        });
+        if (!criteria) {
+            await DGNLCriteria.create({
+                khoa_hoc_id: exam.khoa_hoc_id,
+                so_cau_hoi: 50,
+                thoi_gian: 195,
+                so_cau_hoi_phan_1: 50,
+                thoi_gian_phan_1: 75,
+                so_cau_hoi_phan_2: 50,
+                thoi_gian_phan_2: 60,
+                so_cau_hoi_phan_3: 50,
+                thoi_gian_phan_3: 60,
+                so_cau_hoi_phan_4: 50,
+                thoi_gian_phan_4: 60,
+            });
+        }
+    } else {
+        if (Number(req.body.loai_de_thi_id) === 1) {
+            criteria = await ThematicCriteria.findOne({
+                where: {
+                    mo_dun_id: req.body.mo_dun_id,
+                },
+            });
+        } else if (Number(req.body.loai_de_thi_id) === 2) {
+            criteria = await ModunCriteria.findOne({
+                where: {
+                    mo_dun_id: req.body.mo_dun_id,
+                },
+            });
+        } else if (Number(req.body.loai_de_thi_id) === 3) {
+            criteria = await SyntheticCriteria.findOne({
+                where: {
+                    khoa_hoc_id: req.body.khoa_hoc_id,
+                },
+            });
+        } else if (Number(req.body.loai_de_thi_id) === 4) {
+            criteria = await OnlineCriteria.findOne({
+                where: {
+                    khoa_hoc_id: req.body.khoa_hoc_id,
+                },
+            });
+        }
+        if (!criteria) {
+            return res.status(400).send({
+                status: 'fail',
+                data: '100',
+                message: 'Chưa có tiêu chí đề thi',
+            });
+        }
+    }
+
+    exam = await Exam.create({
+        ...req.body,
+        ...(req.body.de_mau && { loai_de_thi_id: 5 }),
+    });
+
+    return res.status(200).send({
+        status: 'success',
+        data: exam,
+        message: null,
+    });
 };
 
 const getUpdate = async (req, res) => {
@@ -924,7 +934,6 @@ const publish = async (req, res) => {
         await Exam.update(
             {
                 xuat_ban: false,
-                trang_thai: false,
             },
             {
                 where: {
@@ -951,26 +960,15 @@ const publish = async (req, res) => {
                 }
             );
             if (condition[0].bool) {
-                let criteria = await OnlineCriteria.findOne({
+                let criteria = await DGNLCriteria.findOne({
                     where: {
                         khoa_hoc_id: exam.khoa_hoc_id,
                     },
                 });
                 if (!criteria) {
-                    await OnlineCriteria.create({
-                        so_phan: 3,
-                        khoa_hoc_id: exam.khoa_hoc_id,
-                        so_cau_hoi: 50,
-                        thoi_gian: 195,
-                        so_cau_hoi_phan_1: 50,
-                        thoi_gian_phan_1: 75,
-                        yeu_cau_phan_1: 0,
-                        so_cau_hoi_phan_2: 50,
-                        thoi_gian_phan_2: 60,
-                        yeu_cau_phan_2: 0,
-                        so_cau_hoi_phan_3: 50,
-                        thoi_gian_phan_3: 60,
-                        yeu_cau_phan_3: 0,
+                    return res.status(400).send({
+                        status: 'error',
+                        message: 'Chưa có tiêu chí đề thi',
                     });
                 }
             } else {
@@ -999,7 +997,6 @@ const publish = async (req, res) => {
             {
                 xuat_ban: true,
                 tong_diem: tong_diem,
-                trang_thai: false,
             },
             {
                 where: {

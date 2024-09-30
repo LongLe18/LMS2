@@ -8,8 +8,6 @@ router.post('/create', authToken, authRole([2], 0), tryCatch(evaluateController.
 router.put('/:id', authToken, authRole([2], 0), tryCatch(evaluateController.putUpdate));
 router.delete('/:id', authToken, authRole([2], 0), tryCatch(evaluateController.deleteById));
 router.get('/:id/export-report', authToken, tryCatch(evaluateController.download));
-router.get('/:id/export-report-dgnl', authToken, tryCatch(evaluateController.downloadv2));
-router.get('/dgnl', authToken, tryCatch(evaluateController.getAllv2));
 router.get('/:id', authToken, tryCatch(evaluateController.getById));
 router.get('/', authToken, tryCatch(evaluateController.getAll));
 

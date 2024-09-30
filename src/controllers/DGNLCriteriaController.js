@@ -1,8 +1,8 @@
-const { OnlineCriteria, Course, Exam } = require('../models');
+const { DGNLCriteria, Course, Exam } = require('../models');
 const sequelize = require('../utils/db');
 
 const getAll_admin = async (req, res) => {
-    const { count, rows } = await OnlineCriteria.findAndCountAll({
+    const { count, rows } = await DGNLCriteria.findAndCountAll({
         include: {
             model: Course,
             attributes: ['khoa_hoc_id', 'ten_khoa_hoc'],
@@ -35,90 +35,90 @@ const getAll_admin = async (req, res) => {
 };
 
 const getById = async (req, res) => {
-    const onlineCriteria = await OnlineCriteria.findOne({
+    const dgnlCriteria = await DGNLCriteria.findOne({
         where: {
-            idtieu_chi_de_thi_online: req.params.id,
+            idtieu_chi_de_thi_dgnl: req.params.id,
         },
     });
     res.status(200).send({
         status: 'success',
-        data: onlineCriteria,
+        data: dgnlCriteria,
         message: null,
     });
 };
 
 const getByCourse = async (req, res) => {
-    const onlineCriteria = await OnlineCriteria.findOne({
+    const dgnlCriteria = await DGNLCriteria.findOne({
         where: {
             khoa_hoc_id: req.params.id,
         },
     });
     res.status(200).send({
         status: 'success',
-        data: onlineCriteria,
+        data: dgnlCriteria,
         message: null,
     });
 };
 
 const postCreate = async (req, res) => {
-    let onlineCriteria;
-    onlineCriteria = await OnlineCriteria.findOne({
+    let dgnlCriteria;
+    dgnlCriteria = await DGNLCriteria.findOne({
         where: {
             khoa_hoc_id: req.body.khoa_hoc_id,
         },
     });
-    if (onlineCriteria) {
+    if (dgnlCriteria) {
         res.status(400).send({
             status: 'fail',
             message: 'already exist',
         });
         return;
     }
-    onlineCriteria = await OnlineCriteria.create({
+    dgnlCriteria = await DGNLCriteria.create({
         ...req.body,
     });
     res.status(200).send({
         status: 'success',
-        data: onlineCriteria,
+        data: dgnlCriteria,
         message: null,
     });
 };
 
 const getUpdate = async (req, res) => {
-    const onlineCriteria = await OnlineCriteria.findOne({
+    const dgnlCriteria = await DGNLCriteria.findOne({
         where: {
-            idtieu_chi_de_thi_online: req.params.id,
+            idtieu_chi_de_thi_dgnl: req.params.id,
         },
     });
     res.status(200).send({
         status: 'success',
-        data: onlineCriteria,
+        data: dgnlCriteria,
         message: null,
     });
 };
 
 const putUpdate = async (req, res) => {
-    const onlineCriteria = await OnlineCriteria.update(
+    const dgnlCriteria = await DGNLCriteria.update(
         {
             ...req.body,
         },
         {
             where: {
-                idtieu_chi_de_thi_online: req.params.id,
+                idtieu_chi_de_thi_dgnl: req.params.id,
             },
         }
     );
     res.status(200).send({
         status: 'success',
-        data: onlineCriteria,
+        data: dgnlCriteria,
         message: null,
     });
 };
 
 const forceDelete = async (req, res) => {
-    await OnlineCriteria.destroy({
+    await DGNLCriteria.destroy({
         where: {
-            idtieu_chi_de_thi_online: req.params.id,
+            idtieu_chi_de_thi_dgnl: req.params.id,
         },
     });
     res.status(200).send({
@@ -129,14 +129,14 @@ const forceDelete = async (req, res) => {
 };
 
 const getQuantityExamPublish = async (req, res) => {
-    const onlineCriteria = await OnlineCriteria.findOne({
+    const dgnlCriteria = await DGNLCriteria.findOne({
         where: {
-            idtieu_chi_de_thi_online: req.params.id,
+            idtieu_chi_de_thi_dgnl: req.params.id,
         },
     });
     const exams = await Exam.findAll({
         where: {
-            khoa_hoc_id: onlineCriteria.khoa_hoc_id,
+            khoa_hoc_id: dgnlCriteria.khoa_hoc_id,
             xuat_ban: 1,
             loai_de_thi_id: 4,
         },

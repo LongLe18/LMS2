@@ -19,6 +19,7 @@ const SelectedAnswer = require('./SelectedAnswer');
 const StudentExam = require('./StudentExam');
 const SyntheticCriteria = require('./SyntheticCriteria');
 const OnlineCriteria = require('./OnlineCriteria');
+const DGNLCriteria = require('./DGNLCriteria');
 const ThematicCriteria = require('./ThematicCriteria');
 const ExamQuestion = require('./ExamQuestion');
 const Document = require('./Document');
@@ -44,6 +45,7 @@ const Token = require('./Token');
 const CourseStudent = require('./CourseStudent');
 const Province = require('./Province');
 const Evaluate = require('./Evaluate');
+const DGNLEvaluate = require('./DGNLEvaluate');
 const ExceprtType = require('./ExceprtType');
 
 //khoa ngoai khoahoc
@@ -100,6 +102,9 @@ Course.hasMany(SyntheticCriteria, { foreignKey: 'khoa_hoc_id' , constraints: fal
 //khoa ngoai tieuchidetonghop
 OnlineCriteria.belongsTo(Course, { foreignKey: 'khoa_hoc_id' , constraints: false});
 Course.hasMany(OnlineCriteria, { foreignKey: 'khoa_hoc_id' , constraints: false});
+
+DGNLCriteria.belongsTo(Course, { foreignKey: 'khoa_hoc_id' , constraints: false});
+Course.hasMany(DGNLCriteria, { foreignKey: 'khoa_hoc_id' , constraints: false});
 //khoa ngoai tieuchidemodun
 ModunCriteria.belongsTo(Modun, { foreignKey: 'mo_dun_id' , constraints: false});
 Modun.hasMany(ModunCriteria, { foreignKey: 'mo_dun_id' , constraints: false});
@@ -166,8 +171,8 @@ Question.belongsTo(Majoring, { foreignKey: 'chuyen_nganh_id', constraints: false
 Exam.hasMany(Evaluate, { foreignKey: 'de_thi_id', sourceKey: 'de_thi_id', constraints: false});
 Evaluate.belongsTo(Exam, { foreignKey: 'de_thi_id', targetKey: 'de_thi_id', constraints: false});
 
-Course.hasMany(Evaluate, { foreignKey: 'khoa_hoc_id', sourceKey: 'khoa_hoc_id', constraints: false});
-Evaluate.belongsTo(Course, { foreignKey: 'khoa_hoc_id', targetKey: 'khoa_hoc_id', constraints: false});
+Course.hasMany(DGNLEvaluate, { foreignKey: 'khoa_hoc_id', sourceKey: 'khoa_hoc_id', constraints: false});
+DGNLEvaluate.belongsTo(Course, { foreignKey: 'khoa_hoc_id', targetKey: 'khoa_hoc_id', constraints: false});
 
 Exam.hasOne(OnlineCriteria, { foreignKey: 'khoa_hoc_id', sourceKey: 'khoa_hoc_id', constraints: false});
 OnlineCriteria.belongsTo(Exam, { foreignKey: 'khoa_hoc_id', targetKey: 'khoa_hoc_id', constraints: false});
@@ -227,5 +232,7 @@ module.exports = {
     CourseStudent,
     Province,
     Evaluate,
-    ExceprtType
+    ExceprtType,
+    DGNLCriteria,
+    DGNLEvaluate
 };

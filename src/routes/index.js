@@ -18,6 +18,7 @@ const syntheticCriteriaRouter = require('./syntheticcriteria');
 const onlineCriteriaRouter = require('./onlinecriteria');
 const modunCriteriaRouter = require('./moduncriteria');
 const thematicCriteriaRouter = require('./thematiccriteria');
+const dgnlCriteriaRouter = require('./dgnlcriteria');
 const examTypeRouter = require('./examtype');
 const selectedAnswerRouter = require('./selectedanswer');
 const studentExamRouter = require('./studentexam');
@@ -44,6 +45,7 @@ const contactRouter = require('./contact');
 const courseStudentRouter = require('./coursestudent');
 const provinceRouter = require('./province');
 const evaluateRouter = require('./evaluate');
+const dgnlEvaluateRouter = require('./dgnlevaluate');
 
 function route(app) {
     app.use('/auth', authenRouter);
@@ -66,6 +68,7 @@ function route(app) {
     app.use('/online_criteria', onlineCriteriaRouter);
     app.use('/modun_criteria', modunCriteriaRouter);
     app.use('/thematic_criteria', thematicCriteriaRouter);
+    app.use('/dgnl-criteria', dgnlCriteriaRouter);
     app.use('/exam_type', examTypeRouter);
     app.use('/selected_answer', selectedAnswerRouter);
     app.use('/student_exam', studentExamRouter);
@@ -92,6 +95,7 @@ function route(app) {
     app.use('/course_student', courseStudentRouter);
     app.use('/province', provinceRouter);
     app.use('/evaluate', evaluateRouter);
+    app.use('/evaluate-dgnl', dgnlEvaluateRouter);
 }
 
 module.exports = route;
