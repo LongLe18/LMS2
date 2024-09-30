@@ -189,18 +189,18 @@ const BussinessCourses = (props) => {
                 }
                 setState({...state, dataCourse: temp})
             }
-            dispatch(descriptionAction.getDescriptionCourses({ pageSize: 10, pageIndex: pageIndex, kct_id: filter.kct_id }, subCallback)) 
+            dispatch(descriptionAction.getDescriptionCourses({ pageSize: 10000000, pageIndex: pageIndex, kct_id: filter.kct_id }, subCallback)) 
         };
     }
 
     useEffect(() => {
         dispatch(courseAction.filterCourses({ status: filter.trang_thai === 2 ? '' : filter.trang_thai, search: filter.search,
-            start: filter.start, end: filter.end, pageIndex: 1, pageSize: 10000000 }, callbackFilter));
-    }, [filter.trang_thai, filter.start, filter.end]); // eslint-disable-line react-hooks/exhaustive-deps
+            start: filter.start, end: filter.end, pageIndex: 1, pageSize: 10000000, kct_id: filter.kct_id }, callbackFilter));
+    }, [filter.trang_thai, filter.start, filter.end, filter.kct_id]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useMemo(() => {
         dispatch(courseAction.filterCourses({ status: filter.trang_thai === 2 ? '' : filter.trang_thai, search: filter.search,
-            start: filter.start, end: filter.end, pageIndex: 1, pageSize: 10000000 }, callbackFilter));
+            start: filter.start, end: filter.end, pageIndex: 1, pageSize: 10000000, kct_id: filter.kct_id }, callbackFilter));
     }, [searchValue]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const renderProgrammes = () => {
@@ -331,7 +331,7 @@ const BussinessCourses = (props) => {
                                 isShowProgramme={true}
                                 isShowModule={false}
                                 isShowThematic={false}
-                                isShowStatus={true}
+                                isShowStatus={false}
                                 isShowSearchBox={true}
                                 isShowDatePicker={true}
                                 isRangeDatePicker={true}

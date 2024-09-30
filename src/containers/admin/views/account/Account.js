@@ -579,23 +579,21 @@ const AccountPage = () => {
     };
 
     const onSubmitAddStudentToCourse = (values) => {
-      let idCourse = '';
 
       const callback = (res) => {
         // lấy tên khoá học bằng với idCourse
-        const course = courses.data.find((course) => course.khoa_hoc_id === idCourse);
 
         if (res.status === 200 && res.statusText === 'OK' && res.data.status === 'success') {
           notification.success({
             message: 'Thành công',
-            description: `Thêm học viên vào khóa học ${course?.ten_khoa_hoc} thành công`, 
+            description: `Thêm học viên vào khóa học thành công`, 
           });
           setVisible(false);
           setSelectedRowKeys([]);
         } else {
           notification.error({
             message: 'Thông báo',
-            description: `Thêm học viên vào khóa học ${course?.ten_khoa_hoc} thất bại`, 
+            description: `Thêm học viên vào khóa học thất bại`, 
           });
         }
       };
@@ -611,8 +609,7 @@ const AccountPage = () => {
         hoc_vien_id: selectedRowKeys.join(',')
       };
       values.khoa_hoc.map((khoa_hoc_id) => {
-        idCourse = khoa_hoc_id;
-        dispatch(courseActions.addStudentToCourse({ data: listStudent, idCourse: idCourse }, callback));
+        dispatch(courseActions.addStudentToCourse({ data: listStudent, idCourse: khoa_hoc_id }, callback));
         return null;
       });
     };

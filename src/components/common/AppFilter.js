@@ -21,11 +21,11 @@ const COMMON_STATUS = [
     },
     {
       title: 'Đang hoạt động',
-      value: 1,
+      value: '1',
     },
     {
       title: 'Đã dừng',
-      value: 0,
+      value: '0',
     },
 ];
 
@@ -78,14 +78,15 @@ function AppFilter(props) {
         <Option key={label.value} value={label.value} >{label.title}</Option>
       )); 
       return (
-      <Select style={{width:"90%"}}
-        allowClear={true}
-        // defaultValue={''}
-        onChange={(value) => props.onFilterChange('trang_thai', value ? value : '')}
-        placeholder="Chọn trạng thái"
-      >
-        {options}
-      </Select>)
+        <Select style={{width:"90%"}}
+          allowClear={true}
+          // defaultValue={''}
+          onChange={(value) => props.onFilterChange('trang_thai', value ? value : '')}
+          placeholder="Chọn trạng thái"
+        >
+          {options}
+        </Select>
+      )
     };
     
     const renderProvinces = () => {

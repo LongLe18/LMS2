@@ -6,19 +6,22 @@ import axios from 'axios';
 import config from '../../../../configs/index';
 
 import { Row, Col, Table, Pagination, Space, Button, notification, 
-    Form, Modal, Select, InputNumber, Input } from 'antd';
+    Form, Modal, Select, InputNumber, Input, Tabs } from 'antd';
 import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
 // redux
 import * as evaluationAction from '../../../../redux/actions/evaluate';
 import * as examActions from '../../../../redux/actions/exam';
+import * as courseActions from '../../../../redux/actions/course';
 import { useSelector, useDispatch } from "react-redux"; 
 
 const { Option } = Select;
 const { TextArea } = Input;
+const { TabPane } = Tabs;
 
 const EvaluationPage = () => {
     const dataEvaluations = [];
+    const dataEvaluationsDGNL = [];
     const [formEvaluation] = Form.useForm();
 
     const [pageIndex, setPageIndex] = useState(0);
@@ -27,28 +30,47 @@ const EvaluationPage = () => {
     const [idEvaluation, setIdEvaluation] = useState('');
     const [numberSection, setNumberSection] = useState(0);
     const [isModalVisible, setIsModalVisible] = useState(false);
-
+    const [state, setState] = useState({
+        activeTab: '0',
+        idCourse: '',
+    });
     const dispatch = useDispatch();
 
     const evaluations = useSelector(state => state.evaluate.list.result);
+    const evaluationsDGNL = useSelector(state => state.evaluate.listDGNL.result);
     const exams = useSelector(state => state.exam.list.result);
+    const courses = useSelector(state => state.course.list.result);
     const loadingExams = useSelector(state => state.exam.list.loading);
     const loading = useSelector(state => state.evaluate.list.loading);
 
+    // request API khi khởi tạo trang
     useEffect(() => {
-        dispatch(evaluationAction.getEVALUATEs({ id: idExam, pageIndex: pageIndex, pageSize: pageSize}));
-    }, [pageIndex, pageSize, idExam]); // eslint-disable-line react-hooks/exhaustive-deps
-
-    // lấy dữ liệu danh sách đề thi
-    useEffect(() => {
+        // request Danh sách đề thi 
         dispatch(examActions.filterExam({ idCourse: '', idModule: '', idThematic: '', status: '', search: '', 
             start: '', end: '', idType: 4, publish: 1, offset: '', limit: 1000000 }));
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+        // request danh sách khóa học
+        dispatch(courseActions.getCourses({ idkct: '', status: '', search: '' }));
+    }, []);
+
+    useEffect(() => {
+        switch (state.activeTab) {
+            case '0': /// Tabs đánh giá
+                dispatch(evaluationAction.getEVALUATEs({ id: idExam, pageIndex: pageIndex, pageSize: pageSize}));
+                break;
+            case '1': // Tabs Đánh giá ĐGNL
+                dispatch(evaluationAction.getEVALUATEsDGNL({ idCourse: state.idCourse, pageIndex: pageIndex, pageSize: pageSize}));
+                break;
+        }
+    }, [pageIndex, pageSize, idExam, state.activeTab]); // eslint-disable-line react-hooks/exhaustive-deps
 
     if (evaluations.status === 'success' ) {    
         evaluations.data.map((item, index) => dataEvaluations.push({...item, 'key': index}));
     };
     
+    if (evaluationsDGNL.status === 'success' ) {    
+        evaluationsDGNL.data.map((item, index) => dataEvaluationsDGNL.push({...item, 'key': index}));
+    };
+
     // event show modal
     const showModal = () => {
         setIsModalVisible(true);
@@ -65,7 +87,8 @@ const EvaluationPage = () => {
         const callback = (res) => {
             if (res.status === 200 && res.statusText === 'OK') {
                 formEvaluation.resetFields();
-                dispatch(evaluationAction.getEVALUATEs({ id: idExam, pageIndex: pageIndex, pageSize: pageSize}));
+                if (state.activeTab === '0') dispatch(evaluationAction.getEVALUATEs({ id: idExam, pageIndex: pageIndex, pageSize: pageSize}));
+                else if (state.activeTab === '1') dispatch(evaluationAction.getEVALUATEsDGNL({ idCourse: state.idCourse, pageIndex: pageIndex, pageSize: pageSize}));
                 if (idEvaluation === '') {
                     notification.success({
                         message: 'Thành công',
@@ -95,9 +118,11 @@ const EvaluationPage = () => {
         };
 
         if (idEvaluation === '') {
-            dispatch(evaluationAction.CreateEVALUATE(values, callback));
+            if (state.activeTab === '0') dispatch(evaluationAction.CreateEVALUATE(values, callback));
+            else dispatch(evaluationAction.CreateEvaluationDGNL(values, callback));
         } else {
-            dispatch(evaluationAction.EditEVALUATE({ id: idEvaluation, formData: values}, callback));
+            if (state.activeTab === '0') dispatch(evaluationAction.EditEVALUATE({ id: idEvaluation, formData: values}, callback));
+            else dispatch(evaluationAction.EditEvaluationDGNL({ id: idEvaluation, formData: values}, callback));
         }   
     }
     
@@ -119,7 +144,6 @@ const EvaluationPage = () => {
         .catch(error => notification.error({ message: error.message }));
     }
 
-      
     const renderExams = (onChange = false) => {
         let options = [];
         if (exams.status === 'success') {
@@ -149,107 +173,229 @@ const EvaluationPage = () => {
         );
     };
 
+    // render dữ liệu khóa học
+    const renderCourses = () => {
+        let options = [];
+        if (courses.status === 'success') {
+            options = courses.data.filter((item) => item.loai_kct === 0).map((course) => (
+                <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
+            ))
+        }
+        return (
+            <Select style={{width: '100%'}}
+                showSearch
+                allowClear
+                filterOption={(input, option) =>
+                    (option?.children ?? '').toLowerCase().includes(input.toLowerCase())
+                }
+                value={state.courseId}
+                onChange={(khoa_hoc_id) => {
+                    // request api theo khoa_hoc_id
+                    setState({ ...state, idCourse: khoa_hoc_id })
+                }}
+                placeholder="Chọn khóa học"
+            >
+                {options}
+            </Select>
+        );
+    };
+
     // modal content
     const renderModal = () => {
-        return(
-            <Row>
-                <Col xl={24} sm={24} xs={24} className="cate-form-block">
-                    {(idEvaluation === '') ? <h5>Thêm mới đánh giá</h5> : <h5>Sửa thông tin đánh giá</h5>}
-                    <Form layout="vertical" className="category-form" form={formEvaluation} autoComplete="off" onFinish={submitForm}>
-                        <Row gutter={25}>
-                            <Col xl={24} sm={24} xs={24} style={{marginBottom: 12}}>
-                                Số phần thi: {numberSection}
-                            </Col>
-                            <Col xl={24} sm={24} xs={24}>
-                                <Form.Item
-                                    className="input-col"
-                                    label="Tên đề thi"
-                                    name="de_thi_id"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Tên đề thi là trường bắt buộc.',
-                                        },
-                                    ]}
-                                >
-                                    {renderExams()}
-                                </Form.Item>
-                            </Col>
-                            <Col xl={24} sm={24} xs={24} className="left-content">
-                                <Form.Item
-                                    className="input-col"
-                                    label="Phần thi"
-                                    name="phan_thi"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Phần thi là trường bắt buộc.',
-                                        },
-                                    ]}
-                                >
-                                    <InputNumber placeholder="Nhấp phần thi" style={{width: "100%"}}/>
-                                </Form.Item>
-                                <Form.Item
-                                    className="input-col"
-                                    label="Câu bắt đầu"
-                                    name="cau_bat_dau"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Câu bắt đầu là trường bắt buộc.',
-                                        },
-                                    ]}
-                                >
-                                    <InputNumber placeholder="Nhập số câu bắt đầu" style={{width: "100%"}}/>
-                                </Form.Item>
-                                
-                            </Col>
-                            <Col xl={24} sm={24} xs={24} className="right-content">
-                                <Form.Item
-                                    className="input-col"
-                                    label="Câu kết thúc"
-                                    name="cau_ket_thuc"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Câu kết thúc là trường bắt buộc.',
-                                        },
-                                        ({ getFieldValue }) => ({
-                                            validator(_, value) {
-                                                if (!value || getFieldValue('cau_bat_dau') <= value) {
-                                                    return Promise.resolve();
-                                                }
-                                                return Promise.reject(new Error('Câu kết thúc phải lớn hơn hoặc bằng câu bắt đầu!'));
+        if (state.activeTab === '0') {
+            return (
+                <Row>
+                    <Col xl={24} sm={24} xs={24} className="cate-form-block">
+                        {(idEvaluation === '') ? <h5>Thêm mới đánh giá</h5> : <h5>Sửa thông tin đánh giá</h5>}
+                        <Form layout="vertical" className="category-form" form={formEvaluation} autoComplete="off" onFinish={submitForm}>
+                            <Row gutter={25}>
+                                <Col xl={24} sm={24} xs={24} style={{marginBottom: 12}}>
+                                    Số phần thi: {numberSection}
+                                </Col>
+                                <Col xl={24} sm={24} xs={24}>
+                                    <Form.Item
+                                        className="input-col"
+                                        label="Tên đề thi"
+                                        name="de_thi_id"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Tên đề thi là trường bắt buộc.',
                                             },
-                                        }),
-                                    ]}
-                                >
-                                    <InputNumber placeholder="Nhập số câu kết thúc" style={{width: "100%"}}/>
+                                        ]}
+                                    >
+                                        {renderExams()}
+                                    </Form.Item>
+                                </Col>
+                                <Col xl={24} sm={24} xs={24} className="left-content">
+                                    <Form.Item
+                                        className="input-col"
+                                        label="Phần thi"
+                                        name="phan_thi"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Phần thi là trường bắt buộc.',
+                                            },
+                                        ]}
+                                    >
+                                        <InputNumber placeholder="Nhập phần thi" style={{width: "100%"}}/>
+                                    </Form.Item>
+                                    <Form.Item
+                                        className="input-col"
+                                        label="Câu bắt đầu"
+                                        name="cau_bat_dau"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Câu bắt đầu là trường bắt buộc.',
+                                            },
+                                        ]}
+                                    >
+                                        <InputNumber placeholder="Nhập số câu bắt đầu" style={{width: "100%"}}/>
+                                    </Form.Item>
+                                </Col>
+                                <Col xl={24} sm={24} xs={24} className="right-content">
+                                    <Form.Item
+                                        className="input-col"
+                                        label="Câu kết thúc"
+                                        name="cau_ket_thuc"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Câu kết thúc là trường bắt buộc.',
+                                            },
+                                            ({ getFieldValue }) => ({
+                                                validator(_, value) {
+                                                    if (!value || getFieldValue('cau_bat_dau') <= value) {
+                                                        return Promise.resolve();
+                                                    }
+                                                    return Promise.reject(new Error('Câu kết thúc phải lớn hơn hoặc bằng câu bắt đầu!'));
+                                                },
+                                            }),
+                                        ]}
+                                    >
+                                        <InputNumber placeholder="Nhập số câu kết thúc" style={{width: "100%"}}/>
+                                    </Form.Item>
+                                    <Form.Item
+                                        className="input-col"
+                                        label="Đánh giá"
+                                        name="danh_gia"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Đánh giá là trường bắt buộc.',
+                                            },
+                                        ]}
+                                    >
+                                        <TextArea rows={4} placeholder="Nhập nội dung đánh giá" style={{width: "100%"}}/>
+                                    </Form.Item>
+                                    
+                                </Col>
+                                <Form.Item className="button-col" style={{textAlign: 'right'}}>
+                                    {idEvaluation === '' ? <Button shape="round" type="primary" htmlType="submit" >Thêm mới</Button> : <Button shape="round" type="primary" htmlType="submit" >Cập nhật</Button>}                             
                                 </Form.Item>
-                                <Form.Item
-                                    className="input-col"
-                                    label="Đánh giá"
-                                    name="danh_gia"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Đánh giá là trường bắt buộc.',
-                                        },
-                                    ]}
-                                >
-                                    <TextArea rows={4} placeholder="Nhập nội dung đánh giá" style={{width: "100%"}}/>
+                            </Row>                                     
+                        </Form>
+                    </Col>
+                </Row>
+            )
+        } else if (state.activeTab === '1') {
+            return (
+                <Row>
+                    <Col xl={24} sm={24} xs={24} className="cate-form-block">
+                        {(idEvaluation === '') ? <h5>Thêm mới đánh giá</h5> : <h5>Sửa thông tin đánh giá</h5>}
+                        <Form layout="vertical" className="category-form" form={formEvaluation} autoComplete="off" onFinish={submitForm}>
+                            <Row gutter={25}>
+                                <Col xl={24} sm={24} xs={24}>
+                                    <Form.Item
+                                        className="input-col"
+                                        label="Khóa học"
+                                        name="khoa_hoc_id"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Khóa học là trường bắt buộc.',
+                                            },
+                                        ]}
+                                    >
+                                        {renderCourses()}
+                                    </Form.Item>
+                                </Col>
+                                <Col xl={24} sm={24} xs={24} className="left-content">
+                                    <Form.Item
+                                        className="input-col"
+                                        label="Phần thi"
+                                        name="phan_thi"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Phần thi là trường bắt buộc.',
+                                            },
+                                        ]}
+                                    >
+                                        <InputNumber placeholder="Nhập phần thi" style={{width: "100%"}}/>
+                                    </Form.Item>
+                                    <Form.Item
+                                        className="input-col"
+                                        label="Điểm bắt đầu"
+                                        name="diem_tu"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Điểm bắt đầu là trường bắt buộc.',
+                                            },
+                                        ]}
+                                    >
+                                        <InputNumber placeholder="Nhập số điểm bắt đầu" style={{width: "100%"}}/>
+                                    </Form.Item>
+                                </Col>
+                                <Col xl={24} sm={24} xs={24} className="right-content">
+                                    <Form.Item
+                                        className="input-col"
+                                        label="Điểm kết thúc"
+                                        name="diem_den"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Điểm kết thúc là trường bắt buộc.',
+                                            },
+                                            ({ getFieldValue }) => ({
+                                                validator(_, value) {
+                                                    if (!value || getFieldValue('diem_tu') <= value) {
+                                                        return Promise.resolve();
+                                                    }
+                                                    return Promise.reject(new Error('Điểm kết thúc phải lớn hơn hoặc bằng điểm bắt đầu!'));
+                                                },
+                                            }),
+                                        ]}
+                                    >
+                                        <InputNumber placeholder="Nhập điểm câu kết thúc" style={{width: "100%"}}/>
+                                    </Form.Item>
+                                    <Form.Item
+                                        className="input-col"
+                                        label="Đánh giá"
+                                        name="danh_gia"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Đánh giá là trường bắt buộc.',
+                                            },
+                                        ]}
+                                    >
+                                        <TextArea rows={4} placeholder="Nhập nội dung đánh giá" style={{width: "100%"}}/>
+                                    </Form.Item>
+                                    
+                                </Col>
+                                <Form.Item className="button-col" style={{textAlign: 'right'}}>
+                                    {idEvaluation === '' ? <Button shape="round" type="primary" htmlType="submit" >Thêm mới</Button> : <Button shape="round" type="primary" htmlType="submit" >Cập nhật</Button>}                             
                                 </Form.Item>
-                                
-                            </Col>
-                            
-                            <Form.Item className="button-col" style={{textAlign: 'right'}}>
-                                {idEvaluation === '' ? <Button shape="round" type="primary" htmlType="submit" >Thêm mới</Button> : <Button shape="round" type="primary" htmlType="submit" >Cập nhật</Button>}                             
-                            </Form.Item>
-                        </Row>                                     
-                    </Form>
-                </Col>
-            </Row>
-        )
+                            </Row>                                     
+                        </Form>
+                    </Col>
+                </Row>
+            )
+        }
     }
 
     const EditEvaluation = (danh_gia_id) => {
@@ -260,7 +406,11 @@ const EvaluationPage = () => {
             }
         }
         setIdEvaluation(danh_gia_id);
-        dispatch(evaluationAction.getEVALUATE({ id: danh_gia_id }, callback));
+        if (state.activeTab === '0') {
+            dispatch(evaluationAction.getEVALUATE({ id: danh_gia_id }, callback));
+        } else {
+            dispatch(evaluationAction.getEvaluationDGNL({ id: danh_gia_id }, callback));
+        }
     }
     
     const DeleteEvaluation = (danh_gia_id) => {
@@ -272,7 +422,8 @@ const EvaluationPage = () => {
             onOk() {
                 const callback = (res) => {
                     if (res.statusText === 'OK' && res.status === 200) {
-                        dispatch(evaluationAction.getEVALUATEs({ id: idExam, pageIndex: pageIndex, pageSize: pageSize}));         
+                        if (state.activeTab === '0') dispatch(evaluationAction.getEVALUATEs({ id: idExam, pageIndex: pageIndex, pageSize: pageSize}));         
+                        else if (state.activeTab === '1') dispatch(evaluationAction.getEVALUATEsDGNL({ idCourse: state.idCourse, pageIndex: pageIndex, pageSize: pageSize}));
                         notification.success({
                             message: 'Thành công',
                             description: 'Xóa đánh giá thành công',
@@ -284,7 +435,8 @@ const EvaluationPage = () => {
                         })
                     };
                 }
-                dispatch(evaluationAction.DeleteEVALUATE({ id: danh_gia_id }, callback))
+                if (state.activeTab === '0') dispatch(evaluationAction.DeleteEVALUATE({ id: danh_gia_id }, callback))
+                else if (state.activeTab === '1') dispatch(evaluationAction.DeleteEvaluationDGNL({ id: danh_gia_id }, callback))
             },
         });
     }
@@ -306,6 +458,9 @@ const EvaluationPage = () => {
           key: 'ten_de_thi',
           responsive: ['md'],
           sorter: (a, b) => a.ten_de_thi.localeCompare(b.ten_de_thi),
+          render: (ten_de_thi, de_thi) => (
+            de_thi?.de_thi?.ten_de_thi
+          ),
         },
         {
             title: 'Phần thi',
@@ -355,6 +510,73 @@ const EvaluationPage = () => {
         },
     ];
 
+    const columnsDGNL = [
+        {
+            title: 'Khóa học',
+            dataIndex: 'ten_khoa_hoc',
+            key: 'ten_khoa_hoc',
+            responsive: ['md'],
+            render: (ten_khoa_hoc, danh_gia) => (
+                danh_gia?.khoa_hoc?.ten_khoa_hoc
+            ),
+        },
+        {
+            title: 'Phần đánh giá',
+            dataIndex: 'phan_thi',
+            key: 'phan_thi',
+            responsive: ['md'],
+            render: (phan_thi) => (
+                phan_thi === 1 ? 'Phần 1' : 'Phần 2'
+            ),
+        },
+        {
+            title: 'Điểm bắt đầu',
+            dataIndex: 'diem_tu',
+            key: 'diem_tu',
+            responsive: ['md'],
+        },
+        {
+            title: 'Điểm kết thúc',
+            dataIndex: 'diem_den',
+            key: 'diem_den',
+            responsive: ['md'],
+        },
+        {
+            title: 'Nội dung đánh giá',
+            dataIndex: 'noi_dung',
+            key: 'noi_dung',
+            responsive: ['md'],
+        },
+        {
+            title: 'Thời gian cập nhật',
+            dataIndex: 'ngay_sua',
+            key: 'ngay_sua',
+            responsive: ['md'],
+            render: (date) => (
+                moment(date).utc(7).format(config.DATE_FORMAT)
+            ),
+            sorter: (a, b) => moment(a.ngay_sua).unix() - moment(b.ngay_sua).unix()
+        },     
+        {
+            title: 'Tùy chọn',
+            key: 'danh_gia_id',
+            dataIndex: 'danh_gia_id',
+            // Redirect view for edit
+            render: (danh_gia_id) => (
+                <Space size="middle">
+                    <Button  type="button" onClick={() => EditEvaluation(danh_gia_id)} className="ant-btn ant-btn-round ant-btn-primary">Sửa</Button>
+                    <Button shape="round" type="danger" onClick={() => DeleteEvaluation(danh_gia_id)} >Xóa</Button> 
+                </Space>
+            ),
+        },
+    ];
+
+    // event đổi tab
+    const onChangeTab = (value) => {
+        setPageIndex(1);
+        setState({...state, activeTab: value});
+    };
+
     return (
         <>
             {loading && <LoadingCustom />}
@@ -363,32 +585,66 @@ const EvaluationPage = () => {
                     <title>Quản lý đánh giá đề thi</title>
                 </Helmet>
                 <Row className="app-main"><h5>Quản lý đánh giá đề thi</h5></Row>
-                <Row cclassName="select-action-group" gutter={[8, 8]}>
-                    <Col xl={12} sm={12} xs={24}>
-                        {renderExams(true)}
-                    </Col>
-                    <Col xl={12} sm={12} xs={24} className="right-actions">
-                        <Button shape="round" type="primary" icon={<PlusOutlined />} className=" btn-action" onClick={() => {
-                            showModal();
-                            formEvaluation.resetFields();
-                        }}>
-                            Thêm mới đánh giá
-                        </Button>
-                    </Col>
-                </Row>
 
-                {(evaluations.status === 'success') &&
-                    <>
-                        <Table className="table-striped-rows" columns={columns} dataSource={dataEvaluations}  pagination={false}/>
-                        <Pagination style={{marginTop: 12}}
-                            showSizeChanger
-                            onShowSizeChange={onShowSizeChange}
-                            onChange={onChange}
-                            defaultCurrent={pageIndex + 1}
-                            total={evaluations?.count}
-                        />
-                    </>
-                }
+                <Tabs defaultActiveKey={state.activeTab} activeKey={state.activeTab} onChange={onChangeTab}>
+                    <TabPane tab="Đánh giá đề thi" key="0">
+                        <Row cclassName="select-action-group" gutter={[8, 8]}>
+                            <Col xl={12} sm={12} xs={24}>
+                                {renderExams(true)}
+                            </Col>
+                            <Col xl={12} sm={12} xs={24} className="right-actions">
+                                <Button shape="round" type="primary" icon={<PlusOutlined />} className=" btn-action" onClick={() => {
+                                    showModal();
+                                    formEvaluation.resetFields();
+                                }}>
+                                    Thêm mới đánh giá
+                                </Button>
+                            </Col>
+                        </Row>
+
+                        {(evaluations.status === 'success') &&
+                            <>
+                                <Table className="table-striped-rows" columns={columns} dataSource={dataEvaluations} pagination={false}/>
+                                <Pagination style={{marginTop: 12}}
+                                    showSizeChanger
+                                    onShowSizeChange={onShowSizeChange}
+                                    onChange={onChange}
+                                    defaultCurrent={pageIndex + 1}
+                                    total={evaluations?.count}
+                                />
+                            </>
+                        }
+                    </TabPane>
+                    <TabPane tab="Đánh giá đề thi ĐGNL" key="1">
+                        <Row cclassName="select-action-group" gutter={[8, 8]}>
+                            <Col xl={12} sm={12} xs={24}>
+                                {renderCourses()}
+                            </Col>
+                            <Col xl={12} sm={12} xs={24} className="right-actions">
+                                <Button shape="round" type="primary" icon={<PlusOutlined />} className=" btn-action" onClick={() => {
+                                    showModal();
+                                    formEvaluation.resetFields();
+                                }}>
+                                    Thêm mới đánh giá
+                                </Button>
+                            </Col>
+                        </Row>
+                        {(evaluationsDGNL.status === 'success') &&
+                            <>
+                                <Table className="table-striped-rows" columns={columnsDGNL} dataSource={dataEvaluationsDGNL} pagination={false}/>
+                                <Pagination style={{marginTop: 12}}
+                                    showSizeChanger
+                                    onShowSizeChange={onShowSizeChange}
+                                    onChange={onChange}
+                                    defaultCurrent={pageIndex + 1}
+                                    total={evaluationsDGNL?.totalCount}
+                                />
+                            </>
+                        }
+                    </TabPane>
+                </Tabs>
+
+                
             </div>
 
             <Modal visible={isModalVisible}  mask={true} centered={true} className="cra-exam-modal" wrapClassName="cra-exam-modal-container"

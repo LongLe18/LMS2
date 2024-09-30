@@ -122,7 +122,7 @@ const ExamOnlineDetail = () => {
                     setStartTime(0);
                     setIsDoing(false);
                 } else {
-                    // Khi nguồi dùng  chuyển phần tiếp theo mà cố tình refresh lại trang trong khi phần cũ vẫn còn thời gian làm => sẽ dẫn tới làm lại được phần cũ
+                    // Khi người dùng  chuyển phần tiếp theo mà cố tình refresh lại trang trong khi phần cũ vẫn còn thời gian làm => sẽ dẫn tới làm lại được phần cũ
                     if (sessionStorage.getItem('section') !== null && sessionStorage.getItem('timeStartSection') !== null) {
                         const remainingTimeExam = (Number(res.data[`thoi_gian_phan_${sessionStorage.getItem('section')}`]) * 60) - ((new Date().getTime() - sessionStorage.getItem('timeStartSection')) / 1000);
                         if (remainingTimeExam > 0) {

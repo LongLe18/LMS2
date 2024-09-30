@@ -33,7 +33,27 @@ const HistoryExam = () => {
 
     useEffect(() => {
         dispatch(examActions.getExam({ id: params.idExam }));
-        dispatch(examActions.getExamUser({ id: params.idDTHV }));
+        dispatch(examActions.getExamUser({ id: params.idDTHV }, 
+            (res) => {
+                if (res.status === 'success') {
+                    if (res.data.dap_an_da_chons.length > 0) {
+                        let temp = [];
+                        res.data.dap_an_da_chons.map(item => {
+                            if ((item.ket_qua_chon !== null) && (item.ket_qua_chon !== '')) {// Câu trắc nghiệm
+                                temp.push({ cau_hoi_id: item.cau_hoi_id, dap_an: renderAnswerKeyV2(item.ket_qua_chon)[0], 
+                                    loai_dap_an: true, gia_tri_dap_an: renderAnswerKeyV2(item.ket_qua_chon)[1] });
+                            }
+                            else {// câu tự luận
+                                temp.push({ cau_hoi_id: item.cau_hoi_id, noi_dung: item.noi_dung_tra_loi, 
+                                    loai_dap_an: false, gia_tri_dap_an: item.noi_dung_tra_loi });
+                            }
+                            return null;
+                        })
+                        setResults([...results, ...temp]);
+                    }
+                }
+            }
+        ));
         dispatch(answerActions.getAnswersUser({ idDeThi: params.idDTHV, idQuestion: '' }, 
             (res) => {
                 if (res.status === 'success') {
@@ -189,6 +209,7 @@ const HistoryExam = () => {
         let regex = /\\begin{center}\\includegraphics\[scale = 0\.5\]{(.*?)}\\end{center}/;
         let isWrong = false;
         let currentSubmitAnswer = results.find((item) => item.cau_hoi_id === question.cau_hoi_id);
+        console.log(question.cau_hoi_id, convertAnswer(currentSubmitAnswer?.gia_tri_dap_an), answer.dap_an_dung, convertAnswer(question?.dap_an_dungs))
         if (currentSubmitAnswer?.gia_tri_dap_an && question?.dap_an_dungs) {
             if (convertAnswer(currentSubmitAnswer?.gia_tri_dap_an)[index] !== convertAnswer(question?.dap_an_dungs)[index]) {
                 isWrong = true;  
@@ -196,29 +217,29 @@ const HistoryExam = () => {
         }
 
         return (
-            <div className={`answer ${answer.dap_an_dung === true ? 'correct' : ''} ${ isWrong ? 'incorrect' : ''}`}>
+            <div className={`answer ${answer.dap_an_dung === true ? 'correct' : ''} ${ (answer.dap_an_dung === false && isWrong) ? 'incorrect' : ''}`}>
                 <span className="answer-label">{renderAnswerKey(index)}</span>
                 <div className="answer-content">             
-                <MathJax.Provider>
-                    {answer.noi_dung_dap_an.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
-                        return (
-                            <div className="help-answer-content" key={index_cauhoi}> 
-                            {
-                                (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                    <Image src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question_${index_cauhoi}`}></Image>
-                                ) : (
-                                    item.split('$').map((item2, index2) => {
-                                        return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
-                                            <MathJax.Node key={index2} formula={item2} />
-                                        ) : (
-                                            <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
-                                        )
-                                    })
-                                )
-                            }
-                            </div>
+                    <MathJax.Provider>
+                        {answer.noi_dung_dap_an.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
+                            return (
+                                <div className="help-answer-content" key={index_cauhoi}> 
+                                {
+                                    (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
+                                        <Image src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question_${index_cauhoi}`}></Image>
+                                    ) : (
+                                        item.split('$').map((item2, index2) => {
+                                            return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
+                                                <MathJax.Node key={index2} formula={item2} />
+                                            ) : (
+                                                <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                            )
+                                        })
+                                    )
+                                }
+                                </div>
+                            )}
                         )}
-                    )}
                     </MathJax.Provider>
                 </div>
             </div>
@@ -385,12 +406,11 @@ const HistoryExam = () => {
                                                         <ul key={index}>
                                                             {(question.cau_hoi.loai_cau_hoi === 1) ?
                                                                 <li className={`item ${isAnswered && isAnswered.dap_an.includes(renderAnswerKey(index)) ? 'active' : ''}`}>
-                                                                        <button  style={{width:"100%"}}
-                                                                            className="btn-onclick"
-                                                                        >
-                                                                            {renderAnswer(question.cau_hoi, answer, index)}
-                                                                        </button>
-                                                                        
+                                                                    <button  style={{width:"100%"}}
+                                                                        className="btn-onclick"
+                                                                    >
+                                                                        {renderAnswer(question.cau_hoi, answer, index)}
+                                                                    </button>
                                                                 </li>
                                                             : (question.cau_hoi.loai_cau_hoi === 0) ?
                                                                 <li>

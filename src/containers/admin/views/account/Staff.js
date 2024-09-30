@@ -457,12 +457,12 @@ const StaffPage = () => {
               <Row className="app-main">
                   <Col xl={24} sm={24} xs={24}>
                       <AppFilter
-                      title="Quản lý Nhân viên"
-                      isShowStatus={true}
-                      isShowSearchBox={true}
-                      isShowDatePicker={true}
-                      isRangeDatePicker={true}
-                      onFilterChange={(field, value) => onFilterChange(field, value)}
+                        title="Quản lý Nhân viên"
+                        isShowStatus={true}
+                        isShowSearchBox={true}
+                        isShowDatePicker={true}
+                        isRangeDatePicker={true}
+                        onFilterChange={(field, value) => onFilterChange(field, value)}
                       />
                   </Col>
               </Row>

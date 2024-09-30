@@ -11,11 +11,16 @@ const initState = {
         result: {},
         error: null,
     },
+    listDGNL: {
+        loading: false,
+        result: {},
+        error: null,
+    }
 }
 
 export default function evaluateReducer(state = initState, action) {
     switch(action.type) {
-        // get a course
+        // get a evaluation
         case evaluateActions.GET_EVALUATE:
             return {
                 ...state,
@@ -31,7 +36,23 @@ export default function evaluateReducer(state = initState, action) {
                 ...state,
                 item: { ...state.item, loading: false, error: action.error },
             };
-        // get a list of courses
+        // get a evaluation DGNL
+        case evaluateActions.GET_EVALUATE_DGNL:
+            return {
+                ...state,
+                item: { ...state.item, loading: true },
+            };
+        case evaluateActions.GET_EVALUATE_DGNL_SUCCESS:
+            return {
+                ...state,
+                item: { ...state.item, loading: false, result: action.result },
+            };
+        case evaluateActions.GET_EVALUATE_DGNL_FAILED:
+            return {
+                ...state,
+                item: { ...state.item, loading: false, error: action.error },
+            };
+        // get a list of evaluatations
         case evaluateActions.GET_EVALUATES:
             return {
                 ...state,
@@ -47,7 +68,23 @@ export default function evaluateReducer(state = initState, action) {
                 ...state,
                 list: { ...state.list, loading: false, error: action.error },
             };
-        // delete a course
+        // get a list of evaluatations DGNL
+        case evaluateActions.GET_EVALUATES_DGNL:
+            return {
+                ...state,
+                listDGNL: { ...state.listDGNL, loading: true },
+            };
+        case evaluateActions.GET_EVALUATES_DGNL_SUCCESS:
+            return {
+                ...state,
+                listDGNL: { ...state.listDGNL, loading: false, result: action.result },
+            };
+        case evaluateActions.GET_EVALUATES_DGNL_FAILED:
+            return {
+                ...state,
+                listDGNL: { ...state.listDGNL, loading: false, error: action.error },
+            };
+        // delete a evaluation
         case evaluateActions.DELETE_EVALUATE:
             return {
                 ...state,
@@ -63,7 +100,23 @@ export default function evaluateReducer(state = initState, action) {
                 ...state,
                 item: { ...state.item, loading: false, error: action.error },
             };
-        // edit a course
+        // delete a evaluation DGNL
+        case evaluateActions.DELETE_EVALUATE_DGNL:
+            return {
+                ...state,
+                item: { ...state.item, loading: true },
+            };
+        case evaluateActions.DELETE_EVALUATE_DGNL_SUCCESS:
+            return {
+                ...state,
+                item: { ...state.item, loading: false, result: action.result },
+            };
+        case evaluateActions.DELETE_EVALUATE_DGNL_FAILED:
+            return {
+                ...state,
+                item: { ...state.item, loading: false, error: action.error },
+            };
+        // edit a evaluation
         case evaluateActions.EDIT_EVALUATE:
             return {
                 ...state,
@@ -79,7 +132,23 @@ export default function evaluateReducer(state = initState, action) {
                 ...state,
                 item: { ...state.item, loading: false, error: action.error }
             }
-        // create a course
+        // edit a evaluation DGNL
+        case evaluateActions.EDIT_EVALUATE_DGNL:
+            return {
+                ...state,
+                item: { ...state.item, loading: true },
+            };
+        case evaluateActions.EDIT_EVALUATE_DGNL_SUCCESS:
+            return {
+                ...state,
+                item: { ...state.item, loading: false, result: action.result },
+            };
+        case evaluateActions.EDIT_EVALUATE_DGNL_FAILED:
+            return {
+                ...state,
+                item: { ...state.item, loading: false, error: action.error }
+            }
+        // create a evaluation
         case evaluateActions.CREATE_EVALUATE:
             return {
                 ...state,
@@ -91,6 +160,22 @@ export default function evaluateReducer(state = initState, action) {
                 item: { ...state.item, loading: false, result: action.result },
             };
         case evaluateActions.CREATE_EVALUATE_FAILED:
+            return {
+                ...state,
+                item: { ...state.item, loading: false, error: action.error },
+            };
+        // create a evaluation DGNL
+        case evaluateActions.CREATE_EVALUATE_DGNL:
+            return {
+                ...state,
+                item: { ...state.item, loading: true },
+            };
+        case evaluateActions.CREATE_EVALUATE_DGNL_SUCCESS:
+            return {
+                ...state,
+                item: { ...state.item, loading: false, result: action.result },
+            };
+        case evaluateActions.CREATE_EVALUATE_DGNL_FAILED:
             return {
                 ...state,
                 item: { ...state.item, loading: false, error: action.error },

@@ -339,6 +339,11 @@ import {
 
 import {
     loadEvaluations,
+    loadEvaluationDGNL,
+    loadEvaluationsDGNL,
+    loadAddEvaluationDGNL,
+    loadEditEvaluationDGNL,
+    loadDeleteEvaluationDGNL,
     loadAddEvaluation,
     loadDeleteEvaluation,
     loadEditEvaluation,
@@ -635,6 +640,11 @@ export default function* rootSaga() {
         loadEditContact(),
         // đánh giá
         loadEvaluations(),
+        loadEvaluationDGNL(),
+        loadEvaluationsDGNL(),
+        loadDeleteEvaluationDGNL(),
+        loadAddEvaluationDGNL(),
+        loadEditEvaluationDGNL(),
         loadAddEvaluation(),
         loadDeleteEvaluation(),
         loadEditEvaluation(),

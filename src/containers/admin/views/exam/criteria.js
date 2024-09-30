@@ -1185,7 +1185,7 @@ const Criteria = () => {
                                 <AppFilter
                                     title={"Tiêu chí đề thi tổng hợp"}
                                     isShowCourse={true}
-                                    courses={courses.data?.filter((course) => course.loai_kct !== 1)}
+                                    courses={courses.data?.filter((course) => course.loai_kct === 2)}
                                     onFilterChange={(field, value) => onFilterChange(field, value)}
                                 />
                             </Col>
@@ -1218,7 +1218,7 @@ const Criteria = () => {
                                 <AppFilter
                                     title={"Tiêu chí đề thi mô đun"}
                                     isShowCourse={true}
-                                    courses={courses.data?.filter((course) => course.loai_kct !== 1)}
+                                    courses={courses.data?.filter((course) => course.loai_kct === 2)}
                                     onFilterChange={(field, value) => onFilterChange(field, value)}
                                 />
                             </Col>
@@ -1252,7 +1252,7 @@ const Criteria = () => {
                                 <AppFilter
                                     title={"Tiêu chí đề thi chuyên đề"}
                                     isShowCourse={true}
-                                    courses={courses.data?.filter((course) => course.loai_kct !== 1)}
+                                    courses={courses.data?.filter((course) => course.loai_kct === 2)}
                                     onFilterChange={(field, value) => onFilterChange(field, value)}
                                 />
                             </Col>
@@ -1312,6 +1312,9 @@ const Criteria = () => {
                             total={criteriaOnline?.totalCount} onShowSizeChange={onChangePageSize} 
                             showSizeChanger defaultPageSize={pageSize}
                         />
+                    </TabPane>
+                    <TabPane tab="Tiêu chí đề thi ĐGNL" key="5">
+
                     </TabPane>
                 </Tabs>
 
