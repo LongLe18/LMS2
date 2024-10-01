@@ -57,6 +57,24 @@ const tieuchidethionine = sequelize.define(
         yeu_cau_phan_4: {
             type: DataTypes.INTEGER,
         },
+        so_cau_hoi_phan_5: {
+            type: DataTypes.INTEGER,
+        },
+        thoi_gian_phan_5: {
+            type: DataTypes.INTEGER,
+        },
+        yeu_cau_phan_5: {
+            type: DataTypes.INTEGER,
+        },
+        so_cau_hoi_phan_6: {
+            type: DataTypes.INTEGER,
+        },
+        thoi_gian_phan_6: {
+            type: DataTypes.INTEGER,
+        },
+        yeu_cau_phan_6: {
+            type: DataTypes.INTEGER,
+        },
         nguoi_tao: {
             type: DataTypes.STRING,
         },
