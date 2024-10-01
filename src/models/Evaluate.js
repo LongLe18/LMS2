@@ -16,10 +16,10 @@ const danhgia = sequelize.define(
             type: DataTypes.STRING,
         },
         cau_bat_dau: {
-            type: DataTypes.FLOAT,
+            type: DataTypes.INTEGER,
         },
         cau_ket_thuc: {
-            type: DataTypes.FLOAT,
+            type: DataTypes.INTEGER,
         },
         phan_thi: {
             type: DataTypes.INTEGER,
