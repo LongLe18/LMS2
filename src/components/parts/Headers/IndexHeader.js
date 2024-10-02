@@ -26,8 +26,6 @@ import { useDispatch, useSelector } from "react-redux";
 import SocialLogin from 'components/common/SocialLogin';
 import ReCAPTCHA from "react-google-recaptcha";
 
-import useScrollToTop from 'hooks/useScrollToTop';
-
 import * as userAction from '../../../redux/actions/user';
 import * as menuAction from '../../../redux/actions/menu';
 import * as courseAction from '../../../redux/actions/course';
@@ -325,8 +323,8 @@ function IndexHeader(props) {
         <Row className="header-logo">
           <NavLink to="/luyen-tap/trang-chu">
             <img alt="..."  style={{maxHeight: '155px', width: '100%'}}
-            className="img-no-padding img-responsive"
-            src={require("assets/rank/banner.jpg").default}
+              className="img-no-padding img-responsive"
+              src={require("assets/rank/header-logo.png").default}
             />
           </NavLink>
         </Row>

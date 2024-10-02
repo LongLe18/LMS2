@@ -192,6 +192,11 @@ import {
     loadCriteriasOnline,
     loadDeleteCriteriaOnline,
     loadEditCriteriaOnline,
+    loadAddCriteriaDGNL,
+    loadCriteriaDGNL,
+    loadCriteriasDGNL,
+    loadDeleteCriteriaDGNL,
+    loadEditCriteriaDGNL,
 } from './criteria';
 
 import {
@@ -519,6 +524,11 @@ export default function* rootSaga() {
         loadCriteriasOnline(),
         loadDeleteCriteriaOnline(),
         loadEditCriteriaOnline(),
+        loadAddCriteriaDGNL(),
+        loadCriteriaDGNL(),
+        loadCriteriasDGNL(),
+        loadDeleteCriteriaDGNL(),
+        loadEditCriteriaDGNL(),
         // advertisement
         loadAddAdsCourse(),
         loadAddAdsDoc(),

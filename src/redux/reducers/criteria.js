@@ -56,6 +56,16 @@ const initState = {
         result: {},
         error: null,
     },
+    itemDGNL: {
+        loading: false,
+        result: {},
+        error: null,
+    },
+    listDGNL: {
+        loading: false,
+        result: {},
+        error: null,
+    }
 }
 
 export default function criteriaReducer(state = initState, action) {
@@ -417,6 +427,87 @@ export default function criteriaReducer(state = initState, action) {
             return {
                 ...state,
                 itemOnline: { ...state.itemOnline, loading: false, error: action.error },
+            };
+        ///////////////////////////////////////////////// DGNL criteria
+        // get a CRITERIA
+        case criteriaActions.GET_CRITERIA_DGNL:
+            return {
+                ...state,
+                itemDGNL: { ...state.itemDGNL, loading: true },
+            };
+        case criteriaActions.GET_CRITERIA_DGNL_SUCCESS:
+            return {
+                ...state,
+                itemDGNL: { ...state.itemDGNL, loading: false, result: action.result },
+            };
+        case criteriaActions.GET_CRITERIA_DGNL_FAILED:
+            return {
+                ...state,
+                itemDGNL: { ...state.itemDGNL, loading: false, error: action.error },
+            };
+        // get list of CRITERIAS
+        case criteriaActions.GET_CRITERIAS_DGNL:
+            return {
+                ...state,
+                listDGNL: { ...state.listDGNL, loading: true },
+            };
+        case criteriaActions.GET_CRITERIAS_DGNL_SUCCESS:
+            return {
+                ...state,
+                listDGNL: { ...state.listDGNL, loading: false, result: action.result },
+            };
+        case criteriaActions.GET_CRITERIAS_DGNL_FAILED:
+            return {
+                ...state,
+                listDGNL: { ...state.listDGNL, loading: false, error: action.error },
+            };
+        // create a CRITERIA
+        case criteriaActions.CREATE_CRITERIA_DGNL:
+            return {
+                ...state,
+                itemDGNL: { ...state.itemDGNL, loading: true },
+            };
+        case criteriaActions.CREATE_CRITERIA_DGNL_SUCCESS:
+            return {
+                ...state,
+                itemDGNL: { ...state.itemDGNL, loading: false, result: action.result },
+            };
+        case criteriaActions.CREATE_CRITERIA_DGNL_FAILED:
+            return {
+                ...state,
+                itemDGNL: { ...state.itemDGNL, loading: false, error: action.error },
+            };
+        // edit a CRITERIA
+        case criteriaActions.EDIT_CRITERIA_DGNL:
+            return {
+                ...state,
+                itemDGNL: { ...state.itemDGNL, loading: true },
+            };
+        case criteriaActions.EDIT_CRITERIA_DGNL_SUCCESS:
+            return {
+                ...state,
+                itemDGNL: { ...state.itemDGNL, loading: false, result: action.result },
+            };
+        case criteriaActions.EDIT_CRITERIA_DGNL_FAILED:
+            return {
+                ...state,
+                itemDGNL: { ...state.itemDGNL, loading: false, error: action.error },
+            };
+        // delete a CRITERIA
+        case criteriaActions.DELETE_CRITERIA_DGNL:
+            return {
+                ...state,
+                itemDGNL: { ...state.itemDGNL, loading: true },
+            };
+        case criteriaActions.DELETE_CRITERIA_DGNL_SUCCESS:
+            return {
+                ...state,
+                itemDGNL: { ...state.itemDGNL, loading: false, result: action.result },
+            };
+        case criteriaActions.DELETE_CRITERIA_DGNL_FAILED:
+            return {
+                ...state,
+                itemDGNL: { ...state.itemDGNL, loading: false, error: action.error },
             };
         default:
             return state;

@@ -22,10 +22,12 @@ const { TabPane } = Tabs;
 const Criteria = () => {
     const [form] = Form.useForm();
     const [formOnline] = Form.useForm();
+    const [formDGNL] = Form.useForm();
     const dataCriteriaCourse = [];
     const dataCriteriaModule = [];
     const dataCriteriaThematic = [];
     const dataCriteriaOnline = [];
+    const dataCriteriaDGNL = [];
     const dispatch = useDispatch();
 
     const [numberExams, setNumberOfItems] = useState(1);
@@ -50,6 +52,7 @@ const Criteria = () => {
     });
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isModalVisibleOnline, setIsModalVisibleOnline] = useState(false);
+    const [isModalVisibleDGNL, setIsModalVisibleDGNL] = useState(false);
     const [pageSize, setPageSize] = useState(10);
     const [pageIndex, setPageIndex] = useState(1);
 
@@ -74,12 +77,25 @@ const Criteria = () => {
         setIsModalVisibleOnline(true);
     };
 
+    const showModalDGNL = () => {
+        setIsModalVisibleDGNL(true);
+    };
+
     const handleOkOnline = () => {
         setIsModalVisibleOnline(false);
     };
     
     const handleCancelOnline = () => {
         setIsModalVisibleOnline(false);
+        setIsPublish(false);
+    };
+
+    const handleOkDGNL = () => {
+        setIsModalVisibleDGNL(false);
+    };
+    
+    const handleCancelDGNL = () => {
+        setIsModalVisibleDGNL(false);
         setIsPublish(false);
     };
 
@@ -94,6 +110,9 @@ const Criteria = () => {
 
     const criteriaOnline = useSelector(state => state.criteria.listOnline.result);
     const loadingOnline = useSelector(state => state.criteria.listOnline.loading);
+
+    const criteriaDGNL = useSelector(state => state.criteria.listDGNL.result);
+    const loadingDGNL = useSelector(state => state.criteria.listDGNL.loading);
 
     const courses = useSelector(state => state.course.list.result);
     const loadingcourses = useSelector(state => state.course.list.loading);
@@ -299,14 +318,14 @@ const Criteria = () => {
             title: 'Tổng thời gian thi',
             dataIndex: 'thoi_gian',
             key: 'thoi_gian',
-            width: 150,
+            width: 180,
             responsive: ['md'],
         },
         {
             title: 'Số câu hỏi phần 1',
             dataIndex: 'so_cau_hoi_phan_1',
             key: 'so_cau_hoi_phan_1',
-            width: 150,
+            width: 180,
             responsive: ['md'],
         },
         {
@@ -327,7 +346,7 @@ const Criteria = () => {
             title: 'Số câu hỏi phần 2',
             dataIndex: 'so_cau_hoi_phan_2',
             key: 'so_cau_hoi_phan_2',
-            width: 150,
+            width: 180,
             responsive: ['md'],
         },
         {
@@ -348,7 +367,7 @@ const Criteria = () => {
             title: 'Số câu hỏi phần 3',
             dataIndex: 'so_cau_hoi_phan_3',
             key: 'so_cau_hoi_phan_3',
-            width: 150,
+            width: 180,
             responsive: ['md'],
         },
         {
@@ -369,7 +388,7 @@ const Criteria = () => {
             title: 'Số câu hỏi phần 4',
             dataIndex: 'so_cau_hoi_phan_4',
             key: 'so_cau_hoi_phan_4',
-            width: 150,
+            width: 180,
             responsive: ['md'],
         },
         {
@@ -390,7 +409,7 @@ const Criteria = () => {
             title: 'Số câu hỏi phần 5',
             dataIndex: 'so_cau_hoi_phan_5',
             key: 'so_cau_hoi_phan_5',
-            width: 150,
+            width: 180,
             responsive: ['md'],
         },
         {
@@ -411,7 +430,7 @@ const Criteria = () => {
             title: 'Số câu hỏi phần 6',
             dataIndex: 'so_cau_hoi_phan_6',
             key: 'so_cau_hoi_phan_6',
-            width: 150,
+            width: 180,
             responsive: ['md'],
         },
         {
@@ -444,6 +463,139 @@ const Criteria = () => {
         },
     ];
 
+    const columnsDGNL = [
+        {
+            title: 'Tên khóa học',
+            dataIndex: 'ten_khoa_hoc',
+            key: 'ten_khoa_hoc',
+            width: 350,
+            responsive: ['md'],
+            render: (tcdth_khoa_hoc_id, tieu_chi) => (
+                <>{tieu_chi.khoa_hoc?.ten_khoa_hoc}</>
+            ),
+            fixed: 'left',
+        },
+        {
+            title: 'Số phần',
+            dataIndex: 'so_phan',
+            key: 'so_phan',
+            width: 150,
+            responsive: ['md'],
+        },
+        {
+            title: 'Tổng số câu hỏi',
+            dataIndex: 'so_cau_hoi',
+            key: 'so_cau_hoi',
+            width: 150,
+            responsive: ['md'],
+        },
+        {
+            title: 'Tổng thời gian thi',
+            dataIndex: 'thoi_gian',
+            key: 'thoi_gian',
+            width: 180,
+            responsive: ['md'],
+        },
+        {
+            title: 'Số câu hỏi phần 1',
+            dataIndex: 'so_cau_hoi_phan_1',
+            key: 'so_cau_hoi_phan_1',
+            width: 180,
+            responsive: ['md'],
+        },
+        {
+            title: 'Yêu cầu phần 1',
+            dataIndex: 'yeu_cau_phan_1',
+            key: 'yeu_cau_phan_1',
+            width: 150,
+            responsive: ['md'],
+        },
+        {
+            title: 'Thời gian phần 1',
+            dataIndex: 'thoi_gian_phan_1',
+            key: 'thoi_gian_phan_1',
+            width: 150,
+            responsive: ['md'],
+        },
+        {
+            title: 'Số câu hỏi phần 2',
+            dataIndex: 'so_cau_hoi_phan_2',
+            key: 'so_cau_hoi_phan_2',
+            width: 180,
+            responsive: ['md'],
+        },
+        {
+            title: 'Yêu cầu phần 2',
+            dataIndex: 'yeu_cau_phan_2',
+            key: 'yeu_cau_phan_2',
+            width: 150,
+            responsive: ['md'],
+        },
+        {
+            title: 'Thời gian phần 2',
+            dataIndex: 'thoi_gian_phan_2',
+            key: 'thoi_gian_phan_2',
+            width: 150,
+            responsive: ['md'],
+        },
+        {
+            title: 'Số câu hỏi phần 3',
+            dataIndex: 'so_cau_hoi_phan_3',
+            key: 'so_cau_hoi_phan_3',
+            width: 180,
+            responsive: ['md'],
+        },
+        {
+            title: 'Yêu cầu phần 3',
+            dataIndex: 'yeu_cau_phan_3',
+            key: 'yeu_cau_phan_3',
+            width: 150,
+            responsive: ['md'],
+        },
+        {
+            title: 'Thời gian phần 3',
+            dataIndex: 'thoi_gian_phan_3',
+            key: 'thoi_gian_phan_3',
+            width: 150,
+            responsive: ['md'],
+        },
+        {
+            title: 'Số câu hỏi phần 4',
+            dataIndex: 'so_cau_hoi_phan_4',
+            key: 'so_cau_hoi_phan_4',
+            width: 180,
+            responsive: ['md'],
+        },
+        {
+            title: 'Yêu cầu phần 4',
+            dataIndex: 'yeu_cau_phan_4',
+            key: 'yeu_cau_phan_4',
+            width: 150,
+            responsive: ['md'],
+        },
+        {
+            title: 'Thời gian phần 4',
+            dataIndex: 'thoi_gian_phan_4',
+            key: 'thoi_gian_phan_4',
+            width: 150,
+            responsive: ['md'],
+        },
+        {
+            title: 'Tùy chọn',
+            key: 'idtieu_chi_de_thi_dgnl',
+            dataIndex: 'idtieu_chi_de_thi_dgnl',
+            width: 150,
+            // Redirect view for edit
+            render: (idtieu_chi_de_thi_dgnl) => (
+                <Space size="middle">
+                <Button  type="button" onClick={() => EditCriteriaDGNL(idtieu_chi_de_thi_dgnl)} className="ant-btn ant-btn-round ant-btn-primary">Sửa</Button>
+                <Button shape="round" type="danger" onClick={() => DeleteCriteriaDGNL(idtieu_chi_de_thi_dgnl)} >Xóa</Button> 
+                </Space>
+            ),
+            fixed: 'right',
+        },
+    ];
+
     if (criteriaCourse.status === 'success' ) {
         criteriaCourse.data.map((item, index) => dataCriteriaCourse.push({...item, 'key': index}));
     };
@@ -458,6 +610,10 @@ const Criteria = () => {
 
     if (criteriaThematic.status === 'success') {
         criteriaThematic.data.map((item, index) => dataCriteriaThematic.push({...item, 'key': index}));
+    };
+
+    if (criteriaDGNL.status === 'success') {
+        criteriaDGNL.data.map((item, index) => dataCriteriaDGNL.push({...item, 'key': index}));
     };
 
     useEffect(() => {
@@ -475,6 +631,9 @@ const Criteria = () => {
                 break;
             case '4': // tiêu chí đề online
                 dispatch(criteriaAction.getCriteriasOnline({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
+                break;
+            case '5': // tiêu chí ĐGNL
+                dispatch(criteriaAction.getCriteriasDGNL({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
                 break;
             default:
                 break;
@@ -495,6 +654,9 @@ const Criteria = () => {
                 break;
             case '4': // tiêu chí đề online
                 dispatch(criteriaAction.getCriteriasOnline({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
+                break;
+            case '5': // tiêu chí ĐGNL
+                dispatch(criteriaAction.getCriteriasDGNL({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
                 break;
             default:
                 break;
@@ -527,6 +689,9 @@ const Criteria = () => {
                 break;
             case '4': // tiêu chí đề online
                 url = `${config.API_URL}/online_criteria/${id}/quantity-exam-publish`
+                break;
+            case '5': // tiêu chí đề ĐGNL
+                url = `${config.API_URL}/dgnl-criteria/${id}/quantity-exam-publish`
                 break;
             default:
                 break;
@@ -607,13 +772,27 @@ const Criteria = () => {
             if (res.status === 'success') {
                 checkCriteria('4', id);  // check tiêu chí đã có đề xuất bản hay chưa
                 setNumberOfItems(res.data.so_phan);
-                formOnline.setFieldsValue(res.data);
+                formDGNL.setFieldsValue(res.data);
                 showModalOnline();
                 setRequire({...state, isEdit: true});
             }
         };
         setState({...state, idCriteria: id});
         dispatch(criteriaAction.getCriteriaOnline({ id: id }, callback))
+    };
+
+    const EditCriteriaDGNL = (id) => {
+        const callback = (res) => {
+            if (res.status === 'success') {
+                checkCriteria('5', id);  // check tiêu chí đã có đề xuất bản hay chưa
+                setNumberOfItems(res.data.so_phan);
+                formOnline.setFieldsValue(res.data);
+                showModalOnline();
+                setRequire({...state, isEdit: true});
+            }
+        };
+        setState({...state, idCriteria: id});
+        dispatch(criteriaAction.getCriteriaDGNL({ id: id }, callback))
     };
 
     const DeleteCriteriaCourse = (id) => {
@@ -690,6 +869,59 @@ const Criteria = () => {
                     };
                 }
                 dispatch(criteriaAction.deleteCriteriaThematic({ id: id }, callback))
+            },
+        });
+    };
+
+    // xoá tiêu chí online
+    const DeleteCriteriaOnline = (id) => {
+        confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: 'Bạn có chắc chắn muốn xóa tiêu chí này?',
+            okText: 'Đồng ý',
+            cancelText: 'Hủy',
+            onOk() {
+                const callback = (res) => {
+                    if (res.statusText === 'OK' && res.status === 200) {
+                        dispatch(criteriaAction.getCriteriasOnline({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
+                        notification.success({
+                            message: 'Thành công',
+                            description: 'Xóa tiêu chí thành công',
+                        })
+                    } else {
+                        notification.error({
+                            message: 'Thông báo',
+                            description: 'Xóa tiêu chí thất bại',
+                        })
+                    };
+                }
+                dispatch(criteriaAction.deleteCriteriaOnline({ id: id }, callback))
+            },
+        });
+    };
+
+    const DeleteCriteriaDGNL = (id) => {
+        confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: 'Bạn có chắc chắn muốn xóa tiêu chí này?',
+            okText: 'Đồng ý',
+            cancelText: 'Hủy',
+            onOk() {
+                const callback = (res) => {
+                    if (res.statusText === 'OK' && res.status === 200) {
+                        dispatch(criteriaAction.getCriteriasDGNL({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
+                        notification.success({
+                            message: 'Thành công',
+                            description: 'Xóa tiêu chí thành công',
+                        })
+                    } else {
+                        notification.error({
+                            message: 'Thông báo',
+                            description: 'Xóa tiêu chí mới thất bại',
+                        })
+                    };
+                }
+                dispatch(criteriaAction.deleteCriteriaDGNL({ id: id }, callback))
             },
         });
     };
@@ -831,31 +1063,67 @@ const Criteria = () => {
         }   
     };
 
-    // xoá tiêu chí online
-    const DeleteCriteriaOnline = (id) => {
-        confirm({
-            icon: <ExclamationCircleOutlined />,
-            content: 'Bạn có chắc chắn muốn xóa tiêu chí này?',
-            okText: 'Đồng ý',
-            cancelText: 'Hủy',
-            onOk() {
-                const callback = (res) => {
-                    if (res.statusText === 'OK' && res.status === 200) {
-                        dispatch(criteriaAction.getCriteriasOnline({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
-                        notification.success({
-                            message: 'Thành công',
-                            description: 'Xóa tiêu chí thành công',
+    // function tạo/cập nhật tiêu chí ĐGNL
+    const createOrupdateCriteriaDGNL = (values) => {
+        const callback = (res) => {
+            if (res.status === 200 && res.statusText === 'OK') {
+                formDGNL.resetFields();
+                dispatch(criteriaAction.getCriteriasDGNL({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
+                if (!require.isEdit) {
+                    notification.success({
+                        message: 'Thành công',
+                        description: 'Thêm tiêu chí mới thành công',
+                    })
+                } else {
+                    notification.success({
+                        message: 'Thành công',
+                        description: 'Sửa thông tin tiêu chí thành công',
+                    })
+                }
+                setIsModalVisibleDGNL(false);
+            } else {
+                if (!require.isEdit) {
+                    if (res.response.data.message === 'already exist') {
+                        notification.error({
+                            message: 'Thông báo',
+                            description: 'Đã tồn tại tiếu chí',
                         })
                     } else {
                         notification.error({
                             message: 'Thông báo',
-                            description: 'Xóa tiêu chí thất bại',
+                            description: 'Thêm mới tiêu chí thất bại' + res.response.data.message,
                         })
-                    };
+                    }
+                } else {
+                    notification.error({
+                        message: 'Thông báo',
+                        description: 'Sửa tiếu chí thất bại',
+                    })
                 }
-                dispatch(criteriaAction.deleteCriteriaOnline({ id: id }, callback))
-            },
-        });
+            }
+        };
+
+        let dataSubmit = {
+            "so_phan": values.so_phan,
+            "khoa_hoc_id": values.khoa_hoc_id,
+            "so_cau_hoi": 0,
+            "thoi_gian": 0,
+        };
+
+        Array.from({ length: numberExams }).map((_, index) => {
+            dataSubmit[`so_cau_hoi_phan_${index + 1}`] = values[`so_cau_hoi_phan_${index + 1}`];
+            dataSubmit[`thoi_gian_phan_${index + 1}`] = values[`thoi_gian_phan_${index + 1}`];
+            dataSubmit.so_cau_hoi = dataSubmit.so_cau_hoi + values[`so_cau_hoi_phan_${index + 1}`];
+            dataSubmit.thoi_gian = dataSubmit.thoi_gian + values[`thoi_gian_phan_${index + 1}`];
+            return null;
+        })
+        
+
+        if (!require.isEdit) {
+            dispatch(criteriaAction.createCriteriaDGNL(dataSubmit, callback));
+        } else {
+            dispatch(criteriaAction.editCriteriaDGNL({ id: state.idCriteria, formData: dataSubmit}, callback));
+        }   
     };
 
     const renderCourses = () => {
@@ -1128,6 +1396,89 @@ const Criteria = () => {
         )
     }
 
+    const renderModalDGNL = () => {
+        return (
+            <Row>
+                <Col xl={24} sm={24} xs={24} className="cate-form-block">
+                    {require.isEdit ? <h5>Sửa thông tin tiêu chí đề thi ĐGNL</h5> : <h5>Thêm mới tiêu chí đề thi ĐGNL</h5>}
+                    <Form layout="vertical" className="category-form" form={formDGNL} autoComplete="off" onFinish={createOrupdateCriteriaDGNL}>
+                        <Row gutter={25}>
+                            <Col xl={24} sm={24} xs={24}>
+                                <Form.Item
+                                    className="input-col"
+                                    label="Khóa học"
+                                    name="khoa_hoc_id"
+                                    rules={[
+                                        {
+                                            required: require.course,
+                                            message: 'Khóa học là trường bắt buộc.',
+                                        },
+                                    ]}
+                                >
+                                    {renderCourses()}
+                                </Form.Item>
+                            </Col>
+                            <Col xl={24} sm={24} xs={24} className="left-content">
+                                <Form.Item
+                                    className="input-col"
+                                    label="Số phần thi"
+                                    name="so_phan"
+                                    rules={[
+                                        {
+                                        required: true,
+                                        message: 'Số phần thi là trường bắt buộc.',
+                                        },
+                                    ]}
+                                >
+                                    <InputNumber disabled={isPublish} placeholder="Nhập số phần thi" style={{width: "100%"}} max={6} min={1} onChange={handleNumberExamChange}/>
+                                </Form.Item>
+                            </Col>
+                            
+                            {Array.from({ length: numberExams }).map((_, index) => (
+                                <>
+                                    <Col xl={8} sm={24} xs={24} >
+                                        <Form.Item
+                                            className="input-col"
+                                            label={`Số câu hỏi phần ${index + 1}`}
+                                            name={`so_cau_hoi_phan_${index + 1}`}
+                                            rules={[
+                                                {
+                                                required: true,
+                                                message: 'Số câu hỏi là trường bắt buộc.',
+                                                },
+                                            ]}
+                                        >
+                                            <InputNumber disabled={isPublish} placeholder="Nhập số câu hỏi đề thi" style={{width: "100%"}}/>
+                                        </Form.Item>
+                                    </Col>
+                                    <Col xl={8} sm={24} xs={24} >
+                                        <Form.Item
+                                            className="input-col"
+                                            label={`Thời gian phần ${index + 1}`}
+                                            name={`thoi_gian_phan_${index + 1}`}
+                                            rules={[
+                                                {
+                                                required: true,
+                                                message: 'Thời gian là trường bắt buộc.',
+                                                },
+                                            ]}
+                                        >
+                                            <InputNumber placeholder="Nhập thời gian thi" style={{width: "100%"}}/>
+                                        </Form.Item>   
+                                    </Col>
+                                </>
+                            ))}
+                            
+                            <Form.Item className="button-col" style={{textAlign: 'right'}}>
+                                {!require.isEdit ? <Button shape="round" type="primary" htmlType="submit" >Thêm mới</Button> : <Button shape="round" type="primary" htmlType="submit" >Cập nhật</Button>}                             
+                            </Form.Item>
+                        </Row>                                     
+                    </Form>
+                </Col>
+            </Row>
+        )
+    }
+
     // event đổi page Index
     const onChangePage = (page) => {
         setPageIndex(page);
@@ -1172,7 +1523,7 @@ const Criteria = () => {
 
     return (
         <>
-        {(loadingCourse && loadingModule && loadingThematic && loadingOnline) && <LoadingCustom />}
+        {(loadingCourse && loadingModule && loadingThematic && loadingOnline && loadingDGNL) && <LoadingCustom />}
             <div className='content'>
                 <Helmet>
                     <title>Quản lý tiêu chí đề thi</title>
@@ -1314,7 +1665,35 @@ const Criteria = () => {
                         />
                     </TabPane>
                     <TabPane tab="Tiêu chí đề thi ĐGNL" key="5">
-
+                        <Row className="app-main">
+                            <Col xl={24} className="body-content">
+                                <Row>
+                                    <Col xl={24} sm={24} xs={24}>
+                                        <AppFilter
+                                            title={"Tiêu chí đề thi ĐGNL"}
+                                            isShowCourse={true}
+                                            courses={courses.data?.filter((course) => course.loai_kct === 0)}
+                                            onFilterChange={(field, value) => onFilterChange(field, value)}
+                                        />
+                                    </Col>
+                                </Row>
+                            </Col>
+                        </Row>
+                        <Row className="select-action-group" gutter={[8, 8]}>
+                            <Col xl={12} sm={12} xs={24}></Col>
+                            <Col xl={12} sm={12} xs={24} className="right-actions">
+                                <Button shape="round" type="primary" icon={<PlusOutlined />} className=" btn-action" onClick={() => {
+                                    showModalDGNL();
+                                    formDGNL.resetFields();
+                                    setRequire({...state, isEdit: false});
+                                }}>
+                                    Thêm mới tiêu chí
+                                </Button>
+                            </Col>
+                        </Row>
+                        <Table className="table-striped-rows" columns={columnsDGNL} dataSource={dataCriteriaDGNL} pagination={false}></Table>
+                        <br/>
+                        
                     </TabPane>
                 </Tabs>
 
@@ -1337,6 +1716,17 @@ const Criteria = () => {
                     footer={null}
                 >
                     {renderModalOnline()}
+                </Modal>
+                
+                <Modal visible={isModalVisibleDGNL}  mask={true} centered={true} className="cra-exam-modal" wrapClassName="cra-exam-modal-container"
+                    onOk={handleOkDGNL} 
+                    onCancel={handleCancelDGNL}
+                    maskStyle={{ background: 'rgba(0, 0, 0, 0.8)' }}
+                    maskClosable={false}
+                    width={600}
+                    footer={null}
+                >
+                    {renderModalDGNL()}
                 </Modal>
 
             </div>

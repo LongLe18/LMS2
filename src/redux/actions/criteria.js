@@ -89,6 +89,27 @@ export const DELETE_CRITERIA_ONLINE = "DELETE_CRITERIA_ONLINE";
 export const DELETE_CRITERIA_ONLINE_SUCCESS = "DELETE_CRITERIA_ONLINE_SUCCESS";
 export const DELETE_CRITERIA_ONLINE_FAILED = "DELETE_CRITERIA_ONLINE_FAILED";
 
+//////////////////////////////////////////////////////////////////
+export const GET_CRITERIA_DGNL = "GET_CRITERIA_DGNL";
+export const GET_CRITERIA_DGNL_SUCCESS = "GET_CRITERIA_DGNL_SUCCESS";
+export const GET_CRITERIA_DGNL_FAILED = "GET_CRITERIA_DGNL_FAILED";
+
+export const GET_CRITERIAS_DGNL = "GET_CRITERIAS_DGNL";
+export const GET_CRITERIAS_DGNL_SUCCESS = "GET_CRITERIAS_DGNL_SUCCESS";
+export const GET_CRITERIAS_DGNL_FAILED = "GET_CRITERIAS_DGNL_FAILED";
+
+export const CREATE_CRITERIA_DGNL = "CREATE_CRITERIA_DGNL";
+export const CREATE_CRITERIA_DGNL_SUCCESS = "CREATE_CRITERIA_DGNL_SUCCESS";
+export const CREATE_CRITERIA_DGNL_FAILED = "CREATE_CRITERIA_DGNL_FAILED";
+
+export const EDIT_CRITERIA_DGNL = "EDIT_CRITERIA_DGNL";
+export const EDIT_CRITERIA_DGNL_SUCCESS = "EDIT_CRITERIA_DGNL_SUCCESS";
+export const EDIT_CRITERIA_DGNL_FAILED = "EDIT_CRITERIA_DGNL_FAILED";
+
+export const DELETE_CRITERIA_DGNL = "DELETE_CRITERIA_DGNL";
+export const DELETE_CRITERIA_DGNL_SUCCESS = "DELETE_CRITERIA_DGNL_SUCCESS";
+export const DELETE_CRITERIA_DGNL_FAILED = "DELETE_CRITERIA_DGNL_FAILED";
+
 export function getCriteriaCourse(params, callback) {
     return {
         type: GET_CRITERIA_COURSE,
@@ -263,6 +284,48 @@ export function editCriteriaOnline(params, callback) {
 export function deleteCriteriaOnline(params, callback) {
     return {
         type: DELETE_CRITERIA_ONLINE,
+        params,
+        callback,
+    };
+}
+
+
+////////////////////////////////////////////////
+export function getCriteriaDGNL(params, callback) {
+    return {
+        type: GET_CRITERIA_DGNL,
+        params,
+        callback,
+    };
+}
+
+export function getCriteriasDGNL(params, callback) {
+    return {
+        type: GET_CRITERIAS_DGNL,
+        params,
+        callback,
+    };
+}
+
+export function createCriteriaDGNL(params, callback) {
+    return {
+        type: CREATE_CRITERIA_DGNL,
+        params,
+        callback,
+    };
+}
+
+export function editCriteriaDGNL(params, callback) {
+    return {
+        type: EDIT_CRITERIA_DGNL,
+        params,
+        callback,
+    };
+}
+
+export function deleteCriteriaDGNL(params, callback) {
+    return {
+        type: DELETE_CRITERIA_DGNL,
         params,
         callback,
     };

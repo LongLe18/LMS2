@@ -422,6 +422,100 @@ function* deleteCriteaOnline(payload) {
     }
 }
 
+/////////////////////////////////////////////////////////////////////////////
+function* fetchCriteriasDGNL(payload) {
+    try {
+        let khoa_hoc_id = '';
+        if (payload.params?.khoa_hoc_id !== undefined) {
+            khoa_hoc_id = payload.params?.khoa_hoc_id;
+        }
+        let endpoint = `${config.API_URL}/dgnl-criteria/all_admin?khoa_hoc_id=${khoa_hoc_id}&pageIndex=${payload.params?.pageIndex}&pageSize=${payload.params?.pageSize}`;
+        const response = yield call(getApiAuth, endpoint);
+        const result = yield response.data;
+        yield put({ type: actions.criteria.GET_CRITERIAS_DGNL_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.criteria.GET_CRITERIAS_DGNL_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        notification.error({
+            message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
+        });
+    }
+}
+
+function* fetchCriteriaDGNL(payload) {
+    try {
+        let endpoint = `${config.API_URL}/dgnl-criteria/${payload.params.id}`;
+        const response = yield call(getApiAuth, endpoint);
+        const result = yield response.data;
+        yield put({ type: actions.criteria.GET_CRITERIA_DGNL_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.criteria.GET_CRITERIA_DGNL_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        notification.error({
+            message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
+        });
+    }
+}
+
+function* createCriteriaDGNL(payload) {
+    try {
+        let endpoint = config.API_URL + '/dgnl-criteria/create';
+        const response = yield call(postApiAuth, endpoint, payload.params); 
+        const result = yield response;
+        yield put({ type: actions.criteria.CREATE_CRITERIA_DGNL_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.criteria.CREATE_CRITERIA_DGNL_FAILED, error: error });
+        if (payload.callback) {
+            payload.callback(error);
+        }
+    }
+}
+
+function* editCriteriaDGNL(payload) {
+    try {
+        let endpoint = config.API_URL + `/dgnl-criteria/${payload.params.id}`;
+        const response = yield call(putApiAuth, endpoint, payload.params.formData); 
+        const result = yield response;
+        yield put({ type: actions.criteria.EDIT_CRITERIA_DGNL_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.criteria.EDIT_CRITERIA_DGNL_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        notification.error({
+            message: get(error, 'response.data.error', 'Cập nhật thông tin tiêu chí thất bại ' + messageError),
+        });
+    }
+}
+
+function* deleteCriteaDGNL(payload) {
+    try {
+        let endpoint = config.API_URL + `/dgnl-criteria/${payload.params.id}/force`;
+        const response = yield call(deleteApiAuth, endpoint); 
+        const result = yield response;
+        yield put({ type: actions.criteria.DELETE_CRITERIA_DGNL_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.criteria.DELETE_CRITERIA_DGNL_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        notification.error({
+            message: get(error, 'response.data.error', 'Xóa tiêu chí thất bại ' + messageError),
+        });
+    }
+}
+
 export function* loadCriteriasCourse() {
     yield takeEvery(actions.criteria.GET_CRITERIAS_COURSE, fetchCriteriasCourse);
 }
@@ -511,4 +605,26 @@ export function* loadEditCriteriaOnline() {
 
 export function* loadDeleteCriteriaOnline() {
     yield takeEvery(actions.criteria.DELETE_CRITERIA_ONLINE, deleteCriteaOnline);
+}
+
+
+///////////////////////////////////
+export function* loadCriteriasDGNL() {
+    yield takeEvery(actions.criteria.GET_CRITERIAS_DGNL, fetchCriteriasDGNL);
+}
+
+export function* loadCriteriaDGNL() {
+    yield takeEvery(actions.criteria.GET_CRITERIA_DGNL, fetchCriteriaDGNL);
+}
+
+export function* loadAddCriteriaDGNL() {
+    yield takeEvery(actions.criteria.CREATE_CRITERIA_DGNL, createCriteriaDGNL);
+}
+
+export function* loadEditCriteriaDGNL() {
+    yield takeEvery(actions.criteria.EDIT_CRITERIA_DGNL, editCriteriaDGNL);
+}
+
+export function* loadDeleteCriteriaDGNL() {
+    yield takeEvery(actions.criteria.DELETE_CRITERIA_DGNL, deleteCriteaDGNL);
 }

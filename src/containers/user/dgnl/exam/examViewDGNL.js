@@ -8,10 +8,10 @@ import config from '../../../../configs/index';
 
 // component
 import { Layout, Row, Col, Carousel, Table, Steps, Radio, 
-    Checkbox, Button, notification, Spin, Menu, Avatar } from 'antd';
+    Checkbox, Button, notification, Spin, Menu } from 'antd';
 import Statisic from "components/parts/statisic/Statisic";
 import CarouselCustom from 'components/parts/Carousel/Carousel';
-import { BookOutlined, BarsOutlined, QuestionCircleOutlined, ClockCircleOutlined } from '@ant-design/icons';
+import { BookOutlined, BarsOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import SideBarComponent from "../mainpractice/sidebar/SideBar";
 
 // redux
@@ -171,7 +171,7 @@ const ExamViewDGNL = (props) => {
                             {course.status === 'success' &&
                                 <>
                                     <div className="header-exam">
-                                        <h1 style={{color: '#000'}}>THI THỬ ĐÁNH GIÁ NĂNG LỰC ĐẠI HỌC QUỐC GIA {course.data.ten_khoa_hoc}</h1>
+                                        <h1 style={{color: 'rgba(229, 100, 19, 0.92)'}}>GIỚI THIỆU BÀI THI THỬ TRẢI NGHIỆM KỲ THI ĐÁNH GIÁ NĂNG LỰC (HSA)</h1>
                                     </div>
                                     <div>
                                         <h5 className="text-black" style={{fontWeight: 500}}>MỤC ĐÍCH BÀI THI TRẢI NGHIỆM</h5>
@@ -235,17 +235,17 @@ const ExamViewDGNL = (props) => {
         return (
             <Spin spinning={spinning}  tip="Đang xử lý tạo đề thi. Quá trình này sẽ mất thời gian, bạn xin vui lòng chờ">
                 <div className="form-exam" style={{fontSize: 20, display: 'flex', alignItems: 'center'}}>
-                    <div className="title-main" style={{display: 'flex', alignItems: 'center', marginBottom: 12}}>
+                    <div className="title-main" style={{display: 'flex', alignItems: 'center', marginBottom: 12, width: '90%'}}>
                         <img alt="hsa" src={require('assets/img/logo/logo-hsa.png').default} style={{width: '15%'}}/>
-                        <span className="textCenter" style={{textTransform: 'uppercase', color: 'rgb(255, 48, 7)', fontSize: 34}}>Chào mừng bạn tham gia kỳ thi ĐGNL ĐHQGHN (HSA)</span>
+                        <span className="textCenter" style={{textTransform: 'uppercase', color: 'rgb(255, 48, 7)', fontSize: 34}}>Chào mừng bạn tham gia kỳ thi thử ĐGNL ĐHQGHN (HSA)</span>
                         <img alt="hsa" src={require('assets/img/logo/logo-hsa.png').default} style={{width: '15%'}}/>
                     </div>
 
-                    <div style={{width: '80%', padding: 12, border: 'rgb(45, 116, 219) solid 2px', borderRadius: 6, boxShadow: '0 0 15px rgba(0, 0, 0, 0.1)'}}>
+                    <div style={{width: '90%', padding: 12, border: 'rgb(45, 116, 219) solid 2px', borderRadius: 6, boxShadow: '0 0 15px rgba(0, 0, 0, 0.1)'}}>
                         <div style={{display: 'flex', justifyContent: 'center'}}>
                             <div className="description-title">
                                 <span className="textCenter" style={{marginRight: 12}}><QuestionCircleOutlined /> Bài thi gồm 150 câu</span>
-                                <span><ClockCircleOutlined /> 195 phút</span>
+                                {/* <span><ClockCircleOutlined /> 195 phút</span> */}
                             </div>
                         </div>
                         <h6 style={{margin: '24px 0px 12px 0px', color: 'rgb(24, 98, 24)', fontWeight: 700, fontSize: 26}}>Cấu trúc bài thi</h6>
@@ -255,13 +255,13 @@ const ExamViewDGNL = (props) => {
                             direction="vertical"
                             items={[
                                 {
-                                    title: 'Phần 1: Tư duy định lượng (Toán học và xử lý số liệu) - 75 phút',
+                                    title: 'Phần 1: Tư duy định lượng (Toán học và xử lý số liệu)',
                                 },
                                 {
-                                    title: 'Phần 2: Tư duy định tính (Văn học - Ngôn ngữ) - 60 phút',
+                                    title: 'Phần 2: Tư duy định tính (Văn học - Ngôn ngữ)',
                                 },
                                 {
-                                    title: type === 5 ? 'Phần 3: Tiếng Anh - 60 phút' : 'Phần 3: Khoa học - 60 phút',
+                                    title: type === 5 ? 'Phần 3: Tiếng Anh' : 'Phần 3: Khoa học',
                                 },
                             ]}
                         />
@@ -321,12 +321,12 @@ const ExamViewDGNL = (props) => {
         return (
             <div className="wraper wraper-list-course-cate-index">
                 <Row className="logo" align={'middle'} style={{marginTop: 12}}>
-                    <Col xs={{ span: 24 }} lg={{ span: 4 }}>
+                    {/* <Col xs={{ span: 24 }} lg={{ span: 4 }}>
                         <div className="logo">
                             <Avatar shape="square" size={130} src={require('assets/img/logo/vnu-cet-logo.png').default} />
                         </div>
-                    </Col>
-                    <Col xs={{ span: 22, offset: 1 }} lg={{ span: 16, }} style={{textAlign: 'center'}}>
+                    </Col> */}
+                    <Col xs={{ span: 24 }} lg={{ span: 24, }} style={{textAlign: 'center'}}>
                         <h4 style={{color: "red", fontWeight: 500, fontSize: 30}}>Chào mừng bạn tham gia kỳ thi thử ĐGNL ĐHQGHN (HSA)</h4>
                         <h4 style={{fontWeight: 500}}>Kỳ thi đánh giá năng lực học sinh THPT</h4>
                     </Col>
@@ -400,7 +400,9 @@ const ExamViewDGNL = (props) => {
                                             }
                                         }
                                     )
-                                    .catch(error => notification.error({ message: error.response.data.message }));
+                                    .catch(error => {
+                                        notification.error({ message: error.response.data.message ? 'error.response.data.message' : 'Tạo đề thi thất bại' })
+                                    });
                             }}
                         >
                             Đồng ý

@@ -5,11 +5,11 @@ const CarouselCustom = () => {
 
   return (
     <Carousel autoplay style={{marginBottom: 12, height: '100%'}}>
-      <div>
+      {/* <div>
         <img src={require('assets/img/banner1.png').default} alt='banner1' style={{borderRadius: 8}}/>
-      </div>
+      </div> */}
       <div>
-        <img src={require('assets/img/banner2.png').default} alt='banner1' style={{borderRadius: 8}}/>
+        <img src={require('assets/img/banner3.jpg').default} alt='banner1' style={{borderRadius: 8}}/>
       </div>
     </Carousel>
   );

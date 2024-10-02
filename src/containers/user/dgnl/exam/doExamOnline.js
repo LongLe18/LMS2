@@ -1094,6 +1094,31 @@ const ExamOnlineDetail = () => {
         return `${day}-${month}-${year}`;
     };
 
+    // tải nhận xét cho phần thi ĐGNL
+    const exportEvaluationDGNL = async (dthv_id) => {
+        try {
+            const response = await axios({
+                url: `${config.API_URL}/evaluate-dgnl/${dthv_id}/export-report`, 
+                method: 'GET',
+                responseType: 'blob', 
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('userToken')}`,
+                }
+            });
+
+            // Create a URL for the file
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `danhgia.pdf`); // Replace with your file name and extension
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode.removeChild(link);
+        } catch (error) {
+            console.error('Download error:', error);
+        }
+    };
+
     const renderExam = () => {
         if (!userToken) return <NoRecord subTitle="Bạn cần đăng nhập để làm bài thi." status="403" />;
         if (error) return <NoRecord subTitle="Không tìm thấy đề thi." />;
@@ -1203,9 +1228,10 @@ const ExamOnlineDetail = () => {
                                                 <Col xs={{ span: 22, offset: 1 }} lg={{ span: 16 }}>
                                                     {Array.from({ length: exam.data.so_phan }).map((_, index) => {
                                                         return (
-                                                            <div className={`section-${index} detail-title-section`} style={{margin: '12px 0px'}}>Phần {index + 1}: {index === 0 ? `Tư duy định lượng (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)` 
-                                                                : index === 1 ? `Tư duy định tính (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)`
-                                                                : `Khoa học (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)`}</div>
+                                                            // , ${exam.data[`thoi_gian_phan_${index + 1}`]} phút
+                                                            <div className={`section-${index} detail-title-section`} style={{margin: '12px 0px'}}>Phần {index + 1}: {index === 0 ? `Tư duy định lượng (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu)` 
+                                                                : index === 1 ? `Tư duy định tính (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu)`
+                                                                : `Khoa học (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu)`}</div>
                                                         )
                                                     })}
                                                     <div className={"section-sum detail-title-section"} style={{margin: '12px 0px'}}>Tổng điểm</div>
@@ -1245,11 +1271,19 @@ const ExamOnlineDetail = () => {
                                             </Row>
                                             <div style={{fontSize: 22, textAlign: 'center', marginBottom: 12}}>Click vào đây để 
                                                 <Button type="text" onClick={() => setIsDetail(true)}
-                                                    style={{fontSize: 22, color: '#2e66ad'}}
+                                                    style={{fontSize: 22, color: 'red'}}
                                                 >
                                                     XEM CHI TIẾT
                                                 </Button> 
                                                 đáp án và lời giải
+                                            </div>
+                                            <div style={{fontSize: 22, textAlign: 'center', marginBottom: 12}}>Click
+                                                <Button type="text" onClick={() => exportEvaluationDGNL()}
+                                                    style={{fontSize: 22, color: 'red'}}
+                                                >
+                                                    VÀO ĐÂY
+                                                </Button> 
+                                                để xem thông tin nhận xét, đánh giá chung
                                             </div>
                                         </>
                                     :
