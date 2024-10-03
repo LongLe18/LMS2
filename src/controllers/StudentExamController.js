@@ -229,8 +229,6 @@ const postCreatev2 = async (req, res) => {
             thoi_gian_phan_2: 60,
             so_cau_hoi_phan_3: 50,
             thoi_gian_phan_3: 60,
-            so_cau_hoi_phan_4: 50,
-            thoi_gian_phan_4: 60,
         });
 
         criteria = await DGNLCriteria.findOne({
