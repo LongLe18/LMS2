@@ -59,7 +59,7 @@ const getById = async (req, res) => {
             attributes: ['khoa_hoc_id', 'ten_khoa_hoc'],
         },
         where: {
-            danh_gia_dgnl_id: req.params.id
+            danh_gia_dgnl_id: req.params.id,
         },
     });
 
@@ -138,7 +138,7 @@ const download = async (req, res) => {
             include: [
                 {
                     model: Exam,
-                    attributes: ['ten_de_thi', 'khoa_hoc_id'],
+                    attributes: ['khoa_hoc_id'],
                 },
             ],
             where: {
@@ -259,6 +259,42 @@ const download = async (req, res) => {
         let evaluate_1 = await DGNLEvaluate.findOne({
             where: {
                 khoa_hoc_id: studentExam.khoa_hoc_id,
+                phan_thi: 1,
+                cau_bat_dau: {
+                    [Op.lte]: phan_1,
+                },
+                cau_ket_thuc: {
+                    [Op.gte]: phan_1,
+                },
+            },
+        });
+        let evaluate_2 = await DGNLEvaluate.findOne({
+            where: {
+                khoa_hoc_id: studentExam.khoa_hoc_id,
+                phan_thi: 2,
+                cau_bat_dau: {
+                    [Op.lte]: phan_2,
+                },
+                cau_ket_thuc: {
+                    [Op.gte]: phan_2,
+                },
+            },
+        });
+        let evaluate_3 = await DGNLEvaluate.findOne({
+            where: {
+                khoa_hoc_id: studentExam.khoa_hoc_id,
+                phan_thi: 3,
+                cau_bat_dau: {
+                    [Op.lte]: phan_3,
+                },
+                cau_ket_thuc: {
+                    [Op.gte]: phan_3,
+                },
+            },
+        });
+        let evaluate_31 = await DGNLEvaluate.findOne({
+            where: {
+                khoa_hoc_id: studentExam.khoa_hoc_id,
                 phan_thi: 31,
                 cau_bat_dau: {
                     [Op.lte]: tong_diem,
@@ -268,7 +304,7 @@ const download = async (req, res) => {
                 },
             },
         });
-        let evaluate_2 = await DGNLEvaluate.findOne({
+        let evaluate_32 = await DGNLEvaluate.findOne({
             where: {
                 khoa_hoc_id: studentExam.khoa_hoc_id,
                 phan_thi: 32,
@@ -294,13 +330,23 @@ const download = async (req, res) => {
         });
 
         doc.render({
-            ten_de_thi: studentExam?.de_thi?.ten_de_thi,
             phan_1: phan_1,
             phan_2: phan_2,
             phan_3: phan_3,
-            xep_loai_chung: '',
+            diem_tong_hop: tong_diem,
             nhan_xet_1: evaluate_1 ? evaluate_1.danh_gia : '',
             nhan_xet_2: evaluate_2 ? evaluate_2.danh_gia : '',
+            nhan_xet_3: evaluate_3 ? evaluate_3.danh_gia : '',
+            nhan_xet_31: evaluate_31 ? evaluate_31.danh_gia : '',
+            nhan_xet_32: evaluate_32 ? evaluate_32.danh_gia : '',
+            xep_loai_chung:
+                tong_diem >= 0 && tong_diem < 50
+                    ? 'TRUNG BÌNH'
+                    : tong_diem >= 50 && tong_diem < 90
+                    ? 'KHÁ'
+                    : tong_diem >= 90 && tong_diem < 120
+                    ? 'GIỎI'
+                    : 'XUẤT SẮC',
         });
 
         const buf = doc.getZip().generate({

@@ -219,9 +219,24 @@ const postCreatev2 = async (req, res) => {
         },
     });
     if (!criteria) {
-        return res.status(404).send({
-            status: 'error',
-            message: 'Chưa tồn tại tiêu chí đề thi',
+        await DGNLCriteria.create({
+            khoa_hoc_id: khoa_hoc_id,
+            so_cau_hoi: 150,
+            thoi_gian: 195,
+            so_cau_hoi_phan_1: 50,
+            thoi_gian_phan_1: 75,
+            so_cau_hoi_phan_2: 50,
+            thoi_gian_phan_2: 60,
+            so_cau_hoi_phan_3: 50,
+            thoi_gian_phan_3: 60,
+            so_cau_hoi_phan_4: 50,
+            thoi_gian_phan_4: 60,
+        });
+
+        criteria = await DGNLCriteria.findOne({
+            where: {
+                khoa_hoc_id: khoa_hoc_id,
+            },
         });
     }
 
