@@ -801,7 +801,7 @@ const postCreate = async (req, res) => {
         });
         if (!criteria) {
             await DGNLCriteria.create({
-                khoa_hoc_id: exam.khoa_hoc_id,
+                khoa_hoc_id: req.body.khoa_hoc_id,
                 so_cau_hoi: 150,
                 thoi_gian: 195,
                 so_cau_hoi_phan_1: 50,
