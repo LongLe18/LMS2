@@ -318,7 +318,7 @@ const download = async (req, res) => {
         });
 
         const content = fs.readFileSync(
-            path.resolve(process.cwd(), 'public/templates/form_export.docx'),
+            path.resolve(process.cwd(), 'public/templates/form_export_dgnl.docx'),
             'binary'
         );
 
