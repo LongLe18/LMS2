@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Helmet } from 'react-helmet';
 import { useParams, useHistory, Link } from 'react-router-dom';
+import moment from 'moment';
 import axios from 'axios';
 import Hashids from "hashids";
 // import './css/examConfirm.css';
@@ -8,10 +9,10 @@ import config from '../../../../configs/index';
 
 // component
 import { Layout, Row, Col, Carousel, Table, Steps, Radio, 
-    Checkbox, Button, notification, Spin, Menu } from 'antd';
+    Checkbox, Button, notification, Spin, Menu, Modal } from 'antd';
 import Statisic from "components/parts/statisic/Statisic";
 import CarouselCustom from 'components/parts/Carousel/Carousel';
-import { BookOutlined, BarsOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { BookOutlined, BarsOutlined, QuestionCircleOutlined, ClockCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import SideBarComponent from "../mainpractice/sidebar/SideBar";
 
 // redux
@@ -30,6 +31,7 @@ const ExamViewDGNL = (props) => {
 
     const [type, setType] = useState(1);
     const [subjects, setSubjects] = useState([]);
+    const [criteria, setCriteria] = useState();
     const [spinning, setSpinning] = useState(false);
     // isJoinExam: 0 - chưa tham gia, 1 - tham gia thi, 2 - đã chọn môn thi
     const [isJoinExam, setIsJoinExam] = useState(0);
@@ -111,6 +113,74 @@ const ExamViewDGNL = (props) => {
                 });
             }
             items.push(getItem(item.ten_khung_ct, <BookOutlined />, item.kct_id, children, 'item'));
+        });
+    }
+
+    // lấy tiêu chí đề thi ĐGNL
+    const getCriteriaDGNL = () => {
+        axios({
+            method: 'get', 
+            url: config.API_URL + `/dgnl-criteria/by_course/${hashids.decode(idCourse)}`, 
+            timeout: 1000 * 60 * 5,
+            headers: {Authorization: `Bearer ${localStorage.getItem('userToken')}`,}
+        })
+        .then(
+            res => {
+                if (res.statusText === 'OK' && res.status === 200) {
+                    setCriteria(res.data.data)
+                } else {
+                    notification.error({
+                        message: 'Thông báo',
+                        description: 'Lấy dữ liệu tiêu chí đề thi thất bại',
+                    })
+                }
+            }
+        )
+        .catch(error => {
+            notification.error({ message: error.response.data.message ? 'error.response.data.message' : 'Lấy dữ liệu tiêu chí đề thi thất bại' })
+        });
+    }
+
+    // kiểm tra xem học viên đang có đề thi chưa hoàn thành hay không
+    const isFinisedExam = () => {
+        axios({
+            method: 'get', 
+            url: config.API_URL + `/student_exam/by-exam-dgnl?de_mau_id=1631`, 
+            timeout: 1000 * 60 * 5,
+            headers: {Authorization: `Bearer ${localStorage.getItem('userToken')}`,}
+        })
+        .then(
+            res => {
+                if (res.statusText === 'OK' && res.status === 200) {
+                    // Nếu Học viên còn đề thi chưa hoàn thành
+                    if (res.data.data) {
+                        // Hiển thị modal thông báo
+                        Modal.confirm({
+                            icon: <ExclamationCircleOutlined />,
+                            content: 'Bạn đang có đề thi chưa hoàn thành. Bạn có muốn tiếp tục thi không?',
+                            okText: 'Đồng ý',
+                            cancelText: 'Hủy',
+                            onOk() {
+                                history.push(`/luyen-tap/lam-kiem-tra-online/${res.data?.data?.de_thi_id}/${moment().toNow()}/${res.data?.data?.dthv_id}/${hashids.decode(idCourse)}`)
+                            },
+                        });
+                    } else {
+                        setIsJoinExam(1);
+                        getCriteriaDGNL();
+                    }
+                } else {
+                    notification.error({
+                        message: 'Thông báo',
+                        description: 'Lấy dữ liệu thất bại',
+                    })
+                }
+            }
+        )
+        .catch(error => {
+            notification.error({
+                message: 'Thông báo',
+                description: 'Lấy dữ liệu thất bại',
+            })
         });
     }
 
@@ -206,7 +276,10 @@ const ExamViewDGNL = (props) => {
                                     </div>
                                     <div style={{textAlign: 'center', marginTop: 12, height: 50}}>
                                         <Button type="primary" size="large" className="join-exam-button" 
-                                            onClick={() => setIsJoinExam(1)}
+                                            onClick={() => {
+                                                // check Học viên có đề thi chưa hoàn thành không
+                                                isFinisedExam();
+                                            }}
                                             style={{borderRadius: 8, backgroundColor: 'rgb(229 100 19 / 92%)', borderColor: 'rgb(229 100 19 / 92%)', width: '20%'}}
                                         >
                                             Tham gia thi
@@ -217,7 +290,10 @@ const ExamViewDGNL = (props) => {
                         </Col>
                         <Col xl={5} style={{padding: "0", textAlign: 'center'}}>
                             <Button type="primary" size="large" className="join-exam-button" 
-                                onClick={() => setIsJoinExam(1)}
+                                onClick={() => {
+                                    // check Học viên có đề thi chưa hoàn thành không
+                                    isFinisedExam();
+                                }}
                                 style={{borderRadius: 8, backgroundColor: 'rgb(229 100 19 / 92%)', borderColor: 'rgb(229 100 19 / 92%)', marginBottom: 12, width: '80%', fontWeight: 700}}
                             >
                                 Tham gia thi thử ngay
@@ -244,8 +320,8 @@ const ExamViewDGNL = (props) => {
                     <div style={{width: '90%', padding: 12, border: 'rgb(45, 116, 219) solid 2px', borderRadius: 6, boxShadow: '0 0 15px rgba(0, 0, 0, 0.1)'}}>
                         <div style={{display: 'flex', justifyContent: 'center'}}>
                             <div className="description-title">
-                                <span className="textCenter" style={{marginRight: 12}}><QuestionCircleOutlined /> Bài thi gồm 150 câu</span>
-                                {/* <span><ClockCircleOutlined /> 195 phút</span> */}
+                                <span className="textCenter" style={{marginRight: 12}}><QuestionCircleOutlined /> Bài thi gồm {criteria?.so_cau_hoi} câu</span>
+                                <span><ClockCircleOutlined /> {criteria?.thoi_gian} phút</span>
                             </div>
                         </div>
                         <h6 style={{margin: '24px 0px 12px 0px', color: 'rgb(24, 98, 24)', fontWeight: 700, fontSize: 26}}>Cấu trúc bài thi</h6>
@@ -386,23 +462,23 @@ const ExamViewDGNL = (props) => {
                                     data,
                                     headers: {Authorization: `Bearer ${localStorage.getItem('userToken')}`,}
                                 })
-                                    .then(
-                                        res => {
-                                            if (res.statusText === 'OK' && res.status === 200) {
-                                                setSpinning(false);
-                                                // điều hướng vào bài thi
-                                                history.push(`/luyen-tap/xem/${hashids.encode(res.data.data.de_thi_id)}/${idCourse}`);
-                                            } else {
-                                                notification.error({
-                                                    message: 'Thông báo',
-                                                    description: 'Tạo đề thi thất bại. Bạn xin vui lòng thử lại sau ít phút...',
-                                                })
-                                            }
+                                .then(
+                                    res => {
+                                        if (res.statusText === 'OK' && res.status === 200) {
+                                            setSpinning(false);
+                                            // điều hướng vào bài thi
+                                            history.push(`/luyen-tap/xem/${hashids.encode(res.data.data.de_thi_id)}/${idCourse}`);
+                                        } else {
+                                            notification.error({
+                                                message: 'Thông báo',
+                                                description: 'Tạo đề thi thất bại. Bạn xin vui lòng thử lại sau ít phút...',
+                                            })
                                         }
-                                    )
-                                    .catch(error => {
-                                        notification.error({ message: error.response.data.message ? 'error.response.data.message' : 'Tạo đề thi thất bại' })
-                                    });
+                                    }
+                                )
+                                .catch(error => {
+                                    notification.error({ message: error.response.data.message ? 'error.response.data.message' : 'Tạo đề thi thất bại' })
+                                });
                             }}
                         >
                             Đồng ý

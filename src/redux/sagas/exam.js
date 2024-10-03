@@ -386,6 +386,24 @@ function* editExamUser(payload) {
     }
 }
 
+function* editExamDGNLUser(payload) {
+    try {
+        let endpoint = config.API_URL + `/student_exam/${payload.params.idExam}/dgnl`;
+        const response = yield call(putApiAuth, endpoint, payload.params.formData); 
+        const result = yield response;
+        yield put({ type: actions.exam.EDIT_EXAM_DGNL_USER_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.exam.EDIT_EXAM_DGNL_USER_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        notification.error({
+            message: get(error, 'response.data.error', 'Cập nhật thông tin đề thi học viên thất bại ' + messageError),
+        });
+    }
+}
+
 function* deleteExamUser(payload) {
     try {
         let endpoint = config.API_URL + `/student_exam/${payload.params.idExam}/force`;
@@ -487,6 +505,10 @@ export function* loadCreateExamUser() {
 
 export function* loadEditExamUser() {
     yield takeEvery(actions.exam.EDIT_EXAM_USER, editExamUser);
+}
+
+export function* loadEditExamDGNLUser() {
+    yield takeEvery(actions.exam.EDIT_EXAM_DGNL_USER, editExamDGNLUser);
 }
 
 export function* loadDeleteExamUser() {

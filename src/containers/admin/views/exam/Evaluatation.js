@@ -325,7 +325,7 @@ const EvaluationPage = () => {
                                 <Col xl={24} sm={24} xs={24} className="left-content">
                                     <Form.Item
                                         className="input-col"
-                                        label="Phần thi"
+                                        label="Phần đánh giá"
                                         name="phan_thi"
                                         rules={[
                                             {
@@ -334,7 +334,7 @@ const EvaluationPage = () => {
                                             },
                                         ]}
                                     >
-                                        <InputNumber placeholder="Nhập phần thi" style={{width: "100%"}}/>
+                                        <InputNumber placeholder="Nhập phần đánh giá" style={{width: "100%"}}/>
                                     </Form.Item>
                                     <Form.Item
                                         className="input-col"

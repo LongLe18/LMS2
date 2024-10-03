@@ -418,6 +418,22 @@ export default function examReducer(state = initState, action) {
                 ...state,
                 examUser: { ...state.examUser, loading: false, error: action.error },
             };
+        /////////////////
+        case examActions.EDIT_EXAM_DGNL_USER:
+            return {
+                ...state,
+                examUser: { ...state.examUser, loading: true },
+            };
+        case examActions.EDIT_EXAM_DGNL_USER_SUCCESS:
+            return {
+                ...state,
+                examUser: { ...state.examUser, loading: false, result: action.result },
+            };
+        case examActions.EDIT_EXAM_DGNL_USER_FAILED:
+            return {
+                ...state,
+                examUser: { ...state.examUser, loading: false, error: action.error },
+            };
         default:
             return state;
     }

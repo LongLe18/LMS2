@@ -114,22 +114,40 @@ const ExamViewPage = (props) => {
     const userToken = localStorage.getItem('userToken');
 
     const goExam = () => {
-        const callback = (res) => {
-            if (res.status === 200 && res.statusText === 'OK') {
-                if (exam.data.loai_de_thi_id === 4) {
-                    history.push(`/luyen-tap/lam-kiem-tra-online/${params.idExam}/${moment().toNow()}/${res.data.data.dthv_id}/${params.idCourse}`)
-                } else {
-                    history.push(`/luyen-tap/lam-kiem-tra/${params.idExam}/${moment().toNow()}/${res.data.data.dthv_id}/${params.idCourse}`);    
-                }
-            }
-        };
-
         if (!userToken) {
             Modal.warning({
                 title: 'Thông báo',
                 content: 'Bạn cần đăng nhập để làm bài thi.',
             });
+            return;
+        } 
+        
+        if (course.data?.loai_kct === 0) { // Nếu là loại kct ĐGNL
+            const callback = (response) => {
+                if (response.status === 'success') {
+                    let info = {
+                        "thoi_diem_bat_dau": moment().toISOString(),
+                    }
+                    dispatch(examActions.editExamUser({ idExam: response.data[0].dthv_id, formData: info }, (res) => {
+                        if (exam.data.loai_de_thi_id === 4) {
+                            history.push(`/luyen-tap/lam-kiem-tra-online/${params.idExam}/${moment().toNow()}/${response.data[0].dthv_id}/${params.idCourse}`)
+                        } else {
+                            history.push(`/luyen-tap/lam-kiem-tra/${params.idExam}/${moment().toNow()}/${response.data[0].dthv_id}/${params.idCourse}`);    
+                        }
+                    }))
+                }
+            }
+            dispatch(examActions.getExamsUser({ idExam: hashids.decode(params.idExam), idModule: '', type: typeExam }, callback));
         } else {
+            const callback = (res) => {
+                if (res.status === 200 && res.statusText === 'OK') {
+                    if (exam.data.loai_de_thi_id === 4) {
+                        history.push(`/luyen-tap/lam-kiem-tra-online/${params.idExam}/${moment().toNow()}/${res.data.data.dthv_id}/${params.idCourse}`)
+                    } else {
+                        history.push(`/luyen-tap/lam-kiem-tra/${params.idExam}/${moment().toNow()}/${res.data.data.dthv_id}/${params.idCourse}`);    
+                    }
+                }
+            };
             const data = {
                 "thoi_diem_bat_dau": moment().toISOString(),
                 "de_thi_id": hashids.decode(params.idExam)
@@ -237,10 +255,10 @@ const ExamViewPage = (props) => {
                     <Col xs={{ span: 22, offset: 1 }} lg={{ span: 11, offset: 1 }} >
                         {Array.from({ length: exam.data.so_phan }).map((_, index) => {
                             return (
-                                // ${exam.data[`thoi_gian_phan_${index + 1}`]} phút
-                                <div className={`section-${index} detail-title-section`}>Phần {index + 1}: {index === 0 ? `Tư duy định lượng (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu)` 
-                                    : index === 1 ? `Tư duy định tính (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu)`
-                                    : `Khoa học (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu)`}</div>
+                                // 
+                                <div className={`section-${index} detail-title-section`}>Phần {index + 1}: {index === 0 ? `Tư duy định lượng (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)` 
+                                    : index === 1 ? `Tư duy định tính (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)`
+                                    : `Khoa học (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)`}</div>
                             )
                         })}
                     </Col>
@@ -309,7 +327,7 @@ const ExamViewPage = (props) => {
                             <div className="wraper list-news-bg">
                                 <Row gutter={[20]}>
                                     <Col xl={24} sm={24} xs={24} className="news-left">
-                                        {course.data.kct_id !== 1 ? renderDetail() : renderConfirmExam()}
+                                        {course.data.loai_kct !== 0 ? renderDetail() : renderConfirmExam()}
                                     </Col>
                                 </Row>
                             </div>

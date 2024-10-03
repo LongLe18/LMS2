@@ -185,7 +185,6 @@ const ExamOnlineDetail = () => {
                             setIsDoing(false);
                         }
                     }
-                    
                 }
             }
 
@@ -940,7 +939,8 @@ const ExamOnlineDetail = () => {
             "thoi_gian_lam_bai": countSection <= 0 ? secondsToMinutes(exam.data.thoi_gian * 60) : secondsToMinutes(timePassedInSecond),
             "thoi_diem_ket_thuc": moment().toISOString()
         }
-        dispatch(examActions.editExamUser({ idExam: params.idExamUser, formData: info }, callbackSub))
+        if (course?.data.loai_kct === 0) dispatch(examActions.editExamDGNLUser({ idExam: params.idExamUser, formData: info }, callbackSub))
+        else dispatch(examActions.editExamUser({ idExam: params.idExamUser, formData: info }, callbackSub))
     };
 
     const onChangeAnswerText = (value, question) => {
@@ -1127,10 +1127,12 @@ const ExamOnlineDetail = () => {
             <>  
                 <div className='section-question'>
                     <Row>
-                        <Col span={2}>
-                            <img src={require('assets/img/logo/logo-vnu.png').default} width={68}  style={{marginLeft: 12}} alt="logo-vnu"/>
+                        <Col span={4}>
+                            <img src={require('assets/img/logo/logo-vnu.png').default} width={82}  style={{marginLeft: 12}} alt="logo-vnu"/>
+                            <img src={require('assets/img/logo/Logo-DGNT.png').default} width={82}  style={{marginLeft: 12}} alt="logo-DGNT"/>
+                            <img src={require('assets/img/logo/Logo-vnuhcm.jpg').default} width={96}  style={{marginLeft: 12}} alt="logo-vnuhcm"/>
                         </Col>
-                        <Col span={22}>
+                        <Col span={19}>
                             <Row justify={'space-between'} style={{marginBottom: 12}}>
                                 
                                 <Col style={{fontSize: 24, color: 'rgb(255, 48, 7)'}}>{getCurrentDate()}</Col>
@@ -1174,6 +1176,9 @@ const ExamOnlineDetail = () => {
                                     } else return null;
                                 })}
                             </Row>
+                        </Col>
+                        <Col span={1}>
+                            <img src={require('assets/img/logo/logo-saoviet.jpg').default} width={68}  style={{marginLeft: 12}} alt="logo-saoviet"/>
                         </Col>
                     </Row>
                     {/* <Row className='list-questions' justify={'center'} style={{background: '#f0f0f0'}}>
@@ -1228,10 +1233,10 @@ const ExamOnlineDetail = () => {
                                                 <Col xs={{ span: 22, offset: 1 }} lg={{ span: 16 }}>
                                                     {Array.from({ length: exam.data.so_phan }).map((_, index) => {
                                                         return (
-                                                            // , ${exam.data[`thoi_gian_phan_${index + 1}`]} phút
-                                                            <div className={`section-${index} detail-title-section`} style={{margin: '12px 0px'}}>Phần {index + 1}: {index === 0 ? `Tư duy định lượng (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu)` 
-                                                                : index === 1 ? `Tư duy định tính (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu)`
-                                                                : `Khoa học (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu)`}</div>
+                                                            // 
+                                                            <div className={`section-${index} detail-title-section`} style={{margin: '12px 0px'}}>Phần {index + 1}: {index === 0 ? `Tư duy định lượng (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)` 
+                                                                : index === 1 ? `Tư duy định tính (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)`
+                                                                : `Khoa học (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)`}</div>
                                                         )
                                                     })}
                                                     <div className={"section-sum detail-title-section"} style={{margin: '12px 0px'}}>Tổng điểm</div>

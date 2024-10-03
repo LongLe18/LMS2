@@ -476,13 +476,6 @@ const Criteria = () => {
             fixed: 'left',
         },
         {
-            title: 'Số phần',
-            dataIndex: 'so_phan',
-            key: 'so_phan',
-            width: 150,
-            responsive: ['md'],
-        },
-        {
             title: 'Tổng số câu hỏi',
             dataIndex: 'so_cau_hoi',
             key: 'so_cau_hoi',
