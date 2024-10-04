@@ -223,6 +223,7 @@ const postCreatev2 = async (req, res) => {
             khoa_hoc_id: khoa_hoc_id,
             so_cau_hoi: 150,
             thoi_gian: 195,
+            so_phan: 4,
             so_cau_hoi_phan_1: 50,
             thoi_gian_phan_1: 75,
             so_cau_hoi_phan_2: 50,
@@ -247,7 +248,7 @@ const postCreatev2 = async (req, res) => {
         trang_thai: true,
         kct_id: 1,
         khoa_hoc_id,
-        loai_de_thi_id: 4,
+        loai_de_thi_id: 5,
         de_mau_id: sampleExam.de_thi_id,
     });
 

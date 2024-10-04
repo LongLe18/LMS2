@@ -12,6 +12,9 @@ const tieuchidethidgnl = sequelize.define(
         khoa_hoc_id: {
             type: DataTypes.INTEGER,
         },
+        so_phan: {
+            type: DataTypes.INTEGER,
+        },
         so_cau_hoi: {
             type: DataTypes.INTEGER,
         },

@@ -421,7 +421,6 @@ const getById = async (req, res) => {
             ],
         });
     } else {
-        // Nếu có dthv_id trong query, thêm điều kiện SelectedAnswer
         exam = await Exam.findOne({
             include: {
                 model: ExamQuestion,
@@ -477,21 +476,29 @@ const getById = async (req, res) => {
                     khoa_hoc_id: exam.khoa_hoc_id,
                 },
             });
+        } else if (exam.loai_de_thi_id == 5) {
+            criteria = await DGNLCriteria.findOne({
+                where: {
+                    khoa_hoc_id: exam.khoa_hoc_id,
+                },
+            });
         }
-        if (criteria && exam.loai_de_thi_id !== 4) {
-            exam.dataValues.so_cau_hoi = criteria.so_cau_hoi;
-            exam.dataValues.thoi_gian = criteria.thoi_gian;
-        } else if (criteria && exam.loai_de_thi_id === 4) {
-            exam.dataValues.so_cau_hoi = criteria.so_cau_hoi;
-            exam.dataValues.thoi_gian = criteria.thoi_gian;
-            exam.dataValues.so_phan = criteria.so_phan;
-            for (let i = 0; i < criteria.so_phan; i++) {
-                exam.dataValues[`so_cau_hoi_phan_${i + 1}`] =
-                    criteria[`so_cau_hoi_phan_${i + 1}`];
-                exam.dataValues[`yeu_cau_phan_${i + 1}`] =
-                    criteria[`yeu_cau_phan_${i + 1}`];
-                exam.dataValues[`thoi_gian_phan_${i + 1}`] =
-                    criteria[`thoi_gian_phan_${i + 1}`];
+        if (criteria) {
+            if (exam.loai_de_thi_id === 4 || exam.loai_de_thi_id === 5) {
+                exam.dataValues.so_cau_hoi = criteria.so_cau_hoi;
+                exam.dataValues.thoi_gian = criteria.thoi_gian;
+                exam.dataValues.so_phan = criteria.so_phan;
+                for (let i = 0; i < criteria.so_phan; i++) {
+                    exam.dataValues[`so_cau_hoi_phan_${i + 1}`] =
+                        criteria[`so_cau_hoi_phan_${i + 1}`];
+                    exam.dataValues[`yeu_cau_phan_${i + 1}`] =
+                        criteria[`yeu_cau_phan_${i + 1}`];
+                    exam.dataValues[`thoi_gian_phan_${i + 1}`] =
+                        criteria[`thoi_gian_phan_${i + 1}`];
+                }
+            } else {
+                exam.dataValues.so_cau_hoi = criteria.so_cau_hoi;
+                exam.dataValues.thoi_gian = criteria.thoi_gian;
             }
         } else {
             return res.status(404).send({
@@ -802,6 +809,7 @@ const postCreate = async (req, res) => {
         if (!criteria) {
             await DGNLCriteria.create({
                 khoa_hoc_id: req.body.khoa_hoc_id,
+                so_phan: 4,
                 so_cau_hoi: 150,
                 thoi_gian: 195,
                 so_cau_hoi_phan_1: 50,
