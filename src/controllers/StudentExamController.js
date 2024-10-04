@@ -386,7 +386,7 @@ const getByExamIdv2 = async (req, res) => {
             attributes: ['ten_de_thi', 'de_thi_id'],
         },
         where: {
-            '$de_thi.de_mau_id$': req.query.de_mau_id,
+            '$de_thi.khoa_hoc_id$': req.query.khoa_hoc_id,
             hoc_vien_id: req.userId,
             thoi_diem_ket_thuc: {
                 [Op.not]: null,
