@@ -388,9 +388,7 @@ const getByExamIdv2 = async (req, res) => {
         where: {
             '$de_thi.khoa_hoc_id$': req.query.khoa_hoc_id,
             hoc_vien_id: req.userId,
-            thoi_diem_ket_thuc: {
-                [Op.not]: null,
-            },
+            thoi_diem_ket_thuc: null,
         },
         order: [['ngay_tao', 'DESC']],
     });
