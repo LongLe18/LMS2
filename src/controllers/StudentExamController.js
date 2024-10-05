@@ -709,6 +709,8 @@ const putUpdatev3 = async (req, res) => {
     const studentExam = await StudentExam.update(
         {
             thoi_gian_lam_bai: req.body.thoi_gian_lam_bai,
+            phan_dang_lam: req.body.phan_dang_lam,
+            thoi_gian_lam_phan: req.body.thoi_gian_lam_phan,
         },
         {
             where: {
