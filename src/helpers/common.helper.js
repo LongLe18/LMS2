@@ -33,6 +33,7 @@ export const formatedDate = (dateVal) => {
     return moment(dateVal).isValid() ? moment(dateVal).format('DD-MM-YYYY') : '--';
 };
 
+// Hàm chuyển đổi số sang giờ
 export const secondsToMinutes = (time) => {
     let hours = Math.floor(time / 3600);
     hours = hours < 10 ? `0${hours}` : hours;
@@ -45,6 +46,13 @@ export const secondsToMinutes = (time) => {
   
     return hours + ':' + min + ':' + sec;
 };
+
+// chuyển đổi thời gian (hh:mm:ss) thành số
+export const timeToInt = (time) => {
+    let hours = time.split(':')[0];
+    let min = time.split(':')[1];
+    return (parseInt(hours) * 60) + (parseInt(min));
+}
 
 export const cutString = (str = '', length = 20) => {
     let cut = str.indexOf(' ', length);

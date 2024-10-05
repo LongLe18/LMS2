@@ -129,7 +129,7 @@ const ExamViewPage = (props) => {
                         "thoi_diem_bat_dau": moment().toISOString(),
                     }
                     dispatch(examActions.editExamUser({ idExam: response.data[0].dthv_id, formData: info }, (res) => {
-                        if (exam.data.loai_de_thi_id === 4) {
+                        if (exam.data.loai_de_thi_id === 4 || exam.data.loai_de_thi_id === 5) {
                             history.push(`/luyen-tap/lam-kiem-tra-online/${params.idExam}/${moment().toNow()}/${response.data[0].dthv_id}/${params.idCourse}`)
                         } else {
                             history.push(`/luyen-tap/lam-kiem-tra/${params.idExam}/${moment().toNow()}/${response.data[0].dthv_id}/${params.idCourse}`);    
@@ -141,7 +141,7 @@ const ExamViewPage = (props) => {
         } else {
             const callback = (res) => {
                 if (res.status === 200 && res.statusText === 'OK') {
-                    if (exam.data.loai_de_thi_id === 4) {
+                    if (exam.data.loai_de_thi_id === 4 || exam.data.loai_de_thi_id === 5) {
                         history.push(`/luyen-tap/lam-kiem-tra-online/${params.idExam}/${moment().toNow()}/${res.data.data.dthv_id}/${params.idCourse}`)
                     } else {
                         history.push(`/luyen-tap/lam-kiem-tra/${params.idExam}/${moment().toNow()}/${res.data.data.dthv_id}/${params.idCourse}`);    

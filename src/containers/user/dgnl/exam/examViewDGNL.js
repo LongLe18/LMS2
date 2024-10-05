@@ -145,7 +145,7 @@ const ExamViewDGNL = (props) => {
     const isFinisedExam = () => {
         axios({
             method: 'get', 
-            url: config.API_URL + `/student_exam/by-exam-dgnl?de_mau_id=1631`, 
+            url: config.API_URL + `/student_exam/by-exam-dgnl?khoa_hoc_id=${hashids.decode(idCourse)}`, 
             timeout: 1000 * 60 * 5,
             headers: {Authorization: `Bearer ${localStorage.getItem('userToken')}`,}
         })
@@ -161,7 +161,7 @@ const ExamViewDGNL = (props) => {
                             okText: 'Đồng ý',
                             cancelText: 'Hủy',
                             onOk() {
-                                history.push(`/luyen-tap/lam-kiem-tra-online/${res.data?.data?.de_thi_id}/${moment().toNow()}/${res.data?.data?.dthv_id}/${hashids.decode(idCourse)}`)
+                                history.push(`/luyen-tap/lam-kiem-tra-online/${hashids.encode(res.data?.data?.de_thi_id)}/${moment().toNow()}/${res.data?.data?.dthv_id}/${idCourse}`)
                             },
                         });
                     } else {

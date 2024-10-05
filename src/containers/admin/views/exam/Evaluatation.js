@@ -200,6 +200,36 @@ const EvaluationPage = () => {
         );
     };
 
+    // Phần đánh giá cho ĐGNL
+    const renderSectionEvaluation = () => {
+        const sections = [{
+            value: '1',
+            label: 'Phần 1',
+        }, {
+            value: '2',
+            label: 'Phần 2',
+        }, {
+            value: '3',
+            label: 'Phần 3',
+        }, {
+            value: '31',
+            label: 'Phần 3.1',
+        }, {
+            value: '32',
+            label: 'Phần 3.2',
+        }]
+        let options = sections.map((section) => (
+            <Option key={section.value} value={section.value} >{section.label}</Option>
+        ))
+        return (
+            <Select style={{width: '100%'}}
+                placeholder="Chọn phần đánh giá"
+            >
+                {options}
+            </Select>
+        );
+    };
+
     // modal content
     const renderModal = () => {
         if (state.activeTab === '0') {
@@ -334,12 +364,12 @@ const EvaluationPage = () => {
                                             },
                                         ]}
                                     >
-                                        <InputNumber placeholder="Nhập phần đánh giá" style={{width: "100%"}}/>
+                                        {renderSectionEvaluation()}
                                     </Form.Item>
                                     <Form.Item
                                         className="input-col"
                                         label="Điểm bắt đầu"
-                                        name="diem_tu"
+                                        name="cau_bat_dau"
                                         rules={[
                                             {
                                                 required: true,
@@ -354,7 +384,7 @@ const EvaluationPage = () => {
                                     <Form.Item
                                         className="input-col"
                                         label="Điểm kết thúc"
-                                        name="diem_den"
+                                        name="cau_ket_thuc"
                                         rules={[
                                             {
                                                 required: true,
@@ -362,7 +392,7 @@ const EvaluationPage = () => {
                                             },
                                             ({ getFieldValue }) => ({
                                                 validator(_, value) {
-                                                    if (!value || getFieldValue('diem_tu') <= value) {
+                                                    if (!value || getFieldValue('cau_bat_dau') <= value) {
                                                         return Promise.resolve();
                                                     }
                                                     return Promise.reject(new Error('Điểm kết thúc phải lớn hơn hoặc bằng điểm bắt đầu!'));
@@ -526,25 +556,25 @@ const EvaluationPage = () => {
             key: 'phan_thi',
             responsive: ['md'],
             render: (phan_thi) => (
-                phan_thi === 1 ? 'Phần 1' : 'Phần 2'
+                phan_thi === 1 ? 'Phần 1' : phan_thi === 2 ? 'Phần 2' : phan_thi === 3 ? 'Phần 3' : phan_thi === 31 ? 'Phần 3.1' : 'Phần 3.2'
             ),
         },
         {
             title: 'Điểm bắt đầu',
-            dataIndex: 'diem_tu',
-            key: 'diem_tu',
+            dataIndex: 'cau_bat_dau',
+            key: 'cau_bat_dau',
             responsive: ['md'],
         },
         {
             title: 'Điểm kết thúc',
-            dataIndex: 'diem_den',
-            key: 'diem_den',
+            dataIndex: 'cau_ket_thuc',
+            key: 'cau_ket_thuc',
             responsive: ['md'],
         },
         {
             title: 'Nội dung đánh giá',
-            dataIndex: 'noi_dung',
-            key: 'noi_dung',
+            dataIndex: 'danh_gia',
+            key: 'danh_gia',
             responsive: ['md'],
         },
         {

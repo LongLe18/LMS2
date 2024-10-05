@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import Hashids from 'hashids';
 import { Helmet } from 'react-helmet';
 import moment from 'moment';
-import { secondsToMinutes } from 'helpers/common.helper';
+import { secondsToMinutes, timeToInt } from 'helpers/common.helper';
 import './css/ExamDetail2.scss'
 import config from '../../../../configs/index';
 import defaultImage from 'assets/img/default.jpg';
@@ -45,6 +45,7 @@ const ExamOnlineDetail = () => {
     const dispatch = useDispatch();
 
     const timerId = useRef(null);
+    const timeCount = useRef(null);
     let timeOut = '';
     const [PauseModal, contextHolder] = Modal.useModal();
     const [pause, setPause] = useState(false);
@@ -54,6 +55,7 @@ const ExamOnlineDetail = () => {
     const [isDetail, setIsDetail] = useState(false);
     const [comment, setComment] = useState('');
     const [countSection, setCountSection] = useState(3600);
+    const [timeToDo, setTimeToDo] = useState(null); // Thời gian làm bài
     const [results, setResults] = useState([]);
     // eslint-disable-next-line no-unused-vars
     const [startTime, setStartTime] = useState(0);
@@ -116,15 +118,16 @@ const ExamOnlineDetail = () => {
         const callback = (res) => {
             const subCallBack = (subres) => {
                 ///// Xử lý trường hợp Khi đã nộp bài
-                // Nếu có thời gian làm bài => đã nộp bài
-                if (subres.data.thoi_gian_lam_bai !== null) {
+                // Nếu có thời gian kết thúc => đã nộp bài
+                if (subres.data.thoi_diem_ket_thuc !== null) {
                     clearInterval(timerId?.current);
                     setStartTime(0);
-                    setIsDoing(false);
+                    setIsDoing(false); // kết thúc thi
                 } else {
                     // Khi người dùng  chuyển phần tiếp theo mà cố tình refresh lại trang trong khi phần cũ vẫn còn thời gian làm => sẽ dẫn tới làm lại được phần cũ
                     if (sessionStorage.getItem('section') !== null && sessionStorage.getItem('timeStartSection') !== null) {
                         const remainingTimeExam = (Number(res.data[`thoi_gian_phan_${sessionStorage.getItem('section')}`]) * 60) - ((new Date().getTime() - sessionStorage.getItem('timeStartSection')) / 1000);
+                        // const remainingTimeExam = ((Number(res.data[`thoi_gian_phan_${sessionStorage.getItem('section')}`]) - Number(timeToInt(subres?.data?.thoi_gian_lam_bai))) * 60);
                         if (remainingTimeExam > 0) {
                             setState({...state, sectionExam: Number(sessionStorage.getItem('section'))}); // hiện tại thuộc phần nào của đề thi
                             setCountSection(Math.abs(remainingTimeExam));  // thời gian còn lại của phần thi là bao nhiêu
@@ -132,6 +135,13 @@ const ExamOnlineDetail = () => {
                             timerId.current = setInterval(() => {
                                 setCountSection((preCount) => preCount - 1);
                             }, 1000);
+
+                            // 1 phút cập nhật thời gian làm bài 1 lần
+                            if (subres?.data?.thoi_gian_lam_bai) setTimeToDo(timeToInt(subres?.data?.thoi_gian_lam_bai)); // là số phút
+                            timeCount.current = setInterval(() => {
+                                setTimeToDo((preValue) => preValue + 1); // Mỗi lần tăng lên 1 phút
+                            }, 60000)
+                            
                         } else {
                             let info = {};
                             if (subres.data.thoi_diem_ket_thuc === null) {
@@ -147,11 +157,12 @@ const ExamOnlineDetail = () => {
                             dispatch(examActions.editExamUser({ idExam: params.idExamUser, formData: info }))
                             clearInterval(timerId?.current);
                             setStartTime(0);
-                            setIsDoing(false);
+                            setIsDoing(false); // kết thúc thi
                         }
                     }
                     else {
-                        const remainingTimeExam = (Number(res.data.thoi_gian) * 60) - ((new Date().getTime() - new Date(subres.data.thoi_diem_bat_dau).getTime()) / 1000);
+                        // const remainingTimeExam = (Number(res.data.thoi_gian) * 60) - ((new Date().getTime() - new Date(subres.data.thoi_diem_bat_dau).getTime()) / 1000);
+                        const remainingTimeExam = ((Number(res.data.thoi_gian) - Number(timeToInt(subres?.data?.thoi_gian_lam_bai))) * 60);
                         if (remainingTimeExam > 0) { // Còn thời gian làm bài
                             let elapsedTime = (Number(res.data.thoi_gian) * 60) - remainingTimeExam;
                             for (let i = 0; i < res.data.so_phan; i++) {
@@ -163,7 +174,13 @@ const ExamOnlineDetail = () => {
                                     timerId.current = setInterval(() => {
                                         setCountSection((preCount) => preCount - 1);
                                     }, 1000);
-                                    break;
+
+                                    // 1 phút cập nhật thời gian làm bài 1 lần
+                                    if (subres?.data?.thoi_gian_lam_bai) setTimeToDo(timeToInt(subres?.data?.thoi_gian_lam_bai)); // là số phút
+                                    timeCount.current = setInterval(() => {
+                                        setTimeToDo((preValue) => preValue + 1); // Mỗi lần tăng lên 1 phút
+                                    }, 60000)
+                                    break;      
                                 }
                             }
                         }
@@ -182,7 +199,7 @@ const ExamOnlineDetail = () => {
                             dispatch(examActions.editExamUser({ idExam: params.idExamUser, formData: info }))
                             clearInterval(timerId?.current);
                             setStartTime(0);
-                            setIsDoing(false);
+                            setIsDoing(false); // kết thúc thi
                         }
                     }
                 }
@@ -192,7 +209,7 @@ const ExamOnlineDetail = () => {
                 dispatch(examActions.getExamUser({ id: params.idExamUser }, subCallBack)) // Gọi API để lấy thông tin (Thời gian bắt đầu, thời gian kết thúc)
             }
         }
-        // store value with text question
+        // remove value with text question
         localStorage.removeItem('answerText');
         localStorage.removeItem('question');
 
@@ -240,7 +257,8 @@ const ExamOnlineDetail = () => {
             ))
         }
     }, [textAnswer]); // eslint-disable-line react-hooks/exhaustive-deps
-    
+
+    // Hàm xử lý đếm ngược thời gian khi click "Phần tiếp theo"
     const countDown = () => {
         let secondsToGo = 30;
     
@@ -264,6 +282,16 @@ const ExamOnlineDetail = () => {
                 }, 1000);
                 setResults([]); 
                 window.scrollTo({ top: 0, behavior: "smooth" });
+                // thiết lập tiếp bộ đếm thời gian làm bài
+                dispatch(examActions.getExamUser({ id: params.idExamUser }, (res) => {
+                    if (res.status === 'success') {
+                        // 1 phút cập nhật thời gian làm bài 1 lần
+                        if (res?.data?.thoi_gian_lam_bai) setTimeToDo(timeToInt(res?.data?.thoi_gian_lam_bai)); // là số phút
+                        timeCount.current = setInterval(() => {
+                            setTimeToDo((preValue) => preValue + 1); // Mỗi lần tăng lên 1 phút
+                        }, 60000)
+                    }
+                }));
                 instance.destroy();
             }
         });
@@ -280,6 +308,16 @@ const ExamOnlineDetail = () => {
             instance.destroy();
         }, secondsToGo * 1000);
     };
+
+    // 1 phút cập nhật thời gian làm bài 1 lần
+    useEffect(() => {
+        if (timeToDo) {
+            let info = {
+                "thoi_gian_lam_bai": secondsToMinutes(timeToDo === 0 ? 60 : timeToDo * 60),
+            }
+            dispatch(examActions.editExamUser({ idExam: params.idExamUser, formData: info }))
+        }
+    }, [timeToDo]);
 
     useEffect(() => {
         // Khi hết thời gian mà đang ở phần cuối => nộp bài
@@ -308,7 +346,7 @@ const ExamOnlineDetail = () => {
             }, 30000);
         }     
     }, [countSection]); // eslint-disable-line react-hooks/exhaustive-deps
-
+    
     if (exam.status === 'success') {
         breadcrumbs.push({ title: 'Đề thi', link: `#` }, { title: exam.data.ten_de_thi, link: `/luyen-tap/xem/${params.idExam}/${params.idCourse}` });
     }
@@ -694,7 +732,8 @@ const ExamOnlineDetail = () => {
                 else {
                     countDown();
                     clearInterval(timerId?.current); // Dừng đếm thời gian section
-                    timeOut = setTimeout(() => {
+                    clearInterval(timeCount?.current); // Dừng đếm thời gian làm bài
+                    timeOut = setTimeout(() => { // sau 30s chờ => sẽ thực hiện hàm bên trong
                         sessionStorage.setItem('section', state.sectionExam + 1);
                         sessionStorage.setItem('timeStartSection', new Date().getTime());
                         setCountSection(exam.data[`thoi_gian_phan_${state.sectionExam + 1}`] * 60) // set biến đêm Thời gian = của phần tiếp theo
@@ -707,6 +746,16 @@ const ExamOnlineDetail = () => {
                         }, 1000);
                         setResults([]); 
                         window.scrollTo({ top: 0, behavior: "smooth" });
+                        // thiết lập tiếp bộ đếm thời gian làm bài
+                        dispatch(examActions.getExamUser({ id: params.idExamUser }, (res) => {
+                            if (res.status === 'success') {
+                                // 1 phút cập nhật thời gian làm bài 1 lần
+                                if (res?.data?.thoi_gian_lam_bai) setTimeToDo(timeToInt(res?.data?.thoi_gian_lam_bai)); // là số phút
+                                timeCount.current = setInterval(() => {
+                                    setTimeToDo((preValue) => preValue + 1); // Mỗi lần tăng lên 1 phút
+                                }, 60000)
+                            }
+                        }));
                     }, 30000);
                 }
             },
