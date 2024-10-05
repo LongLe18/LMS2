@@ -339,7 +339,7 @@ const download = async (req, res) => {
             nhan_xet_3: evaluate_3 ? evaluate_3.danh_gia : '',
             nhan_xet_31: evaluate_31 ? evaluate_31.danh_gia : '',
             nhan_xet_32: evaluate_32 ? evaluate_32.danh_gia : '',
-            xep_loai_chung:
+            nhan_xet_chung:
                 tong_diem >= 0 && tong_diem < 50
                     ? 'TRUNG BÌNH'
                     : tong_diem >= 50 && tong_diem < 90
