@@ -30,6 +30,12 @@ const dethihocvien = sequelize.define(
         thoi_diem_ket_thuc: {
             type: DataTypes.DATE,
         },
+        phan_dang_lam: {
+            type: DataTypes.DATE,
+        },
+        thoi_gian_lam_phan: {
+            type: DataTypes.TIME,
+        },
         nguoi_tao: {
             type: DataTypes.STRING,
         },
