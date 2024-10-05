@@ -285,7 +285,7 @@ const postCreatev2 = async (req, res) => {
         await sequelize.query(
             `
         INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
-            SELECT cau_hoi_id, ${exam.dataValues.de_thi_id}, 3 FROM cau_hoi_de_thi
+            SELECT cau_hoi_id, ${exam.dataValues.de_thi_id}, 4 FROM cau_hoi_de_thi
             WHERE chuyen_nganh_id = 5 AND de_thi_id = ${sampleExam.de_thi_id}
             ORDER BY cau_hoi_id ASC
             LIMIT ${criteria.so_cau_hoi_phan_4}

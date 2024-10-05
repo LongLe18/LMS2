@@ -484,7 +484,26 @@ const getById = async (req, res) => {
             });
         }
         if (criteria) {
-            if (exam.loai_de_thi_id === 4 || exam.loai_de_thi_id === 5) {
+            if (exam.loai_de_thi_id === 5) {
+                exam.dataValues.so_cau_hoi = criteria.so_cau_hoi;
+                exam.dataValues.thoi_gian = criteria.thoi_gian;
+                exam.dataValues.so_phan = 3;
+                exam.dataValues.so_cau_hoi_phan_1 = criteria.so_cau_hoi_phan_1;
+                exam.dataValues.thoi_gian_phan_1 = criteria.thoi_gian_phan_1;
+                exam.dataValues.so_cau_hoi_phan_2 = criteria.so_cau_hoi_phan_2;
+                exam.dataValues.thoi_gian_phan_2 = criteria.thoi_gian_phan_2;
+                if (exam.cau_hoi_de_this.some((item) => item.phan === 3)) {
+                    exam.dataValues.so_cau_hoi_phan_3 =
+                        criteria.so_cau_hoi_phan_3;
+                    exam.dataValues.thoi_gian_phan_3 =
+                        criteria.thoi_gian_phan_3;
+                } else {
+                    exam.dataValues.so_cau_hoi_phan_3 =
+                        criteria.so_cau_hoi_phan_4;
+                    exam.dataValues.thoi_gian_phan_3 =
+                        criteria.thoi_gian_phan_4;
+                }
+            } else if (exam.loai_de_thi_id === 4) {
                 exam.dataValues.so_cau_hoi = criteria.so_cau_hoi;
                 exam.dataValues.thoi_gian = criteria.thoi_gian;
                 exam.dataValues.so_phan = criteria.so_phan;
