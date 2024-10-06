@@ -530,6 +530,12 @@ const putUpdate = async (req, res) => {
                     khoa_hoc_id: exam.khoa_hoc_id,
                 },
             });
+        } else if (exam.loai_de_thi_id == 5) {
+            criteria = await DGNLCriteria.findOne({
+                where: {
+                    khoa_hoc_id: exam.khoa_hoc_id,
+                },
+            });
         }
     }
     let dat_yeu_cau;
