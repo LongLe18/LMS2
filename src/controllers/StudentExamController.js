@@ -542,7 +542,7 @@ const putUpdate = async (req, res) => {
     if (criteria) {
         so_cau_tra_loi_sai = criteria.so_cau_hoi - so_cau_tra_loi_dung;
         let ket_qua = (ket_qua_diem / exam.tong_diem) * 100;
-        if (ket_qua > criteria.yeu_cau) dat_yeu_cau = true;
+        if (criteria.yeu_cau && ket_qua > criteria.yeu_cau) dat_yeu_cau = true;
         else {
             dat_yeu_cau = false;
         }
