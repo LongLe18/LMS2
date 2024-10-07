@@ -48,7 +48,7 @@ const ExamDGNLAdminPage = () => {
     const exams = useSelector(state => state.exam.list.result);
     const error = useSelector(state => state.exam.list.error);
 
-    const typeExams = useSelector(state => state.typeExam.list.result);
+    // const typeExams = useSelector(state => state.typeExam.list.result);
     const courses = useSelector(state => state.course.list.result);
     const majors = useSelector(state => state.major.list.result);
 

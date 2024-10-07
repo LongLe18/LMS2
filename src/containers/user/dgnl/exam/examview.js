@@ -206,7 +206,7 @@ const ExamViewPage = (props) => {
                                             <Timeline.Item style={{color: 'red'}}>Đề thi Online gồm {exam.data.so_phan} phần</Timeline.Item>
                                             {Array.from({ length: exam.data.so_phan }).map((_, index) => {
                                                 return (
-                                                    <Timeline.Item color='gray'>Phần {index + 1} gồm {exam.data[`so_cau_hoi_phan_${index + 1}`]} câu hỏi - thời gian {exam.data[`thoi_gian_phan_${index + 1}`]} phút</Timeline.Item>
+                                                    <Timeline.Item color='gray' key={index}>Phần {index + 1} gồm {exam.data[`so_cau_hoi_phan_${index + 1}`]} câu hỏi - thời gian {exam.data[`thoi_gian_phan_${index + 1}`]} phút</Timeline.Item>
                                                 )
                                             })}
                                             <Timeline.Item>Thí sinh làm bài thi trực tiếp trên phần mềm máy tính, câu hỏi dưới dạng trắc nghiệm khách quan và điền đáp án.</Timeline.Item>
@@ -255,8 +255,7 @@ const ExamViewPage = (props) => {
                     <Col xs={{ span: 22, offset: 1 }} lg={{ span: 11, offset: 1 }} >
                         {Array.from({ length: exam.data.so_phan }).map((_, index) => {
                             return (
-                                // 
-                                <div className={`section-${index} detail-title-section`}>Phần {index + 1}: {index === 0 ? `Tư duy định lượng (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)` 
+                                <div key={index} className={`section-${index} detail-title-section`}>Phần {index + 1}: {index === 0 ? `Tư duy định lượng (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)` 
                                     : index === 1 ? `Tư duy định tính (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)`
                                     : `Khoa học (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)`}</div>
                             )

@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import Hashids from 'hashids';
 import { Helmet } from 'react-helmet';
 import moment from 'moment';
-import { secondsToMinutes, timeToInt } from 'helpers/common.helper';
+import { secondsToMinutes } from 'helpers/common.helper';
 import './css/ExamDetail2.scss'
 import config from '../../../../configs/index';
 import defaultImage from 'assets/img/default.jpg';
@@ -56,6 +56,7 @@ const ExamOnlineDetail = () => {
     const [comment, setComment] = useState('');
     const [countSection, setCountSection] = useState(3600);
     const [timeToDo, setTimeToDo] = useState(null); // Thời gian làm bài
+    const [timeToDoAllSection, setTimeToDoAllSection] = useState(null); // Thời gian làm bài các phần
     const [results, setResults] = useState([]);
     // eslint-disable-next-line no-unused-vars
     const [startTime, setStartTime] = useState(0);
@@ -123,87 +124,42 @@ const ExamOnlineDetail = () => {
                     clearInterval(timerId?.current);
                     setStartTime(0);
                     setIsDoing(false); // kết thúc thi
-                } else { // Chưa kết thúc đè thi
+                } else { // Chưa kết thúc đề thi
                     const thoi_gian_lam_bai_phan = subres?.data?.thoi_gian_lam_phan.split(','); // [0, 0, 0]
+                    setTimeToDoAllSection(thoi_gian_lam_bai_phan);
+                    const remainingTimeExam = ((Number(res.data[`thoi_gian_phan_${subres?.data?.phan_dang_lam}`]) - thoi_gian_lam_bai_phan[subres?.data?.phan_dang_lam - 1]) * 60);
+                    // Nếu còn thời gian làm bài
+                    if (remainingTimeExam > 0) {
+                        setState({...state, sectionExam: subres.data?.phan_dang_lam }); // hiện tại thuộc phần nào của đề thi
+                        setCountSection(Math.abs(remainingTimeExam));  // thời gian còn lại của phần thi là bao nhiêu
+                        setStartTime(new Date().getTime());
+                        timerId.current = setInterval(() => {
+                            setCountSection((preCount) => preCount - 1);
+                        }, 1000);
 
-                    // Khi người dùng  chuyển phần tiếp theo mà cố tình refresh lại trang trong khi phần cũ vẫn còn thời gian làm => sẽ dẫn tới làm lại được phần cũ
-                    if (subres.data.phan_dang_lam && subres.data.phan_dang_lam > 1) {
-                        const remainingTimeExam = ((Number(res.data[`thoi_gian_phan_${subres?.data?.phan_dang_lam ? subres?.data?.phan_dang_lam : 1}`]) - thoi_gian_lam_bai_phan[state.sectionExam - 1]) * 60);
-                        // const remainingTimeExam = (Number(res.data[`thoi_gian_phan_${sessionStorage.getItem('section')}`]) * 60) - ((new Date().getTime() - sessionStorage.getItem('timeStartSection')) / 1000);
-                        if (remainingTimeExam > 0) {
-                            setState({...state, sectionExam: Number(sessionStorage.getItem('section'))}); // hiện tại thuộc phần nào của đề thi
-                            setCountSection(Math.abs(remainingTimeExam));  // thời gian còn lại của phần thi là bao nhiêu
-                            setStartTime(new Date().getTime());
-                            timerId.current = setInterval(() => {
-                                setCountSection((preCount) => preCount - 1);
-                            }, 1000);
-
-                            // 1 phút cập nhật thời gian làm bài 1 lần
-                            if (subres?.data?.thoi_gian_lam_bai) setTimeToDo(timeToInt(subres?.data?.thoi_gian_lam_bai)); // là số phút
-                            timeCount.current = setInterval(() => {
-                                setTimeToDo((preValue) => preValue + 1); // Mỗi lần tăng lên 1 phút
-                            }, 60000)
-                            
+                        // 1 phút cập nhật thời gian làm bài 1 lần
+                        if (subres?.data?.thoi_gian_lam_phan) setTimeToDo(Number(thoi_gian_lam_bai_phan[subres?.data?.phan_dang_lam - 1])); // là số phút
+                        timeCount.current = setInterval(() => {
+                            setTimeToDo((preValue) => preValue + 1); // Mỗi lần tăng lên 1 phút
+                        }, 60000)
+                    } else {
+                        let info = {};
+                        if (subres.data.thoi_diem_ket_thuc === null) {
+                            info = {
+                                "thoi_gian_lam_bai": secondsToMinutes(res.data.thoi_gian * 60),
+                                "thoi_diem_ket_thuc": moment().toISOString(),
+                            }
                         } else {
-                            let info = {};
-                            if (subres.data.thoi_diem_ket_thuc === null) {
-                                info = {
-                                    "thoi_gian_lam_bai": secondsToMinutes(res.data.thoi_gian * 60),
-                                    "thoi_diem_ket_thuc": moment().toISOString(),
-                                }
-                            } else {
-                                info = {
-                                    "thoi_gian_lam_bai": secondsToMinutes(res.data.thoi_gian * 60),
-                                }
+                            info = {
+                                "thoi_gian_lam_bai": secondsToMinutes(res.data.thoi_gian * 60),
                             }
-                            dispatch(examActions.editExamUser({ idExam: params.idExamUser, formData: info }))
-                            clearInterval(timerId?.current);
-                            setStartTime(0);
-                            setIsDoing(false); // kết thúc thi
                         }
+                        dispatch(examActions.editExamUser({ idExam: params.idExamUser, formData: info }))
+                        clearInterval(timerId?.current);
+                        setStartTime(0);
+                        setIsDoing(false); // kết thúc thi
                     }
-                    else {
-                        // const remainingTimeExam = (Number(res.data.thoi_gian) * 60) - ((new Date().getTime() - new Date(subres.data.thoi_diem_bat_dau).getTime()) / 1000);
-                        const remainingTimeExam = ((Number(res.data.thoi_gian) - Number(timeToInt(subres?.data?.thoi_gian_lam_bai))) * 60);
-                        if (remainingTimeExam > 0) { // Còn thời gian làm bài
-                            let elapsedTime = (Number(res.data.thoi_gian) * 60) - remainingTimeExam;
-                            for (let i = 0; i < res.data.so_phan; i++) {
-                                elapsedTime  = elapsedTime - (res.data[`thoi_gian_phan_${i + 1}`]* 60);
-                                if (elapsedTime < 0) {
-                                    setState({...state, sectionExam: i + 1}); // hiện tại thuộc phần nào của đề thi
-                                    setCountSection(Math.abs(elapsedTime));  // thời gian còn lại của phần thi là bao nhiêu
-                                    setStartTime(new Date().getTime());
-                                    timerId.current = setInterval(() => {
-                                        setCountSection((preCount) => preCount - 1);
-                                    }, 1000);
 
-                                    // 1 phút cập nhật thời gian làm bài 1 lần
-                                    if (subres?.data?.thoi_gian_lam_bai) setTimeToDo(timeToInt(subres?.data?.thoi_gian_lam_bai)); // là số phút
-                                    timeCount.current = setInterval(() => {
-                                        setTimeToDo((preValue) => preValue + 1); // Mỗi lần tăng lên 1 phút
-                                    }, 60000)
-                                    break;      
-                                }
-                            }
-                        }
-                        else {
-                            let info = {};
-                            if (subres.data.thoi_diem_ket_thuc === null) {
-                                info = {
-                                    "thoi_gian_lam_bai": secondsToMinutes(res.data.thoi_gian * 60),
-                                    "thoi_diem_ket_thuc": moment().toISOString(),
-                                }
-                            } else {
-                                info = {
-                                    "thoi_gian_lam_bai": secondsToMinutes(res.data.thoi_gian * 60),
-                                }
-                            }
-                            dispatch(examActions.editExamUser({ idExam: params.idExamUser, formData: info }))
-                            clearInterval(timerId?.current);
-                            setStartTime(0);
-                            setIsDoing(false); // kết thúc thi
-                        }
-                    }
                 }
             }
 
@@ -288,7 +244,7 @@ const ExamOnlineDetail = () => {
                 dispatch(examActions.getExamUser({ id: params.idExamUser }, (res) => {
                     if (res.status === 'success') {
                         // 1 phút cập nhật thời gian làm bài 1 lần
-                        if (res?.data?.thoi_gian_lam_bai) setTimeToDo(timeToInt(res?.data?.thoi_gian_lam_bai)); // là số phút
+                        if (res?.data?.thoi_gian_lam_phan) setTimeToDo(Number(res?.data?.thoi_gian_lam_phan.split(',')[state.sectionExam])); // là số phút
                         timeCount.current = setInterval(() => {
                             setTimeToDo((preValue) => preValue + 1); // Mỗi lần tăng lên 1 phút
                         }, 60000)
@@ -314,10 +270,14 @@ const ExamOnlineDetail = () => {
     // 1 phút cập nhật thời gian làm bài 1 lần
     useEffect(() => {
         if (timeToDo) {
+            let temp = timeToDoAllSection; 
+            temp[state.sectionExam - 1] = timeToDo; // cập nhật thời gian làm bài của phần tương ứng
+            const thoi_gian_lam_bai = temp.reduce((partialSum, a) => Number(partialSum) + Number(a), 0) // tổng thời gian làm bài
+            setTimeToDoAllSection(temp);
             let info = {
-                thoi_gian_lam_bai: secondsToMinutes(timeToDo === 0 ? 60 : timeToDo * 60),
+                thoi_gian_lam_bai: secondsToMinutes(timeToDo === 0 ? 60 : thoi_gian_lam_bai * 60),
                 phan_dang_lam: Number(state.sectionExam),
-                thoi_gian_lam_phan: '0,0,0',
+                thoi_gian_lam_phan: timeToDoAllSection.join(','),
             }
             dispatch(examActions.editExamUser({ idExam: params.idExamUser, formData: info }))
         }
@@ -756,7 +716,7 @@ const ExamOnlineDetail = () => {
                         dispatch(examActions.getExamUser({ id: params.idExamUser }, (res) => {
                             if (res.status === 'success') {
                                 // 1 phút cập nhật thời gian làm bài 1 lần
-                                if (res?.data?.thoi_gian_lam_bai) setTimeToDo(timeToInt(res?.data?.thoi_gian_lam_bai)); // là số phút
+                                if (res?.data?.thoi_gian_lam_phan) setTimeToDo(Number(res?.data?.thoi_gian_lam_phan.split(',')[state.sectionExam])); // là số phút
                                 timeCount.current = setInterval(() => {
                                     setTimeToDo((preValue) => preValue + 1); // Mỗi lần tăng lên 1 phút
                                 }, 60000)
