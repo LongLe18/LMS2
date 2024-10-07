@@ -125,6 +125,8 @@ const FooterPage = (props) => {
     const EditFooter = (id) => {
         dispatch(footerAction.getFOOTER({ id: id }));
         setState({ ...state, isEdit: true, idFooter: id });
+        let body = document.getElementsByClassName('cate-form-block')[0];
+        body.scrollIntoView();
     };
 
     useEffect(() => {

@@ -335,14 +335,15 @@ const OnlineExamDetailPage = () => {
         let options = [];
         if (programmes.status === 'success') {
             options = programmes.data
-                .filter(programme => programme.loai_kct === 1)
+                .filter(programme => programme.loai_kct !== 2)
                 .map((programme) => (
                     <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
                 ))
         }
         return (
             <Select
-                showSearch={false}
+                showSearch={true}
+                filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
                 placeholder="Chọn khung chương trình"
                 onChange={(kct_id) => dispatch(courseActions.getCourses({ idkct: kct_id, status: '', search: '' }))}
             >
@@ -359,12 +360,13 @@ const OnlineExamDetailPage = () => {
             ))
         }
         return (
-          <Select
-            showSearch={false}
-            placeholder="Chọn khóa học"
-          >
-            {options}
-          </Select>
+            <Select
+                showSearch={true}
+                filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
+                placeholder="Chọn khóa học"
+            >
+                {options}
+            </Select>
         );
     };
 
@@ -392,7 +394,8 @@ const OnlineExamDetailPage = () => {
         if (typeExams.status === 'success') {
             options = typeExams.data.map((type) => (
                 <Option key={type.loai_de_thi_id} value={type.loai_de_thi_id} >{type.mo_ta}</Option>
-            ))
+            ));
+            options.push(<Option key={'5'} value={5} >Đề thi mẫu ĐGNL</Option>)
         }
         return (
             <Select
@@ -690,6 +693,7 @@ const OnlineExamDetailPage = () => {
                                                 </Col>
                                                 <Col xl={7} sm={12} xs={24}>
                                                     <Form.Item label="Khung chương trình" name="kct_id"
+                                                        initialValue={exam.data.kct_id}
                                                         rules={[
                                                             {
                                                                 required: true,

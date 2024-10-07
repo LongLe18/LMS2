@@ -30,7 +30,7 @@ const Criteria = () => {
     const dataCriteriaDGNL = [];
     const dispatch = useDispatch();
 
-    const [numberExams, setNumberOfItems] = useState(1);
+    const [numberExams, setNumberOfItems] = useState(4);
     const [course, setCourse] = useState(false);
     const [module, setModule] = useState(false);
     const [thematic, setThematic] = useState(false);
@@ -454,9 +454,9 @@ const Criteria = () => {
             width: 150,
             // Redirect view for edit
             render: (idtieu_chi_de_thi_online) => (
-                <Space size="middle">
-                <Button  type="button" onClick={() => EditCriteriaOnline(idtieu_chi_de_thi_online)} className="ant-btn ant-btn-round ant-btn-primary">Sửa</Button>
-                <Button shape="round" type="danger" onClick={() => DeleteCriteriaOnline(idtieu_chi_de_thi_online)} >Xóa</Button> 
+                <Space size="small">
+                    <Button  type="button" onClick={() => EditCriteriaOnline(idtieu_chi_de_thi_online)} className="ant-btn ant-btn-round ant-btn-primary">Sửa</Button>
+                    <Button shape="round" type="danger" onClick={() => DeleteCriteriaOnline(idtieu_chi_de_thi_online)} >Xóa</Button> 
                 </Space>
             ),
             fixed: 'right',
@@ -553,8 +553,8 @@ const Criteria = () => {
             // Redirect view for edit
             render: (idtieu_chi_de_thi_dgnl) => (
                 <Space size="middle">
-                <Button  type="button" onClick={() => EditCriteriaDGNL(idtieu_chi_de_thi_dgnl)} className="ant-btn ant-btn-round ant-btn-primary">Sửa</Button>
-                <Button shape="round" type="danger" onClick={() => DeleteCriteriaDGNL(idtieu_chi_de_thi_dgnl)} >Xóa</Button> 
+                    <Button  type="button" onClick={() => EditCriteriaDGNL(idtieu_chi_de_thi_dgnl)} className="ant-btn ant-btn-round ant-btn-primary">Sửa</Button>
+                    <Button shape="round" type="danger" onClick={() => DeleteCriteriaDGNL(idtieu_chi_de_thi_dgnl)} >Xóa</Button> 
                 </Space>
             ),
             fixed: 'right',
@@ -1083,7 +1083,6 @@ const Criteria = () => {
             return null;
         })
         
-
         if (!require.isEdit) {
             dispatch(criteriaAction.createCriteriaDGNL(dataSubmit, callback));
         } else {
@@ -1095,11 +1094,15 @@ const Criteria = () => {
         let options = [];
         if (courses.status === 'success') {
             if (state.activeTab === '4') {
-                options = courses.data.filter((item) => item.loai_kct !== 0).map((course) => (
+                options = courses.data.filter((item) => item.loai_kct === 1).map((course) => (
+                    <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
+                ))
+            } else if (state.activeTab === '5') {
+                options = courses.data.filter((item) => item.loai_kct === 0).map((course) => (
                     <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
                 ))
             } else {
-                options = courses.data.map((course) => (
+                options = courses.data.filter((item) => item.loai_kct === 2).map((course) => (
                     <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
                 ))
             }
@@ -1384,7 +1387,7 @@ const Criteria = () => {
                                 </Form.Item>
                             </Col>
                             <Col xl={24} sm={24} xs={24} className="left-content">
-                                <Form.Item
+                                <Form.Item initialValue={numberExams}
                                     className="input-col"
                                     label="Số phần thi"
                                     name="so_phan"
@@ -1395,13 +1398,13 @@ const Criteria = () => {
                                         },
                                     ]}
                                 >
-                                    <InputNumber disabled={isPublish} placeholder="Nhập số phần thi" style={{width: "100%"}} max={6} min={1} onChange={handleNumberExamChange}/>
+                                    <InputNumber disabled={true} placeholder="Nhập số phần thi" style={{width: "100%"}} defaultValue={numberExams} onChange={handleNumberExamChange}/>
                                 </Form.Item>
                             </Col>
                             
                             {Array.from({ length: numberExams }).map((_, index) => (
                                 <>
-                                    <Col xl={8} sm={24} xs={24} >
+                                    <Col xl={12} sm={24} xs={24} >
                                         <Form.Item
                                             className="input-col"
                                             label={`Số câu hỏi phần ${index + 1}`}
@@ -1416,7 +1419,7 @@ const Criteria = () => {
                                             <InputNumber disabled={isPublish} placeholder="Nhập số câu hỏi đề thi" style={{width: "100%"}}/>
                                         </Form.Item>
                                     </Col>
-                                    <Col xl={8} sm={24} xs={24} >
+                                    <Col xl={12} sm={24} xs={24} >
                                         <Form.Item
                                             className="input-col"
                                             label={`Thời gian phần ${index + 1}`}
@@ -1434,9 +1437,11 @@ const Criteria = () => {
                                 </>
                             ))}
                             
-                            <Form.Item className="button-col" style={{textAlign: 'right'}}>
-                                {!require.isEdit ? <Button shape="round" type="primary" htmlType="submit" >Thêm mới</Button> : <Button shape="round" type="primary" htmlType="submit" >Cập nhật</Button>}                             
-                            </Form.Item>
+                            <Col xl={24} sm={24} xs={24}>
+                                <Form.Item className="button-col" style={{textAlign: 'right'}}>
+                                    {!require.isEdit ? <Button shape="round" type="primary" htmlType="submit" >Thêm mới</Button> : <Button shape="round" type="primary" htmlType="submit" >Cập nhật</Button>}                             
+                                </Form.Item>
+                            </Col>
                         </Row>                                     
                     </Form>
                 </Col>
@@ -1622,7 +1627,7 @@ const Criteria = () => {
                                 </Button>
                             </Col>
                         </Row>
-                        <Table className="table-striped-rows" columns={columns4} dataSource={dataCriteriaOnline} pagination={false} scroll={{ x: 1500, y: 300 }}></Table>
+                        <Table className="table-striped-rows" columns={columns4} dataSource={dataCriteriaOnline} pagination={false} scroll={{ x: 1500, y: 500 }}></Table>
                         <br/>
                         <Pagination current={pageIndex} onChange={onChangePage} 
                             total={criteriaOnline?.totalCount} onShowSizeChange={onChangePageSize} 

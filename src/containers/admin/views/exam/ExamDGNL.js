@@ -141,7 +141,7 @@ const ExamDGNLAdminPage = () => {
       key: 'loai_de_thi_id',
       responsive: ['md'],
       render: (loai_de_thi_id) => (
-        <span>{loai_de_thi_id === 1 ? 'Đề thi chuyên đề' : loai_de_thi_id === 2 ? 'Đề thi mô-đun' : loai_de_thi_id === 3 ? 'Đề thi tổng hợp' : 'Đề thi theo phần'}</span>
+        <span>Đề thi mẫu ĐGNL</span>
       )
     },
     {
@@ -182,7 +182,7 @@ const ExamDGNLAdminPage = () => {
       // Redirect view for edit
       render: (de_thi_id, de_thi) => (
         <Col>
-          <a href={ de_thi.loai_de_thi_id === 4 ? `/admin/onlineExam/detail/${de_thi.de_thi_id}?loai_de_thi=DGNL`  : `/admin/exam/detail/${de_thi.de_thi_id}?loai_de_thi=DGNL` } type="button" className="ant-btn ant-btn-round ant-btn-primary" 
+          <a href={ de_thi.loai_de_thi_id === 5 ? `/admin/onlineExam/detail/${de_thi.de_thi_id}?loai_de_thi=DGNL`  : `/admin/exam/detail/${de_thi.de_thi_id}?loai_de_thi=DGNL` } type="button" className="ant-btn ant-btn-round ant-btn-primary" 
             style={{display: de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}}
           >
             Xem
@@ -311,33 +311,33 @@ const ExamDGNLAdminPage = () => {
       );
   };
 
-  const renderTypeExams = () => {
-      let options = [];
-      if (typeExams.status === 'success') {
-        options = typeExams.data.map((type) => {
-          if (type.loai_de_thi_id === 3) {
-            return (
-              <Option key={type.loai_de_thi_id} value={type.loai_de_thi_id} >{type.mo_ta}</Option>
-            )
-          }
-          return null;
-        })
-      }
-      return (
-        <Select defaultValue={3}
-          showSearch={false}
-          placeholder="Chọn loại đề thi"
-          onChange={(typeId) => {
-              if (typeId === 1) {setState({...state, showThematic: true, showCourse: true, showModule: true, onlineExam: false})}
-              else if (typeId === 2) {setState({...state, showThematic: false, showCourse: true, showModule: true, onlineExam: false})}
-              else if (typeId === 3) {setState({...state, showThematic: false, showCourse: true, showModule: false, onlineExam: false})}
-              else {setState({...state, showThematic: false, showCourse: true, showModule: false, onlineExam: true})}
-          }}
-        >
-          {options}
-        </Select>
-      );
-  };
+  // const renderTypeExams = () => {
+  //     let options = [];
+  //     if (typeExams.status === 'success') {
+  //       options = typeExams.data.map((type) => {
+  //         if (type.loai_de_thi_id === 3) {
+  //           return (
+  //             <Option key={type.loai_de_thi_id} value={type.loai_de_thi_id} >{type.mo_ta}</Option>
+  //           )
+  //         }
+  //         return null;
+  //       })
+  //     }
+  //     return (
+  //       <Select defaultValue={3}
+  //         showSearch={false}
+  //         placeholder="Chọn loại đề thi"
+  //         onChange={(typeId) => {
+  //             if (typeId === 1) {setState({...state, showThematic: true, showCourse: true, showModule: true, onlineExam: false})}
+  //             else if (typeId === 2) {setState({...state, showThematic: false, showCourse: true, showModule: true, onlineExam: false})}
+  //             else if (typeId === 3) {setState({...state, showThematic: false, showCourse: true, showModule: false, onlineExam: false})}
+  //             else {setState({...state, showThematic: false, showCourse: true, showModule: false, onlineExam: true})}
+  //         }}
+  //       >
+  //         {options}
+  //       </Select>
+  //     );
+  // };
 
   const renderCourse = () => {
       let options = [];
@@ -387,38 +387,39 @@ const ExamDGNLAdminPage = () => {
           <>
             <h2 className="form-title">Tạo đề thi</h2>
             <Form form={form} className="login-form app-form" name="login-form" onFinish={createExam}
-                labelCol={{
-                    span: 6,
-                }} >
-                <Form.Item label='Mã đề thi' name="de_thi_ma" rules={[{ required: true, message: 'Mã đề thi là bắt buộc'}]}>
-                    <Input size="normal" placeholder="Tên đề thi" />
-                </Form.Item>
-                <Form.Item label='Tên đề thi' name="ten_de_thi" rules={[{ required: true, message: 'Tên đề thi là bắt buộc'}]}>
-                    <Input size="normal" placeholder="Tên đề thi" />
-                </Form.Item>
-                <Form.Item label="Loại đề thi" name="loai_de_thi_id" initialValue={3} rules={[{ required: true, message: 'Loại đề thi là bắt buộc'}]}>
-                    {renderTypeExams()}
-                </Form.Item>
-                <Form.Item label="Khung" name="kct_id" rules={[{ required: true, message: 'Khung chương trình là bắt buộc'}]}>
-                  {renderProgramme()}
-                </Form.Item>
-                <Form.Item label="Khóa học" name="khoa_hoc_id" rules={[{ required: true, message: 'Khóa học là bắt buộc' }]}>
-                  {renderCourse()}
-                </Form.Item>
-                <Form.Item className="input-col" label="Hình đại diện" name="anh_dai_dien" rules={[]}>
-                    <Dragger {...propsImage} maxCount={1}
-                        listType="picture"
-                        className="upload-list-inline"
-                    >
-                        <p className="ant-upload-drag-icon">
-                        <UploadOutlined />
-                        </p>
-                        <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
-                    </Dragger>
-                </Form.Item>
-                <Form.Item className="button-col" style={{marginBottom: 0}}>
-                    <Button shape="round" type="primary" htmlType="submit" >Tạo đề thi</Button>
-                </Form.Item>
+              labelCol={{
+                  span: 6,
+              }} 
+            >
+              <Form.Item label='Mã đề thi' name="de_thi_ma" rules={[{ required: true, message: 'Mã đề thi là bắt buộc'}]}>
+                  <Input size="normal" placeholder="Tên đề thi" />
+              </Form.Item>
+              <Form.Item label='Tên đề thi' name="ten_de_thi" rules={[{ required: true, message: 'Tên đề thi là bắt buộc'}]}>
+                  <Input size="normal" placeholder="Tên đề thi" />
+              </Form.Item>
+              {/* <Form.Item label="Loại đề thi" name="loai_de_thi_id" initialValue={3} rules={[{ required: true, message: 'Loại đề thi là bắt buộc'}]}>
+                  {renderTypeExams()}
+              </Form.Item> */}
+              <Form.Item label="Khung" name="kct_id" rules={[{ required: true, message: 'Khung chương trình là bắt buộc'}]}>
+                {renderProgramme()}
+              </Form.Item>
+              <Form.Item label="Khóa học" name="khoa_hoc_id" rules={[{ required: true, message: 'Khóa học là bắt buộc' }]}>
+                {renderCourse()}
+              </Form.Item>
+              <Form.Item className="input-col" label="Hình đại diện" name="anh_dai_dien" rules={[]}>
+                  <Dragger {...propsImage} maxCount={1}
+                      listType="picture"
+                      className="upload-list-inline"
+                  >
+                      <p className="ant-upload-drag-icon">
+                      <UploadOutlined />
+                      </p>
+                      <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
+                  </Dragger>
+              </Form.Item>
+              <Form.Item className="button-col" style={{marginBottom: 0}}>
+                  <Button shape="round" type="primary" htmlType="submit" >Tạo đề thi</Button>
+              </Form.Item>
             </Form>
         </>
       )

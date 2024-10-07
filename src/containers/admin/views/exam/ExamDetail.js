@@ -215,10 +215,11 @@ const ExamDetailPage = () => {
             options = typeExams.data.filter(type => type !== 4).map((type) => {
                 return <Option key={type.loai_de_thi_id} value={type.loai_de_thi_id} >{type.mo_ta}</Option>
             })
+            options.push(<Option key={'5'} value={5} >Đề thi mẫu ĐGNL</Option>)
         }
         return (
           <Select
-            disabled={false}
+            disabled={true}
             showSearch={false}
             placeholder="Chọn loại đề thi"
             onChange={(typeId) => {

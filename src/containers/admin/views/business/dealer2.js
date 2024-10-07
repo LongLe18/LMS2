@@ -135,8 +135,9 @@ const DealerPage = (props) => {
         }
         return (
             <Select
-            showSearch={false}
-            placeholder="Chọn khóa học"
+                showSearch={true}
+                filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
+                placeholder="Chọn khóa học"
             >
                 {options}
             </Select>
@@ -294,7 +295,7 @@ const DealerPage = (props) => {
                             ? <h5>Sửa thông tin chiết khấu</h5> 
                             : <h5>Thêm mới chiết khấu</h5>}  
                         <Form layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={submitForm}>
-                            <Form.Item initialValue={1}
+                            <Form.Item
                                 className="input-col"
                                 label="Khung chương trình"
                                 name="kct_id"

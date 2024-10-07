@@ -49,9 +49,11 @@ export const secondsToMinutes = (time) => {
 
 // chuyển đổi thời gian (hh:mm:ss) thành số
 export const timeToInt = (time) => {
-    let hours = time.split(':')[0];
-    let min = time.split(':')[1];
-    return (parseInt(hours) * 60) + (parseInt(min));
+    if (time) {
+        let hours = time.split(':')[0];
+        let min = time.split(':')[1];
+        return (parseInt(hours) * 60) + (parseInt(min));
+    } return 0;
 }
 
 export const cutString = (str = '', length = 20) => {

@@ -50,6 +50,9 @@ const ModuleCate = (props) => {
       dispatch(partActions.filterModule({ idCourse: '', status: filter.trang_thai, search: filter.search, start: filter.start, end: filter.end}));
       dispatch(programmeAction.getProgrammes({ status: '' }));
       dispatch(majorActions.getMajors());
+
+      dispatch(courseActions.getCourses({ idkct: '', status: '', search: '' }));
+
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     if (modules.status === 'success') {
@@ -448,7 +451,7 @@ const ModuleCate = (props) => {
                               isShowSearchBox={true}
                               isShowDatePicker={true}
                               isRangeDatePicker={true}
-                              courses={courses.data}
+                              courses={courses.data?.filter((course) => course.loai_kct === 2)}
                               onFilterChange={(field, value) => onFilterChange(field, value)}
                           />
                         </Col>

@@ -123,11 +123,13 @@ const ExamOnlineDetail = () => {
                     clearInterval(timerId?.current);
                     setStartTime(0);
                     setIsDoing(false); // kết thúc thi
-                } else {
+                } else { // Chưa kết thúc đè thi
+                    const thoi_gian_lam_bai_phan = subres?.data?.thoi_gian_lam_phan.split(','); // [0, 0, 0]
+
                     // Khi người dùng  chuyển phần tiếp theo mà cố tình refresh lại trang trong khi phần cũ vẫn còn thời gian làm => sẽ dẫn tới làm lại được phần cũ
-                    if (sessionStorage.getItem('section') !== null && sessionStorage.getItem('timeStartSection') !== null) {
-                        const remainingTimeExam = (Number(res.data[`thoi_gian_phan_${sessionStorage.getItem('section')}`]) * 60) - ((new Date().getTime() - sessionStorage.getItem('timeStartSection')) / 1000);
-                        // const remainingTimeExam = ((Number(res.data[`thoi_gian_phan_${sessionStorage.getItem('section')}`]) - Number(timeToInt(subres?.data?.thoi_gian_lam_bai))) * 60);
+                    if (subres.data.phan_dang_lam && subres.data.phan_dang_lam > 1) {
+                        const remainingTimeExam = ((Number(res.data[`thoi_gian_phan_${subres?.data?.phan_dang_lam ? subres?.data?.phan_dang_lam : 1}`]) - thoi_gian_lam_bai_phan[state.sectionExam - 1]) * 60);
+                        // const remainingTimeExam = (Number(res.data[`thoi_gian_phan_${sessionStorage.getItem('section')}`]) * 60) - ((new Date().getTime() - sessionStorage.getItem('timeStartSection')) / 1000);
                         if (remainingTimeExam > 0) {
                             setState({...state, sectionExam: Number(sessionStorage.getItem('section'))}); // hiện tại thuộc phần nào của đề thi
                             setCountSection(Math.abs(remainingTimeExam));  // thời gian còn lại của phần thi là bao nhiêu
@@ -313,7 +315,9 @@ const ExamOnlineDetail = () => {
     useEffect(() => {
         if (timeToDo) {
             let info = {
-                "thoi_gian_lam_bai": secondsToMinutes(timeToDo === 0 ? 60 : timeToDo * 60),
+                thoi_gian_lam_bai: secondsToMinutes(timeToDo === 0 ? 60 : timeToDo * 60),
+                phan_dang_lam: Number(state.sectionExam),
+                thoi_gian_lam_phan: '0,0,0',
             }
             dispatch(examActions.editExamUser({ idExam: params.idExamUser, formData: info }))
         }
@@ -733,7 +737,9 @@ const ExamOnlineDetail = () => {
                     countDown();
                     clearInterval(timerId?.current); // Dừng đếm thời gian section
                     clearInterval(timeCount?.current); // Dừng đếm thời gian làm bài
-                    timeOut = setTimeout(() => { // sau 30s chờ => sẽ thực hiện hàm bên trong
+
+                    // sau 30s chờ => sẽ thực hiện hàm bên trong
+                    timeOut = setTimeout(() => { 
                         sessionStorage.setItem('section', state.sectionExam + 1);
                         sessionStorage.setItem('timeStartSection', new Date().getTime());
                         setCountSection(exam.data[`thoi_gian_phan_${state.sectionExam + 1}`] * 60) // set biến đêm Thời gian = của phần tiếp theo
@@ -1179,7 +1185,7 @@ const ExamOnlineDetail = () => {
                         <Col span={4}>
                             <img src={require('assets/img/logo/logo-vnu.png').default} width={82}  style={{marginLeft: 12}} alt="logo-vnu"/>
                             <img src={require('assets/img/logo/Logo-DGNT.png').default} width={82}  style={{marginLeft: 12}} alt="logo-DGNT"/>
-                            <img src={require('assets/img/logo/Logo-vnuhcm.jpg').default} width={96}  style={{marginLeft: 12}} alt="logo-vnuhcm"/>
+                            <img src={require('assets/img/logo/Logo-vnuhcm.jpg').default} width={82}  style={{marginLeft: 12}} alt="logo-vnuhcm"/>
                         </Col>
                         <Col span={19}>
                             <Row justify={'space-between'} style={{marginBottom: 12}}>
