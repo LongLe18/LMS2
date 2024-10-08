@@ -280,45 +280,41 @@ const download = async (req, res) => {
                 },
             },
         });
-        let evaluate_3 = await DGNLEvaluate.findOne({
-            where: {
-                khoa_hoc_id: studentExam.khoa_hoc_id,
-                phan_thi: 3,
-                cau_bat_dau: {
-                    [Op.lte]: phan_3,
+
+        let evaluate_3
+        if (studentExam.some((item) => item.phan === 3)) {
+            evaluate_3= await DGNLEvaluate.findOne({
+                where: {
+                    khoa_hoc_id: studentExam.khoa_hoc_id,
+                    phan_thi: 31,
+                    cau_bat_dau: {
+                        [Op.lte]: phan_3,
+                    },
+                    cau_ket_thuc: {
+                        [Op.gte]: phan_3,
+                    },
                 },
-                cau_ket_thuc: {
-                    [Op.gte]: phan_3,
+            });
+        } else {
+            evaluate_3= await DGNLEvaluate.findOne({
+                where: {
+                    khoa_hoc_id: studentExam.khoa_hoc_id,
+                    phan_thi: 32,
+                    cau_bat_dau: {
+                        [Op.lte]: phan_3,
+                    },
+                    cau_ket_thuc: {
+                        [Op.gte]: phan_3,
+                    },
                 },
-            },
-        });
-        let evaluate_31 = await DGNLEvaluate.findOne({
-            where: {
-                khoa_hoc_id: studentExam.khoa_hoc_id,
-                phan_thi: 31,
-                cau_bat_dau: {
-                    [Op.lte]: tong_diem,
-                },
-                cau_ket_thuc: {
-                    [Op.gte]: tong_diem,
-                },
-            },
-        });
-        let evaluate_32 = await DGNLEvaluate.findOne({
-            where: {
-                khoa_hoc_id: studentExam.khoa_hoc_id,
-                phan_thi: 32,
-                cau_bat_dau: {
-                    [Op.lte]: diem_tu_luan / 16,
-                },
-                cau_ket_thuc: {
-                    [Op.gte]: diem_tu_luan / 16,
-                },
-            },
-        });
+            });
+        }
 
         const content = fs.readFileSync(
-            path.resolve(process.cwd(), 'public/templates/form_export_dgnl.docx'),
+            path.resolve(
+                process.cwd(),
+                'public/templates/form_export_dgnl.docx'
+            ),
             'binary'
         );
 
@@ -337,8 +333,6 @@ const download = async (req, res) => {
             nhan_xet_1: evaluate_1 ? evaluate_1.danh_gia : '',
             nhan_xet_2: evaluate_2 ? evaluate_2.danh_gia : '',
             nhan_xet_3: evaluate_3 ? evaluate_3.danh_gia : '',
-            nhan_xet_31: evaluate_31 ? evaluate_31.danh_gia : '',
-            nhan_xet_32: evaluate_32 ? evaluate_32.danh_gia : '',
             nhan_xet_chung:
                 tong_diem >= 0 && tong_diem < 50
                     ? 'TRUNG BÌNH'
