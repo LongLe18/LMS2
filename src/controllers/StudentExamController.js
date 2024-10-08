@@ -530,13 +530,19 @@ const putUpdate = async (req, res) => {
                     khoa_hoc_id: exam.khoa_hoc_id,
                 },
             });
+        } else if (exam.loai_de_thi_id == 5) {
+            criteria = await DGNLCriteria.findOne({
+                where: {
+                    khoa_hoc_id: exam.khoa_hoc_id,
+                },
+            });
         }
     }
     let dat_yeu_cau;
     if (criteria) {
         so_cau_tra_loi_sai = criteria.so_cau_hoi - so_cau_tra_loi_dung;
         let ket_qua = (ket_qua_diem / exam.tong_diem) * 100;
-        if (ket_qua > criteria.yeu_cau) dat_yeu_cau = true;
+        if (criteria.yeu_cau && ket_qua > criteria.yeu_cau) dat_yeu_cau = true;
         else {
             dat_yeu_cau = false;
         }
