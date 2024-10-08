@@ -352,11 +352,11 @@ const ExamViewDGNL = (props) => {
                                 <Checkbox.Group style={{ width: '100%', display: 'flex', justifyContent: 'center' }} onChange={onChangeSubject} value={subjects}>
                                     <Row style={{width: '10%', textAlign: 'left'}}>
                                         {majors.status === 'success' && 
-                                            majors.data.map((major) => {
+                                            majors.data.map((major, index) => {
 
                                                 if (major.chuyen_nganh_id !== 1 && major.chuyen_nganh_id !== 7 && major.chuyen_nganh_id !== 5) {
                                                     return (
-                                                        <Col span={24}>
+                                                        <Col span={24} key={index}>
                                                             <Checkbox value={major.chuyen_nganh_id} checked={true}>{major.ten_chuyen_nganh}</Checkbox>
                                                         </Col>
                                                     )
@@ -426,7 +426,7 @@ const ExamViewDGNL = (props) => {
                         Câu hỏi thi ĐGNL/đề thi là tài sản của Trung tâm Khảo thí ĐHQGHN. Thí sinh tham dự kỳ thi ĐGNL có trách nhiệm bảo quản câu hỏi thi ĐGNL/ đề thi; KHÔNG được phép sao chép một phản hay toàn bộ câu hỏi thi ĐGNL (dạng chữ viết, hình ảnh, âm thanh, video/clip...) 
                         chuyễn cho người khác dưới mọi hình thức trong quá trình làm bài thi và cả khi đã kết thúc ca thi, 
                         KHÔNG được phép mang các tài liệu/tài sản của Trung tâm Khảo thí ra khỏi phòng thi/khu vực thi. 
-                        Thí sinh <span style={{color: 'red'}}>KHÔNG được phép tiết lộ, chia sẻ một phản hay toàn bộ dữ kiện của đẻ thi/câu hỏi thi ĐGNL</span> 
+                        Thí sinh <span style={{color: 'red'}}>KHÔNG được phép tiết lộ, chia sẻ một phản hay toàn bộ dữ kiện của đẻ thi/câu hỏi thi ĐGNL </span> 
                         (dạng hình ảnh,âm thanh, video/clip, chữ viết...) với cá nhân, tỗ chứ khác, trên các phương tiện đại chúng khi chưa có sự đồng ý của Trung tâm Khảo thí ĐHQGHN sau kỳ thi. 
                         Thí sinh vi phạm <span style={{color: 'red'}}>sẽ bị đình chỉ thi, hủy tất cả các kết quả điểm bài thi ĐGNL; dừng và hủy toàn bộ đăng ký (nếu có)</span>. 
                         Trung tâm Khảo thí ĐHQGHN sẽ <span style={{color: 'red'}}>thông báo thí sinh bị đình chỉ thi tới Trường THPT, Sở Giáo dục & Đào tạo, các trường đại học....</span>
@@ -452,7 +452,7 @@ const ExamViewDGNL = (props) => {
                                     "khoa_hoc_id": hashids.decode(idCourse)[0],
                                     "chuyen_nganh_ids": type === 5 ? type.toString() : subjects.join(', ')
                                 };
-                                localStorage.setItem('mon_thi', subjects.join(', '));
+                                localStorage.setItem('mon_thi', type === 5 ? type.toString() : subjects.join(', '));
                                 // Tạo đề thi
                                 setSpinning(true); // chờ
                                 axios({

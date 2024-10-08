@@ -209,7 +209,6 @@ const HistoryExam = () => {
         let regex = /\\begin{center}\\includegraphics\[scale = 0\.5\]{(.*?)}\\end{center}/;
         let isWrong = false;
         let currentSubmitAnswer = results.find((item) => item.cau_hoi_id === question.cau_hoi_id);
-        console.log(question.cau_hoi_id, convertAnswer(currentSubmitAnswer?.gia_tri_dap_an), answer.dap_an_dung, convertAnswer(question?.dap_an_dungs))
         if (currentSubmitAnswer?.gia_tri_dap_an && question?.dap_an_dungs) {
             if (convertAnswer(currentSubmitAnswer?.gia_tri_dap_an)[index] !== convertAnswer(question?.dap_an_dungs)[index]) {
                 isWrong = true;  

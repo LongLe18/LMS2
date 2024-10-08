@@ -938,6 +938,7 @@ const ExamOnlineDetail = () => {
                     const info = {
                         "diem_cac_phan": points.join(',')
                     }
+                    console.log(info);
                     dispatch(examActions.editExamUser({ idExam: params.idExamUser, formData: info }, (a) => {
                         if (a.status === 200 && a.statusText === 'OK') {
                             window.location.reload();
@@ -947,11 +948,10 @@ const ExamOnlineDetail = () => {
             }))
         };
 
-        let timePassedInSecond = (new Date().getTime() - new Date(examUser.data.thoi_diem_bat_dau).getTime()) / 1000;
-        timePassedInSecond = Math.round(timePassedInSecond);
+        const thoi_gian_lam_bai = timeToDoAllSection.reduce((partialSum, a) => Number(partialSum) + Number(a), 0) // tổng thời gian làm bài
 
         const info = {
-            "thoi_gian_lam_bai": countSection <= 0 ? secondsToMinutes(exam.data.thoi_gian * 60) : secondsToMinutes(timePassedInSecond),
+            "thoi_gian_lam_bai": secondsToMinutes(timeToDo === 0 ? 60 : thoi_gian_lam_bai * 60),
             "thoi_diem_ket_thuc": moment().toISOString()
         }
         if (course?.data.loai_kct === 0) dispatch(examActions.editExamDGNLUser({ idExam: params.idExamUser, formData: info }, callbackSub))
@@ -1149,10 +1149,12 @@ const ExamOnlineDetail = () => {
                         </Col>
                         <Col span={19}>
                             <Row justify={'space-between'} style={{marginBottom: 12}}>
-                                
                                 <Col style={{fontSize: 24, color: 'rgb(255, 48, 7)'}}>{getCurrentDate()}</Col>
-                                <Col style={{display: 'flex', padding: 4, background: '#1890ff', fontSize: 16, borderRadius: 4}}>
-                                    {(isDoing && state.sectionExam === 1) ? 'PHẦN 1: TƯ DUY ĐỊNH LƯỢNG' : (isDoing && state.sectionExam === 2) ? 'PHẦN 2: TƯ DUY ĐỊNH TÍNH' : 'PHẦN 3: KHOA HỌC'}
+                                <Col style={{display: isDoing ? 'flex' : 'none', padding: 4, background: '#1890ff', fontSize: 16, borderRadius: 4}}>
+                                    {(isDoing && state.sectionExam === 1) ? 
+                                    'PHẦN 1: TƯ DUY ĐỊNH LƯỢNG' : (isDoing && state.sectionExam === 2) ? 
+                                    'PHẦN 2: TƯ DUY ĐỊNH TÍNH' : (isDoing && state.sectionExam === 3) && 
+                                    `PHẦN 3: ${localStorage.getItem('mon_thi').split(',').length === 1 ? 'NGOẠI NGỮ' : 'KHOA HỌC'}`}
                                 </Col>
                                 <Col><span style={{ fontSize: 24, color: 'rgb(255, 48, 7)' }}>{secondsToMinutes(countSection)}</span></Col>
                             </Row>
@@ -1251,7 +1253,7 @@ const ExamOnlineDetail = () => {
                                                             // 
                                                             <div className={`section-${index} detail-title-section`} style={{margin: '12px 0px'}}>Phần {index + 1}: {index === 0 ? `Tư duy định lượng (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)` 
                                                                 : index === 1 ? `Tư duy định tính (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)`
-                                                                : `Khoa học (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)`}</div>
+                                                                : `${localStorage.getItem('mon_thi').split(',').length === 1 ? 'Ngoại ngữ ' : 'Khoa học '} (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)`}</div>
                                                         )
                                                     })}
                                                     <div className={"section-sum detail-title-section"} style={{margin: '12px 0px'}}>Tổng điểm</div>
@@ -1357,7 +1359,7 @@ const ExamOnlineDetail = () => {
                                                                             <div style={{padding: 0}}>
                                                                                 Phần {index + 1}: {index === 0 ? `Tư duy định lượng: ` 
                                                                                 : index === 1 ? `Tư duy định tính: `
-                                                                                : `Khoa học:`}
+                                                                                : `${localStorage.getItem('mon_thi').split(',').length === 1 ? 'Ngoại ngữ' : 'Khoa học'}:`}
                                                                             </div>
                                                                             <div style={{padding: 0}}>
                                                                                 {number.reduce((partialSum, a) => partialSum + a, 0)}
@@ -2019,7 +2021,7 @@ const ExamOnlineDetail = () => {
                     <Content className="app-content" style={{background: '#fff'}}>
                         <div className="header-exam">
                             {/* <h1>{exam.data.ten_de_thi} - Phần {state.sectionExam}</h1> */}
-                            <h1 style={{color: 'rgb(255, 48, 7)'}}>Bài thì thử ĐGNL ĐHQGHN (HSA) 2024 - Phần {state.sectionExam}</h1>
+                            <h1 style={{color: 'rgb(255, 48, 7)'}}>Bài thì thử ĐGNL ĐHQGHN (HSA) 2024 {(isDoing && state.sectionExam === 1) ? '- PHẦN 1' : (isDoing && state.sectionExam === 2) ? '- PHẦN 2' : (isDoing && state.sectionExam === 3) && '- PHẦN 3'}</h1>
                             <h4>Mã đề: {exam.data.de_thi_id}</h4>
                             <AuthModal />
                         </div>

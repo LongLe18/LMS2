@@ -10,7 +10,7 @@ import useFetch from 'hooks/useFetch';
 import useDebounce from 'hooks/useDebounce';
 
 // component
-import { Row, Col, Table, Button, Tag, Select, notification, Pagination, Tabs } from 'antd';
+import { Row, Col, Table, Button, Tag, Select, notification, Pagination, Tabs, message } from 'antd';
 import AppFilter from "components/common/AppFilter";
 import ReactExport from "react-export-excel";
 
@@ -47,7 +47,7 @@ const StatisticExam = (props) => {
 
     const [province] = useFetch('/province');
     const [data, setData] = useState([]);
-    const [dataDGNL, setDataDGNL] = useState(null);
+    const [dataDGNL, setDataDGNL] = useState([]);
     const [total, setTotal] = useState(0);
     const [pageIndex, setPageIndex] = useState(1);
     const [pageSize, setPageSize] = useState(10);
@@ -112,7 +112,7 @@ const StatisticExam = (props) => {
                             setDataDGNL(res.data.data.map((item, index) => ({...item, key: index, ho_ten: item?.hoc_vien?.ten_hoc_vien})));
                         }
                         else 
-                            setDataDGNL(res.data);
+                            setDataDGNL(res.data.data);
                     } else {
                         notification.error({
                             message: 'Lỗi',
@@ -250,7 +250,11 @@ const StatisticExam = (props) => {
     }, [filter.start, filter.end, filter.tinh, state.examId, pageIndex, pageSize]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useMemo(() => {
-        fetchStatiscal(state.examId)
+        if (state.activeTab === '0') {
+            fetchStatiscalDGNL(state.idCourse);
+        } else {
+            fetchStatiscal(state.examId);
+        }
     }, [searchValue]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const columns = [
@@ -347,6 +351,10 @@ const StatisticExam = (props) => {
                                 link.click();
                                 link.parentNode.removeChild(link);
                             } catch (error) {
+                                notification.warn({
+                                    message: 'Cảnh báo',
+                                    description: 'Chưa có dữ liệu đánh giá của khóa học',
+                                })
                                 console.error('Download error:', error);
                             }
                         }}
@@ -358,7 +366,7 @@ const StatisticExam = (props) => {
                     <Button type='primary' style={{borderRadius: 6}}
                         onClick={() => {
                             // open new  tab
-                            window.open(`/luyen-tap/lich-su-admin/${state.examId}/${dthv_id}`, '_blank');
+                            window.open(`/luyen-tap/lich-su-admin/${record.de_thi_id}/${dthv_id}`, '_blank');
                         }}
                     >
                         Xem lại
@@ -441,7 +449,6 @@ const StatisticExam = (props) => {
                 moment(new Date(ngay_thi)).utc(7).format(config.DATE_FORMAT)
             )
         },
-        
         {
             title: 'Tùy chọn',
             dataIndex: 'dthv_id',
@@ -470,6 +477,10 @@ const StatisticExam = (props) => {
                                 link.click();
                                 link.parentNode.removeChild(link);
                             } catch (error) {
+                                notification.warn({
+                                    message: 'Cảnh báo',
+                                    description: 'Chưa có dữ liệu đánh giá của khóa học',
+                                })
                                 console.error('Download error:', error);
                             }
                         }}
@@ -480,7 +491,7 @@ const StatisticExam = (props) => {
                     <Button type='primary' style={{borderRadius: 6}}
                         onClick={() => {
                             // open new  tab
-                            window.open(`/luyen-tap/lich-su-admin/${state.examId}/${dthv_id}`, '_blank');
+                            window.open(`/luyen-tap/lich-su-admin/${record.de_thi_id}/${dthv_id}`, '_blank');
                         }}
                     >
                         Xem lại
@@ -527,7 +538,6 @@ const StatisticExam = (props) => {
         setPageIndex(1);
         setData([]);
         setState({...state, activeTab: value, examId: null});
-        if (value === '0') fetchStatiscalDGNL('');
     };
 
     return (
@@ -618,7 +628,7 @@ const StatisticExam = (props) => {
                                         <ExcelColumn label="Ngày thi" value={(col) => moment(col.ngay_thi).utc(7).format(config.DATE_FORMAT)}/>
                                     </ExcelSheet>
                                 </ExcelFile>
-                                <Button type='primary' style={{marginLeft: 8}} onClick={exportReportSummanry}>Tải báo cáo tổng hợp</Button>
+                                <Button type='primary' style={{marginLeft: 8}} onClick={exportReportSummanry}>Tải kết quả</Button>
                             </Col>
                         </Row>
                     </Col>
@@ -644,17 +654,13 @@ const StatisticExam = (props) => {
                         <Row className='app-main' style={{paddingTop: 0}}>
                             <Col xl={24} sm={24} xs={24}>
                                 {renderCourseForDGNL()}
-                                <Button type='primary' style={{marginLeft: 8}} onClick={exportReportSummanry}>Tải báo cáo tổng hợp</Button>
+                                <Button type='primary' style={{marginLeft: 8}} onClick={exportReportSummanry}>Tải kết quả</Button>
                             </Col>
                         </Row>
                     </Col>
-                    {dataDGNL !== null && 
-                        <>
-                            <Table className="table-striped-rows" columns={columnsDGNL} dataSource={dataDGNL} pagination={false} />
-                            <br/>
-                            <Pagination current={pageIndex} onChange={onChange} total={total} onShowSizeChange={onShowSizeChange} showSizeChanger defaultPageSize={pageSize}/>
-                        </>
-                    }
+                    <Table className="table-striped-rows" columns={columnsDGNL} dataSource={dataDGNL} pagination={false} />
+                    <br/>
+                    <Pagination current={pageIndex} onChange={onChange} total={total} onShowSizeChange={onShowSizeChange} showSizeChanger defaultPageSize={pageSize}/>
                 </TabPane>
             </Tabs>
         </div>

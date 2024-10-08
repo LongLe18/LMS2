@@ -490,28 +490,28 @@ const Criteria = () => {
             responsive: ['md'],
         },
         {
-            title: 'Số câu hỏi phần 1',
+            title: 'Số câu hỏi phần Toán học',
             dataIndex: 'so_cau_hoi_phan_1',
             key: 'so_cau_hoi_phan_1',
             width: 180,
             responsive: ['md'],
         },
         {
-            title: 'Thời gian phần 1',
+            title: 'Thời gian phần Toán học',
             dataIndex: 'thoi_gian_phan_1',
             key: 'thoi_gian_phan_1',
             width: 150,
             responsive: ['md'],
         },
         {
-            title: 'Số câu hỏi phần 2',
+            title: 'Số câu hỏi phần Văn học',
             dataIndex: 'so_cau_hoi_phan_2',
             key: 'so_cau_hoi_phan_2',
             width: 180,
             responsive: ['md'],
         },
         {
-            title: 'Thời gian phần 2',
+            title: 'Thời gian phần Văn học',
             dataIndex: 'thoi_gian_phan_2',
             key: 'thoi_gian_phan_2',
             width: 150,
@@ -532,14 +532,14 @@ const Criteria = () => {
             responsive: ['md'],
         },
         {
-            title: 'Số câu hỏi phần Tiếng Anh',
+            title: 'Số câu hỏi phần Ngoại ngữ',
             dataIndex: 'so_cau_hoi_phan_4',
             key: 'so_cau_hoi_phan_4',
             width: 180,
             responsive: ['md'],
         },
         {
-            title: 'Thời gian phần Tiếng Anh',
+            title: 'Thời gian phần Ngoại ngữ',
             dataIndex: 'thoi_gian_phan_4',
             key: 'thoi_gian_phan_4',
             width: 150,
@@ -1407,7 +1407,7 @@ const Criteria = () => {
                                     <Col xl={12} sm={24} xs={24} >
                                         <Form.Item
                                             className="input-col"
-                                            label={`Số câu hỏi phần ${index + 1}`}
+                                            label={`Số câu hỏi phần ${index === 0 ? ' Toán học' : index === 1 ? ' Văn học' : index === 2 ? ' Khoa học' : 'Ngoại ngữ'}`}
                                             name={`so_cau_hoi_phan_${index + 1}`}
                                             rules={[
                                                 {
@@ -1627,7 +1627,7 @@ const Criteria = () => {
                                 </Button>
                             </Col>
                         </Row>
-                        <Table className="table-striped-rows" columns={columns4} dataSource={dataCriteriaOnline} pagination={false} scroll={{ x: 1500, y: 500 }}></Table>
+                        <Table className="table-striped-rows table-section" columns={columns4} dataSource={dataCriteriaOnline} pagination={false} scroll={{ x: 1500, y: 500 }} style={{scrollbarWidth: 500}}></Table>
                         <br/>
                         <Pagination current={pageIndex} onChange={onChangePage} 
                             total={criteriaOnline?.totalCount} onShowSizeChange={onChangePageSize} 

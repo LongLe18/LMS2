@@ -211,12 +211,6 @@ const EvaluationPage = () => {
         }, {
             value: '3',
             label: 'Phần 3',
-        }, {
-            value: '31',
-            label: 'Phần 3.1',
-        }, {
-            value: '32',
-            label: 'Phần 3.2',
         }]
         let options = sections.map((section) => (
             <Option key={section.value} value={section.value} >{section.label}</Option>
