@@ -67,7 +67,7 @@ const getAll = async (req, res) => {
                 trang_thai: req.query.trang_thai,
             }),
             ...(req.query.search && {
-                search: `%${decodeURI(req.query.search)}%`,
+                ho_ten: { [Op.like]: `%${decodeURI(req.query.search)}%` },
             }),
             ...(req.query.ttp_id && { ttp_id: req.query.ttp_id }),
             ...(req.query.ngay_bat_dau &&
