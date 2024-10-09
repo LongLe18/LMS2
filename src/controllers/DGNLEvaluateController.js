@@ -197,11 +197,11 @@ const download = async (req, res) => {
                     )
                 ) {
                     if (selectedAnswer.cau_hoi.chuyen_nganh_id === 1) {
-                        phan_1 += selectedAnswer.cau_hoi.diem;
+                        phan_1 += parseFloat(selectedAnswer.cau_hoi.diem);
                     } else if (selectedAnswer.cau_hoi.chuyen_nganh_id === 7) {
-                        phan_2 += selectedAnswer.cau_hoi.diem;
+                        phan_2 += parseFloat(selectedAnswer.cau_hoi.diem);
                     } else {
-                        phan_3 += selectedAnswer.cau_hoi.diem;
+                        phan_3 += parseFloat(selectedAnswer.cau_hoi.diem);
                     }
                 }
             } else if (
@@ -215,9 +215,9 @@ const download = async (req, res) => {
                 const dap_ans = selectedAnswer.cau_hoi.dap_ans;
                 const bangDiem = {
                     0: 0,
-                    1: selectedAnswer.cau_hoi.diem / 10,
-                    2: selectedAnswer.cau_hoi.diem / 4,
-                    3: selectedAnswer.cau_hoi.diem / 2,
+                    1: parseFloat(selectedAnswer.cau_hoi.diem) / 10,
+                    2: parseFloat(selectedAnswer.cau_hoi.diem) / 4,
+                    3: parseFloat(selectedAnswer.cau_hoi.diem) / 2,
                 };
                 let so_cau_dung = ket_qua_chons.reduce(
                     (acc, ket_qua_chon, index) =>
@@ -243,13 +243,13 @@ const download = async (req, res) => {
                             .toLowerCase()
                 ) {
                     if (selectedAnswer.cau_hoi.chuyen_nganh_id === 1) {
-                        phan_1 += selectedAnswer.cau_hoi.diem;
+                        phan_1 += parseFloat(selectedAnswer.cau_hoi.diem);
                     } else if (selectedAnswer.cau_hoi.chuyen_nganh_id === 7) {
-                        phan_2 += selectedAnswer.cau_hoi.diem;
+                        phan_2 += parseFloat(selectedAnswer.cau_hoi.diem);
                     } else {
-                        phan_3 += selectedAnswer.cau_hoi.diem;
+                        phan_3 += parseFloat(selectedAnswer.cau_hoi.diem);
                     }
-                    diem_tu_luan += selectedAnswer.cau_hoi.diem;
+                    diem_tu_luan += parseFloat(selectedAnswer.cau_hoi.diem);
                 }
             }
         }
