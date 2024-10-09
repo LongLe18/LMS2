@@ -88,7 +88,7 @@ function* fetchUsers(payload) {
 
 function* fetchStudents(payload) {
   try {
-    const endpoint = `${config.API_URL}/student?ngay_bat_dau=${payload.params.startDay}&trang_thai=${payload.params.status}&search=${payload.params.search}&ngay_ket_thuc=${payload.params.endDay}&limit=${payload.params.pageSize}&offset=${payload.params.pageIndex}&tinh=${payload.params.province}`;
+    const endpoint = `${config.API_URL}/student?ngay_bat_dau=${payload.params.startDay}&trang_thai=${payload.params.status}&search=${payload.params.search}&ngay_ket_thuc=${payload.params.endDay}&pageSize=${payload.params.pageSize}&pageIndex=${payload.params.pageIndex}&ttp_id=${payload.params.province}`;
     const response = yield call(getApiAuth, endpoint);
     const data = yield response.data;
     yield put({ type: actions.user.GET_STUDENTS_SUCCESS, result: data });

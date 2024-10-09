@@ -93,7 +93,7 @@ const StatisticExam = (props) => {
     const fetchStatiscalDGNL = (idCourse) => {
         if (idCourse !== null && idCourse !== undefined) {
             const token = localStorage.getItem('userToken');
-            axios.get(config.API_URL + `/student_exam/dgnl?pageIndex=${pageIndex}&pageSize=${pageSize}&khoa_hoc_id=${idCourse}`, { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'}})
+            axios.get(config.API_URL + `/student_exam/dgnl?search=${searchValue}&pageIndex=${pageIndex}&pageSize=${pageSize}&khoa_hoc_id=${idCourse}&ngay_bat_dau=${filter.start}&ngay_ket_thuc=${filter.end}&ttp_id=${filter.tinh}`, { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'}})
             .then(
                 res => {
                     if (res.status === 200 && res.statusText === 'OK') {
@@ -109,7 +109,7 @@ const StatisticExam = (props) => {
                                 }
                                 return null;
                             })
-                            setDataDGNL(res.data.data.map((item, index) => ({...item, key: index, ho_ten: item?.hoc_vien?.ten_hoc_vien})));
+                            setDataDGNL(res.data.data.filter((item) => item.thoi_diem_ket_thuc !== null).map((item, index) => ({...item, key: index, ho_ten: item?.hoc_vien?.ten_hoc_vien})));
                         }
                         else 
                             setDataDGNL(res.data.data);
@@ -366,7 +366,7 @@ const StatisticExam = (props) => {
                     <Button type='primary' style={{borderRadius: 6}}
                         onClick={() => {
                             // open new  tab
-                            window.open(`/luyen-tap/lich-su-admin/${record.de_thi_id}/${dthv_id}`, '_blank');
+                            window.open(`/luyen-tap/lich-su-admin/${state.examId}/${dthv_id}`, '_blank');
                         }}
                     >
                         Xem lại

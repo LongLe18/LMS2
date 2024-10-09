@@ -287,7 +287,7 @@ const HistoryExam = () => {
     const renderExam = () => {
         if (error) return <NoRecord subTitle="Không tìm thấy đề thi." />;
         return (
-            <Row className="question-content" style={{margin: '0 24px'}}>
+            <Row className="question-content" style={{margin: '0 24px'}} gutter={12}>
                 <Col span={21}>
                     {(exam.status === 'success') &&(
                         <div className="history-header">

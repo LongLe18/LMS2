@@ -151,7 +151,7 @@ const ExamAdminPage = () => {
           dataIndex: 'ten_khoa_hoc',
           key: 'ten_khoa_hoc',
           responsive: ['md'],
-          width: 300,
+          width: 200,
       },
       {
         title: 'Mô đun',

@@ -677,7 +677,7 @@ const ExamOnlineDetail = () => {
                     </div>
                     
                     <div>Đề thi phần tiếp theo sẽ hiện thị sau 30 giây. Bạn hãy sẵn có thể để vào làm bài</div>
-                    {localStorage.getItem('mon_thi').split(',').includes('9') &&
+                    {localStorage.getItem('mon_thi')?.split(',').includes('9') &&
                         <div style={{width: '100%', textAlign: 'center'}}>
                             <Button type="primary" danger style={{borderRadius: 8}}>
                                 <a href={alat} target='_blank' rel='noopener noreferrer'>ALAT Địa lý Việt Nam</a>
@@ -1110,10 +1110,10 @@ const ExamOnlineDetail = () => {
     };
 
     // tải nhận xét cho phần thi ĐGNL
-    const exportEvaluationDGNL = async (dthv_id) => {
+    const exportEvaluationDGNL = async () => {
         try {
             const response = await axios({
-                url: `${config.API_URL}/evaluate-dgnl/${dthv_id}/export-report`, 
+                url: `${config.API_URL}/evaluate-dgnl/${params.idExamUser}/export-report`, 
                 method: 'GET',
                 responseType: 'blob', 
                 headers: {
@@ -1154,7 +1154,7 @@ const ExamOnlineDetail = () => {
                                     {(isDoing && state.sectionExam === 1) ? 
                                     'PHẦN 1: TƯ DUY ĐỊNH LƯỢNG' : (isDoing && state.sectionExam === 2) ? 
                                     'PHẦN 2: TƯ DUY ĐỊNH TÍNH' : (isDoing && state.sectionExam === 3) && 
-                                    `PHẦN 3: ${localStorage.getItem('mon_thi').split(',').length === 1 ? 'NGOẠI NGỮ' : 'KHOA HỌC'}`}
+                                    `PHẦN 3: ${localStorage.getItem('mon_thi')?.split(',').length === 1 ? 'NGOẠI NGỮ' : 'KHOA HỌC'}`}
                                 </Col>
                                 <Col><span style={{ fontSize: 24, color: 'rgb(255, 48, 7)' }}>{secondsToMinutes(countSection)}</span></Col>
                             </Row>
@@ -1253,7 +1253,7 @@ const ExamOnlineDetail = () => {
                                                             // 
                                                             <div className={`section-${index} detail-title-section`} style={{margin: '12px 0px'}}>Phần {index + 1}: {index === 0 ? `Tư duy định lượng (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)` 
                                                                 : index === 1 ? `Tư duy định tính (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)`
-                                                                : `${localStorage.getItem('mon_thi').split(',').length === 1 ? 'Ngoại ngữ ' : 'Khoa học '} (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)`}</div>
+                                                                : `${localStorage.getItem('mon_thi')?.split(',').length === 1 ? 'Ngoại ngữ ' : 'Khoa học '} (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)`}</div>
                                                         )
                                                     })}
                                                     <div className={"section-sum detail-title-section"} style={{margin: '12px 0px'}}>Tổng điểm</div>
@@ -1359,7 +1359,7 @@ const ExamOnlineDetail = () => {
                                                                             <div style={{padding: 0}}>
                                                                                 Phần {index + 1}: {index === 0 ? `Tư duy định lượng: ` 
                                                                                 : index === 1 ? `Tư duy định tính: `
-                                                                                : `${localStorage.getItem('mon_thi').split(',').length === 1 ? 'Ngoại ngữ' : 'Khoa học'}:`}
+                                                                                : `${localStorage.getItem('mon_thi')?.split(',').length === 1 ? 'Ngoại ngữ' : 'Khoa học'}:`}
                                                                             </div>
                                                                             <div style={{padding: 0}}>
                                                                                 {number.reduce((partialSum, a) => partialSum + a, 0)}
@@ -1639,7 +1639,7 @@ const ExamOnlineDetail = () => {
                                                 )
                                             } else return null;
                                         })}
-                                        {(localStorage.getItem('mon_thi').split(',').includes('9') && index === 2) &&
+                                        {(localStorage.getItem('mon_thi')?.split(',').includes('9') && index === 2) &&
                                             <div style={{width: '100%', textAlign: 'center', marginBottom: 12}}>
                                                 <Button type="primary" danger style={{borderRadius: 8}}>
                                                     <a href={alat} target='_blank' rel='noopener noreferrer'>ALAT Địa lý Việt Nam</a>

@@ -140,7 +140,7 @@ const AccountPage = () => {
 
     useEffect(() => {
         dispatch(userAction.getStudents({ search: filter.search, startDay: filter.start, 
-          endDay: filter.end, status: filter.trang_thai, pageIndex: pageIndex - 1, 
+          endDay: filter.end, status: filter.trang_thai, pageIndex: pageIndex, 
           pageSize: pageSize, province: filter.tinh }, (res) => {
             if (res.status === 'success') {
               res.data = (res.data.map((student) => {
@@ -197,8 +197,8 @@ const AccountPage = () => {
           key: 'trang_thai',
           responsive: ['md'],
           render: (trang_thai) => (
-            <Tag color={trang_thai === 1 ? 'green' : trang_thai === 2 ? 'orange' : 'red'} key={trang_thai}>
-              {trang_thai === 1 ? "Hoạt động" : trang_thai === 2 ? "Chờ kích hoạt" : "Tạm dừng"}
+            <Tag color={trang_thai === true ? 'green' : trang_thai === false ? 'red' : 'orange'} key={trang_thai}>
+              {trang_thai === true ? "Hoạt động" : trang_thai === false ? "Tạm dừng" : "Chờ kích hoạt"}
             </Tag>
           ),
         },
@@ -245,7 +245,7 @@ const AccountPage = () => {
     
     useEffect(() => {
       dispatch(userAction.getStudents({ status: filter.trang_thai, search: filter.search,
-        startDay: filter.start, endDay: filter.end, pageIndex: pageIndex - 1, 
+        startDay: filter.start, endDay: filter.end, pageIndex: pageIndex, 
         pageSize: pageSize, province: filter.tinh }, (res) => {
           if (res.status === 'success') {
             res.data = (res.data.map((student) => {
@@ -259,7 +259,7 @@ const AccountPage = () => {
 
     useMemo(() => {
       dispatch(userAction.getStudents({ status: filter.trang_thai, search: filter.search,
-        startDay: filter.start, endDay: filter.end, pageIndex: pageIndex - 1, 
+        startDay: filter.start, endDay: filter.end, pageIndex: pageIndex, 
         pageSize: pageSize, province: filter.tinh }, (res) => {
           if (res.status === 'success') {
             res.data = (res.data.map((student) => {
@@ -385,7 +385,7 @@ const AccountPage = () => {
             const callback = (res) => {
               if (res.status === 'success') {
                 dispatch(userAction.getStudents({ status: filter.trang_thai, search: filter.search,
-                  startDay: filter.start, endDay: filter.end, pageIndex: pageIndex - 1, 
+                  startDay: filter.start, endDay: filter.end, pageIndex: pageIndex, 
                   pageSize: pageSize, province: filter.tinh }, (res) => {
                     if (res.status === 'success') {
                       res.data = (res.data.map((student) => {
@@ -426,7 +426,7 @@ const AccountPage = () => {
           const callback = (res) => {
             if (res.status === 'success') {
               dispatch(userAction.getStudents({ status: filter.trang_thai, search: filter.search,
-                startDay: filter.start, endDay: filter.end, pageIndex: pageIndex - 1, 
+                startDay: filter.start, endDay: filter.end, pageIndex: pageIndex, 
                 pageSize: pageSize, province: filter.tinh }, (res) => {
                   if (res.status === 'success') {
                     res.data = (res.data.map((student) => {
@@ -475,7 +475,7 @@ const AccountPage = () => {
                 form.resetFields();
                 setState({ ...state, isEdit: false, idStudent: '' });
                 dispatch(userAction.getStudents({ status: filter.trang_thai, search: filter.search,
-                  startDay: filter.start, endDay: filter.end, pageIndex: pageIndex - 1, 
+                  startDay: filter.start, endDay: filter.end, pageIndex: pageIndex, 
                   pageSize: pageSize, province: filter.tinh }, (res) => {
                     if (res.status === 'success') {
                       res.data = (res.data.map((student) => {
@@ -707,7 +707,7 @@ const AccountPage = () => {
           <Button type='primary' onClick={() => exportFile()} style={{marginRight: '10px'}}>Trích xuất file</Button>
           <Button type='primary' onClick={() => setVisibleFastlyCreateAccount(true)} style={{marginRight: '10px'}}>Tạo nhanh học viên</Button>
           <Button type='primary' onClick={() => addNew()} style={{marginRight: '10px'}}>Thêm học viên mới</Button>
-          <span>Số học viên đã chọn: {selectedRowKeys.length}/{students.total}</span>
+          <span>Số học viên đã chọn: {selectedRowKeys.length}/{students.totalCount}</span>
           <ExcelFile filename={'Quản lý học viên'} element={<Button className='download' style={{display: 'none'}}></Button>}>
               <ExcelSheet data={allData.length > 0 && allData} name={"Quản lý học viên"}>
                   <ExcelColumn label="Họ tên" value="ho_ten"/>
@@ -723,8 +723,8 @@ const AccountPage = () => {
           <Table className="table-striped-rows" columns={columns} dataSource={data} pagination={false} rowSelection={rowSelection}/>
           <br/>
           <div style={{display: 'flex', alignItems: 'center'}}>
-            <Pagination current={pageIndex} onChange={onChange} total={students.total} onShowSizeChange={onShowSizeChange} showSizeChanger defaultPageSize={pageSize}/>
-            <span style={{marginLeft: '10px'}}>Tổng số học viên: <b>{students.total}</b></span>
+            <Pagination current={pageIndex} onChange={onChange} total={students.totalCount} onShowSizeChange={onShowSizeChange} showSizeChanger defaultPageSize={pageSize}/>
+            <span style={{marginLeft: '10px'}}>Tổng số học viên: <b>{students.totalCount}</b></span>
           </div>
           {(errorusers) && notification.error({
               message: 'Thông báo',
