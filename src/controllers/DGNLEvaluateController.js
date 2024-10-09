@@ -258,7 +258,7 @@ const download = async (req, res) => {
 
         let evaluate_1 = await DGNLEvaluate.findOne({
             where: {
-                khoa_hoc_id: studentExam.khoa_hoc_id,
+                khoa_hoc_id: studentExam.de_thi.khoa_hoc_id,
                 phan_thi: 1,
                 cau_bat_dau: {
                     [Op.lte]: phan_1,
@@ -270,7 +270,7 @@ const download = async (req, res) => {
         });
         let evaluate_2 = await DGNLEvaluate.findOne({
             where: {
-                khoa_hoc_id: studentExam.khoa_hoc_id,
+                khoa_hoc_id: studentExam.de_thi.khoa_hoc_id,
                 phan_thi: 2,
                 cau_bat_dau: {
                     [Op.lte]: phan_2,
@@ -282,10 +282,10 @@ const download = async (req, res) => {
         });
 
         let evaluate_3
-        if (studentExam.some((item) => item.phan === 3)) {
+        if (!(selectedAnswers.some((item) => item.cau_hoi.chuyen_nganh_id === 5))) {
             evaluate_3= await DGNLEvaluate.findOne({
                 where: {
-                    khoa_hoc_id: studentExam.khoa_hoc_id,
+                    khoa_hoc_id: studentExam.de_thi.khoa_hoc_id,
                     phan_thi: 31,
                     cau_bat_dau: {
                         [Op.lte]: phan_3,
@@ -298,7 +298,7 @@ const download = async (req, res) => {
         } else {
             evaluate_3= await DGNLEvaluate.findOne({
                 where: {
-                    khoa_hoc_id: studentExam.khoa_hoc_id,
+                    khoa_hoc_id: studentExam.de_thi.khoa_hoc_id,
                     phan_thi: 32,
                     cau_bat_dau: {
                         [Op.lte]: phan_3,
