@@ -10,7 +10,7 @@ import useFetch from 'hooks/useFetch';
 import useDebounce from 'hooks/useDebounce';
 
 // component
-import { Row, Col, Table, Button, Tag, Select, notification, Pagination, Tabs, message } from 'antd';
+import { Row, Col, Table, Button, Tag, Select, notification, Pagination, Tabs } from 'antd';
 import AppFilter from "components/common/AppFilter";
 import ReactExport from "react-export-excel";
 
@@ -109,7 +109,9 @@ const StatisticExam = (props) => {
                                 }
                                 return null;
                             })
-                            setDataDGNL(res.data.data.filter((item) => item.thoi_diem_ket_thuc !== null).map((item, index) => ({...item, key: index, ho_ten: item?.hoc_vien?.ten_hoc_vien})));
+                            setDataDGNL(res.data.data.filter((item) => item.thoi_diem_ket_thuc !== null)
+                                .map((item, index) => ({...item, key: index, ten_khoa_hoc: courses.data.filter((course) => course.khoa_hoc_id === idCourse)[0]?.ten_khoa_hoc}))
+                            );
                         }
                         else 
                             setDataDGNL(res.data.data);
@@ -127,7 +129,7 @@ const StatisticExam = (props) => {
             });
         }
     }
-    
+
     const onFilterChange = (field, value) => {
         if (field === 'ngay') {
             setFilter((state) => ({ ...state, start: value[0] }));  
@@ -405,10 +407,9 @@ const StatisticExam = (props) => {
         },
         {
             title: 'Đề thi',
-            dataIndex: 'ten_de_thi',
-            key: 'ten_de_thi',
+            dataIndex: 'ten_khoa_hoc',
+            key: 'ten_khoa_hoc',
             responsive: ['md'],
-            render: (ten_de_thi, ket_qua) => (ket_qua?.de_thi?.ten_de_thi)
         },
         {
             title: 'Điểm phần 1',
@@ -454,6 +455,7 @@ const StatisticExam = (props) => {
             dataIndex: 'dthv_id',
             key: 'dthv_id',
             responsive: ['md'],
+            width: 150,
             render: (dthv_id, record) => (
                 <> 
                     <Button type='primary' style={{borderRadius: 6, marginRight: 6, marginBottom: 6}}
@@ -654,7 +656,20 @@ const StatisticExam = (props) => {
                         <Row className='app-main' style={{paddingTop: 0}}>
                             <Col xl={24} sm={24} xs={24}>
                                 {renderCourseForDGNL()}
-                                <Button type='primary' style={{marginLeft: 8}} onClick={exportReportSummanry}>Tải kết quả</Button>
+                                {/* <Button type='primary' style={{marginLeft: 8}} onClick={exportReportSummanry}>Tải kết quả</Button> */}
+                                <ExcelFile element={<Button type='primary'>Tải kết quả</Button>} filename={'baocao'}>
+                                    <ExcelSheet data={dataDGNL} name={'Thống kê điểm'}>
+                                        <ExcelColumn label="Họ tên" value={(col) => col?.hoc_vien?.ho_ten}/>
+                                        <ExcelColumn label="Số điện thoại" value={(col) => col?.hoc_vien?.sdt}/>
+                                        <ExcelColumn label="Quê quán" value={(col) => col.hoc_vien?.tinh_thanhpho?.ten}/>
+                                        <ExcelColumn label="Đề thi" value={"ten_khoa_hoc"}/>
+                                        <ExcelColumn label="Điểm phần 1" value={"diem_phan_1"}/>
+                                        <ExcelColumn label="Điểm phần 2" value={"diem_phan_2"}/>
+                                        <ExcelColumn label="Điểm phần 3" value={"diem_phan_3"}/>
+                                        <ExcelColumn label="Điểm" value="ket_qua_diem"/>
+                                        <ExcelColumn label="Ngày thi" value={(col) => moment(col.ngay_thi).utc(7).format(config.DATE_FORMAT)}/>
+                                    </ExcelSheet>
+                                </ExcelFile>
                             </Col>
                         </Row>
                     </Col>

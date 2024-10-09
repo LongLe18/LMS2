@@ -75,8 +75,10 @@ const QuestionPage = () => {
       return (
         <Select style={{width: '100%'}}
           showSearch={true}
+          allowClear
           onChange={(chuyen_nganh_id) => {
-            setFilter({ ...filter, chuyen_nganh_id: chuyen_nganh_id });
+            if (chuyen_nganh_id === undefined) setFilter({ ...filter, chuyen_nganh_id: '' });
+            else setFilter({ ...filter, chuyen_nganh_id: chuyen_nganh_id });
           }}
           filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
           placeholder="Chọn chuyên ngành"
@@ -97,10 +99,12 @@ const QuestionPage = () => {
         return (
             <Select style={{width: '100%'}}
               showSearch={true}
+              allowClear
               placeholder="Chọn khung chương trình"
               filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
               onChange={(kct_id) => {
-                setFilter({ ...filter, kct_id: kct_id });
+                if (kct_id === undefined) setFilter({ ...filter, kct_id: '' });
+                else setFilter({ ...filter, kct_id: kct_id });
               }}
             >
             {options}
@@ -145,6 +149,7 @@ const QuestionPage = () => {
           dataIndex: 'chuyen_nganh',
           key: 'chuyen_nganh',
           responsive: ['md'],
+          render: (chuyen_nganh, cau_hoi) => cau_hoi?.chuyen_nganh?.ten_chuyen_nganh
         },
         {
           title: 'Tùy chọn',
@@ -153,7 +158,7 @@ const QuestionPage = () => {
           // Redirect view for edit
           render: (cau_hoi_id) => (
             <Space size="middle">
-              <Link to={ "#" } type="button" className="ant-btn ant-btn-round ant-btn-primary">Xem</Link>
+              {/* <Link to={ "#" } type="button" className="ant-btn ant-btn-round ant-btn-primary">Xem</Link> */}
               <Button shape="round" type="danger" onClick={() => showConfirmDelete(cau_hoi_id)}>Xóa</Button> 
             </Space>
           ),
@@ -171,8 +176,7 @@ const QuestionPage = () => {
     // hàm xóa câu hỏi 
     const deleteQuestion = (idQuestion) => {
       const callback = (res) => {
-        console.log(res);
-        if (res.status === 'success') {
+        if (res.data.status === 'success') {
           notification.success({
             message: 'Thông báo',
             description: 'Xóa câu hỏi thành công',

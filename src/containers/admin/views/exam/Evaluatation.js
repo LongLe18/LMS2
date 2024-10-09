@@ -24,7 +24,7 @@ const EvaluationPage = () => {
     const dataEvaluationsDGNL = [];
     const [formEvaluation] = Form.useForm();
 
-    const [pageIndex, setPageIndex] = useState(0);
+    const [pageIndex, setPageIndex] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [idExam, setIdExam] = useState('');
     const [idEvaluation, setIdEvaluation] = useState('');
@@ -61,7 +61,7 @@ const EvaluationPage = () => {
                 dispatch(evaluationAction.getEVALUATEsDGNL({ idCourse: state.idCourse, pageIndex: pageIndex, pageSize: pageSize}));
                 break;
         }
-    }, [pageIndex, pageSize, idExam, state.activeTab]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [pageIndex, pageSize, idExam, state.activeTab, state.idCourse]); // eslint-disable-line react-hooks/exhaustive-deps
 
     if (evaluations.status === 'success' ) {    
         evaluations.data.map((item, index) => dataEvaluations.push({...item, 'key': index}));
@@ -191,7 +191,8 @@ const EvaluationPage = () => {
                 value={state.courseId}
                 onChange={(khoa_hoc_id) => {
                     // request api theo khoa_hoc_id
-                    setState({ ...state, idCourse: khoa_hoc_id })
+                    if (khoa_hoc_id === undefined) setState({ ...state, idCourse: '' })
+                    else setState({ ...state, idCourse: khoa_hoc_id })
                 }}
                 placeholder="Chọn khóa học"
             >
@@ -583,18 +584,18 @@ const EvaluationPage = () => {
         },     
         {
             title: 'Tùy chọn',
-            key: 'danh_gia_id',
-            dataIndex: 'danh_gia_id',
+            key: 'danh_gia_dgnl_id',
+            dataIndex: 'danh_gia_dgnl_id',
             // Redirect view for edit
-            render: (danh_gia_id) => (
+            render: (danh_gia_dgnl_id) => (
                 <Space size="middle">
-                    <Button  type="button" onClick={() => EditEvaluation(danh_gia_id)} className="ant-btn ant-btn-round ant-btn-primary">Sửa</Button>
-                    <Button shape="round" type="danger" onClick={() => DeleteEvaluation(danh_gia_id)} >Xóa</Button> 
+                    <Button  type="button" onClick={() => EditEvaluation(danh_gia_dgnl_id)} className="ant-btn ant-btn-round ant-btn-primary">Sửa</Button>
+                    <Button shape="round" type="danger" onClick={() => DeleteEvaluation(danh_gia_dgnl_id)} >Xóa</Button> 
                 </Space>
             ),
         },
     ];
-
+    
     // event đổi tab
     const onChangeTab = (value) => {
         setPageIndex(1);
@@ -634,7 +635,7 @@ const EvaluationPage = () => {
                                     onShowSizeChange={onShowSizeChange}
                                     onChange={onChange}
                                     defaultCurrent={pageIndex + 1}
-                                    total={evaluations?.count}
+                                    total={evaluations?.totalCount}
                                 />
                             </>
                         }

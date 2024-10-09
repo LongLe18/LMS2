@@ -95,6 +95,10 @@ export const GET_CRITERIA_ONLINE_ID = "GET_CRITERIA_ONLINE_ID";
 export const GET_CRITERIA_ONLINE_ID_SUCCESS = "GET_CRITERIA_ONLINE_ID_SUCCESS";
 export const GET_CRITERIA_ONLINE_ID_FAILED = "GET_CRITERIA_ONLINE_ID_FAILED";
 
+export const GET_CRITERIA_DGNL_ID = "GET_CRITERIA_DGNL_ID";
+export const GET_CRITERIA_DGNL_ID_SUCCESS = "GET_CRITERIA_DGNL_ID_SUCCESS";
+export const GET_CRITERIA_DGNL_ID_FAILED = "GET_CRITERIA_DGNL_ID_FAILED";
+
 export function getExam(params, callback) {
     return {
         type: GET_EXAM,
@@ -162,6 +166,14 @@ export function deleteExam(params, callback) {
 export function getCriteriaOnlineById(params, callback) {
     return {
         type: GET_CRITERIA_ONLINE_ID,
+        params,
+        callback,
+    };
+}
+
+export function getCriteriaDGNLById(params, callback) {
+    return {
+        type: GET_CRITERIA_DGNL_ID,
         params,
         callback,
     };

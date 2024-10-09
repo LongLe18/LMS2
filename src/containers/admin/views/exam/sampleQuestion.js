@@ -249,10 +249,11 @@ const SampleQuestion = (props) => {
                 </Col>
                 {exam.status === 'success' && 
                     <Button type="primary" 
-                        onClick={() => exam.data.loai_de_thi_id === 4 ? 
+                        onClick={() => exam.data.loai_de_thi_id === 5 ? 
                             props.history.push(`/admin/onlineExam/detail/${idExam}`) : 
                             props.history.push(`/admin/exam/detail/${idExam}`)}
-                    >Quay lại đề thi
+                    >
+                        Quay lại đề thi
                     </Button>
                 }
                 {loading && <LoadingCustom/>}

@@ -7,7 +7,7 @@ import { get } from 'lodash';
 
 function* fetchEvaluations(payload) {
     try {
-        let endpoint = `${config.API_URL}/evaluate?de_thi_id=${payload.params.id}&offset=${payload.params.pageIndex}&limit=${payload.params.pageSize}`;
+        let endpoint = `${config.API_URL}/evaluate?de_thi_id=${payload.params.id}&pageIndex=${payload.params.pageIndex}&pageSize=${payload.params.pageSize}`;
         const response = yield call(getApiAuth, endpoint);
         const result = yield response.data;
         yield put({ type: actions.evaluate.GET_EVALUATES_SUCCESS, result: result });

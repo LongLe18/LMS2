@@ -85,7 +85,6 @@ const ExamDetailPage = () => {
     const [currentStep, setCurrentStep] = useState(0);
     const [currentQuestion, setCurrentQuestion] = useState(defaultQuestion);
     const [isOpenEditor, setIsOpenEditor] = useState(false);
-    console.log(isOpenEditor);
     const [isModalVisible, setIsModalVisible] = useState(false);
     
     const exam = useSelector(state => state.exam.item.result);
@@ -130,9 +129,12 @@ const ExamDetailPage = () => {
                     setState({...state, showThematic: true, showCourse: false, showModule: false})
                     dispatch(examActions.getModuleCriteria({  idModule: res.data.mo_dun_id }));
                 }
-                else {
+                else if (res.data.loai_de_thi_id === 3) { // Loại tổng hợp
                     setState({...state, showThematic: true, showCourse: false, showModule: false});
                     dispatch(examActions.getSyntheticCriteria({  idCourse: res.data.khoa_hoc_id }));
+                } else {
+                    setState({...state, showThematic: true, showCourse: false, showModule: true});
+                    dispatch(examActions.getCriteriaOnlineById({  idCourse: res.data.khoa_hoc_id }));
                 }
                 dispatch(moduleActions.getModulesByIdCourse({ idCourse: res.data.khoa_hoc_id }));
                 dispatch(thematicActions.getThematicsByIdModule({ idModule: res.data.mo_dun_id }));
@@ -1313,7 +1315,7 @@ const ExamDetailPage = () => {
                                                 <h6 style={{padding: "10px 0 0 10px"}}>
                                                     Danh sách câu hỏi{' '}
                                                     <span className="counter">
-                                                    {exam.data.cau_hoi_de_this.length}/{criteria.data.so_cau_hoi}
+                                                    {exam.data.cau_hoi_de_this.length}/{criteria?.data.so_cau_hoi}
                                                     </span>
                                                 </h6>
                                                 {renderQuestions()}

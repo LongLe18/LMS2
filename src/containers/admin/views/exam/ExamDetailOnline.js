@@ -152,7 +152,7 @@ const OnlineExamDetailPage = () => {
         const callback = (res) => {
             // lấy số lượng câu hỏi của đề theo tiêu chí đề  thi thuộc vào
             if (res.status === 'success') {
-                dispatch(examActions.getCriteriaOnlineById({  idCourse: res.data.khoa_hoc_id }));
+                dispatch(examActions.getCriteriaDGNLById({  idCourse: res.data.khoa_hoc_id }));
             };
         };
 
@@ -195,6 +195,7 @@ const OnlineExamDetailPage = () => {
         }
     };
 
+    // cập nhật câu hỏi
     const save = () => {
         form.submit();
     };
@@ -244,6 +245,10 @@ const OnlineExamDetailPage = () => {
                             kieu_hien_thi_dap_an: res.data.cot_tren_hang.toString(),
                             dap_an_dung: dap_an_dung,
                             chuyen_nganh_id: res.data.chuyen_nganh_id,
+                            //
+                            noi_dung: res.data.noi_dung,
+                            dap_an: dap_ans,
+                            loi_giai: res.data.loi_giai,
                         });
                         setCurrentQuestion({...currentQuestion, noi_dung: res.data.noi_dung, 
                             dap_an: dap_ans, loi_giai: res.data.loi_giai,
@@ -646,8 +651,8 @@ const OnlineExamDetailPage = () => {
                     <div className='exam-page'>
                         <Steps current={currentStep} style={{maxWidth: '100%'}}>
                             <Step title="Thông tin chung" />
-                            {(criteria && criteria.status === 'success') &&
-                                Array.from({ length: criteria.data.so_phan }).map((_, index) => {
+                            {
+                                Array.from({ length: criteria?.data?.so_phan }).map((_, index) => {
                                     return <Step title={`Danh sách câu hỏi phần ${index + 1}`} />
                                 })
                             }
@@ -755,7 +760,7 @@ const OnlineExamDetailPage = () => {
                         </TabPane>
                         
                         {
-                            Array.from({ length: criteria.data.so_phan }).map((_, index) => {
+                            Array.from({ length: criteria?.data?.so_phan }).map((_, index) => {
                                 return (
                                     <TabPane tab={`Tạo câu hỏi phần ${index + 1}`} key={`step_${index + 1}`}>
                                         <Row gutter={[16, 16]} style={{marginBottom: 12}}>
@@ -1191,7 +1196,7 @@ const OnlineExamDetailPage = () => {
                                 )
                             })
                         }
-                        <TabPane tab="Hoàn thành" key={`step_${criteria.data.so_phan + 1}`}>
+                        <TabPane tab="Hoàn thành" key={`step_${criteria?.data?.so_phan + 1}`}>
                             <Row gutter={25}>
                                 <Col xl={24} sm={24} xs={24} className="left-content">
                                     <Result
@@ -1238,7 +1243,7 @@ const OnlineExamDetailPage = () => {
                                 </Button>
                             </>
                             )}
-                            {(currentStep >= 1 && currentStep <= criteria.data.so_phan )&& (
+                            {(currentStep >= 1 && currentStep <= criteria?.data?.so_phan )&& (
                             <>
                                 <Button type="primary" onClick={() => window.open(`/luyen-tap/xem-lai/${hashids.encode(id)}`, "_blank")} size="large">
                                     Xem toàn đề
