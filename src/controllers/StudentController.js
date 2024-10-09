@@ -637,7 +637,7 @@ const postCreateMoreByPrefix = async (req, res) => {
 
     let formattedNumber;
     let data = [];
-    for (let index = 1; index < Number(req.body.so_luong); index++) {
+    for (let index = 1; index <= Number(req.body.so_luong); index++) {
         // Chuyển số thành chuỗi và thêm số 0 vào đầu nếu cần để có độ dài 3 ký tự
         formattedNumber = index.toString().padStart(3, '0');
 
