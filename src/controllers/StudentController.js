@@ -67,13 +67,17 @@ const getAll = async (req, res) => {
                 trang_thai: req.query.trang_thai,
             }),
             ...(req.query.search && {
-                search: `%${decodeURI(req.query.search)}%`,
+                ho_ten: `%${decodeURI(req.query.search)}%`,
             }),
             ...(req.query.ttp_id && { ttp_id: req.query.ttp_id }),
             ...(req.query.ngay_bat_dau &&
                 req.query.ngay_ket_thuc && {
-                    ngay_bat_dau: req.query.ngay_bat_dau,
-                    ngay_ket_thuc: req.query.ngay_ket_thuc,
+                    ngay_sinh: {
+                        [Op.between]: [
+                            req.query.ngay_bat_dau,
+                            req.query.ngay_ket_thuc,
+                        ],
+                    },
                 }),
         },
         offset:
