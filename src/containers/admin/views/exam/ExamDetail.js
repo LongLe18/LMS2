@@ -651,6 +651,10 @@ const ExamDetailPage = () => {
                             kieu_hien_thi_dap_an: res.data.cot_tren_hang.toString(),
                             chuyen_nganh_id: res.data.chuyen_nganh_id,
                             dap_an_dung: dap_an_dung,
+                            //
+                            noi_dung: res.data.noi_dung,
+                            ap_an: dap_ans, 
+                            loi_giai: res.data.loi_giai,
                         });
 
                         setCurrentQuestion({...currentQuestion, noi_dung: res.data.noi_dung, 

@@ -210,8 +210,11 @@ const EvaluationPage = () => {
             value: '2',
             label: 'Phần 2',
         }, {
-            value: '3',
-            label: 'Phần 3',
+            value: '31',
+            label: 'Phần Tiếng Anh (Phần 3)',
+        }, {
+            value: '32',
+            label: 'Phần Khoa học (Phần 3)',
         }]
         let options = sections.map((section) => (
             <Option key={section.value} value={section.value} >{section.label}</Option>
@@ -551,7 +554,7 @@ const EvaluationPage = () => {
             key: 'phan_thi',
             responsive: ['md'],
             render: (phan_thi) => (
-                phan_thi === 1 ? 'Phần 1' : phan_thi === 2 ? 'Phần 2' : phan_thi === 3 ? 'Phần 3' : phan_thi === 31 ? 'Phần 3.1' : 'Phần 3.2'
+                phan_thi === 1 ? 'Phần 1' : phan_thi === 2 ? 'Phần 2' : phan_thi === 32 ? 'Phần 3: Khoa học' : phan_thi === 31 && 'Phần 3: Tiếng Anh'
             ),
         },
         {
