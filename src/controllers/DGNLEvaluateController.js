@@ -282,7 +282,7 @@ const download = async (req, res) => {
         });
 
         let evaluate_3
-        if (!(selectedAnswers.some((item) => item.cau_hoi.chuyen_nganh_id === 5))) {
+        if (selectedAnswers.some((item) => item.cau_hoi.chuyen_nganh_id === 5)) {
             evaluate_3= await DGNLEvaluate.findOne({
                 where: {
                     khoa_hoc_id: studentExam.de_thi.khoa_hoc_id,
