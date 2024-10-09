@@ -439,9 +439,6 @@ const putUpdate = async (req, res) => {
     let ket_qua_chons;
     let dap_ans;
     let result;
-    let phan_1 = 0;
-    let phan_2 = 0;
-    let phan_3 = 0;
     for (const selectedAnswer of selectedAnswers) {
         result = false;
         if (selectedAnswer.cau_hoi.loai_cau_hoi === 1) {
@@ -454,13 +451,6 @@ const putUpdate = async (req, res) => {
                         ket_qua_chon == dap_ans[index].dap_an_dung
                 )
             ) {
-                if (selectedAnswer.cau_hoi.chuyen_nganh_id === 1) {
-                    phan_1 += selectedAnswer.cau_hoi.diem;
-                } else if (selectedAnswer.cau_hoi.chuyen_nganh_id === 7) {
-                    phan_2 += selectedAnswer.cau_hoi.diem;
-                } else {
-                    phan_3 += selectedAnswer.cau_hoi.diem;
-                }
                 result = true;
             }
         } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 2) {
@@ -493,13 +483,6 @@ const putUpdate = async (req, res) => {
                         .trim()
                         .toLowerCase()
             ) {
-                if (selectedAnswer.cau_hoi.chuyen_nganh_id === 1) {
-                    phan_1 += parseFloat(selectedAnswer.cau_hoi.diem);
-                } else if (selectedAnswer.cau_hoi.chuyen_nganh_id === 7) {
-                    phan_2 += parseFloat(selectedAnswer.cau_hoi.diem);
-                } else {
-                    phan_3 += parseFloat(selectedAnswer.cau_hoi.diem);
-                }
                 result = true;
             }
         }
@@ -567,9 +550,6 @@ const putUpdate = async (req, res) => {
     const studentExam = await StudentExam.update(
         {
             ...req.body,
-            ...(exam.de_mau_id && {
-                diem_cac_phan: `${phan_1},${phan_2},${phan_3}`,
-            }),
             ket_qua_diem: ket_qua_diem,
             so_cau_tra_loi_dung: so_cau_tra_loi_dung,
             so_cau_tra_loi_sai: so_cau_tra_loi_sai,
@@ -628,11 +608,11 @@ const putUpdatev2 = async (req, res) => {
                 )
             ) {
                 if (selectedAnswer.cau_hoi.chuyen_nganh_id === 1) {
-                    phan_1 += selectedAnswer.cau_hoi.diem;
+                    phan_1 += parseFloat(selectedAnswer.cau_hoi.diem);
                 } else if (selectedAnswer.cau_hoi.chuyen_nganh_id === 7) {
-                    phan_2 += selectedAnswer.cau_hoi.diem;
+                    phan_2 += parseFloat(selectedAnswer.cau_hoi.diem);
                 } else {
-                    phan_3 += selectedAnswer.cau_hoi.diem;
+                    phan_3 += parseFloat(selectedAnswer.cau_hoi.diem);
                 }
                 result = true;
             }
@@ -642,9 +622,9 @@ const putUpdatev2 = async (req, res) => {
             const dap_ans = selectedAnswer.cau_hoi.dap_ans;
             const bangDiem = {
                 0: 0,
-                1: selectedAnswer.cau_hoi.diem / 10,
-                2: selectedAnswer.cau_hoi.diem / 4,
-                3: selectedAnswer.cau_hoi.diem / 2,
+                1: parseFloat(selectedAnswer.cau_hoi.diem) / 10,
+                2: parseFloat(selectedAnswer.cau_hoi.diem) / 4,
+                3: parseFloat(selectedAnswer.cau_hoi.diem) / 2,
             };
             let so_cau_dung = ket_qua_chons.reduce(
                 (acc, ket_qua_chon, index) =>
@@ -667,11 +647,11 @@ const putUpdatev2 = async (req, res) => {
                         .toLowerCase()
             ) {
                 if (selectedAnswer.cau_hoi.chuyen_nganh_id === 1) {
-                    phan_1 += selectedAnswer.cau_hoi.diem;
+                    phan_1 += parseFloat(selectedAnswer.cau_hoi.diem);
                 } else if (selectedAnswer.cau_hoi.chuyen_nganh_id === 7) {
-                    phan_2 += selectedAnswer.cau_hoi.diem;
+                    phan_2 += parseFloat(selectedAnswer.cau_hoi.diem);
                 } else {
-                    phan_3 += selectedAnswer.cau_hoi.diem;
+                    phan_3 += parseFloat(selectedAnswer.cau_hoi.diem);
                 }
                 result = true;
             }
