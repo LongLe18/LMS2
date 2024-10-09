@@ -72,8 +72,12 @@ const getAll = async (req, res) => {
             ...(req.query.ttp_id && { ttp_id: req.query.ttp_id }),
             ...(req.query.ngay_bat_dau &&
                 req.query.ngay_ket_thuc && {
-                    ngay_bat_dau: req.query.ngay_bat_dau,
-                    ngay_ket_thuc: req.query.ngay_ket_thuc,
+                    ngay_sinh: {
+                        [Op.between]: [
+                            req.query.ngay_bat_dau,
+                            req.query.ngay_ket_thuc,
+                        ],
+                    },
                 }),
         },
         offset:
@@ -633,7 +637,7 @@ const postCreateMoreByPrefix = async (req, res) => {
 
     let formattedNumber;
     let data = [];
-    for (let index = 1; index < Number(req.body.so_luong); index++) {
+    for (let index = 1; index <= Number(req.body.so_luong); index++) {
         // Chuyển số thành chuỗi và thêm số 0 vào đầu nếu cần để có độ dài 3 ký tự
         formattedNumber = index.toString().padStart(3, '0');
 
