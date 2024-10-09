@@ -1,4 +1,11 @@
-const { Student, Thematic, Exam, CourseStudent, Course } = require('../models');
+const {
+    Student,
+    Thematic,
+    Exam,
+    CourseStudent,
+    Course,
+    Province,
+} = require('../models');
 const { Op } = require('sequelize');
 const sequelize = require('../utils/db');
 const security = require('../utils/security');
@@ -38,71 +45,55 @@ const getStatistical = async (req, res, next) => {
 
 //[GET] student?id
 const getAll = async (req, res) => {
-    let search = 1;
-    let ngay_tao = 1;
-    let offset = 0;
-    let limit = 100;
-    let trang_thai = 1;
-    let tinh = 1;
-    if (req.query.offset) {
-        offset = req.query.offset;
-    }
-    if (req.query.limit) {
-        limit = req.query.limit;
-    }
-    if (req.query.trang_thai) {
-        trang_thai = 'hoc_vien.trang_thai=:trang_thai';
-    }
-    if (req.query.ngay_bat_dau && req.query.ngay_ket_thuc) {
-        ngay_tao = `hoc_vien.ngay_tao BETWEEN :ngay_bat_dau AND :ngay_ket_thuc`;
-    }
-    if (req.query.search) {
-        search =
-            '(hoc_vien.truong_hoc LIKE :search OR hoc_vien.ho_ten LIKE :search OR hoc_vien.email LIKE :search)';
-    }
-    if (req.query.tinh) {
-        tinh = 'tinh_thanhpho.ttp_id LIKE :tinh';
-    }
-    let filter = `WHERE ${trang_thai} AND ${ngay_tao} AND ${search} AND ${tinh}`;
-    const total = await sequelize.query(
-        `
-        SELECT count(hoc_vien.hoc_vien_id) as tong FROM hoc_vien LEFT JOIN tinh_thanhpho 
-        ON hoc_vien.ttp_id=tinh_thanhpho.ttp_id ${filter} 
-        ORDER BY hoc_vien.trang_thai DESC, hoc_vien.ngay_tao DESC`,
-        {
-            replacements: {
-                trang_thai: parseInt(req.query.trang_thai),
+    const { count, rows } = await Student.findAndCountAll({
+        attributes: [
+            'hoc_vien_id',
+            'anh_dai_dien',
+            'ho_ten',
+            'gioi_tinh',
+            'email',
+            'truong_hoc',
+            'trang_thai',
+            'sdt',
+            'ngay_sinh',
+            'ttp_id',
+        ],
+        include: {
+            model: Province,
+            attributes: ['ttp_id', 'ten'],
+        },
+        where: {
+            ...(req.query.trang_thai && {
+                trang_thai: req.query.trang_thai,
+            }),
+            ...(req.query.search && {
                 search: `%${decodeURI(req.query.search)}%`,
-                tinh: `%${decodeURI(req.query.tinh)}%`,
-                ngay_bat_dau: req.query.ngay_bat_dau,
-                ngay_ket_thuc: req.query.ngay_ket_thuc,
-            },
-            type: sequelize.QueryTypes.SELECT,
-        }
-    );
-    const students = await sequelize.query(
-        `
-        SELECT hoc_vien.hoc_vien_id, hoc_vien.ho_ten, hoc_vien.gioi_tinh, hoc_vien.email, hoc_vien.anh_dai_dien, 
-        hoc_vien.trang_thai, hoc_vien.sdt, hoc_vien.ngay_sinh, tinh_thanhpho.ten AS tinh, hoc_vien.truong_hoc 
-        FROM hoc_vien LEFT JOIN tinh_thanhpho ON hoc_vien.ttp_id=tinh_thanhpho.ttp_id ${filter} 
-        ORDER BY hoc_vien.trang_thai DESC, hoc_vien.ngay_tao DESC LIMIT :offset, :limit`,
-        {
-            replacements: {
-                trang_thai: parseInt(req.query.trang_thai),
-                search: `%${decodeURI(req.query.search)}%`,
-                tinh: `%${decodeURI(req.query.tinh)}%`,
-                ngay_bat_dau: req.query.ngay_bat_dau,
-                ngay_ket_thuc: req.query.ngay_ket_thuc,
-                limit: parseInt(limit),
-                offset: parseInt(offset),
-            },
-            type: sequelize.QueryTypes.SELECT,
-        }
-    );
+            }),
+            ...(req.query.ttp_id && { ttp_id: req.query.ttp_id }),
+            ...(req.query.ngay_bat_dau &&
+                req.query.ngay_ket_thuc && {
+                    ngay_bat_dau: req.query.ngay_bat_dau,
+                    ngay_ket_thuc: req.query.ngay_ket_thuc,
+                }),
+        },
+        offset:
+            (Number(req.query.pageIndex || 1) - 1) *
+            Number(req.query.pageSize || 10),
+        limit: Number(req.query.pageSize || 10),
+        order: [
+            req.query.sortBy
+                ? req.query.sortBy.split(',')
+                : ['ngay_tao', 'DESC'],
+        ],
+    });
+
     res.status(200).send({
         status: 'success',
-        total: total[0].tong,
-        data: students,
+        data: rows,
+        pageIndex: Number(req.query.pageIndex || 1),
+        pageSize: Number(req.query.pageSize || 10),
+        totalCount: count,
+        totalPage: Math.ceil(count / Number(req.query.pageSize || 10)),
         message: null,
     });
 };
@@ -657,8 +648,12 @@ const postCreateMoreByPrefix = async (req, res) => {
 
     await sequelize.query(
         `INSERT IGNORE INTO hoc_vien (ho_ten, ten_dang_nhap, email, mat_khau, trang_thai)
-            VALUES ${data.map((value) => `('${value.ho_ten}', '${value.ten_dang_nhap}', 
-            '${value.email}', '${value.mat_khau}', '${value.trang_thai}')`).join(',')};
+            VALUES ${data
+                .map(
+                    (value) => `('${value.ho_ten}', '${value.ten_dang_nhap}', 
+            '${value.email}', '${value.mat_khau}', '${value.trang_thai}')`
+                )
+                .join(',')};
             `,
         {
             type: sequelize.QueryTypes.INSERT,

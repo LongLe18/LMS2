@@ -85,7 +85,7 @@ const getAllDGNL = async (req, res) => {
         include: [
             {
                 model: Student,
-                attributes: ['hoc_vien_id', 'ho_ten', 'sdt'],
+                attributes: ['hoc_vien_id', 'ho_ten', 'sdt', 'ttp_id'],
                 include: {
                     model: Province,
                     attributes: ['ttp_id', 'ten'],
@@ -99,6 +99,23 @@ const getAllDGNL = async (req, res) => {
         where: {
             ...(req.query.khoa_hoc_id && {
                 '$de_thi.khoa_hoc_id$': req.query.khoa_hoc_id,
+            }),
+            ...(req.query.ngay_bat_dau &&
+                req.query.ngay_ket_thuc && {
+                    ngay_tao: {
+                        [Op.between]: [
+                            req.query.ngay_bat_dau,
+                            req.query.ngay_ket_thuc,
+                        ],
+                    },
+                }),
+            ...(req.query.search && {
+                '$hoc_vien.ho_ten$': {
+                    [Op.like]: `%${req.query.search}%`,
+                },
+            }),
+            ...(req.query.ttp_id && {
+                '$hoc_vien.ttp_id$': req.query.ttp_id,
             }),
             '$de_thi.de_mau_id$': {
                 [Op.not]: null,
@@ -477,11 +494,11 @@ const putUpdate = async (req, res) => {
                         .toLowerCase()
             ) {
                 if (selectedAnswer.cau_hoi.chuyen_nganh_id === 1) {
-                    phan_1 += selectedAnswer.cau_hoi.diem;
+                    phan_1 += parseFloat(selectedAnswer.cau_hoi.diem);
                 } else if (selectedAnswer.cau_hoi.chuyen_nganh_id === 7) {
-                    phan_2 += selectedAnswer.cau_hoi.diem;
+                    phan_2 += parseFloat(selectedAnswer.cau_hoi.diem);
                 } else {
-                    phan_3 += selectedAnswer.cau_hoi.diem;
+                    phan_3 += parseFloat(selectedAnswer.cau_hoi.diem);
                 }
                 result = true;
             }
@@ -724,7 +741,7 @@ const putUpdatev3 = async (req, res) => {
             },
         }
     );
-    
+
     res.status(200).send({
         status: 'success',
         data: studentExam,
