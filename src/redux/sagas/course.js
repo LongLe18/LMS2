@@ -190,7 +190,7 @@ function* deleteCourseStudent(payload) {
 
 function* fectchRemainStudentOfCourse(payload) {
     try {
-        let endpoint = `${config.API_URL}/course/add/student/list/${payload.params.idCourse}?tinh=${payload.params.province}&ten_hoc_vien=${payload.params.search}&offset=${payload.params.pageIndex}&limit=${payload.params.pageSize}`;
+        let endpoint = `${config.API_URL}/course/add/student/list/${payload.params.idCourse}?tinh=${payload.params.province}&ten_hoc_vien=${payload.params.search}&pageIndex=${payload.params.pageIndex}&pageSize=${payload.params.pageSize}`;
         const response = yield call(getApiAuth, endpoint);
         const result = yield response.data;
         yield put({ type: actions.course.GET_REMAIN_STUDENT_COURSE_SUCCESS, result: result });

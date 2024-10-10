@@ -181,7 +181,7 @@ const CourseStudentPage = (props) => {
         if (state.activeTab === '2')
             dispatch(courseActions.getStudentOfCourse({ idCourse: state.idCourse, province: filter.tinh, search: filter.search }));
         if (state.activeTab === '3')
-            dispatch(courseActions.getRemainStudentOfCourse({ idCourse: state.idCourse, province: filter.tinh, search: filter.search, pageIndex: pageIndex - 1, pageSize: pageSize }));
+            dispatch(courseActions.getRemainStudentOfCourse({ idCourse: state.idCourse, province: filter.tinh, search: filter.search, pageIndex: pageIndex, pageSize: pageSize }));
     }, [filter.tinh]); // eslint-disable-line react-hooks/exhaustive-deps
     
     useMemo(() => {
@@ -190,7 +190,7 @@ const CourseStudentPage = (props) => {
         if (state.activeTab === '2')
             dispatch(courseActions.getStudentOfCourse({ idCourse: state.idCourse, province: filter.tinh, search: filter.search }));
         if (state.activeTab === '3')
-            dispatch(courseActions.getRemainStudentOfCourse({ idCourse: state.idCourse, province: filter.tinh, search: filter.search, pageIndex: pageIndex - 1, pageSize: pageSize }));
+            dispatch(courseActions.getRemainStudentOfCourse({ idCourse: state.idCourse, province: filter.tinh, search: filter.search, pageIndex: pageIndex, pageSize: pageSize }));
     }, [searchValue]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const getProvince = () => {
@@ -242,13 +242,13 @@ const CourseStudentPage = (props) => {
 
     useEffect(() => {
         if (state.activeTab === '3')
-            dispatch(courseActions.getRemainStudentOfCourse({ idCourse: state.idCourse, province: filter.tinh, search: filter.search, pageIndex: pageIndex - 1, pageSize: pageSize }));
+            dispatch(courseActions.getRemainStudentOfCourse({ idCourse: state.idCourse, province: filter.tinh, search: filter.search, pageIndex: pageIndex, pageSize: pageSize }));
     }, [pageIndex, pageSize]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const RemainStudentOfCourse = (id) => {
         setFilter({ ...filter, search: ''});
         setState({...state, activeTab: "3", idCourse: id });
-        dispatch(courseActions.getRemainStudentOfCourse({ idCourse: id, province: filter.tinh, search: filter.search, pageIndex: pageIndex - 1, pageSize: pageSize }));
+        dispatch(courseActions.getRemainStudentOfCourse({ idCourse: id, province: filter.tinh, search: filter.search, pageIndex: pageIndex, pageSize: pageSize }));
     };
 
     const deleteStudentCourse = (id) => {
@@ -304,7 +304,7 @@ const CourseStudentPage = (props) => {
                     });
                     dispatch(courseActions.getCourseStudent({ search: filter.search }));
                 if (state.activeTab === '3')
-                    dispatch(courseActions.getRemainStudentOfCourse({ idCourse: state.idCourse, province: filter.tinh, search: filter.search, pageIndex: pageIndex - 1, pageSize: pageSize }));
+                    dispatch(courseActions.getRemainStudentOfCourse({ idCourse: state.idCourse, province: filter.tinh, search: filter.search, pageIndex: pageIndex, pageSize: pageSize }));
             } else {
                     notification.error({
                     message: 'Thông báo',
@@ -327,7 +327,7 @@ const CourseStudentPage = (props) => {
                 });
                 setSelectedRowKeys([]);
                 if (state.activeTab === '3')
-                    dispatch(courseActions.getRemainStudentOfCourse({ idCourse: state.idCourse, province: filter.tinh, search: filter.search, pageIndex: pageIndex - 1, pageSize: pageSize }));
+                    dispatch(courseActions.getRemainStudentOfCourse({ idCourse: state.idCourse, province: filter.tinh, search: filter.search, pageIndex: pageIndex, pageSize: pageSize }));
             } else {
                     notification.error({
                     message: 'Thông báo',
@@ -383,7 +383,7 @@ const CourseStudentPage = (props) => {
                     <Table className="table-striped-rows" columns={columns} dataSource={data} />
                 </TabPane>
                 <TabPane tab="Chi tiết khóa học" disabled key="2">
-                        <Table className="table-striped-rows" columns={columns2} dataSource={dataDetail} />
+                    <Table className="table-striped-rows" columns={columns2} dataSource={dataDetail} pagination={false} />
                 </TabPane>
                 <TabPane tab="Thêm học viên" disabled key="3">
                     <>

@@ -204,16 +204,16 @@ const EvaluationPage = () => {
     // Phần đánh giá cho ĐGNL
     const renderSectionEvaluation = () => {
         const sections = [{
-            value: '1',
+            value: 1,
             label: 'Phần 1',
         }, {
-            value: '2',
+            value: 2,
             label: 'Phần 2',
         }, {
-            value: '31',
+            value: 31,
             label: 'Phần Tiếng Anh (Phần 3)',
         }, {
-            value: '32',
+            value: 32,
             label: 'Phần Khoa học (Phần 3)',
         }]
         let options = sections.map((section) => (

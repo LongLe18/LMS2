@@ -164,6 +164,8 @@ const ExamOnlineDetail = () => {
             }
 
             if (res.status === 'success') {
+                if (res.data.loai_de_thi_id !== 5) dispatch(evaluationActions.getEVALUATEs({ id: hashids.decode(params.idExam), pageIndex: 1, pageSize: 1000 })); // lấy đánh giá
+                else dispatch(evaluationActions.getEVALUATEsDGNL({ idCourse: hashids.decode(params.idCourse), pageIndex: 1, pageSize: 1000 }));
                 dispatch(examActions.getExamUser({ id: params.idExamUser }, subCallBack)) // Gọi API để lấy thông tin (Thời gian bắt đầu, thời gian kết thúc)
             }
         }
@@ -197,7 +199,7 @@ const ExamOnlineDetail = () => {
             }
         ));
         dispatch(commentAction.getCOMMENTs({ idCourse: '', idModule: '', type: 1 }));
-        dispatch(evaluationActions.getEVALUATEs({ id: hashids.decode(params.idExam), pageIndex: 0, pageSize: 100 }));
+        
         dispatch(courseActions.getCourse({ id: hashids.decode(params.idCourse) }));
     }, [params.idExam, params.idExamUser]) // eslint-disable-line react-hooks/exhaustive-deps
     
@@ -1299,14 +1301,16 @@ const ExamOnlineDetail = () => {
                                                 </Button> 
                                                 đáp án và lời giải
                                             </div>
-                                            <div style={{fontSize: 22, textAlign: 'center', marginBottom: 12}}>Click
-                                                <Button type="text" onClick={() => exportEvaluationDGNL()}
-                                                    style={{fontSize: 22, color: 'red'}}
-                                                >
-                                                    VÀO ĐÂY
-                                                </Button> 
-                                                để xem thông tin nhận xét, đánh giá chung
-                                            </div>
+                                            {
+                                                course?.data.loai_kct === 0 && <div style={{fontSize: 22, textAlign: 'center', marginBottom: 12}}>Click
+                                                    <Button type="text" onClick={() => exportEvaluationDGNL()}
+                                                        style={{fontSize: 22, color: 'red'}}
+                                                    >
+                                                        VÀO ĐÂY
+                                                    </Button> 
+                                                    để xem thông tin nhận xét, đánh giá chung
+                                                </div>
+                                            }
                                         </>
                                     :
                                         <>
@@ -2021,7 +2025,9 @@ const ExamOnlineDetail = () => {
                     <Content className="app-content" style={{background: '#fff'}}>
                         <div className="header-exam">
                             {/* <h1>{exam.data.ten_de_thi} - Phần {state.sectionExam}</h1> */}
-                            <h1 style={{color: 'rgb(255, 48, 7)'}}>Bài thì thử ĐGNL ĐHQGHN (HSA) 2024 {(isDoing && state.sectionExam === 1) ? '- PHẦN 1' : (isDoing && state.sectionExam === 2) ? '- PHẦN 2' : (isDoing && state.sectionExam === 3) && '- PHẦN 3'}</h1>
+                            <h1 style={{color: 'rgb(255, 48, 7)'}}>
+                                {exam.data.loai_de_thi_id === 5 ? `Bài thi thử ĐGNL ĐHQGHN (HSA) 2024 ${(isDoing && state.sectionExam === 1) ? '- PHẦN 1' : (isDoing && state.sectionExam === 2) ? '- PHẦN 2' : (isDoing && state.sectionExam === 3) && '- PHẦN 3'}` : exam.data.ten_de_thi}
+                            </h1>
                             <h4>Mã đề: {exam.data.de_thi_id}</h4>
                             <AuthModal />
                         </div>
