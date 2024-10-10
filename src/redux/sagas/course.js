@@ -136,7 +136,7 @@ function* addStudentToCourse(payload) {
 
 function* fectchCourseStudent(payload) {
     try {
-        let endpoint = `${config.API_URL}/course_student?search=${payload.params.search}`;
+        let endpoint = `${config.API_URL}/course_student?search=${payload.params.search}&pageIndex=${payload.params.pageIndex}&pageSize=${payload.params.pageSize}`;
         const response = yield call(getApiAuth, endpoint);
         const result = yield response.data;
         yield put({ type: actions.course.GET_COURSES_STUDENT_SUCCESS, result: result });
@@ -154,7 +154,7 @@ function* fectchCourseStudent(payload) {
 
 function* fectchStudentOfCourse(payload) {
     try {
-        let endpoint = `${config.API_URL}/course/student/list/${payload.params.idCourse}?tinh=${payload.params.province}&ten_hoc_vien=${payload.params.search}`;
+        let endpoint = `${config.API_URL}/course/student/list/${payload.params.idCourse}?tinh=${payload.params.province}&ten_hoc_vien=${payload.params.search}&pageIndex=${payload.params.pageIndex}&pageSize=${payload.params.pageSize}`;
         const response = yield call(getApiAuth, endpoint);
         const result = yield response.data;
         yield put({ type: actions.course.GET_COURSES_STUDENT_DETAIL_SUCCESS, result: result });

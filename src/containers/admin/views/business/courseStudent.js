@@ -73,8 +73,8 @@ const CourseStudentPage = (props) => {
         },
         {
             title: 'Số lượng học viên',
-            dataIndex: 'so_luong',
-            key: 'so_luong',
+            dataIndex: 'so_luong_hoc_vien',
+            key: 'so_luong_hoc_vien',
             responsive: ['md'],
         },
         {
@@ -126,6 +126,7 @@ const CourseStudentPage = (props) => {
             dataIndex: 'tinh',
             key: 'tinh',
             responsive: ['md'],
+            render: (hoc_vien, record) => record?.tinh_thanhpho?.ten
         },
         {
             title: 'Tùy chọn',
@@ -153,9 +154,15 @@ const CourseStudentPage = (props) => {
             responsive: ['md'],
         },
         {
-            title: 'Trường học',
-            dataIndex: 'truong_hoc',
-            key: 'truong_hoc',
+            title: 'Giới tính',
+            dataIndex: 'gioi_tinh',
+            key: 'gioi_tinh',
+            responsive: ['md'],
+        },
+        {
+            title: 'email',
+            dataIndex: 'email',
+            key: 'email',
             responsive: ['md'],
         },
         {
@@ -163,6 +170,7 @@ const CourseStudentPage = (props) => {
             dataIndex: 'tinh',
             key: 'tinh',
             responsive: ['md'],
+            render: (hoc_vien, record) => record?.tinh_thanhpho?.ten
         },
         {
             title: 'Tùy chọn',
@@ -179,16 +187,16 @@ const CourseStudentPage = (props) => {
 
     useEffect(() => {
         if (state.activeTab === '2')
-            dispatch(courseActions.getStudentOfCourse({ idCourse: state.idCourse, province: filter.tinh, search: filter.search }));
+            dispatch(courseActions.getStudentOfCourse({ idCourse: state.idCourse, province: filter.tinh, search: filter.search, pageIndex: pageIndex, pageSize: pageSize }));
         if (state.activeTab === '3')
             dispatch(courseActions.getRemainStudentOfCourse({ idCourse: state.idCourse, province: filter.tinh, search: filter.search, pageIndex: pageIndex, pageSize: pageSize }));
     }, [filter.tinh]); // eslint-disable-line react-hooks/exhaustive-deps
     
     useMemo(() => {
         if (state.activeTab === '1')
-            dispatch(courseActions.getCourseStudent({ search: filter.search }));
+            dispatch(courseActions.getCourseStudent({ search: filter.search, pageIndex: pageIndex, pageSize: pageSize }));
         if (state.activeTab === '2')
-            dispatch(courseActions.getStudentOfCourse({ idCourse: state.idCourse, province: filter.tinh, search: filter.search }));
+            dispatch(courseActions.getStudentOfCourse({ idCourse: state.idCourse, province: filter.tinh, search: filter.search, pageIndex: pageIndex, pageSize: pageSize }));
         if (state.activeTab === '3')
             dispatch(courseActions.getRemainStudentOfCourse({ idCourse: state.idCourse, province: filter.tinh, search: filter.search, pageIndex: pageIndex, pageSize: pageSize }));
     }, [searchValue]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -227,6 +235,7 @@ const CourseStudentPage = (props) => {
     };
 
     const onChangeTab = (value) => {
+        setPageIndex(1);
         setState({...state, activeTab: value});
         setFilter({ ...filter,
             search: '',
@@ -237,12 +246,13 @@ const CourseStudentPage = (props) => {
     const StudentOfCourse = (id) => {
         setFilter({ ...filter, search: ''});
         setState({...state, activeTab: "2", idCourse: id });
-        dispatch(courseActions.getStudentOfCourse({ idCourse: id, province: filter.tinh, search: filter.search }));
+        dispatch(courseActions.getStudentOfCourse({ idCourse: id, province: filter.tinh, search: filter.search, pageIndex: pageIndex, pageSize: pageSize }));
     };
 
     useEffect(() => {
-        if (state.activeTab === '3')
-            dispatch(courseActions.getRemainStudentOfCourse({ idCourse: state.idCourse, province: filter.tinh, search: filter.search, pageIndex: pageIndex, pageSize: pageSize }));
+        if (state.activeTab === '1') dispatch(courseActions.getCourseStudent({ search: filter.search, pageIndex: pageIndex, pageSize: pageSize }));
+        else if (state.activeTab === '2') dispatch(courseActions.getStudentOfCourse({ idCourse: state.idCourse, province: filter.tinh, search: filter.search, pageIndex: pageIndex, pageSize: pageSize }));
+        else if (state.activeTab === '3') dispatch(courseActions.getRemainStudentOfCourse({ idCourse: state.idCourse, province: filter.tinh, search: filter.search, pageIndex: pageIndex, pageSize: pageSize }));
     }, [pageIndex, pageSize]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const RemainStudentOfCourse = (id) => {
@@ -260,12 +270,12 @@ const CourseStudentPage = (props) => {
             onOk() {
                 const callback = (res) => {
                     if (res.statusText === 'OK' && res.status === 200) {
-                        dispatch(courseActions.getStudentOfCourse({ idCourse: state.idCourse, province: filter.tinh, search: filter.search }));
+                        dispatch(courseActions.getStudentOfCourse({ idCourse: state.idCourse, province: filter.tinh, search: filter.search, pageIndex: pageIndex, pageSize: pageSize }));
                         notification.success({
                             message: 'Thành công',
                             description: 'Xóa học viên thành công',
                         });
-                        dispatch(courseActions.getCourseStudent({ search: filter.search }));
+                        dispatch(courseActions.getCourseStudent({ search: filter.search, pageIndex: pageIndex, pageSize: pageSize }));
                     } else {
                         notification.error({
                             message: 'Thông báo',
@@ -302,7 +312,7 @@ const CourseStudentPage = (props) => {
                         message: 'Thành công',
                         description: 'Thêm học viên vào khóa học thành công', 
                     });
-                    dispatch(courseActions.getCourseStudent({ search: filter.search }));
+                    dispatch(courseActions.getCourseStudent({ search: filter.search, pageIndex: pageIndex, pageSize: pageSize }));
                 if (state.activeTab === '3')
                     dispatch(courseActions.getRemainStudentOfCourse({ idCourse: state.idCourse, province: filter.tinh, search: filter.search, pageIndex: pageIndex, pageSize: pageSize }));
             } else {
@@ -380,17 +390,19 @@ const CourseStudentPage = (props) => {
             </Col>
             <Tabs defaultActiveKey={state.activeTab} activeKey={state.activeTab} onChange={onChangeTab}>
                 <TabPane tab="Quản lý khóa học - học viên" key="1">
-                    <Table className="table-striped-rows" columns={columns} dataSource={data} />
+                    <Table className="table-striped-rows" columns={columns} dataSource={data} pagination={false}/>
+                    <br/>
+                    <Pagination current={pageIndex} onChange={onChange} total={courseStudent.totalCount} onShowSizeChange={onShowSizeChange} defaultPageSize={pageSize}/>
                 </TabPane>
                 <TabPane tab="Chi tiết khóa học" disabled key="2">
                     <Table className="table-striped-rows" columns={columns2} dataSource={dataDetail} pagination={false} />
+                    <br/>
+                    <Pagination current={pageIndex} onChange={onChange} total={studentofCourse.totalCount} onShowSizeChange={onShowSizeChange} defaultPageSize={pageSize}/>
                 </TabPane>
                 <TabPane tab="Thêm học viên" disabled key="3">
-                    <>
-                        <Table className="table-striped-rows" columns={columns3} dataSource={remainData} pagination={false} rowSelection={rowSelection}/>
-                        <br/>
-                        <Pagination current={pageIndex} onChange={onChange} total={remainStudentofCourse.totalCount} onShowSizeChange={onShowSizeChange} defaultPageSize={pageSize}/>
-                    </>
+                    <Table className="table-striped-rows" columns={columns3} dataSource={remainData} pagination={false} rowSelection={rowSelection}/>
+                    <br/>
+                    <Pagination current={pageIndex} onChange={onChange} total={remainStudentofCourse.totalCount} onShowSizeChange={onShowSizeChange} defaultPageSize={pageSize}/>
                 </TabPane>
             </Tabs>  
         </div>
