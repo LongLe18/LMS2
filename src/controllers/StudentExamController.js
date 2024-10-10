@@ -111,7 +111,7 @@ const getAllDGNL = async (req, res) => {
                 }),
             ...(req.query.search && {
                 '$hoc_vien.ho_ten$': {
-                    [Op.like]: `%${req.query.search}%`,
+                    [Op.like]: `%${decodeURI(req.query.search)}%`,
                 },
             }),
             ...(req.query.ttp_id && {

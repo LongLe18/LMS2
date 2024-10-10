@@ -1,35 +1,37 @@
-const { CourseStudent } = require('../models');
+const { CourseStudent, Course } = require('../models');
 const sequelize = require('../utils/db');
 
 //[GET] /account_bank
 //by Pham Viet Trieu
 const getAll = async (req, res) => {
-    let search =1;
-    if (req.query.search) {
-        search = 'khoa_hoc.ten_khoa_hoc LIKE :search';
-    }
-    const count= await sequelize.query(`
-        SELECT COUNT(*) AS tong FROM khoa_hoc WHERE ${search}`,
+    const count = await Course.count();
+    const rows = await sequelize.query(
+        `
+        SELECT khoa_hoc.khoa_hoc_id, khoa_hoc.ten_khoa_hoc, COUNT(khoa_hoc_hoc_vien.hoc_vien_id) AS so_luong_hoc_vien
+            FROM khoa_hoc LEFT JOIN khoa_hoc_hoc_vien ON khoa_hoc.khoa_hoc_id = khoa_hoc_hoc_vien.khoa_hoc_id
+            INNER JOIN hoc_vien ON khoa_hoc_hoc_vien.hoc_vien_id = hoc_vien.hoc_vien_id
+            WHERE khoa_hoc.ten_khoa_hoc LIKE :search GROUP BY khoa_hoc.khoa_hoc_id, khoa_hoc.ten_khoa_hoc ORDER BY khoa_hoc.ngay_tao LIMIT :limit OFFSET :offset`,
         {
             replacements: {
-                search: `%${decodeURI(req.query.search)}%`,
+                search: req.query.search
+                    ? `%${decodeURI(req.query.search)}%`
+                    : '%%',
+                offset:
+                    (Number(req.query.pageIndex || 1) - 1) *
+                    Number(req.query.pageSize || 10),
+                limit: Number(req.query.pageSize || 10),
             },
-            type: sequelize.QueryTypes.SELECT
-        });
-    const courseStudents = await sequelize.query(`
-        SELECT khoa_hoc.khoa_hoc_id, khoa_hoc.ten_khoa_hoc, (SELECT COUNT(DISTINCT khoa_hoc_hoc_vien.hoc_vien_id) 
-        FROM khoa_hoc_hoc_vien WHERE khoa_hoc_hoc_vien.khoa_hoc_id=khoa_hoc.khoa_hoc_id) AS so_luong
-        FROM khoa_hoc WHERE ${search} ORDER BY khoa_hoc.ngay_tao LIMIT 200`,
-        {
-            replacements: {
-                search: `%${decodeURI(req.query.search)}%`,
-            },
-            type: sequelize.QueryTypes.SELECT
-        });
+            type: sequelize.QueryTypes.SELECT,
+        }
+    );
+
     res.status(200).send({
         status: 'success',
-        data: courseStudents,
-        count: count[0].tong,
+        data: rows,
+        pageIndex: Number(req.query.pageIndex || 1),
+        pageSize: Number(req.query.pageSize || 10),
+        totalCount: count,
+        totalPage: Math.ceil(count / Number(req.query.pageSize || 10)),
         message: null,
     });
 };

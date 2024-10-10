@@ -308,7 +308,7 @@ const getByFilter = async (req, res) => {
         },
         where: {
             ...(req.query.search && {
-                ten_khoa_hoc: { [Op.like]: `%${req.query.search}%` },
+                ten_khoa_hoc: { [Op.like]: `%${decodeURI(req.query.search)}%` },
             }),
             ...(req.query.kct_id && {
                 kct_id: req.query.kct_id,
@@ -347,58 +347,42 @@ const getByFilter = async (req, res) => {
 };
 
 const getStudents = async (req, res) => {
-    let ten_hoc_vien = 1;
-    let tinh = 1;
-    let offset = 0;
-    let limit = 100;
-    if (req.query.offset) {
-        offset = req.query.offset;
-    }
-    if (req.query.limit) {
-        limit = req.query.limit;
-    }
-    if (req.query.ten_hoc_vien) {
-        ten_hoc_vien = 'hoc_vien.ho_ten LIKE :ten_hoc_vien';
-    }
-    if (req.query.tinh) {
-        tinh = 'tinh_thanhpho.ten LIKE :tinh';
-    }
-    let filter = `AND ${tinh} AND ${ten_hoc_vien}`;
-    const count = await sequelize.query(
-        `
-        SELECT COUNT(DISTINCT hoc_vien.hoc_vien_id) AS SL FROM hoc_vien JOIN khoa_hoc_hoc_vien ON 
-        hoc_vien.hoc_vien_id=khoa_hoc_hoc_vien.hoc_vien_id LEFT JOIN tinh_thanhpho ON hoc_vien.ttp_id=tinh_thanhpho.ttp_id
-        WHERE khoa_hoc_hoc_vien.khoa_hoc_id=:khoa_hoc_id ${filter}`,
-        {
-            replacements: {
-                tinh: `%${decodeURI(req.query.tinh)}%`,
-                ten_hoc_vien: `%${decodeURI(req.query.ten_hoc_vien)}%`,
-                khoa_hoc_id: parseInt(req.params.id),
+    const { count, rows } = await Student.findAndCountAll({
+        attributes: ['hoc_vien_id', 'ho_ten', 'email', 'sdt', 'truong_hoc'],
+        include: [
+            { model: CourseStudent, attributes: [] },
+            {
+                model: Province,
+                attributes: ['ttp_id', 'ten'],
             },
-            type: sequelize.QueryTypes.SELECT,
-        }
-    );
-    const students = await sequelize.query(
-        `
-        SELECT hoc_vien.hoc_vien_id, hoc_vien.ho_ten, hoc_vien.email, hoc_vien.sdt, hoc_vien.truong_hoc, tinh_thanhpho.ten AS tinh, khoa_hoc_hoc_vien.ngay_tao, khoa_hoc_hoc_vien.khhv_id
-        FROM hoc_vien JOIN khoa_hoc_hoc_vien ON hoc_vien.hoc_vien_id=khoa_hoc_hoc_vien.hoc_vien_id LEFT JOIN tinh_thanhpho ON 
-        hoc_vien.ttp_id=tinh_thanhpho.ttp_id WHERE khoa_hoc_hoc_vien.khoa_hoc_id=:khoa_hoc_id ${filter}
-        ORDER BY khoa_hoc_hoc_vien.ngay_tao DESC LIMIT :offset, :limit`,
-        {
-            replacements: {
-                tinh: `%${decodeURI(req.query.tinh)}%`,
-                ten_hoc_vien: `%${decodeURI(req.query.ten_hoc_vien)}%`,
-                khoa_hoc_id: parseInt(req.params.id),
-                offset: parseInt(offset),
-                limit: parseInt(limit),
-            },
-            type: sequelize.QueryTypes.SELECT,
-        }
-    );
-    res.status(200).send({
+        ],
+        where: {
+            '$khoa_hoc_hoc_vien.khoa_hoc_id$': Number(req.params.id),
+            ...(req.query.search && {
+                ten_hoc_vien: {
+                    [Op.like]: `%${decodeURI(req.query.search)}%`,
+                },
+            }),
+            ...(req.query.ttp_id && { ttp_id: req.query.ttp_id }),
+        },
+        offset:
+            (Number(req.query.pageIndex || 1) - 1) *
+            Number(req.query.pageSize || 10),
+        limit: Number(req.query.pageSize || 10),
+        order: [
+            req.query.sortBy
+                ? req.query.sortBy.split(',')
+                : ['ngay_tao', 'DESC'],
+        ],
+    });
+
+    return res.status(200).send({
         status: 'success',
-        data: students,
-        count: count[0].SL,
+        data: rows,
+        pageIndex: Number(req.query.pageIndex || 1),
+        pageSize: Number(req.query.pageSize || 10),
+        totalCount: count,
+        totalPage: Math.ceil(count / Number(req.query.pageSize || 10)),
         message: null,
     });
 };

@@ -13,7 +13,7 @@ const getAll = async (req, res) => {
         },
         where: {
             ...(req.query.search && {
-                ten_khoa_hoc: { [Op.like]: `%${req.query.search}%` },
+                ten_khoa_hoc: { [Op.like]: `%${decodeURI(req.query.search)}%` },
             }), 
             ...(req.query.kct_id && {
                 '$khoa_hoc.kct_id$': req.query.kct_id,

@@ -603,6 +603,11 @@ const forceDelete = async (req, res) => {
             hoc_vien_id: req.params.id,
         },
     });
+    await CourseStudent.destroy({
+        where: {
+            hoc_vien_id: req.params.id,
+        },
+    })
     res.send({
         status: 'success',
         data: null,

@@ -165,6 +165,12 @@ Student.hasMany(Comment, { foreignKey: 'hoc_vien_id' , constraints: false});
 SideComment.belongsTo(Comment, { foreignKey: 'binh_luan_id', constraints: false});
 Comment.hasMany(Comment, { foreignKey: 'binh_luan_id', constraints: false});
 
+CourseStudent.belongsTo(Course, { foreignKey: 'khoa_hoc_id', constraints: false});
+Course.hasMany(CourseStudent, { foreignKey: 'khoa_hoc_id', constraints: false});
+
+CourseStudent.belongsTo(Student, { foreignKey: 'hoc_vien_id', constraints: false});
+Student.hasOne(CourseStudent, { foreignKey: 'hoc_vien_id', constraints: false});
+
 Majoring.hasMany(Question, { foreignKey: 'chuyen_nganh_id', constraints: false});
 Question.belongsTo(Majoring, { foreignKey: 'chuyen_nganh_id', constraints: false});
 
