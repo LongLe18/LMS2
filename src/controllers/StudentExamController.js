@@ -353,7 +353,7 @@ const postCreatev2 = async (req, res) => {
                         FROM cau_hoi_de_thi
                         WHERE de_thi_id = ${exam.de_thi_id})
                         ORDER BY RAND() LIMIT ${
-                            criteria.so_cau_hoi_phan_3 -
+                            Number(criteria.so_cau_hoi_phan_3) -
                             so_cau_hoi_tung_chuyen_nganh * 3
                         }
                 `,
