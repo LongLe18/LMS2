@@ -19,7 +19,7 @@ import AppBreadCrumb from "components/parts/breadcrumb/AppBreadCrumb";
 import NoRecord from 'components/common/NoRecord';
 import LoadingCustom from "components/parts/loading/Loading"
 import { Layout, Row, Col, Modal, Button, notification, Input, Alert, Upload, 
-    message, List, Comment, Space, Timeline, Image } from 'antd';
+    message, List, Comment, Space, Timeline, Image, Spin } from 'antd';
 import { InfoCircleOutlined, CommentOutlined, UploadOutlined, DownloadOutlined } from '@ant-design/icons';
 import TextEditorWidget2 from 'components/common/TextEditor/TextEditor2';
 import MathJax from 'react-mathjax';
@@ -58,6 +58,7 @@ const ExamOnlineDetail = () => {
     const [timeToDo, setTimeToDo] = useState(null); // Thời gian làm bài
     const [timeToDoAllSection, setTimeToDoAllSection] = useState(null); // Thời gian làm bài các phần
     const [results, setResults] = useState([]);
+    const [loadingExportFile, setLoadingExportFile] = useState(false);
     // eslint-disable-next-line no-unused-vars
     const [startTime, setStartTime] = useState(0);
     const [state, setState] = useState({
@@ -1089,7 +1090,7 @@ const ExamOnlineDetail = () => {
                             <ul>
                                 {exam.status === 'success' && exam.data.cau_hoi_de_this.map((question, index) => {
                                     return (
-                                        <li key={index + 1} className={isCorrectAnswer(question.cau_hoi)}>
+                                        <li key={index + 1} className={"normal " + isCorrectAnswer(question.cau_hoi)}>
                                             <a href={`#${index}`}>{index + 1}</a> . <span>{convertAnswerKey(question.cau_hoi)}</span>
                                         </li>
                                     );
@@ -1114,6 +1115,7 @@ const ExamOnlineDetail = () => {
     // tải nhận xét cho phần thi ĐGNL
     const exportEvaluationDGNL = async () => {
         try {
+            setLoadingExportFile(true);
             const response = await axios({
                 url: `${config.API_URL}/evaluate-dgnl/${params.idExamUser}/export-report`, 
                 method: 'GET',
@@ -1131,8 +1133,10 @@ const ExamOnlineDetail = () => {
             document.body.appendChild(link);
             link.click();
             link.parentNode.removeChild(link);
+            setLoadingExportFile(false);
         } catch (error) {
             console.error('Download error:', error);
+            setLoadingExportFile(false);
         }
     };
 
@@ -1141,7 +1145,7 @@ const ExamOnlineDetail = () => {
         if (error) return <NoRecord subTitle="Không tìm thấy đề thi." />;
 
         return (
-            <>  
+            <Spin spinning={loadingExportFile}>  
                 <div className='section-question'>
                     <Row>
                         <Col span={4}>
@@ -1170,7 +1174,7 @@ const ExamOnlineDetail = () => {
                                             <>
                                                 {partQuestions.map((question, index) => {
                                                     const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
-                                                    if (!isAnswered) {
+                                                    if (!isAnswered || (isAnswered && !isAnswered.loai_dap_an && isAnswered.noi_dung === '')) {
                                                         return (
                                                             <div key={index + 1} className={`item`}>
                                                                 {/* <a href={`#${index + 1}`}>{index + 1}</a> */}
@@ -1979,7 +1983,7 @@ const ExamOnlineDetail = () => {
                                                             >
                                                                 {index + 1}. 
                                                             </button>
-                                                            <span>{isAnswered ? (isAnswered.loai_dap_an ? isAnswered?.dap_an?.join(', '): isAnswered.noi_dung) : '-'}</span>
+                                                            <span>{isAnswered ? (isAnswered.loai_dap_an ? isAnswered?.dap_an?.join(', ') : isAnswered.noi_dung ? isAnswered.noi_dung : '-' ) : '-'}</span>
                                                         </li>
                                                     );
                                                 })}
@@ -2010,7 +2014,7 @@ const ExamOnlineDetail = () => {
                         }
                     </p> 
                 }
-            </>
+            </Spin>
         )
     }
 

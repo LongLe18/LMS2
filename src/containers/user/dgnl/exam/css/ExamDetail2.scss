@@ -334,6 +334,7 @@ b {
   background: transparent;
   border: none;
   color: #183fff;
+  font-weight: 700;
   margin: 4px 0px;
   // padding: 4px 0px 0px;
   // background: #f0efef;
@@ -349,6 +350,7 @@ b {
   font-size: 18px;
   display: inline-block;
   color: red;
+  font-weight: 700;
   margin-left: 24px;
   padding: 4px 0px 0px;
 
@@ -360,17 +362,28 @@ b {
   // border: #5aa2fb;
 }
 
+.exam-right-info ul li.normal a {
+  color: #183fff;
+  padding: 6px;
+  font-weight: 700;
+  border-radius: 50%;
+}
+
 .exam-right-info ul li.right-answer a {
   font-size: 16px;
-  // background: #3da844;
-  // color: #fff;
+  font-weight: 700;
+  color: #183fff;
+  background: #27e327;
+  padding: 6px;
+  border-radius: 50%;
   // border: #3da844;
 }
 
 .exam-right-info ul li.wrong-answer a {
   background: red;
   color: #fff;
-  border: red;
+  padding: 6px;
+  border-radius: 50%;
 }
 
 .submit-exam {
