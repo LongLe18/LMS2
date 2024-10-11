@@ -272,8 +272,8 @@ const postCreatev2 = async (req, res) => {
     // phần 1
     await sequelize.query(
         `
-        INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
-            SELECT cau_hoi_id, ${exam.dataValues.de_thi_id}, 1 FROM cau_hoi_de_thi
+        INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan, chuyen_nganh_id)
+            SELECT cau_hoi_id, ${exam.dataValues.de_thi_id}, 1, chuyen_nganh_id FROM cau_hoi_de_thi
             WHERE chuyen_nganh_id = 1 AND de_thi_id = ${sampleExam.de_thi_id}
             ORDER BY RAND() LIMIT ${criteria.so_cau_hoi_phan_1}
     `,
@@ -285,8 +285,8 @@ const postCreatev2 = async (req, res) => {
     // phần 2
     await sequelize.query(
         `
-            INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
-                SELECT chdt.cau_hoi_id, ${exam.dataValues.de_thi_id}, 2 FROM cau_hoi_de_thi chdt
+            INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan, chuyen_nganh_id)
+                SELECT chdt.cau_hoi_id, ${exam.dataValues.de_thi_id}, 2, chdt.chuyen_nganh_id FROM cau_hoi_de_thi chdt
                 INNER JOIN cau_hoi ch ON chdt.cau_hoi_id = ch.cau_hoi_id
                 WHERE chdt.chuyen_nganh_id = 7 AND chdt.de_thi_id = ${sampleExam.de_thi_id}
                 ORDER BY ch.trich_doan_id ASC, RAND()
@@ -301,8 +301,8 @@ const postCreatev2 = async (req, res) => {
     if (chuyen_nganh_ids === '5') {
         await sequelize.query(
             `
-        INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
-            SELECT cau_hoi_id, ${exam.dataValues.de_thi_id}, 4 FROM cau_hoi_de_thi
+        INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan, chuyen_nganh_id)
+            SELECT cau_hoi_id, ${exam.dataValues.de_thi_id}, 4, chuyen_nganh_id FROM cau_hoi_de_thi
             WHERE chuyen_nganh_id = 5 AND de_thi_id = ${sampleExam.de_thi_id}
             ORDER BY cau_hoi_id ASC
             LIMIT ${criteria.so_cau_hoi_phan_4}
@@ -327,8 +327,8 @@ const postCreatev2 = async (req, res) => {
         for (const chuyen_nganh_id of chuyen_nganh_ids.split(',')) {
             await sequelize.query(
                 `
-                        INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
-                            SELECT cau_hoi_id, ${exam.dataValues.de_thi_id}, 3 FROM cau_hoi_de_thi
+                        INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan, chuyen_nganh_id)
+                            SELECT cau_hoi_id, ${exam.dataValues.de_thi_id}, 3, chuyen_nganh_id FROM cau_hoi_de_thi
                             WHERE chuyen_nganh_id = :chuyen_nganh_id AND de_thi_id = ${sampleExam.de_thi_id}
                             ORDER BY RAND() LIMIT ${so_cau_hoi_tung_chuyen_nganh}
                     `,
@@ -342,11 +342,11 @@ const postCreatev2 = async (req, res) => {
         }
         await sequelize.query(
             `
-                    INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan)
+                    INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan, chuyen_nganh_id)
                         SELECT cau_hoi_id, ${
                             exam.dataValues.de_thi_id
-                        }, 3 FROM cau_hoi
-                        WHERE chuyen_nganh_id IN (${chuyen_nganh_ids}) AND kct_id = 1 AND de_thi_id = ${
+                        }, 4, chuyen_nganh_id FROM cau_hoi_de_thi
+                        WHERE chuyen_nganh_id IN (${chuyen_nganh_ids}) AND de_thi_id = ${
                 sampleExam.de_thi_id
             }
                         AND cau_hoi_id NOT IN (SELECT cau_hoi_id
