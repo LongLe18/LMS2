@@ -86,6 +86,7 @@ const getAllDGNL = async (req, res) => {
             {
                 model: Student,
                 attributes: ['hoc_vien_id', 'ho_ten', 'sdt', 'ttp_id'],
+                required: true,
                 include: {
                     model: Province,
                     attributes: ['ttp_id', 'ten'],
