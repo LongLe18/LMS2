@@ -36,7 +36,7 @@ import * as commentAction from '../../../../redux/actions/comment';
 import * as notificationAction from '../../../../redux/actions/notification';
 
 const { Content } = Layout;
-const { TextArea } = Input;
+// const { TextArea } = Input;
 const { Dragger } = Upload;
 
 const ExamCourseDetail = () => {
@@ -958,7 +958,7 @@ const ExamCourseDetail = () => {
                                                                 </li>
                                                             : (question.cau_hoi.loai_cau_hoi === 0) ?
                                                                 <li>
-                                                                    <TextArea placeholder='Nhập đáp án' rows={1} style={{width:"35%", marginTop: 12}} disabled={!isDoing} defaultValue={isAnswered !== undefined ? isAnswered.noi_dung : null}
+                                                                    <Input placeholder='Nhập đáp án'style={{width:"35%", marginTop: 12}} disabled={!isDoing} defaultValue={isAnswered !== undefined ? isAnswered.noi_dung : null}
                                                                         onChange={(e) => {
                                                                             localStorage.setItem('answerText', null);
                                                                             localStorage.setItem('question', null);

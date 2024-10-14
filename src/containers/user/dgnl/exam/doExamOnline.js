@@ -35,7 +35,7 @@ import * as notificationAction from '../../../../redux/actions/notification';
 import * as courseActions from '../../../../redux/actions/course';
 
 const { Content } = Layout;
-const { TextArea } = Input;
+// const { TextArea } = Input;
 const { Dragger } = Upload;
 
 const ExamOnlineDetail = () => {
@@ -1568,7 +1568,7 @@ const ExamOnlineDetail = () => {
                                                                                         </li>
                                                                                     : (question.cau_hoi.loai_cau_hoi === 0) ?
                                                                                         <li>
-                                                                                            <TextArea placeholder='Nhập đáp án' rows={1} style={{width:"35%", marginTop: 12}} disabled={!isDoing} defaultValue={isAnswered !== undefined ? isAnswered.noi_dung : null}
+                                                                                            <Input placeholder='Nhập đáp án' rows={1} style={{width:"35%", marginTop: 12}} disabled={!isDoing} defaultValue={isAnswered !== undefined ? isAnswered.noi_dung : null}
                                                                                                 onChange={(e) => {
                                                                                                     localStorage.setItem('answerText', null);
                                                                                                     localStorage.setItem('question', null);
@@ -1754,7 +1754,7 @@ const ExamOnlineDetail = () => {
                                                                     </li>
                                                                 : (question.cau_hoi.loai_cau_hoi === 0) ?
                                                                     <li>
-                                                                        <TextArea rows={4} style={{width:"100%"}} disabled={!isDoing} 
+                                                                        <Input style={{width:"100%"}} disabled={!isDoing} 
                                                                             defaultValue={isAnswered !== undefined ? isAnswered.noi_dung : null} />
                                                                     </li>
                                                                 :

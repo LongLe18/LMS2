@@ -10,7 +10,7 @@ import useFetch from 'hooks/useFetch';
 import useDebounce from 'hooks/useDebounce';
 
 // component
-import { Row, Col, Table, Button, Tag, Select, notification, Pagination, Tabs } from 'antd';
+import { Row, Col, Table, Button, Tag, Select, notification, Pagination, Tabs, Spin } from 'antd';
 import AppFilter from "components/common/AppFilter";
 import ReactExport from "react-export-excel";
 
@@ -44,7 +44,7 @@ const StatisticExam = (props) => {
         tinh: '',
     });
     const searchValue = useDebounce(filter.search, 250);
-
+    const [loadingExportFile, setLoadingExportFile] = useState(false);
     const [province] = useFetch('/province');
     const [data, setData] = useState([]);
     const [dataDGNL, setDataDGNL] = useState([]);
@@ -461,6 +461,7 @@ const StatisticExam = (props) => {
                     <Button type='primary' style={{borderRadius: 6, marginRight: 6, marginBottom: 6}}
                         onClick={async () => {
                             try {
+                                setLoadingExportFile(true)
                                 const response = await axios({
                                     url: `${config.API_URL}/evaluate-dgnl/${dthv_id}/export-report`, 
                                     method: 'GET',
@@ -478,6 +479,7 @@ const StatisticExam = (props) => {
                                 document.body.appendChild(link);
                                 link.click();
                                 link.parentNode.removeChild(link);
+                                setLoadingExportFile(false);
                             } catch (error) {
                                 notification.warn({
                                     message: 'Cảnh báo',
@@ -544,140 +546,142 @@ const StatisticExam = (props) => {
 
     return (
         <div className='content'>
-            <Tabs defaultActiveKey={state.activeTab} activeKey={state.activeTab} onChange={onChangeTab}>
-                <TabPane tab="Kết quả thi Ôn luyện" key="2">
-                    <Col xl={24} className="body-content">
-                        <Row className="app-main">
-                            <Col xl={24} sm={24} xs={24}>
-                                <AppFilter
-                                    title="Thống kê kết quả thi của phần Ôn luyện"
-                                    isShowSearchBox={true}
-                                    isSearchProvinces={true}
-                                    isShowDatePicker={true}
-                                    isRangeDatePicker={true}
-                                    provinces={province.length > 0 ? province: []}
-                                    onFilterChange={(field, value) => onFilterChange(field, value)}
-                                />
-                            </Col>
-                        </Row>
-                        <Row className='app-main' style={{paddingTop: 0}}>
-                            <Col xl={24} sm={24} xs={24}>
-                                {renderCourseForPractice()}
-                                {renderExams()}
-                                <ExcelFile element={<Button type='primary'>Trích xuất file</Button>} filename={'baocao'}>
-                                    <ExcelSheet data={data} name={'Thống kê điểm'}>
-                                        <ExcelColumn label="Họ tên" value="ho_ten"/>
-                                        <ExcelColumn label="Số điện thoại" value="sdt"/>
-                                        <ExcelColumn label="Quê quán" value="tinh"/>
-                                        <ExcelColumn label="Trường học" value="truong_hoc"/>
-                                        <ExcelColumn label="Số câu đúng" value={"so_cau_tra_loi_dung"}/>
-                                        <ExcelColumn label="Số câu sai" value={"so_cau_tra_loi_sai"}/>
-                                        <ExcelColumn label="Điểm phần 1" value={"diem_phan_1"}/>
-                                        <ExcelColumn label="Điểm phần 2" value={"diem_phan_2"}/>
-                                        <ExcelColumn label="Điểm phần 3" value={"diem_phan_3"}/>
-                                        <ExcelColumn label="Điểm phần 4" value={"diem_phan_4"}/>
-                                        <ExcelColumn label="Điểm" value="diem_so"/>
-                                        <ExcelColumn label="Xếp hạng" value={(col) => (col.diem_so >= 9.5 && col.diem_so <= 10) ? "Xuất sắc" 
-                                                : (col.diem_so >= 8.0 && col.diem_so < 9.5) ? 'Giỏi' 
-                                                : (col.diem_so >= 7.0 && col.diem_so < 8.0) ? 'Khá' 
-                                                : (col.diem_so >= 5.0 && col.diem_so < 7.0) ? 'Trung binh' : 'Dưới trung bình'}/>
-                                        <ExcelColumn label="Ngày thi" value={(col) => moment(col.ngay_thi).utc(7).format(config.DATE_FORMAT)}/>
-                                    </ExcelSheet>
-                                </ExcelFile>
-                            </Col>
-                        </Row>
-                    </Col>
-                    <Table className="table-striped-rows" columns={columns} dataSource={data} pagination={false}/>
-                    <br/>
-                    <Pagination current={pageIndex} onChange={onChange} total={total} onShowSizeChange={onShowSizeChange} showSizeChanger defaultPageSize={pageSize}/>
-                </TabPane>
-                <TabPane tab="Kết quả thi thử" key="1">
-                    <Col xl={24} className="body-content">
-                        <Row className="app-main">
-                            <Col xl={24} sm={24} xs={24}>
-                                <AppFilter
-                                    title="Thống kê kết quả thi của phần Thi thử"
-                                    isShowSearchBox={true}
-                                    isSearchProvinces={true}
-                                    isShowDatePicker={true}
-                                    isRangeDatePicker={true}
-                                    provinces={province.length > 0 ? province: []}
-                                    onFilterChange={(field, value) => onFilterChange(field, value)}
-                                />
-                            </Col>
-                        </Row>
-                        <Row className='app-main' style={{paddingTop: 0}}>
-                            <Col xl={24} sm={24} xs={24}>
-                                {renderCourseForTryExam()}
-                                {renderExams()}
-                                <ExcelFile element={<Button type='primary'>Trích xuất file</Button>} filename={'baocao'}>
-                                    <ExcelSheet data={data} name={'Thống kê điểm'}>
-                                        <ExcelColumn label="Họ tên" value="ho_ten"/>
-                                        <ExcelColumn label="Số điện thoại" value="sdt"/>
-                                        <ExcelColumn label="Quê quán" value="tinh"/>
-                                        <ExcelColumn label="Trường học" value="truong_hoc"/>
-                                        <ExcelColumn label="Số câu đúng" value={"so_cau_tra_loi_dung"}/>
-                                        <ExcelColumn label="Số câu sai" value={"so_cau_tra_loi_sai"}/>
-                                        <ExcelColumn label="Điểm phần 1" value={"diem_phan_1"}/>
-                                        <ExcelColumn label="Điểm phần 2" value={"diem_phan_2"}/>
-                                        <ExcelColumn label="Điểm phần 3" value={"diem_phan_3"}/>
-                                        <ExcelColumn label="Điểm phần 4" value={"diem_phan_4"}/>
-                                        <ExcelColumn label="Điểm" value="diem_so"/>
-                                        <ExcelColumn label="Xếp hạng" value={(col) => (col.diem_so >= 9.5 && col.diem_so <= 10) ? "Xuất sắc" 
-                                                : (col.diem_so >= 8.0 && col.diem_so < 9.5) ? 'Giỏi' 
-                                                : (col.diem_so >= 7.0 && col.diem_so < 8.0) ? 'Khá' 
-                                                : (col.diem_so >= 5.0 && col.diem_so < 7.0) ? 'Trung binh' : 'Dưới trung bình'}/>
-                                        <ExcelColumn label="Ngày thi" value={(col) => moment(col.ngay_thi).utc(7).format(config.DATE_FORMAT)}/>
-                                    </ExcelSheet>
-                                </ExcelFile>
-                                <Button type='primary' style={{marginLeft: 8}} onClick={exportReportSummanry}>Tải kết quả</Button>
-                            </Col>
-                        </Row>
-                    </Col>
-                    <Table className="table-striped-rows" columns={columns} dataSource={data} pagination={false}/>
-                    <br/>
-                    <Pagination current={pageIndex} onChange={onChange} total={total} onShowSizeChange={onShowSizeChange} showSizeChanger defaultPageSize={pageSize}/>
-                </TabPane>
-                <TabPane tab="Kết quả thi ĐGNL" key="0">
-                    <Col xl={24} className="body-content">
-                        <Row className="app-main">
-                            <Col xl={24} sm={24} xs={24}>
-                                <AppFilter
-                                    title="Thống kê kết quả thi của phần Đánh giá năng lực"
-                                    isShowSearchBox={true}
-                                    isSearchProvinces={true}
-                                    isShowDatePicker={true}
-                                    isRangeDatePicker={true}
-                                    provinces={province.length > 0 ? province: []}
-                                    onFilterChange={(field, value) => onFilterChange(field, value)}
-                                />
-                            </Col>
-                        </Row>
-                        <Row className='app-main' style={{paddingTop: 0}}>
-                            <Col xl={24} sm={24} xs={24}>
-                                {renderCourseForDGNL()}
-                                {/* <Button type='primary' style={{marginLeft: 8}} onClick={exportReportSummanry}>Tải kết quả</Button> */}
-                                <ExcelFile element={<Button type='primary'>Tải kết quả</Button>} filename={'baocao'}>
-                                    <ExcelSheet data={dataDGNL} name={'Thống kê điểm'}>
-                                        <ExcelColumn label="Họ tên" value={(col) => col?.hoc_vien?.ho_ten}/>
-                                        <ExcelColumn label="Số điện thoại" value={(col) => col?.hoc_vien?.sdt}/>
-                                        <ExcelColumn label="Quê quán" value={(col) => col.hoc_vien?.tinh_thanhpho?.ten}/>
-                                        <ExcelColumn label="Đề thi" value={"ten_khoa_hoc"}/>
-                                        <ExcelColumn label="Điểm phần 1" value={"diem_phan_1"}/>
-                                        <ExcelColumn label="Điểm phần 2" value={"diem_phan_2"}/>
-                                        <ExcelColumn label="Điểm phần 3" value={"diem_phan_3"}/>
-                                        <ExcelColumn label="Điểm" value="ket_qua_diem"/>
-                                        <ExcelColumn label="Ngày thi" value={(col) => moment(col.ngay_thi).utc(7).format(config.DATE_FORMAT)}/>
-                                    </ExcelSheet>
-                                </ExcelFile>
-                            </Col>
-                        </Row>
-                    </Col>
-                    <Table className="table-striped-rows" columns={columnsDGNL} dataSource={dataDGNL} pagination={false} />
-                    <br/>
-                    <Pagination current={pageIndex} onChange={onChange} total={total} onShowSizeChange={onShowSizeChange} showSizeChanger defaultPageSize={pageSize}/>
-                </TabPane>
-            </Tabs>
+            <Spin spinning={loadingExportFile}>  
+                <Tabs defaultActiveKey={state.activeTab} activeKey={state.activeTab} onChange={onChangeTab}>
+                    <TabPane tab="Kết quả thi Ôn luyện" key="2">
+                        <Col xl={24} className="body-content">
+                            <Row className="app-main">
+                                <Col xl={24} sm={24} xs={24}>
+                                    <AppFilter
+                                        title="Thống kê kết quả thi của phần Ôn luyện"
+                                        isShowSearchBox={true}
+                                        isSearchProvinces={true}
+                                        isShowDatePicker={true}
+                                        isRangeDatePicker={true}
+                                        provinces={province.length > 0 ? province: []}
+                                        onFilterChange={(field, value) => onFilterChange(field, value)}
+                                    />
+                                </Col>
+                            </Row>
+                            <Row className='app-main' style={{paddingTop: 0}}>
+                                <Col xl={24} sm={24} xs={24}>
+                                    {renderCourseForPractice()}
+                                    {renderExams()}
+                                    <ExcelFile element={<Button type='primary'>Trích xuất file</Button>} filename={'baocao'}>
+                                        <ExcelSheet data={data} name={'Thống kê điểm'}>
+                                            <ExcelColumn label="Họ tên" value="ho_ten"/>
+                                            <ExcelColumn label="Số điện thoại" value="sdt"/>
+                                            <ExcelColumn label="Quê quán" value="tinh"/>
+                                            <ExcelColumn label="Trường học" value="truong_hoc"/>
+                                            <ExcelColumn label="Số câu đúng" value={"so_cau_tra_loi_dung"}/>
+                                            <ExcelColumn label="Số câu sai" value={"so_cau_tra_loi_sai"}/>
+                                            <ExcelColumn label="Điểm phần 1" value={"diem_phan_1"}/>
+                                            <ExcelColumn label="Điểm phần 2" value={"diem_phan_2"}/>
+                                            <ExcelColumn label="Điểm phần 3" value={"diem_phan_3"}/>
+                                            <ExcelColumn label="Điểm phần 4" value={"diem_phan_4"}/>
+                                            <ExcelColumn label="Điểm" value="diem_so"/>
+                                            <ExcelColumn label="Xếp hạng" value={(col) => (col.diem_so >= 9.5 && col.diem_so <= 10) ? "Xuất sắc" 
+                                                    : (col.diem_so >= 8.0 && col.diem_so < 9.5) ? 'Giỏi' 
+                                                    : (col.diem_so >= 7.0 && col.diem_so < 8.0) ? 'Khá' 
+                                                    : (col.diem_so >= 5.0 && col.diem_so < 7.0) ? 'Trung binh' : 'Dưới trung bình'}/>
+                                            <ExcelColumn label="Ngày thi" value={(col) => moment(col.ngay_thi).utc(7).format(config.DATE_FORMAT)}/>
+                                        </ExcelSheet>
+                                    </ExcelFile>
+                                </Col>
+                            </Row>
+                        </Col>
+                        <Table className="table-striped-rows" columns={columns} dataSource={data} pagination={false}/>
+                        <br/>
+                        <Pagination current={pageIndex} onChange={onChange} total={total} onShowSizeChange={onShowSizeChange} showSizeChanger defaultPageSize={pageSize}/>
+                    </TabPane>
+                    <TabPane tab="Kết quả thi thử" key="1">
+                        <Col xl={24} className="body-content">
+                            <Row className="app-main">
+                                <Col xl={24} sm={24} xs={24}>
+                                    <AppFilter
+                                        title="Thống kê kết quả thi của phần Thi thử"
+                                        isShowSearchBox={true}
+                                        isSearchProvinces={true}
+                                        isShowDatePicker={true}
+                                        isRangeDatePicker={true}
+                                        provinces={province.length > 0 ? province: []}
+                                        onFilterChange={(field, value) => onFilterChange(field, value)}
+                                    />
+                                </Col>
+                            </Row>
+                            <Row className='app-main' style={{paddingTop: 0}}>
+                                <Col xl={24} sm={24} xs={24}>
+                                    {renderCourseForTryExam()}
+                                    {renderExams()}
+                                    <ExcelFile element={<Button type='primary'>Trích xuất file</Button>} filename={'baocao'}>
+                                        <ExcelSheet data={data} name={'Thống kê điểm'}>
+                                            <ExcelColumn label="Họ tên" value="ho_ten"/>
+                                            <ExcelColumn label="Số điện thoại" value="sdt"/>
+                                            <ExcelColumn label="Quê quán" value="tinh"/>
+                                            <ExcelColumn label="Trường học" value="truong_hoc"/>
+                                            <ExcelColumn label="Số câu đúng" value={"so_cau_tra_loi_dung"}/>
+                                            <ExcelColumn label="Số câu sai" value={"so_cau_tra_loi_sai"}/>
+                                            <ExcelColumn label="Điểm phần 1" value={"diem_phan_1"}/>
+                                            <ExcelColumn label="Điểm phần 2" value={"diem_phan_2"}/>
+                                            <ExcelColumn label="Điểm phần 3" value={"diem_phan_3"}/>
+                                            <ExcelColumn label="Điểm phần 4" value={"diem_phan_4"}/>
+                                            <ExcelColumn label="Điểm" value="diem_so"/>
+                                            <ExcelColumn label="Xếp hạng" value={(col) => (col.diem_so >= 9.5 && col.diem_so <= 10) ? "Xuất sắc" 
+                                                    : (col.diem_so >= 8.0 && col.diem_so < 9.5) ? 'Giỏi' 
+                                                    : (col.diem_so >= 7.0 && col.diem_so < 8.0) ? 'Khá' 
+                                                    : (col.diem_so >= 5.0 && col.diem_so < 7.0) ? 'Trung binh' : 'Dưới trung bình'}/>
+                                            <ExcelColumn label="Ngày thi" value={(col) => moment(col.ngay_thi).utc(7).format(config.DATE_FORMAT)}/>
+                                        </ExcelSheet>
+                                    </ExcelFile>
+                                    <Button type='primary' style={{marginLeft: 8}} onClick={exportReportSummanry}>Tải kết quả</Button>
+                                </Col>
+                            </Row>
+                        </Col>
+                        <Table className="table-striped-rows" columns={columns} dataSource={data} pagination={false}/>
+                        <br/>
+                        <Pagination current={pageIndex} onChange={onChange} total={total} onShowSizeChange={onShowSizeChange} showSizeChanger defaultPageSize={pageSize}/>
+                    </TabPane>
+                    <TabPane tab="Kết quả thi ĐGNL" key="0">
+                        <Col xl={24} className="body-content">
+                            <Row className="app-main">
+                                <Col xl={24} sm={24} xs={24}>
+                                    <AppFilter
+                                        title="Thống kê kết quả thi của phần Đánh giá năng lực"
+                                        isShowSearchBox={true}
+                                        isSearchProvinces={true}
+                                        isShowDatePicker={true}
+                                        isRangeDatePicker={true}
+                                        provinces={province.length > 0 ? province: []}
+                                        onFilterChange={(field, value) => onFilterChange(field, value)}
+                                    />
+                                </Col>
+                            </Row>
+                            <Row className='app-main' style={{paddingTop: 0}}>
+                                <Col xl={24} sm={24} xs={24}>
+                                    {renderCourseForDGNL()}
+                                    {/* <Button type='primary' style={{marginLeft: 8}} onClick={exportReportSummanry}>Tải kết quả</Button> */}
+                                    <ExcelFile element={<Button type='primary'>Tải kết quả</Button>} filename={'baocao'}>
+                                        <ExcelSheet data={dataDGNL} name={'Thống kê điểm'}>
+                                            <ExcelColumn label="Họ tên" value={(col) => col?.hoc_vien?.ho_ten}/>
+                                            <ExcelColumn label="Số điện thoại" value={(col) => col?.hoc_vien?.sdt}/>
+                                            <ExcelColumn label="Quê quán" value={(col) => col.hoc_vien?.tinh_thanhpho?.ten}/>
+                                            <ExcelColumn label="Đề thi" value={"ten_khoa_hoc"}/>
+                                            <ExcelColumn label="Điểm phần 1" value={"diem_phan_1"}/>
+                                            <ExcelColumn label="Điểm phần 2" value={"diem_phan_2"}/>
+                                            <ExcelColumn label="Điểm phần 3" value={"diem_phan_3"}/>
+                                            <ExcelColumn label="Điểm" value="ket_qua_diem"/>
+                                            <ExcelColumn label="Ngày thi" value={(col) => moment(col.ngay_thi).utc(7).format(config.DATE_FORMAT)}/>
+                                        </ExcelSheet>
+                                    </ExcelFile>
+                                </Col>
+                            </Row>
+                        </Col>
+                        <Table className="table-striped-rows" columns={columnsDGNL} dataSource={dataDGNL} pagination={false} />
+                        <br/>
+                        <Pagination current={pageIndex} onChange={onChange} total={total} onShowSizeChange={onShowSizeChange} showSizeChanger defaultPageSize={pageSize}/>
+                    </TabPane>
+                </Tabs>
+            </Spin>
         </div>
     )
 };

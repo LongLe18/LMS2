@@ -6,7 +6,7 @@ import MathJax from 'react-mathjax';
 import './css/exceprt.css';
 
 // component
-import { Row, Col, Table, notification, Button, Space, Form, Input, Modal, Pagination } from 'antd';
+import { Row, Col, Table, notification, Button, Space, Form, Input, Modal, Pagination, Select } from 'antd';
 import LoadingCustom from 'components/parts/loading/Loading';
 import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
@@ -17,6 +17,7 @@ import useDebounce from 'hooks/useDebounce';
 
 // const { Dragger } = Upload;
 const { TextArea, Search } = Input;
+const { Option } = Select;
 
 const Exceprt = (props) => {
     const dispatch = useDispatch();
@@ -128,6 +129,49 @@ const Exceprt = (props) => {
     //       setState({ ...state, fileImg: '' });
     //     },
     // };
+    
+    const renderTypeExceprt = () => {
+        let data = [{
+            id: 1,
+            tieu_de: 'Đọc đoạn trích sau đây và trả lời các câu hỏi từ',
+        }, {
+            id: 2,
+            tieu_de: 'Đọc nội dung bài toán sau đây để trả lời các câu hỏi từ',
+        }, {
+            id: 3,
+            tieu_de: 'Dựa vào dữ liệu sau đây để trả lời các câu hỏi từ',
+        }, , {
+            id: 4,
+            tieu_de: 'Đọc đoạn thông tin sau và trả lời các câu hỏi từ',
+        }, {
+            id: 5,
+            tieu_de: 'Đọc bảng tóm tắt sau và trả lời các câu hỏi từ'
+        }, {
+            id: 6,
+            tieu_de: 'Đọc đoạn tư liệu sau và trả lời các câu hỏi từ'
+        }, {
+            id: 7,
+            tieu_de: 'Đọc bảng số liệu sau và trả lời các câu hỏi từ'
+        }, {
+            id: 8,
+            tieu_de: 'Fill in each blank from'
+        }, {
+            id: 9,
+            tieu_de: 'Answer each question from'
+        },]
+        let options = [];
+        options = data.map((item) => (
+            <Option key={item.id} value={item.id} >{item.tieu_de}</Option>
+        ))
+        return (
+            <Select
+                showSearch={false}
+                placeholder="Chọn Tiêu đề trích đoạn"
+            >
+                {options}
+            </Select>
+        );
+    };
 
     const editExceprt = (trich_doan_id) => {
         const callback = (res) => {
@@ -175,6 +219,7 @@ const Exceprt = (props) => {
                     description: state.isEdit ? 'Sửa thông tin trích đoạn thành công' : 'Thêm trích đoạn mới thành công', 
                 });
                 dispatch(exceprtAction.getExceprts({ pageSize: pageSize, pageIndex: pageIndex, id: state.search }));
+                form.resetFields();
             } else {
                 notification.error({
                     message: 'Thông báo',
@@ -185,8 +230,8 @@ const Exceprt = (props) => {
 
         // if (state.fileImg !== '')
         //     formData.append('noi_dung', state.fileImg !== undefined ? state.fileImg : '');
-
         formData.append('noi_dung', values.noi_dung);
+        formData.append('loai_trich_doan_id', values.loai_trich_doan_id);
         if (!isEdit)
             dispatch(exceprtAction.createEXCEPRT(formData, callback));
         else dispatch(exceprtAction.editEXCEPRT({ id: state.idExceprt, formData: formData }, callback));
@@ -255,6 +300,21 @@ const Exceprt = (props) => {
                         {!isEdit ? <h5>Thêm mới trích đoạn đề thi</h5> :  <h5>Sửa trích đoạn đề thi</h5>}
                         <Form id='form-control' layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={createExceprt}>
                             <Row gutter={25}>
+                                <Col xl={24} sm={24} xs={24}>
+                                    <Form.Item 
+                                        className="input-col"
+                                        label="Tiêu đề trích đoạn"
+                                        name="loai_trich_doan_id"
+                                        rules={[
+                                            {
+                                            required: true,
+                                            message: 'Nội dungTiêu đề trích đoạn là trường bắt buộc.',
+                                            },
+                                        ]}
+                                    >
+                                        {renderTypeExceprt()}
+                                    </Form.Item>
+                                </Col>
                                 <Col xl={24} sm={24} xs={24} className="right-content">
                                     <Form.Item 
                                         className="input-col"
@@ -279,6 +339,7 @@ const Exceprt = (props) => {
                                         </Dragger> */}
                                     </Form.Item>                         
                                     <Form.Item className="button-col" style={{textAlign: 'right'}}>
+                                        {isEdit && <Button style={{marginRight: 6}} shape="round" type="primary" danger onClick={() => {setIsEdit(false); setState({...state, idExceprt: ''}); }} >Hủy</Button> }
                                         {!isEdit ? <Button shape="round" type="primary" htmlType="submit" >Thêm mới</Button> : <Button shape="round" type="primary" htmlType="submit" >Cập nhật</Button>}                             
                                     </Form.Item>
                                 </Col>

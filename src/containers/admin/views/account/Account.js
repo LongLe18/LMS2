@@ -225,7 +225,7 @@ const AccountPage = () => {
           render: (id, vai_tro) => (
               <Col style={{display: 'flex', flexDirection: 'column'}}>
                   <Button  type="button" onClick={() => EditUser(vai_tro)} className="ant-btn ant-btn-round ant-btn-primary" style={{marginBottom: '5px'}}>Sửa</Button>
-                  {/* <Button  type="danger" onClick={() => DeleteStudent(id)} style={{marginBottom: '5px'}} shape="round">Xóa</Button> */}
+                  <Button  type="danger" onClick={() => DeleteStudent(id)} style={{marginBottom: '5px'}} shape="round">Xóa</Button>
                   {(vai_tro.trang_thai === true) && <Button shape="round" type="danger" onClick={() => DeleteUser(id, vai_tro)}>Tạm dừng</Button>}
                   {(vai_tro.trang_thai === false || vai_tro.trang_thai === 2) && <Button shape="round" type="danger" onClick={() => DeleteUser(id, vai_tro)}>Kích hoạt</Button>}
               </Col>
@@ -416,40 +416,40 @@ const AccountPage = () => {
       });
     };
 
-    // const DeleteStudent = (id) => {
-    //   confirm({
-    //     icon: <ExclamationCircleOutlined />,
-    //     content: 'Bạn có chắc chắn muốn xóa học viên này?',
-    //     okText: 'Đồng ý',
-    //     cancelText: 'Hủy',
-    //     onOk() {
-    //       const callback = (res) => {
-    //         if (res.status === 'success') {
-    //           dispatch(userAction.getStudents({ status: filter.trang_thai, search: filter.search,
-    //             startDay: filter.start, endDay: filter.end, pageIndex: pageIndex, 
-    //             pageSize: pageSize, province: filter.tinh }, (res) => {
-    //               if (res.status === 'success') {
-    //                 res.data = (res.data.map((student) => {
-    //                   return {...student, 'vai_tro': 'học viên', 'key': student.hoc_vien_id, 'id': student.hoc_vien_id };
-    //                 }));
-    //                 setData([...res.data]);
-    //               }
-    //             }));
-    //           notification.success({
-    //               message: 'Thành công',
-    //               description: 'Xóa học viên thành công',
-    //           })
-    //         } else {
-    //           notification.error({
-    //             message: 'Thông báo',
-    //             description: 'Xóa học viên thất bại',
-    //           })
-    //         };
-    //       }
-    //       dispatch(userAction.deleteStudent2({ id: id }, callback))
-    //     },
-    //   });
-    // }
+    const DeleteStudent = (id) => {
+      confirm({
+        icon: <ExclamationCircleOutlined />,
+        content: 'Bạn có chắc chắn muốn xóa học viên này?',
+        okText: 'Đồng ý',
+        cancelText: 'Hủy',
+        onOk() {
+          const callback = (res) => {
+            if (res.status === 'success') {
+              dispatch(userAction.getStudents({ status: filter.trang_thai, search: filter.search,
+                startDay: filter.start, endDay: filter.end, pageIndex: pageIndex, 
+                pageSize: pageSize, province: filter.tinh }, (res) => {
+                  if (res.status === 'success') {
+                    res.data = (res.data.map((student) => {
+                      return {...student, 'vai_tro': 'học viên', 'key': student.hoc_vien_id, 'id': student.hoc_vien_id };
+                    }));
+                    setData([...res.data]);
+                  }
+                }));
+              notification.success({
+                  message: 'Thành công',
+                  description: 'Xóa học viên thành công',
+              })
+            } else {
+              notification.error({
+                message: 'Thông báo',
+                description: 'Xóa học viên thất bại',
+              })
+            };
+          }
+          dispatch(userAction.deleteStudent2({ id: id }, callback))
+        },
+      });
+    }
 
     const createUser = (values) => {
         const formData = new FormData();
