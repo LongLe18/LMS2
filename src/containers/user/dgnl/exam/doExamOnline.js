@@ -126,41 +126,49 @@ const ExamOnlineDetail = () => {
                     setStartTime(0);
                     setIsDoing(false); // kết thúc thi
                 } else { // Chưa kết thúc đề thi
+                    let phan_dang_lam = subres?.data?.phan_dang_lam;
                     const thoi_gian_lam_bai_phan = subres?.data?.thoi_gian_lam_phan.split(','); // [0, 0, 0]
                     setTimeToDoAllSection(thoi_gian_lam_bai_phan);
-                    const remainingTimeExam = ((Number(res.data[`thoi_gian_phan_${subres?.data?.phan_dang_lam}`]) - thoi_gian_lam_bai_phan[subres?.data?.phan_dang_lam - 1]) * 60);
-                    // Nếu còn thời gian làm bài
-                    if (remainingTimeExam > 0) {
-                        setState({...state, sectionExam: subres.data?.phan_dang_lam }); // hiện tại thuộc phần nào của đề thi
-                        setCountSection(Math.abs(remainingTimeExam));  // thời gian còn lại của phần thi là bao nhiêu
-                        setStartTime(new Date().getTime());
-                        timerId.current = setInterval(() => {
-                            setCountSection((preCount) => preCount - 1);
-                        }, 1000);
+                    for (let i = 0; i < res?.data.so_phan; i++) {
+                        const remainingTimeExam = ((Number(res.data[`thoi_gian_phan_${phan_dang_lam}`]) - thoi_gian_lam_bai_phan[phan_dang_lam - 1]) * 60);
+                        // Nếu phần đang làm chưa tới phần cuối cùng
+                        if (subres?.data.phan_dang_lam === res?.data.so_phan && remainingTimeExam <= 0) { // Nếu là phần cuối cùng và hết thời thi => kết thúc thi
+                            let info = {};
+                            if (subres.data.thoi_diem_ket_thuc === null) {
+                                info = {
+                                    "thoi_gian_lam_bai": secondsToMinutes(res.data.thoi_gian * 60),
+                                    "thoi_diem_ket_thuc": moment().toISOString(),
+                                }
+                            } else {
+                                info = {
+                                    "thoi_gian_lam_bai": secondsToMinutes(res.data.thoi_gian * 60),
+                                }
+                            }
+                            dispatch(examActions.editExamUser({ idExam: params.idExamUser, formData: info }))
+                            clearInterval(timerId?.current);
+                            setStartTime(0);
+                            setIsDoing(false); // kết thúc thi
+                            break; // Thoát vòng lặp
+                        } else if (phan_dang_lam < res?.data.so_phan && remainingTimeExam <= 0) { // Nếu chưa phải là phần cuối cùng và hết thời thi => sang phần tiếp theo
+                            phan_dang_lam = phan_dang_lam + 1;
 
-                        // 1 phút cập nhật thời gian làm bài 1 lần
-                        if (subres?.data?.thoi_gian_lam_phan) setTimeToDo(Number(thoi_gian_lam_bai_phan[subres?.data?.phan_dang_lam - 1])); // là số phút
-                        timeCount.current = setInterval(() => {
-                            setTimeToDo((preValue) => preValue + 1); // Mỗi lần tăng lên 1 phút
-                        }, 60000)
-                    } else {
-                        let info = {};
-                        if (subres.data.thoi_diem_ket_thuc === null) {
-                            info = {
-                                "thoi_gian_lam_bai": secondsToMinutes(res.data.thoi_gian * 60),
-                                "thoi_diem_ket_thuc": moment().toISOString(),
-                            }
-                        } else {
-                            info = {
-                                "thoi_gian_lam_bai": secondsToMinutes(res.data.thoi_gian * 60),
-                            }
+                            continue; // Tiếp tục vòng lặp
+                        } else if (subres?.data.phan_dang_lam <= res?.data.so_phan && remainingTimeExam > 0) { // Nếu còn thời gian làm bài
+                            setState({...state, sectionExam: phan_dang_lam }); // hiện tại thuộc phần nào của đề thi
+                            setCountSection(Math.abs(remainingTimeExam));  // thời gian còn lại của phần thi là bao nhiêu
+                            setStartTime(new Date().getTime());
+                            timerId.current = setInterval(() => {
+                                setCountSection((preCount) => preCount - 1);
+                            }, 1000);
+    
+                            // 1 phút cập nhật thời gian làm bài 1 lần
+                            if (subres?.data?.thoi_gian_lam_phan) setTimeToDo(Number(thoi_gian_lam_bai_phan[phan_dang_lam - 1])); // là số phút
+                            timeCount.current = setInterval(() => {
+                                setTimeToDo((preValue) => preValue + 1); // Mỗi lần tăng lên 1 phút
+                            }, 60000);
+                            break;
                         }
-                        dispatch(examActions.editExamUser({ idExam: params.idExamUser, formData: info }))
-                        clearInterval(timerId?.current);
-                        setStartTime(0);
-                        setIsDoing(false); // kết thúc thi
                     }
-
                 }
             }
 
@@ -297,23 +305,23 @@ const ExamOnlineDetail = () => {
             });
             onSaveHistory();
         } else if (countSection <= 0 && state.sectionExam < exam.data.so_phan) { // Khi hết thời gian mà đang không phải phần cuối => chuyển sang phần tiếp theo
-            countDown();
             clearInterval(timerId?.current); // Dừng đếm thời gian section
-            
-            setTimeout(() => {
-                setCountSection(exam.data[`thoi_gian_phan_${state.sectionExam + 1}`] * 60) // set biến đêm Thời gian = của phần tiếp theo
-                setState(prevState => ({
-                    ...prevState,
-                    sectionExam: prevState.sectionExam + 1
-                }));
-                timerId.current = setInterval(() => {
-                    setCountSection((preCount) => preCount - 1);
-                }, 1000);
-                setResults([]); 
-            }, 30000);
+            // setTimeout(() => {
+            //     setCountSection(exam.data[`thoi_gian_phan_${state.sectionExam + 1}`] * 60) // set biến đêm Thời gian = của phần tiếp theo
+            //     setState(prevState => ({
+            //         ...prevState,
+            //         sectionExam: prevState.sectionExam + 1
+            //     }));
+            //     timerId.current = setInterval(() => {
+            //         setCountSection((preCount) => preCount - 1);
+            //     }, 1000);
+            //     setResults([]); 
+            // }, 30000);
+
+            countDown();
         }     
     }, [countSection]); // eslint-disable-line react-hooks/exhaustive-deps
-    
+
     if (exam.status === 'success') {
         breadcrumbs.push({ title: 'Đề thi', link: `#` }, { title: exam.data.ten_de_thi, link: `/luyen-tap/xem/${params.idExam}/${params.idCourse}` });
     }
