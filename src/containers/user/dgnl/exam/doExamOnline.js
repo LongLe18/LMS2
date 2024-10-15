@@ -236,9 +236,11 @@ const ExamOnlineDetail = () => {
             content: `Phần tiếp theo sẽ bắt đầu ngay sau ${secondsToGo} giây.`,
             okText: 'Làm ngay phần tiếp theo',
             onOk: () => {
-                // Huỷ chờ đếm ngược
                 // Bắt đầu làm luôn phần thi mới
-                clearTimeout(timeOut);
+                clearTimeout(timeOut); // Huỷ chờ đếm ngược
+                clearInterval(timerId?.current); // Dừng đếm thời gian section
+                clearInterval(timeCount?.current); // Dừng đếm thời gian làm bài phần cũ
+
                 sessionStorage.setItem('section', state.sectionExam + 1);
                 sessionStorage.setItem('timeStartSection', new Date().getTime());
                 setCountSection(exam.data[`thoi_gian_phan_${state.sectionExam + 1}`] * 60) // set biến đêm Thời gian = của phần tiếp theo
@@ -305,20 +307,34 @@ const ExamOnlineDetail = () => {
             });
             onSaveHistory();
         } else if (countSection <= 0 && state.sectionExam < exam.data.so_phan) { // Khi hết thời gian mà đang không phải phần cuối => chuyển sang phần tiếp theo
-            clearInterval(timerId?.current); // Dừng đếm thời gian section
-            // setTimeout(() => {
-            //     setCountSection(exam.data[`thoi_gian_phan_${state.sectionExam + 1}`] * 60) // set biến đêm Thời gian = của phần tiếp theo
-            //     setState(prevState => ({
-            //         ...prevState,
-            //         sectionExam: prevState.sectionExam + 1
-            //     }));
-            //     timerId.current = setInterval(() => {
-            //         setCountSection((preCount) => preCount - 1);
-            //     }, 1000);
-            //     setResults([]); 
-            // }, 30000);
-
             countDown();
+            clearInterval(timerId?.current); // Dừng đếm thời gian section
+            clearInterval(timeCount?.current); // Dừng đếm thời gian làm bài phần cũ
+
+            timeOut = setTimeout(() => { // Chờ 30s 
+                sessionStorage.setItem('section', state.sectionExam + 1);
+                sessionStorage.setItem('timeStartSection', new Date().getTime());
+                setCountSection(exam.data[`thoi_gian_phan_${state.sectionExam + 1}`] * 60) // set biến đêm Thời gian = của phần tiếp theo
+                setState(prevState => ({
+                    ...prevState,
+                    sectionExam: prevState.sectionExam + 1
+                }));
+                timerId.current = setInterval(() => {
+                    setCountSection((preCount) => preCount - 1);
+                }, 1000);
+                setResults([]); 
+                window.scrollTo({ top: 0, behavior: "smooth" });
+                // thiết lập tiếp bộ đếm thời gian làm bài
+                dispatch(examActions.getExamUser({ id: params.idExamUser }, (res) => {
+                    if (res.status === 'success') {
+                        // 1 phút cập nhật thời gian làm bài 1 lần
+                        if (res?.data?.thoi_gian_lam_phan) setTimeToDo(Number(res?.data?.thoi_gian_lam_phan.split(',')[state.sectionExam])); // là số phút
+                        timeCount.current = setInterval(() => {
+                            setTimeToDo((preValue) => preValue + 1); // Mỗi lần tăng lên 1 phút
+                        }, 60000)
+                    }
+                }));
+            }, 30000);
         }     
     }, [countSection]); // eslint-disable-line react-hooks/exhaustive-deps
 
