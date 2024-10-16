@@ -50,7 +50,7 @@ const EvaluationPage = () => {
             start: '', end: '', idType: 4, publish: 1, offset: '', limit: 1000000 }));
         // request danh sách khóa học
         dispatch(courseActions.getCourses({ idkct: '', status: '', search: '' }));
-    }, []);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         switch (state.activeTab) {
@@ -59,6 +59,8 @@ const EvaluationPage = () => {
                 break;
             case '1': // Tabs Đánh giá ĐGNL
                 dispatch(evaluationAction.getEVALUATEsDGNL({ idCourse: state.idCourse, pageIndex: pageIndex, pageSize: pageSize}));
+                break;
+            default:
                 break;
         }
     }, [pageIndex, pageSize, idExam, state.activeTab, state.idCourse]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -476,7 +478,7 @@ const EvaluationPage = () => {
 
     // event đổi pageIndex
     const onChange = page => {
-        setPageIndex(page - 1 );
+        setPageIndex(page);
     };
 
     const columns = [
@@ -637,7 +639,7 @@ const EvaluationPage = () => {
                                     showSizeChanger
                                     onShowSizeChange={onShowSizeChange}
                                     onChange={onChange}
-                                    defaultCurrent={pageIndex + 1}
+                                    defaultCurrent={pageIndex}
                                     total={evaluations?.totalCount}
                                 />
                             </>
@@ -664,7 +666,7 @@ const EvaluationPage = () => {
                                     showSizeChanger
                                     onShowSizeChange={onShowSizeChange}
                                     onChange={onChange}
-                                    defaultCurrent={pageIndex + 1}
+                                    defaultCurrent={pageIndex}
                                     total={evaluationsDGNL?.totalCount}
                                 />
                             </>

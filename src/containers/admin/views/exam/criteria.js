@@ -670,7 +670,7 @@ const Criteria = () => {
             },
         }).then(res => {
             if (res.status === 200 && res.statusText === 'OK') {
-                if (res.data.data.length > 0) setIsPublish(true);
+                if (res.data.data > 0) setIsPublish(true);
             } else {
                 notification.error({
                     message: 'Lỗi',
@@ -737,7 +737,7 @@ const Criteria = () => {
             if (res.status === 'success') {
                 checkCriteria('4', id);  // check tiêu chí đã có đề xuất bản hay chưa
                 setNumberOfItems(res.data.so_phan);
-                formDGNL.setFieldsValue(res.data);
+                formOnline.setFieldsValue(res.data);
                 showModalOnline();
                 setRequire({...state, isEdit: true});
             }
@@ -1097,8 +1097,11 @@ const Criteria = () => {
                 options = courses.data.filter((item) => item.loai_kct === 1).map((course) => (
                     <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
                 ))
-            } else if (state.activeTab === '5') {
-                options = courses.data.filter((item) => item.loai_kct === 0).map((course) => (
+            } else if (state.activeTab === '5') { // ĐGNL
+                let temp = courses.data.filter((item) => item.loai_kct === 0);
+                if (!require.isEdit) temp = temp.filter(item => !dataCriteriaDGNL.some(comp => comp.khoa_hoc_id === item.khoa_hoc_id));
+
+                options = temp.map((course) => (
                     <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
                 ))
             } else {
@@ -1107,6 +1110,7 @@ const Criteria = () => {
                 ))
             }
         }
+
         return (
             <Select
                 showSearch={false} value={state.courseId}
