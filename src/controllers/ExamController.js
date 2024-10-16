@@ -1209,14 +1209,13 @@ const reuse = async (req, res) => {
             'de_mau',
             'de_mau_id',
             'de_thi_ma',
-            'de_thi_id'
         ],
     });
     const examNew = await Exam.create({
         ...examOld.dataValues,
         de_thi_ma: `${examOld.de_thi_ma}_NEW`,
         ten_de_thi: `${examOld.ten_de_thi} NEW`,
-        de_cha_id: examOld.de_thi_id,
+        de_cha_id: req.params.id,
         ...(examOld.de_mau && { trang_thai: false, xuat_ban: false }),
     });
     let examQuestionOlds = await ExamQuestion.findAll({
