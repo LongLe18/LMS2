@@ -1172,12 +1172,12 @@ const ExamOnlineDetail = () => {
             <Spin spinning={loadingExportFile}>  
                 <div className='section-question'>
                     <Row>
-                        <Col span={4}>
+                        <Col span={3}>
                             <img src={require('assets/img/logo/logo-vnu.png').default} width={82}  style={{marginLeft: 12}} alt="logo-vnu"/>
                             <img src={require('assets/img/logo/Logo-DGNT.png').default} width={82}  style={{marginLeft: 12}} alt="logo-DGNT"/>
-                            <img src={require('assets/img/logo/Logo-vnuhcm.jpg').default} width={82}  style={{marginLeft: 12}} alt="logo-vnuhcm"/>
+                            {/* <img src={require('assets/img/logo/Logo-vnuhcm.jpg').default} width={82}  style={{marginLeft: 12}} alt="logo-vnuhcm"/> */}
                         </Col>
-                        <Col span={19}>
+                        <Col span={21}>
                             <Row justify={'space-between'} style={{marginBottom: 12}}>
                                 <Col style={{fontSize: 24, color: 'rgb(255, 48, 7)'}}>{getCurrentDate()}</Col>
                                 <Col style={{display: isDoing ? 'flex' : 'none', padding: 4, background: '#1890ff', fontSize: 16, borderRadius: 4}}>
@@ -1224,9 +1224,9 @@ const ExamOnlineDetail = () => {
                                 })}
                             </Row>
                         </Col>
-                        <Col span={1}>
+                        {/* <Col span={1}>
                             <img src={require('assets/img/logo/logo-saoviet.jpg').default} width={68}  style={{marginLeft: 12}} alt="logo-saoviet"/>
-                        </Col>
+                        </Col> */}
                     </Row>
                     {/* <Row className='list-questions' justify={'center'} style={{background: '#f0f0f0'}}>
                     {isDoing && Array.from({ length: exam.data.so_phan }).map((_, index) => {

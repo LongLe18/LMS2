@@ -751,8 +751,8 @@ const Criteria = () => {
             if (res.status === 'success') {
                 checkCriteria('5', id);  // check tiêu chí đã có đề xuất bản hay chưa
                 setNumberOfItems(res.data.so_phan);
-                formOnline.setFieldsValue(res.data);
-                showModalOnline();
+                formDGNL.setFieldsValue(res.data);
+                showModalDGNL();
                 setRequire({...state, isEdit: true});
             }
         };
@@ -1469,6 +1469,9 @@ const Criteria = () => {
             case '4': // tiêu chí đề online
                 dispatch(criteriaAction.getCriteriasOnline({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: page }));
                 break;
+            case '5': // tiêu chí ĐGNL
+                dispatch(criteriaAction.getCriteriasDGNL({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: page }));
+                break;
             default:
                 break;
         }
@@ -1489,6 +1492,9 @@ const Criteria = () => {
                 break;
             case '4': // tiêu chí đề online
                 dispatch(criteriaAction.getCriteriasOnline({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
+                break;
+            case '5': // tiêu chí ĐGNL
+                dispatch(criteriaAction.getCriteriasDGNL({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
                 break;
             default:
                 break;
@@ -1667,6 +1673,10 @@ const Criteria = () => {
                         </Row>
                         <Table className="table-striped-rows" columns={columnsDGNL} dataSource={dataCriteriaDGNL} pagination={false}></Table>
                         <br/>
+                        <Pagination current={pageIndex} onChange={onChangePage} 
+                            total={criteriaDGNL?.totalCount} onShowSizeChange={onChangePageSize} 
+                            showSizeChanger defaultPageSize={pageSize}
+                        />
                         
                     </TabPane>
                 </Tabs>

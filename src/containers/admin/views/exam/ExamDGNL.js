@@ -552,7 +552,7 @@ const ExamDGNLAdminPage = () => {
 
   useEffect(() => {
     dispatch(examActions.filterExamDGNL({ idCourse: filter.khoa_hoc_id, kct_id: filter.kct_id, 
-      status: filter.trang_thai, publish: tabs, pageIndex: pageIndex, pageSize: pageSize 
+      status: filter.trang_thai, publish: tabs, pageIndex: pageIndex === 0 ? 1 : pageIndex, pageSize: pageSize 
     }));
   }, [pageIndex, pageSize]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -578,7 +578,7 @@ const ExamDGNLAdminPage = () => {
       const formData = new FormData();
       formData.append('ten_de_thi', values.ten_de_thi);
       formData.append('mo_ta', values.mo_ta !== undefined ? values.mo_ta : '' );
-      formData.append('loai_de_thi_id', values.loai_de_thi_id);
+      // formData.append('loai_de_thi_id', values.loai_de_thi_id);
       formData.append('khoa_hoc_id', values.khoa_hoc_id);
       formData.append('kct_id', values.kct_id);
       formData.append('de_mau', 1); // Tạo đề mẫu cho ĐGNL
@@ -755,7 +755,7 @@ const ExamDGNLAdminPage = () => {
                 onShowSizeChange={onShowSizeChange}
                 onChange={onChange}
                 defaultCurrent={pageIndex}
-                total={exams?.total}
+                total={exams?.totalCount}
               />
             </TabPane>
             <TabPane tab="Đề đã xuất bản" key="1">
@@ -766,7 +766,7 @@ const ExamDGNLAdminPage = () => {
                 pageSize={pageSize}
                 onChange={onChange}
                 defaultCurrent={pageIndex}
-                total={exams?.total}
+                total={exams?.totalCount}
               />
             </TabPane>
             {error && notification.error({

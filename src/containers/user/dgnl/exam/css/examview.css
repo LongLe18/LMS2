@@ -109,35 +109,39 @@
 }
 
 .title-section .section-0 {
-  background: #d4ad00;
-  border-color: #d4ad00;
+  background: rgb(244, 238, 0);
+  border-color: rgb(244, 238, 0);
   text-align: center;
-  color: #b60505;
+  font-weight: 700;
+  color: red;
   text-transform: uppercase;
 }
 
 .title-section .section-1 {
-  background: #2222ffc2;
-  border-color: #2222ffc2;
+  background: rgb(55, 155, 255);
+  border-color: rgb(55, 155, 255);
   text-align: center;
   text-transform: uppercase;
+  font-weight: 700;
   color: #fff;
 }
 
 .title-section .section-2 {
-  background: #b60505;
-  border-color: #b60505;
+  background: rgb(255, 47, 47);
+  border-color: rgb(255, 47, 47);
   text-align: center;
-  color: #d4ad00;
+  font-weight: 700;
+  color: rgb(255, 255, 0);
   text-transform: uppercase;
 }
 
 .title-section .section-sum {
   text-transform: uppercase;
   color: #fff;
-  background: #d09e80;
+  background: #cd7742;
+  font-weight: 700;
   text-align: center;
-  border-color: #d09e80;
+  border-color: #cd7742;
 }
 
 @media only screen and (max-width: 480px) {

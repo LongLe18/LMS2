@@ -58,8 +58,10 @@ const SampleQuestion = (props) => {
                 }
                 else if (res.data.loai_de_thi_id === 3) {
                     dispatch(examActions.getSyntheticCriteria({  idCourse: res.data.khoa_hoc_id }));
-                } else {
+                } else if (res.data.loai_de_thi_id === 4) {
                     dispatch(examActions.getCriteriaOnlineById({  idCourse: res.data.khoa_hoc_id }));
+                } else {
+                    dispatch(examActions.getCriteriaDGNLById({ idCourse: res.data.khoa_hoc_id }))
                 }
             };
         };
@@ -178,6 +180,7 @@ const SampleQuestion = (props) => {
     }
 
     const chooseQuestion = (id) => {
+        console.log(criteria.data)
         if (exam.data.cau_hoi_de_this.length === criteria.data.so_cau_hoi) {
             Modal.warning({
                 title: 'Thông báo',

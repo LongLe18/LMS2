@@ -46,12 +46,12 @@ function* fectchFilter(payload) {
         let endpoint = `${config.API_URL}/exam/all_admin?offset=${payload.params.offset}&limit=${payload.params.limit}&trang_thai=${payload.params.status}&khoa_hoc_id=${payload.params.idCourse}&mo_dun_id=${payload.params.idModule}&chuyen_de_id=${payload.params.idThematic}&loai_de_thi_id=${payload.params.idType}&ngay_bat_dau=${payload.params.start}&ngay_ket_thuc=${payload.params.end}&search=${payload.params.search}&xuat_ban=${payload.params.publish}`;
         const response = yield call(getApiAuth, endpoint);
         const result = yield response.data;
-        yield put({ type: actions.exam.FILTER_EXAMS_DGNL_SUCCESS, result: result });
+        yield put({ type: actions.exam.FILTER_EXAMS_SUCCESS, result: result });
         if (payload.callback) {
             payload.callback(result);
         }
     } catch (error) {
-        yield put({ type: actions.exam.FILTER_EXAMS_DGNL_FAILED, error: error });
+        yield put({ type: actions.exam.FILTER_EXAMS_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
         notification.error({
             message: get(error, 'response.data.error', 'Tải dữ liệu đề thi thất bại ' + messageError),
@@ -64,12 +64,12 @@ function* fectchFilterDGNL(payload) {
         let endpoint = `${config.API_URL}/exam/dgnl?pageIndex=${payload.params.pageIndex}&pageSize=${payload.params.pageSize}&kct_id=${payload.params.kct_id}&sortBy=ngay_tao,ASC&trang_thai=${payload.params.status}&xuat_ban=${payload.params.publish}&khoa_hoc_id=${payload.params.idCourse}`;
         const response = yield call(getApiAuth, endpoint);
         const result = yield response.data;
-        yield put({ type: actions.exam.FILTER_EXAMS_SUCCESS, result: result });
+        yield put({ type: actions.exam.FILTER_EXAMS_DGNL_SUCCESS, result: result });
         if (payload.callback) {
             payload.callback(result);
         }
     } catch (error) {
-        yield put({ type: actions.exam.FILTER_EXAMS_FAILED, error: error });
+        yield put({ type: actions.exam.FILTER_EXAMS_DGNL_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
         notification.error({
             message: get(error, 'response.data.error', 'Tải dữ liệu đề thi thất bại ' + messageError),
