@@ -2054,7 +2054,7 @@ const ExamOnlineDetail = () => {
                         <div className="header-exam">
                             {/* <h1>{exam.data.ten_de_thi} - Phần {state.sectionExam}</h1> */}
                             <h1 style={{color: 'rgb(255, 48, 7)'}}>
-                                {exam.data.loai_de_thi_id === 5 ? `Bài thi thử ĐGNL ĐHQGHN (HSA) 2024 ${(isDoing && state.sectionExam === 1) ? '- PHẦN 1' : (isDoing && state.sectionExam === 2) ? '- PHẦN 2' : (isDoing && state.sectionExam === 3) && '- PHẦN 3'}` : exam.data.ten_de_thi}
+                                {exam.data.loai_de_thi_id === 5 ? `Bài thi thử ĐGNL ĐHQGHN (HSA) 2024 ${(isDoing && state.sectionExam === 1) ? '- PHẦN 1' : (isDoing && state.sectionExam === 2) ? '- PHẦN 2' : (isDoing && state.sectionExam === 3) ? '- PHẦN 3' : (!isDoing) && ''}` : exam.data.ten_de_thi}
                             </h1>
                             <h4>Mã đề: {exam.data.de_thi_id}</h4>
                             <AuthModal />

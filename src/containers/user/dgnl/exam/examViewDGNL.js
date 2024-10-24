@@ -12,7 +12,7 @@ import { Layout, Row, Col, Carousel, Table, Steps, Radio,
     Checkbox, Button, notification, Spin, Menu, Modal } from 'antd';
 import Statisic from "components/parts/statisic/Statisic";
 import CarouselCustom from 'components/parts/Carousel/Carousel';
-import { BookOutlined, BarsOutlined, QuestionCircleOutlined, ClockCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { BookOutlined, BarsOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import SideBarComponent from "../mainpractice/sidebar/SideBar";
 
 // redux
@@ -318,12 +318,12 @@ const ExamViewDGNL = (props) => {
                     </div>
 
                     <div style={{width: '90%', padding: 12, border: 'rgb(45, 116, 219) solid 2px', borderRadius: 6, boxShadow: '0 0 15px rgba(0, 0, 0, 0.1)'}}>
-                        <div style={{display: 'flex', justifyContent: 'center'}}>
+                        {/* <div style={{display: 'flex', justifyContent: 'center'}}>
                             <div className="description-title">
                                 <span className="textCenter" style={{marginRight: 12}}><QuestionCircleOutlined /> Bài thi gồm {criteria?.so_cau_hoi} câu</span>
                                 <span><ClockCircleOutlined /> {criteria?.thoi_gian} phút</span>
                             </div>
-                        </div>
+                        </div> */}
                         <h6 style={{margin: '24px 0px 12px 0px', color: 'rgb(24, 98, 24)', fontWeight: 700, fontSize: 26}}>Cấu trúc bài thi</h6>
                         <Steps style={{alignItems: 'center'}}
                             progressDot
