@@ -334,11 +334,11 @@ const download = async (req, res) => {
             nhan_xet_2: evaluate_2 ? evaluate_2.danh_gia : '',
             nhan_xet_3: evaluate_3 ? evaluate_3.danh_gia : '',
             nhan_xet_chung:
-                tong_diem >= 0 && tong_diem < 50
+                tong_diem >= 0 && tong_diem < 61
                     ? 'TRUNG BÌNH'
-                    : tong_diem >= 50 && tong_diem < 90
+                    : tong_diem >= 61 && tong_diem < 96
                     ? 'KHÁ'
-                    : tong_diem >= 90 && tong_diem < 120
+                    : tong_diem >= 96 && tong_diem < 126
                     ? 'GIỎI'
                     : 'XUẤT SẮC',
         });
