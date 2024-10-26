@@ -355,10 +355,12 @@ const ExamOnlineDetail = () => {
             });
 
             // Create a URL for the file
+            const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+            const fileName = `DG_${userInfo.hoc_vien_id}_${userInfo.ho_ten}.pdf`
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', 'danhgia.pdf'); // Replace with your file name and extension
+            link.setAttribute('download', fileName); // Replace with your file name and extension
             document.body.appendChild(link);
             link.click();
             link.parentNode.removeChild(link);
@@ -1150,10 +1152,12 @@ const ExamOnlineDetail = () => {
             });
 
             // Create a URL for the file
+            const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+            const fileName = `DG_${userInfo.hoc_vien_id}_${userInfo.ho_ten}.pdf`
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', `danhgia.pdf`); // Replace with your file name and extension
+            link.setAttribute('download', fileName); // Replace with your file name and extension
             document.body.appendChild(link);
             link.click();
             link.parentNode.removeChild(link);
