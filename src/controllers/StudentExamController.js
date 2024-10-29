@@ -479,9 +479,10 @@ const putUpdate = async (req, res) => {
                 selectedAnswer.cau_hoi.loai_cau_hoi === 0 &&
                 selectedAnswer.noi_dung_tra_loi &&
                 selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an &&
-                selectedAnswer.noi_dung_tra_loi.trim().toLowerCase() ==
+                selectedAnswer.noi_dung_tra_loi.trim().replaceAll('<b>', '').replaceAll('</b>', '').replaceAll('<em>', '').replaceAll('</em>', '').replaceAll('<u>', '').replaceAll('</u>', '').toLowerCase() ==
                     selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an
                         .trim()
+                        .replaceAll('<b>', '').replaceAll('</b>', '').replaceAll('<em>', '').replaceAll('</em>', '').replaceAll('<u>', '').replaceAll('</u>', '')
                         .toLowerCase()
             ) {
                 result = true;
@@ -642,9 +643,10 @@ const putUpdatev2 = async (req, res) => {
                 selectedAnswer.cau_hoi.loai_cau_hoi === 0 &&
                 selectedAnswer.noi_dung_tra_loi &&
                 selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an &&
-                selectedAnswer.noi_dung_tra_loi.trim().toLowerCase() ==
+                selectedAnswer.noi_dung_tra_loi.trim().replaceAll('<b>', '').replaceAll('</b>', '').replaceAll('<em>', '').replaceAll('</em>', '').replaceAll('<u>', '').replaceAll('</u>', '').toLowerCase() ==
                     selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an
                         .trim()
+                        .replaceAll('<b>', '').replaceAll('</b>', '').replaceAll('<em>', '').replaceAll('</em>', '').replaceAll('<u>', '').replaceAll('</u>', '')
                         .toLowerCase()
             ) {
                 if (selectedAnswer.cau_hoi.chuyen_nganh_id === 1) {
