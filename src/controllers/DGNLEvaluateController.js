@@ -239,7 +239,12 @@ const download = async (req, res) => {
                     selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an &&
                     selectedAnswer.noi_dung_tra_loi.trim().toLowerCase() ==
                         selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an
-                        .replaceAll('<b>', '').replaceAll('</b>', '').replaceAll('<em>', '').replaceAll('</em>', '').replaceAll('<u>', '').replaceAll('</u>', '')
+                            .replaceAll('<b>', '')
+                            .replaceAll('</b>', '')
+                            .replaceAll('<em>', '')
+                            .replaceAll('</em>', '')
+                            .replaceAll('<u>', '')
+                            .replaceAll('</u>', '')
                             .trim()
                             .toLowerCase()
                 ) {
@@ -282,9 +287,11 @@ const download = async (req, res) => {
             },
         });
 
-        let evaluate_3
-        if (selectedAnswers.some((item) => item.cau_hoi.chuyen_nganh_id === 5)) {
-            evaluate_3= await DGNLEvaluate.findOne({
+        let evaluate_3;
+        if (
+            selectedAnswers.some((item) => item.cau_hoi.chuyen_nganh_id === 5)
+        ) {
+            evaluate_3 = await DGNLEvaluate.findOne({
                 where: {
                     khoa_hoc_id: studentExam.de_thi.khoa_hoc_id,
                     phan_thi: 31,
@@ -297,7 +304,7 @@ const download = async (req, res) => {
                 },
             });
         } else {
-            evaluate_3= await DGNLEvaluate.findOne({
+            evaluate_3 = await DGNLEvaluate.findOne({
                 where: {
                     khoa_hoc_id: studentExam.de_thi.khoa_hoc_id,
                     phan_thi: 32,

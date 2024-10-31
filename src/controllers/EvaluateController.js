@@ -302,10 +302,15 @@ const download = async (req, res) => {
                     selectedAnswer.noi_dung_tra_loi &&
                     selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an &&
                     selectedAnswer.noi_dung_tra_loi.trim().toLowerCase() ==
-                    selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an
-                    .replaceAll('<b>', '').replaceAll('</b>', '').replaceAll('<em>', '').replaceAll('</em>', '').replaceAll('<u>', '').replaceAll('</u>', '')
-                        .trim()
-                        .toLowerCase()
+                        selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an
+                            .replaceAll('<b>', '')
+                            .replaceAll('</b>', '')
+                            .replaceAll('<em>', '')
+                            .replaceAll('</em>', '')
+                            .replaceAll('<u>', '')
+                            .replaceAll('</u>', '')
+                            .trim()
+                            .toLowerCase()
                 )
                     result = true;
             }
