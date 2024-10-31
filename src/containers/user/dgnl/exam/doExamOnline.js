@@ -799,9 +799,27 @@ const ExamOnlineDetail = () => {
                             isRight = 'wrong-answer';
                         }
                     } else if (question.loai_cau_hoi === 0) { // Câu tự luận
-                        if (currentSubmitAnswer && question.dap_ans[0].noi_dung_dap_an === (currentSubmitAnswer.noi_dung_tra_loi).toLowerCase()) {
+                        if (currentSubmitAnswer && question.dap_ans[0].noi_dung_dap_an
+                            .replaceAll('<b>', '')
+                            .replaceAll('</b>', '')
+                            .replaceAll('<em>', '')
+                            .replaceAll('</em>', '')
+                            .replaceAll('<u>', '')
+                            .replaceAll('</u>', '')
+                            .trim()
+                            .toLowerCase() === (currentSubmitAnswer.noi_dung_tra_loi).toLowerCase()) 
+                        {
                             isRight = 'right-answer';
-                        } else if (currentSubmitAnswer && question.dap_ans[0].noi_dung_dap_an !== (currentSubmitAnswer.noi_dung_tra_loi).toLowerCase()) {
+                        } else if (currentSubmitAnswer && question.dap_ans[0].noi_dung_dap_an
+                            .replaceAll('<b>', '')
+                            .replaceAll('</b>', '')
+                            .replaceAll('<em>', '')
+                            .replaceAll('</em>', '')
+                            .replaceAll('<u>', '')
+                            .replaceAll('</u>', '')
+                            .trim()
+                            .toLowerCase() !== (currentSubmitAnswer.noi_dung_tra_loi).toLowerCase()) 
+                        {
                             isRight = 'wrong-answer';
                         }
                     }
@@ -956,7 +974,16 @@ const ExamOnlineDetail = () => {
                                             number = number + 1;
                                         } 
                                     } else if (question.cau_hoi.loai_cau_hoi === 0) { // Câu tự luận
-                                        if (currentSubmitAnswer && question.cau_hoi.dap_ans[0].noi_dung_dap_an === (currentSubmitAnswer.noi_dung_tra_loi).toLowerCase()) {
+                                        if (currentSubmitAnswer && question.cau_hoi.dap_ans[0].noi_dung_dap_an
+                                            .replaceAll('<b>', '')
+                                            .replaceAll('</b>', '')
+                                            .replaceAll('<em>', '')
+                                            .replaceAll('</em>', '')
+                                            .replaceAll('<u>', '')
+                                            .replaceAll('</u>', '')
+                                            .trim()
+                                            .toLowerCase() === (currentSubmitAnswer.noi_dung_tra_loi).toLowerCase()) 
+                                        {
                                             number = number + 1;
                                         } 
                                     }
@@ -1318,7 +1345,15 @@ const ExamOnlineDetail = () => {
                                                                                 number = number + 1;
                                                                             } 
                                                                         } else { // Câu tự luận
-                                                                            if (currentSubmitAnswer && question.cau_hoi.dap_ans[0].noi_dung_dap_an === (currentSubmitAnswer?.noi_dung_tra_loi)?.toLowerCase()) {
+                                                                            if (currentSubmitAnswer && question.cau_hoi.dap_ans[0].noi_dung_dap_an
+                                                                                .replaceAll('<b>', '')
+                                                                                .replaceAll('</b>', '')
+                                                                                .replaceAll('<em>', '')
+                                                                                .replaceAll('</em>', '')
+                                                                                .replaceAll('<u>', '')
+                                                                                .replaceAll('</u>', '')
+                                                                                .trim()
+                                                                                .toLowerCase() === (currentSubmitAnswer?.noi_dung_tra_loi)?.toLowerCase()) {
                                                                                 number = number + 1;
                                                                             } 
                                                                         }
@@ -1387,7 +1422,15 @@ const ExamOnlineDetail = () => {
                                                                                 number = number + 1;
                                                                             } 
                                                                         } else { // Câu tự luận
-                                                                            if (currentSubmitAnswer && question.cau_hoi.dap_ans[0].noi_dung_dap_an === (currentSubmitAnswer?.noi_dung_tra_loi)?.toLowerCase()) {
+                                                                            if (currentSubmitAnswer && question.cau_hoi.dap_ans[0].noi_dung_dap_an
+                                                                                .replaceAll('<b>', '')
+                                                                                .replaceAll('</b>', '')
+                                                                                .replaceAll('<em>', '')
+                                                                                .replaceAll('</em>', '')
+                                                                                .replaceAll('<u>', '')
+                                                                                .replaceAll('</u>', '')
+                                                                                .trim()
+                                                                                .toLowerCase() === (currentSubmitAnswer?.noi_dung_tra_loi)?.toLowerCase()) {
                                                                                 number = number + 1;
                                                                             } 
                                                                         }
@@ -1441,7 +1484,15 @@ const ExamOnlineDetail = () => {
                                                                                 number = number + 1;
                                                                             } 
                                                                         } else { // Câu tự luận
-                                                                            if (currentSubmitAnswer && question.cau_hoi.dap_ans[0].noi_dung_dap_an === (currentSubmitAnswer?.noi_dung_tra_loi)?.toLowerCase()) {
+                                                                            if (currentSubmitAnswer && question.cau_hoi.dap_ans[0].noi_dung_dap_an
+                                                                                .replaceAll('<b>', '')
+                                                                                .replaceAll('</b>', '')
+                                                                                .replaceAll('<em>', '')
+                                                                                .replaceAll('</em>', '')
+                                                                                .replaceAll('<u>', '')
+                                                                                .replaceAll('</u>', '')
+                                                                                .trim()
+                                                                                .toLowerCase() === (currentSubmitAnswer?.noi_dung_tra_loi)?.toLowerCase()) {
                                                                                 number = number + 1;
                                                                             } 
                                                                         }
