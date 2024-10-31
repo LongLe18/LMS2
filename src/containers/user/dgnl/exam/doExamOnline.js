@@ -144,7 +144,8 @@ const ExamOnlineDetail = () => {
                                     "thoi_gian_lam_bai": secondsToMinutes(res.data.thoi_gian * 60),
                                 }
                             }
-                            dispatch(examActions.editExamUser({ idExam: params.idExamUser, formData: info }))
+                            if (course?.data.loai_kct === 0) dispatch(examActions.editExamDGNLUser({ idExam: params.idExamUser, formData: info }))
+                            else dispatch(examActions.editExamUser({ idExam: params.idExamUser, formData: info }))
                             clearInterval(timerId?.current);
                             setStartTime(0);
                             setIsDoing(false); // kết thúc thi
@@ -292,7 +293,8 @@ const ExamOnlineDetail = () => {
                 phan_dang_lam: Number(state.sectionExam),
                 thoi_gian_lam_phan: timeToDoAllSection.join(','),
             }
-            dispatch(examActions.editExamUser({ idExam: params.idExamUser, formData: info }))
+            if (course?.data.loai_kct === 0) dispatch(examActions.editExamDGNLUser({ idExam: params.idExamUser, formData: info }))
+            else dispatch(examActions.editExamUser({ idExam: params.idExamUser, formData: info }))
         }
     }, [timeToDo]);
 
@@ -965,12 +967,19 @@ const ExamOnlineDetail = () => {
                     const info = {
                         "diem_cac_phan": points.join(',')
                     }
-                    console.log(info);
-                    dispatch(examActions.editExamUser({ idExam: params.idExamUser, formData: info }, (a) => {
-                        if (a.status === 200 && a.statusText === 'OK') {
-                            window.location.reload();
-                        }
-                    }))
+                    if (course?.data.loai_kct === 0) {
+                        dispatch(examActions.editExamDGNLUser({ idExam: params.idExamUser, formData: info }, (a) => {
+                            if (a.status === 200 && a.statusText === 'OK') {
+                                window.location.reload();
+                            }
+                        }))
+                    } else {
+                        dispatch(examActions.editExamUser({ idExam: params.idExamUser, formData: info }, (a) => {
+                            if (a.status === 200 && a.statusText === 'OK') {
+                                window.location.reload();
+                            }
+                        }))
+                    }
                 }
             }))
         };
