@@ -366,7 +366,7 @@ const ExamAdminPage = () => {
   const renderTypeExams = () => {
       let options = [];
       if (typeExams.status === 'success') {
-        options = typeExams.data.map((type) => (
+        options = typeExams.data.filter((item) => item.loai_de_thi_id !== 5).map((type) => (
           <Option key={type.loai_de_thi_id} value={type.loai_de_thi_id} >{type.mo_ta}</Option>
         ))
       }

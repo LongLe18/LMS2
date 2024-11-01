@@ -1377,8 +1377,8 @@ const ExamOnlineDetail = () => {
                                                 </Button> 
                                                 đáp án và lời giải
                                             </div>
-                                            {
-                                                course?.data.loai_kct === 0 && <div style={{fontSize: 22, textAlign: 'center', marginBottom: 12}}>Click
+                                            {course?.data.loai_kct === 0 && 
+                                                <div style={{fontSize: 22, textAlign: 'center', marginBottom: 12}}>Click
                                                     <Button type="text" onClick={() => exportEvaluationDGNL()}
                                                         style={{fontSize: 22, color: 'red'}}
                                                     >
