@@ -457,7 +457,7 @@ const IntroCoursePage = () => {
                                 <div className="info-item" dangerouslySetInnerHTML={{ __html: description.data.xep_lop_thoi_gian }}></div>
                             : ''}
                         </div>    
-                        <div className="content-detail content-detail-nd">
+                        {/* <div className="content-detail content-detail-nd">
                             <h4 className="title-content-detail uppercase">
                                 <DollarOutlined style={{marginRight: '10px'}}/> Học phí
                             </h4>
@@ -465,7 +465,7 @@ const IntroCoursePage = () => {
                                 Để có thông tin và tư vấn chi tiết về học phí đối với mỗi khóa học các bậc phụ huynh và các em học sinh hãy gọi theo số Hotline: 
                                 <a href="tel:1900633234">1900.633.234</a> hoặc <Link to="#">Click vào đây để nhận được tư vấn trực tiếp</Link>
                             </div>
-                        </div>   
+                        </div>    */}
                     </div>
                 </Col>
                 <Col span={6} className="list-course-advertisement">

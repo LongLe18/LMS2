@@ -106,11 +106,11 @@ const Footer = () => {
                 </div>
             </div>
             {/* Copy right */}
-            <div className="copy-right">
+            {/* <div className="copy-right">
                 <p className="text-center">
                     Copyright 2024 © Trung tâm Đào tạo và Chuyển giao Khoa học công nghệ (ENNO). All rights reserved.
                 </p>
-            </div>
+            </div> */}
         </div>
     )
 };
