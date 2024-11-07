@@ -129,7 +129,7 @@ const StatisticExam = (props) => {
             });
         }
     }
-
+    
     const onFilterChange = (field, value) => {
         if (field === 'ngay') {
             setFilter((state) => ({ ...state, start: value[0] }));  
@@ -670,7 +670,7 @@ const StatisticExam = (props) => {
                                             <ExcelColumn label="Điểm phần 2" value={"diem_phan_2"}/>
                                             <ExcelColumn label="Điểm phần 3" value={"diem_phan_3"}/>
                                             <ExcelColumn label="Điểm" value="ket_qua_diem"/>
-                                            <ExcelColumn label="Ngày thi" value={(col) => moment(col.ngay_thi).utc(7).format(config.DATE_FORMAT)}/>
+                                            <ExcelColumn label="Ngày thi" value={(col) => moment(col.ngay_tao).utc(7).format(config.DATE_FORMAT)}/>
                                         </ExcelSheet>
                                     </ExcelFile>
                                 </Col>

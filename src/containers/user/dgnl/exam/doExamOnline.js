@@ -1635,7 +1635,7 @@ const ExamOnlineDetail = () => {
                                                                         return (
                                                                             <Col xs={24} sm={24} md={getAnswerCols(question.cau_hoi.cot_tren_hang)} key={index}>
                                                                                 <ul key={index}>
-                                                                                    {(question.cau_hoi.loai_cau_hoi === 1) ?
+                                                                                    {(question.cau_hoi.loai_cau_hoi === 1) ? // Trắc nghiệm
                                                                                         <li className={`item ${isAnswered && isAnswered.dap_an.includes(renderAnswerKey(index)) ? 'active' : ''}`}>
                                                                                             <button style={{width:"100%"}} disabled={pause}
                                                                                                 className="btn-onclick"
@@ -1654,7 +1654,7 @@ const ExamOnlineDetail = () => {
                                                                                                 {renderAnswer(question.cau_hoi, answer, index)}
                                                                                             </button>
                                                                                         </li>
-                                                                                    : (question.cau_hoi.loai_cau_hoi === 0) ?
+                                                                                    : (question.cau_hoi.loai_cau_hoi === 0) ? // Tự luận
                                                                                         <li>
                                                                                             <Input placeholder='Nhập đáp án' rows={1} style={{width:"35%", marginTop: 12}} disabled={!isDoing} defaultValue={isAnswered !== undefined ? isAnswered.noi_dung : null}
                                                                                                 onChange={(e) => {
