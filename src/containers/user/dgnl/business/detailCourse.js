@@ -15,7 +15,7 @@ import jwt_decode from 'jwt-decode';
 // component
 import { Layout, Row, Col, Button, Modal, notification, Form, Input } from 'antd';
 import { FacebookOutlined, TwitterOutlined, MailOutlined, LinkedinOutlined, CrownFilled, BookOutlined, StarFilled,
-    UsergroupAddOutlined, MenuOutlined, BankFilled, DollarOutlined, EyeInvisibleOutlined, EyeTwoTone,
+    UsergroupAddOutlined, MenuOutlined, BankFilled, EyeInvisibleOutlined, EyeTwoTone,
     UserOutlined, LockOutlined } from '@ant-design/icons';
 import AppBreadCrumb from 'components/parts/breadcrumb/AppBreadCrumb';
 import SideBarComponent from '../mainpractice/sidebar/SideBar';

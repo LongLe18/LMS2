@@ -3,11 +3,10 @@ import { useParams } from 'react-router-dom';
 import Hashids from 'hashids';
 import { Helmet } from 'react-helmet';
 import moment from 'moment';
-import { secondsToMinutes } from 'helpers/common.helper';
+import { secondsToMinutes, diff } from 'helpers/common.helper';
 import './css/ExamDetail2.scss'
 import config from '../../../../configs/index';
 import defaultImage from 'assets/img/default.jpg';
-import { diff } from 'helpers/common.helper';
 import { createRoot } from 'react-dom/client';
 import axios from 'axios';
 // hook
@@ -1220,12 +1219,18 @@ const ExamOnlineDetail = () => {
                         <Col span={21}>
                             <Row justify={'space-between'} style={{marginBottom: 12}}>
                                 <Col style={{fontSize: 24, color: 'rgb(255, 48, 7)'}}>{getCurrentDate()}</Col>
-                                <Col style={{display: isDoing ? 'flex' : 'none', padding: 4, background: '#1890ff', fontSize: 16, borderRadius: 4}}>
-                                    {(isDoing && state.sectionExam === 1) ? 
-                                    'PHẦN 1: TƯ DUY ĐỊNH LƯỢNG' : (isDoing && state.sectionExam === 2) ? 
-                                    'PHẦN 2: TƯ DUY ĐỊNH TÍNH' : (isDoing && state.sectionExam === 3) && 
-                                    `PHẦN 3: ${localStorage.getItem('mon_thi')?.split(',').length === 1 ? 'NGOẠI NGỮ' : 'KHOA HỌC'}`}
-                                </Col>
+                                {course?.data.loai_kct !== 0 ? 
+                                    <Col style={{display: isDoing ? 'flex' : 'none', padding: 4, background: '#1890ff', fontSize: 16, borderRadius: 4}}>
+                                        {`PHẦN ${state.sectionExam}`}
+                                    </Col>
+                                : 
+                                    <Col style={{display: isDoing ? 'flex' : 'none', padding: 4, background: '#1890ff', fontSize: 16, borderRadius: 4}}>
+                                        {(isDoing && state.sectionExam === 1) ? 
+                                        'PHẦN 1: TƯ DUY ĐỊNH LƯỢNG' : (isDoing && state.sectionExam === 2) ? 
+                                        'PHẦN 2: TƯ DUY ĐỊNH TÍNH' : (isDoing && state.sectionExam === 3) && 
+                                        `PHẦN 3: ${localStorage.getItem('mon_thi')?.split(',').length === 1 ? 'NGOẠI NGỮ' : 'KHOA HỌC'}`}
+                                    </Col>
+                                }
                                 <Col><span style={{ fontSize: 24, color: 'rgb(255, 48, 7)' }}>{secondsToMinutes(countSection)}</span></Col>
                             </Row>
                             <Row className='list-questions' justify={'center'}>
@@ -1294,7 +1299,7 @@ const ExamOnlineDetail = () => {
                     </Row> */}
                 </div>
                 <Row className="question-content" gutter={[16]} style={{margin: '0 68px'}}>
-                    <Col span={21}>
+                    <Col span={course?.data.loai_kct !== 0 ? 18 : 21}>
                         {(!isDoing && examUser.status === 'success') &&(
                             <div className="history-header">
                                 <div className="summury-result">
@@ -1747,9 +1752,7 @@ const ExamOnlineDetail = () => {
                             } else return null;
                         })}
                         {(exam.status === 'success' && !isDoing && ((course?.data.loai_kct === 0 && isDetail) || course?.data.loai_kct !== 0)) && exam.data.cau_hoi_de_this.map((question, ParentIndex) => {
-                            
                             let regex = /\\begin{center}\\includegraphics\[scale = 0\.5\]{(.*?)}\\end{center}/;
-
                             return (
                                 <>
                                     {((question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom !== undefined && question.cau_hoi.exceprtTo !== undefined)  || (question.cau_hoi?.trich_doan?.loai_trich_doan_id === 0)) &&
@@ -1768,7 +1771,7 @@ const ExamOnlineDetail = () => {
                                                 <MathJax.Provider>
                                                     {question.cau_hoi?.trich_doan?.noi_dung?.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
                                                         return (
-                                                            <div className="title-exam-content" key={index_cauhoi}>
+                                                            <div className="title-exam-content" key={`question_${index_cauhoi}`}>
                                                                 {
                                                                     (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
                                                                         <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}><Image src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></Image></div>
@@ -1776,7 +1779,7 @@ const ExamOnlineDetail = () => {
                                                                     (
                                                                         <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
                                                                             return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
-                                                                                <MathJax.Node key={index2} formula={item2} />
+                                                                                <MathJax.Node key={`questionI_${index2}`} formula={item2} />
                                                                             ) : (
                                                                                 <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
                                                                             )
@@ -2044,7 +2047,7 @@ const ExamOnlineDetail = () => {
                         })}
                     </Col>
                     
-                    {isDoing && Array.from({ length: exam.data.so_phan }).map((_, index) => {
+                    {(isDoing && course?.data.loai_kct === 0) && Array.from({ length: exam.data.so_phan }).map((_, index) => {
                         if (index + 1 === state.sectionExam) {
                             const startIndex = index === 0 ? 0 : Array.from({ length: index }).reduce((sum, _, i) => sum + exam.data[`so_cau_hoi_phan_${i + 1}`], 0);
                             const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${state.sectionExam}`];
@@ -2077,6 +2080,73 @@ const ExamOnlineDetail = () => {
                                                 })}
                                             </ul>
                                         </div>
+                                    </div>
+                                </Col>
+                            )
+                        } else return null;
+                    })}
+                    {(isDoing && course?.data.loai_kct !== 0) && Array.from({ length: exam.data.so_phan }).map((_, index) => {
+                        if (index + 1 === state.sectionExam) {
+                            const startIndex = index === 0 ? 0 : Array.from({ length: index }).reduce((sum, _, i) => sum + exam.data[`so_cau_hoi_phan_${i + 1}`], 0);
+                            const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${state.sectionExam}`];
+                            const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
+                            return (
+                                <Col span={6}>
+                                    <div className="exam-right-content" style={{ position: 'sticky', top: '0px', marginTop: 0 }}>
+                                        <div className="topbar-exam">
+                                            <p className="mg-0">
+                                            <b style={{fontSize: 16}}>Thời gian </b>
+                                            <span className="white-spread-upper"></span>
+                                            <b style={{ color: '#fff', fontSize: 20 }}>{secondsToMinutes(countSection)}</b>
+                                            </p>
+                                
+                                            <p className="mg-0">
+                                            <b style={{fontSize: 16}}>Số câu đã làm</b>
+                                            <span className="white-spread-under"></span>
+                                            <b style={{ color: '#fff', fontSize: 24 }}>
+                                                <span style={{ color: '#373636' }}>{`${results.length}/${partQuestions.length}`}</span>
+                                            </b>
+                                            </p>
+                                        </div>
+                                        <div className="exam-right-info">
+                                            <p className="mg-0 color-blue text-center title-list-q"><b>Câu hỏi</b></p>
+                                            <ul style={{flexDirection: 'row'}}>
+                                                {partQuestions.map((question, index) => {
+                                                    const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
+                                                    return (
+                                                        <li key={index + 1} className={`item ${((isAnswered && isAnswered.dap_an?.length !== 0) || (isAnswered && question?.cau_hoi?.loai_cau_hoi === 2)) ? 'active' : ''}`}>
+                                                            <button className='a-tag' style={{borderRadius: 8}}
+                                                                onClick={() => {
+                                                                    const element = document?.getElementById(index + 1);
+                                                                    const offset = 120; // height of your fixed header
+                                                                    const y = element.getBoundingClientRect().top + window.pageYOffset - offset;
+
+                                                                    window.scrollTo({ top: y, behavior: "smooth" });
+                                                                }}
+                                                            >
+                                                                {index + 1}
+                                                            </button>
+                                                        </li>
+                                                    );
+                                                })}
+                                            </ul>
+                                        </div>
+                                        <p className="text-center">
+                                            {(state.sectionExam === exam.data.so_phan) ?
+                                                <button className="btn-onclick submit-exam" onClick={() => submit()}>
+                                                    <b>Nộp bài thi</b>
+                                                </button>
+                                            :
+                                                <button className="btn-onclick submit-exam" onClick={() => handleNextSectionExam()}>
+                                                    <b>Phần tiếp theo</b>
+                                                </button>
+                                            }
+                                            {(state.sectionExam > 1 && !isDoing) &&
+                                                <button className="btn-onclick submit-exam" onClick={() => handlePrevSectionExam()}>
+                                                    <b>Phần thi trước</b>
+                                                </button>
+                                            }
+                                        </p> 
                                     </div>
                                 </Col>
                             )

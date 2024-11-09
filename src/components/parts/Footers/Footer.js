@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 // css
 import './css/AppFooter.css';
 // helper
-import boCongThuong from 'assets/img/logo/bo-cong-thuong.png';
+// import boCongThuong from 'assets/img/logo/bo-cong-thuong.png';
 // component
 import { Row, Col, Button } from 'antd';
 import { FacebookOutlined, YoutubeOutlined, PhoneOutlined } from '@ant-design/icons';
@@ -39,9 +39,9 @@ const Footer = () => {
                                                     <h3>{item.ten_footer}</h3>
                                                 </div>
                                                 <div className="footer-title" dangerouslySetInnerHTML={{ __html: item.noi_dung }}></div>
-                                                <div className="policy-icon">
+                                                {/* <div className="policy-icon">
                                                     <img src={boCongThuong} alt="chung-chi"/>
-                                                </div>
+                                                </div> */}
                                             </div>
                                         </Col>  
                                     )
@@ -61,19 +61,19 @@ const Footer = () => {
                                                     if (index <= 3) {
                                                         if (item.mo_ta === 'FACEBOOK')
                                                             return (
-                                                                <Button block shape="round" icon={<FacebookOutlined />} onClick={() => window.location.href = item.link_lien_ket} 
+                                                                <Button key={item.link_lien_ket} block shape="round" icon={<FacebookOutlined />} onClick={() => window.location.href = item.link_lien_ket} 
                                                                     className='icon button circle is-outline tooltip whatsapp show-for-medium tooltipstered'>
                                                                 </Button>
                                                             )
                                                         else if (item.mo_ta === 'YOUTUBE')
                                                             return (
-                                                                <Button block shape="round" icon={<YoutubeOutlined />} onClick={() => window.location.href = item.link_lien_ket}
+                                                                <Button key={item.link_lien_ket} block shape="round" icon={<YoutubeOutlined />} onClick={() => window.location.href = item.link_lien_ket}
                                                                     className='icon button circle is-outline tooltip whatsapp show-for-medium tooltipstered'>
                                                                 </Button>
                                                             )
                                                         else if (item.mo_ta === 'HOTLINE')
                                                             return (
-                                                                <Button block shape="round" icon={<PhoneOutlined />} onClick={() => window.location.href = 'tel:' + item.link_lien_ket}
+                                                                <Button key={item.link_lien_ket} block shape="round" icon={<PhoneOutlined />} onClick={() => window.location.href = 'tel:' + item.link_lien_ket}
                                                                     className='icon button circle is-outline tooltip whatsapp show-for-medium tooltipstered'>
                                                                 </Button>
                                                             )
