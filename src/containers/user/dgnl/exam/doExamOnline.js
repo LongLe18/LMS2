@@ -57,6 +57,7 @@ const ExamOnlineDetail = () => {
     const [timeToDo, setTimeToDo] = useState(null); // Thời gian làm bài
     const [timeToDoAllSection, setTimeToDoAllSection] = useState(null); // Thời gian làm bài các phần
     const [results, setResults] = useState([]);
+    const [isFullscreen, setIsFullscreen] = useState(false);
     const [loadingExportFile, setLoadingExportFile] = useState(false);
     // eslint-disable-next-line no-unused-vars
     const [startTime, setStartTime] = useState(0);
@@ -157,15 +158,15 @@ const ExamOnlineDetail = () => {
                             setState({...state, sectionExam: phan_dang_lam }); // hiện tại thuộc phần nào của đề thi
                             setCountSection(Math.abs(remainingTimeExam));  // thời gian còn lại của phần thi là bao nhiêu
                             setStartTime(new Date().getTime());
-                            timerId.current = setInterval(() => {
-                                setCountSection((preCount) => preCount - 1);
-                            }, 1000);
+                            // timerId.current = setInterval(() => {
+                            //     setCountSection((preCount) => preCount - 1);
+                            // }, 1000);
     
                             // 1 phút cập nhật thời gian làm bài 1 lần
                             if (subres?.data?.thoi_gian_lam_phan) setTimeToDo(Number(thoi_gian_lam_bai_phan[phan_dang_lam - 1])); // là số phút
-                            timeCount.current = setInterval(() => {
-                                setTimeToDo((preValue) => preValue + 1); // Mỗi lần tăng lên 1 phút
-                            }, 60000);
+                            // timeCount.current = setInterval(() => {
+                            //     setTimeToDo((preValue) => preValue + 1); // Mỗi lần tăng lên 1 phút
+                            // }, 60000);
                             break;
                         }
                     }
@@ -226,6 +227,37 @@ const ExamOnlineDetail = () => {
             ))
         }
     }, [textAnswer]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    // check full screen
+    useEffect(() => {
+        const handleFullscreenChange = () => {
+            const fullscreenElement = document.fullscreenElement
+            setIsFullscreen(!!fullscreenElement)
+
+            if (!fullscreenElement) {
+                // Custom action when fullscreen is exited
+                clearInterval(timerId?.current); // Dừng đếm thời gian section
+                clearInterval(timeCount?.current); // Dừng đếm thời gian làm bài phần cũ
+              }
+        }
+    
+        document.addEventListener('fullscreenchange', handleFullscreenChange)
+        return () => document.removeEventListener('fullscreenchange', handleFullscreenChange)
+    }, []);
+
+    // event chuyển full screen
+    const enterFullscreen = () => {
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+
+            timerId.current = setInterval(() => {
+                setCountSection((preCount) => preCount - 1);
+            }, 1000);
+            timeCount.current = setInterval(() => {
+                setTimeToDo((preValue) => preValue + 1); // Mỗi lần tăng lên 1 phút
+            }, 60000)
+        }
+    }
 
     // Hàm xử lý đếm ngược thời gian khi click "Phần tiếp theo"
     const countDown = () => {
@@ -1101,28 +1133,38 @@ const ExamOnlineDetail = () => {
         });
     };
 
-    // Function cho phép làm lại bài
-    // const doExamAgain = () => {
-    //     const callback = (res) => {
-    //         if (res.status === 200 && res.statusText === 'OK') {
-    //             sessionStorage.clear();
-    //             window.location.href = `/luyen-tap/lam-kiem-tra-online/${params.idExam}/${moment().toNow()}/${res.data.data.dthv_id}/${params.idCourse}`;
-    //         }
-    //     };
-
-    //     const data = {
-    //         "thoi_diem_bat_dau": moment().toISOString(),
-    //         "de_thi_id": hashids.decode(params.idExam)
-    //     }
-    //     dispatch(examActions.createExamUser(data, callback));
-    // };
-
     const renderHistoryExamSidebar = () => {
         return (
             <Col span={3}>
                 {examUser.status === 'success' &&
                     <div className="exam-right-content" style={{ position: 'sticky', top: '100px' }}>
-                        {/* <div className="topbar-exam">
+                        <div className="exam-right-info">
+                            <p className="mg-0 color-blue text-center title-list-q">
+                                <b style={{fontSize: 18}}>Câu hỏi</b>
+                            </p>
+                            <ul>
+                                {exam.status === 'success' && exam.data.cau_hoi_de_this.map((question, index) => {
+                                    return (
+                                        <li key={index + 1} className={"normal " + isCorrectAnswer(question.cau_hoi)}>
+                                            <a href={`#${index}`}>{index + 1}</a> . <span>{convertAnswerKey(question.cau_hoi)}</span>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        </div>
+                    </div>
+                }
+            </Col>
+        );
+    };
+
+    const renderHistoryExamSidebarOld = () => {
+        return (
+            <Col span={6}>
+                {examUser.status === 'success' &&
+
+                    <div className="exam-right-content" style={{ position: 'sticky', top: '0px' }}>
+                        <div className="topbar-exam">
                             <p className="mg-0">
                             <b style={{fontSize: 18}}>Số câu đã làm</b>
                             <span className="white-spread-under"></span>
@@ -1143,16 +1185,27 @@ const ExamOnlineDetail = () => {
                                 {`Chưa chọn: `}
                                 <b>{exam.data.cau_hoi_de_this.length - results.length}</b>
                             </p>
-                        </div> */}
+                        </div>
                         <div className="exam-right-info">
                             <p className="mg-0 color-blue text-center title-list-q">
                                 <b style={{fontSize: 18}}>Câu hỏi</b>
                             </p>
-                            <ul>
+                            <ul style={{ display: 'block' }}>
                                 {exam.status === 'success' && exam.data.cau_hoi_de_this.map((question, index) => {
                                     return (
-                                        <li key={index + 1} className={"normal " + isCorrectAnswer(question.cau_hoi)}>
-                                            <a href={`#${index}`}>{index + 1}</a> . <span>{convertAnswerKey(question.cau_hoi)}</span>
+                                        <li key={index + 1} className={isCorrectAnswer(question.cau_hoi)}>
+                                            {/* <a href={`#${index + 1}`}>{index + 1}</a> */}
+                                            <button className='a-tag' style={{borderRadius: 8}}
+                                                onClick={() => {
+                                                    const element = document?.getElementById(index + 1);
+                                                    const offset = 120; // height of your fixed header
+                                                    const y = element.getBoundingClientRect().top + window.pageYOffset - offset;
+
+                                                    window.scrollTo({ top: y, behavior: "smooth" });
+                                                }}
+                                            >
+                                                {index + 1}
+                                            </button>
                                         </li>
                                     );
                                 })}
@@ -1273,30 +1326,6 @@ const ExamOnlineDetail = () => {
                             <img src={require('assets/img/logo/logo-saoviet.jpg').default} width={68}  style={{marginLeft: 12}} alt="logo-saoviet"/>
                         </Col> */}
                     </Row>
-                    {/* <Row className='list-questions' justify={'center'} style={{background: '#f0f0f0'}}>
-                    {isDoing && Array.from({ length: exam.data.so_phan }).map((_, index) => {
-                            if (index + 1 === state.sectionExam) {
-                                const startIndex = index === 0 ? 0 : Array.from({ length: index }).reduce((sum, _, i) => sum + exam.data[`so_cau_hoi_phan_${i + 1}`], 0);
-                                const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${state.sectionExam}`];
-                                const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
-                                return (
-                                    <>
-                                        {partQuestions.map((question, index) => {
-                                            const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
-                                            if (isAnswered) {
-                                                return (
-                                                    <div key={index + 1} className={`item`}>
-                                                        <a href={`#${index}`} style={{color: 'green'}}>{index + 1}</a>
-                                                    </div>
-                                                );
-                                            }
-                                            return null;
-                                        })}
-                                    </>
-                                )
-                            } else return null;
-                        })}
-                    </Row> */}
                 </div>
                 <Row className="question-content" gutter={[16]} style={{margin: '0 68px'}}>
                     <Col span={course?.data.loai_kct !== 0 ? 18 : 21}>
@@ -1402,7 +1431,7 @@ const ExamOnlineDetail = () => {
                                                     <b className="point font-weight-5">{examUser.data.ket_qua_diem}/{exam.data.tong_diem}</b>
                                                     </p>
                                                 </div>
-                                                <div className="total_point">
+                                                <div className="total_point mb-4">
                                                     <p className='font-weight-5'>
                                                         Thời gian làm:{' '}
                                                         <b>
@@ -1535,10 +1564,6 @@ const ExamOnlineDetail = () => {
                                 </div>
                                 {course?.data.loai_kct !== 0 &&
                                     <div className="block-action">
-                                        {/* <Button type="default" size="large" className="dowload-exam-button" onClick={() => doExamAgain()}>
-                                            <FileOutlined />
-                                            Làm lại bài thi
-                                        </Button> */}
                                         <Button type="primary" size="large" className="dowload-exam-button" onClick={() => downloadReport()}>
                                             <DownloadOutlined />
                                             Tải kết quả đánh giá
@@ -2047,6 +2072,7 @@ const ExamOnlineDetail = () => {
                         })}
                     </Col>
                     
+                    {/* Đánh giá năng lực */}
                     {(isDoing && course?.data.loai_kct === 0) && Array.from({ length: exam.data.so_phan }).map((_, index) => {
                         if (index + 1 === state.sectionExam) {
                             const startIndex = index === 0 ? 0 : Array.from({ length: index }).reduce((sum, _, i) => sum + exam.data[`so_cau_hoi_phan_${i + 1}`], 0);
@@ -2085,6 +2111,7 @@ const ExamOnlineDetail = () => {
                             )
                         } else return null;
                     })}
+                    {/* Các khóa học thuộc khung chương trình khác */}
                     {(isDoing && course?.data.loai_kct !== 0) && Array.from({ length: exam.data.so_phan }).map((_, index) => {
                         if (index + 1 === state.sectionExam) {
                             const startIndex = index === 0 ? 0 : Array.from({ length: index }).reduce((sum, _, i) => sum + exam.data[`so_cau_hoi_phan_${i + 1}`], 0);
@@ -2108,9 +2135,9 @@ const ExamOnlineDetail = () => {
                                             </b>
                                             </p>
                                         </div>
-                                        <div className="exam-right-info">
+                                        <div className="exam-right-info hide-scrollbar">
                                             <p className="mg-0 color-blue text-center title-list-q"><b>Câu hỏi</b></p>
-                                            <ul style={{flexDirection: 'row'}}>
+                                            <ul style={{ display: 'block' }}>
                                                 {partQuestions.map((question, index) => {
                                                     const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
                                                     return (
@@ -2152,7 +2179,8 @@ const ExamOnlineDetail = () => {
                             )
                         } else return null;
                     })}
-                    {(!isDoing && ((course?.data.loai_kct === 0 && isDetail) || course?.data.loai_kct !== 0)) && renderHistoryExamSidebar()}
+                    {(!isDoing && course?.data.loai_kct === 0 && isDetail) && renderHistoryExamSidebar()}
+                    {(!isDoing && course?.data.loai_kct !== 0 && renderHistoryExamSidebarOld())}
                 </Row>
                 {isDoing && 
                     <p className="text-center">
@@ -2173,6 +2201,17 @@ const ExamOnlineDetail = () => {
                     </p> 
                 }
             </Spin>
+        )
+    }
+
+    if (!isFullscreen) {
+        return (
+            <div className='full-screen'>
+                <div>Bạn phải vào chế độ toàn màn hình (fullscreen) mới làm được bài thi.</div>
+                <Button onClick={enterFullscreen} type='primary'>
+                    Vào chế độ Full screen
+                </Button>
+            </div>
         )
     }
 

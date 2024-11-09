@@ -30,10 +30,26 @@ const ReviewExamPage = () => {
 
     const [results, setResults] = useState([]);
     const [help, setHelp] = useState([]);
+    const [isFullscreen, setIsFullscreen] = useState(false)
 
     useEffect(() => {
         dispatch(examActions.getExam({ id: hashids.decode(idExam) }))
     }, [idExam]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+        const handleFullscreenChange = () => {
+            setIsFullscreen(!!document.fullscreenElement)
+        }
+    
+        document.addEventListener('fullscreenchange', handleFullscreenChange)
+        return () => document.removeEventListener('fullscreenchange', handleFullscreenChange)
+    }, []);
+    
+    const enterFullscreen = () => {
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen()
+        }
+    }
 
     const renderHistoryExamSidebar = () => {
         return (
@@ -424,6 +440,17 @@ const ReviewExamPage = () => {
             </Row>
         )
     };
+
+    if (!isFullscreen) {
+        return (
+            <div className='full-screen'>
+                <div>Bạn phải vào chế độ toàn màn hình (fullscreen) mới làm được bài thi.</div>
+                <Button onClick={enterFullscreen} type='primary'>
+                    Vào chế độ Full screen
+                </Button>
+            </div>
+        )
+    }
 
     return (
         <>

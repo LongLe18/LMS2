@@ -318,6 +318,10 @@ b {
   // display: none;  /* Safari and Chrome */
 }
 
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 .exam-right-info ul {
   padding: 0 15px;
   flex-direction: column;
@@ -357,6 +361,25 @@ b {
   border-radius: 54% !important;
   text-align: center;
   border: 1px solid #ccc;
+}
+
+.exam-right-info ul li.right-answer .a-tag {
+  font-size: 16px;
+  font-weight: 700;
+  color: #183fff;
+  background: #27e327;
+  border-color: #27e327;
+  padding: 6px;
+  border-radius: 50%;
+  // border: #3da844;
+}
+
+.exam-right-info ul li.wrong-answer .a-tag {
+  background: red;
+  border-color: red;
+  color: #fff;
+  padding: 6px;
+  border-radius: 50%;
 }
 
 .exam-right-info ul li span {
@@ -760,4 +783,15 @@ b {
   margin: 0 !important;
   font-size: 18px !important;
   padding-right: 4px !important;
+}
+
+.full-screen {
+  margin: 12px 0px;
+  text-align: center;
+
+  div {
+    font-weight: 700;
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
 }

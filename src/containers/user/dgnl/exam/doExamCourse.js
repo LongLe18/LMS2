@@ -62,6 +62,7 @@ const ExamCourseDetail = () => {
         idSubcomment: 0,
         showSubcomment: false,
     });
+    const [isFullscreen, setIsFullscreen] = useState(false);
     const [results, setResults] = useState([]);
     
     const exam = useSelector(state => state.exam.item.result);
@@ -121,9 +122,9 @@ const ExamCourseDetail = () => {
                         if (remainingTime > 0) { // Còn thời gian làm bài
                             setCount(remainingTime);
                             setStartTime(new Date().getTime());
-                            timerId.current = setInterval(() => {
-                                setCount((preCount) => preCount - 1);
-                            }, 1000);
+                            // timerId.current = setInterval(() => {
+                            //     setCount((preCount) => preCount - 1);
+                            // }, 1000);
                         } else { // Hết thời gian làm bài
                             let info = {};
                             if (subres.data.thoi_diem_ket_thuc === null) {
@@ -183,6 +184,33 @@ const ExamCourseDetail = () => {
         dispatch(commentAction.getCOMMENTs({ idCourse: '', idModule: '', type: 1 }));
     }, [params.idExam, params.idExamUser]); // eslint-disable-line react-hooks/exhaustive-deps
     
+    // check full screen
+    useEffect(() => {
+        const handleFullscreenChange = () => {
+            const fullscreenElement = document.fullscreenElement
+            setIsFullscreen(!!fullscreenElement)
+
+            if (!fullscreenElement) {
+                // Custom action when fullscreen is exited
+                clearInterval(timerId?.current); // Dừng đếm thời gian section
+              }
+        }
+    
+        document.addEventListener('fullscreenchange', handleFullscreenChange)
+        return () => document.removeEventListener('fullscreenchange', handleFullscreenChange)
+    }, []);
+
+    // event chuyển full screen
+    const enterFullscreen = () => {
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+
+            timerId.current = setInterval(() => {
+                setCount((preCount) => preCount - 1);
+            }, 1000);
+        }
+    }
+
     useMemo(() => {
         if (textAnswer !== null && localStorage.getItem('question') !== null) {
             dispatch(answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, 
@@ -1215,6 +1243,17 @@ const ExamCourseDetail = () => {
         )
     };
 
+    if (!isFullscreen) {
+        return (
+            <div className='full-screen'>
+                <div>Bạn phải vào chế độ toàn màn hình (fullscreen) mới làm được bài thi.</div>
+                <Button onClick={enterFullscreen} type='primary'>
+                    Vào chế độ Full screen
+                </Button>
+            </div>
+        )
+    }
+    
     return (
         <>
             {loading && <LoadingCustom />}
