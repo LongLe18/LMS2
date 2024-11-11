@@ -378,6 +378,7 @@ const ExamOnlineDetail = () => {
     // Tải báo cáo
     const downloadReport = async () => {
         try {
+            setLoadingExportFile(true);
             const response = await axios({
                 url: `${config.API_URL}/evaluate/${params.idExamUser}/export-report`, 
                 method: 'GET',
@@ -397,8 +398,10 @@ const ExamOnlineDetail = () => {
             document.body.appendChild(link);
             link.click();
             link.parentNode.removeChild(link);
+            setLoadingExportFile(false);
         } catch (error) {
             console.error('Download error:', error);
+            setLoadingExportFile(false);
         }
     }
 
@@ -1264,12 +1267,11 @@ const ExamOnlineDetail = () => {
             <Spin spinning={loadingExportFile}>  
                 <div className='section-question'>
                     <Row>
-                        <Col span={3}>
+                        <Col span={3} style={{display: course?.data.loai_kct !== 0 ? 'none' : 'block'}}>
                             <img src={require('assets/img/logo/logo-vnu.png').default} width={82}  style={{marginLeft: 12}} alt="logo-vnu"/>
                             <img src={require('assets/img/logo/Logo-DGNT.png').default} width={82}  style={{marginLeft: 12}} alt="logo-DGNT"/>
-                            {/* <img src={require('assets/img/logo/Logo-vnuhcm.jpg').default} width={82}  style={{marginLeft: 12}} alt="logo-vnuhcm"/> */}
                         </Col>
-                        <Col span={21}>
+                        <Col span={course?.data.loai_kct !== 0 ? 24 : 21}>
                             <Row justify={'space-between'} style={{marginBottom: 12}}>
                                 <Col style={{fontSize: 24, color: 'rgb(255, 48, 7)'}}>{getCurrentDate()}</Col>
                                 {course?.data.loai_kct !== 0 ? 
@@ -1322,9 +1324,6 @@ const ExamOnlineDetail = () => {
                                 })}
                             </Row>
                         </Col>
-                        {/* <Col span={1}>
-                            <img src={require('assets/img/logo/logo-saoviet.jpg').default} width={68}  style={{marginLeft: 12}} alt="logo-saoviet"/>
-                        </Col> */}
                     </Row>
                 </div>
                 <Row className="question-content" gutter={[16]} style={{margin: '0 68px'}}>

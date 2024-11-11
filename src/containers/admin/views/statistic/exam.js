@@ -335,6 +335,7 @@ const StatisticExam = (props) => {
                     <Button type='primary' style={{borderRadius: 6, marginRight: 6}}
                         onClick={async () => {
                             try {
+                                setLoadingExportFile(true)
                                 const response = await axios({
                                     url: `${config.API_URL}/evaluate/${dthv_id}/export-report`, 
                                     method: 'GET',
@@ -352,12 +353,14 @@ const StatisticExam = (props) => {
                                 document.body.appendChild(link);
                                 link.click();
                                 link.parentNode.removeChild(link);
+                                setLoadingExportFile(false);
                             } catch (error) {
                                 notification.warn({
                                     message: 'Cảnh báo',
                                     description: 'Chưa có dữ liệu đánh giá của khóa học',
                                 })
                                 console.error('Download error:', error);
+                                setLoadingExportFile(false);
                             }
                         }}
                     >

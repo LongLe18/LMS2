@@ -48,7 +48,7 @@ const ExamDGNLAdminPage = () => {
     const exams = useSelector(state => state.exam.list.result);
     const error = useSelector(state => state.exam.list.error);
 
-    // const typeExams = useSelector(state => state.typeExam.list.result);
+    const typeExams = useSelector(state => state.typeExam.list.result);
     const courses = useSelector(state => state.course.list.result);
     const majors = useSelector(state => state.major.list.result);
 
@@ -141,7 +141,7 @@ const ExamDGNLAdminPage = () => {
       key: 'loai_de_thi_id',
       responsive: ['md'],
       render: (loai_de_thi_id) => (
-        <span>Đề thi mẫu ĐGNL</span>
+        <span>{loai_de_thi_id === 5 ? 'Đề thi mẫu ĐGNL': 'Đề thi mẫu ĐGNL BK'}</span>
       )
     },
     {
@@ -311,33 +311,22 @@ const ExamDGNLAdminPage = () => {
       );
   };
 
-  // const renderTypeExams = () => {
-  //     let options = [];
-  //     if (typeExams.status === 'success') {
-  //       options = typeExams.data.map((type) => {
-  //         if (type.loai_de_thi_id === 3) {
-  //           return (
-  //             <Option key={type.loai_de_thi_id} value={type.loai_de_thi_id} >{type.mo_ta}</Option>
-  //           )
-  //         }
-  //         return null;
-  //       })
-  //     }
-  //     return (
-  //       <Select defaultValue={3}
-  //         showSearch={false}
-  //         placeholder="Chọn loại đề thi"
-  //         onChange={(typeId) => {
-  //             if (typeId === 1) {setState({...state, showThematic: true, showCourse: true, showModule: true, onlineExam: false})}
-  //             else if (typeId === 2) {setState({...state, showThematic: false, showCourse: true, showModule: true, onlineExam: false})}
-  //             else if (typeId === 3) {setState({...state, showThematic: false, showCourse: true, showModule: false, onlineExam: false})}
-  //             else {setState({...state, showThematic: false, showCourse: true, showModule: false, onlineExam: true})}
-  //         }}
-  //       >
-  //         {options}
-  //       </Select>
-  //     );
-  // };
+  const renderTypeExams = () => {
+      let options = [];
+      if (typeExams.status === 'success') {
+        options = typeExams.data.filter((type) => type.loai_de_thi_id > 4).map((type) => (
+          <Option key={type.loai_de_thi_id} value={type.loai_de_thi_id} >{type.mo_ta}</Option>
+        ))
+      }
+      return (
+        <Select
+          showSearch={false}
+          placeholder="Chọn loại đề thi"
+        >
+          {options}
+        </Select>
+      );
+  };
 
   const renderCourse = () => {
       let options = [];
@@ -397,9 +386,9 @@ const ExamDGNLAdminPage = () => {
               <Form.Item label='Tên đề thi' name="ten_de_thi" rules={[{ required: true, message: 'Tên đề thi là bắt buộc'}]}>
                   <Input size="normal" placeholder="Tên đề thi" />
               </Form.Item>
-              {/* <Form.Item label="Loại đề thi" name="loai_de_thi_id" initialValue={3} rules={[{ required: true, message: 'Loại đề thi là bắt buộc'}]}>
+              <Form.Item label="Loại đề thi" name="loai_de_thi_id" rules={[{ required: true, message: 'Loại đề thi là bắt buộc'}]}>
                   {renderTypeExams()}
-              </Form.Item> */}
+              </Form.Item>
               <Form.Item label="Khung" name="kct_id" rules={[{ required: true, message: 'Khung chương trình là bắt buộc'}]}>
                 {renderProgramme()}
               </Form.Item>
@@ -587,7 +576,7 @@ const ExamDGNLAdminPage = () => {
       }
       
       if (state.fileImg !== '')
-          formData.append('anh_dai_dien', state.fileImg !== undefined ? state.fileImg : '');
+        formData.append('anh_dai_dien', state.fileImg !== undefined ? state.fileImg : '');
       
       dispatch(examActions.createExam(formData, callback));
   }
