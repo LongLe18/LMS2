@@ -220,15 +220,15 @@ function AppFilter(props) {
           </Col>
         </Row>
         {(props.isShowStatus || props.isShowDatePicker || props.isShowCourse || props.isShowSearchBox || props.isTypeExam || 
-          props.buttonBack || props.dataExportStatisticTeacher || props.dataExportStatisticStudent) &&
+          props.buttonBack || props.dataExportStatisticTeacher || props.dataExportStatisticStudent || props.isShowProgramme ) &&
         <Row>
           <Col xl={24} sm={16} xs={16}>    
             <Row>
-            {props.isShowStatus && (
-                <Col xl={4} md={6} xs={12}>
-                  {renderStatus()}
-                </Col>
-            )}
+              {props.isShowStatus && (
+                  <Col xl={4} md={6} xs={12}>
+                    {renderStatus()}
+                  </Col>
+              )}
               {props.isShowDatePicker && (
                 <Col xl={5} md={6} xs={24}>
                   {props.isRangeDatePicker ? (

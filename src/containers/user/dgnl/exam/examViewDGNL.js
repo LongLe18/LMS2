@@ -31,7 +31,7 @@ const ExamViewDGNL = (props) => {
 
     const [type, setType] = useState(1);
     const [subjects, setSubjects] = useState([]);
-    const [criteria, setCriteria] = useState();
+    // const [criteria, setCriteria] = useState();
     const [spinning, setSpinning] = useState(false);
     // isJoinExam: 0 - chưa tham gia, 1 - tham gia thi, 2 - đã chọn môn thi
     const [isJoinExam, setIsJoinExam] = useState(0);
@@ -51,6 +51,27 @@ const ExamViewDGNL = (props) => {
             key: '3',
             content: `Phần 3: Khoa học\n- Thời gian: 60 phút - 50 câu`,
               note: `Phần tự chọn, thí sinh lựa chọn các câu hỏi thuộc 3 trong 5 chủ đề (môn học)`,
+        },
+    ];
+
+    const dataSourceTableDGTDBK = [
+        {
+            key: '1',
+            content: `Mức độ 1: Tư duy tái hiện`,
+            note: `Thể hiện khả năng nhớ lại kiến thức, thực hiện tư duy theo những quy trình đã biết.\n
+                Các hành động tư duy cần đánh giá: xác định, tìm kiếm, lựa chọn, nhắc lại, đặt tên, ghép nối ...`,
+        },
+        {
+            key: '2',
+            content: `Mức độ 2: Tư duy suy luận`,
+            note: `Thể hiện khả năng lập luận có căn cứ, thực hiện tư duy phân tích, tổng hợp dựa theo vận dụng quy trình thích ứng với điều kiện.\n
+                Các hành động tư duy cần đánh giá: phân loại, so sánh, chỉ được minh chứng, tổng hợp, vận dụng, đưa ra lí lẽ, suy luận, giải thích, áp dụng, tóm tắt …`,
+        },
+        {
+            key: '3',
+            content: `Mức độ 3: Tư duy bậc cao`,
+            note: `Thiết lập và thực hiện được các mô hình đánh giá, giải thích dựa trên bằng chứng.\n
+                Các hành động tư duy cần đánh giá: phân tích, đánh giá, phân biệt, phán đoán, lập luận (nhiều bước), kiểm tra giả thuyết…`,
         },
     ];
 
@@ -127,7 +148,8 @@ const ExamViewDGNL = (props) => {
         .then(
             res => {
                 if (res.statusText === 'OK' && res.status === 200) {
-                    setCriteria(res.data.data)
+                    console.log(res.data.data);
+                    // setCriteria(res.data.data)
                 } else {
                     notification.error({
                         message: 'Thông báo',
@@ -184,6 +206,172 @@ const ExamViewDGNL = (props) => {
         });
     }
 
+    // Nội dung của ĐGNL HN (loai_kct === 0)
+    const contentPageDGNL = () => {
+        return (
+            <Row id="main-content">
+                <Col xl={19} md={24} xs={24} style={{paddingRight: 12}}>
+                    <Row style={{margin: '18px 0'}}>
+                        <Col xl={24} md={20} xs={20}>
+                            <Carousel autoplay style={{marginBottom: 12}}>
+                                <img src={require('assets/img/seo-exam-dgnl.png').default} alt='banner1'/>
+                            </Carousel>
+                        </Col>
+                    </Row>
+                    {course.status === 'success' &&
+                        <>
+                            <div className="header-exam">
+                                <h1 style={{color: 'rgba(229, 100, 19, 0.92)'}}>GIỚI THIỆU BÀI THI THỬ TRẢI NGHIỆM KỲ THI ĐÁNH GIÁ NĂNG LỰC (HSA)</h1>
+                            </div>
+                            <div>
+                                <h5 className="text-black" style={{fontWeight: 500}}>MỤC ĐÍCH BÀI THI TRẢI NGHIỆM</h5>
+                                <span style={{fontSize: 20, fontWeight: 500}}>Giúp thí sinh làm quen với định dạng bài thi Đánh giá năng lực, trải nghiệm ngân hàng câu hỏi phong phú, sẵn sàng kiến thức và tâm lý cho kỳ thi chính thức.</span>
+                                <h5 style={{marginTop: 8, fontWeight: 500, color: 'green'}}>CẤU TRÚC BÀI THI</h5>
+                                <Table className='table-structure' style={{ whiteSpace: 'break-spaces', textAlign: 'left', fontSize: 20}} dataSource={dataSource} columns={columns} pagination={false}/>
+                                <h5 style={{fontWeight: 500, marginTop: 8}}>CHI TIẾT CẤU TRÚC:</h5>
+                                <div style={{fontSize: 20}}>
+                                    Về hình thức, bài thi ĐGNL năm 2025 điều chỉnh chủ yếu ở phần 3 và cách đặt câu hỏi. Sau khi hoàn thành hai phần thi đầu, phần thi thứ 3 thí sinh sẽ được lựa chọn 3 trong 5 chủ đề thuộc lĩnh vực Lý, Hóa, Sinh, Sử, Địa để hoàn thành bài thi trong thời gian 195 phút (không kể thời gian bù thêm cho câu hỏi thử nghiệm).
+                                </div>
+                                <div style={{fontSize: 20, marginTop: 6}}>
+                                    Riêng phần lựa chọn liên quan đến Ngoại ngữ sẽ được xây dựng thành một hợp phần riêng thay thế phần Khoa học để đánh giá năng lực chuyên biệt.
+                                </div>
+                                <div style={{fontSize: 20, marginTop: 6}}>
+                                    Về câu hỏi, mỗi chủ đề thi sẽ xuất hiện câu hỏi chùm, trong một ngữ cảnh dữ liệu đầu bài sẽ hỏi kèm 1- 3 câu hỏi khác nhau để đánh giá năng lực tổng hợp của thí sinh. Câu hỏi chùm có thể là chủ đề mới với ngữ liệu cho trước đòi hỏi thí sinh phải nhận định, phân tích và đưa ra phương án giải quyết vấn đề đã cho.
+                                </div>
+
+                                <div style={{textAlign: 'center'}}>
+                                    <img style={{marginTop: 12}} src={require('assets/img/cau-truc-de-thi-dgnl.png').default} alt='banner1'/>
+                                </div>
+
+                                <div style={{fontSize: 20}}>
+                                    <span style={{fontWeight: 700}}>Phần 1 (bắt buộc):</span> Toán học và Xử lý số liệu được làm bài trong 75 phút gồm 50 câu hỏi (35 câu hỏi trắc nghiệm bốn lựa chọn, 15 câu hỏi điền đáp án) thuộc lĩnh vực đại số và một số yếu tố giải tích, hình học và đo lường, thống kê và xác suất.
+                                </div>
+                                <div style={{fontSize: 20, marginTop: 6}}>
+                                    <span style={{fontWeight: 700}}>Phần 2 (bắt buộc):</span> Ngôn ngữ - Văn học được hoàn thành trong 60 phút gồm 50 câu hỏi trắc nghiệm sử dụng ngữ liệu liên quan đến nhiều lĩnh vực trong đời sống như văn học, ngôn ngữ (từ vựng, ngữ pháp, hoạt động giao tiếp, sự phát triển của ngôn ngữ và các biến thể ngôn ngữ, hành văn), văn hóa, xã hội, lịch sử, địa lý, nghệ thuật, v.v… Ngữ liệu được lựa chọn trong hoặc ngoài chương trình giáo dục phổ thông.
+                                </div>
+                                <div style={{fontSize: 20, marginTop: 6}}>
+                                    <span style={{fontWeight: 700}}>Phần 3 (tự chọn):</span> Khoa học thiết kế thời gian là 60 phút gồm 50 câu hỏi trắc nghiệm và điền đáp án. Thí sinh lựa chọn 3 trong 5 chủ đề thuộc lĩnh vực: Hóa học, Sinh học, Vật lý, Địa lý, Lịch sử
+                                </div>
+                                
+                            </div>
+                            <div style={{textAlign: 'center', marginTop: 12, height: 50}}>
+                                <Button type="primary" size="large" className="join-exam-button" 
+                                    onClick={() => {
+                                        // check Học viên có đề thi chưa hoàn thành không
+                                        isFinisedExam();
+                                    }}
+                                    style={{borderRadius: 8, backgroundColor: 'rgb(229 100 19 / 92%)', borderColor: 'rgb(229 100 19 / 92%)', width: '20%'}}
+                                >
+                                    Tham gia thi
+                                </Button>
+                            </div>
+                        </>
+                    }
+                </Col>
+                <Col xl={5} style={{padding: "0", textAlign: 'center'}}>
+                    <Button type="primary" size="large" className="join-exam-button" 
+                        onClick={() => {
+                            // check Học viên có đề thi chưa hoàn thành không
+                            isFinisedExam();
+                        }}
+                        style={{borderRadius: 8, backgroundColor: 'rgb(229 100 19 / 92%)', borderColor: 'rgb(229 100 19 / 92%)', marginBottom: 12, width: '80%', fontWeight: 700}}
+                    >
+                        Tham gia thi thử ngay
+                    </Button>
+                    <SideBarComponent/>
+                </Col>
+            </Row>
+        )
+    };
+    
+    // Nội dung của ĐGTD HN (loai_kct === 3)
+    const contentPageDGTDBK = () => {
+        return (
+            <Row id="main-content">
+                <Col xl={19} md={24} xs={24} style={{paddingRight: 12}}>
+                    <Row style={{margin: '18px 0'}}>
+                        <Col xl={24} md={20} xs={20}>
+                            <Carousel autoplay style={{marginBottom: 12}}>
+                                <img src={require('assets/img/seo-exam-dgtd-bk.png').default} alt='banner1'/>
+                            </Carousel>
+                        </Col>
+                    </Row>
+                    {course.status === 'success' &&
+                        <>
+                            <div className="header-exam">
+                                <h1 style={{color: 'rgba(229, 100, 19, 0.92)'}}>GIỚI THIỆU BÀI THI THỬ TRẢI NGHIỆM KỲ THI ĐÁNH GIÁ NĂNG LỰC (HSA)</h1>
+                            </div>
+                            <div>
+                                <h5 className="text-black" style={{fontWeight: 600}}>MỤC ĐÍCH BÀI THI TRẢI NGHIỆM</h5>
+                                <span style={{fontSize: 18, fontWeight: 500}}>Giúp thí sinh làm quen với định dạng bài thi Đánh giá năng lực, trải nghiệm ngân hàng câu hỏi phong phú, sẵn sàng kiến thức và tâm lý cho kỳ thi chính thức.</span>
+                                <h5 style={{marginTop: 8, fontWeight: 600}}>CẤU TRÚC BÀI THI</h5>
+                                <span  style={{fontSize: 18, fontWeight: 500}}>
+                                    Bài thi gồm ba phần thi: tư duy toán học (60 phút), tư duy đọc hiểu (30 phút) và tư duy khoa học/giải quyết vấn đề (60 phút). Đây là ba phần thi độc lập, câu hỏi thi sẽ tập trung vào đánh giá năng lực tư duy của thí sinh trong mỗi phần thi, không đi vào kiểm tra kiến thức của môn học nào.
+                                </span>
+                                <div style={{textAlign: 'center'}}>
+                                    <img style={{marginTop: 12}} src={require('assets/img/cau-truc-bai-thi-dgtd-bach-khoa.jpg').default} alt='banner1'/>
+                                </div>
+                                <h5 style={{marginTop: 8, fontWeight: 600}}>1. Mức độ đánh giá tư duy</h5>
+                                <Table className='table-structure' style={{ whiteSpace: 'break-spaces', textAlign: 'left', fontSize: 20}} dataSource={dataSourceTableDGTDBK} columns={columns} pagination={false}/>
+                                <h5 style={{marginTop: 8, fontWeight: 600}}>2. Lĩnh vực đánh giá</h5>
+                                <div style={{fontSize: 18 }}>
+                                    Với định hướng đánh giá tư duy của học sinh, đem lại sự thành công cho người học ở bậc đại học, trong bài thi đánh giá tư duy ba năng lực tư duy đã được xác định gồm:
+                                    <br/>(1) Tư duy Toán học
+                                    <br/>(2) Tư duy Đọc hiểu
+                                    <br/>(3) Tư duy Khoa học/Giải quyết vấn đề.
+
+                                    <br/><br/>
+                                    <span style={{fontStyle: 'italic'}}>Phần đánh giá tư duy toán học:</span> nội dung gồm kiến thức về các lĩnh vực số học, đại số, hàm số, hình học, thống kê và xác xuất. Cấu trúc câu hỏi có ý nghĩa cả về vấn đề và ngữ cảnh, đại diện cho các mối quan hệ toán học; truy cập các kiến thức toán học bằng trí nhớ; kết hợp với thông tin đã cho; mô hình hóa, tính toán và thao tác toán học; diễn giải; áp dụng các kỹ năng lập luận, đưa ra quyết định dựa trên toán học và thuật toán/tựa thuật toán phù hợp. Phần đánh giá tư duy toán học nhấn mạnh tới tư duy định lượng và áp dụng phần tính toán hoặc ghi nhớ các công thức phức tạp. Các câu hỏi hàm chứa các vấn đề từ dễ đến khó với độ tin cậy để đảm bảo mức độ phân hóa thí sinh theo yêu cầu.
+                                    <br/><br/>
+                                    <span style={{fontStyle: 'italic'}}>Phần đánh giá tư duy đọc hiểu: </span>đánh giá khả năng đọc nhanh và hiểu đúng. Các câu hỏi của phần thi đọc hiểu yêu cầu học sinh chuyển hóa ý nghĩa từ một số văn bản thuộc các thể loại: Văn bản khoa học, Văn bản văn học, Văn bản báo chí, nhằm đo lường khả năng thu thập được thông tin với những gì được tuyên bố rõ ràng và lập luận để xác định ý nghĩa tiềm ẩn. Các câu hỏi yêu cầu học sinh sử dụng các kỹ năng viện dẫn và lập luận để xác định các ý chính, định vị và giải thích các chi tiết quan trọng; hiểu chuỗi các sự kiện, so sánh, hiểu mối quan hệ nhân quả, xác định ý nghĩa của từ, cụm từ và các tuyên bố dựa vào ngữ cảnh; khái quát hóa, phân tích giọng văn và phương pháp của tác giả; phân tích các đòi hỏi và bằng chứng trong các cuộc tranh luận và tích hợp thông tin từ nhiều văn bản liên quan.
+                                    
+                                    <br/><br/>
+                                    <span style={{fontStyle: 'italic'}}>Phần đánh giá tư duy khoa học/giải quyết vấn đề: </span>Phần thi được thiết kế gồm (1) Tập hợp các thông tin khoa học và (2) Các câu hỏi trắc nghiệm, nhằm đo lường khả năng: tính, giải thích được dữ liệu; chỉ ra được phương án phù hợp với thông tin khoa học; thiết lập và thực hiện được các mô hình đánh giá, suy luận và kết quả thử nghiệm.
+                                        Thông tin khoa học được truyền tải theo một trong ba định dạng khác nhau: biểu diễn dữ liệu (đồ thị khoa học, bảng biểu và sơ đồ), tóm tắt nghiên cứu (mô tả một hoặc nhiều thí nghiệm liên quan) hoặc quan điểm xung đột (hai hoặc nhiều tóm tắt mô hình lý thuyết, hiện tượng không phù hợp với nhau).
+                                </div>
+                                <h5 style={{marginTop: 8, fontWeight: 600}}>3. Kiểu câu hỏi đánh giá tư duy</h5>
+                                <div style={{fontSize: 18 }}>
+                                    Đề thi gồm các câu hỏi trắc nghiệm. Những kiểu câu hỏi trắc nghiệm được sử dụng bao gồm (câu hỏi chỉ được tính điểm nếu thí sinh lựa chọn đầy đủ phương án):
+                                    <br/>- Nhiều lựa chọn (chọn nhiều phương án đúng).
+                                    <br/>- Lựa chọn: Đúng/Sai
+                                    <br/>- Trả lời ngắn (điền câu trả lời).
+                                    <br/>- Kéo thả (chọn sẵn trong menu)
+
+                                    <br/>Đề thi đánh giá tư duy có những đặc thù rất riêng do vậy học sinh tham gia bắt buộc nên tham khảo và làm thử đề thi trước khi dự thi.
+                                </div>
+                                
+                            </div>
+                            <div style={{textAlign: 'center', marginTop: 12, height: 50}}>
+                                <Button type="primary" size="large" className="join-exam-button" 
+                                    onClick={() => {
+                                        // check Học viên có đề thi chưa hoàn thành không
+                                        isFinisedExam();
+                                    }}
+                                    style={{borderRadius: 8, backgroundColor: 'rgb(229 100 19 / 92%)', borderColor: 'rgb(229 100 19 / 92%)', width: '20%'}}
+                                >
+                                    Tham gia thi
+                                </Button>
+                            </div>
+                        </>
+                    }
+                </Col>
+                <Col xl={5} style={{padding: "0", textAlign: 'center'}}>
+                    <Button type="primary" size="large" className="join-exam-button" 
+                        onClick={() => {
+                            // check Học viên có đề thi chưa hoàn thành không
+                            isFinisedExam();
+                        }}
+                        style={{borderRadius: 8, backgroundColor: 'rgb(229 100 19 / 92%)', borderColor: 'rgb(229 100 19 / 92%)', marginBottom: 12, width: '80%', fontWeight: 700}}
+                    >
+                        Tham gia thi thử ngay
+                    </Button>
+                    <SideBarComponent/>
+                </Col>
+            </Row>
+        )
+    }
+
+    // Trang giới thiệu cấu trúc thi
     const renderPages = () => {
         document.getElementById("main-content")?.scrollIntoView({
             behavior: "smooth"
@@ -229,83 +417,13 @@ const ExamViewDGNL = (props) => {
                         
                     <Statisic />
 
-                    <Row id="main-content">
-                        <Col xl={19} md={24} xs={24} style={{paddingRight: 12}}>
-                            <Row style={{margin: '18px 0'}}>
-                                <Col xl={24} md={20} xs={20}>
-                                    <Carousel autoplay style={{marginBottom: 12}}>
-                                        <img src={require('assets/img/seo-exam-dgnl.png').default} alt='banner1'/>
-                                    </Carousel>
-                                </Col>
-                            </Row>
-                            {course.status === 'success' &&
-                                <>
-                                    <div className="header-exam">
-                                        <h1 style={{color: 'rgba(229, 100, 19, 0.92)'}}>GIỚI THIỆU BÀI THI THỬ TRẢI NGHIỆM KỲ THI ĐÁNH GIÁ NĂNG LỰC (HSA)</h1>
-                                    </div>
-                                    <div>
-                                        <h5 className="text-black" style={{fontWeight: 500}}>MỤC ĐÍCH BÀI THI TRẢI NGHIỆM</h5>
-                                        <span style={{fontSize: 20, fontWeight: 500}}>Giúp thí sinh làm quen với định dạng bài thi Đánh giá năng lực, trải nghiệm ngân hàng câu hỏi phong phú, sẵn sàng kiến thức và tâm lý cho kỳ thi chính thức.</span>
-                                        <h5 style={{marginTop: 8, fontWeight: 500, color: 'green'}}>CẤU TRÚC BÀI THI</h5>
-                                        <Table className='table-structure' style={{ whiteSpace: 'break-spaces', textAlign: 'left', fontSize: 20}} dataSource={dataSource} columns={columns} pagination={false}/>
-                                        <h5 style={{fontWeight: 500, marginTop: 8}}>CHI TIẾT CẤU TRÚC:</h5>
-                                        <div style={{fontSize: 20}}>
-                                            Về hình thức, bài thi ĐGNL năm 2025 điều chỉnh chủ yếu ở phần 3 và cách đặt câu hỏi. Sau khi hoàn thành hai phần thi đầu, phần thi thứ 3 thí sinh sẽ được lựa chọn 3 trong 5 chủ đề thuộc lĩnh vực Lý, Hóa, Sinh, Sử, Địa để hoàn thành bài thi trong thời gian 195 phút (không kể thời gian bù thêm cho câu hỏi thử nghiệm).
-                                        </div>
-                                        <div style={{fontSize: 20, marginTop: 6}}>
-                                            Riêng phần lựa chọn liên quan đến Ngoại ngữ sẽ được xây dựng thành một hợp phần riêng thay thế phần Khoa học để đánh giá năng lực chuyên biệt.
-                                        </div>
-                                        <div style={{fontSize: 20, marginTop: 6}}>
-                                            Về câu hỏi, mỗi chủ đề thi sẽ xuất hiện câu hỏi chùm, trong một ngữ cảnh dữ liệu đầu bài sẽ hỏi kèm 1- 3 câu hỏi khác nhau để đánh giá năng lực tổng hợp của thí sinh. Câu hỏi chùm có thể là chủ đề mới với ngữ liệu cho trước đòi hỏi thí sinh phải nhận định, phân tích và đưa ra phương án giải quyết vấn đề đã cho.
-                                        </div>
-
-                                        <div style={{textAlign: 'center'}}>
-                                            <img style={{marginTop: 12}} src={require('assets/img/cau-truc-de-thi-dgnl.png').default} alt='banner1'/>
-                                        </div>
-
-                                        <div style={{fontSize: 20}}>
-                                            <span style={{fontWeight: 700}}>Phần 1 (bắt buộc):</span> Toán học và Xử lý số liệu được làm bài trong 75 phút gồm 50 câu hỏi (35 câu hỏi trắc nghiệm bốn lựa chọn, 15 câu hỏi điền đáp án) thuộc lĩnh vực đại số và một số yếu tố giải tích, hình học và đo lường, thống kê và xác suất.
-                                        </div>
-                                        <div style={{fontSize: 20, marginTop: 6}}>
-                                            <span style={{fontWeight: 700}}>Phần 2 (bắt buộc):</span> Ngôn ngữ - Văn học được hoàn thành trong 60 phút gồm 50 câu hỏi trắc nghiệm sử dụng ngữ liệu liên quan đến nhiều lĩnh vực trong đời sống như văn học, ngôn ngữ (từ vựng, ngữ pháp, hoạt động giao tiếp, sự phát triển của ngôn ngữ và các biến thể ngôn ngữ, hành văn), văn hóa, xã hội, lịch sử, địa lý, nghệ thuật, v.v… Ngữ liệu được lựa chọn trong hoặc ngoài chương trình giáo dục phổ thông.
-                                        </div>
-                                        <div style={{fontSize: 20, marginTop: 6}}>
-                                            <span style={{fontWeight: 700}}>Phần 3 (tự chọn):</span> Khoa học thiết kế thời gian là 60 phút gồm 50 câu hỏi trắc nghiệm và điền đáp án. Thí sinh lựa chọn 3 trong 5 chủ đề thuộc lĩnh vực: Hóa học, Sinh học, Vật lý, Địa lý, Lịch sử
-                                        </div>
-                                        
-                                    </div>
-                                    <div style={{textAlign: 'center', marginTop: 12, height: 50}}>
-                                        <Button type="primary" size="large" className="join-exam-button" 
-                                            onClick={() => {
-                                                // check Học viên có đề thi chưa hoàn thành không
-                                                isFinisedExam();
-                                            }}
-                                            style={{borderRadius: 8, backgroundColor: 'rgb(229 100 19 / 92%)', borderColor: 'rgb(229 100 19 / 92%)', width: '20%'}}
-                                        >
-                                            Tham gia thi
-                                        </Button>
-                                    </div>
-                                </>
-                            }
-                        </Col>
-                        <Col xl={5} style={{padding: "0", textAlign: 'center'}}>
-                            <Button type="primary" size="large" className="join-exam-button" 
-                                onClick={() => {
-                                    // check Học viên có đề thi chưa hoàn thành không
-                                    isFinisedExam();
-                                }}
-                                style={{borderRadius: 8, backgroundColor: 'rgb(229 100 19 / 92%)', borderColor: 'rgb(229 100 19 / 92%)', marginBottom: 12, width: '80%', fontWeight: 700}}
-                            >
-                                Tham gia thi thử ngay
-                            </Button>
-                            <SideBarComponent/>
-                        </Col>
-                    </Row>
+                    {course?.data?.loai_kct === 0 ? contentPageDGNL() : contentPageDGTDBK()}
                 </div>
             </div>
         )
     };
 
+    // Trang chọn môn thi
     const formSubject = () => {
         // Form chọn các môn thi 
         return (
@@ -318,12 +436,6 @@ const ExamViewDGNL = (props) => {
                     </div>
 
                     <div style={{width: '90%', padding: 12, border: 'rgb(45, 116, 219) solid 2px', borderRadius: 6, boxShadow: '0 0 15px rgba(0, 0, 0, 0.1)'}}>
-                        {/* <div style={{display: 'flex', justifyContent: 'center'}}>
-                            <div className="description-title">
-                                <span className="textCenter" style={{marginRight: 12}}><QuestionCircleOutlined /> Bài thi gồm {criteria?.so_cau_hoi} câu</span>
-                                <span><ClockCircleOutlined /> {criteria?.thoi_gian} phút</span>
-                            </div>
-                        </div> */}
                         <h6 style={{margin: '24px 0px 12px 0px', color: 'rgb(24, 98, 24)', fontWeight: 700, fontSize: 26}}>Cấu trúc bài thi</h6>
                         <Steps style={{alignItems: 'center'}}
                             progressDot

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import constants from '../../../../helpers/constants';
 
 import config from '../../../../configs/index';
 import moment from "moment";
@@ -105,8 +106,8 @@ const ProgramPage = () => {
             key: 'loai_kct',
             responsive: ['md'],
             render: (loai_kct) => (
-                <Tag color={loai_kct === 0 ? 'green' : loai_kct === 1 ? 'orange' : 'blue'} key={loai_kct}>
-                    {loai_kct === 1 ? "Thi thử Online" : loai_kct === 0 ? "Đánh giá năng lực" : 'Ôn luyện'}
+                <Tag color={loai_kct === 0 ? 'green' : loai_kct === 1 ? 'orange' : loai_kct === 3 ? 'geekblue' : 'blue'} key={loai_kct}>
+                    {loai_kct === 1 ? "Thi thử Online" : loai_kct === 0 ? "Đánh giá năng lực" : loai_kct === 3 ? 'Đánh giá tư duy BK' : 'Ôn luyện'}
                 </Tag>
             ),
         },
@@ -299,17 +300,7 @@ const ProgramPage = () => {
                             },
                             ]}
                         >
-                            <Radio.Group>
-                                <Radio className="option-payment" value={0}>
-                                    Đánh giá năng lực
-                                </Radio>
-                                <Radio className="option-payment" value={1}>
-                                    Thi thử Online
-                                </Radio>
-                                <Radio className="option-payment" value={2}>
-                                    Ôn luyện
-                                </Radio>
-                            </Radio.Group>
+                            <Radio.Group options={constants.TYPE_PROGRAMES}  />
                         </Form.Item>
                         <Form.Item
                             className="input-col"

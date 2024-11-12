@@ -1,15 +1,14 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // helper
 import config from '../../../../configs/index';
-import defaultImage from 'assets/img/default.jpg';
 import moment from "moment";
 import Hashids from 'hashids';
 
 // component
 import AppFilter from "components/common/AppFilter";
 import LoadingCustom from 'components/parts/loading/Loading';
-import { Table, Button, Row, Col, notification, Space, Avatar, Form, Select, Input, Pagination } from 'antd';
+import { Table, Button, Row, Col, notification, Space, Form, Select, Input, Pagination } from 'antd';
 import TextEditorWidget2 from "components/common/TextEditor/TextEditor2";
 
 // redux
@@ -18,8 +17,6 @@ import * as programmeAction from '../../../../redux/actions/programme';
 import * as descriptionAction from '../../../../redux/actions/descriptionCourse';
 import { useSelector, useDispatch } from "react-redux";
 
-// hooks
-import useDebounce from "hooks/useDebounce";
 
 const { Option } = Select;
 
@@ -50,23 +47,16 @@ const BussinessCourses = (props) => {
         kct_id: '',
         end: '',
     });
-    const searchValue = useDebounce(filter.search, 250);
 
     const columns = [
-        {
-            title: 'Ảnh đại diện',
-            dataIndex: 'anh_dai_dien',
-            key: 'anh_dai_dien',
-            responsive: ['lg'],
-            render: (src) => (
-              <Avatar src={src !== null ? config.API_URL + src : defaultImage} size={50} shape='circle' />
-            )
-        },
         {
           title: 'Tên khóa học',
           dataIndex: 'ten_khoa_hoc',
           key: 'ten_khoa_hoc',
           responsive: ['md'],
+          render: (ten_khung_ct, description) => (
+            description?.khoa_hoc?.ten_khoa_hoc
+          )
         },
         {
           title: 'Khung chương trình',
@@ -74,7 +64,7 @@ const BussinessCourses = (props) => {
           key: 'ten_khung_ct',
           responsive: ['md'],
           render: (ten_khung_ct, description) => (
-            description?.khung_chuong_trinh?.ten_khung_ct
+            description?.khoa_hoc?.khung_chuong_trinh?.ten_khung_ct
           )
         },
         {
@@ -114,53 +104,14 @@ const BussinessCourses = (props) => {
     }
 
     useEffect(() => {
-        const callback = (res) => {
-            let temp = [];
-            if (res.status === 'success') {
-                const subCallback = (subRes) => {
-                    if (subRes.status === 'success') {
-                        res.data.map((item, index) => {
-                            subRes.data.map((subItem, subIntex) => {
-                                if (item.khoa_hoc_id === subItem.khoa_hoc_id) {
-                                    temp.push({...item, key: subIntex})
-                                }
-                                return null;
-                            });
-                            return null;
-                        });
-                    }
-                    setState({...state, dataCourse: temp})
-                }
-                dispatch(descriptionAction.getDescriptionCourses({ pageSize: 10, pageIndex: pageIndex, kct_id: filter.kct_id }, subCallback)) 
-            };
-        }
         dispatch(programmeAction.getProgrammes({ status: '' }));
-        dispatch(courseAction.filterCourses({ status: '', search: filter.search, start: filter.start, end: filter.end, pageIndex: 1, pageSize: 10000000}, callback));
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
-    
-    useEffect(() => {
-        const callback = (res) => {
-            let temp = [];
-            if (res.status === 'success') {
-                const subCallback = (subRes) => {
-                    if (subRes.status === 'success') {
-                        res.data.map((item, index) => {
-                            subRes.data.map((subItem, subIntex) => {
-                                if (item.khoa_hoc_id === subItem.khoa_hoc_id) {
-                                    temp.push({...item, key: subIntex})
-                                }
-                                return null;
-                            });
-                            return null;
-                        });
-                    }
-                    setState({...state, dataCourse: temp})
-                }
-                dispatch(descriptionAction.getDescriptionCourses({ pageSize: 10, pageIndex: pageIndex, kct_id: filter.kct_id }, subCallback)) 
-            };
-        }
-        dispatch(courseAction.filterCourses({ status: '', search: filter.search, start: filter.start, end: filter.end, pageIndex: 1, pageSize: 10000000}, callback));
+        dispatch(descriptionAction.getDescriptionCourses({ pageSize: 10, pageIndex: pageIndex, kct_id: filter.kct_id }));
     }, [pageIndex]); // eslint-disable-line react-hooks/exhaustive-deps
+    
+
+    useEffect(() => {
+        dispatch(courseAction.filterCourses({ status: '', search: filter.search, start: filter.start, end: filter.end, pageIndex: 1, pageSize: 10000000}));
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const onFilterChange = (field, value) => {
         if (field === 'ngay') {
@@ -172,55 +123,10 @@ const BussinessCourses = (props) => {
         }
     };
     
-    const callbackFilter = (res) => {
-        let temp = [];
-        if (res.status === 'success') {
-            const subCallback = (subRes) => {
-                if (subRes.status === 'success') {
-                    res.data.map((item, index) => {
-                        subRes.data.map((subItem, subIntex) => {
-                            if (item.khoa_hoc_id === subItem.khoa_hoc_id) {
-                                temp.push({...item, key: subIntex})
-                            }
-                            return null;
-                        });
-                        return null;
-                    });
-                }
-                setState({...state, dataCourse: temp})
-            }
-            dispatch(descriptionAction.getDescriptionCourses({ pageSize: 10000000, pageIndex: pageIndex, kct_id: filter.kct_id }, subCallback)) 
-        };
-    }
-
     useEffect(() => {
-        dispatch(courseAction.filterCourses({ status: filter.trang_thai === 2 ? '' : filter.trang_thai, search: filter.search,
-            start: filter.start, end: filter.end, pageIndex: 1, pageSize: 10000000, kct_id: filter.kct_id }, callbackFilter));
+        dispatch(descriptionAction.getDescriptionCourses({ pageSize: 10, pageIndex: pageIndex, kct_id: filter.kct_id }));
     }, [filter.trang_thai, filter.start, filter.end, filter.kct_id]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    useMemo(() => {
-        dispatch(courseAction.filterCourses({ status: filter.trang_thai === 2 ? '' : filter.trang_thai, search: filter.search,
-            start: filter.start, end: filter.end, pageIndex: 1, pageSize: 10000000, kct_id: filter.kct_id }, callbackFilter));
-    }, [searchValue]); // eslint-disable-line react-hooks/exhaustive-deps
-
-    const renderProgrammes = () => {
-        
-        let options = [];
-        if (programmes.status === 'success') {
-            options = programmes.data.map((programme) => (
-                <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
-            ))
-        }
-        return (
-            <Select
-                showSearch={false}
-                placeholder="Chọn khung chương trình"
-                onChange={(kct_id) => dispatch(courseAction.getCourses({ idkct: kct_id, status: '', search: filter.search }))}
-            >
-            {options}
-            </Select>
-        );
-    };
 
     const renderCourses = () => {
         let options = [];
@@ -231,8 +137,9 @@ const BussinessCourses = (props) => {
         }
         return (
             <Select
-            showSearch={false}
-            placeholder="Chọn khóa học"
+                showSearch={true}
+                filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
+                placeholder="Chọn khóa học"
             >
                 {options}
             </Select>
@@ -262,28 +169,7 @@ const BussinessCourses = (props) => {
             if (res.statusText === 'OK' && res.status === 200) {
                 form.resetFields();
                 setState({ ...state, isEdit: false });
-                dispatch(courseAction.filterCourses({ status: filter.trang_thai === 2 ? '' : filter.trang_thai, search: filter.search,
-                    start: filter.start, end: filter.end, pageIndex: 1, pageSize: 10000000 }, (res) => {
-                        if (res.status === 'success') {
-                            let temp = [];
-                            const subCallback = (subRes) => {
-                                if (subRes.status === 'success') {
-                                    res.data.map((item, index) => {
-                                        subRes.data.map((subItem, subIntex) => {
-                                            if (item.khoa_hoc_id === subItem.khoa_hoc_id) {
-                                                temp.push({...item, key: subIntex})
-                                            }
-                                            return null;
-                                        });
-                                        return null;
-                                    });
-                                }
-                                setState({...state, dataCourse: temp});
-                                window.location.reload();
-                            }
-                            dispatch(descriptionAction.getDescriptionCourses({ pageSize: 10, pageIndex: pageIndex, kct_id: filter.kct_id }, subCallback)) 
-                        };
-                    }));
+                dispatch(descriptionAction.getDescriptionCourses({ pageSize: 10, pageIndex: pageIndex, kct_id: filter.kct_id }));
                 notification.success({
                     message: 'Thành công',
                     description: state.isEdit ?  'Sửa mô tả khóa học thành công' : 'Thêm mô tả khóa học mới thành công',
@@ -327,14 +213,7 @@ const BussinessCourses = (props) => {
                         <Col xl={24} sm={24} xs={24}>
                             <AppFilter
                                 title="Danh sách khóa học"
-                                isShowCourse={false}
                                 isShowProgramme={true}
-                                isShowModule={false}
-                                isShowThematic={false}
-                                isShowStatus={false}
-                                isShowSearchBox={true}
-                                isShowDatePicker={true}
-                                isRangeDatePicker={true}
                                 programmes={programmes.data}
                                 courses={courses.data}
                                 onFilterChange={(field, value) => onFilterChange(field, value)}
@@ -343,43 +222,26 @@ const BussinessCourses = (props) => {
                     </Row>
                 </Col>
             </Row>
-            {state.dataCourse.length > 0 && 
-                <>
-                    <Table className="table-striped-rows" columns={columns} dataSource={state.dataCourse} pagination={false}/>
-                    <br/>
-                    <Pagination current={pageIndex} onChange={onChange} total={descriptions?.totalCount} />
-                    <br/>
-                </>
-            }
+            <Table className="table-striped-rows" columns={columns} dataSource={descriptions?.data} pagination={false}/>
+            <br/>
+            <Pagination current={pageIndex} onChange={onChange} total={descriptions?.totalCount} />
+            <br/>
             <Row>
                 <Col xl={24} sm={24} xs={24} className="cate-form-block">
                     {loading && <LoadingCustom/>}  
                     {(state.isEdit && description.status === 'success' && description) ? <h5>Sửa thông tin mô tả khóa học</h5> : <h5>Thêm mới mô tả khóa học</h5>}  
                     <Form layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={submitForm}>  
-                        <Form.Item initialValue={1}
-                            className="input-col"
-                            label="Khung chương trình"
-                            name="kct_id"
-                            rules={[
-                                {
-                                required: true,
-                                message: 'Khung chương trình là trường bắt buộc.',
-                                },
-                            ]}
-                            >
-                                {renderProgrammes()}
-                        </Form.Item>
                         <Form.Item
                             className="input-col"
                             label="Khóa học"
                             name="khoa_hoc_id"
                             rules={[
                                 {
-                                required: true,
-                                message: 'Khóa học là trường bắt buộc.',
+                                    required: true,
+                                    message: 'Khóa học là trường bắt buộc.',
                                 },
                             ]}
-                            >
+                        >
                                 {renderCourses()}
                         </Form.Item>
                         <Form.Item
@@ -387,7 +249,7 @@ const BussinessCourses = (props) => {
                             label="Mô tả chung"
                             name="mo_ta_chung"
                             rules={[]}
-                            >
+                        >
                                 <TextEditorWidget2
                                     placeholder="Mô tả khóa học"
                                     showToolbar={true}
@@ -400,7 +262,7 @@ const BussinessCourses = (props) => {
                             label="Giới thiệu Khóa học"
                             name="gioi_thieu"
                             rules={[]}
-                            >
+                        >
                                 <TextEditorWidget2
                                     placeholder="Giới thiệu khóa học"
                                     showToolbar={true}
@@ -413,7 +275,7 @@ const BussinessCourses = (props) => {
                             label="Hình thức đào tạo"
                             name="hinh_thuc_dao_tao"
                             rules={[]}
-                            >
+                        >
                                 <TextEditorWidget2
                                     placeholder="Hình thức đào tạo"
                                     showToolbar={true}
@@ -426,7 +288,7 @@ const BussinessCourses = (props) => {
                             label="Mục tiêu cam kết"
                             name="muc_tieu_cam_ket"
                             rules={[]}
-                            >
+                        >
                                 <TextEditorWidget2
                                     placeholder="Mục tiêu cam kết"
                                     showToolbar={true}
@@ -439,7 +301,7 @@ const BussinessCourses = (props) => {
                             label="Đối tượng"
                             name="doi_tuong"
                             rules={[]}
-                            >
+                        >
                                 <TextEditorWidget2
                                     placeholder="Đối tượng"
                                     showToolbar={true}
@@ -452,7 +314,7 @@ const BussinessCourses = (props) => {
                             label="Nội dung chi tiết"
                             name="noi_dung_chi_tiet"
                             rules={[]}
-                            >
+                        >
                                 <TextEditorWidget2
                                     placeholder="Nội dung chi tiết"
                                     showToolbar={true}
@@ -465,7 +327,7 @@ const BussinessCourses = (props) => {
                             label="Xếp lớp thời gian"
                             name="xep_lop_thoi_gian"
                             rules={[]}
-                            >
+                        >
                                 <TextEditorWidget2
                                     placeholder="Xếp lớp thời gian"
                                     showToolbar={true}
@@ -478,7 +340,7 @@ const BussinessCourses = (props) => {
                             label="Giá gốc (Nhập liền không dấu. Ví dụ: 10000)"
                             name="gia_goc"
                             rules={[]}
-                            >
+                        >
                                 <Input placeholder='Giá gốc'/>
                         </Form.Item>
                         <Form.Item className="button-col">

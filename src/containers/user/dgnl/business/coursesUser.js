@@ -139,17 +139,17 @@ const CoursesUser = (props) => {
                                                 </div>
                                                 {item.id === 0 ?
                                                     <CardSlider id={index} 
-                                                        courses={courseOfUser.filter((course) => course.loai_kct === item.id)} 
+                                                        courses={courseOfUser.filter((course) => course.loai_kct === 0 || course.loai_kct === 3)} 
                                                         link={`/luyen-tap/danh-gia-nang-luc/`}
                                                     />
                                                     : item.id === 1 ?
                                                     <CardSlider id={index} 
-                                                        courses={courseOfUser.filter((course) => course.loai_kct === item.id && course.loai_kct === 1)} 
+                                                        courses={courseOfUser.filter((course) => course.loai_kct === 1)} 
                                                         link={`/luyen-tap/kiem-tra/`}
                                                     />
                                                     :
                                                     <CardSlider id={index} 
-                                                        courses={courseOfUser.filter((course) => course.loai_kct === item.id && course.loai_kct === 2)} 
+                                                        courses={courseOfUser.filter((course) => course.loai_kct === 2)} 
                                                         link={`/luyen-tap/luyen-tap/`}
                                                     />
                                                 }                        

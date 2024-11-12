@@ -133,16 +133,16 @@ const Exceprt = (props) => {
     const renderTypeExceprt = () => {
         let data = [{
             id: 1,
-            tieu_de: 'Đọc đoạn trích sau đây và trả lời các câu hỏi từ',
+            tieu_de: 'Đọc đoạn trích sau đây và trả lời các câu hỏi từ'
         }, {
             id: 2,
-            tieu_de: 'Đọc nội dung bài toán sau đây để trả lời các câu hỏi từ',
+            tieu_de: 'Đọc nội dung bài toán sau đây để trả lời các câu hỏi từ'
         }, {
             id: 3,
-            tieu_de: 'Dựa vào dữ liệu sau đây để trả lời các câu hỏi từ',
+            tieu_de: 'Dựa vào dữ liệu sau đây để trả lời các câu hỏi từ'
         }, , {
             id: 4,
-            tieu_de: 'Đọc đoạn thông tin sau và trả lời các câu hỏi từ',
+            tieu_de: 'Đọc đoạn thông tin sau và trả lời các câu hỏi từ'
         }, {
             id: 5,
             tieu_de: 'Đọc bảng tóm tắt sau và trả lời các câu hỏi từ'
@@ -158,7 +158,7 @@ const Exceprt = (props) => {
         }, {
             id: 9,
             tieu_de: 'Answer each question from'
-        },]
+        }]
         let options = [];
         options = data.map((item) => (
             <Option key={item.id} value={item.id} >{item.tieu_de}</Option>

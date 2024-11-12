@@ -189,6 +189,13 @@ const EXAM_ANSWER_VIEW_LIST = [
   { label: 'Hàng 4 cột', value: '4' },
 ];
 
+const TYPE_PROGRAMES = [
+  { label: 'Thi thử Online', value: 1 },
+  { label: 'Đánh giá năng lực', value: 0 },
+  { label: 'Đánh giá tư duy Bách khoa', value: 3 },
+  { label: 'Ôn luyện', value: 2 },
+];
+
 const QUESTIONS_FORMATS = [{ label: 'Câu hỏi lựa chọn', value: 'LUA_CHON' }];
 
 const ANSWER_OPTIONS = [
@@ -223,6 +230,7 @@ const constants = {
     EXAMS_VERSIONS,
     COURSES_TYPES,
     QUESTIONS_TYPES,
+    TYPE_PROGRAMES,
     QUESTIONS_LEVELS,
     SUBJECT_LIST,
     QUESTIONS_FORMATS,

@@ -96,8 +96,8 @@ export default function TextEditorWidget2 (props) {
                     size="small"
                     onClick={() => {
                         if (!props.disabled) {
-                        setViewable(false);
-                        props.openEditor(true);
+                            setViewable(false);
+                            props.openEditor(true);
                         }
                     }}
                 >
