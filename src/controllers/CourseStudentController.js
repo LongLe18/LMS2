@@ -1,29 +1,52 @@
 const { CourseStudent, Course } = require('../models');
 const sequelize = require('../utils/db');
+const { Op } = require('sequelize');
 
 //[GET] /account_bank
 //by Pham Viet Trieu
 const getAll = async (req, res) => {
-    const count = await Course.count();
-    const rows = await sequelize.query(
-        `
-        SELECT khoa_hoc.khoa_hoc_id, khoa_hoc.ten_khoa_hoc, COUNT(khoa_hoc_hoc_vien.hoc_vien_id) AS so_luong_hoc_vien
-            FROM khoa_hoc LEFT JOIN khoa_hoc_hoc_vien ON khoa_hoc.khoa_hoc_id = khoa_hoc_hoc_vien.khoa_hoc_id
-            INNER JOIN hoc_vien ON khoa_hoc_hoc_vien.hoc_vien_id = hoc_vien.hoc_vien_id
-            WHERE khoa_hoc.ten_khoa_hoc LIKE :search GROUP BY khoa_hoc.khoa_hoc_id, khoa_hoc.ten_khoa_hoc ORDER BY khoa_hoc.ngay_tao LIMIT :limit OFFSET :offset`,
-        {
-            replacements: {
-                search: req.query.search
-                    ? `%${decodeURI(req.query.search)}%`
-                    : '%%',
-                offset:
-                    (Number(req.query.pageIndex || 1) - 1) *
-                    Number(req.query.pageSize || 10),
-                limit: Number(req.query.pageSize || 10),
+    const count = (await Course.findAll({
+        attributes: [
+            'khoa_hoc_id',
+        ],
+        where: {
+            ten_khoa_hoc: {
+                [Op.like]: req.query.search ? `%${decodeURI(req.query.search)}%` : '%%',
             },
-            type: sequelize.QueryTypes.SELECT,
-        }
-    );
+        },
+    })).length;
+    const rows = await Course.findAll({
+        attributes: [
+            'khoa_hoc_id',
+            'ten_khoa_hoc',
+            'ngay_tao',
+            [
+                sequelize.fn(
+                    'COUNT',
+                    sequelize.col('khoa_hoc_hoc_viens.hoc_vien_id')
+                ),
+                'so_luong_hoc_vien',
+            ],
+        ],
+        include: [
+            {
+                model: CourseStudent,
+                attributes: [],
+            },
+        ],
+        where: {
+            ten_khoa_hoc: {
+                [Op.like]: req.query.search ? `%${decodeURI(req.query.search)}%` : '%%',
+            },
+        },
+        group: ['khoa_hoc.khoa_hoc_id', 'khoa_hoc.ten_khoa_hoc'],
+        order: [['ngay_tao', 'ASC']],
+        offset:
+            (Number(req.query.pageIndex || 1) - 1) *
+            Number(req.query.pageSize || 10),
+        limit: Number(req.query.pageSize || 10),
+        subQuery: false,
+    });
 
     res.status(200).send({
         status: 'success',
