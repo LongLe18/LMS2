@@ -8,7 +8,7 @@ const getAll = async (req, res) => {
             attributes: ['khoa_hoc_id', 'ten_khoa_hoc'],
             include: {
                 model: Program,
-                attributes: ['kct_id', 'ten_khung_ct'],
+                attributes: ['kct_id', 'ten_khung_ct', 'loai_kct'],
             },
         },
         where: {
