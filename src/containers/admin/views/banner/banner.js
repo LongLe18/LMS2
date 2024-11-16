@@ -429,7 +429,7 @@ const BannerCoursePage = (props) => {
                 loading={loadingCourses}
                 placeholder="Chọn khóa học"
             >
-            {options}
+                {options}
             </Select>
         );
     };

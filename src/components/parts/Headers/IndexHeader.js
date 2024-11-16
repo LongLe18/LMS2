@@ -471,7 +471,7 @@ function IndexHeader(props) {
                 href="/luyen-tap/trang-chu"
                 className="simple-text logo-mini"
               >
-                <Avatar src={require("assets/rank/Logo.png").default} alt="react-logo" size={40} />
+                <Avatar src={require("assets/rank/Logo-saoviet.png").default} alt="react-logo" size={40} />
               </a>
             </div>
             <div className="nav__mobile-close"><Button icon={<CloseOutlined />} onClick={() => onCollapse(!collapsed)}></Button></div>

@@ -37,7 +37,7 @@ const { Content } = Layout;
 // const { TextArea } = Input;
 const { Dragger } = Upload;
 
-const ExamOnlineDetail = () => {
+const ExamOnlineDetailDGTD = () => {
     const params = useParams();
     const hashids = new Hashids();
     const userToken = localStorage.getItem('userToken');
@@ -2245,4 +2245,4 @@ const ExamOnlineDetail = () => {
     )
 }
 
-export default ExamOnlineDetail
+export default ExamOnlineDetailDGTD

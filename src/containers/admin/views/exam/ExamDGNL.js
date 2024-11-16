@@ -41,10 +41,10 @@ const ExamDGNLAdminPage = () => {
     const [spinning, setSpinning] = useState(false);
     const [pageIndex, setPageIndex] = useState(1);
     const [pageSize, setPageSize] = useState(10);
+    const [programmes, setProgrammes] = useState(null);
 
     const dispatch = useDispatch();
 
-    const programmes = useSelector(state => state.programme.list.result);
     const exams = useSelector(state => state.exam.list.result);
     const error = useSelector(state => state.exam.list.error);
 
@@ -65,7 +65,6 @@ const ExamDGNLAdminPage = () => {
       dispatch(typeExamActions.getTypes());
       dispatch(majorActions.getMajors());
       dispatch(courseActions.getCourses({ idkct: '', status: 1, search: '' })); // lấy khoá học đang hoạt động
-      dispatch(programmeActions.getProgrammes({ status: 1 })); // lấy khung chương trình đang hoạt động
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const [state, setState] = useState({
@@ -287,29 +286,6 @@ const ExamDGNLAdminPage = () => {
       },
   };
 
-  // UI khung chương trình 
-  const renderProgramme = () => {
-      let options = [];
-      if (programmes.status === 'success') {
-        options = programmes.data.map((programme) => {
-          if (programme.loai_kct === 0) { // lấy ra khung chương trình đgnl
-            return (
-              <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
-            )
-          }
-          return null;
-        })
-      }
-      return (
-        <Select
-            showSearch={false}
-            placeholder="Chọn khung chương trình"
-            onChange={(kct_id) => dispatch(courseActions.getCourses({ idkct: kct_id, status: 1, search: '' }))}
-        >
-          {options}
-        </Select>
-      );
-  };
 
   const renderTypeExams = () => {
       let options = [];
@@ -322,11 +298,49 @@ const ExamDGNLAdminPage = () => {
         <Select
           showSearch={false}
           placeholder="Chọn loại đề thi"
+          onChange={(loai_de_thi_id) => {
+            dispatch(programmeActions.getProgrammes({ status: 1 }, (res) => {
+              if (res.status === 'success') {
+                switch (loai_de_thi_id) {
+                  case 5: // ĐGNL
+                    setProgrammes(res.data.filter(item => item.loai_kct === 0));
+                    break;
+                  case 6: // ĐGTD
+                    setProgrammes(res.data.filter(item => item.loai_kct === 3));
+                    break;
+                }
+              }
+            }));
+          }}
         >
           {options}
         </Select>
       );
   };
+
+  // UI khung chương trình 
+  const renderProgramme = () => {
+    let options = [];
+    if (programmes && programmes.length > 0) {
+      options = programmes.map((programme) => {
+        if (programme.loai_kct === 0 || programme.loai_kct === 3) { // lấy ra khung chương trình ĐGNL và ĐGTD
+          return (
+            <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
+          )
+        }
+        return null;
+      })
+    }
+    return (
+      <Select
+          showSearch={false}
+          placeholder="Chọn khung chương trình"
+          onChange={(kct_id) => dispatch(courseActions.getCourses({ idkct: kct_id, status: 1, search: '' }))}
+      >
+        {options}
+      </Select>
+    );
+};
 
   const renderCourse = () => {
       let options = [];

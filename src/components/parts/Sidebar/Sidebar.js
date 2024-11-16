@@ -59,7 +59,7 @@ function Sidebar(props) {
             to="/admin/dashboard"
             className="simple-text logo-mini"
           >
-            <Avatar src={require("assets/rank/Logo.png").default} alt="react-logo" size={40} />
+            <Avatar src={require("assets/rank/Logo-saoviet.png").default} alt="react-logo" size={40} />
           </NavLink>
           <NavLink style={{fontSize: '16px', marginLeft: '10px'}}
             to="/admin/dashboard"

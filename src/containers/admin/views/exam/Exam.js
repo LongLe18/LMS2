@@ -329,7 +329,7 @@ const ExamAdminPage = () => {
   const renderProgrammesForCreatFastExam = () => {
     let options = [];
     if (programmes.status === 'success') {
-      options = programmes.data.filter((programme) => programme.loai_kct !== 0).map((programme) => (
+      options = programmes.data.filter((programme) => programme.loai_kct !== 0 && programme.loai_kct !== 3).map((programme) => (
           <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
         ))
     }
@@ -361,12 +361,12 @@ const ExamAdminPage = () => {
         {options}
       </Select>
     );
-};
+  };
 
   const renderTypeExams = () => {
       let options = [];
       if (typeExams.status === 'success') {
-        options = typeExams.data.filter((item) => item.loai_de_thi_id !== 5).map((type) => (
+        options = typeExams.data.filter((item) => item.loai_de_thi_id !== 5 && item.loai_de_thi_id !== 6).map((type) => (
           <Option key={type.loai_de_thi_id} value={type.loai_de_thi_id} >{type.mo_ta}</Option>
         ))
       }
@@ -483,7 +483,7 @@ const ExamAdminPage = () => {
                       {renderTypeExams()}
                   </Form.Item>
                   <Form.Item label="Khung" name="khung_ct" rules={[{ required: state.showCourse, message: 'Loại đề thi là bắt buộc'}]}
-                  style={{display: state.showCourse ? '' : 'none'}}>
+                    style={{display: state.showCourse ? '' : 'none'}}>
                       {state.onlineExam ? renderProgrammesForCreateExam() : renderProgramme()}
                   </Form.Item>
                   <Form.Item label="Khóa học" name="khoa_hoc_id" rules={[{ required: state.showCourse, message: 'Khóa học là bắt buộc' }]}

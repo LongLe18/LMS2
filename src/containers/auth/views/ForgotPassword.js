@@ -43,7 +43,7 @@ const ForgotPasswordPage = (props) => {
                 <Row className="logo" align={'middle'}>
                     <Col xs={{ span: 24 }} lg={{ span: 4 }}>
                         <Link to='/luyen-tap/trang-chu' className="logo">
-                            <Avatar shape="square" size={200} src={require('assets/rank/Logo.png').default} />
+                            <Avatar shape="square" size={200} src={require('assets/rank/Logo-saoviet.png').default} />
                         </Link>
                     </Col>
                     <Col xs={{ span: 22, offset: 1 }} lg={{ span: 9, offset: 4}} style={{marginRight: '10%'}}>

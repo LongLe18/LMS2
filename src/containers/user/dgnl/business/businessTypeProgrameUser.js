@@ -29,11 +29,95 @@ import Statisic from "components/parts/statisic/Statisic";
 const { Content } = Layout;
 const { Option } = Select;
 
+const CourseCard = ({ course, programType }) => {
+    const hashids = new Hashids();
+
+    const getLinkPath = () => {
+        const encodedId = hashids.encode(course.khoa_hoc_id);
+        switch (programType.id) {
+            case 0: return `/luyen-tap/danh-gia-nang-luc/${encodedId}`;
+            case 1: return `/luyen-tap/kiem-tra/${encodedId}`;
+            default: return `/luyen-tap/luyen-tap/${encodedId}`;
+        }
+    };
+  
+    return (
+        <Col xl={5} sm={12} xs={12} className="course-cate-row">
+            <div className="course-cate-box">
+                <div className="image-box">
+                    <Link to={getLinkPath()}>
+                        <img 
+                            src={course.anh_dai_dien ? `${config.API_URL}${course.anh_dai_dien}` : defaultImage} 
+                            alt={course.ten_khoa_hoc} 
+                        />
+                    </Link>
+                </div>
+                <div className="box-text pb-1">
+                    <h3 className="course-cate-title">
+                        <Link to={getLinkPath()}>{course.ten_khoa_hoc}</Link>
+                    </h3>
+                    <p className="course-cate-description">
+                        <Link to={getLinkPath()}>
+                            <Button 
+                                type="primary" 
+                                style={{margin: '12px 0 12px 0', fontSize: 12, borderRadius: 4}}
+                            >
+                                Chi tiết
+                            </Button>
+                        </Link>
+                    </p>
+                </div>
+            </div>
+        </Col>
+    );
+};
+
+const ProgramSection = ({ programType, courses }) => (
+    <Col xl={24} md={24} xs={24}>
+        <h3 className="section-title section-title-center" style={{marginTop: 24}}>
+            <b></b>
+            <span 
+                style={{
+                    justifyContent: 'center', 
+                    textTransform: 'uppercase', 
+                    color: 'rgb(21, 87, 21)', 
+                    fontWeight: 700, 
+                    margin: '0 15px'
+                }}
+            >
+                {programType.name}
+            </span>
+            <b></b>
+        </h3>
+        <Row gutter={[16, 16]} className="list-cate-items">
+            {courses.map((course) => (
+                <CourseCard key={course.khoa_hoc_id} course={course} programType={programType} />
+            ))}
+        </Row>
+    </Col>
+);
+
+const CourseCatalog = ({ idTypeKCT, typeProgramme, courseOfUser }) => {
+    const selectedProgramType = typeProgramme.find(type => type.id === Number(idTypeKCT));
+  
+    if (!selectedProgramType) {
+      return null;
+    }
+  
+    const filteredCourses = Number(idTypeKCT) === 0
+        ? courseOfUser.filter(course => course.loai_kct === 0 || course.loai_kct === 3)
+        : courseOfUser.filter(course => course.loai_kct === selectedProgramType.id);
+  
+    return (
+        <ProgramSection programType={selectedProgramType} courses={filteredCourses} />
+    );
+  }
+
 const BusinessTypeProgramePageUser = (props) => {
     const idTypeKCT = useParams().idTypeKCT;
     const hashids = new Hashids();
     // eslint-disable-next-line no-unused-vars
-    const [dataInit, setDataInit] = useState([]);
+    // const [dataInit, setDataInit] = useState([]);
     const [dataSearch, setDataSearch] = useState([]);
     
     const dispatch = useDispatch();
@@ -53,7 +137,7 @@ const BusinessTypeProgramePageUser = (props) => {
         dispatch(courseAction.getCourses({ idkct: '', status: 1, search: '' }, (res) => {
             if (res.status === 'success') {
                 res.data.sort((objA, objB) => Number(new Date(objB.ngay_bat_dau)) - Number(new Date(objA.ngay_bat_dau)));
-                setDataInit(res.data);
+                // setDataInit(res.data);
                 // dataInit.push(...courses.data);    
             }
         }));
@@ -261,51 +345,7 @@ const BusinessTypeProgramePageUser = (props) => {
                     )}
                     
                     <Row gutter={16}>
-                        {
-                            typeProgramme.filter((type) => type.id === Number(idTypeKCT)).map((item, index) => {
-                                return (
-                                    <Col Col xl={24} md={24} xs={24}>
-                                        <h3 className="section-title section-title-center" style={{marginTop: 24}}>
-                                            <b></b>
-                                            <span style={{justifyContent: 'center', textTransform: 'uppercase', 
-                                                color: 'rgb(21, 87, 21)', fontWeight: 700, margin: '0 15px'}}
-                                            >
-                                                {item.name}
-                                            </span>
-                                            <b></b>
-                                        </h3>
-                                        <Row gutter={[16, 16]} className="list-cate-items">
-                                            {courseOfUser.filter(course => course.loai_kct === item.id).map((cate, index) => {
-                                                return (
-                                                    <Col xl={5} sm={12} xs={12} className="course-cate-row" key={cate.key}>
-                                                        <div className="course-cate-box">
-                                                            <div className="image-box">
-
-                                                                <Link to={item.id === 0 ? `/luyen-tap/danh-gia-nang-luc/${hashids.encode(cate.khoa_hoc_id)}` : item.id === 1 ? `/luyen-tap/kiem-tra/${hashids.encode(cate.khoa_hoc_id)}` : `/luyen-tap/luyen-tap/${hashids.encode(cate.khoa_hoc_id)}`}>
-                                                                    <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
-                                                                </Link>
-                                                            </div>
-                                                            <div className="box-text pb-1">
-                                                                <h3 className="course-cate-title">
-                                                                    <Link to={item.id === 0 ? `/luyen-tap/danh-gia-nang-luc/${hashids.encode(cate.khoa_hoc_id)}` : item.id === 1 ? `/luyen-tap/kiem-tra/${hashids.encode(cate.khoa_hoc_id)}` : `/luyen-tap/luyen-tap/${hashids.encode(cate.khoa_hoc_id)}`}>{cate.ten_khoa_hoc}</Link>
-                                                                </h3>
-                                                                <p className="course-cate-description">
-                                                                    <Link to={item.id === 0 ? `/luyen-tap/danh-gia-nang-luc/${hashids.encode(cate.khoa_hoc_id)}` : item.id === 1 ? `/luyen-tap/kiem-tra/${hashids.encode(cate.khoa_hoc_id)}` : `/luyen-tap/luyen-tap/${hashids.encode(cate.khoa_hoc_id)}`}>
-                                                                        <Button type="primary" style={{margin: '12px 0 12px 0', fontSize: 12, borderRadius: 4}}>
-                                                                            Chi tiết
-                                                                        </Button>
-                                                                    </Link>
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </Col>
-                                                )
-                                            })}
-                                        </Row>
-                                    </Col>
-                                )
-                            })
-                        }
+                        <CourseCatalog idTypeKCT={idTypeKCT} typeProgramme={typeProgramme} courseOfUser={courseOfUser}/>
                     </Row>
                 </div>
             </div>

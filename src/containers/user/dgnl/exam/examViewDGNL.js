@@ -148,7 +148,6 @@ const ExamViewDGNL = (props) => {
         .then(
             res => {
                 if (res.statusText === 'OK' && res.status === 200) {
-                    console.log(res.data.data);
                     // setCriteria(res.data.data)
                 } else {
                     notification.error({
@@ -589,7 +588,7 @@ const ExamViewDGNL = (props) => {
                                     }
                                 )
                                 .catch(error => {
-                                    notification.error({ message: error.response.data.message ? 'error.response.data.message' : 'Tạo đề thi thất bại' })
+                                    notification.error({ message: error.response.data.message ? error.response.data.message : 'Tạo đề thi thất bại' })
                                 });
                             }}
                         >

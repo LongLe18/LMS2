@@ -1097,8 +1097,8 @@ const Criteria = () => {
                 options = courses.data.filter((item) => item.loai_kct === 1).map((course) => (
                     <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
                 ))
-            } else if (state.activeTab === '5') { // ĐGNL
-                let temp = courses.data.filter((item) => item.loai_kct === 0);
+            } else if (state.activeTab === '5') { // ĐGNL 
+                let temp = courses.data.filter((item) => item.loai_kct === 0 || item.loai_kct === 3);
                 if (!require.isEdit) temp = temp.filter(item => !dataCriteriaDGNL.some(comp => comp.khoa_hoc_id === item.khoa_hoc_id));
 
                 options = temp.map((course) => (
