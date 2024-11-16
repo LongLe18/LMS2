@@ -2,7 +2,7 @@
 
 ## Install
 
-- nodejs v16.15.1
+- nodejs v16.10.1
 - docker
 - mysql
 - pm2

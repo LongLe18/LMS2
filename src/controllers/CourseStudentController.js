@@ -1,4 +1,4 @@
-const { CourseStudent, Course } = require('../models');
+const { CourseStudent, Course, Student } = require('../models');
 const sequelize = require('../utils/db');
 const { Op } = require('sequelize');
 
@@ -28,12 +28,15 @@ const getAll = async (req, res) => {
                 'so_luong_hoc_vien',
             ],
         ],
-        include: [
-            {
-                model: CourseStudent,
+        include: {
+            model: CourseStudent,
+            attributes: [],
+            include: {
+                model: Student,
                 attributes: [],
+                required: true,
             },
-        ],
+        },
         where: {
             ten_khoa_hoc: {
                 [Op.like]: req.query.search ? `%${decodeURI(req.query.search)}%` : '%%',
