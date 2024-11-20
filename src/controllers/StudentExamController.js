@@ -19,6 +19,7 @@ const {
     SyntheticCriteria,
     Province,
     DGNLCriteria,
+    DGTDCriteria,
 } = require('../models');
 const sequelize = require('../utils/db');
 
@@ -455,7 +456,6 @@ const putUpdate = async (req, res) => {
                 result = true;
             }
         } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 2) {
-            // Câu trắc nghiệm đúng sai
             const ket_qua_chons = [...selectedAnswer.ket_qua_chon.toString()];
             const dap_ans = selectedAnswer.cau_hoi.dap_ans;
             const bangDiem = {
@@ -742,6 +742,168 @@ const putUpdatev3 = async (req, res) => {
     });
 };
 
+// dùng cho đánh giá tư duy
+const putUpdatev4 = async (req, res) => {
+    const selectedAnswers = await SelectedAnswer.findAll({
+        include: {
+            model: Question,
+            attributes: ['loai_cau_hoi', 'diem', 'chuyen_nganh_id'],
+            include: {
+                model: Answer,
+                attributes: ['noi_dung_dap_an', 'dap_an_dung'],
+            },
+        },
+        where: {
+            dthv_id: req.params.id,
+        },
+        order: [[sequelize.col('dap_an_id'), 'ASC']],
+    });
+
+    let ket_qua_diem = 0;
+    let so_cau_tra_loi_dung = 0;
+    let so_cau_tra_loi_sai = 0;
+    let ket_qua_chons;
+    let dap_ans;
+    let result;
+    let phan_1 = 0;
+    let phan_2 = 0;
+    let phan_3 = 0;
+    for (const selectedAnswer of selectedAnswers) {
+        result = false;
+        if (selectedAnswer.cau_hoi.loai_cau_hoi === 0) {
+            if (
+                selectedAnswer.noi_dung_tra_loi &&
+                selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an &&
+                selectedAnswer.noi_dung_tra_loi.trim().toLowerCase() ==
+                    selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an
+                        .replaceAll('<b>', '')
+                        .replaceAll('</b>', '')
+                        .replaceAll('<em>', '')
+                        .replaceAll('</em>', '')
+                        .replaceAll('<u>', '')
+                        .replaceAll('</u>', '')
+                        .trim()
+                        .toLowerCase()
+            )
+                result = true;
+        } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 1) {
+            // Câu trắc nghiệm
+            ket_qua_chons = selectedAnswer.ket_qua_chon.toString().split('');
+            dap_ans = selectedAnswer.cau_hoi.dap_ans;
+            if (
+                ket_qua_chons.every(
+                    (ket_qua_chon, index) =>
+                        (ket_qua_chon === '1') === dap_ans[index].dap_an_dung
+                )
+            ) {
+                result = true;
+            }
+        } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 2) {
+            ket_qua_chons = selectedAnswer.ket_qua_chon.toString().split('');
+            dap_ans = selectedAnswer.cau_hoi.dap_ans;
+            if (
+                ket_qua_chons.every(
+                    (ket_qua_chon, index) =>
+                        (ket_qua_chon === '1') === dap_ans[index].dap_an_dung
+                )
+            ) {
+                result = true;
+            }
+        } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 3) {
+            // nếu không chọn thì để là "_"
+            ket_qua_chons = selectedAnswer.ket_qua_chon.toString().split('');
+            dap_ans = selectedAnswer.cau_hoi.dap_ans;
+            if (
+                ket_qua_chons.every(
+                    (ket_qua_chon, index) =>
+                        (ket_qua_chon === '1') === dap_ans[index].dap_an_dung
+                )
+            ) {
+                result = true;
+            }
+        } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 4) {
+            // nếu không chọn thì để là "_"
+            ket_qua_chons = selectedAnswer.ket_qua_chon.toString().split('');
+            dap_ans = selectedAnswer.cau_hoi.dap_ans;
+            if (
+                ket_qua_chons.every(
+                    (ket_qua_chon, index) =>
+                        (ket_qua_chon === '1') === dap_ans[index].dap_an_dung
+                )
+            ) {
+                result = true;
+            }
+        } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 5) {
+            // nếu không nhập thì để là "_"
+            if (
+                selectedAnswer.noi_dung_tra_loi &&
+                selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an &&
+                selectedAnswer.noi_dung_tra_loi.trim().toLowerCase() ==
+                    selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an
+                        .replaceAll('<b>', '')
+                        .replaceAll('</b>', '')
+                        .replaceAll('<em>', '')
+                        .replaceAll('</em>', '')
+                        .replaceAll('<u>', '')
+                        .replaceAll('</u>', '')
+                        .trim()
+                        .toLowerCase()
+            ) {
+                result = true;
+            }
+        }
+        if (result) {
+            ket_qua_diem += parseFloat(selectedAnswer.cau_hoi.diem);
+            so_cau_tra_loi_dung++;
+        }
+    }
+    let exam = await sequelize.query(
+        `
+        SELECT de_thi.* FROM de_thi JOIN de_thi_hoc_vien ON de_thi.de_thi_id = de_thi_hoc_vien.de_thi_id 
+        WHERE de_thi_hoc_vien.dthv_id = :dthv_id`,
+        {
+            replacements: {
+                dthv_id: req.params.id,
+            },
+            type: sequelize.QueryTypes.SELECT,
+        }
+    );
+
+    let criteria;
+    if (exam[0]) {
+        exam = exam[0];
+        criteria = await DGTDCriteria.findOne({
+            where: {
+                khoa_hoc_id: exam.khoa_hoc_id,
+            },
+        });
+    }
+
+    if (criteria) {
+        so_cau_tra_loi_sai = criteria.so_cau_hoi - so_cau_tra_loi_dung;
+    }
+    const studentExam = await StudentExam.update(
+        {
+            ...req.body,
+            diem_cac_phan: `${phan_1},${phan_2},${phan_3}`,
+            ket_qua_diem: ket_qua_diem,
+            so_cau_tra_loi_dung: so_cau_tra_loi_dung,
+            so_cau_tra_loi_sai: so_cau_tra_loi_sai,
+        },
+        {
+            where: {
+                dthv_id: req.params.id,
+            },
+        }
+    );
+
+    return res.status(200).send({
+        status: 'success',
+        data: studentExam,
+        message: null,
+    });
+};
+
 const forceDelete = async (req, res) => {
     await StudentExam.destroy({
         where: {
@@ -905,4 +1067,5 @@ module.exports = {
     getAllDGNL,
     getByExamId,
     getByExamIdv2,
+    putUpdatev4,
 };

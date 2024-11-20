@@ -1,49 +1,60 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../utils/db');
 
-const cauhoi = sequelize.define(
-    'cau_hoi',
+const tieuchidethidgtd = sequelize.define(
+    'tieu_chi_de_thi_dgtd',
     {
-        cau_hoi_id: {
+        idtieu_chi_de_thi_dgtd: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
         },
-        noi_dung: {
-            type: DataTypes.STRING,
-        },
-        // 0: tự luận, 1: trắc nghiệm, 2: trắc nghiệm nhiều lựa chọn, 3: trắc nghiệm nhiều lựa chọn đúng sai, 4: trắc nghiệm đúng sai, 5: tự luận nhiều vị trí
-        loai_cau_hoi: {
-            type: DataTypes.TINYINT,
-        },
-        diem: {
-            type: DataTypes.DECIMAL(10, 2),
-        },
-        loi_giai: {
-            type: DataTypes.STRING,
-        },
-        cot_tren_hang: {
+        khoa_hoc_id: {
             type: DataTypes.INTEGER,
         },
-        trich_doan_id: {
+        so_phan: {
             type: DataTypes.INTEGER,
         },
-        mdch_id: {
+        so_cau_hoi: {
             type: DataTypes.INTEGER,
         },
-        chuyen_de_id: {
+        thoi_gian: {
             type: DataTypes.INTEGER,
         },
-        mo_dun_id: {
+        so_cau_hoi_phan_1: {
             type: DataTypes.INTEGER,
         },
-        de_thi_id: {
+        thoi_gian_phan_1: {
             type: DataTypes.INTEGER,
         },
-        kct_id: {
+        so_cau_hoi_phan_2: {
             type: DataTypes.INTEGER,
         },
-        chuyen_nganh_id: {
+        thoi_gian_phan_2: {
+            type: DataTypes.INTEGER,
+        },
+        so_cau_hoi_phan_3: {
+            type: DataTypes.INTEGER,
+        },
+        thoi_gian_phan_3: {
+            type: DataTypes.INTEGER,
+        },
+        so_cau_hoi_phan_4: {
+            type: DataTypes.INTEGER,
+        },
+        thoi_gian_phan_4: {
+            type: DataTypes.INTEGER,
+        },
+        so_cau_hoi_phan_5: {
+            type: DataTypes.INTEGER,
+        },
+        thoi_gian_phan_5: {
+            type: DataTypes.INTEGER,
+        },
+        so_cau_hoi_phan_6: {
+            type: DataTypes.INTEGER,
+        },
+        thoi_gian_phan_6: {
             type: DataTypes.INTEGER,
         },
         nguoi_tao: {
@@ -61,10 +72,10 @@ const cauhoi = sequelize.define(
     },
     {
         sequelize,
-        modelName: 'cau_hoi',
+        modelName: 'tieu_chi_de_thi_dgtd',
         freezeTableName: true,
         timestamps: false,
     }
 );
 
-module.exports = cauhoi;
+module.exports = tieuchidethidgtd;

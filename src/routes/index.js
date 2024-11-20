@@ -46,6 +46,8 @@ const courseStudentRouter = require('./coursestudent');
 const provinceRouter = require('./province');
 const evaluateRouter = require('./evaluate');
 const dgnlEvaluateRouter = require('./dgnlevaluate');
+const dgtdCriteriaRouter = require('./dgtdcriteria');
+const dgtdEvaluateRouter = require('./dgtdevaluate');
 
 function route(app) {
     app.use('/auth', authenRouter);
@@ -96,6 +98,8 @@ function route(app) {
     app.use('/province', provinceRouter);
     app.use('/evaluate', evaluateRouter);
     app.use('/evaluate-dgnl', dgnlEvaluateRouter);
+    app.use('/dgtd-criteria', dgtdCriteriaRouter);
+    app.use('/evaluate-dgtd', dgtdEvaluateRouter);
 }
 
 module.exports = route;
