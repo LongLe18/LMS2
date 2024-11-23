@@ -142,3 +142,11 @@ export function generateCaptcha() {
     }
     return uniquechar;
 }
+
+export const getAnswerCols = (type) => {
+    if (type === 1) return 24;
+    else if (type === 2) return 12;
+    else if (type === 3) return 8;
+    else if (type === 4) return 6;
+    else return 24;
+};

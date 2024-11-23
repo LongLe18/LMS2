@@ -17,6 +17,107 @@
     font-size: 16px;
 }
 
+.body-dgtd .title-exam div {
+    display: inline-block;
+}
+
+.body-dgtd .title-exam {
+    width: 100%;
+    margin: 0px;
+    // min-height: 50px;
+    font-size: 24px;
+    user-select: none;
+  }
+  
+.body-dgtd .title-exam .title-exam-content {
+    font-size: 20px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+.body-dgtd .content-answer-question ul {
+    margin: 0;
+    padding: 0;
+}
+  
+.body-dgtd .content-answer-question ul li {
+    // margin: 0px 0 5px 0px;
+    // padding: 5px;
+    margin: 0;
+    position: relative;
+    list-style-type: none;
+    position: relative;
+}
+
+.body-dgtd .content-answer-question ul li .answer-label {
+    font-weight: bold;
+    position: absolute;
+    top: 8px;
+}
+  
+.content-answer-question .btn-onClick p {
+    display: inline-block;
+}
+  
+.content-answer-question ul li button {
+    color: #272727;
+    border: none;
+    background: transparent;
+}
+
+.doing-exam .content-answer-question ul li button:hover .answer-label {
+    border: 1px solid orange;
+    color: #fff;
+    background: orange;
+}
+  
+.doing-exam .content-answer-question ul li.active button .answer-label, .wrongrightAnswer .active {
+    border: 1px solid #7db7ff;
+    color: #fff;
+    background: #7db7ff;
+}
+
+.content-answer-question ul li button .answer.correct .answer-label, .wrongrightAnswer .correct {
+    background: #3da844 !important;
+    color: #fff;
+}
+  
+.content-answer-question ul li button .answer.incorrect .answer-label, .wrongrightAnswer .incorrect {
+    background: red !important;
+    color: #fff;
+}
+  
+.content-answer-question ul li button .answer.incorrect .answer-label, .wrongrightAnswer .no-thing {
+    border: 1px solid #ccc !important;
+}
+  
+.content-answer-question ul li button .answer.incorrect .answer-label, .wrongrightAnswer .no-thing span {
+    color: #000 !important;
+}
+
+.content-answer-question ul li button .answer-label {
+    vertical-align: middle;
+    display: inline-block;
+    border: 1px solid #ccc;
+    text-align: center;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    line-height: 27px;
+    text-align: center;
+}
+  
+.content-answer-question ul li p {
+    margin: 0;
+}
+  
+.question-list .btn-onClick {
+    cursor: pointer;
+}
+
 .a-tag {
     font-size: 16px;
     color: #757677;
@@ -99,4 +200,20 @@
     margin: 0 5px;
     padding: 0 10px;
     vertical-align: middle;
+}
+
+.btn-DS {
+    background-color: transparent;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    height: 30px;
+    width: 30px;
+    margin-right: 4px;
+}
+
+.option-answer {
+    width: 75%;
+    margin-left: 6px;
+    min-height: 50px;
+    font-size: 20px;
 }
