@@ -49,6 +49,8 @@ const DGNLEvaluate = require('./DGNLEvaluate');
 const DGTDEvaluate = require('./DGTDEvaluate');
 const DGTDCriteria = require('./DGTDCriteria');
 const ExceprtType = require('./ExceprtType');
+const QuestionDetail = require('./QuestionDetail');
+const Option = require('./Option');
 
 //khoa ngoai khoahoc
 Program.hasMany(Course, { foreignKey: 'kct_id', constraints: false });
@@ -199,6 +201,12 @@ Exceprt.belongsTo(ExceprtType, { foreignKey: 'loai_trich_doan_id', constraints: 
 Course.hasOne(CourseDescription, { foreignKey: 'khoa_hoc_id', sourceKey: 'khoa_hoc_id', constraints: false});
 CourseDescription.belongsTo(Course, { foreignKey: 'khoa_hoc_id', targetKey: 'khoa_hoc_id', constraints: false});
 
+Question.hasMany(QuestionDetail, { foreignKey: 'cau_hoi_id', sourceKey: 'cau_hoi_id', constraints: false});
+QuestionDetail.belongsTo(Question, { foreignKey: 'cau_hoi_id', targetKey: 'cau_hoi_id', constraints: false});
+
+Question.hasOne(Option, { foreignKey: 'cau_hoi_id', sourceKey: 'cau_hoi_id', constraints: false});
+Option.belongsTo(Question, { foreignKey: 'cau_hoi_id', targetKey: 'cau_hoi_id', constraints: false});
+
 module.exports = {
     Course,
     Lesson,
@@ -250,5 +258,7 @@ module.exports = {
     DGNLCriteria,
     DGNLEvaluate,
     DGTDCriteria,
-    DGTDEvaluate
+    DGTDEvaluate,
+    QuestionDetail,
+    Option,
 };

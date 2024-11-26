@@ -53,6 +53,7 @@ const getAll = async (req, res) => {
                 chuyen_nganh_id: req.query.chuyen_nganh_id,
             }),
             ...(req.query.kct_id && { kct_id: req.query.kct_id }),
+            ...(req.query.loai_cau_hoi && { loai_cau_hoi: req.query.loai_cau_hoi }),
         },
         offset:
             (Number(req.query.pageIndex || 1) - 1) *

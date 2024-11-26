@@ -190,20 +190,6 @@ const postCreate = async (req, res) => {
         ...req.body,
         hoc_vien_id: req.userId,
     });
-    // await sequelize.query(
-    //     `
-    //     INSERT INTO dap_an_da_chon (cau_hoi_id, dthv_id)
-    //         SELECT cau_hoi_id, :dthv_id FROM cau_hoi_de_thi
-    //         WHERE de_thi_id = :de_thi_id
-    // `,
-    //     {
-    //         type: sequelize.QueryTypes.INSERT,
-    //         replacements: {
-    //             dthv_id: Number(studentExam.dthv_id),
-    //             de_thi_id: Number(req.body.de_thi_id),
-    //         },
-    //     }
-    // );
     res.status(200).send({
         status: 'success',
         data: studentExam,
@@ -212,7 +198,7 @@ const postCreate = async (req, res) => {
 };
 
 // Dùng cho thi đánh giá năng lực mới
-const postCreatev2 = async (req, res) => {
+const postCreateDGNL = async (req, res) => {
     const { khoa_hoc_id, chuyen_nganh_ids, ...rest } = req.body;
 
     const sampleExam = await Exam.findOne({
@@ -378,6 +364,120 @@ const postCreatev2 = async (req, res) => {
     });
 };
 
+// Dùng cho thi đánh giá tư duy
+const postCreateDGTD = async (req, res) => {
+    const { khoa_hoc_id, ...rest } = req.body;
+
+    const sampleExam = await Exam.findOne({
+        where: {
+            de_mau: true,
+            xuat_ban: true,
+            trang_thai: true,
+            khoa_hoc_id,
+        },
+    });
+
+    if (!sampleExam) {
+        return res.status(404).send({
+            status: 'error',
+            data: null,
+            message: 'Đề mẫu của khóa học không tồn tại',
+        });
+    }
+
+    let criteria = await DGTDCriteria.findOne({
+        where: {
+            khoa_hoc_id: khoa_hoc_id,
+        },
+    });
+    if (!criteria) {
+        await DGTDCriteria.create({
+            khoa_hoc_id: khoa_hoc_id,
+            so_cau_hoi: 100,
+            thoi_gian: 150,
+            so_phan: 3,
+            so_cau_hoi_phan_1: 40,
+            thoi_gian_phan_1: 60,
+            so_cau_hoi_phan_2: 20,
+            thoi_gian_phan_2: 30,
+            so_cau_hoi_phan_3: 40,
+            thoi_gian_phan_3: 60,
+        });
+
+        criteria = await DGTDCriteria.findOne({
+            where: {
+                khoa_hoc_id: khoa_hoc_id,
+            },
+        });
+    }
+
+    const exam = await Exam.create({
+        ten_de_thi: 'THI ĐÁNH GIÁ TƯ DUY',
+        tong_diem: 100,
+        xuat_ban: true,
+        trang_thai: true,
+        kct_id: 1,
+        khoa_hoc_id,
+        loai_de_thi_id: 6,
+        de_mau_id: sampleExam.de_thi_id,
+    });
+
+    // phần 1
+    await sequelize.query(
+        `
+        INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan, chuyen_nganh_id)
+            SELECT cau_hoi_id, ${exam.dataValues.de_thi_id}, 1, chuyen_nganh_id FROM cau_hoi_de_thi
+            WHERE chuyen_nganh_id = 10 AND de_thi_id = ${sampleExam.de_thi_id}
+            ORDER BY RAND() LIMIT ${criteria.so_cau_hoi_phan_1}
+    `,
+        {
+            type: sequelize.QueryTypes.INSERT,
+        }
+    );
+
+    // phần 2
+    await sequelize.query(
+        `
+            INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan, chuyen_nganh_id)
+                SELECT chdt.cau_hoi_id, ${exam.dataValues.de_thi_id}, 2, chdt.chuyen_nganh_id FROM cau_hoi_de_thi chdt
+                INNER JOIN cau_hoi ch ON chdt.cau_hoi_id = ch.cau_hoi_id
+                WHERE chdt.chuyen_nganh_id = 11 AND chdt.de_thi_id = ${sampleExam.de_thi_id}
+                ORDER BY ch.trich_doan_id ASC, RAND()
+                LIMIT ${criteria.so_cau_hoi_phan_2}
+        `,
+        {
+            type: sequelize.QueryTypes.INSERT,
+        }
+    );
+
+    // phần 3
+    await sequelize.query(
+        `
+            INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan, chuyen_nganh_id)
+                SELECT chdt.cau_hoi_id, ${exam.dataValues.de_thi_id}, 3, chdt.chuyen_nganh_id FROM cau_hoi_de_thi chdt
+                INNER JOIN cau_hoi ch ON chdt.cau_hoi_id = ch.cau_hoi_id
+                WHERE chdt.chuyen_nganh_id = 12 AND chdt.de_thi_id = ${sampleExam.de_thi_id}
+                ORDER BY ch.trich_doan_id ASC, RAND()
+                LIMIT ${criteria.so_cau_hoi_phan_3}
+        `,
+        {
+            type: sequelize.QueryTypes.INSERT,
+        }
+    );
+
+    const studentExam = await StudentExam.create({
+        ...rest,
+        de_thi_id: exam.dataValues.de_thi_id,
+        hoc_vien_id: req.userId,
+    });
+
+    res.status(200).send({
+        status: 'success',
+        data: studentExam,
+        message: null,
+    });
+};
+
 const getByExamId = async (req, res) => {
     const studentExam = await StudentExam.findOne({
         where: {
@@ -398,7 +498,7 @@ const getByExamId = async (req, res) => {
 };
 
 // dùng cho đánh giá năng lực
-const getByExamIdv2 = async (req, res) => {
+const getByExamIdDGNL = async (req, res) => {
     const studentExam = await StudentExam.findOne({
         include: {
             model: Exam,
@@ -743,7 +843,7 @@ const putUpdatev3 = async (req, res) => {
 };
 
 // dùng cho đánh giá tư duy
-const putUpdatev4 = async (req, res) => {
+const putUpdateDGTD = async (req, res) => {
     const selectedAnswers = await SelectedAnswer.findAll({
         include: {
             model: Question,
@@ -764,6 +864,7 @@ const putUpdatev4 = async (req, res) => {
     let so_cau_tra_loi_sai = 0;
     let ket_qua_chons;
     let dap_ans;
+    let noi_dung_dap_ans;
     let result;
     let phan_1 = 0;
     let phan_2 = 0;
@@ -775,15 +876,7 @@ const putUpdatev4 = async (req, res) => {
                 selectedAnswer.noi_dung_tra_loi &&
                 selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an &&
                 selectedAnswer.noi_dung_tra_loi.trim().toLowerCase() ==
-                    selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an
-                        .replaceAll('<b>', '')
-                        .replaceAll('</b>', '')
-                        .replaceAll('<em>', '')
-                        .replaceAll('</em>', '')
-                        .replaceAll('<u>', '')
-                        .replaceAll('</u>', '')
-                        .trim()
-                        .toLowerCase()
+                    selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an.toLowerCase()
             )
                 result = true;
         } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 1) {
@@ -816,6 +909,7 @@ const putUpdatev4 = async (req, res) => {
             if (
                 ket_qua_chons.every(
                     (ket_qua_chon, index) =>
+                        ket_qua_chon !== '_' &&
                         (ket_qua_chon === '1') === dap_ans[index].dap_an_dung
                 )
             ) {
@@ -828,6 +922,7 @@ const putUpdatev4 = async (req, res) => {
             if (
                 ket_qua_chons.every(
                     (ket_qua_chon, index) =>
+                        ket_qua_chon !== '_' &&
                         (ket_qua_chon === '1') === dap_ans[index].dap_an_dung
                 )
             ) {
@@ -835,19 +930,37 @@ const putUpdatev4 = async (req, res) => {
             }
         } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 5) {
             // nếu không nhập thì để là "_"
+            noi_dung_dap_ans = selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an
+                ? selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an.split(';')
+                : '';
             if (
                 selectedAnswer.noi_dung_tra_loi &&
-                selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an &&
-                selectedAnswer.noi_dung_tra_loi.trim().toLowerCase() ==
-                    selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an
-                        .replaceAll('<b>', '')
-                        .replaceAll('</b>', '')
-                        .replaceAll('<em>', '')
-                        .replaceAll('</em>', '')
-                        .replaceAll('<u>', '')
-                        .replaceAll('</u>', '')
-                        .trim()
-                        .toLowerCase()
+                noi_dung_dap_ans &
+                    selectedAnswer.noi_dung_tra_loi
+                        .split(';')
+                        .every(
+                            (noi_dung_tra_loi, index) =>
+                                noi_dung_tra_loi.trim().toLowerCase() ===
+                                noi_dung_dap_ans[index].trim().toLowerCase()
+                        )
+            ) {
+                result = true;
+            }
+        } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 6) {
+            // nếu không nhập thì để là "_"
+            noi_dung_dap_ans = selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an
+                ? selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an.split(';')
+                : '';
+            if (
+                selectedAnswer.noi_dung_tra_loi &&
+                noi_dung_dap_ans &
+                    selectedAnswer.noi_dung_tra_loi
+                        .split(';')
+                        .every(
+                            (noi_dung_tra_loi, index) =>
+                                noi_dung_tra_loi.trim().toLowerCase() ===
+                                noi_dung_dap_ans[index].trim().toLowerCase()
+                        )
             ) {
                 result = true;
             }
@@ -1061,11 +1174,12 @@ module.exports = {
     forceDelete,
     clearAll,
     exportReport,
-    postCreatev2,
+    postCreateDGNL,
     putUpdatev2,
     putUpdatev3,
     getAllDGNL,
     getByExamId,
-    getByExamIdv2,
-    putUpdatev4,
+    getByExamIdDGNL,
+    putUpdateDGTD,
+    postCreateDGTD,
 };

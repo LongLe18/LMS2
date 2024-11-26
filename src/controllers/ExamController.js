@@ -13,6 +13,9 @@
     SelectedAnswer,
     ExceprtType,
     DGNLCriteria,
+    QuestionDetail,
+    Option,
+    DGTDCriteria,
 } = require('../models');
 const { Op } = require('sequelize');
 const sequelize = require('../utils/db');
@@ -796,6 +799,170 @@ const getByIdv2 = async (req, res) => {
     });
 };
 
+const getByIdDGTD = async (req, res) => {
+    let exam = await Exam.findOne({
+        where: {
+            de_thi_id: req.params.id,
+        },
+    });
+    if (exam.de_mau) {
+        exam = await Exam.findOne({
+            include: {
+                model: ExamQuestion,
+                include: {
+                    model: Question,
+                    include: [
+                        {
+                            model: Answer,
+                        },
+                        {
+                            model: QuestionDetail,
+                            attributes: ['chct_id', 'noi_dung'],
+                        },
+                        {
+                            model: Option,
+                            attributes: ['lua_chon_id', 'noi_dung'],
+                        },
+                        {
+                            model: Exceprt,
+                            include: {
+                                model: ExceprtType,
+                            },
+                        },
+                    ],
+                },
+            },
+            where: {
+                de_thi_id: req.params.id,
+            },
+            order: [
+                [
+                    sequelize.literal(
+                        `FIELD(cau_hoi_de_this.chuyen_nganh_id, ${[
+                            10, 11, 12,
+                        ].join(', ')})`
+                    ),
+                ],
+                [sequelize.col('dap_an_id'), 'ASC'],
+            ],
+        });
+    } else {
+        exam = await Exam.findOne({
+            include: {
+                model: ExamQuestion,
+                include: {
+                    model: Question,
+                    include: [
+                        {
+                            model: Answer,
+                        },
+                        {
+                            model: QuestionDetail,
+                            attributes: ['chct_id', 'noi_dung'],
+                        },
+                        {
+                            model: Option,
+                            attributes: ['lua_chon_id', 'noi_dung'],
+                        },
+                        {
+                            model: Exceprt,
+                            include: {
+                                model: ExceprtType,
+                            },
+                        },
+                    ],
+                },
+            },
+            where: {
+                de_thi_id: req.params.id,
+            },
+            order: [
+                [sequelize.col('phan'), 'ASC'],
+                [sequelize.col('chdt_id'), 'ASC'],
+                [sequelize.col('dap_an_id'), 'ASC'],
+                [sequelize.col('lua_chon_id'), 'ASC'],
+                [sequelize.col('chct_id'), 'ASC'],
+            ],
+        });
+    }
+
+    const criteria = await DGTDCriteria.findOne({
+        where: {
+            khoa_hoc_id: exam.khoa_hoc_id,
+        },
+    });
+    if (criteria) {
+        exam.dataValues.so_cau_hoi = criteria.so_cau_hoi;
+        exam.dataValues.thoi_gian = criteria.thoi_gian;
+        exam.dataValues.so_phan = criteria.so_phan;
+        for (let i = 0; i < criteria.so_phan; i++) {
+            exam.dataValues[`so_cau_hoi_phan_${i + 1}`] =
+                criteria[`so_cau_hoi_phan_${i + 1}`];
+            exam.dataValues[`yeu_cau_phan_${i + 1}`] =
+                criteria[`yeu_cau_phan_${i + 1}`];
+            exam.dataValues[`thoi_gian_phan_${i + 1}`] =
+                criteria[`thoi_gian_phan_${i + 1}`];
+        }
+    } else {
+        return res.status(404).send({
+            status: 'error',
+            message: 'no criteria',
+        });
+    }
+
+    let dap_an_dungs;
+    let exceprtFrom;
+    let exceprtTo;
+    for (var index1 = 0; index1 < exam.cau_hoi_de_this.length; index1++) {
+        dap_an_dungs = [];
+        if (
+            exam.cau_hoi_de_this[index1].cau_hoi &&
+            exam.cau_hoi_de_this[index1].cau_hoi.trich_doan_id
+        ) {
+            if (
+                index1 == 0 ||
+                exam.cau_hoi_de_this[index1].cau_hoi.trich_doan_id !=
+                    exam.cau_hoi_de_this[index1 - 1].cau_hoi.trich_doan_id
+            ) {
+                exceprtFrom = exceprtTo = index1;
+                for (
+                    var index3 = index1 + 1;
+                    index3 < exam.cau_hoi_de_this.length;
+                    index3++
+                ) {
+                    if (
+                        exam.cau_hoi_de_this[index1].cau_hoi.trich_doan_id ==
+                        exam.cau_hoi_de_this[index3].cau_hoi.trich_doan_id
+                    )
+                        exceprtTo = index3;
+                }
+                exam.cau_hoi_de_this[index1].cau_hoi.dataValues.exceprtFrom =
+                    exceprtFrom;
+                exam.cau_hoi_de_this[index1].cau_hoi.dataValues.exceprtTo =
+                    exceprtTo;
+            }
+        }
+        for (
+            var index2 = 0;
+            index2 < exam.cau_hoi_de_this[index1].cau_hoi.dap_ans.length;
+            index2++
+        ) {
+            if (
+                exam.cau_hoi_de_this[index1].cau_hoi.dap_ans[index2].dap_an_dung
+            )
+                dap_an_dungs.push(index2);
+            exam.cau_hoi_de_this[index1].cau_hoi.dataValues.dap_an_dungs =
+                dap_an_dungs;
+        }
+    }
+
+    res.status(200).send({
+        status: 'success',
+        data: exam,
+        message: null,
+    });
+};
+
 const postCreate = async (req, res) => {
     if (!req.body.de_thi_ma) {
         return res.status(400).send({
@@ -1376,4 +1543,5 @@ module.exports = {
     getByIdv2,
     getExamDGNL,
     getCriteriaByExamId,
+    getByIdDGTD,
 };

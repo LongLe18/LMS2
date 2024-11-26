@@ -12,7 +12,7 @@ const cauhoi = sequelize.define(
         noi_dung: {
             type: DataTypes.STRING,
         },
-        // 0: tự luận, 1: trắc nghiệm, 2: trắc nghiệm nhiều lựa chọn, 3: trắc nghiệm nhiều lựa chọn đúng sai, 4: trắc nghiệm đúng sai, 5: tự luận nhiều vị trí
+        // 0: tự luận, 1: trắc nghiệm, 2: trắc nghiệm nhiều lựa chọn, 3: trắc nghiệm nhiều lựa chọn đúng sai, 4: trắc nghiệm đúng sai, 5: tự luận nhiều vị trí, 6: kéo thả
         loai_cau_hoi: {
             type: DataTypes.TINYINT,
         },
