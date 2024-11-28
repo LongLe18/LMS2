@@ -37,7 +37,7 @@ const getAll_admin = async (req, res) => {
 const getById = async (req, res) => {
     const dgtdCriteria = await DGTDCriteria.findOne({
         where: {
-            idtieu_chi_de_thi_dgnl: req.params.id,
+            idtieu_chi_de_thi_dgtd: req.params.id,
         },
     });
     res.status(200).send({
@@ -87,7 +87,7 @@ const postCreate = async (req, res) => {
 const getUpdate = async (req, res) => {
     const dgtdCriteria = await DGTDCriteria.findOne({
         where: {
-            idtieu_chi_de_thi_dgnl: req.params.id,
+            idtieu_chi_de_thi_dgtd: req.params.id,
         },
     });
     res.status(200).send({
@@ -104,7 +104,7 @@ const putUpdate = async (req, res) => {
         },
         {
             where: {
-                idtieu_chi_de_thi_dgnl: req.params.id,
+                idtieu_chi_de_thi_dgtd: req.params.id,
             },
         }
     );
@@ -118,7 +118,7 @@ const putUpdate = async (req, res) => {
 const forceDelete = async (req, res) => {
     await DGTDCriteria.destroy({
         where: {
-            idtieu_chi_de_thi_dgnl: req.params.id,
+            idtieu_chi_de_thi_dgtd: req.params.id,
         },
     });
     res.status(200).send({
@@ -131,7 +131,7 @@ const forceDelete = async (req, res) => {
 const getQuantityExamPublish = async (req, res) => {
     const dgtdCriteria = await DGTDCriteria.findOne({
         where: {
-            idtieu_chi_de_thi_dgnl: req.params.id,
+            idtieu_chi_de_thi_dgtd: req.params.id,
         },
     });
     const exams = await Exam.findAll({
