@@ -59,7 +59,7 @@ const getById = async (req, res) => {
             attributes: ['khoa_hoc_id', 'ten_khoa_hoc'],
         },
         where: {
-            danh_gia_dgnl_id: req.params.id,
+            danh_gia_dgtd_id: req.params.id,
         },
     });
 
@@ -108,7 +108,7 @@ const putUpdate = async (req, res) => {
         },
         {
             where: {
-                danh_gia_dgnl_id: req.params.id,
+                danh_gia_dgtd_id: req.params.id,
             },
         }
     );
@@ -122,7 +122,7 @@ const putUpdate = async (req, res) => {
 const deleteById = async (req, res) => {
     await DGTDEvaluate.destroy({
         where: {
-            danh_gia_dgnl_id: req.params.id,
+            danh_gia_dgtd_id: req.params.id,
         },
     });
     res.status(200).send({
