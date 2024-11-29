@@ -1,4 +1,11 @@
-const { Question, Answer, Majoring, ExamQuestion, QuestionDetail } = require('../models');
+const {
+    Question,
+    Answer,
+    Majoring,
+    ExamQuestion,
+    QuestionDetail,
+    Option,
+} = require('../models');
 const fs = require('fs');
 const { Op } = require('sequelize');
 const sequelize = require('../utils/db');
@@ -53,7 +60,9 @@ const getAll = async (req, res) => {
                 chuyen_nganh_id: req.query.chuyen_nganh_id,
             }),
             ...(req.query.kct_id && { kct_id: req.query.kct_id }),
-            ...(req.query.loai_cau_hoi && { loai_cau_hoi: req.query.loai_cau_hoi }),
+            ...(req.query.loai_cau_hoi && {
+                loai_cau_hoi: req.query.loai_cau_hoi,
+            }),
         },
         offset:
             (Number(req.query.pageIndex || 1) - 1) *
@@ -88,9 +97,17 @@ const getAll_admin = async (req, res) => {
 
 const getById = async (req, res) => {
     const question = await Question.findOne({
-        include: {
-            model: Answer,
-        },
+        include: [
+            {
+                model: Answer,
+                attributes: ['dap_an_id', 'noi_dung_dap_an'],
+            },
+            {
+                model: Option,
+                attributes: ['lua_chon_id', 'noi_dung'],
+            },
+            { model: QuestionDetail, attributes: ['chct_id', 'noi_dung'] },
+        ],
         where: {
             cau_hoi_id: req.params.id,
         },
@@ -119,12 +136,12 @@ const postCreate = async (req, res) => {
         ...(req.files &&
             req.files.tep_dinh_kem_noi_dung && {
                 noi_dung: `${req.body.noi_dung} ${req.body.tep_dinh_kem_noi_dung}`,
-                tep_dinh_kem_noi_dung: req.body.tep_dinh_kem_noi_dung
+                tep_dinh_kem_noi_dung: req.body.tep_dinh_kem_noi_dung,
             }),
         ...(req.files &&
             req.files.tep_dinh_kem_loi_giai && {
                 loi_giai: `${req.body.loi_giai} ${req.body.tep_dinh_kem_loi_giai}`,
-                tep_dinh_kem_loi_giai: req.body.tep_dinh_kem_loi_giai
+                tep_dinh_kem_loi_giai: req.body.tep_dinh_kem_loi_giai,
             }),
     });
     res.status(200).send({
@@ -151,12 +168,12 @@ const putUpdate = async (req, res) => {
             ...(req.files &&
                 req.files.tep_dinh_kem_noi_dung && {
                     noi_dung: `${req.body.noi_dung} ${req.body.tep_dinh_kem_noi_dung}`,
-                    tep_dinh_kem_noi_dung: req.body.tep_dinh_kem_noi_dung
+                    tep_dinh_kem_noi_dung: req.body.tep_dinh_kem_noi_dung,
                 }),
             ...(req.files &&
                 req.files.tep_dinh_kem_loi_giai && {
                     loi_giai: `${req.body.loi_giai} ${req.body.tep_dinh_kem_loi_giai}`,
-                    tep_dinh_kem_loi_giai: req.body.tep_dinh_kem_loi_giai
+                    tep_dinh_kem_loi_giai: req.body.tep_dinh_kem_loi_giai,
                 }),
         },
         {
@@ -244,6 +261,133 @@ const forceDelete = async (req, res) => {
     });
 };
 
+const addDetails = async (req, res) => {
+    const { details } = req.body;
+
+    await QuestionDetail.bulkCreate(
+        details.map((detail) => ({
+            noi_dung: detail.noi_dung,
+            cau_hoi_id: req.params.id,
+        }))
+    );
+
+    res.status(200).send({
+        status: 'success',
+        data: null,
+        message: null,
+    });
+};
+
+const addDetail = async (req, res) => {
+    const { noi_dung } = req.body;
+
+    await QuestionDetail.create({
+        noi_dung,
+        cau_hoi_id: req.params.id,
+    });
+
+    res.status(200).send({
+        status: 'success',
+        data: null,
+        message: null,
+    });
+};
+
+const getDetails = async (req, res) => {
+    const details = await QuestionDetail.findAll({
+        where: {
+            cau_hoi_id: req.params.id,
+        },
+    });
+
+    res.status(200).send({
+        status: 'success',
+        data: details,
+        message: null,
+    });
+};
+
+const updateDetail = async (req, res) => {
+    await QuestionDetail.update(req.body, {
+        where: {
+            chct_id: req.params.detailId,
+        },
+    });
+
+    res.status(200).send({
+        status: 'success',
+        data: null,
+        message: null,
+    });
+};
+
+const removeDetail = async (req, res) => {
+    await QuestionDetail.destroy({
+        where: {
+            chct_id: req.params.detailId,
+        },
+    });
+
+    res.status(200).send({
+        status: 'success',
+        data: null,
+        message: null,
+    });
+};
+
+const addOption = async (req, res) => {
+    const { noi_dung } = req.body;
+    await Option.create({ noi_dung, cau_hoi_id: req.params.id });
+
+    res.status(200).send({
+        status: 'success',
+        data: null,
+        message: null,
+    });
+};
+
+const getOption = async (req, res) => {
+    const option = await Option.findAll({
+        where: {
+            cau_hoi_id: req.params.id,
+        },
+    });
+
+    res.status(200).send({
+        status: 'success',
+        data: option,
+        message: null,
+    });
+};
+
+const updateOption = async (req, res) => {
+    await Option.update(req.body, {
+        where: {
+            lua_chon_id: req.params.optionId,
+        },
+    });
+
+    res.status(200).send({
+        status: 'success',
+        data: null,
+        message: null,
+    });
+};
+
+const removeOption = async (req, res) => {
+    await Option.destroy(req.body, {
+        where: {
+            lua_chon_id: req.params.optionId,
+        },
+    });
+
+    res.status(200).send({
+        status: 'success',
+        data: null,
+        message: null,
+    });
+};
+
 module.exports = {
     getByExam,
     getAll,
@@ -252,4 +396,13 @@ module.exports = {
     postCreate,
     putUpdate,
     forceDelete,
+    addDetails,
+    addDetail,
+    getDetails,
+    updateDetail,
+    removeDetail,
+    addOption,
+    getOption,
+    updateOption,
+    removeOption,
 };
