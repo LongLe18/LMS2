@@ -41,6 +41,23 @@ function* fetchEvaluationsDGNL(payload) {
     }
 }
 
+function* fetchEvaluationsDGTD(payload) {
+    try {
+        let endpoint = `${config.API_URL}/evaluate-dgtd?khoa_hoc_id=${payload.params.idCourse}&pageIndex=${payload.params.pageIndex}&pageSize=${payload.params.pageSize}`;
+        const response = yield call(getApiAuth, endpoint);
+        const result = yield response.data;
+        yield put({ type: actions.evaluate.GET_EVALUATES_DGTD_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.evaluate.GET_EVALUATES_DGTD_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        notification.error({
+            message: get(error, 'response.data.error', 'Tải dữ liệu đánh giá đã thất bại ' + messageError),
+        });
+    }
+}
 
 function* fetchEvaluation(payload) {
     try {
@@ -71,6 +88,24 @@ function* fetchEvaluationDGNL(payload) {
         }
     } catch (error) {
         yield put({ type: actions.evaluate.GET_EVALUATE_DGNL_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        notification.error({
+            message: get(error, 'response.data.error', 'Tải dữ liệu đánh giá đã thất bại ' + messageError),
+        });
+    }
+}
+
+function* fetchEvaluationDGTD(payload) {
+    try {
+        let endpoint = `${config.API_URL}/evaluate-dgtd/${payload.params.id}`;
+        const response = yield call(getApiAuth, endpoint);
+        const result = yield response.data;
+        yield put({ type: actions.evaluate.GET_EVALUATE_DGTD_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.evaluate.GET_EVALUATE_DGTD_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
         notification.error({
             message: get(error, 'response.data.error', 'Tải dữ liệu đánh giá đã thất bại ' + messageError),
@@ -114,6 +149,24 @@ function* createEvaluationDGNL(payload) {
     }
 }
 
+function* createEvaluationDGTD(payload) {
+    try {
+        let endpoint = config.API_URL + '/evaluate-dgtd/create';
+        const response = yield call(postApiAuth, endpoint, payload.params); 
+        const result = yield response;
+        yield put({ type: actions.evaluate.CREATE_EVALUATE_DGTD_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.evaluate.CREATE_EVALUATE_DGTD_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : error.response.data.message;
+        notification.error({
+            message: get(error, 'response.data.error', 'Thêm đánh giá mới thất bại: ' + messageError),
+        });
+    }
+}
+
 function* editEvaluation(payload) {
     try {
         let endpoint = config.API_URL + `/evaluate/${payload.params.id}`;
@@ -143,6 +196,24 @@ function* editEvaluationDGNL(payload) {
         }
     } catch (error) {
         yield put({ type: actions.evaluate.EDIT_EVALUATE_DGNL_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        notification.error({
+            message: get(error, 'response.data.error', 'Cập nhật thông tin đánh giá thất bại ' + messageError),
+        });
+    }
+}
+
+function* editEvaluationDGTD(payload) {
+    try {
+        let endpoint = config.API_URL + `/evaluate-dgtd/${payload.params.id}`;
+        const response = yield call(putApiAuth, endpoint, payload.params.formData); 
+        const result = yield response;
+        yield put({ type: actions.evaluate.EDIT_EVALUATE_DGTD_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.evaluate.EDIT_EVALUATE_DGTD_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
         notification.error({
             message: get(error, 'response.data.error', 'Cập nhật thông tin đánh giá thất bại ' + messageError),
@@ -186,12 +257,35 @@ function* deleteEvaluationDGNL(payload) {
     }
 }
 
+function* deleteEvaluationDGTD(payload) {
+    try {
+        let endpoint = config.API_URL + `/evaluate-dgtd/${payload.params.id}`;
+        const response = yield call(deleteApiAuth, endpoint); 
+        const result = yield response;
+        yield put({ type: actions.evaluate.DELETE_EVALUATE_DGTD_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.evaluate.DELETE_EVALUATE_DGTD_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        notification.error({
+            message: get(error, 'response.data.error', 'Xóa đánh giá thất bại ' + messageError),
+        });
+    }
+}
+
+
 export function* loadEvaluations() {
     yield takeEvery(actions.evaluate.GET_EVALUATES, fetchEvaluations);
 }
 
 export function* loadEvaluationsDGNL() {
     yield takeEvery(actions.evaluate.GET_EVALUATES_DGNL, fetchEvaluationsDGNL);
+}
+
+export function* loadEvaluationsDGTD() {
+    yield takeEvery(actions.evaluate.GET_EVALUATES_DGTD, fetchEvaluationsDGTD);
 }
 
 export function* loadEvaluation() {
@@ -202,12 +296,20 @@ export function* loadEvaluationDGNL() {
     yield takeEvery(actions.evaluate.GET_EVALUATE_DGNL, fetchEvaluationDGNL);
 }
 
+export function* loadEvaluationDGTD() {
+    yield takeEvery(actions.evaluate.GET_EVALUATE_DGTD, fetchEvaluationDGTD);
+}
+
 export function* loadAddEvaluation() {
     yield takeEvery(actions.evaluate.CREATE_EVALUATE, createEvaluation);
 }
 
 export function* loadAddEvaluationDGNL() {
     yield takeEvery(actions.evaluate.CREATE_EVALUATE_DGNL, createEvaluationDGNL);
+}
+
+export function* loadAddEvaluationDGTD() {
+    yield takeEvery(actions.evaluate.CREATE_EVALUATE_DGTD, createEvaluationDGTD);
 }
 
 export function* loadEditEvaluation() {
@@ -218,10 +320,18 @@ export function* loadEditEvaluationDGNL() {
     yield takeEvery(actions.evaluate.EDIT_EVALUATE_DGNL, editEvaluationDGNL);
 }
 
+export function* loadEditEvaluationDGTD() {
+    yield takeEvery(actions.evaluate.EDIT_EVALUATE_DGTD, editEvaluationDGTD);
+}
+
 export function* loadDeleteEvaluation() {
     yield takeEvery(actions.evaluate.DELETE_EVALUATE, deleteEvaluation);
 }
 
 export function* loadDeleteEvaluationDGNL() {
     yield takeEvery(actions.evaluate.DELETE_EVALUATE_DGNL, deleteEvaluationDGNL);
+}
+
+export function* loadDeleteEvaluationDGTD() {
+    yield takeEvery(actions.evaluate.DELETE_EVALUATE_DGTD, deleteEvaluationDGTD);
 }

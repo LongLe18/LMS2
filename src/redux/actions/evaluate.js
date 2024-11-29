@@ -6,6 +6,10 @@ export const GET_EVALUATE_DGNL = "GET_EVALUATE_DGNL";
 export const GET_EVALUATE_DGNL_SUCCESS = "GET_EVALUATE_DGNL_SUCCESS";
 export const GET_EVALUATE_DGNL_FAILED = "GET_EVALUATE_DGNL_FAILED";
 
+export const GET_EVALUATE_DGTD = "GET_EVALUATE_DGTD";
+export const GET_EVALUATE_DGTD_SUCCESS = "GET_EVALUATE_DGTD_SUCCESS";
+export const GET_EVALUATE_DGTD_FAILED = "GET_EVALUATE_DGTD_FAILED";
+
 export const GET_EVALUATES = "GET_EVALUATES";
 export const GET_EVALUATES_SUCCESS = "GET_EVALUATES_SUCCESS";
 export const GET_EVALUATES_FAILED = "GET_EVALUATES_FAILED";
@@ -13,6 +17,10 @@ export const GET_EVALUATES_FAILED = "GET_EVALUATES_FAILED";
 export const GET_EVALUATES_DGNL = "GET_EVALUATES_DGNL";
 export const GET_EVALUATES_DGNL_SUCCESS = "GET_EVALUATES_DGNL_SUCCESS";
 export const GET_EVALUATES_DGNL_FAILED = "GET_EVALUATES_DGNL_FAILED";
+
+export const GET_EVALUATES_DGTD = "GET_EVALUATES_DGTD";
+export const GET_EVALUATES_DGTD_SUCCESS = "GET_EVALUATES_DGTD_SUCCESS";
+export const GET_EVALUATES_DGTD_FAILED = "GET_EVALUATES_DGTD_FAILED";
 
 export const DELETE_EVALUATE = "DELETE_EVALUATE";
 export const DELETE_EVALUATE_SUCCESS = "DELETE_EVALUATE_SUCCESS";
@@ -22,6 +30,10 @@ export const DELETE_EVALUATE_DGNL = "DELETE_EVALUATE_DGNL";
 export const DELETE_EVALUATE_DGNL_SUCCESS = "DELETE_EVALUATE_DGNL_SUCCESS";
 export const DELETE_EVALUATE_DGNL_FAILED = "DELETE_EVALUATE_DGNL_FAILED";
 
+export const DELETE_EVALUATE_DGTD = "DELETE_EVALUATE_DGTD";
+export const DELETE_EVALUATE_DGTD_SUCCESS = "DELETE_EVALUATE_DGTD_SUCCESS";
+export const DELETE_EVALUATE_DGTD_FAILED = "DELETE_EVALUATE_DGTD_FAILED";
+
 export const EDIT_EVALUATE = "EDIT_EVALUATE";
 export const EDIT_EVALUATE_SUCCESS = "EDIT_EVALUATE_SUCCESS";
 export const EDIT_EVALUATE_FAILED = "EDIT_EVALUATE_FAILED";
@@ -30,6 +42,10 @@ export const EDIT_EVALUATE_DGNL = "EDIT_EVALUATE_DGNL";
 export const EDIT_EVALUATE_DGNL_SUCCESS = "EDIT_EVALUATE_DGNL_SUCCESS";
 export const EDIT_EVALUATE_DGNL_FAILED = "EDIT_EVALUATE_DGNL_FAILED";
 
+export const EDIT_EVALUATE_DGTD = "EDIT_EVALUATE_DGTD";
+export const EDIT_EVALUATE_DGTD_SUCCESS = "EDIT_EVALUATE_DGTD_SUCCESS";
+export const EDIT_EVALUATE_DGTD_FAILED = "EDIT_EVALUATE_DGTD_FAILED";
+
 export const CREATE_EVALUATE = "CREATE_EVALUATE";
 export const CREATE_EVALUATE_SUCCESS = "CREATE_EVALUATE_SUCCESS";
 export const CREATE_EVALUATE_FAILED = "CREATE_EVALUATE_FAILED";
@@ -37,6 +53,10 @@ export const CREATE_EVALUATE_FAILED = "CREATE_EVALUATE_FAILED";
 export const CREATE_EVALUATE_DGNL = "CREATE_EVALUATE_DGNL";
 export const CREATE_EVALUATE_DGNL_SUCCESS = "CREATE_EVALUATE_DGNL_SUCCESS";
 export const CREATE_EVALUATE_DGNL_FAILED = "CREATE_EVALUATE_DGNL_FAILED";
+
+export const CREATE_EVALUATE_DGTD = "CREATE_EVALUATE_DGTD";
+export const CREATE_EVALUATE_DGTD_SUCCESS = "CREATE_EVALUATE_DGTD_SUCCESS";
+export const CREATE_EVALUATE_DGTD_FAILED = "CREATE_EVALUATE_DGTD_FAILED";
 
 export function getEVALUATE(params, callback) {
     return {
@@ -54,6 +74,15 @@ export function getEvaluationDGNL(params, callback) {
     };
 }
 
+export function getEvaluationDGTD(params, callback) {
+    return {
+        type: GET_EVALUATE_DGTD,
+        params,
+        callback,
+    };
+}
+
+
 export function getEVALUATEs(params, callback) {
     return {
         type: GET_EVALUATES,
@@ -65,6 +94,14 @@ export function getEVALUATEs(params, callback) {
 export function getEVALUATEsDGNL(params, callback) {
     return {
         type: GET_EVALUATES_DGNL,
+        params,
+        callback,
+    };
+}
+
+export function getEVALUATEsDGTD(params, callback) {
+    return {
+        type: GET_EVALUATES_DGTD,
         params,
         callback,
     };
@@ -86,6 +123,14 @@ export function DeleteEvaluationDGNL(params, callback) {
     };
 }
 
+export function DeleteEvaluationDGTD(params, callback) {
+    return {
+        type: DELETE_EVALUATE_DGTD,
+        params,
+        callback,
+    };
+}
+
 export function EditEVALUATE(params, callback) {
     return {
         type: EDIT_EVALUATE,
@@ -102,6 +147,14 @@ export function EditEvaluationDGNL(params, callback) {
     };
 }
 
+export function EditEvaluationDGTD(params, callback) {
+    return {
+        type: EDIT_EVALUATE_DGTD,
+        params,
+        callback,
+    };
+}
+
 export function CreateEVALUATE(params, callback) {
     return {
         type: CREATE_EVALUATE,
@@ -113,6 +166,14 @@ export function CreateEVALUATE(params, callback) {
 export function CreateEvaluationDGNL(params, callback) {
     return {
         type: CREATE_EVALUATE_DGNL,
+        params,
+        callback,
+    };
+}
+
+export function CreateEvaluationDGTD(params, callback) {
+    return {
+        type: CREATE_EVALUATE_DGTD,
         params,
         callback,
     };

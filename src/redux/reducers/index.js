@@ -26,6 +26,7 @@ import comment from './comment';
 import footer from './footer';
 import contact from './contact';
 import evaluate from './evaluate';
+import optionQuestion from './optionQuestion';
 
 export default combineReducers({ 
     programme,
@@ -54,4 +55,5 @@ export default combineReducers({
     footer,
     contact,
     evaluate,
+    optionQuestion,
 });

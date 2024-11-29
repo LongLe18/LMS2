@@ -199,6 +199,11 @@ import {
     loadCriteriasDGNL,
     loadDeleteCriteriaDGNL,
     loadEditCriteriaDGNL,
+    loadCriteriasDGTD,
+    loadEditCriteriaDGTD,
+    loadCriteriaDGTD,
+    loadAddCriteriaDGTD,
+    loadDeleteCriteriaDGTD,
 } from './criteria';
 
 import {
@@ -355,6 +360,11 @@ import {
     loadDeleteEvaluation,
     loadEditEvaluation,
     loadEvaluation,
+    loadAddEvaluationDGTD,
+    loadDeleteEvaluationDGTD,
+    loadEditEvaluationDGTD,
+    loadEvaluationDGTD,
+    loadEvaluationsDGTD,
 } from './evaluate';
 
 export default function* rootSaga() {
@@ -533,6 +543,11 @@ export default function* rootSaga() {
         loadCriteriasDGNL(),
         loadDeleteCriteriaDGNL(),
         loadEditCriteriaDGNL(),
+        loadCriteriaDGTD(),
+        loadCriteriasDGTD(),
+        loadAddCriteriaDGTD(),
+        loadEditCriteriaDGTD(),
+        loadDeleteCriteriaDGTD(),
         // advertisement
         loadAddAdsCourse(),
         loadAddAdsDoc(),
@@ -663,5 +678,10 @@ export default function* rootSaga() {
         loadDeleteEvaluation(),
         loadEditEvaluation(),
         loadEvaluation(),
+        loadAddEvaluationDGTD(),
+        loadDeleteEvaluationDGTD(),
+        loadEditEvaluationDGTD(),
+        loadEvaluationDGTD(),
+        loadEvaluationsDGTD(),
     ]);
 }

@@ -22,6 +22,7 @@ const { TabPane } = Tabs;
 const EvaluationPage = () => {
     const dataEvaluations = [];
     const dataEvaluationsDGNL = [];
+    const dataEvaluationsDGTD = [];
     const [formEvaluation] = Form.useForm();
 
     const [pageIndex, setPageIndex] = useState(1);
@@ -38,6 +39,7 @@ const EvaluationPage = () => {
 
     const evaluations = useSelector(state => state.evaluate.list.result);
     const evaluationsDGNL = useSelector(state => state.evaluate.listDGNL.result);
+    const evaluationsDGTD = useSelector(state => state.evaluate.listDGTD.result);
     const exams = useSelector(state => state.exam.list.result);
     const courses = useSelector(state => state.course.list.result);
     const loadingExams = useSelector(state => state.exam.list.loading);
@@ -60,6 +62,9 @@ const EvaluationPage = () => {
             case '1': // Tabs Đánh giá ĐGNL
                 dispatch(evaluationAction.getEVALUATEsDGNL({ idCourse: state.idCourse, pageIndex: pageIndex, pageSize: pageSize}));
                 break;
+            case '2': // Tabs Đánh giá ĐGNL
+                dispatch(evaluationAction.getEVALUATEsDGTD({ idCourse: state.idCourse, pageIndex: pageIndex, pageSize: pageSize}));
+                break;
             default:
                 break;
         }
@@ -71,6 +76,10 @@ const EvaluationPage = () => {
     
     if (evaluationsDGNL.status === 'success' ) {    
         evaluationsDGNL.data.map((item, index) => dataEvaluationsDGNL.push({...item, 'key': index}));
+    };
+
+    if (evaluationsDGTD.status === 'success' ) {    
+        evaluationsDGTD.data.map((item, index) => dataEvaluationsDGTD.push({...item, 'key': index}));
     };
 
     // event show modal
@@ -91,6 +100,7 @@ const EvaluationPage = () => {
                 formEvaluation.resetFields();
                 if (state.activeTab === '0') dispatch(evaluationAction.getEVALUATEs({ id: idExam, pageIndex: pageIndex, pageSize: pageSize}));
                 else if (state.activeTab === '1') dispatch(evaluationAction.getEVALUATEsDGNL({ idCourse: state.idCourse, pageIndex: pageIndex, pageSize: pageSize}));
+                else if (state.activeTab === '2') dispatch(evaluationAction.getEVALUATEsDGTD({ idCourse: state.idCourse, pageIndex: pageIndex, pageSize: pageSize}));
                 if (idEvaluation === '') {
                     notification.success({
                         message: 'Thành công',
@@ -121,9 +131,11 @@ const EvaluationPage = () => {
 
         if (idEvaluation === '') {
             if (state.activeTab === '0') dispatch(evaluationAction.CreateEVALUATE(values, callback));
+            if (state.activeTab === '2') dispatch(evaluationAction.CreateEvaluationDGTD(values, callback));
             else dispatch(evaluationAction.CreateEvaluationDGNL(values, callback));
         } else {
             if (state.activeTab === '0') dispatch(evaluationAction.EditEVALUATE({ id: idEvaluation, formData: values}, callback));
+            if (state.activeTab === '2') dispatch(evaluationAction.EditEvaluationDGTD({ id: idEvaluation, formData: values}, callback));
             else dispatch(evaluationAction.EditEvaluationDGNL({ id: idEvaluation, formData: values}, callback));
         }   
     }
@@ -179,9 +191,15 @@ const EvaluationPage = () => {
     const renderCourses = () => {
         let options = [];
         if (courses.status === 'success') {
-            options = courses.data.filter((item) => item.loai_kct === 0).map((course) => (
-                <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
-            ))
+            if (state.activeTab === '1') {
+                options = courses.data.filter((item) => item.loai_kct === 0).map((course) => (
+                    <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
+                ))
+            } else if (state.activeTab === '2') {
+                options = courses.data.filter((item) => item.loai_kct === 3).map((course) => (
+                    <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
+                ))
+            } else return null;
         }
         return (
             <Select style={{width: '100%'}}
@@ -330,7 +348,7 @@ const EvaluationPage = () => {
                     </Col>
                 </Row>
             )
-        } else if (state.activeTab === '1') {
+        } else if (state.activeTab === '1' || state.activeTab === '2') {
             return (
                 <Row>
                     <Col xl={24} sm={24} xs={24} className="cate-form-block">
@@ -425,7 +443,7 @@ const EvaluationPage = () => {
                     </Col>
                 </Row>
             )
-        }
+        } else return null
     }
 
     const EditEvaluation = (danh_gia_id) => {
@@ -438,6 +456,8 @@ const EvaluationPage = () => {
         setIdEvaluation(danh_gia_id);
         if (state.activeTab === '0') {
             dispatch(evaluationAction.getEVALUATE({ id: danh_gia_id }, callback));
+        } else if (state.activeTab === '2')  {
+            dispatch(evaluationAction.getEvaluationDGTD({ id: danh_gia_id }, callback));
         } else {
             dispatch(evaluationAction.getEvaluationDGNL({ id: danh_gia_id }, callback));
         }
@@ -454,19 +474,21 @@ const EvaluationPage = () => {
                     if (res.statusText === 'OK' && res.status === 200) {
                         if (state.activeTab === '0') dispatch(evaluationAction.getEVALUATEs({ id: idExam, pageIndex: pageIndex, pageSize: pageSize}));         
                         else if (state.activeTab === '1') dispatch(evaluationAction.getEVALUATEsDGNL({ idCourse: state.idCourse, pageIndex: pageIndex, pageSize: pageSize}));
+                        else if (state.activeTab === '2') dispatch(evaluationAction.getEVALUATEsDGTD({ idCourse: state.idCourse, pageIndex: pageIndex, pageSize: pageSize}));
                         notification.success({
                             message: 'Thành công',
                             description: 'Xóa đánh giá thành công',
-                        })
+                        });
                     } else {
                         notification.error({
                             message: 'Thông báo',
                             description: 'Xóa đánh giá mới thất bại',
-                        })
+                        });
                     };
                 }
-                if (state.activeTab === '0') dispatch(evaluationAction.DeleteEVALUATE({ id: danh_gia_id }, callback))
-                else if (state.activeTab === '1') dispatch(evaluationAction.DeleteEvaluationDGNL({ id: danh_gia_id }, callback))
+                if (state.activeTab === '0') dispatch(evaluationAction.DeleteEVALUATE({ id: danh_gia_id }, callback));
+                else if (state.activeTab === '1') dispatch(evaluationAction.DeleteEvaluationDGNL({ id: danh_gia_id }, callback));
+                else if (state.activeTab === '2') dispatch(evaluationAction.DeleteEvaluationDGTD({ id: danh_gia_id }, callback));
             },
         });
     }
@@ -601,6 +623,67 @@ const EvaluationPage = () => {
         },
     ];
     
+    const columnsDGTD = [
+        {
+            title: 'Khóa học',
+            dataIndex: 'ten_khoa_hoc',
+            key: 'ten_khoa_hoc',
+            responsive: ['md'],
+            render: (ten_khoa_hoc, danh_gia) => (
+                danh_gia?.khoa_hoc?.ten_khoa_hoc
+            ),
+        },
+        {
+            title: 'Phần đánh giá',
+            dataIndex: 'phan_thi',
+            key: 'phan_thi',
+            responsive: ['md'],
+            render: (phan_thi) => (
+                phan_thi === 1 ? 'Phần 1' : phan_thi === 2 ? 'Phần 2' : phan_thi === 32 ? 'Phần 3: Khoa học' : phan_thi === 31 && 'Phần 3: Tiếng Anh'
+            ),
+        },
+        {
+            title: 'Điểm bắt đầu',
+            dataIndex: 'cau_bat_dau',
+            key: 'cau_bat_dau',
+            responsive: ['md'],
+        },
+        {
+            title: 'Điểm kết thúc',
+            dataIndex: 'cau_ket_thuc',
+            key: 'cau_ket_thuc',
+            responsive: ['md'],
+        },
+        {
+            title: 'Nội dung đánh giá',
+            dataIndex: 'danh_gia',
+            key: 'danh_gia',
+            responsive: ['md'],
+        },
+        {
+            title: 'Thời gian cập nhật',
+            dataIndex: 'ngay_sua',
+            key: 'ngay_sua',
+            responsive: ['md'],
+            render: (date) => (
+                moment(date).utc(7).format(config.DATE_FORMAT)
+            ),
+            sorter: (a, b) => moment(a.ngay_sua).unix() - moment(b.ngay_sua).unix()
+        },     
+        {
+            title: 'Tùy chọn',
+            key: 'danh_gia_dgtd_id',
+            dataIndex: 'danh_gia_dgtd_id',
+            // Redirect view for edit
+            render: (danh_gia_dgtd_id) => (
+                <Space size="middle">
+                    <Button  type="button" onClick={() => EditEvaluation(danh_gia_dgtd_id)} className="ant-btn ant-btn-round ant-btn-primary">Sửa</Button>
+                    <Button shape="round" type="danger" onClick={() => DeleteEvaluation(danh_gia_dgtd_id)} >Xóa</Button> 
+                </Space>
+            ),
+        },
+    ];
+
     // event đổi tab
     const onChangeTab = (value) => {
         setPageIndex(1);
@@ -672,9 +755,36 @@ const EvaluationPage = () => {
                             </>
                         }
                     </TabPane>
-                </Tabs>
 
-                
+                    <TabPane tab="Đánh giá đề thi ĐGTD BK" key="2">
+                        <Row cclassName="select-action-group" gutter={[8, 8]}>
+                            <Col xl={12} sm={12} xs={24}>
+                                {renderCourses()}
+                            </Col>
+                            <Col xl={12} sm={12} xs={24} className="right-actions">
+                                <Button shape="round" type="primary" icon={<PlusOutlined />} className=" btn-action" onClick={() => {
+                                    showModal();
+                                    formEvaluation.resetFields();
+                                }}>
+                                    Thêm mới đánh giá
+                                </Button>
+                            </Col>
+                        </Row>
+                        {(evaluationsDGTD.status === 'success') &&
+                            <>
+                                <Table className="table-striped-rows" columns={columnsDGTD} dataSource={dataEvaluationsDGTD} pagination={false}/>
+                                <Pagination style={{marginTop: 12}}
+                                    showSizeChanger
+                                    onShowSizeChange={onShowSizeChange}
+                                    onChange={onChange}
+                                    defaultCurrent={pageIndex}
+                                    total={evaluationsDGTD?.totalCount}
+                                />
+                            </>
+                        }
+                    </TabPane>
+                </Tabs>
+               
             </div>
 
             <Modal visible={isModalVisible}  mask={true} centered={true} className="cra-exam-modal" wrapClassName="cra-exam-modal-container"

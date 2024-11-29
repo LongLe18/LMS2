@@ -163,6 +163,8 @@ const QUESTIONS_TYPES = [
   { label: 'Trắc nghiệm', value: 1 },
   { label: 'Tự luận ', value: 0 },
   { label: 'Đúng sai ', value: 2 },
+  { label: 'Kéo thả ', value: 3 },
+  { label: 'Trắc nghiệm nhiều đáp án ', value: 4 },
 ];
 
 const QUESTIONS_LEVELS = [

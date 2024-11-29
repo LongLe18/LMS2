@@ -15,7 +15,12 @@ const initState = {
         loading: false,
         result: {},
         error: null,
-    }
+    },
+    listDGTD: {
+        loading: false,
+        result: {},
+        error: null,
+    },
 }
 
 export default function evaluateReducer(state = initState, action) {
@@ -52,6 +57,22 @@ export default function evaluateReducer(state = initState, action) {
                 ...state,
                 item: { ...state.item, loading: false, error: action.error },
             };
+        // get a evaluation DGTD
+        case evaluateActions.GET_EVALUATE_DGTD:
+            return {
+                ...state,
+                item: { ...state.item, loading: true },
+            };
+        case evaluateActions.GET_EVALUATE_DGTD_SUCCESS:
+            return {
+                ...state,
+                item: { ...state.item, loading: false, result: action.result },
+            };
+        case evaluateActions.GET_EVALUATE_DGTD_FAILED:
+            return {
+                ...state,
+                item: { ...state.item, loading: false, error: action.error },
+            };
         // get a list of evaluatations
         case evaluateActions.GET_EVALUATES:
             return {
@@ -84,6 +105,22 @@ export default function evaluateReducer(state = initState, action) {
                 ...state,
                 listDGNL: { ...state.listDGNL, loading: false, error: action.error },
             };
+        // get a list of evaluatations DGTD
+        case evaluateActions.GET_EVALUATES_DGTD:
+            return {
+                ...state,
+                listDGTD: { ...state.listDGTD, loading: true },
+            };
+        case evaluateActions.GET_EVALUATES_DGTD_SUCCESS:
+            return {
+                ...state,
+                listDGTD: { ...state.listDGTD, loading: false, result: action.result },
+            };
+        case evaluateActions.GET_EVALUATES_DGTD_FAILED:
+            return {
+                ...state,
+                listDGTD: { ...state.listDGTD, loading: false, error: action.error },
+            };
         // delete a evaluation
         case evaluateActions.DELETE_EVALUATE:
             return {
@@ -112,6 +149,22 @@ export default function evaluateReducer(state = initState, action) {
                 item: { ...state.item, loading: false, result: action.result },
             };
         case evaluateActions.DELETE_EVALUATE_DGNL_FAILED:
+            return {
+                ...state,
+                item: { ...state.item, loading: false, error: action.error },
+            };
+        // delete a evaluation DGTD
+        case evaluateActions.DELETE_EVALUATE_DGTD:
+            return {
+                ...state,
+                item: { ...state.item, loading: true },
+            };
+        case evaluateActions.DELETE_EVALUATE_DGTD_SUCCESS:
+            return {
+                ...state,
+                item: { ...state.item, loading: false, result: action.result },
+            };
+        case evaluateActions.DELETE_EVALUATE_DGTD_FAILED:
             return {
                 ...state,
                 item: { ...state.item, loading: false, error: action.error },
@@ -148,6 +201,22 @@ export default function evaluateReducer(state = initState, action) {
                 ...state,
                 item: { ...state.item, loading: false, error: action.error }
             }
+        // edit a evaluation DGTD
+        case evaluateActions.EDIT_EVALUATE_DGTD:
+            return {
+                ...state,
+                item: { ...state.item, loading: true },
+            };
+        case evaluateActions.EDIT_EVALUATE_DGTD_SUCCESS:
+            return {
+                ...state,
+                item: { ...state.item, loading: false, result: action.result },
+            };
+        case evaluateActions.EDIT_EVALUATE_DGTD_FAILED:
+            return {
+                ...state,
+                item: { ...state.item, loading: false, error: action.error }
+            }
         // create a evaluation
         case evaluateActions.CREATE_EVALUATE:
             return {
@@ -176,6 +245,22 @@ export default function evaluateReducer(state = initState, action) {
                 item: { ...state.item, loading: false, result: action.result },
             };
         case evaluateActions.CREATE_EVALUATE_DGNL_FAILED:
+            return {
+                ...state,
+                item: { ...state.item, loading: false, error: action.error },
+            };
+        // create a evaluation DGTD
+        case evaluateActions.CREATE_EVALUATE_DGTD:
+            return {
+                ...state,
+                item: { ...state.item, loading: true },
+            };
+        case evaluateActions.CREATE_EVALUATE_DGTD_SUCCESS:
+            return {
+                ...state,
+                item: { ...state.item, loading: false, result: action.result },
+            };
+        case evaluateActions.CREATE_EVALUATE_DGTD_FAILED:
             return {
                 ...state,
                 item: { ...state.item, loading: false, error: action.error },

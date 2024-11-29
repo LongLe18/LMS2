@@ -110,6 +110,27 @@ export const DELETE_CRITERIA_DGNL = "DELETE_CRITERIA_DGNL";
 export const DELETE_CRITERIA_DGNL_SUCCESS = "DELETE_CRITERIA_DGNL_SUCCESS";
 export const DELETE_CRITERIA_DGNL_FAILED = "DELETE_CRITERIA_DGNL_FAILED";
 
+/////////////////////////////////////////////////////////////////////////////
+export const GET_CRITERIA_DGTD = "GET_CRITERIA_DGTD";
+export const GET_CRITERIA_DGTD_SUCCESS = "GET_CRITERIA_DGTD_SUCCESS";
+export const GET_CRITERIA_DGTD_FAILED = "GET_CRITERIA_DGTD_FAILED";
+
+export const GET_CRITERIAS_DGTD = "GET_CRITERIAS_DGTD";
+export const GET_CRITERIAS_DGTD_SUCCESS = "GET_CRITERIAS_DGTD_SUCCESS";
+export const GET_CRITERIAS_DGTD_FAILED = "GET_CRITERIAS_DGTD_FAILED";
+
+export const CREATE_CRITERIA_DGTD = "CREATE_CRITERIA_DGTD";
+export const CREATE_CRITERIA_DGTD_SUCCESS = "CREATE_CRITERIA_DGTD_SUCCESS";
+export const CREATE_CRITERIA_DGTD_FAILED = "CREATE_CRITERIA_DGTD_FAILED";
+
+export const EDIT_CRITERIA_DGTD = "EDIT_CRITERIA_DGTD";
+export const EDIT_CRITERIA_DGTD_SUCCESS = "EDIT_CRITERIA_DGTD_SUCCESS";
+export const EDIT_CRITERIA_DGTD_FAILED = "EDIT_CRITERIA_DGTD_FAILED";
+
+export const DELETE_CRITERIA_DGTD = "DELETE_CRITERIA_DGTD";
+export const DELETE_CRITERIA_DGTD_SUCCESS = "DELETE_CRITERIA_DGTD_SUCCESS";
+export const DELETE_CRITERIA_DGTD_FAILED = "DELETE_CRITERIA_DGTD_FAILED";
+
 export function getCriteriaCourse(params, callback) {
     return {
         type: GET_CRITERIA_COURSE,
@@ -326,6 +347,47 @@ export function editCriteriaDGNL(params, callback) {
 export function deleteCriteriaDGNL(params, callback) {
     return {
         type: DELETE_CRITERIA_DGNL,
+        params,
+        callback,
+    };
+}
+
+////////////////////////////////////////////////
+export function getCriteriaDGTD(params, callback) {
+    return {
+        type: GET_CRITERIA_DGTD,
+        params,
+        callback,
+    };
+}
+
+export function getCriteriasDGTD(params, callback) {
+    return {
+        type: GET_CRITERIAS_DGTD,
+        params,
+        callback,
+    };
+}
+
+export function createCriteriaDGTD(params, callback) {
+    return {
+        type: CREATE_CRITERIA_DGTD,
+        params,
+        callback,
+    };
+}
+
+export function editCriteriaDGTD(params, callback) {
+    return {
+        type: EDIT_CRITERIA_DGTD,
+        params,
+        callback,
+    };
+}
+
+export function deleteCriteriaDGTD(params, callback) {
+    return {
+        type: DELETE_CRITERIA_DGTD,
         params,
         callback,
     };

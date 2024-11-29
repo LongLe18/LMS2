@@ -65,6 +65,16 @@ const initState = {
         loading: false,
         result: {},
         error: null,
+    },
+    itemDGTD: {
+        loading: false,
+        result: {},
+        error: null,
+    },
+    listDGTD: {
+        loading: false,
+        result: {},
+        error: null,
     }
 }
 
@@ -508,6 +518,90 @@ export default function criteriaReducer(state = initState, action) {
             return {
                 ...state,
                 itemDGNL: { ...state.itemDGNL, loading: false, error: action.error },
+            };
+        
+
+
+        ///////////////////////////////////////////////// DGTD criteria
+        // get a CRITERIA
+        case criteriaActions.GET_CRITERIA_DGTD:
+            return {
+                ...state,
+                itemDGTD: { ...state.itemDGTD, loading: true },
+            };
+        case criteriaActions.GET_CRITERIA_DGTD_SUCCESS:
+            return {
+                ...state,
+                itemDGTD: { ...state.itemDGTD, loading: false, result: action.result },
+            };
+        case criteriaActions.GET_CRITERIA_DGTD_FAILED:
+            return {
+                ...state,
+                itemDGTD: { ...state.itemDGTD, loading: false, error: action.error },
+            };
+        // get list of CRITERIAS
+        case criteriaActions.GET_CRITERIAS_DGTD:
+            return {
+                ...state,
+                listDGTD: { ...state.listDGTD, loading: true },
+            };
+        case criteriaActions.GET_CRITERIAS_DGTD_SUCCESS:
+            return {
+                ...state,
+                listDGTD: { ...state.listDGTD, loading: false, result: action.result },
+            };
+        case criteriaActions.GET_CRITERIAS_DGTD_FAILED:
+            return {
+                ...state,
+                listDGTD: { ...state.listDGTD, loading: false, error: action.error },
+            };
+        // create a CRITERIA
+        case criteriaActions.CREATE_CRITERIA_DGTD:
+            return {
+                ...state,
+                itemDGTD: { ...state.itemDGTD, loading: true },
+            };
+        case criteriaActions.CREATE_CRITERIA_DGTD_SUCCESS:
+            return {
+                ...state,
+                itemDGTD: { ...state.itemDGTD, loading: false, result: action.result },
+            };
+        case criteriaActions.CREATE_CRITERIA_DGTD_FAILED:
+            return {
+                ...state,
+                itemDGTD: { ...state.itemDGTD, loading: false, error: action.error },
+            };
+        // edit a CRITERIA
+        case criteriaActions.EDIT_CRITERIA_DGTD:
+            return {
+                ...state,
+                itemDGTD: { ...state.itemDGTD, loading: true },
+            };
+        case criteriaActions.EDIT_CRITERIA_DGTD_SUCCESS:
+            return {
+                ...state,
+                itemDGTD: { ...state.itemDGTD, loading: false, result: action.result },
+            };
+        case criteriaActions.EDIT_CRITERIA_DGTD_FAILED:
+            return {
+                ...state,
+                itemDGTD: { ...state.itemDGTD, loading: false, error: action.error },
+            };
+        // delete a CRITERIA
+        case criteriaActions.DELETE_CRITERIA_DGTD:
+            return {
+                ...state,
+                itemDGTD: { ...state.itemDGTD, loading: true },
+            };
+        case criteriaActions.DELETE_CRITERIA_DGTD_SUCCESS:
+            return {
+                ...state,
+                itemDGTD: { ...state.itemDGTD, loading: false, result: action.result },
+            };
+        case criteriaActions.DELETE_CRITERIA_DGTD_FAILED:
+            return {
+                ...state,
+                itemDGTD: { ...state.itemDGTD, loading: false, error: action.error },
             };
         default:
             return state;

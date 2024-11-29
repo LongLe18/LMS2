@@ -24,6 +24,7 @@ import * as comment from './comment';
 import * as footer from './footer';
 import * as contact from './contact';
 import * as evaluate from './evaluate';
+import * as optionQuestion from './optionQuestion';
 
 export { 
     advertise,
@@ -52,4 +53,5 @@ export {
     footer,
     contact,
     evaluate,
+    optionQuestion,
 }

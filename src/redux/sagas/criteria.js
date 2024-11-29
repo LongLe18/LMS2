@@ -516,6 +516,100 @@ function* deleteCriteaDGNL(payload) {
     }
 }
 
+/////////////////////////////////////////////////////////////////////////////
+function* fetchCriteriasDGTD(payload) {
+    try {
+        let khoa_hoc_id = '';
+        if (payload.params?.khoa_hoc_id !== undefined) {
+            khoa_hoc_id = payload.params?.khoa_hoc_id;
+        }
+        let endpoint = `${config.API_URL}/dgtd-criteria/all_admin?khoa_hoc_id=${khoa_hoc_id}&pageIndex=${payload.params?.pageIndex}&pageSize=${payload.params?.pageSize}`;
+        const response = yield call(getApiAuth, endpoint);
+        const result = yield response.data;
+        yield put({ type: actions.criteria.GET_CRITERIAS_DGTD_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.criteria.GET_CRITERIAS_DGTD_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        notification.error({
+            message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
+        });
+    }
+}
+
+function* fetchCriteriaDGTD(payload) {
+    try {
+        let endpoint = `${config.API_URL}/dgtd-criteria/${payload.params.id}`;
+        const response = yield call(getApiAuth, endpoint);
+        const result = yield response.data;
+        yield put({ type: actions.criteria.GET_CRITERIA_DGTD_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.criteria.GET_CRITERIA_DGTD_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        notification.error({
+            message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
+        });
+    }
+}
+
+function* createCriteriaDGTD(payload) {
+    try {
+        let endpoint = config.API_URL + '/dgtd-criteria/create';
+        const response = yield call(postApiAuth, endpoint, payload.params); 
+        const result = yield response;
+        yield put({ type: actions.criteria.CREATE_CRITERIA_DGTD_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.criteria.CREATE_CRITERIA_DGTD_FAILED, error: error });
+        if (payload.callback) {
+            payload.callback(error);
+        }
+    }
+}
+
+function* editCriteriaDGTD(payload) {
+    try {
+        let endpoint = config.API_URL + `/dgtd-criteria/${payload.params.id}`;
+        const response = yield call(putApiAuth, endpoint, payload.params.formData); 
+        const result = yield response;
+        yield put({ type: actions.criteria.EDIT_CRITERIA_DGTD_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.criteria.EDIT_CRITERIA_DGTD_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        notification.error({
+            message: get(error, 'response.data.error', 'Cập nhật thông tin tiêu chí thất bại ' + messageError),
+        });
+    }
+}
+
+function* deleteCriteaDGTD(payload) {
+    try {
+        let endpoint = config.API_URL + `/dgtd-criteria/${payload.params.id}/force`;
+        const response = yield call(deleteApiAuth, endpoint); 
+        const result = yield response;
+        yield put({ type: actions.criteria.DELETE_CRITERIA_DGTD_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.criteria.DELETE_CRITERIA_DGTD_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        notification.error({
+            message: get(error, 'response.data.error', 'Xóa tiêu chí thất bại ' + messageError),
+        });
+    }
+}
+
 export function* loadCriteriasCourse() {
     yield takeEvery(actions.criteria.GET_CRITERIAS_COURSE, fetchCriteriasCourse);
 }
@@ -627,4 +721,25 @@ export function* loadEditCriteriaDGNL() {
 
 export function* loadDeleteCriteriaDGNL() {
     yield takeEvery(actions.criteria.DELETE_CRITERIA_DGNL, deleteCriteaDGNL);
+}
+
+///////////////////////////////////
+export function* loadCriteriasDGTD() {
+    yield takeEvery(actions.criteria.GET_CRITERIAS_DGTD, fetchCriteriasDGTD);
+}
+
+export function* loadCriteriaDGTD() {
+    yield takeEvery(actions.criteria.GET_CRITERIA_DGTD, fetchCriteriaDGTD);
+}
+
+export function* loadAddCriteriaDGTD() {
+    yield takeEvery(actions.criteria.CREATE_CRITERIA_DGTD, createCriteriaDGTD);
+}
+
+export function* loadEditCriteriaDGTD() {
+    yield takeEvery(actions.criteria.EDIT_CRITERIA_DGTD, editCriteriaDGTD);
+}
+
+export function* loadDeleteCriteriaDGTD() {
+    yield takeEvery(actions.criteria.DELETE_CRITERIA_DGTD, deleteCriteaDGTD);
 }
