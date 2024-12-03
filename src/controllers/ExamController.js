@@ -986,14 +986,39 @@ const postCreate = async (req, res) => {
     }
 
     let criteria;
-    if (req.body.de_mau) {
+
+    if (Number(req.body.loai_de_thi_id) === 1) {
+        criteria = await ThematicCriteria.findOne({
+            where: {
+                mo_dun_id: req.body.mo_dun_id,
+            },
+        });
+    } else if (Number(req.body.loai_de_thi_id) === 2) {
+        criteria = await ModunCriteria.findOne({
+            where: {
+                mo_dun_id: req.body.mo_dun_id,
+            },
+        });
+    } else if (Number(req.body.loai_de_thi_id) === 3) {
+        criteria = await SyntheticCriteria.findOne({
+            where: {
+                khoa_hoc_id: req.body.khoa_hoc_id,
+            },
+        });
+    } else if (Number(req.body.loai_de_thi_id) === 4) {
+        criteria = await OnlineCriteria.findOne({
+            where: {
+                khoa_hoc_id: req.body.khoa_hoc_id,
+            },
+        });
+    } else if (Number(req.body.loai_de_thi_id) === 5) {
         criteria = await DGNLCriteria.findOne({
             where: {
                 khoa_hoc_id: req.body.khoa_hoc_id,
             },
         });
         if (!criteria) {
-            await DGNLCriteria.create({
+            criteria = await DGNLCriteria.create({
                 khoa_hoc_id: req.body.khoa_hoc_id,
                 so_phan: 4,
                 so_cau_hoi: 150,
@@ -1008,44 +1033,38 @@ const postCreate = async (req, res) => {
                 thoi_gian_phan_4: 60,
             });
         }
-    } else {
-        if (Number(req.body.loai_de_thi_id) === 1) {
-            criteria = await ThematicCriteria.findOne({
-                where: {
-                    mo_dun_id: req.body.mo_dun_id,
-                },
-            });
-        } else if (Number(req.body.loai_de_thi_id) === 2) {
-            criteria = await ModunCriteria.findOne({
-                where: {
-                    mo_dun_id: req.body.mo_dun_id,
-                },
-            });
-        } else if (Number(req.body.loai_de_thi_id) === 3) {
-            criteria = await SyntheticCriteria.findOne({
-                where: {
-                    khoa_hoc_id: req.body.khoa_hoc_id,
-                },
-            });
-        } else if (Number(req.body.loai_de_thi_id) === 4) {
-            criteria = await OnlineCriteria.findOne({
-                where: {
-                    khoa_hoc_id: req.body.khoa_hoc_id,
-                },
-            });
-        }
+    } else if (Number(req.body.loai_de_thi_id) === 6) {
+        criteria = await DGTDCriteria.findOne({
+            where: {
+                khoa_hoc_id: req.body.khoa_hoc_id,
+            },
+        });
         if (!criteria) {
-            return res.status(400).send({
-                status: 'fail',
-                data: '100',
-                message: 'Chưa có tiêu chí đề thi',
+            criteria = await DGTDCriteria.create({
+                khoa_hoc_id: req.body.khoa_hoc_id,
+                so_cau_hoi: 100,
+                thoi_gian: 150,
+                so_phan: 3,
+                so_cau_hoi_phan_1: 40,
+                thoi_gian_phan_1: 60,
+                so_cau_hoi_phan_2: 20,
+                thoi_gian_phan_2: 30,
+                so_cau_hoi_phan_3: 40,
+                thoi_gian_phan_3: 60,
             });
         }
+    }
+    if (!criteria) {
+        return res.status(400).send({
+            status: 'fail',
+            data: '100',
+            message: 'Chưa có tiêu chí đề thi',
+        });
     }
 
     exam = await Exam.create({
         ...req.body,
-        ...(req.body.de_mau && { loai_de_thi_id: 5 }),
+        // ...(req.body.de_mau && { loai_de_thi_id: 5 }),
     });
 
     return res.status(200).send({
