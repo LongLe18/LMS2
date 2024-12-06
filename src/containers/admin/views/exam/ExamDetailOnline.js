@@ -12,7 +12,7 @@ import { Row, Col, Form, Steps, Tabs, Modal,
     Input, Upload, message, Result,
     Select, Image, Button, notification, Radio } from 'antd';
 import { UploadOutlined, SaveOutlined, RightOutlined, LeftOutlined, 
-    CloseOutlined, ExclamationCircleOutlined, TeamOutlined, } from '@ant-design/icons';
+    CloseOutlined, ExclamationCircleOutlined, TeamOutlined, DeleteOutlined } from '@ant-design/icons';
 import TextEditorWidget from 'components/common/TextEditor/TextEditor';
 
 // image
@@ -29,6 +29,7 @@ import * as exceprtActions from '../../../../redux/actions/exceprt';
 import * as answerActions from '../../../../redux/actions/answer';
 import * as questionActions from '../../../../redux/actions/question';
 import * as majorActions from '../../../../redux/actions/major';
+import * as optionQuestionActions from '../../../../redux/actions/optionQuestion';
 
 const { Step } = Steps;
 const { TabPane } = Tabs;
@@ -82,6 +83,7 @@ const OnlineExamDetailPage = () => {
     const id = useParams().id; // id
     const hashids = new Hashids();
     const dispatch = useDispatch();
+    const paramtypeExamUrl = new URLSearchParams(history.location.search).get('loai_de_thi');
 
     const [currentStep, setCurrentStep] = useState(0);
     const [currentQuestion, setCurrentQuestion] = useState(defaultQuestion);
@@ -113,7 +115,9 @@ const OnlineExamDetailPage = () => {
         typeQuestion: 0,
     });
     const [tagsLuaChon, setTagsLuaChon] = useState([]);
-    const inputRefLuaChon = useRef(null)
+    const [tagsDapAnDungs, setTagDapAnDungs] = useState([]);
+    const inputRefLuaChon = useRef(null);
+    const inputRefDapAnDungs = useRef(null);
 
     // props for upload image
     const propsImage = {
@@ -159,7 +163,9 @@ const OnlineExamDetailPage = () => {
             };
         };
 
-        dispatch(examActions.getExam({ id: id }, callback));
+        if (paramtypeExamUrl !== 'DGTD') dispatch(examActions.getExam({ id: id }, callback));
+        else dispatch(examActions.getExam({ id: id, type: 'dgtd' }, callback));
+
         dispatch(programmeActions.getProgrammes({ status: '' }));
         dispatch(courseActions.getCourses({ idkct: '', status: '', search: '' }));
         dispatch(typeExamActions.getTypes());
@@ -315,7 +321,11 @@ const OnlineExamDetailPage = () => {
                         </div>
                     : 
                         <div className='body-question' style={{color: question.cau_hoi.dap_ans.length === 0 ? 'red' : 'black'}}>
-                            <div className="answer-detail">Câu hỏi Tự Luận</div>
+                            <div className="answer-detail">
+                                {question.cau_hoi.loai_cau_hoi === 0 ? 'Câu hỏi Tự Luận' : question.cau_hoi.loai_cau_hoi === 3 ? 'Trắc nghiệm nhiều lựa chọn đúng sai' :
+                                    question.cau_hoi.loai_cau_hoi === 4 ? 'Đúng sai' : question.cau_hoi.loai_cau_hoi === 5 ? 'Tự luận nhiều vị trí' : 'Kéo thả'
+                                }
+                            </div>
                         </div>}
                 </div>
             );
@@ -419,16 +429,18 @@ const OnlineExamDetailPage = () => {
     const handleChangeType = (type) => {
         if (type.target.value === 0 ) { // tự luận 
             setState({...state, showTuLuan: true, showTextTuLuan: true, showTextTuLuan2: true, typeQuestion: type.target.value});
-        } else if (type.target.value === 1 || type.target.value === 2 || type.target.value === 3) {
+        } else {
             setState({...state, showTuLuan: false, showTextTuLuan: false, showTextTuLuan2: false, typeQuestion: type.target.value});
-        } else return null;
+        } 
     };
 
     // Cập nhật thông tin đề thi
     const handleSaveExam = (values) => {
         const callback = (res) => {
             if (res.statusText === 'OK' && res.status === 200) {
-                dispatch(examActions.getExam({ id: id }));
+                if (paramtypeExamUrl !== 'DGTD') dispatch(examActions.getExam({ id: id }, callback));
+                else dispatch(examActions.getExam({ id: id, type: 'dgtd' }, callback));
+
                 setState({ ...state, fileImg: '' });
                 notification.success({
                     message: 'Thành công',
@@ -492,7 +504,8 @@ const OnlineExamDetailPage = () => {
                 });
                 setState({...state, isEdit: false});
             }
-            dispatch(examActions.getExam({ id: id }));
+            if (paramtypeExamUrl !== 'DGTD') dispatch(examActions.getExam({ id: id }, callback));
+            else dispatch(examActions.getExam({ id: id, type: 'dgtd' }, callback));
         };
 
         const callback = (res) => {
@@ -502,7 +515,7 @@ const OnlineExamDetailPage = () => {
                     dispatch(questionActions.createQuestionExam(questionExam, subCallBack));             
                     
                     const answer = new FormData();
-                    if (values.loai_cau_hoi === 1 || values.loai_cau_hoi === 2) { // Trắc nghiệm
+                    if (values.loai_cau_hoi === 1 || values.loai_cau_hoi === 4) { // Trắc nghiệm hoặc chọn đúng sai
                         for (let i = 0; i < values.dap_an.length; i++) {
                             answer.append(`noi_dung_dap_an${i+1}`, values.dap_an[i].tieu_de)
                         };
@@ -514,15 +527,27 @@ const OnlineExamDetailPage = () => {
                             if (dap_an_dung[i] === 'C') answer.append('dap_an_dung3', 1)
                             if (dap_an_dung[i] === 'D') answer.append('dap_an_dung4', 1)
                         }
-                    } else if (values.loai_cau_hoi === 3) { // câu hỏi kéo thả
-                        // tạo lựa chọn; tạo đáp án; 
-                        
-                    } else {// Tự luận
+                    } else if (values.loai_cau_hoi === 6) { // câu hỏi kéo thả
+                        /////////// tạo lựa chọn; tạo câu hỏi chi tiết; tạo đáp án đúng
+                        // tạo lựa chọn
+                        const lua_chon = {
+                            "noi_dung": tagsLuaChon.map((item) => item.text).join(';')
+                        };
+                        dispatch(optionQuestionActions.CreateOPTIONQUESTON({ formData: lua_chon, id: res.data.data.cau_hoi_id }, subCallBack2));
+
+                        // Tạo nội dung câu hỏi chi tiết
+                        const details = [];
+                        values.dap_an.map((dap_an) => details.push({ "noi_dung": dap_an.tieu_de }));
+                        dispatch(questionActions.createDetailQuestion({ formData: { "details": details }, idQuestion: res.data.data.cau_hoi_id }));
+
+                        // tạo đáp án đúng
+                        answer.append(`noi_dung_dap_an1`, tagsDapAnDungs.map((item) => item.text).join(';')); 
+                    } else if (values.loai_cau_hoi === 0) { // Tự luận
                         answer.append(`noi_dung_dap_an1`, values.dap_an_tu_luan[0].tieu_de)
                     }
                     answer.append('cau_hoi_id', res.data.data.cau_hoi_id);
 
-                    dispatch(answerActions.createANSWER(answer, subCallBack2));
+                    dispatch(answerActions.createANSWER(answer, subCallBack2)); // tạo đáp án
                 } else { // Sửa đáp án
                     
                     const answer = new FormData();
@@ -546,7 +571,7 @@ const OnlineExamDetailPage = () => {
                             answer.append(`noi_dung_dap_an1`, values.dap_an_tu_luan[0].tieu_de)
                             answer.append('dap_an_id1', question.data.dap_ans[0].dap_an_id)
                         }
-                        dispatch(answerActions.editANSWER({ formData: answer, de_thi_id: id  }, subCallBack2));
+                        dispatch(answerActions.editANSWER({ formData: answer, de_thi_id: id }, subCallBack2));
                     } else { // đổi loại câu hỏi
                         if (values.loai_cau_hoi === 1 || values.loai_cau_hoi === 2) { // Tự luận -> Trắc nghiệm
                             // Xoá đáp án hiện có
@@ -598,12 +623,11 @@ const OnlineExamDetailPage = () => {
         if (values.trich_doan !== '')
             formQuestionData.append('trich_doan_id', values.trich_doan);    
 
-        console.log(tagsLuaChon);
-        // if (state.isEdit) {
-        //     dispatch(questionActions.editQuestion({ idQuestion: state.idQuestion, formData: formQuestionData, de_thi_id: id }, callback));        
-        // } else {
-        //     dispatch(questionActions.createQuestion(formQuestionData, callback));         
-        // }
+        if (state.isEdit) {
+            dispatch(questionActions.editQuestion({ idQuestion: state.idQuestion, formData: formQuestionData, de_thi_id: id }, callback));        
+        } else {
+            dispatch(questionActions.createQuestion(formQuestionData, callback));         
+        }
     };
 
     const handlePublishExam = () => {
@@ -612,7 +636,7 @@ const OnlineExamDetailPage = () => {
                 notification.success({
                     message: 'Xuất bản đề thi thành công.',
                 });   
-                if (new URLSearchParams(history.location.search).get('loai_de_thi') === 'DGNL') {
+                if (paramtypeExamUrl === 'DGNL') {
                     history.push('/admin/question/examDgnl');
                 } else {
                     history.push('/admin/question/exam');
@@ -629,7 +653,8 @@ const OnlineExamDetailPage = () => {
             setState({...state, isEdit: false, idQuestion: 0, indexQuestion: 0});
 
             if (res.status === 200 && res.statusText === 'OK') {
-                dispatch(examActions.getExam({ id: id }));
+                if (paramtypeExamUrl !== 'DGTD') dispatch(examActions.getExam({ id: id }, callback));
+                else dispatch(examActions.getExam({ id: id, type: 'dgtd' }, callback));
                 notification.success({
                     message: 'Xóa câu hỏi thành công.',
                 });   
@@ -651,7 +676,6 @@ const OnlineExamDetailPage = () => {
         });
     };
 
-    
     // Hàm press enter input lựa chọn
     const handleInputKeyDownLuaChon = (e) => {
         if (e.key === 'Enter' && inputRefLuaChon.current && inputRefLuaChon?.current?.input?.value?.trim()) {
@@ -664,9 +688,26 @@ const OnlineExamDetailPage = () => {
         }
     }
 
+    // Hàm press enter input đáp án đúng
+    const handleInputKeyDownDapAnDung = (e) => {
+        if (e.key === 'Enter' && inputRefDapAnDungs.current && inputRefDapAnDungs?.current?.input?.value?.trim()) {
+            e.preventDefault()
+            const newTag = { id: Date.now(), text: inputRefDapAnDungs?.current?.input?.value.trim() }
+            setTagDapAnDungs([...tagsDapAnDungs, newTag]);
+            if (inputRefDapAnDungs.current?.input) {
+                inputRefDapAnDungs.current.input.value = ''
+            }
+        }
+    }
+
     // Xóa input Lựa chọn
     const deleteTagLuaChon = (idToDelete) => {
         setTagsLuaChon(tagsLuaChon.filter((tag) => tag.id !== idToDelete))
+    }
+
+    // Xóa input đáp án đúng
+    const deleteTagDapAnDung = (idToDelete) => {
+        setTagDapAnDungs(tagsDapAnDungs.filter((tag) => tag.id !== idToDelete))
     }
 
     return (
@@ -1008,7 +1049,7 @@ const OnlineExamDetailPage = () => {
                                                                         </Form.Item>
                                                                     </Col>
                                                                 </Row>
-                                                                <Row style={{display: state.typeQuestion === 3 ? '' : 'none'}}>
+                                                                <Row style={{display: state.typeQuestion === 6 ? '' : 'none'}}>
                                                                     <Col xl={4}>
                                                                         <Form.Item className="label">
                                                                             <span style={{ color: '#ff4d4f' }}>*</span>Lựa chọn
@@ -1021,12 +1062,11 @@ const OnlineExamDetailPage = () => {
                                                                             name="lua_chons"
                                                                             rules={[
                                                                                 {
-                                                                                    required: state.typeQuestion === 3,
+                                                                                    required: state.typeQuestion === 6,
                                                                                     message: 'Lựa chọn là trường bắt buộc',
                                                                                 },
                                                                             ]}
                                                                         >
-                                                                            {/* <div className="flex flex-wrap items-center border border-gray-300 rounded-md p-2 focus-within:border-blue-500"> */}
                                                                             <div>
                                                                                 {tagsLuaChon.map((tag) => (
                                                                                     <span style={{background: '#cfc9c9', borderRadius: 4}}
@@ -1053,7 +1093,7 @@ const OnlineExamDetailPage = () => {
                                                                     </Col>
                                                                 </Row>
 
-                                                                {/* <Row style={{display: !state.showTuLuan ? '' : 'none'}}>
+                                                                <Row style={{display: !state.showTuLuan ? '' : 'none'}}>
                                                                     <Col xl={4}>
                                                                         <Form.Item className="label">
                                                                             <span style={{ color: '#ff4d4f' }}>*</span>Đáp án đúng
@@ -1071,12 +1111,35 @@ const OnlineExamDetailPage = () => {
                                                                                 },
                                                                             ]}
                                                                         >
-                                                                            {state.typeQuestion !== 3 ? renderAnswer() : null}
+                                                                            {state.typeQuestion !== 6 ? renderAnswer() : 
+                                                                                <div>
+                                                                                    {tagsDapAnDungs.map((tag) => (
+                                                                                        <span style={{background: '#cfc9c9', borderRadius: 4}}
+                                                                                            key={tag.id}
+                                                                                            className="flex items-center bg-gray-200 text-gray-700 text-sm rounded-full px-3 py-1 m-1"
+                                                                                        >
+                                                                                            {tag.text}
+                                                                                            <Button type='text'
+                                                                                                onClick={() => deleteTagDapAnDung(tag.id)}
+                                                                                                className="ml-2 focus:outline-none"
+                                                                                                aria-label={`Remove ${tag.text}`}
+                                                                                            >
+                                                                                                <CloseOutlined size={14} />
+                                                                                            </Button>
+                                                                                        </span>
+                                                                                    ))}
+                                                                                    <Input type="text"
+                                                                                        ref={inputRefDapAnDungs}
+                                                                                        onKeyDown={handleInputKeyDownDapAnDung}
+                                                                                        placeholder='Nhập các đáp án đúng cho từng câu hỏi'
+                                                                                    />
+                                                                                </div>
+                                                                            }
                                                                         </Form.Item>
                                                                     </Col>
-                                                                </Row> */}
+                                                                </Row>
 
-                                                                {/* <Row>
+                                                                <Row>
                                                                     <Col xl={4}>
                                                                         <Form.Item className="label"><span style={{ color: '#ff4d4f' }}>*</span>Hiển thị đáp án</Form.Item>
                                                                     </Col>
@@ -1095,28 +1158,32 @@ const OnlineExamDetailPage = () => {
                                                                             <Radio.Group options={constants.EXAM_ANSWER_VIEW_LIST} disabled={state.trang_thai === 'active'} optionType="button" buttonStyle="solid" />
                                                                         </Form.Item>
                                                                     </Col>
-                                                                </Row> */}
+                                                                </Row>
+
                                                                 {/* Section Đáp án */}
-                                                                {/* <Col xl={24}>
+                                                                <Col xl={24}>
                                                                     <Form.Item className="label">
-                                                                        <span style={{ color: '#000', fontWeight: 600 }}>Tùy chọn đáp án</span>
+                                                                        <span style={{ color: '#000', fontWeight: 600 }}>
+                                                                            Tùy chọn {state.typeQuestion !== 6 ? 'đáp án' : 'câu hỏi'}
+                                                                        </span>
                                                                     </Form.Item>
                                                                 </Col>
                                                                 <Form.List name="dap_an">
                                                                     {(fields, { add, remove }) => (
                                                                         <div className="group-answers">
-                                                                            {fields.map(({ key, name, ...restField }) => ( // loop dap an 
+                                                                            {fields.map(({ key, name, ...restField }, index) => ( // loop dap an 
                                                                                 <Row key={key} style={{display: !state.showTuLuan ? '' : 'none'}}>
                                                                                     <Col xl={4}>
                                                                                         <Form.Item {...restField} rules={[]} className="label">
-                                                                                            <span style={{ color: '#ff4d4f' }}>*</span> {currentQuestion?.dap_an[key]?.label}
+                                                                                            <span style={{ color: '#ff4d4f' }}>*</span> 
+                                                                                            {state.typeQuestion !== 6 ? currentQuestion?.dap_an[key]?.label : `Câu hỏi ${index + 1}`}
                                                                                         </Form.Item>
                                                                                     </Col>
-                                                                                    <Col xl={20}>
+                                                                                    <Col xl={19}>
                                                                                         <Form.Item {...restField} name={[name, 'tieu_de']} rules={[{ required: !state.showTuLuan, message: 'Bạn chưa nhập nội dung đáp án' }]}>
                                                                                             <TextEditorWidget
                                                                                                 valueParent={currentQuestion?.dap_an[key]?.tieu_de}
-                                                                                                placeholder="Thêm nội dung đáp án"
+                                                                                                placeholder={state.typeQuestion !== 6 ? "Thêm nội dung đáp án" : 'Thêm nội dung câu hỏi'}
                                                                                                 onChange={(val) => {
                                                                                                     let dap_an = [...currentQuestion.dap_an];
                                                                                                     dap_an[key] = {
@@ -1129,14 +1196,31 @@ const OnlineExamDetailPage = () => {
                                                                                             />
                                                                                         </Form.Item>
                                                                                     </Col>
+                                                                                    <Col xl={1}>
+                                                                                        <Button 
+                                                                                            type="text" 
+                                                                                            icon={<DeleteOutlined />} 
+                                                                                            onClick={() => remove(name)}
+                                                                                            style={{ color: '#ff4d4f' }}
+                                                                                        />
+                                                                                    </Col>
                                                                                 </Row>
                                                                             ))}
+                                                                            <Form.Item style={{display: (state.typeQuestion === 6 || state.typeQuestion === 2) ? '' : 'none'}}>
+                                                                                <Button 
+                                                                                    type="dashed" 
+                                                                                    onClick={() => add()} 
+                                                                                    block
+                                                                                >
+                                                                                    Thêm câu hỏi
+                                                                                </Button>
+                                                                            </Form.Item>   
                                                                         </div>
                                                                     )}
-                                                                </Form.List> */}
+                                                                </Form.List>
 
                                                                 {/* câu hỏi Tự luận */}
-                                                                {/* <Form.List name="dap_an_tu_luan">
+                                                                <Form.List name="dap_an_tu_luan">
                                                                     {(fields, { add, remove }) => (
                                                                         <div className="group-answers">
                                                                             {fields.map(({ key, name, ...restField }) => ( // loop dap an 
@@ -1185,10 +1269,10 @@ const OnlineExamDetailPage = () => {
                                                                             ))}
                                                                         </div>
                                                                     )}
-                                                                </Form.List>  */}
+                                                                </Form.List> 
                                                                 
                                                                 {/* Lời giải */}
-                                                                {/* <Row>
+                                                                <Row>
                                                                     <Col xl={4}>
                                                                         <Form.Item className="label">Lời giải</Form.Item>
                                                                     </Col>
@@ -1215,7 +1299,7 @@ const OnlineExamDetailPage = () => {
                                                                             />
                                                                         </Form.Item>
                                                                     </Col>
-                                                                </Row> */}
+                                                                </Row>
                                                                 
                                                             </Col>
                                                         </Row>
@@ -1317,7 +1401,9 @@ const OnlineExamDetailPage = () => {
                             )}
                             {(currentStep >= 1 && currentStep <= criteria?.data?.so_phan )&& (
                             <>
-                                <Button type="primary" onClick={() => window.open(`/luyen-tap/xem-lai/${hashids.encode(id)}`, "_blank")} size="large">
+                                <Button onClick={() => window.open(`/luyen-tap/xem-lai/${hashids.encode(id)}?loai_de_thi=${paramtypeExamUrl}`, "_blank")} 
+                                    size="large" type="primary" 
+                                >
                                     Xem toàn đề
                                 </Button>
                                 <Button type="dash" onClick={() => {

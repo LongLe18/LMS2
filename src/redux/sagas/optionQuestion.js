@@ -5,112 +5,91 @@ import { getApi, postApiAuth, putApiAuth, deleteApiAuth } from '../services/api'
 import * as actions from '../actions';
 import { get } from 'lodash';
 
-function* fetchContacts(payload) {
+// /:id/... ID câu hỏi
+function* fetchOptionQuestion(payload) {
     try {
-        let endpoint = `${config.API_URL}/contact`;
+        let endpoint = `${config.API_URL}/question/${payload.params.id}/get-option`;
         const response = yield call(getApi, endpoint);
         const result = yield response.data;
-        yield put({ type: actions.contact.GET_CONTACTS_SUCCESS, result: result });
+        yield put({ type: actions.optionQuestion.GET_OPTIONQUESTON_SUCCESS, result: result });
         if (payload.callback) {
             payload.callback(result);
         }
     } catch (error) {
-        yield put({ type: actions.contact.GET_CONTACTS_FAILED, error: error });
+        yield put({ type: actions.optionQuestion.GET_OPTIONQUESTON_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
         notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu Liên hệ đã thất bại ' + messageError),
+            message: get(error, 'response.data.error', 'Tải dữ liệu Lựa chọn câu hỏi đã thất bại ' + messageError),
         });
     }
 }
 
-function* fetchContact(payload) {
+function* createOptionQuestion(payload) {
     try {
-        let endpoint = `${config.API_URL}/contact/${payload.params.id}`;
-        const response = yield call(getApi, endpoint);
-        const result = yield response.data;
-        yield put({ type: actions.contact.GET_CONTACT_SUCCESS, result: result });
-        if (payload.callback) {
-            payload.callback(result);
-        }
-    } catch (error) {
-        yield put({ type: actions.contact.GET_CONTACT_FAILED, error: error });
-        let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu Liên hệ đã thất bại ' + messageError),
-        });
-    }
-}
-
-function* createContact(payload) {
-    try {
-        let endpoint = config.API_URL + '/contact/create';
-        const response = yield call(postApiAuth, endpoint, payload.params); 
+        let endpoint = config.API_URL + `/question/${payload.params.id}/add-option`;
+        const response = yield call(postApiAuth, endpoint, payload.params.formData); 
         const result = yield response;
-        yield put({ type: actions.contact.CREATE_CONTACT_SUCCESS, result: result });
+        yield put({ type: actions.optionQuestion.CREATE_OPTIONQUESTON_SUCCESS, result: result });
         if (payload.callback) {
             payload.callback(result);
         }
     } catch (error) {
-        yield put({ type: actions.contact.CREATE_CONTACT_FAILED, error: error });
+        yield put({ type: actions.optionQuestion.CREATE_OPTIONQUESTON_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
         notification.error({
-            message: get(error, 'response.data.error', 'Thêm Liên hệ mới thất bại ' + messageError),
+            message: get(error, 'response.data.error', 'Thêm Lựa chọn câu hỏi mới thất bại ' + messageError),
         });
     }
 }
 
-function* editContact(payload) {
+function* editOptionQuestion(payload) {
     try {
-        let endpoint = config.API_URL + `/contact/${payload.params.id}`;
+        let endpoint = config.API_URL + `/question/update-option/${payload.params.optionId}`;
         const response = yield call(putApiAuth, endpoint, payload.params.formData); 
         const result = yield response;
-        yield put({ type: actions.contact.EDIT_CONTACT_SUCCESS, result: result });
+        yield put({ type: actions.optionQuestion.EDIT_OPTIONQUESTON_SUCCESS, result: result });
         if (payload.callback) {
             payload.callback(result);
         }
     } catch (error) {
-        yield put({ type: actions.contact.EDIT_CONTACT_FAILED, error: error });
+        yield put({ type: actions.optionQuestion.EDIT_OPTIONQUESTON_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
         notification.error({
-            message: get(error, 'response.data.error', 'Cập nhật thông tin Liên hệ thất bại ' + messageError),
+            message: get(error, 'response.data.error', 'Cập nhật thông tin Lựa chọn câu hỏi thất bại ' + messageError),
         });
     }
 }
 
-function* deleteContact(payload) {
+function* deleteOptionQuestion(payload) {
     try {
-        let endpoint = config.API_URL + `/contact/${payload.params.id}`;
+        let endpoint = config.API_URL + `/question/remove-option/${payload.params.optionId}`;
         const response = yield call(deleteApiAuth, endpoint); 
         const result = yield response;
-        yield put({ type: actions.contact.DELETE_CONTACT_SUCCESS, result: result });
+        yield put({ type: actions.optionQuestion.DELETE_OPTIONQUESTON_SUCCESS, result: result });
         if (payload.callback) {
             payload.callback(result);
         }
     } catch (error) {
-        yield put({ type: actions.contact.DELETE_CONTACT_FAILED, error: error });
+        yield put({ type: actions.optionQuestion.DELETE_OPTIONQUESTON_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
         notification.error({
-            message: get(error, 'response.data.error', 'Xóa Liên hệ thất bại ' + messageError),
+            message: get(error, 'response.data.error', 'Xóa Lựa chọn câu hỏi thất bại ' + messageError),
         });
     }
 }
 
-export function* loadContacts() {
-    yield takeEvery(actions.contact.GET_CONTACTS, fetchContacts);
+export function* loadOptionQuestion() {
+    yield takeEvery(actions.optionQuestion.GET_OPTIONQUESTON, fetchOptionQuestion);
 }
 
-export function* loadContact() {
-    yield takeEvery(actions.contact.GET_CONTACT, fetchContact);
+export function* loadAddOptionQuestion() {
+    yield takeEvery(actions.optionQuestion.CREATE_OPTIONQUESTON, createOptionQuestion);
 }
 
-export function* loadAddContact() {
-    yield takeEvery(actions.contact.CREATE_CONTACT, createContact);
+export function* loadEditOptionQuestion() {
+    yield takeEvery(actions.optionQuestion.EDIT_OPTIONQUESTON, editOptionQuestion);
 }
 
-export function* loadEditContact() {
-    yield takeEvery(actions.contact.EDIT_CONTACT, editContact);
-}
-
-export function* loadDeleteContact() {
-    yield takeEvery(actions.contact.DELETE_CONTACT, deleteContact);
+export function* loadDeleteOptionQuestion() {
+    yield takeEvery(actions.optionQuestion.DELETE_OPTIONQUESTON, deleteOptionQuestion);
 }

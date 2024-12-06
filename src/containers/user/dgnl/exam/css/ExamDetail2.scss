@@ -795,3 +795,16 @@ b {
     margin-bottom: 12px;
   }
 }
+
+.empty-box {
+  cursor: pointer;
+  border-radius: 3px;
+  display: inline-block;
+  min-width: 66px;
+  height: 25px;
+  border: 1px solid #c1c1c1 !important;
+  opacity: 1 !important;
+  margin: 0 5px;
+  padding: 0 10px;
+  vertical-align: middle;
+}

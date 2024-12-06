@@ -144,6 +144,10 @@ import {
     loadDeleteQuestionExam,
     loadGetQuestionExam,
     loadGetQuestionsExam,
+    loadAddDetailQuestion,
+    loadDeleteDetailQuestion,
+    loadDetailsQuestion,
+    loadEditDetailQuestion,
 } from './question';
 
 import { 
@@ -367,6 +371,13 @@ import {
     loadEvaluationsDGTD,
 } from './evaluate';
 
+import {
+    loadAddOptionQuestion,
+    loadDeleteOptionQuestion,
+    loadEditOptionQuestion,
+    loadOptionQuestion,
+} from './optionQuestion';
+
 export default function* rootSaga() {
     yield all([
         // major
@@ -495,6 +506,10 @@ export default function* rootSaga() {
         loadDeleteQuestionExam(),
         loadGetQuestionExam(),
         loadGetQuestionsExam(),
+        loadAddDetailQuestion(),
+        loadDeleteDetailQuestion(),
+        loadDetailsQuestion(),
+        loadEditDetailQuestion(),
         // answer
         loadAdAnswer(),
         loadAnswer(),
@@ -683,5 +698,10 @@ export default function* rootSaga() {
         loadEditEvaluationDGTD(),
         loadEvaluationDGTD(),
         loadEvaluationsDGTD(),
+        // Lựa chọn câu hỏi
+        loadAddOptionQuestion(),
+        loadDeleteOptionQuestion(),
+        loadEditOptionQuestion(),
+        loadOptionQuestion(),
     ]);
 }

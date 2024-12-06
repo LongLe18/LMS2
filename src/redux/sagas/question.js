@@ -205,6 +205,81 @@ function* deleteQuestionExam(payload) {
     }
 }
 
+//////////////////////////// chi tiết câu hỏi
+//// :id : ID câu hỏi
+function* fetchDetailsQuestion(payload) {
+    try {
+        let endpoint = `${config.API_URL}/question/${payload.params.idQuestion}/get-details`;
+        const response = yield call(getApiAuth, endpoint);
+        const result = yield response.data;
+        yield put({ type: actions.quesiton.GET_DETAILS_QUESTION_SUCCESS, result: result });
+        if (payload.callback) { 
+            payload.callback(result);
+        }
+    } catch (error) {
+        console.log(error)
+        yield put({ type: actions.quesiton.GET_DETAILS_QUESTION_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        notification.error({
+            message: get(error, 'response.data.error', 'Tải dữ liệu câu hỏi chi tiết đã thất bại ' + messageError),
+        });
+    }
+}
+
+function* createDetailsQuestion(payload) {
+    try {
+        let endpoint = config.API_URL + `/question/${payload.params.idQuestion}/add-details`;
+        const response = yield call(postApiAuth, endpoint, payload.params.formData); 
+        const result = yield response;
+        yield put({ type: actions.quesiton.CREATE_DETAIL_QUESTION_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.quesiton.CREATE_DETAIL_QUESTION_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        notification.error({
+            message: get(error, 'response.data.error', 'Thêm câu hỏi chi tiết mới thất bại ' + messageError),
+        });
+    }
+}
+
+function* editDetailQuestion(payload) {
+    try {
+        let endpoint = config.API_URL + `/question/update-detail/${payload.params.idDetail}`;
+        const response = yield call(putApiAuth, endpoint, payload.params.formData); 
+        const result = yield response;
+        yield put({ type: actions.quesiton.EDIT_DETAIL_QUESTION_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.quesiton.EDIT_DETAIL_QUESTION_FAILED, error: error });
+        let messageError = (error.response && error.response.status && error.response.status === 403) ? error.response.data : '';
+        notification.error({
+            message: get(error, 'response.data.error', 'Cập nhật thông tin câu hỏi chi tiết thất bại ' + messageError),
+        });
+    }
+}
+
+function* deleteDetailQuestion(payload) {
+    try {
+        let endpoint = config.API_URL + `/question/remove-detail/${payload.params.idDetail}`;
+        const response = yield call(deleteApiAuth, endpoint); 
+        const result = yield response;
+        yield put({ type: actions.quesiton.DELETE_DETAIL_QUESTION_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.quesiton.DELETE_DETAIL_QUESTION_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        notification.error({
+            message: get(error, 'response.data.error', 'Xóa câu hỏi chi tiết thất bại ' + messageError),
+        });
+    }
+}
+
 export function* loadQuestions() {
     yield takeEvery(actions.quesiton.GET_QUESTIONS, fetchQuestions);
 }
@@ -247,4 +322,21 @@ export function* loadAddQuestionExam() {
 
 export function* loadDeleteQuestionExam() {
     yield takeEvery(actions.quesiton.DELETE_QUESTION_EXAM, deleteQuestionExam);
+}
+
+///////////////////////////////////////
+export function* loadDeleteDetailQuestion() {
+    yield takeEvery(actions.quesiton.DELETE_DETAIL_QUESTION, deleteDetailQuestion);
+}
+
+export function* loadEditDetailQuestion() {
+    yield takeEvery(actions.quesiton.EDIT_DETAIL_QUESTION, editDetailQuestion);
+}
+
+export function* loadAddDetailQuestion() {
+    yield takeEvery(actions.quesiton.CREATE_DETAIL_QUESTION, createDetailsQuestion);
+}
+
+export function* loadDetailsQuestion() {
+    yield takeEvery(actions.quesiton.GET_DETAILS_QUESTION, fetchDetailsQuestion);
 }

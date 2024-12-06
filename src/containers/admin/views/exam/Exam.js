@@ -207,7 +207,13 @@ const ExamAdminPage = () => {
         // Redirect view for edit
         render: (de_thi_id, de_thi) => (
           <Col>
-            <a href={ de_thi.loai_de_thi_id === 5 ? `/admin/onlineExam/detail/${de_thi.de_thi_id}?loai_de_thi=ONLUYEN`  : `/admin/exam/detail/${de_thi.de_thi_id}?loai_de_thi=ONLUYEN` } type="button" className="ant-btn ant-btn-round ant-btn-primary" 
+            <a href={ de_thi.loai_de_thi_id === 5 ? 
+                `/admin/onlineExam/detail/${de_thi.de_thi_id}?loai_de_thi=DGNL` : 
+                de_thi.loai_de_thi_id === 6 ?  
+                `/admin/onlineExam/detail/${de_thi.de_thi_id}?loai_de_thi=DGTD` : 
+                `/admin/exam/detail/${de_thi.de_thi_id}?loai_de_thi=DGNL`
+              } 
+              type="button" className="ant-btn ant-btn-round ant-btn-primary" 
               style={{display: de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}}
             >
               Xem

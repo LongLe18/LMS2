@@ -25,7 +25,9 @@ function* fetchExams(payload) {
 
 function* fetchExam(payload) {
     try {
-        let endpoint = `${config.API_URL}/exam/${payload.params.id}`;
+        let endpoint = '';
+        if (payload.params.type) endpoint = `${config.API_URL}/exam/dgtd/${payload.params.id}`;
+        else endpoint = `${config.API_URL}/exam/${payload.params.id}`;
         const response = yield call(getApiAuth, endpoint);
         const result = yield response.data;
         yield put({ type: actions.exam.GET_EXAM_SUCCESS, result: result });

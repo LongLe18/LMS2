@@ -21,6 +21,16 @@ const initState = {
         result: {},
         error: null,
     },
+    detailQuestion: {
+        loading: false,
+        result: {},
+        error: null,
+    },
+    detailsQuestion: {
+        loading: false,
+        result: {},
+        error: null,
+    }
 }
 
 export default function questionReducer(state = initState, action) {
@@ -217,6 +227,89 @@ export default function questionReducer(state = initState, action) {
             return {
                 ...state,
                 questionExamItem: { ...state.questionExamItem, loading: false, error: action.error },
+            };
+
+
+        /////////////////////////////////////////////// lấy chi tiết câu hỏi loại câu hỏi 'kéo thả'
+        // get detail question
+        case questionActions.GET_DETAIL_QUESTION:
+            return {
+                ...state,
+                detailQuestion: { ...state.detailQuestion, loading: true },
+            };
+        case questionActions.GET_DETAIL_QUESTION_SUCCESS:
+            return {
+                ...state,
+                detailQuestion: { ...state.detailQuestion, loading: false, result: action.result },
+            };
+        case questionActions.GET_DETAIL_QUESTION_FAILED:
+            return {
+                ...state,
+                detailQuestion: { ...state.detailQuestion, loading: false, error: action.error },
+            };
+        // get details question 
+        case questionActions.GET_DETAILS_QUESTION:
+            return {
+                ...state,
+                detailsQuestion: { ...state.detailsQuestion, loading: true },
+            };
+        case questionActions.GET_DETAILS_QUESTION_SUCCESS:
+            return {
+                ...state,
+                detailsQuestion: { ...state.detailsQuestion, loading: false, result: action.result },
+            };
+        case questionActions.GET_DETAILS_QUESTION_FAILED:
+            return {
+                ...state,
+                detailsQuestion: { ...state.detailsQuestion, loading: false, error: action.error },
+            };
+        // edit detail question 
+        case questionActions.EDIT_DETAIL_QUESTION:
+            return {
+                ...state,
+                detailQuestion: { ...state.detailQuestion, loading: true },
+            };
+        case questionActions.EDIT_DETAIL_QUESTION_SUCCESS:
+            return {
+                ...state,
+                detailQuestion: { ...state.detailQuestion, loading: false, result: action.result },
+            };
+        case questionActions.EDIT_DETAIL_QUESTION_FAILED:
+            return {
+                ...state,
+                detailQuestion: { ...state.detailQuestion, loading: false, error: action.error },
+            };
+        // create detail question 
+        case questionActions.CREATE_DETAIL_QUESTION:
+            return {
+                ...state,
+                detailQuestion: { ...state.detailQuestion, loading: true },
+            };
+        case questionActions.CREATE_DETAIL_QUESTION_SUCCESS:
+            return {
+                ...state,
+                detailQuestion: { ...state.detailQuestion, loading: false, result: action.result },
+            };
+        case questionActions.CREATE_DETAIL_QUESTION_FAILED:
+            return {
+                ...state,
+                detailQuestion: { ...state.detailQuestion, loading: false, error: action.error },
+            };
+        // delete detail question 
+        case questionActions.DELETE_DETAIL_QUESTION:
+            return {
+                ...state,
+                detailQuestion: { ...state.detailQuestion, loading: true },
+            };
+        case questionActions.DELETE_DETAIL_QUESTION_SUCCESS:
+            return {
+                ...state,
+                detailQuestion: { ...state.detailQuestion, loading: false, result: action.result },
+            };
+        case questionActions.DELETE_DETAIL_QUESTION_FAILED:
+            return {
+                ...state,
+                detailQuestion: { ...state.detailQuestion, loading: false, error: action.error },
             };
         default:
             return state;
