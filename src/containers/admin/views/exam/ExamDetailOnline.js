@@ -325,7 +325,8 @@ const OnlineExamDetailPage = () => {
                                     question.cau_hoi.loai_cau_hoi === 4 ? 'Đúng sai' : question.cau_hoi.loai_cau_hoi === 5 ? 'Tự luận nhiều vị trí' : 'Kéo thả'
                                 }
                             </div>
-                        </div>}
+                        </div>
+                    }
                 </div>
             );
           });
@@ -426,7 +427,7 @@ const OnlineExamDetailPage = () => {
     }
 
     const handleChangeType = (type) => {
-        if (type.target.value === 0 ) { // tự luận 
+        if (type.target.value === 0 || type.target.value === 5) { // tự luận 
             setState({...state, showTuLuan: true, showTextTuLuan: true, showTextTuLuan2: true, typeQuestion: type.target.value});
         } else {
             setState({...state, showTuLuan: false, showTextTuLuan: false, showTextTuLuan2: false, typeQuestion: type.target.value});
@@ -598,11 +599,6 @@ const OnlineExamDetailPage = () => {
                         dispatch(answerActions.createANSWER(answer, subCallBack2));
                     }
                 }
-            } else {
-                notification.error({
-                    message: 'Thông báo',
-                    description: 'Thêm câu hỏi mới thất bại',
-                })
             }
         };
 
@@ -1205,7 +1201,7 @@ const OnlineExamDetailPage = () => {
                                                                                     </Col>
                                                                                 </Row>
                                                                             ))}
-                                                                            <Form.Item style={{display: (state.typeQuestion === 6 || state.typeQuestion === 2) ? '' : 'none'}}>
+                                                                            <Form.Item style={{display: (state.typeQuestion === 6) ? '' : 'none'}}>
                                                                                 <Button 
                                                                                     type="dashed" 
                                                                                     onClick={() => add()} 
@@ -1266,6 +1262,15 @@ const OnlineExamDetailPage = () => {
 
                                                                                 </Row>
                                                                             ))}
+                                                                            <Form.Item style={{display: (state.typeQuestion === 5) ? '' : 'none'}}>
+                                                                                <Button 
+                                                                                    type="dashed" 
+                                                                                    onClick={() => add()} 
+                                                                                    block
+                                                                                >
+                                                                                    Thêm câu hỏi
+                                                                                </Button>
+                                                                            </Form.Item>   
                                                                         </div>
                                                                     )}
                                                                 </Form.List> 
