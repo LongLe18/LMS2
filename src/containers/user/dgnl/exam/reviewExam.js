@@ -329,6 +329,42 @@ const ReviewExamPage = () => {
         )
     }
 
+    // giao diện câu hỏi chọn nhiều đáp án
+    const renderMultiChoiceQuestion = (question, answer, index) => {
+        return (
+            <button  style={{width:"100%"}}
+                className="btn-onclick"
+            >
+                <div className={`answer ${answer.dap_an_dung === true ? 'correct' : ''} `}>
+                    <span className="answer-label">{renderAnswerKey(index)}</span>
+                    <div className="answer-content">
+                        <MathJax.Provider>
+                            {answer.noi_dung_dap_an.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
+                                return (
+                                    <div className="help-answer-content" key={index_cauhoi}>
+                                    {
+                                        (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
+                                            <Image src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_answer_question_${index_cauhoi}`}></Image>
+                                        ) : (
+                                            item.split('$').map((item2, index2) => {
+                                                return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
+                                                    <MathJax.Node key={index2} formula={item2} />
+                                                ) : (
+                                                    <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                )
+                                            })
+                                        )
+                                    }
+                                    </div>
+                                )}
+                            )}
+                        </MathJax.Provider>
+                    </div>
+                </div>
+            </button>
+        );
+    };
+
     const renderExam = () => {
         if (error) return <NoRecord subTitle="Không tìm thấy đề thi." />;
         return (
@@ -459,6 +495,8 @@ const ReviewExamPage = () => {
                                                                     renderRightWrongQuestion(isAnswered, index, question, answer) 
                                                                 : (question.cau_hoi.loai_cau_hoi === 6) ?
                                                                     renderDragDropQuestion(question, index)
+                                                                : (question.cau_hoi.loai_cau_hoi === 2) ? 
+                                                                    renderMultiChoiceQuestion(question, answer, index)
                                                                 : null
                                                                 }
                                                             </li>

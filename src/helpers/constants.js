@@ -162,9 +162,9 @@ const COURSES_TYPES = [
 const QUESTIONS_TYPES = [
   { label: 'Trắc nghiệm', value: 1 },
   { label: 'Tự luận ', value: 0 },
-  { label: 'Tự luận nhiều vị trí', value: 5 },
   { label: 'Đúng sai ', value: 4 },
   { label: 'Kéo thả ', value: 6 },
+  { label: 'Tự luận nhiều vị trí', value: 5 },
   { label: 'Trắc nghiệm nhiều lựa chọn', value: 2 },
 ];
 

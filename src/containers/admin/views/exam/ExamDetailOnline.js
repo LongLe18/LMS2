@@ -274,7 +274,7 @@ const OnlineExamDetailPage = () => {
     };
 
     // render danh sách câu hỏi cho sidebar bên phải 
-    const renderQuestions = () => {
+    const renderSidebarQuestions = () => {
         const questionArr = exam.data.cau_hoi_de_this.map((question, index) => {
             return (
                 <div
@@ -304,7 +304,6 @@ const OnlineExamDetailPage = () => {
                         <span className="point">
                             {/* [{question.cau_hoi.diem} điểm] */}
                             {majors.data.filter((marjor) => marjor.chuyen_nganh_id === question.cau_hoi.chuyen_nganh_id)[0]?.ten_chuyen_nganh}
-                            {question.cau_hoi.loai_cau_hoi === 2 && 'Câu hỏi đúng sai'}
                         </span>
                     </div>
                     {(question.cau_hoi.loai_cau_hoi === 1 || question.cau_hoi.loai_cau_hoi === 2) ?
@@ -515,7 +514,7 @@ const OnlineExamDetailPage = () => {
                     dispatch(questionActions.createQuestionExam(questionExam, subCallBack));             
                     
                     const answer = new FormData();
-                    if (values.loai_cau_hoi === 1 || values.loai_cau_hoi === 4) { // Trắc nghiệm hoặc chọn đúng sai
+                    if (values.loai_cau_hoi === 1 || values.loai_cau_hoi === 4 || values.loai_cau_hoi === 2) { // Trắc nghiệm hoặc chọn đúng sai
                         for (let i = 0; i < values.dap_an.length; i++) {
                             answer.append(`noi_dung_dap_an${i+1}`, values.dap_an[i].tieu_de)
                         };
@@ -552,7 +551,7 @@ const OnlineExamDetailPage = () => {
                     
                     const answer = new FormData();
                     if (question.data.loai_cau_hoi === values.loai_cau_hoi) { // cùng 1 loại câu hỏi
-                        if (values.loai_cau_hoi === 1 || values.loai_cau_hoi === 2) { // Trắc nghiệm
+                        if (values.loai_cau_hoi === 1 || values.loai_cau_hoi === 4 || values.loai_cau_hoi === 2) { // Trắc nghiệm
                             answer.append('loai_cau_hoi', values.loai_cau_hoi); 
                             for (let i = 0; i < values.dap_an.length; i++) {
                                 answer.append(`noi_dung_dap_an${i+1}`, values.dap_an[i].tieu_de)
@@ -573,7 +572,7 @@ const OnlineExamDetailPage = () => {
                         }
                         dispatch(answerActions.editANSWER({ formData: answer, de_thi_id: id }, subCallBack2));
                     } else { // đổi loại câu hỏi
-                        if (values.loai_cau_hoi === 1 || values.loai_cau_hoi === 2) { // Tự luận -> Trắc nghiệm
+                        if (values.loai_cau_hoi === 1 || values.loai_cau_hoi === 4) { // Tự luận -> Trắc nghiệm
                             // Xoá đáp án hiện có
                             dispatch(answerActions.deleteAnswerByQuestion({ id: question.data.cau_hoi_id }));
                             // Tạo lại đáp án mới
@@ -1341,7 +1340,7 @@ const OnlineExamDetailPage = () => {
                                                                     {exam.data.cau_hoi_de_this.length}/{state.so_cau_hoi}
                                                                     </span>
                                                                 </h6>
-                                                                {renderQuestions()}
+                                                                {renderSidebarQuestions()}
                                                             </div>
                                                         </div>
                                                     </div>
