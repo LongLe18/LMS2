@@ -587,7 +587,7 @@ const ExamDGNLAdminPage = () => {
       const formData = new FormData();
       formData.append('ten_de_thi', values.ten_de_thi);
       formData.append('mo_ta', values.mo_ta !== undefined ? values.mo_ta : '' );
-      // formData.append('loai_de_thi_id', values.loai_de_thi_id);
+      formData.append('loai_de_thi_id', values.loai_de_thi_id);
       formData.append('khoa_hoc_id', values.khoa_hoc_id);
       formData.append('kct_id', values.kct_id);
       formData.append('de_mau', 1); // Tạo đề mẫu cho ĐGNL

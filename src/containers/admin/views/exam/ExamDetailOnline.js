@@ -221,31 +221,69 @@ const OnlineExamDetailPage = () => {
                     if (res.status === 'success') {
                         let dap_an_dung = [''];
                         let dap_ans = [];
-                        res.data.dap_ans.map((item, index) => {
-                            switch(index) {
-                                case 0:
-                                    if (item.dap_an_dung) dap_an_dung.push('A');
-                                    dap_ans.push({ tieu_de: item.noi_dung_dap_an, label: 'Đáp án A', key: 'A' });
-                                    break;
-                                case 1:
-                                    if (item.dap_an_dung) dap_an_dung.push('B');
-                                    dap_ans.push({ tieu_de: item.noi_dung_dap_an, label: 'Đáp án B', key: 'B' });
-                                    break;
-                                case 2:
-                                    if (item.dap_an_dung) dap_an_dung.push('C');
-                                    dap_ans.push({ tieu_de: item.noi_dung_dap_an, label: 'Đáp án C', key: 'C' });
-                                    break;
-                                case 3: 
-                                    if (item.dap_an_dung) dap_an_dung.push('D');
-                                    dap_ans.push({ tieu_de: item.noi_dung_dap_an, label: 'Đáp án D', key: 'D' });
-                                    break; 
-                                default:  
-                                    if (item.dap_an_dung) dap_an_dung.push('');
-                                    break;                                   
-                            }
-                            return null;
-                        });
-    
+                        let cau_hoi_chi_tiets = [];
+
+                        if (res.data.loai_cau_hoi !== 6) {
+                            res.data.dap_ans.map((item, index) => {
+                                switch(index) {
+                                    case 0:
+                                        if (item.dap_an_dung) dap_an_dung.push('A');
+                                        dap_ans.push({ tieu_de: item.noi_dung_dap_an, label: 'Đáp án A', key: 'A' });
+                                        break;
+                                    case 1:
+                                        if (item.dap_an_dung) dap_an_dung.push('B');
+                                        dap_ans.push({ tieu_de: item.noi_dung_dap_an, label: 'Đáp án B', key: 'B' });
+                                        break;
+                                    case 2:
+                                        if (item.dap_an_dung) dap_an_dung.push('C');
+                                        dap_ans.push({ tieu_de: item.noi_dung_dap_an, label: 'Đáp án C', key: 'C' });
+                                        break;
+                                    case 3: 
+                                        if (item.dap_an_dung) dap_an_dung.push('D');
+                                        dap_ans.push({ tieu_de: item.noi_dung_dap_an, label: 'Đáp án D', key: 'D' });
+                                        break; 
+                                    default:  
+                                        if (item.dap_an_dung) dap_an_dung.push('');
+                                        break;                                   
+                                }
+                                return null;
+                            });
+                        } else {
+                            // binding dữ liệu cho kéo thả
+                            const tempLuaChons = [];
+                            res.data.lua_chon.noi_dung.split(';').map((item, index) => {
+                                const newTag = { id: `${Date.now()}-${index}`, text: item.trim()};
+                                tempLuaChons.push(newTag);
+                            })
+                            setTagsLuaChon(tempLuaChons);
+
+                            res.data.dap_ans[0].noi_dung_dap_an.split(';').map((item, index) => {
+                                const newTag = { id: `${Date.now()}-${index + tempLuaChons.length}`, text: item.trim()};
+                                dap_ans.push(newTag);
+                            })
+                            setTagDapAnDungs(dap_ans);
+
+                            res.data.cau_hoi_chi_tiets.map((item, index) => {
+                                switch(index) {
+                                    case 0:
+                                        cau_hoi_chi_tiets.push({ tieu_de: item.noi_dung, label: 'Đáp án A', key: 'A' });
+                                        break;
+                                    case 1:
+                                        cau_hoi_chi_tiets.push({ tieu_de: item.noi_dung, label: 'Đáp án B', key: 'B' });
+                                        break;
+                                    case 2:
+                                        cau_hoi_chi_tiets.push({ tieu_de: item.noi_dung, label: 'Đáp án C', key: 'C' });
+                                        break;
+                                    case 3: 
+                                    cau_hoi_chi_tiets.push({ tieu_de: item.noi_dung, label: 'Đáp án D', key: 'D' });
+                                        break; 
+                                    default:  
+                                        break;                                   
+                                }
+                                return null;
+                            });
+                        }
+                        
                         questionForm.setFieldsValue({
                             trich_doan: res.data.trich_doan_id ? res.data.trich_doan_id : '',
                             diem: res.data.diem,
@@ -256,23 +294,29 @@ const OnlineExamDetailPage = () => {
                             chuyen_nganh_id: res.data.chuyen_nganh_id,
                             //
                             noi_dung: res.data.noi_dung,
-                            dap_an: dap_ans,
+                            dap_an: res.data.loai_cau_hoi !== 6 ? dap_ans : cau_hoi_chi_tiets,
                             loi_giai: res.data.loi_giai,
                         });
+
                         setCurrentQuestion({...currentQuestion, noi_dung: res.data.noi_dung, 
-                            dap_an: dap_ans, loi_giai: res.data.loi_giai,
+                            dap_an: res.data.loai_cau_hoi !== 6 ? dap_ans : cau_hoi_chi_tiets, loi_giai: res.data.loi_giai,
                         });
-    
-                        setState({ ...state, isEdit: true, idQuestion: cau_hoi.cau_hoi_id, indexQuestion: index + 1,
-                            showTuLuan: res.data.loai_cau_hoi === 0 ? true : false, 
-                            showTextTuLuan: res.data.loai_cau_hoi === 0 ? true : false, 
-                            showTextTuLuan2: res.data.loai_cau_hoi === 0 ? true : false })
+                        
+                        if (res.data.loai_cau_hoi === 0 ||  res.data.loai_cau_hoi === 5) { // tự luận 
+                            setState({...state, isEdit: true, idQuestion: cau_hoi.cau_hoi_id, showTuLuan: true, indexQuestion: index + 1,
+                                showTextTuLuan: true, showTextTuLuan2: true, typeQuestion: res.data.loai_cau_hoi
+                            });
+                        } else {
+                            setState({...state, isEdit: true, idQuestion: cau_hoi.cau_hoi_id, indexQuestion: index + 1, 
+                                showTuLuan: false, showTextTuLuan: false, showTextTuLuan2: false, typeQuestion: res.data.loai_cau_hoi
+                            });
+                        } 
                     }
                 }));
             },
         });
     };
-
+    
     // render danh sách câu hỏi cho sidebar bên phải 
     const renderSidebarQuestions = () => {
         const questionArr = exam.data.cau_hoi_de_this.map((question, index) => {
@@ -281,7 +325,11 @@ const OnlineExamDetailPage = () => {
                     className={`${currentQuestion.cau_hoi_id === question.cau_hoi_id ? 'active' : ''} item`}
                     key={index}
                     onClick={() => {
-                        EditQuestion(question.cau_hoi, index);
+                        if (question.cau_hoi.loai_cau_hoi === 6) {
+                            notification.warning({
+                                message: "Loại câu hỏi này không thể chỉnh sửa, bạn hãy xóa và thêm mới lại"
+                            });
+                        } else EditQuestion(question.cau_hoi, index);
                     }}
                 >
                     <CloseOutlined
@@ -542,8 +590,10 @@ const OnlineExamDetailPage = () => {
 
                         // tạo đáp án đúng
                         answer.append(`noi_dung_dap_an1`, tagsDapAnDungs.map((item) => item.text).join(';')); 
-                    } else if (values.loai_cau_hoi === 0) { // Tự luận
-                        answer.append(`noi_dung_dap_an1`, values.dap_an_tu_luan[0].tieu_de)
+                    } else if (values.loai_cau_hoi === 0 || values.loai_cau_hoi === 5) { // Tự luận
+                        for (let i = 0; i < values.dap_an_tu_luan.length; i++) {
+                            answer.append(`noi_dung_dap_an${i+1}`, values.dap_an_tu_luan[i].tieu_de)
+                        };
                     }
                     answer.append('cau_hoi_id', res.data.data.cau_hoi_id);
 
@@ -566,10 +616,12 @@ const OnlineExamDetailPage = () => {
                                 else if (dap_an_dung[i] === 'C') answer.append('dap_an_dung3', 1)
                                 else if (dap_an_dung[i] === 'D') answer.append('dap_an_dung4', 1)
                             }
-                        } else {// Tự luận
+                        } else if (values.loai_cau_hoi === 0 || values.loai_cau_hoi === 5) { // Tự luận
+                            for (let i = 0; i < values.dap_an_tu_luan.length; i++) {
+                                answer.append(`noi_dung_dap_an${i+1}`, values.dap_an_tu_luan[i].tieu_de)
+                                answer.append(`dap_an_id${i+1}`, question.data.dap_ans[i].dap_an_id)
+                            };
                             answer.append('loai_cau_hoi', values.loai_cau_hoi); 
-                            answer.append(`noi_dung_dap_an1`, values.dap_an_tu_luan[0].tieu_de)
-                            answer.append('dap_an_id1', question.data.dap_ans[0].dap_an_id)
                         }
                         dispatch(answerActions.editANSWER({ formData: answer, de_thi_id: id }, subCallBack2));
                     } else { // đổi loại câu hỏi
@@ -1262,7 +1314,7 @@ const OnlineExamDetailPage = () => {
 
                                                                                 </Row>
                                                                             ))}
-                                                                            <Form.Item style={{display: (state.typeQuestion === 5) ? '' : 'none'}}>
+                                                                            {/* <Form.Item style={{display: (state.typeQuestion === 5) ? '' : 'none'}}>
                                                                                 <Button 
                                                                                     type="dashed" 
                                                                                     onClick={() => add()} 
@@ -1270,7 +1322,7 @@ const OnlineExamDetailPage = () => {
                                                                                 >
                                                                                     Thêm câu hỏi
                                                                                 </Button>
-                                                                            </Form.Item>   
+                                                                            </Form.Item>    */}
                                                                         </div>
                                                                     )}
                                                                 </Form.List> 

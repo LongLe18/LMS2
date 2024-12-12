@@ -287,7 +287,7 @@ const ReviewExamPage = () => {
                     </div>
                         
                     {question?.cau_hoi?.cau_hoi_chi_tiets?.map((cau_hoi, index) => {
-                        const partCauhoi = cau_hoi?.noi_dung?.split('...');
+                        const partCauhoi = cau_hoi?.noi_dung?.split('{ENTER}');
                         return (
                             <Row key={index}>
                                 <div style={{fontSize: 18, marginBottom: 8, marginRight: 12}}>
@@ -314,8 +314,7 @@ const ReviewExamPage = () => {
                                                     )
                                                 })}
                                                 {index_2 < partCauhoi.length - 1 && (
-                                                    <div className={`empty-box`}>
-                                                    </div>
+                                                    <div className={`empty-box`}></div>
                                                 )}
                                             </div>
                                         )
@@ -461,12 +460,35 @@ const ReviewExamPage = () => {
                                                             ) : 
                                                             (
                                                                 <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
-                                                                    return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
-                                                                        <MathJax.Node key={index2} formula={item2} />
-                                                                    ) : (
-                                                                        <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
-                                                                    )
-                                                                })}</div>
+                                                                    const partCauhoi = item2.split('{ENTER}');
+
+                                                                    return (partCauhoi.map((chi_tiet, index_2) => {
+                                                                        return (
+                                                                            <div style={{fontSize: 18, marginBottom: 8}} key={index_2}>
+                                                                                {chi_tiet.split('\n').map((item, index) => {
+                                                                                    return (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
+                                                                                        <div style={{display: 'flex', justifyContent: 'center', width: '100%'}} key={index}>
+                                                                                            <Image src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question4_${index}`}></Image>
+                                                                                        </div>
+                                                                                    ) : 
+                                                                                    (
+                                                                                        <span key={index}>{item.split('$').map((item2, index2) => {
+                                                                                            return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
+                                                                                                <MathJax.Node key={index2} formula={item2} />
+                                                                                            ) : (
+                                                                                                <span key={index2} dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                                                            )
+                                                                                        })}</span>
+                                                                                    )
+                                                                                })}
+                                                                                {index_2 < partCauhoi.length - 1 && (
+                                                                                    <div className={`empty-box`}></div>
+                                                                                )}
+                                                                            </div>
+                                                                        )
+                                                                    }))
+                                                                })}
+                                                                </div>
                                                             )
                                                         }
                                                     </div>
@@ -475,7 +497,6 @@ const ReviewExamPage = () => {
                                         </MathJax.Provider>
                                     </div>
                                                          
-
                                     <div className="content-answer-question">
                                         <Row gutter={[20, 10]} className="multi-choice">
                                             {question.cau_hoi.dap_ans.map((answer, index) => {
