@@ -259,6 +259,24 @@ function* fetchCriteriaDGNLByCourse(payload) {
     }
 }
 
+function* fetchCriteriaDGTDByCourse(payload) {
+    try {
+        let endpoint = `${config.API_URL}/dgtd-criteria/by_course/${payload.params.idCourse}`;
+        const response = yield call(getApiAuth, endpoint);
+        const result = yield response.data;
+        yield put({ type: actions.exam.GET_CRITERIA_DGTD_ID_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.exam.GET_CRITERIA_DGTD_ID_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        notification.error({
+            message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
+        });
+    }
+}
+
 function* fetchThematicCriteria(payload) {
     try {
         let endpoint = `${config.API_URL}/thematic_criteria/by_thematic/${payload.params.idThematic}`;
@@ -476,6 +494,10 @@ export function* loadFilterExamDGNL() {
 
 export function* loadCriteriaDGNLByCourse() {
     yield takeEvery(actions.exam.GET_CRITERIA_DGNL_ID, fetchCriteriaDGNLByCourse);
+}
+
+export function* loadCriteriaDGTDByCourse() {
+    yield takeEvery(actions.exam.GET_CRITERIA_DGTD_ID, fetchCriteriaDGTDByCourse);
 }
 
 export function* loadCriteriaByCourse() {

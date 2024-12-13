@@ -983,7 +983,7 @@ const OnlineExamDetailPage = () => {
                                                                     </Col>
                                                                     <Col xl={4}>
                                                                         <Form.Item>
-                                                                            <Button type='primary' onClick={() => history.push('/admin/sample/question/' + id)}>Câu hỏi có sẵn</Button>
+                                                                            <Button type='primary' onClick={() => history.push(`/admin/sample/question/${id}?loai_de_thi=${paramtypeExamUrl}`)}>Câu hỏi có sẵn</Button>
                                                                         </Form.Item>
                                                                     </Col>
                                                                     <Col xl={3}>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import './css/ExamDetail.css'
 import LoadingCustom from "components/parts/loading/Loading";
 import config from '../../../../configs/index';
@@ -18,8 +18,10 @@ import * as thematicActions from '../../../../redux/actions/thematic';
 const { Option } = Select;
 
 const SampleQuestion = (props) => {
+    let history = useHistory();
     const idExam = useParams().id;
     const dispatch = useDispatch();
+    const paramtypeExamUrl = new URLSearchParams(history.location.search).get('loai_de_thi');
 
     const questions = useSelector(state => state.question.list.result);
     const loading = useSelector(state => state.question.list.loading);
@@ -35,6 +37,17 @@ const SampleQuestion = (props) => {
 
     const thematics = useSelector(state => state.thematic.listbyId.result);
     const loadingThematics = useSelector(state => state.thematic.listbyId.loading);
+
+    const majors = {
+        1: 'Toán',
+        3: 'Vật lý',
+        4: 'Hóa học',
+        5: 'Tiếng anh',
+        6: 'Sinh học',
+        7: 'Văn học',
+        8: "Lịch sử",
+        9: "Địa lý"
+    }
 
     const regex = /\\begin{center}\\includegraphics\[scale = 0\.5\]{(.*?)}\\end{center}/;
     const [filter, setFilter] = useState({
@@ -60,14 +73,17 @@ const SampleQuestion = (props) => {
                     dispatch(examActions.getSyntheticCriteria({  idCourse: res.data.khoa_hoc_id }));
                 } else if (res.data.loai_de_thi_id === 4) {
                     dispatch(examActions.getCriteriaOnlineById({  idCourse: res.data.khoa_hoc_id }));
-                } else {
+                } else if (res.data.loai_de_thi_id === 5) {
                     dispatch(examActions.getCriteriaDGNLById({ idCourse: res.data.khoa_hoc_id }))
+                } else {
+                    dispatch(examActions.getCriteriaDGTDById({ idCourse: res.data.khoa_hoc_id }))
                 }
             };
         };
 
         dispatch(questionActions.getQuestions({ kct_id: '', chuyen_nganh_id: '', pageSize: pageSize, pageIndex: pageIndex }));
-        dispatch(examActions.getExam({ id: idExam }, callback));
+        if (paramtypeExamUrl !== 'DGTD') dispatch(examActions.getExam({ id: idExam }, callback));
+        else dispatch(examActions.getExam({ id: idExam, type: 'dgtd' }, callback));
         dispatch(courseActions.getCourses({ idkct: '', status: 1, search: '' }));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -180,7 +196,6 @@ const SampleQuestion = (props) => {
     }
 
     const chooseQuestion = (id) => {
-        console.log(criteria.data)
         if (exam.data.cau_hoi_de_this.length === criteria.data.so_cau_hoi) {
             Modal.warning({
                 title: 'Thông báo',
@@ -197,17 +212,14 @@ const SampleQuestion = (props) => {
             onOk() {
                 const callback = (res) => {
                     if (res.status === 200) {
-                        dispatch(examActions.getExam({ id: idExam }));
+                        if (paramtypeExamUrl !== 'DGTD') dispatch(examActions.getExam({ id: idExam }, callback));
+                        else dispatch(examActions.getExam({ id: idExam, type: 'dgtd' }, callback));
+                        
                         notification.success({
                             message: 'Thành công',
                             description: 'Thêm câu hỏi vào đề thi thành công',
                         })
-                    } else {
-                        notification.error({
-                            message: 'Thông báo',
-                            description: 'Thêm câu hỏi vào đề thi thất bại',
-                        })
-                    };
+                    } 
                 }
                 const questionExam = { cau_hoi_id: id, de_thi_id: idExam }
                 dispatch(questionActions.createQuestionExam(questionExam, callback));
@@ -269,7 +281,7 @@ const SampleQuestion = (props) => {
                                     onClick={() => chooseQuestion(question.cau_hoi_id)}
                                 >
                                     <div className="header-question">
-                                        Câu {index + 1} <span className="point">[{question.diem} điểm]</span>
+                                        Câu {index + 1} <span className="point">[{question.diem} điểm]</span> {majors[question.chuyen_nganh_id]}
                                     </div>
                                     <div className="body-question">
                                         <div className="answer-detail">

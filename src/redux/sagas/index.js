@@ -122,6 +122,7 @@ import {
     loadExamsUser,
     loadReuseExam,
     loadExamCourseOnline,
+    loadCriteriaDGTDByCourse,
 } from './exam';
 
 import { 
@@ -487,6 +488,7 @@ export default function* rootSaga() {
         loadExamsUser(),
         loadReuseExam(),
         loadExamCourseOnline(),
+        loadCriteriaDGTDByCourse(),
         // type Exam
         loadAddTypeExam(),
         loadDeleteTypeExam(),

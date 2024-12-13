@@ -210,6 +210,22 @@ export default function examReducer(state = initState, action) {
                 ...state,
                 criteria: { ...state.criteria, loading: false, error: action.error },
             };
+        // DGTD criteria
+        case examActions.GET_CRITERIA_DGTD_ID:
+            return {
+                ...state,
+                criteria: { ...state.criteria, loading: true },
+            };
+        case examActions.GET_CRITERIA_DGTD_ID_SUCCESS:
+            return {
+                ...state,
+                criteria: { ...state.criteria, loading: false, result: action.result },
+            };
+        case examActions.GET_CRITERIA_DGTD_ID_FAILED:
+            return {
+                ...state,
+                criteria: { ...state.criteria, loading: false, error: action.error },
+            };
         // Synthetic criteria
         case examActions.GET_SYNTHETIC_CRITERIA:
             return {
