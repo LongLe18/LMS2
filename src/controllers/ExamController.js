@@ -1155,7 +1155,7 @@ const publish = async (req, res) => {
             }
         );
     } else {
-        if (exam.de_mau) {
+        if (exam.loai_de_thi_id === 5) {
             const condition = await sequelize.query(
                 `
                 SELECT ((SELECT COUNT(*) FROM cau_hoi_de_thi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 1) >= 50
@@ -1174,6 +1174,36 @@ const publish = async (req, res) => {
             );
             if (condition[0].bool) {
                 let criteria = await DGNLCriteria.findOne({
+                    where: {
+                        khoa_hoc_id: exam.khoa_hoc_id,
+                    },
+                });
+                if (!criteria) {
+                    return res.status(400).send({
+                        status: 'error',
+                        message: 'Chưa có tiêu chí đề thi',
+                    });
+                }
+            } else {
+                return res.status(400).send({
+                    status: 'error',
+                    message: 'Số lượng câu hỏi chưa đủ yêu cầu',
+                });
+            }
+        }else if(exam.loai_de_thi_id === 6){
+            const condition = await sequelize.query(
+                `
+                SELECT ((SELECT COUNT(*) FROM cau_hoi_de_thi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 10) >= 40
+                AND (SELECT COUNT(*) FROM cau_hoi_de_thi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 11) >= 20
+                AND (SELECT COUNT(*) FROM cau_hoi_de_thi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 12) >= 40
+                AND (SELECT COUNT(*) FROM cau_hoi_de_thi WHERE de_thi_id = :de_thi_id) >= 100) AS bool`,
+                {
+                    replacements: { de_thi_id: Number(req.params.id) },
+                    type: sequelize.QueryTypes.SELECT,
+                }
+            );
+            if (condition[0].bool) {
+                let criteria = await DGTDCriteria.findOne({
                     where: {
                         khoa_hoc_id: exam.khoa_hoc_id,
                     },
