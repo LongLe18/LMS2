@@ -597,7 +597,6 @@ const ExamDGNLAdminPage = () => {
       
       if (state.fileImg !== '')
         formData.append('anh_dai_dien', state.fileImg !== undefined ? state.fileImg : '');
-      
       dispatch(examActions.createExam(formData, callback));
   }
 

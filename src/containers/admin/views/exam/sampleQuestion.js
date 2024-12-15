@@ -281,7 +281,7 @@ const SampleQuestion = (props) => {
                                     onClick={() => chooseQuestion(question.cau_hoi_id)}
                                 >
                                     <div className="header-question">
-                                        Câu {index + 1} <span className="point">[{question.diem} điểm]</span> {majors[question.chuyen_nganh_id]}
+                                        Câu {index + 1} <span className="point">[{question.diem} điểm]</span> {majors[question.chuyen_nganh_id]} {question.trich_doan_id && 'Có trích đoạn'}
                                     </div>
                                     <div className="body-question">
                                         <div className="answer-detail">

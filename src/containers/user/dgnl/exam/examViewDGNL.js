@@ -137,11 +137,13 @@ const ExamViewDGNL = (props) => {
         });
     }
 
-    // lấy tiêu chí đề thi ĐGNL
-    const getCriteriaDGNL = () => {
+    // lấy tiêu chí đề thi ĐGNL và ĐGTD
+    const getCriteriaDG = (isDGNL) => {
+        // isDGNL: true => Đề thi ĐGNL; false => Đề thi ĐGTD
+        const url = isDGNL ? `/dgnl-criteria/by_course/${hashids.decode(idCourse)}` : `/dgtd-criteria/by_course/${hashids.decode(idCourse)}`
         axios({
             method: 'get', 
-            url: config.API_URL + `/dgnl-criteria/by_course/${hashids.decode(idCourse)}`, 
+            url: config.API_URL + url, 
             timeout: 1000 * 60 * 5,
             headers: {Authorization: `Bearer ${localStorage.getItem('userToken')}`,}
         })
@@ -162,7 +164,7 @@ const ExamViewDGNL = (props) => {
         });
     }
 
-    // kiểm tra xem học viên đang có đề thi chưa hoàn thành hay không
+    // kiểm tra xem học viên đang có đề thi chưa hoàn thành hay không (Dùng chung ĐGNL và ĐGTD)
     const isFinisedExam = () => {
         axios({
             method: 'get', 
@@ -186,8 +188,8 @@ const ExamViewDGNL = (props) => {
                             },
                         });
                     } else {
-                        setIsJoinExam(1);
-                        getCriteriaDGNL();
+                        if (course?.data?.loai_kct === 0) setIsJoinExam(1);
+                        getCriteriaDG(course?.data?.loai_kct === 0 ? true : false);
                     }
                 } else {
                     notification.error({

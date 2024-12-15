@@ -440,9 +440,14 @@ const OnlineExamDetailPage = () => {
     const renderMajor = () => {
         let options = [];
         if (majors.status === 'success') {
-          options = majors.data.map((major) => (
-            <Option key={major.chuyen_nganh_id} value={major.chuyen_nganh_id} >{major?.ten_chuyen_nganh}</Option>
-          ))
+            if (paramtypeExamUrl !== 'DGTD') 
+                options = majors.data.filter((major) => major.chuyen_nganh_id <= 9).map((major) => (
+                    <Option key={major.chuyen_nganh_id} value={major.chuyen_nganh_id} >{major?.ten_chuyen_nganh}</Option>
+                ))
+            else 
+                options = majors.data.filter((major) => major.chuyen_nganh_id > 9).map((major) => (
+                    <Option key={major.chuyen_nganh_id} value={major.chuyen_nganh_id} >{major?.ten_chuyen_nganh}</Option>
+                ))
         }
         return (
             <Select
@@ -1419,22 +1424,30 @@ const OnlineExamDetailPage = () => {
                                             <Button key={1} onClick={() => {
                                                 state.so_cau_hoi = 0 // số câu hỏi tại mỗi phần   
                                                 setCurrentStep(0);
-                                            }}> Kiểm tra lại</Button>,
+                                            }}> 
+                                                Kiểm tra lại
+                                            </Button>,
                                             <Button key={2}
-                                            type="primary"
-                                            onClick={() =>
-                                                Modal.confirm({
-                                                title: 'Xuất bản đề thi',
-                                                content: 'Bạn có chắc chắn muốn xuất bản đề thi này không?',
-                                                okText: 'Có',
-                                                cancelText: 'Không',
-                                                onOk: () => {
-                                                    handlePublishExam();
-                                                }})}
+                                                type="primary"
+                                                onClick={() =>
+                                                    Modal.confirm({
+                                                        title: 'Xuất bản đề thi',
+                                                        content: 'Bạn có chắc chắn muốn xuất bản đề thi này không?',
+                                                        okText: 'Có',
+                                                        cancelText: 'Không',
+                                                        onOk: () => {
+                                                            handlePublishExam();
+                                                        }
+                                                    })
+                                                }
                                             >
                                                 Xuất bản
                                             </Button>,
-                                            <Button key={3} type="primary" onClick={() => window.open(`/luyen-tap/xem-lai/${hashids.encode(id)}`, "_blank")}>Xem toàn đề</Button>,
+                                            <Button key={3} type="primary" 
+                                                onClick={() => window.open(`/luyen-tap/xem-lai/${hashids.encode(id)}?loai_de_thi=${paramtypeExamUrl}`, "_blank")}
+                                            >
+                                                Xem toàn đề
+                                            </Button>,
                                         ]}
                                     />
                                 </Col>
