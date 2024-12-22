@@ -159,7 +159,9 @@ const OnlineExamDetailPage = () => {
         const callback = (res) => {
             // lấy số lượng câu hỏi của đề theo tiêu chí đề  thi thuộc vào
             if (res.status === 'success') {
-                dispatch(examActions.getCriteriaDGNLById({  idCourse: res.data.khoa_hoc_id }));
+                
+                if (paramtypeExamUrl !== 'DGTD') dispatch(examActions.getCriteriaDGNLById({  idCourse: res.data.khoa_hoc_id }));
+                else dispatch(examActions.getCriteriaDGTDById({ idCourse: res.data.khoa_hoc_id }));
             };
         };
 
@@ -223,28 +225,32 @@ const OnlineExamDetailPage = () => {
                         let dap_ans = [];
                         let cau_hoi_chi_tiets = [];
 
-                        if (res.data.loai_cau_hoi !== 6) {
+                        if (res.data.loai_cau_hoi !== 6) { // nếu loại câu hỏi không phải kéo thả
                             res.data.dap_ans.map((item, index) => {
-                                switch(index) {
-                                    case 0:
-                                        if (item.dap_an_dung) dap_an_dung.push('A');
-                                        dap_ans.push({ tieu_de: item.noi_dung_dap_an, label: 'Đáp án A', key: 'A' });
-                                        break;
-                                    case 1:
-                                        if (item.dap_an_dung) dap_an_dung.push('B');
-                                        dap_ans.push({ tieu_de: item.noi_dung_dap_an, label: 'Đáp án B', key: 'B' });
-                                        break;
-                                    case 2:
-                                        if (item.dap_an_dung) dap_an_dung.push('C');
-                                        dap_ans.push({ tieu_de: item.noi_dung_dap_an, label: 'Đáp án C', key: 'C' });
-                                        break;
-                                    case 3: 
-                                        if (item.dap_an_dung) dap_an_dung.push('D');
-                                        dap_ans.push({ tieu_de: item.noi_dung_dap_an, label: 'Đáp án D', key: 'D' });
-                                        break; 
-                                    default:  
-                                        if (item.dap_an_dung) dap_an_dung.push('');
-                                        break;                                   
+                                if (res.data.loai_cau_hoi !== 0 && res.data.loai_cau_hoi !== 5) { // trắc nghiệm
+                                    switch(index) {
+                                        case 0:
+                                            if (item.dap_an_dung) dap_an_dung.push('A');
+                                            dap_ans.push({ tieu_de: item.noi_dung_dap_an, label: 'Đáp án A', key: 'A' });
+                                            break;
+                                        case 1:
+                                            if (item.dap_an_dung) dap_an_dung.push('B');
+                                            dap_ans.push({ tieu_de: item.noi_dung_dap_an, label: 'Đáp án B', key: 'B' });
+                                            break;
+                                        case 2:
+                                            if (item.dap_an_dung) dap_an_dung.push('C');
+                                            dap_ans.push({ tieu_de: item.noi_dung_dap_an, label: 'Đáp án C', key: 'C' });
+                                            break;
+                                        case 3: 
+                                            if (item.dap_an_dung) dap_an_dung.push('D');
+                                            dap_ans.push({ tieu_de: item.noi_dung_dap_an, label: 'Đáp án D', key: 'D' });
+                                            break; 
+                                        default:  
+                                            if (item.dap_an_dung) dap_an_dung.push('');
+                                            break;                                   
+                                    }
+                                } else if (res.data.loai_cau_hoi === 0 || res.data.loai_cau_hoi === 5) { // tự luận
+                                    dap_ans.push({ tieu_de: item.noi_dung_dap_an, label: 'Đáp án', key: 'A' });
                                 }
                                 return null;
                             });
@@ -291,6 +297,7 @@ const OnlineExamDetailPage = () => {
                             muc_do_cau_hoi: res.data.mdch_id,
                             kieu_hien_thi_dap_an: res.data.cot_tren_hang.toString(),
                             dap_an_dung: dap_an_dung,
+                            dap_an_tu_luan: res.data.loai_cau_hoi === 0 || res.data.loai_cau_hoi === 5 ? dap_ans : [],
                             chuyen_nganh_id: res.data.chuyen_nganh_id,
                             //
                             noi_dung: res.data.noi_dung,
@@ -369,7 +376,7 @@ const OnlineExamDetailPage = () => {
                     : 
                         <div className='body-question' style={{color: question.cau_hoi.dap_ans.length === 0 ? 'red' : 'black'}}>
                             <div className="answer-detail">
-                                {question.cau_hoi.loai_cau_hoi === 0 ? 'Câu hỏi Tự Luận' : question.cau_hoi.loai_cau_hoi === 3 ? 'Trắc nghiệm nhiều lựa chọn đúng sai' :
+                                {question.cau_hoi.loai_cau_hoi === 0 ? 'Tự Luận' : question.cau_hoi.loai_cau_hoi === 3 ? 'Trắc nghiệm nhiều lựa chọn đúng sai' :
                                     question.cau_hoi.loai_cau_hoi === 4 ? 'Đúng sai' : question.cau_hoi.loai_cau_hoi === 5 ? 'Tự luận nhiều vị trí' : 'Kéo thả'
                                 }
                             </div>
@@ -568,7 +575,7 @@ const OnlineExamDetailPage = () => {
                     dispatch(questionActions.createQuestionExam(questionExam, subCallBack));             
                     
                     const answer = new FormData();
-                    if (values.loai_cau_hoi === 1 || values.loai_cau_hoi === 4 || values.loai_cau_hoi === 2) { // Trắc nghiệm hoặc chọn đúng sai
+                    if (values.loai_cau_hoi === 1 || values.loai_cau_hoi === 4 || values.loai_cau_hoi === 2 || values.loai_cau_hoi === 3) { // Trắc nghiệm hoặc chọn đúng sai
                         for (let i = 0; i < values.dap_an.length; i++) {
                             answer.append(`noi_dung_dap_an${i+1}`, values.dap_an[i].tieu_de)
                         };
@@ -607,7 +614,7 @@ const OnlineExamDetailPage = () => {
                     
                     const answer = new FormData();
                     if (question.data.loai_cau_hoi === values.loai_cau_hoi) { // cùng 1 loại câu hỏi
-                        if (values.loai_cau_hoi === 1 || values.loai_cau_hoi === 4 || values.loai_cau_hoi === 2) { // Trắc nghiệm
+                        if (values.loai_cau_hoi === 1 || values.loai_cau_hoi === 4 || values.loai_cau_hoi === 2 || values.loai_cau_hoi === 3) { // Trắc nghiệm
                             answer.append('loai_cau_hoi', values.loai_cau_hoi); 
                             for (let i = 0; i < values.dap_an.length; i++) {
                                 answer.append(`noi_dung_dap_an${i+1}`, values.dap_an[i].tieu_de)

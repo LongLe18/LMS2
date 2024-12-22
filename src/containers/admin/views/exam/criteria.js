@@ -649,20 +649,6 @@ const Criteria = () => {
             responsive: ['md'],
         },
         {
-            title: 'Số câu hỏi phần Ngoại ngữ',
-            dataIndex: 'so_cau_hoi_phan_4',
-            key: 'so_cau_hoi_phan_4',
-            width: 180,
-            responsive: ['md'],
-        },
-        {
-            title: 'Thời gian phần Ngoại ngữ',
-            dataIndex: 'thoi_gian_phan_4',
-            key: 'thoi_gian_phan_4',
-            width: 150,
-            responsive: ['md'],
-        },
-        {
             title: 'Tùy chọn',
             key: 'idtieu_chi_de_thi_dgtd',
             dataIndex: 'idtieu_chi_de_thi_dgtd',
@@ -1283,7 +1269,7 @@ const Criteria = () => {
             "thoi_gian": 0,
         };
 
-        Array.from({ length: numberExams }).map((_, index) => {
+        Array.from({ length: numberExams - 1 }).map((_, index) => {
             dataSubmit[`so_cau_hoi_phan_${index + 1}`] = values[`so_cau_hoi_phan_${index + 1}`];
             dataSubmit[`thoi_gian_phan_${index + 1}`] = values[`thoi_gian_phan_${index + 1}`];
             dataSubmit.so_cau_hoi = dataSubmit.so_cau_hoi + values[`so_cau_hoi_phan_${index + 1}`];
@@ -1691,27 +1677,27 @@ const Criteria = () => {
                                 </Form.Item>
                             </Col>
                             <Col xl={24} sm={24} xs={24} className="left-content">
-                                <Form.Item initialValue={numberExams}
+                                <Form.Item initialValue={numberExams - 1}
                                     className="input-col"
                                     label="Số phần thi"
                                     name="so_phan"
                                     rules={[
                                         {
-                                        required: true,
-                                        message: 'Số phần thi là trường bắt buộc.',
+                                            required: true,
+                                            message: 'Số phần thi là trường bắt buộc.',
                                         },
                                     ]}
                                 >
-                                    <InputNumber disabled={true} placeholder="Nhập số phần thi" style={{width: "100%"}} defaultValue={numberExams} onChange={handleNumberExamChange}/>
+                                    <InputNumber disabled={true} placeholder="Nhập số phần thi" style={{width: "100%"}} defaultValue={numberExams - 1} onChange={handleNumberExamChange}/>
                                 </Form.Item>
                             </Col>
                             
-                            {Array.from({ length: numberExams }).map((_, index) => (
+                            {Array.from({ length: numberExams - 1 }).map((_, index) => (
                                 <>
                                     <Col xl={12} sm={24} xs={24} >
                                         <Form.Item
                                             className="input-col"
-                                            label={`Số câu hỏi phần ${index === 0 ? ' Toán học' : index === 1 ? ' Văn học' : index === 2 ? ' Khoa học' : 'Ngoại ngữ'}`}
+                                            label={`Số câu hỏi phần ${index === 0 ? ' Toán học' : index === 1 ? ' Đọc hiểu' : index === 2 ? ' Khoa học' : 'Ngoại ngữ'}`}
                                             name={`so_cau_hoi_phan_${index + 1}`}
                                             rules={[
                                                 {

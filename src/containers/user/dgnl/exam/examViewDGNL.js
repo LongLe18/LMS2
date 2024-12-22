@@ -465,7 +465,7 @@ const ExamViewDGNL = (props) => {
                                 <Checkbox.Group style={{ width: '100%', display: 'flex', justifyContent: 'center' }} onChange={onChangeSubject} value={subjects}>
                                     <Row style={{width: '10%', textAlign: 'left'}}>
                                         {majors.status === 'success' && 
-                                            majors.data.map((major, index) => {
+                                            majors.data.filter((item) => item.chuyen_nganh_id < 10).map((major, index) => {
 
                                                 if (major.chuyen_nganh_id !== 1 && major.chuyen_nganh_id !== 7 && major.chuyen_nganh_id !== 5) {
                                                     return (

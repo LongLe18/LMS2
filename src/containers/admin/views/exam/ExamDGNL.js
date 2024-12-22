@@ -65,6 +65,11 @@ const ExamDGNLAdminPage = () => {
       dispatch(typeExamActions.getTypes());
       dispatch(majorActions.getMajors());
       dispatch(courseActions.getCourses({ idkct: '', status: 1, search: '' })); // lấy khoá học đang hoạt động
+      dispatch(programmeActions.getProgrammes({ status: 1 }, (res) => {
+        if (res.status === 'success') {
+          setProgrammes(res.data.filter(item => item.loai_kct === 0 || item.loai_kct === 3));
+        }
+      }));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const [state, setState] = useState({
