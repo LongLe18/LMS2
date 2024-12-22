@@ -100,7 +100,7 @@ const getById = async (req, res) => {
         include: [
             {
                 model: Answer,
-                attributes: ['dap_an_id', 'noi_dung_dap_an', 'dap_an_dung],
+                attributes: ['dap_an_id', 'noi_dung_dap_an', 'dap_an_dung'],
             },
             {
                 model: Option,
