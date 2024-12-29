@@ -3,7 +3,7 @@ const router = express.Router();
 const { tryCatch } = require('../middlewares/tryCatch');
 const courseController = require('../controllers/CourseController');
 const { authToken, authRole } = require('../middlewares/auth');
-const { upload } = require('../middlewares/upload');
+const { upload, uploadToMinio, uploadMultipleToMinio } = require('../middlewares/upload6');
 
 router.post(
     '/create', authToken, authRole([2], 6),
@@ -11,6 +11,7 @@ router.post(
         { name: 'anh_dai_dien', maxCount: 1 },
         { name: 'video_mo_ta', maxCount: 1 },
     ]),
+    uploadMultipleToMinio,
     tryCatch(courseController.postCreate)
 );
 //router.get('/create', authToken, authRole([2], 6), tryCatch(courseController.getCreate));
@@ -21,6 +22,7 @@ router.put(
         { name: 'anh_dai_dien', maxCount: 1 },
         { name: 'video_mo_ta', maxCount: 1 },
     ]),
+    uploadMultipleToMinio,
     tryCatch(courseController.putUpdate)
 );
 router.delete('/:id', authToken, authRole([2], 6), tryCatch(courseController.deleteById));

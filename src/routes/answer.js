@@ -4,26 +4,29 @@ const { tryCatch } = require('../middlewares/tryCatch');
 const answerController = require('../controllers/AnswerController');
 const { authToken, authRole } = require('../middlewares/auth');
 const { uploadWordMedia } = require('../middlewares/upload4');
+const { upload, uploadToMinio, uploadMultipleToMinio } = require('../middlewares/upload5');
 
 router.post(
     '/create', authToken, authRole([2], 6),
-    uploadWordMedia.fields([
+    upload.fields([
         { name: 'tep_dinh_kem1', maxCount: 1 },
         { name: 'tep_dinh_kem2', maxCount: 1 },
         { name: 'tep_dinh_kem3', maxCount: 1 },
         { name: 'tep_dinh_kem4', maxCount: 1 },
     ]),
+    uploadMultipleToMinio,
     tryCatch(answerController.postCreate)
 );
 router.get('/:id/edit', authToken, authRole([2], 6), tryCatch(answerController.getUpdate));
 router.put(
     '/',  authToken, authRole([2], 6),
-    uploadWordMedia.fields([
+    upload.fields([
         { name: 'tep_dinh_kem1', maxCount: 1 },
         { name: 'tep_dinh_kem2', maxCount: 1 },
         { name: 'tep_dinh_kem3', maxCount: 1 },
         { name: 'tep_dinh_kem4', maxCount: 1 },
     ]),
+    uploadMultipleToMinio,
     tryCatch(answerController.putUpdate)
 );
 router.delete('/:id', authToken, authRole([2], 6), tryCatch(answerController.deleteByIdQuestion));

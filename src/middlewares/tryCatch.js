@@ -5,7 +5,7 @@ const tryCatch = (func) => async (req, res, next) => {
         await func(req, res);
     } catch (error) {
         console.log(error)
-        res.status(404).send({
+        return res.status(404).send({
             status: 'error',
             data: null,
             // message: error,

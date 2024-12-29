@@ -3,21 +3,31 @@ const router = express.Router();
 const { tryCatch } = require('../middlewares/tryCatch');
 const examController = require('../controllers/ExamController');
 const { authToken, authRole } = require('../middlewares/auth');
-const { upload } = require('../middlewares/upload2');
-const { uploadWordMedia } = require('../middlewares/upload3');
+const {
+    upload,
+    uploadToMinio,
+    uploadMultipleToMinio,
+} = require('../middlewares/upload8');
+const {
+    upload: upload2,
+    uploadToMinio: uploadToMinio2,
+    uploadMultipleToMinio: uploadMultipleToMinio2,
+} = require('../middlewares/upload7');
 
 router.post(
     '/create',
     authToken,
     authRole([2], 6),
-    upload.single('anh_dai_dien'),
+    upload.fields([{ name: 'anh_dai_dien', maxCount: 1 }]),
+    uploadMultipleToMinio,
     tryCatch(examController.postCreate)
 );
 router.post(
     '/upload-word-media',
     authToken,
     authRole([2], 6),
-    uploadWordMedia.single('file'),
+    upload2.single('file'),
+    uploadToMinio2,
     tryCatch(examController.uploadWordMedia)
 );
 router.get(
@@ -36,7 +46,8 @@ router.put(
     '/:id',
     authToken,
     authRole([2], 6),
-    upload.single('anh_dai_dien'),
+    upload.fields([{ name: 'anh_dai_dien', maxCount: 1 }]),
+    uploadMultipleToMinio,
     tryCatch(examController.putUpdate)
 );
 router.delete(

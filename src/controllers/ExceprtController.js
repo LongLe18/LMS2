@@ -83,7 +83,7 @@ const getUpdate = async (req, res) => {
 };
 
 const putUpdate = async (req, res) => {
-    if (req.file) {
+    if (req.files) {
         const exceprt = await Exceprt.findOne({
             where: {
                 trich_doan_id: req.params.id,

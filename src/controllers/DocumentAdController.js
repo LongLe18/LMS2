@@ -49,7 +49,7 @@ const postCreate = async (req, res) => {
 };
 
 const putUpdate = async (req, res) => {
-    if (req.file) {
+    if (req.files) {
         const documentAd = await DocumentAd.findOne({
             where: {
                 qctl_id: req.params.id,

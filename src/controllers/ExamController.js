@@ -1088,7 +1088,7 @@ const getUpdate = async (req, res) => {
 };
 
 const putUpdate = async (req, res) => {
-    if (req.file) {
+    if (req.files) {
         const exam = await Exam.findOne({
             where: {
                 de_thi_id: req.params.id,

@@ -1,11 +1,12 @@
-const { Minio } = require('minio');
+const { Client } = require('minio');
 
-const minioClient = new Minio({
-    endPoint: 'localhost',
-    port: 9000,
-    useSSL: false,
-    accessKey: 'admin',
-    secretKey: '^P*XQ3*0H7%6Ny',
+require('dotenv').config();
+const minioClient = new Client({
+    endPoint: process.env.MINIO_ENDPOINT, // Change to your MinIO server's endpoint
+    port: Number(process.env.MINIO_PORT), // Change to your MinIO server's port if different
+    useSSL: false, // Set true if using HTTPS
+    accessKey: process.env.MINIO_ACCESS_KEY, // Replace with your MinIO access key
+    secretKey: process.env.MINIO_SECRET_KEY, // Replace with your MinIO secret key
 });
 
-module.exports = minioClient;
+module.exports = { minioClient };

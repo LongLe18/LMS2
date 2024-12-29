@@ -36,15 +36,20 @@ const uploadToMinio = (req, res, next) => {
     const fileBuffer = req.file.buffer;
 
     // Upload file to MinIO
-    minioClient.putObject(bucketName, fileName, fileBuffer, (err, etag) => {
-        if (err) {
-            console.error('Error uploading file:', err);
-            return res.status(500).send('File upload failed.');
+    minioClient.putObject(
+        bucketName,
+        `Picture/word/media/${req.body.id}/${req.body.upload_times}/${fileName}`,
+        fileBuffer,
+        (err, etag) => {
+            if (err) {
+                console.error('Error uploading file:', err);
+                return res.status(500).send('File upload failed.');
+            }
+            console.log(`File uploaded successfully. ETag: ${etag}`);
+            req.minioFile = { fileName, etag }; // Lưu thông tin để middleware tiếp theo sử dụng
+            next(); // Tiếp tục xử lý
         }
-        console.log(`File uploaded successfully. ETag: ${etag}`);
-        req.minioFile = { fileName, etag }; // Lưu thông tin để middleware tiếp theo sử dụng
-        next(); // Tiếp tục xử lý
-    });
+    );
 };
 
 const uploadMultipleToMinio = async (req, res, next) => {
@@ -58,18 +63,13 @@ const uploadMultipleToMinio = async (req, res, next) => {
         const uploadPromises = Object.entries(req.files).flatMap(
             ([fieldName, files]) =>
                 files.map((file) => {
-                    const fileName = `${moment().unix()}-${uuid()}${extname(
-                        file.originalname
-                    )}`;
+                    const fileName = file.originalname;
                     const fileBuffer = file.buffer;
-                    req.body[
-                        file.fieldname
-                    ] = `\\begin{center}\\includegraphics[scale = 0.5]{Picture/word/media/${req.query.de_thi_id}/${fileName}}\\end{center}\\\n`;
 
                     return new Promise((resolve, reject) => {
                         minioClient.putObject(
                             bucketName,
-                            `Picture/word/media/${req.query.de_thi_id}/${fileName}`,
+                            `Picture/word/media/${req.body.id}/${req.body.upload_times}`,
                             fileBuffer,
                             (err, etag) => {
                                 if (err) {
