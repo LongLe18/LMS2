@@ -12,6 +12,9 @@ const cauhoidethi = sequelize.define(
         phan: {
             type: DataTypes.INTEGER,
         },
+        danh_dau: {
+            type: DataTypes.TINYINT,
+        },
         cau_hoi_id: {
             type: DataTypes.INTEGER,
         },

@@ -1,16 +1,32 @@
 version: '3.3'
 services:
-    db:
-        image: mysql:8.0
-        container_name: db_lms
-        restart: always
-        environment:
-            MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
-            MYSQL_DATABASE: ${DATABASE_DB_NAME}
-        ports:
-            - '3306:3306'
+    # db:
+    #     image: mysql:8.0
+    #     container_name: db_lms
+    #     restart: always
+    #     environment:
+    #         MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+    #         MYSQL_DATABASE: ${DATABASE_DB_NAME}
+    #     ports:
+    #         - '3306:3306'
+    #     volumes:
+    #         - db_data:/var/lib/mysql
+    #     networks:
+    #         - myNetwork
+
+     minio:
+        image: 'bitnami/minio:latest'
+        container_name: public_minio
         volumes:
-            - db_data:/var/lib/mysql
+            - minio:/bitnami/minio/data
+        ports:
+            - 9000:9000
+            - 9001:9001
+        environment:
+            - MINIO_ROOT_USER=admin
+            - MINIO_ROOT_PASSWORD=^P*XQ3*0H7%6Ny
+            - MINIO_DEFAULT_BUCKETS=bucket-public
+        restart: unless-stopped
         networks:
             - myNetwork
 
@@ -18,4 +34,5 @@ networks:
     myNetwork:
 
 volumes:
-    db_data:
+    # db_data:
+    minio:

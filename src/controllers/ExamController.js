@@ -1190,7 +1190,7 @@ const publish = async (req, res) => {
                     message: 'Số lượng câu hỏi chưa đủ yêu cầu',
                 });
             }
-        }else if(exam.loai_de_thi_id === 6){
+        } else if (exam.loai_de_thi_id === 6) {
             const condition = await sequelize.query(
                 `
                 SELECT ((SELECT COUNT(*) FROM cau_hoi_de_thi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 10) >= 40

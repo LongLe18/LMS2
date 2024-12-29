@@ -31,6 +31,7 @@ const cauhoi = sequelize.define(
         mdch_id: {
             type: DataTypes.INTEGER,
         },
+        // đánh giá tư duy -> 10: tư duy toán học, 11: tư duy đọc hiểu, 12: tư duy khoa học/ giải quyết vấn đề
         chuyen_de_id: {
             type: DataTypes.INTEGER,
         },
