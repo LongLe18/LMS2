@@ -64,6 +64,24 @@ const putUpdate = async (req, res) => {
     });
 };
 
+const putUpdatev2 = async (req, res) => {
+    const examQuestion = await ExamQuestion.update(
+        {
+            danh_dau: req.body.danh_dau,
+        },
+        {
+            where: {
+                chdt_id: req.params.id,
+            },
+        }
+    );
+    res.status(200).send({
+        status: 'success',
+        data: examQuestion,
+        message: null,
+    });
+};
+
 const forceDelete = async (req, res) => {
     const examQuestion = await ExamQuestion.findOne({
         where: {
@@ -95,4 +113,5 @@ module.exports = {
     getUpdate,
     putUpdate,
     forceDelete,
+    putUpdatev2,
 };
