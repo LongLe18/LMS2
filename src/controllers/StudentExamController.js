@@ -303,10 +303,9 @@ const postCreatev2 = async (req, res) => {
         await sequelize.query(
             `
         INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan, chuyen_nganh_id)
-            SELECT chdt.cau_hoi_id, ${exam.dataValues.de_thi_id}, 4, chdt.chuyen_nganh_id FROM cau_hoi_de_thi chdt
-            INNER JOIN cau_hoi ch ON chdt.cau_hoi_id = ch.cau_hoi_id
-            WHERE chdt.chuyen_nganh_id = 5 AND chdt.de_thi_id = ${sampleExam.de_thi_id}
-            ORDER BY ch.trich_doan_id ASC, RAND()
+            SELECT cau_hoi_id, ${exam.dataValues.de_thi_id}, 4, chuyen_nganh_id FROM cau_hoi_de_thi
+            WHERE chuyen_nganh_id = 5 AND de_thi_id = ${sampleExam.de_thi_id}
+            ORDER BY cau_hoi_id ASC
             LIMIT ${criteria.so_cau_hoi_phan_4}
     `,
             {
