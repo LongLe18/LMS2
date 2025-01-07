@@ -352,10 +352,11 @@ const postCreatev2 = async (req, res) => {
                         WHERE chdt.chuyen_nganh_id IN (${chuyen_nganh_ids}) AND chdt.de_thi_id = ${
                 sampleExam.de_thi_id
             }
+                        AND ch.trich_doan_id IS NULL
                         AND chdt.cau_hoi_id NOT IN (SELECT cau_hoi_id
                         FROM cau_hoi_de_thi
                         WHERE de_thi_id = ${exam.de_thi_id})
-                        ORDER BY ch.trich_doan_id ASC, RAND() LIMIT ${
+                        ORDER BY RAND() LIMIT ${
                             Number(criteria.so_cau_hoi_phan_3) -
                             so_cau_hoi_tung_chuyen_nganh * 3
                         }
