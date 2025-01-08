@@ -329,10 +329,47 @@ const postCreatev2 = async (req, res) => {
             await sequelize.query(
                 `
                         INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan, chuyen_nganh_id)
-                            SELECT chdt.cau_hoi_id, ${exam.dataValues.de_thi_id}, 3, chdt.chuyen_nganh_id FROM cau_hoi_de_thi chdt
+                            SELECT chdt.cau_hoi_id, ${exam.dataValues.de_thi_id}, 3, chdt.chuyen_nganh_id
+                            FROM cau_hoi_de_thi chdt
                             INNER JOIN cau_hoi ch ON chdt.cau_hoi_id = ch.cau_hoi_id
-                            WHERE chdt.chuyen_nganh_id = :chuyen_nganh_id AND chdt.de_thi_id = ${sampleExam.de_thi_id}
+                            WHERE chdt.chuyen_nganh_id = :chuyen_nganh_id
+                            AND chdt.de_thi_id = ${sampleExam.de_thi_id}
+                            AND ch.trich_doan_id IS NOT NULL
                             ORDER BY ch.trich_doan_id ASC, RAND() LIMIT ${so_cau_hoi_tung_chuyen_nganh}
+                    `,
+                {
+                    type: sequelize.QueryTypes.INSERT,
+                    replacements: {
+                        chuyen_nganh_id: Number(chuyen_nganh_id),
+                    },
+                }
+            );
+
+            let limit_value = await sequelize.query(`
+                    SELECT COUNT(*) as count
+                        FROM cau_hoi_de_thi
+                        WHERE de_thi_id = ${exam.dataValues.de_thi_id}
+                        AND chuyen_nganh_id = :chuyen_nganh_id
+                `,
+                {
+                    type: sequelize.QueryTypes.SELECT,
+                    replacements: {
+                        chuyen_nganh_id: Number(chuyen_nganh_id),
+                    },
+                }
+            )
+
+            await sequelize.query(
+                `
+                        INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan, chuyen_nganh_id)
+                            SELECT chdt.cau_hoi_id, ${exam.dataValues.de_thi_id}, 3, chdt.chuyen_nganh_id
+                            FROM cau_hoi_de_thi chdt
+                            INNER JOIN cau_hoi ch ON chdt.cau_hoi_id = ch.cau_hoi_id
+                            WHERE chdt.chuyen_nganh_id = :chuyen_nganh_id 
+                            AND chdt.de_thi_id = ${sampleExam.de_thi_id}
+                            AND ch.trich_doan_id IS NULL
+                            ORDER BY ch.trich_doan_id ASC, RAND() 
+                            LIMIT ${so_cau_hoi_tung_chuyen_nganh - limit_value[0].count}
                     `,
                 {
                     type: sequelize.QueryTypes.INSERT,
