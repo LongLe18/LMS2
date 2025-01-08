@@ -1554,16 +1554,16 @@ export default function ExamOnlineDetaiDGTD() {
         )
     }
 
-    // if (!isFullscreen) {
-    //     return (
-    //         <div className='full-screen'>
-    //             <div>Bạn phải vào chế độ toàn màn hình (fullscreen) mới làm được bài thi.</div>
-    //             <Button onClick={enterFullscreen} type='primary'>
-    //                 Vào chế độ Full screen
-    //             </Button>
-    //         </div>
-    //     )
-    // }
+    if (!isFullscreen) {
+        return (
+            <div className='full-screen'>
+                <div>Bạn phải vào chế độ toàn màn hình (fullscreen) mới làm được bài thi.</div>
+                <Button onClick={enterFullscreen} type='primary'>
+                    Vào chế độ Full screen
+                </Button>
+            </div>
+        )
+    }
 
     return (
         <Spin spinning={loadingExportFile}>
