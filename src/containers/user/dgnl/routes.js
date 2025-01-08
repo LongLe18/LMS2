@@ -29,6 +29,7 @@ import ReceiptUserPage from './business/receiptUser';
 import CheckOutPage from './business/checkout';
 import CheckOutPage2 from './business/checkout2';
 import BusinessTypeProgramePageUser from './business/businessTypeProgrameUser';
+import ExamOnlineDetaiDGTD from './exam/doExamOnlineTD';
 // import MainPageUser from './business/mainPage';
 
 const routes = [
@@ -129,6 +130,13 @@ const routes = [
         exact: true,
         hidden: true,
         render: (props) => (shouldHaveAccessPermission('detail', '/luyen-tap/lam-kiem-tra-online/:idExam/:time/:idExamUser/:idCourse') ? <ExamOnlineDetail {...props}/> : <Redirect to="/auth/hocvien"/>),
+    },
+    {
+        id: 'doExamCourse',
+        path: '/luyen-tap/lam-kiem-tra-online-dgtd/:idExam/:time/:idExamUser/:idCourse',
+        exact: true,
+        hidden: true,
+        render: (props) => (shouldHaveAccessPermission('detail', '/luyen-tap/lam-kiem-tra-online-dgtd/:idExam/:time/:idExamUser/:idCourse') ? <ExamOnlineDetaiDGTD {...props}/> : <Redirect to="/auth/hocvien"/>),
     },
     {
         id: 'reviewExam',

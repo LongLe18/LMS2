@@ -8,7 +8,8 @@ import MathJax from 'react-mathjax';
 
 // component
 import LoadingCustom from 'components/parts/loading/Loading';
-import { Layout, Row, Col, Button, notification, Input, Alert, Image, Space, Tag, Checkbox } from 'antd';
+import { Layout, Row, Col, Button, notification, Input, Alert, 
+    Image, Space, Tag, Checkbox, Radio } from 'antd';
 import NoRecord from 'components/common/NoRecord';
 import { InfoCircleOutlined } from '@ant-design/icons';
 
@@ -92,6 +93,9 @@ const ReviewExamPage = () => {
     };
 
     const renderAnswerKey = (index) => {
+        if (index === 4) return 'E';
+        if (index === 5) return 'F';
+        if (index === 6) return 'G';
         if (index === 3) return 'D';
         else if (index === 2) return 'C';
         else if (index === 1) return 'B';
@@ -134,16 +138,47 @@ const ReviewExamPage = () => {
         if (exam.status === 'success') {
             return (
                 <p className="result-exam-item">
-                    {(question?.cau_hoi?.loai_cau_hoi === 1 || question?.cau_hoi?.loai_cau_hoi === 2) ?
-                        <span className="right-answer">Đáp án đúng {question?.cau_hoi.dap_an_dungs?.map((item) => renderAnswerKey(item)).join(', ')}</span> :
-                    question?.cau_hoi?.loai_cau_hoi === 6 ?
-                        <span className="right-answer">
-                            Đáp án đúng: {
-                                question?.cau_hoi.dap_ans[0]?.noi_dung_dap_an.split(';').map((item, index) => `${index + 1}. ${item}`).join('; ')
-                            }
-                        </span>
-                    : <span className="right-answer" dangerouslySetInnerHTML={{ __html: `Đáp án đúng: ${question?.cau_hoi.dap_ans[0]?.noi_dung_dap_an}` }}></span>
-                    }
+                    {(() => {
+                        if (question?.cau_hoi?.loai_cau_hoi === 1 || question?.cau_hoi?.loai_cau_hoi === 2 || question?.cau_hoi?.loai_cau_hoi === 3) {
+                            return <span className="right-answer">Đáp án đúng: {question?.cau_hoi.dap_an_dungs?.map((item) => renderAnswerKey(item)).join(', ')}</span>;
+                        } else if (question?.cau_hoi?.loai_cau_hoi === 6) {
+                            return (
+                                <span className="right-answer">
+                                    Đáp án đúng: {
+                                        question?.cau_hoi.dap_ans[0]?.noi_dung_dap_an.split(';').map((item, index) => {
+                                            return (
+                                                <MathJax.Provider key={index}>
+                                                    {item.split('\n').map((subitem, index_cauhoi) => {
+                                                        return (
+                                                            <div className="title-exam-content" key={index_cauhoi} style={{display: 'flex'}}>
+                                                                <span style={{fontSize: 16, marginRight: 6}}>{index + 1}.</span>
+                                                                {
+                                                                    (subitem.indexOf('includegraphics') !== -1 && subitem?.match(regex) !== null) ? (
+                                                                        <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}><Image src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question2_${index_cauhoi}`}></Image></div>
+                                                                    ) : 
+                                                                    (
+                                                                        <div style={{textAlign: 'justify'}}>{subitem.split('$').map((item2, index2) => {
+                                                                            return (subitem.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
+                                                                                <MathJax.Node key={index2} formula={item2} />
+                                                                            ) : (
+                                                                                <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                                            )
+                                                                        })}</div>
+                                                                    )
+                                                                }
+                                                            </div>
+                                                        )}
+                                                    )}
+                                                </MathJax.Provider>
+                                            )
+                                        })
+                                    }
+                                </span>
+                            );
+                        } else {
+                            return <span className="right-answer" dangerouslySetInnerHTML={{ __html: `Đáp án đúng: ${question?.cau_hoi.dap_ans[0]?.noi_dung_dap_an}` }}></span>;
+                        }
+                    })()}
                 </p>
             );
         }
@@ -275,12 +310,33 @@ const ReviewExamPage = () => {
                     <div style={{margin: 12}}>
                         <Space wrap >
                             {question?.cau_hoi?.lua_chon?.noi_dung?.split(';').map((lua_chon, index) => (
-                                <Tag
+                                <Tag style={{fontSize: 20, padding: '7px 14px'}}
                                     key={index}
-                                    className={`cursor-move}`}
+                                    className={`cursor-move`}
                                     color="blue"
                                 >
-                                    {lua_chon}
+                                    <MathJax.Provider>
+                                        {lua_chon.split('\n').filter(item => item !== '').map((item, index_cauhoi) => {
+                                            return (
+                                                <div className="title-exam-content" key={index_cauhoi}>
+                                                    {
+                                                        (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
+                                                            <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}><Image src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question2_${index_cauhoi}`}></Image></div>
+                                                        ) : 
+                                                        (
+                                                            <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
+                                                                return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
+                                                                    <MathJax.Node key={index2} formula={item2} />
+                                                                ) : (
+                                                                    <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                                )
+                                                            })}</div>
+                                                        )
+                                                    }
+                                                </div>
+                                            )}
+                                        )}
+                                    </MathJax.Provider>
                                 </Tag>
                             ))}
                         </Space>
@@ -365,6 +421,47 @@ const ReviewExamPage = () => {
         );
     };
 
+    // giao diện câu hỏi đúng sai chọn nhiều
+    const renderMultiChoiceRightWrongQuestion = (question, answer, index) => {
+        console.log(question, answer);
+        return (
+            <button style={{width:"100%"}}
+                className="btn-onclick"
+            >
+                <div className={`answer`} style={{alignItems: 'center'}}>
+                    <Radio.Group name="groupRightWrong" defaultValue={answer.dap_an_dung}>
+                        <Radio value={true}>Đ</Radio>
+                        <Radio value={false}>S</Radio>
+                    </Radio.Group>
+                    <div className="answer-content" style={{flexDirection: 'row', alignItems: 'center'}}>
+                        <span style={{marginRight: 6}}>{renderAnswerKey(index)}. </span>
+                        <MathJax.Provider>
+                            {answer.noi_dung_dap_an.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
+                                return (
+                                    <div className="help-answer-content" key={index_cauhoi}>
+                                    {
+                                        (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
+                                            <Image src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_answer_question_${index_cauhoi}`}></Image>
+                                        ) : (
+                                            item.split('$').map((item2, index2) => {
+                                                return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
+                                                    <MathJax.Node key={index2} formula={item2} />
+                                                ) : (
+                                                    <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                )
+                                            })
+                                        )
+                                    }
+                                    </div>
+                                )}
+                            )}
+                        </MathJax.Provider>
+                    </div>
+                </div>
+            </button>
+        );
+    }
+
     const renderExam = () => {
         if (error) return <NoRecord subTitle="Không tìm thấy đề thi." />;
         return (
@@ -442,51 +539,43 @@ const ReviewExamPage = () => {
                                 }               
                                 <div className="question-list" key={ParentIndex}>
                                     <div className="question-info" id={`${ParentIndex + 1}`}>
-                                    <b style={{fontSize: "22px", color: "#fff", backgroundColor: 'green'}}>Câu {ParentIndex + 1}. 
+                                        <b style={{fontSize: "22px", color: "#fff", backgroundColor: 'green'}}>Câu {ParentIndex + 1}. 
                                             {/* <span className="point">[{question?.cau_hoi?.diem} điểm]</span> */}
-                                            <span style={{display: question.cau_hoi.loai_cau_hoi === 4 ? 'block' : 'none'}} className="point">[Câu trắc nghiệm đúng sai]</span>
+                                            {/* <span style={{display: question.cau_hoi.loai_cau_hoi === 4 ? 'block' : 'none'}} className="point">[Câu trắc nghiệm đúng sai]</span> */}
                                         </b>
                                         <ul className="action-links"></ul>
                                     </div>
 
                                     <div className="title-exam">
                                         <MathJax.Provider>
-                                            {question.cau_hoi.noi_dung.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
+                                            {question.cau_hoi.noi_dung.split('\n').filter(item => item !== '').map((item, index_cauhoi) => {
+                                                const partQuestion = item.split('{ENTER}');
+
                                                 return (
                                                     <div className="title-exam-content" key={index_cauhoi}>
                                                         {
                                                             (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                                <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}><Image src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></Image></div>
+                                                                <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
+                                                                    <Image src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question2_${index_cauhoi}`}></Image>
+                                                                </div>
                                                             ) : 
                                                             (
-                                                                <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
-                                                                    const partCauhoi = item2.split('{ENTER}');
-
-                                                                    return (partCauhoi.map((chi_tiet, index_2) => {
-                                                                        return (
-                                                                            <div style={{fontSize: 18, marginBottom: 8}} key={index_2}>
-                                                                                {chi_tiet.split('\n').map((item, index) => {
-                                                                                    return (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                                                        <div style={{display: 'flex', justifyContent: 'center', width: '100%'}} key={index}>
-                                                                                            <Image src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question4_${index}`}></Image>
-                                                                                        </div>
-                                                                                    ) : 
-                                                                                    (
-                                                                                        <span key={index}>{item.split('$').map((item2, index2) => {
-                                                                                            return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
-                                                                                                <MathJax.Node key={index2} formula={item2} />
-                                                                                            ) : (
-                                                                                                <span key={index2} dangerouslySetInnerHTML={{ __html: item2 }}></span>
-                                                                                            )
-                                                                                        })}</span>
-                                                                                    )
-                                                                                })}
-                                                                                {index_2 < partCauhoi.length - 1 && (
-                                                                                    <div className={`empty-box`}></div>
-                                                                                )}
-                                                                            </div>
-                                                                        )
-                                                                    }))
+                                                                <div style={{textAlign: 'justify'}}>{partQuestion.map((item2, index2) => {
+                                                                    const partCauhoi = item2.split('$');
+                                                                    return (
+                                                                        <div key={index2}>
+                                                                            {partCauhoi.map((chi_tiet, index_2) => {
+                                                                                return (item.indexOf('$' + chi_tiet + '$') !== -1 && (chi_tiet.includes('{') || chi_tiet.includes('\\')) && (!chi_tiet.includes('\\underline') && !chi_tiet.includes('\\bold') && !chi_tiet.includes('\\italic'))) ? (
+                                                                                    <MathJax.Node key={index_2} formula={chi_tiet} />
+                                                                                ) : (
+                                                                                    <span dangerouslySetInnerHTML={{ __html: chi_tiet }}></span>
+                                                                                )
+                                                                            })}
+                                                                            {index2 < partQuestion.length - 1 && (
+                                                                                <div className={`empty-box`}></div>
+                                                                            )}
+                                                                        </div>
+                                                                    )
                                                                 })}
                                                                 </div>
                                                             )
@@ -498,6 +587,13 @@ const ReviewExamPage = () => {
                                     </div>
                                                          
                                     <div className="content-answer-question">
+                                        {question.cau_hoi.loai_cau_hoi === 3 &&
+                                            <>
+                                                <span style={{marginRight: 8}}>Đúng</span>
+                                                <span>Sai</span>
+                                            </>
+                                        }
+
                                         <Row gutter={[20, 10]} className="multi-choice">
                                             {question.cau_hoi.dap_ans.map((answer, index) => {
                                                 const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
@@ -519,6 +615,8 @@ const ReviewExamPage = () => {
                                                                     renderDragDropQuestion(question, index)
                                                                 : (question.cau_hoi.loai_cau_hoi === 2) ? 
                                                                     renderMultiChoiceQuestion(question, answer, index)
+                                                                : (question.cau_hoi.loai_cau_hoi === 3) ?
+                                                                    renderMultiChoiceRightWrongQuestion(question, answer, index)
                                                                 : null
                                                                 }
                                                             </li>
@@ -592,16 +690,16 @@ const ReviewExamPage = () => {
         )
     };
 
-    // if (!isFullscreen) {
-    //     return (
-    //         <div className='full-screen'>
-    //             <div>Bạn phải vào chế độ toàn màn hình (fullscreen) mới làm được bài thi.</div>
-    //             <Button onClick={enterFullscreen} type='primary'>
-    //                 Vào chế độ Full screen
-    //             </Button>
-    //         </div>
-    //     )
-    // }
+    if (!isFullscreen) {
+        return (
+            <div className='full-screen'>
+                <div>Bạn phải vào chế độ toàn màn hình (fullscreen) mới làm được bài thi.</div>
+                <Button onClick={enterFullscreen} type='primary'>
+                    Vào chế độ Full screen
+                </Button>
+            </div>
+        )
+    }
 
     return (
         <>

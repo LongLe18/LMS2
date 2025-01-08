@@ -80,9 +80,9 @@
 }
   
 .doing-exam .content-answer-question ul li.active button .answer-label, .wrongrightAnswer .active {
-    border: 1px solid #7db7ff;
+    border: 1px solid #1890ff;
     color: #fff;
-    background: #7db7ff;
+    background: #1890ff;
 }
 
 .content-answer-question ul li button .answer.correct .answer-label, .wrongrightAnswer .correct {
@@ -149,6 +149,18 @@
     text-align: 'center';
     margin-bottom: 16px;
     border-radius: 8px;
+}
+
+.list-question-side .right-answer{
+    color: #fff;
+    background: #27e327;
+    border-color: #27e327;
+}
+
+.list-question-side .wrong-answer{
+    background: red;
+    border-color: red;
+    color: #fff;
 }
 
 .list-question-side .list-question-area {
@@ -221,4 +233,9 @@
     margin-left: 6px;
     min-height: 50px;
     font-size: 20px;
+}
+
+.cursor-move {
+    font-size: 20px;
+    padding: 7px 14px;
 }

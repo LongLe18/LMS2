@@ -184,12 +184,16 @@ const ExamViewDGNL = (props) => {
                             okText: 'Đồng ý',
                             cancelText: 'Hủy',
                             onOk() {
-                                history.push(`/luyen-tap/lam-kiem-tra-online/${hashids.encode(res.data?.data?.de_thi_id)}/${moment().toNow()}/${res.data?.data?.dthv_id}/${idCourse}`)
+                                if (course?.data?.loai_kct === 0) 
+                                    history.push(`/luyen-tap/lam-kiem-tra-online/${hashids.encode(res.data?.data?.de_thi_id)}/${moment().toNow()}/${res.data?.data?.dthv_id}/${idCourse}`)
+                                else
+                                history.push(`/luyen-tap/lam-kiem-tra-online-dgtd/${hashids.encode(res.data?.data?.de_thi_id)}/${moment().toNow()}/${res.data?.data?.dthv_id}/${idCourse}`)
                             },
                         });
                     } else {
                         if (course?.data?.loai_kct === 0) setIsJoinExam(1);
-                        getCriteriaDG(course?.data?.loai_kct === 0 ? true : false);
+                        else setIsJoinExam(2)
+                        getCriteriaDG(course?.data?.loai_kct === 0);
                     }
                 } else {
                     notification.error({
@@ -506,6 +510,70 @@ const ExamViewDGNL = (props) => {
         )
     }
 
+    // Xác nhận vào thi
+    const confirmExam = () => {
+        const data = {
+            "khoa_hoc_id": hashids.decode(idCourse)[0],
+            "chuyen_nganh_ids": type === 5 ? type.toString() : subjects.join(', ')
+        };
+        setSpinning(true); // chờ
+        if (course?.data?.loai_kct === 0) { // nếu là ĐGNL
+            localStorage.setItem('mon_thi', type === 5 ? type.toString() : subjects.join(', '));
+            // Tạo đề thi
+            axios({
+                method: 'post', 
+                url: config.API_URL + `/student_exam/dgnl/create`, 
+                timeout: 1000 * 60 * 5,
+                data,
+                headers: {Authorization: `Bearer ${localStorage.getItem('userToken')}`,}
+            })
+            .then(
+                res => {
+                    if (res.statusText === 'OK' && res.status === 200) {
+                        setSpinning(false);
+                        // điều hướng vào bài thi
+                        history.push(`/luyen-tap/xem/${hashids.encode(res.data.data.de_thi_id)}/${idCourse}`);
+                    } else {
+                        setSpinning(false);
+                        notification.error({
+                            message: 'Thông báo',
+                            description: 'Tạo đề thi thất bại. Bạn xin vui lòng thử lại sau ít phút...',
+                        })
+                    }
+                }
+            )
+            .catch(error => {
+                notification.error({ message: error.response.data.message ? error.response.data.message : 'Tạo đề thi thất bại' })
+            });
+        } else { // nếu là ĐGTD
+            axios({
+                method: 'post', 
+                url: config.API_URL + `/student_exam/dgtd/create`, 
+                timeout: 1000 * 60 * 5,
+                data,
+                headers: {Authorization: `Bearer ${localStorage.getItem('userToken')}`,}
+            })
+            .then(
+                res => {
+                    if (res.statusText === 'OK' && res.status === 200) {
+                        setSpinning(false);
+                        // điều hướng vào bài thi
+                        history.push(`/luyen-tap/xem/${hashids.encode(res.data.data.de_thi_id)}/${idCourse}`);
+                    } else {
+                        setSpinning(false);
+                        notification.error({
+                            message: 'Thông báo',
+                            description: 'Tạo đề thi thất bại. Bạn xin vui lòng thử lại sau ít phút...',
+                        })
+                    }
+                }
+            )
+            .catch(error => {
+                notification.error({ message: error.response.data.message ? error.response.data.message : 'Tạo đề thi thất bại' })
+            });
+        }
+    }
+
     const renderConfirmExam = (id) => {
         return (
             <div className="wraper wraper-list-course-cate-index">
@@ -560,39 +628,7 @@ const ExamViewDGNL = (props) => {
                     <p className="block-action text-center mt-4">
                         <Button type="primary" size="large" className="join-exam-button" 
                             style={{borderRadius: 8, backgroundColor: 'rgb(229 100 19 / 92%)', borderColor: 'rgb(229 100 19 / 92%)', width: '10%'}}
-                            onClick={() => {
-                                const data = {
-                                    "khoa_hoc_id": hashids.decode(idCourse)[0],
-                                    "chuyen_nganh_ids": type === 5 ? type.toString() : subjects.join(', ')
-                                };
-                                localStorage.setItem('mon_thi', type === 5 ? type.toString() : subjects.join(', '));
-                                // Tạo đề thi
-                                setSpinning(true); // chờ
-                                axios({
-                                    method: 'post', 
-                                    url: config.API_URL + `/student_exam/dgnl/create`, 
-                                    timeout: 1000 * 60 * 5,
-                                    data,
-                                    headers: {Authorization: `Bearer ${localStorage.getItem('userToken')}`,}
-                                })
-                                .then(
-                                    res => {
-                                        if (res.statusText === 'OK' && res.status === 200) {
-                                            setSpinning(false);
-                                            // điều hướng vào bài thi
-                                            history.push(`/luyen-tap/xem/${hashids.encode(res.data.data.de_thi_id)}/${idCourse}`);
-                                        } else {
-                                            notification.error({
-                                                message: 'Thông báo',
-                                                description: 'Tạo đề thi thất bại. Bạn xin vui lòng thử lại sau ít phút...',
-                                            })
-                                        }
-                                    }
-                                )
-                                .catch(error => {
-                                    notification.error({ message: error.response.data.message ? error.response.data.message : 'Tạo đề thi thất bại' })
-                                });
-                            }}
+                            onClick={() => { confirmExam() }}
                         >
                             Đồng ý
                         </Button>
@@ -603,16 +639,14 @@ const ExamViewDGNL = (props) => {
     }
 
     return (
-        <>
-            <Layout className="main-app-dgnl">
-                <Helmet>
-                    <title>Thi thử đánh giá năng lực</title>
-                </Helmet>
-                <Content className="app-content ">
-                    {isJoinExam === 1 ? formSubject() : isJoinExam === 0 ? renderPages() : renderConfirmExam()}
-                </Content>
-            </Layout>
-        </>
+        <Layout className="main-app-dgnl">
+            <Helmet>
+                <title>Thi thử đánh giá năng lực</title>
+            </Helmet>
+            <Content className="app-content ">
+                {isJoinExam === 1 ? formSubject() : isJoinExam === 0 ? renderPages() : renderConfirmExam()}
+            </Content>
+        </Layout>
     )
 }
 

@@ -80,6 +80,7 @@ const ExamDetailPage = () => {
     const id = useParams().id; // id
     const dispatch = useDispatch();
     const hashids = new Hashids();
+    const paramtypeExamUrl = new URLSearchParams(history.location.search).get('loai_de_thi');
 
     const [questionForm] = Form.useForm();
     const [currentStep, setCurrentStep] = useState(0);

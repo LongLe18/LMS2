@@ -160,13 +160,13 @@ const COURSES_TYPES = [
 ];
 
 const QUESTIONS_TYPES = [
-  { label: 'Tự luận ', value: 0 }, // ok
+  { label: 'Tự luận ', value: 0 },  // ok
   { label: 'Trắc nghiệm', value: 1 }, // ok
   { label: 'Trắc nghiệm nhiều lựa chọn', value: 2 }, // ok
   { label: 'Nhiều lựa chọn đúng sai', value: 3 }, // ok
-  { label: 'Đúng sai ', value: 4 },
-  { label: 'Tự luận nhiều vị trí', value: 5 },
-  { label: 'Kéo thả ', value: 6 },
+  { label: 'Đúng sai ', value: 4 }, // ok
+  { label: 'Tự luận nhiều vị trí', value: 5 }, // ok
+  { label: 'Kéo thả ', value: 6 }, // ok
 ];
 
 const QUESTIONS_LEVELS = [

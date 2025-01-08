@@ -42,6 +42,10 @@ export const PERMISSIONS = [
                     key: '/luyen-tap/lam-kiem-tra-online/:idExam/:time/:idExamUser/:idCourse'
                 },
                 {
+                    name: 'Làm đề thi online ĐGTD',
+                    key: '/luyen-tap/lam-kiem-tra-online-dgtd/:idExam/:time/:idExamUser/:idCourse'
+                },
+                {
                     name: 'Lịch sử thi',
                     key: '/luyen-tap/lich-su/:idExam/:idDTHV'
                 },

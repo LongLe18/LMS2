@@ -91,13 +91,21 @@ const ExamViewPage = (props) => {
     ];
 
     useEffect(() => {
-        dispatch(courseActions.getCourse({ id: hashids.decode(params.idCourse) }));
-        dispatch(examActions.getExam({ id: hashids.decode(params.idExam) }, (response) => {
+        const callback = (response) => {
             if (response.status === 'success') {
                 setTypeExam(response.data.loai_de_thi_id);
             }
+        }
+
+        dispatch(courseActions.getCourse({ id: hashids.decode(params.idCourse) }, (res) => {
+            if (res.status === 'success' && res.data) {
+                if (res.data.loai_kct === 3) { // Nếu là loại kct ĐGTD BK
+                    dispatch(examActions.getExam({ id: hashids.decode(params.idExam), type: 'dgtd' }, callback));
+                } else {
+                    dispatch(examActions.getExam({ id: hashids.decode(params.idExam) }, callback));
+                }
+            }
         }));
-        
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     if (exam.status === 'success') {
@@ -133,7 +141,7 @@ const ExamViewPage = (props) => {
                         if (exam.data.loai_de_thi_id === 4 || exam.data.loai_de_thi_id === 5) {
                             history.push(`/luyen-tap/lam-kiem-tra-online/${params.idExam}/${moment().toNow()}/${response.data[0].dthv_id}/${params.idCourse}`)
                         } else if (exam.data.loai_de_thi_id === 6) { // tư duy BK
-                            
+                            history.push(`/luyen-tap/lam-kiem-tra-online-dgtd/${params.idExam}/${moment().toNow()}/${response.data[0].dthv_id}/${params.idCourse}`)
                         } else {
                             history.push(`/luyen-tap/lam-kiem-tra/${params.idExam}/${moment().toNow()}/${response.data[0].dthv_id}/${params.idCourse}`);    
                         }
@@ -147,7 +155,7 @@ const ExamViewPage = (props) => {
                     if (exam.data.loai_de_thi_id === 4 || exam.data.loai_de_thi_id === 5) {
                         history.push(`/luyen-tap/lam-kiem-tra-online/${params.idExam}/${moment().toNow()}/${res.data.data.dthv_id}/${params.idCourse}`)
                     } else if (exam.data.loai_de_thi_id === 6) { // tư duy BK
-
+                        history.push(`/luyen-tap/lam-kiem-tra-online-dgtd/${params.idExam}/${moment().toNow()}/${res.data.data.dthv_id}/${params.idCourse}`)
                     } else {
                         history.push(`/luyen-tap/lam-kiem-tra/${params.idExam}/${moment().toNow()}/${res.data.data.dthv_id}/${params.idCourse}`);    
                     }
@@ -243,7 +251,7 @@ const ExamViewPage = (props) => {
         )
     }
 
-    const renderConfirmExam = () => {
+    const renderConfirmExamDGNL = () => {
         return (
             <>
                 <Row className="logo" align={'middle'}>
@@ -312,6 +320,64 @@ const ExamViewPage = (props) => {
         )
     }
 
+    const renderConfirmExamDGTD = () => {
+        return (
+            <>
+                <Row className="logo" align={'middle'}>
+                    <Col xs={{ span: 24 }} lg={{ span: 24}}>
+                        <h4 style={{fontWeight: 500, fontSize: 30, textAlign: 'center'}}>Kỳ thi đánh giá năng lực học sinh trung học phổ thông</h4>
+                    </Col>
+                </Row>
+                <Row className='title-section' justify={'center'}>
+                    <Col xs={{ span: 22, offset: 1 }} lg={{ span: 11, offset: 1 }} >
+                        <div className={`section-0 detail-title-section`}>Phần 1: Tư duy Toán học</div>
+                        <div className={`section-1 detail-title-section`}>Phần 2: Tư duy Đọc hiểu</div>
+                        <div className={`section-2 detail-title-section`}>Phần 3: Tư duy khoa học/Giải quyết vấn đề</div>
+                    </Col>
+                </Row>
+                <div className="content-page" style={{fontSize: 16}}>
+                    <span style={{fontSize: 18, color: 'green', fontWeight: 600}}>Tiến trình làm bài thi trên máy tính</span>
+                    <br/>
+                    <span>Khi BẮT ĐẦU làm bài, màn hình máy tính sẽ hiển thị phần thi thứ nhất:</span>
+                    <br/>
+
+                    <div style={{fontStyle: 'italic'}}><span style={{fontWeight: 700}}>Phần 1</span>: Tư duy Toán học</div>
+
+                    Thí sinh làm lần lượt các câu hỏi. Nếu bạn kết thúc phần 1 trước thời gian quy định. Bạn có thể
+                    chuyển sang phần thi thứ hai. Khi hết thời gian phần 1, máy tính sẽ tự động chuyển sang phần thi thứ hai.
+                    Nếu phần thi có thêm câu hỏi thử nghiệm, máy tính sẽ cộng thời gian tương ứng đề hoàn thành tất cả các
+                    câu hỏi.
+                    <br/>
+
+                    <div style={{fontStyle: 'italic'}}><span style={{fontWeight: 700}}>Phần 2</span>: Tư duy Đọc hiểu</div>       
+
+                    Câu hỏi được đánh thứ tự tiếp nối theo thứ tự câu hỏi của phần thi thứ nhất. Nếu bạn kết thúc phần
+                    2 trước thời gian quy định, bạn có thể chuyển sang phần thi thứ ba. Khi hết thời gian quy định, máy tính
+                    sẽ tự động chuyển sang phần thi thứ ba.
+                    <br/>
+
+                    <div style={{fontStyle: 'italic'}}><span style={{fontWeight: 700}}>Phần 3</span>: Khoa học/Giải quyết vấn đề</div>       
+
+
+                    Câu hỏi được đánh thứ tự tiếp nối theo thứ tự câu hỏi của phần thi thứ hai cho đến câu hỏi cuối
+                    cùng. Nếu bạn kết thúc phần 3 trước thời gian quy định, bạn có thể bấm NỘP BÀI đề hoàn thành bài thi
+                    sớm. Khi hết thời gian theo quy định, máy tính sẽ tự động NỘP BÀI.
+                    <br/>
+
+                    Khi KẾT THÚC bài thi, màn hình máy tính sẽ hiển thị kết quả thi của bạn.
+
+                </div>
+                <p className="block-action text-center mt-0">
+                    <Button type="primary" size="large" className="join-exam-button" onClick={() => goExam()} 
+                        style={{borderRadius: 8, backgroundColor: 'rgb(229 100 19 / 92%)', borderColor: 'rgb(229 100 19 / 92%)'}}
+                    >
+                        Làm bài thi
+                    </Button>
+                </p>
+            </>
+        )
+    }
+
     return (
         <>
             {loading && <LoadingCustom/>}
@@ -333,7 +399,15 @@ const ExamViewPage = (props) => {
                             <div className="wraper list-news-bg">
                                 <Row gutter={[20]}>
                                     <Col xl={24} sm={24} xs={24} className="news-left">
-                                        {course.data.loai_kct !== 0 ? renderDetail() : renderConfirmExam()}
+                                        {(() => {
+                                            if (course.data.loai_kct === 0) {
+                                                return renderConfirmExamDGNL();
+                                            } else if (course.data.loai_kct === 3) {
+                                                return renderConfirmExamDGTD();
+                                            } else {
+                                                return renderDetail();
+                                            }
+                                        })()}
                                     </Col>
                                 </Row>
                             </div>

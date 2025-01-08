@@ -87,6 +87,10 @@ export const EDIT_EXAM_DGNL_USER = "EDIT_EXAM_DGNL_USER";
 export const EDIT_EXAM_DGNL_USER_SUCCESS = "EDIT_EXAM_DGNL_USER_SUCCESS";
 export const EDIT_EXAM_DGNL_USER_FAILED = "EDIT_EXAM_DGNL_USER_FAILED";
 
+export const EDIT_EXAM_DGTD_USER = "EDIT_EXAM_DGTD_USER";
+export const EDIT_EXAM_DGTD_USER_SUCCESS = "EDIT_EXAM_DGTD_USER_SUCCESS";
+export const EDIT_EXAM_DGTD_USER_FAILED = "EDIT_EXAM_DGTD_USER_FAILED";
+
 export const DELETE_EXAM_USER = "DELETE_EXAM_USER";
 export const DELETE_EXAM_USER_SUCCESS = "DELETE_EXAM_USER_SUCCESS";
 export const DELETE_EXAM_USER_FAILED = "DELETE_EXAM_USER_FAILED";
@@ -304,6 +308,13 @@ export function editExamDGNLUser(params, callback) {
     }
 }
 
+export function editExamDGTDUser(params, callback) {
+    return {
+        type: EDIT_EXAM_DGTD_USER,
+        params,
+        callback
+    }
+}
 
 export function deleteExamUser(params, callback) {
     return {

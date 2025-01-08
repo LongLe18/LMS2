@@ -398,8 +398,9 @@ function* createExamUser(payload) {
             payload.callback(result);
         }
     } catch (error) {
+        console.log(error);
         yield put({ type: actions.exam.CREATE_EXAM_USER_FAILED, error: error });
-        let messageError = error.response.status === 403 ? error.response.data : '';
+        let messageError = error?.response?.status === 403 ? error?.response?.data : '';
         notification.error({
             message: get(error, 'response.data.error', 'Thêm đề thi học viên mới thất bại ' + messageError),
         });
@@ -435,6 +436,24 @@ function* editExamDGNLUser(payload) {
         }
     } catch (error) {
         yield put({ type: actions.exam.EDIT_EXAM_DGNL_USER_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        notification.error({
+            message: get(error, 'response.data.error', 'Cập nhật thông tin đề thi học viên thất bại ' + messageError),
+        });
+    }
+}
+
+function* editExamDGTDUser(payload) {
+    try {
+        let endpoint = config.API_URL + `/student_exam/${payload.params.idExam}/dgtd`;
+        const response = yield call(putApiAuth, endpoint, payload.params.formData); 
+        const result = yield response;
+        yield put({ type: actions.exam.EDIT_EXAM_DGTD_USER_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.exam.EDIT_EXAM_DGTD_USER_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
         notification.error({
             message: get(error, 'response.data.error', 'Cập nhật thông tin đề thi học viên thất bại ' + messageError),
@@ -555,6 +574,10 @@ export function* loadEditExamUser() {
 
 export function* loadEditExamDGNLUser() {
     yield takeEvery(actions.exam.EDIT_EXAM_DGNL_USER, editExamDGNLUser);
+}
+
+export function* loadEditExamDGTDUser() {
+    yield takeEvery(actions.exam.EDIT_EXAM_DGTD_USER, editExamDGTDUser);
 }
 
 export function* loadDeleteExamUser() {

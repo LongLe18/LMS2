@@ -695,7 +695,7 @@ const OnlineExamDetailPage = () => {
                 notification.success({
                     message: 'Xuất bản đề thi thành công.',
                 });   
-                if (paramtypeExamUrl === 'DGNL') {
+                if (paramtypeExamUrl === 'DGNL' || paramtypeExamUrl === 'DGTD') {
                     history.push('/admin/question/examDgnl');
                 } else {
                     history.push('/admin/question/exam');
@@ -779,7 +779,7 @@ const OnlineExamDetailPage = () => {
                             <Step title="Thông tin chung" />
                             {
                                 Array.from({ length: criteria?.data?.so_phan }).map((_, index) => {
-                                    return <Step title={`Danh sách câu hỏi phần ${index + 1}`} />
+                                    return <Step key={index.toString()} title={`Danh sách câu hỏi phần ${index + 1}`} />
                                 })
                             }
                             <Step title="Hoàn thành" />
@@ -890,8 +890,8 @@ const OnlineExamDetailPage = () => {
                                 return (
                                     <TabPane tab={`Tạo câu hỏi phần ${index + 1}`} key={`step_${index + 1}`}>
                                         <Row gutter={[16, 16]} style={{marginBottom: 12}}>
-                                            {majors.data.map((major) => (
-                                                <Col xl={4} lg={6} md={12} sm={12} xs={24}>
+                                            {majors.data.map((major, index) => (
+                                                <Col key={index} xl={4} lg={6} md={12} sm={12} xs={24}>
                                                     <div className="dashboard-stat stat-user">
                                                         <div className="visual"><TeamOutlined /></div>
                                                         <div className="detail">

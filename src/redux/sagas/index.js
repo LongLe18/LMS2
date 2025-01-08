@@ -102,6 +102,7 @@ import {
     loadDeleteExam,
     loadEditExam,
     loadEditExamDGNLUser,
+    loadEditExamDGTDUser,
     loadExam,
     loadExams,
     loadFilterExam,
@@ -149,6 +150,7 @@ import {
     loadDeleteDetailQuestion,
     loadDetailsQuestion,
     loadEditDetailQuestion,
+    loadEditQuestionExam,
 } from './question';
 
 import { 
@@ -469,6 +471,7 @@ export default function* rootSaga() {
         loadDeleteExam(),
         loadEditExam(),
         loadEditExamDGNLUser(),
+        loadEditExamDGTDUser(),
         loadExam(),
         loadExams(),
         loadFilterExam(),
@@ -512,6 +515,7 @@ export default function* rootSaga() {
         loadDeleteDetailQuestion(),
         loadDetailsQuestion(),
         loadEditDetailQuestion(),
+        loadEditQuestionExam(),
         // answer
         loadAdAnswer(),
         loadAnswer(),

@@ -133,6 +133,26 @@ function* fetchQuestionsExam(payload) {
     }
 }
 
+function* editQuestionExam(payload) {
+    try {
+        let endpoint = '';
+        if (payload.params.type) endpoint = `${config.API_URL}/exam_question/v2/${payload.params.idQuestionExam}`;
+        else endpoint = `${config.API_URL}/exam_question/${payload.params.idQuestionExam}`;
+        const response = yield call(putApiAuth, endpoint, payload.params.formData);
+        const result = yield response.data;
+        yield put({ type: actions.quesiton.EDIT_QUESTION_EXAM_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.quesiton.EDIT_QUESTION_EXAM_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        notification.error({
+            message: get(error, 'response.data.error', 'Cập nhật dữ liệu câu hỏi đã thất bại ' + messageError),
+        });
+    }
+}
+
 function* fetchQuestionExam(payload) {
     try {
         let endpoint = `${config.API_URL}/exam_question/${payload.params.idQuestion}`;
@@ -314,6 +334,10 @@ export function* loadGetQuestionsByExam() {
 
 export function* loadGetQuestionExam() {
     yield takeEvery(actions.quesiton.GET_QUESTION_EXAM, fetchQuestionExam);
+}
+
+export function* loadEditQuestionExam() {
+    yield takeEvery(actions.quesiton.EDIT_QUESTION_EXAM, editQuestionExam);
 }
 
 export function* loadAddQuestionExam() {

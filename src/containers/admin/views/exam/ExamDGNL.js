@@ -212,7 +212,7 @@ const ExamDGNLAdminPage = () => {
           }
           <Tooltip title={`Xem lại đề`} color="#2db7f5" placement="bottom">
             <Button shape="round" type="primary" 
-              onClick={() => window.open(`/luyen-tap/xem-lai/${hashids.encode(de_thi_id)}`, "_blank")} style={{display: !de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}} icon={<EyeOutlined />}>
+              onClick={() => window.open(`/luyen-tap/xem-lai/${hashids.encode(de_thi_id)}?loai_de_thi=${de_thi.loai_de_thi_id === 5 ? 'DGNL' : 'DGTD'}`, "_blank")} style={{display: !de_thi.xuat_ban ? 'none' : '', marginBottom: '5px'}} icon={<EyeOutlined />}>
             </Button> 
           </Tooltip>
           <Tooltip title={`Sử dụng lại đề`} color="#2db7f5" placement="bottom">

@@ -1356,7 +1356,6 @@ const ExamOnlineDetai = () => {
                                                 <Col xs={{ span: 22, offset: 1 }} lg={{ span: 16 }}>
                                                     {Array.from({ length: exam.data.so_phan }).map((_, index) => {
                                                         return (
-                                                            // 
                                                             <div className={`section-${index} detail-title-section`} style={{margin: '12px 0px'}}>Phần {index + 1}: {index === 0 ? `Tư duy định lượng (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)` 
                                                                 : index === 1 ? `Tư duy định tính (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)`
                                                                 : `${localStorage.getItem('mon_thi')?.split(',').length === 1 ? 'Ngoại ngữ ' : 'Khoa học '} (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)`}</div>
@@ -2081,7 +2080,7 @@ const ExamOnlineDetai = () => {
                             const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${state.sectionExam}`];
                             const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
                             return (
-                                <Col span={3} style={{padding: 0}}>
+                                <Col span={3} style={{padding: 0}} key={index}>
                                     <div className="exam-right-content" >
                                         <div className="exam-right-info">
                                             <p className="mg-0 title-list-q" style={{textAlign: 'left !important'}}><b>Trả lời của bạn</b></p>
@@ -2120,7 +2119,7 @@ const ExamOnlineDetai = () => {
                             const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${state.sectionExam}`];
                             const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
                             return (
-                                <Col span={6}>
+                                <Col span={6} key={index}>
                                     <div className="exam-right-content" style={{ position: 'sticky', top: '0px', marginTop: 0 }}>
                                         <div className="topbar-exam">
                                             <p className="mg-0">

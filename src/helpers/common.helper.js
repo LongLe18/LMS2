@@ -150,3 +150,20 @@ export const getAnswerCols = (type) => {
     else if (type === 4) return 6;
     else return 24;
 };
+
+export const renderAnswerKeyV2 = (dap_an) => {
+    const answerKey = ['A', 'B', 'C', 'D'];
+    let answerLetters = [];
+    let answerIndices = [];
+
+    if (dap_an !== null && dap_an !== undefined) {
+        for (let i = 0; i < dap_an.length; i++) {
+            if (dap_an[i] === '1') {
+                answerLetters.push(answerKey[i]);
+                answerIndices.push(i);
+            }
+        }
+    }
+    // Output: [['A', 'B'], [0, 1]]
+    return [answerLetters, answerIndices];
+};

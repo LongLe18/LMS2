@@ -29,7 +29,6 @@ const LoginUserPage = (props) => {
 
     const onSubmit = (values) => {
         const callback = (res) => {
-            console.log(res);
             const json_token = jwt_decode(localStorage.getItem('userToken'));
             if (json_token.role === 0 && json_token.role === roleCheck) {
                 setTimeout(() => {
