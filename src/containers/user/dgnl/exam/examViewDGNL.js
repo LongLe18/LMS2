@@ -304,11 +304,11 @@ const ExamViewDGNL = (props) => {
                     {course.status === 'success' &&
                         <>
                             <div className="header-exam">
-                                <h1 style={{color: 'rgba(229, 100, 19, 0.92)'}}>GIỚI THIỆU BÀI THI THỬ TRẢI NGHIỆM KỲ THI ĐÁNH GIÁ NĂNG LỰC (HSA)</h1>
+                                <h1 style={{color: 'rgba(229, 100, 19, 0.92)'}}>GIỚI THIỆU BÀI THI THỬ TRẢI NGHIỆM KỲ THI ĐÁNH GIÁ TƯ DUY (HSA)</h1>
                             </div>
                             <div>
                                 <h5 className="text-black" style={{fontWeight: 600}}>MỤC ĐÍCH BÀI THI TRẢI NGHIỆM</h5>
-                                <span style={{fontSize: 18, fontWeight: 500}}>Giúp thí sinh làm quen với định dạng bài thi Đánh giá năng lực, trải nghiệm ngân hàng câu hỏi phong phú, sẵn sàng kiến thức và tâm lý cho kỳ thi chính thức.</span>
+                                <span style={{fontSize: 18, fontWeight: 500}}>Giúp thí sinh làm quen với định dạng bài thi Đánh giá tư duy, trải nghiệm ngân hàng câu hỏi phong phú, sẵn sàng kiến thức và tâm lý cho kỳ thi chính thức.</span>
                                 <h5 style={{marginTop: 8, fontWeight: 600}}>CẤU TRÚC BÀI THI</h5>
                                 <span  style={{fontSize: 18, fontWeight: 500}}>
                                     Bài thi gồm ba phần thi: tư duy toán học (60 phút), tư duy đọc hiểu (30 phút) và tư duy khoa học/giải quyết vấn đề (60 phút). Đây là ba phần thi độc lập, câu hỏi thi sẽ tập trung vào đánh giá năng lực tư duy của thí sinh trong mỗi phần thi, không đi vào kiểm tra kiến thức của môn học nào.

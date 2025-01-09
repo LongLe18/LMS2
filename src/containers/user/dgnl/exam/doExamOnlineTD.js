@@ -263,7 +263,8 @@ export default function ExamOnlineDetaiDGTD() {
                     )
                 )
             }
-            const lua_chon = word?.cau_hoi?.lua_chon?.noi_dung?.replace(/\n/g, "").split(';').filter(item => item !== '');
+            let selectedGaps = gaps.filter(item => (item?.questionId)?.toString() === result.draggableId);
+            const lua_chon = word?.cau_hoi?.lua_chon?.noi_dung?.replace(/\n/g, "").split(';').filter(item => !selectedGaps.some(obj => obj.userWord === item.trim().replace(/\s+/g, '')));
             setGaps((prev) =>
                 prev.map((gap) => 
                     gap.id === destination.droppableId ? { ...gap, userWord: lua_chon[source.index], questionId: Number(result.draggableId) - index } : gap
@@ -464,12 +465,13 @@ export default function ExamOnlineDetaiDGTD() {
     // Xử lý lưu đáp án đã chọn của câu hỏi 'Kéo thả'
     useEffect(() => {
         let value;
-        const question = localStorage.getItem('question');
+        const question = JSON.parse(localStorage.getItem('question'));
         localStorage.setItem('answerText', null);
-        const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
-        if (isAnswered) {
-            value = gaps.find((it) => it.cau_hoi_id === question.cau_hoi_id).filter(item => item.userWord).map(item => item.userWord).join(';');
-        } else value = gaps.filter(item => item.userWord).map(item => item.userWord).join(';');
+        // const isAnswered = results?.find((it) => it.cau_hoi_id === question?.cau_hoi_id);
+        // if (isAnswered) {
+            // value = gaps.filter((it) => it.questionId === question?.cau_hoi_id)?.filter(item => item.userWord).map(item => item.userWord).join(';');
+        // } else 
+        value = gaps.filter((it) => it.questionId === question?.cau_hoi_id)?.filter(item => item.userWord).map(item => item.userWord).join(';');
         localStorage.setItem('answerText', value);
     }, [gaps]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -835,9 +837,6 @@ export default function ExamOnlineDetaiDGTD() {
 
     // Hàm UI câu hỏi kéo thả
     const questionDragAndDrop = (question, key) => {
-        // localStorage.setItem('question', null);
-        // localStorage.setItem('question', JSON.stringify(question));
-
         const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);  
         let lua_chons = ''
         if (isAnswered) lua_chons = isAnswered?.noi_dung?.replace(/\n/g, "").split(';').filter(item => item !== '');
@@ -852,7 +851,7 @@ export default function ExamOnlineDetaiDGTD() {
                         {(provided) => (
                             <div ref={provided.innerRef} {...provided.droppableProps} style={{margin: 12}}>
                                 <Space wrap >
-                                    {question?.cau_hoi?.lua_chon?.noi_dung?.split(';').map((lua_chon, index) => (
+                                    {question?.cau_hoi?.lua_chon?.noi_dung?.split(';').filter(item => !selectedGaps.some(obj => obj.userWord === item.trim().replace(/\s+/g, ''))).map((lua_chon, index) => (
                                         <Draggable key={`${question?.cau_hoi_id + index}`}
                                             draggableId={(question?.cau_hoi_id + index).toString()} index={index}
                                         >
@@ -935,11 +934,11 @@ export default function ExamOnlineDetaiDGTD() {
                                                 {(isDoing && index_2 < partCauhoi.length - 1) && (
                                                     <Droppable droppableId={`gap-${index + index_2}`}>
                                                         {(provided, snapshot) => (
-                                                            <div ref={provided.innerRef}
+                                                            <div ref={provided.innerRef} style={{display: 'inline-block'}}
                                                                 {...provided.droppableProps}
-                                                                className={`empty-box ${
+                                                                className={`${
                                                                     snapshot.isDraggingOver ? 'bg-gray-50' : ''
-                                                                } ${selectedGaps[index + index_2]?.userWord ? 'border-solid border-blue-500' : ''}`}
+                                                                } ${selectedGaps[index  + index_2]?.userWord ? 'border-solid border-blue-500' : 'empty-box'}`}
                                                             >
                                                                 {selectedGaps[index + index_2]?.userWord && (
                                                                     <Draggable draggableId={`gap-${index + index_2}-word`} index={index + index_2}>
@@ -1126,7 +1125,7 @@ export default function ExamOnlineDetaiDGTD() {
                             <Row className={`answer`} style={{alignItems: 'center', width: '100%'}} key={index}>
                                 <Col span={3}>
                                     <Radio.Group name="groupRightWrong" disabled={!isDoing}
-                                        defaultValue={isAnswered !== undefined ? isAnswered.ket_qua_chon[index] === '1' : false}
+                                        defaultValue={isAnswered !== undefined ? isAnswered?.ket_qua_chon[index] === '1' : isAnswered?.ket_qua_chon[index] === '0' ? false : null}
                                         onChange={(e) => {
                                             setPause(true); // Tạm dừng để ngăn chặn việc thay đổi đáp án quá nhanh
                                             dispatch(answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, 
@@ -1732,7 +1731,7 @@ export default function ExamOnlineDetaiDGTD() {
 
                                                                         return (
                                                                             <>
-                                                                                <div style={{fontSize: 20, fontWeight: 700}}>Câu {indexSubQuestion + 1} [{getTypeQuestion(subQuestion.cau_hoi.loai_cau_hoi)}]</div>
+                                                                                <div style={{fontSize: 20, fontWeight: 700}}>Câu {indexSubQuestion + currentQuestion + 1} [{getTypeQuestion(subQuestion.cau_hoi.loai_cau_hoi)}]</div>
                                                                                 {renderTitleQuestion(subQuestion)}
                                                                                 {questionComponent}
                                                                             </>
