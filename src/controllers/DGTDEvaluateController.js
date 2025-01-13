@@ -192,57 +192,72 @@ const download = async (req, res) => {
                     result = true;
             } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 1) {
                 // Câu trắc nghiệm
-                ket_qua_chons = selectedAnswer.ket_qua_chon.toString().split('');
+                ket_qua_chons = selectedAnswer.ket_qua_chon
+                    .toString()
+                    .split('');
                 dap_ans = selectedAnswer.cau_hoi.dap_ans;
                 if (
                     ket_qua_chons.every(
                         (ket_qua_chon, index) =>
-                            (ket_qua_chon === '1') === dap_ans[index].dap_an_dung
+                            (ket_qua_chon === '1') ===
+                            dap_ans[index].dap_an_dung
                     )
                 ) {
                     result = true;
                 }
             } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 2) {
-                ket_qua_chons = selectedAnswer.ket_qua_chon.toString().split('');
+                ket_qua_chons = selectedAnswer.ket_qua_chon
+                    .toString()
+                    .split('');
                 dap_ans = selectedAnswer.cau_hoi.dap_ans;
                 if (
                     ket_qua_chons.every(
                         (ket_qua_chon, index) =>
-                            (ket_qua_chon === '1') === dap_ans[index].dap_an_dung
+                            (ket_qua_chon === '1') ===
+                            dap_ans[index].dap_an_dung
                     )
                 ) {
                     result = true;
                 }
             } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 3) {
                 // nếu không chọn thì để là "_"
-                ket_qua_chons = selectedAnswer.ket_qua_chon.toString().split('');
+                ket_qua_chons = selectedAnswer.ket_qua_chon
+                    .toString()
+                    .split('');
                 dap_ans = selectedAnswer.cau_hoi.dap_ans;
                 if (
                     ket_qua_chons.every(
                         (ket_qua_chon, index) =>
                             ket_qua_chon !== '_' &&
-                            (ket_qua_chon === '1') === dap_ans[index].dap_an_dung
+                            (ket_qua_chon === '1') ===
+                                dap_ans[index].dap_an_dung
                     )
                 ) {
                     result = true;
                 }
             } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 4) {
                 // nếu không chọn thì để là "_"
-                ket_qua_chons = selectedAnswer.ket_qua_chon.toString().split('');
+                ket_qua_chons = selectedAnswer.ket_qua_chon
+                    .toString()
+                    .split('');
                 dap_ans = selectedAnswer.cau_hoi.dap_ans;
                 if (
                     ket_qua_chons.every(
                         (ket_qua_chon, index) =>
                             ket_qua_chon !== '_' &&
-                            (ket_qua_chon === '1') === dap_ans[index].dap_an_dung
+                            (ket_qua_chon === '1') ===
+                                dap_ans[index].dap_an_dung
                     )
                 ) {
                     result = true;
                 }
             } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 5) {
                 // nếu không nhập thì để là "_"
-                noi_dung_dap_ans = selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an
-                    ? selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an.split(';')
+                noi_dung_dap_ans = selectedAnswer.cau_hoi.dap_ans[0]
+                    .noi_dung_dap_an
+                    ? selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an.split(
+                          ';'
+                      )
                     : '';
                 if (
                     selectedAnswer.noi_dung_tra_loi &&
@@ -259,8 +274,11 @@ const download = async (req, res) => {
                 }
             } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 6) {
                 // nếu không nhập thì để là "_"
-                noi_dung_dap_ans = selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an
-                    ? selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an.split(';')
+                noi_dung_dap_ans = selectedAnswer.cau_hoi.dap_ans[0]
+                    .noi_dung_dap_an
+                    ? selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an.split(
+                          ';'
+                      )
                     : '';
                 if (
                     selectedAnswer.noi_dung_tra_loi &&
@@ -279,6 +297,14 @@ const download = async (req, res) => {
             if (result) {
                 ket_qua_diem += parseFloat(selectedAnswer.cau_hoi.diem);
                 so_cau_tra_loi_dung++;
+
+                if (selectedAnswer.cau_hoi.chuyen_nganh_id === 10) {
+                    phan_1 += parseFloat(selectedAnswer.cau_hoi.diem);
+                } else if (selectedAnswer.cau_hoi.chuyen_nganh_id === 11) {
+                    phan_2 += parseFloat(selectedAnswer.cau_hoi.diem);
+                } else {
+                    phan_3 += parseFloat(selectedAnswer.cau_hoi.diem);
+                }
             }
         }
 
@@ -308,42 +334,23 @@ const download = async (req, res) => {
                 },
             },
         });
-
-        let evaluate_3;
-        if (
-            selectedAnswers.some((item) => item.cau_hoi.chuyen_nganh_id === 5)
-        ) {
-            evaluate_3 = await DGTDEvaluate.findOne({
-                where: {
-                    khoa_hoc_id: studentExam.de_thi.khoa_hoc_id,
-                    phan_thi: 31,
-                    cau_bat_dau: {
-                        [Op.lte]: phan_3,
-                    },
-                    cau_ket_thuc: {
-                        [Op.gte]: phan_3,
-                    },
+        let evaluate_3 = await DGTDEvaluate.findOne({
+            where: {
+                khoa_hoc_id: studentExam.de_thi.khoa_hoc_id,
+                phan_thi: 3,
+                cau_bat_dau: {
+                    [Op.lte]: phan_3,
                 },
-            });
-        } else {
-            evaluate_3 = await DGTDEvaluate.findOne({
-                where: {
-                    khoa_hoc_id: studentExam.de_thi.khoa_hoc_id,
-                    phan_thi: 32,
-                    cau_bat_dau: {
-                        [Op.lte]: phan_3,
-                    },
-                    cau_ket_thuc: {
-                        [Op.gte]: phan_3,
-                    },
+                cau_ket_thuc: {
+                    [Op.gte]: phan_3,
                 },
-            });
-        }
+            },
+        });
 
         const content = fs.readFileSync(
             path.resolve(
                 process.cwd(),
-                'public/templates/form_export_dgnl.docx'
+                'public/templates/form_export_dgtd.docx'
             ),
             'binary'
         );
