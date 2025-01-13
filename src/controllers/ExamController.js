@@ -23,6 +23,26 @@ const fs = require('fs');
 const { parse, extname } = require('path');
 const path = require('path');
 
+function generateCombinations(arr, k) {
+    let results = [];
+
+    function combine(temp, start) {
+        if (temp.length === k) {
+            results.push([...temp]);
+            return;
+        }
+
+        for (let i = start; i < arr.length; i++) {
+            temp.push(arr[i]);
+            combine(temp, i + 1);
+            temp.pop();
+        }
+    }
+
+    combine([], 0);
+    return results;
+}
+
 const getExamOnline = async (req, res) => {
     let khoa_hoc_id = 1;
     let limit = 100;
@@ -1116,7 +1136,13 @@ const putUpdate = async (req, res) => {
 
 const publish = async (req, res) => {
     const exam = await Exam.findOne({
-        attributes: ['xuat_ban', 'de_mau', 'khoa_hoc_id'],
+        attributes: [
+            'de_thi_id',
+            'xuat_ban',
+            'de_mau',
+            'khoa_hoc_id',
+            'loai_de_thi_id',
+        ],
         where: {
             de_thi_id: req.params.id,
         },
@@ -1184,6 +1210,206 @@ const publish = async (req, res) => {
                         message: 'Chưa có tiêu chí đề thi',
                     });
                 }
+
+                setTimeout(async () => {
+                    const subjects = [3, 4, 6, 8, 9];
+                    const combinations = generateCombinations(subjects, 3);
+
+                    for (let count = 1; count <= 4; count++) {
+                        const newExam = await Exam.create({
+                            ten_de_thi: 'THI ĐÁNH GIÁ NĂNG LỰC',
+                            tong_diem: 150,
+                            xuat_ban: true,
+                            trang_thai: true,
+                            kct_id: 1,
+                            khoa_hoc_id: exam.khoa_hoc_id,
+                            loai_de_thi_id: 5,
+                            de_mau_id: exam.de_thi_id,
+                            to_hop: '1,7,5',
+                        });
+
+                        // phần 1
+                        await sequelize.query(
+                            `
+                            INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan, chuyen_nganh_id)
+                                SELECT cau_hoi_id, ${newExam.dataValues.de_thi_id}, 1, chuyen_nganh_id FROM cau_hoi_de_thi
+                                WHERE chuyen_nganh_id = 1 AND de_thi_id = ${exam.de_thi_id}
+                                ORDER BY RAND() LIMIT ${criteria.so_cau_hoi_phan_1}
+                        `,
+                            {
+                                type: sequelize.QueryTypes.INSERT,
+                            }
+                        );
+
+                        // phần 2
+                        await sequelize.query(
+                            `
+                            INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan, chuyen_nganh_id)
+                                SELECT chdt.cau_hoi_id, ${newExam.dataValues.de_thi_id}, 2, chdt.chuyen_nganh_id FROM cau_hoi_de_thi chdt
+                                INNER JOIN cau_hoi ch ON chdt.cau_hoi_id = ch.cau_hoi_id
+                                WHERE chdt.chuyen_nganh_id = 7 AND chdt.de_thi_id = ${exam.de_thi_id}
+                                ORDER BY ch.trich_doan_id ASC, RAND()
+                                LIMIT ${criteria.so_cau_hoi_phan_2}
+                        `,
+                            {
+                                type: sequelize.QueryTypes.INSERT,
+                            }
+                        );
+
+                        // phần 3
+                        await sequelize.query(
+                            `
+                            INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan, chuyen_nganh_id)
+                                SELECT cau_hoi_id, ${newExam.dataValues.de_thi_id}, 4, chuyen_nganh_id FROM cau_hoi_de_thi
+                                WHERE chuyen_nganh_id = 5 AND de_thi_id = ${exam.de_thi_id}
+                                ORDER BY cau_hoi_id ASC
+                                LIMIT ${criteria.so_cau_hoi_phan_4}
+                        `,
+                            {
+                                type: sequelize.QueryTypes.INSERT,
+                            }
+                        );
+                    }
+
+                    for (let combination of combinations) {
+                        for (let count = 1; count <= 4; count++) {
+                            const newExam = await Exam.create({
+                                ten_de_thi: 'THI ĐÁNH GIÁ NĂNG LỰC',
+                                tong_diem: 150,
+                                xuat_ban: true,
+                                trang_thai: true,
+                                kct_id: 1,
+                                khoa_hoc_id: exam.khoa_hoc_id,
+                                loai_de_thi_id: 5,
+                                de_mau_id: exam.de_thi_id,
+                                to_hop: `1,7,${combination.join(',')}`,
+                            });
+
+                            // phần 1
+                            await sequelize.query(
+                                `
+                                INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan, chuyen_nganh_id)
+                                    SELECT cau_hoi_id, ${newExam.dataValues.de_thi_id}, 1, chuyen_nganh_id FROM cau_hoi_de_thi
+                                    WHERE chuyen_nganh_id = 1 AND de_thi_id = ${exam.de_thi_id}
+                                    ORDER BY RAND() LIMIT ${criteria.so_cau_hoi_phan_1}
+                            `,
+                                {
+                                    type: sequelize.QueryTypes.INSERT,
+                                }
+                            );
+
+                            // phần 2
+                            await sequelize.query(
+                                `
+                                INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan, chuyen_nganh_id)
+                                    SELECT chdt.cau_hoi_id, ${newExam.dataValues.de_thi_id}, 2, chdt.chuyen_nganh_id FROM cau_hoi_de_thi chdt
+                                    INNER JOIN cau_hoi ch ON chdt.cau_hoi_id = ch.cau_hoi_id
+                                    WHERE chdt.chuyen_nganh_id = 7 AND chdt.de_thi_id = ${exam.de_thi_id}
+                                    ORDER BY ch.trich_doan_id ASC, RAND()
+                                    LIMIT ${criteria.so_cau_hoi_phan_2}
+                            `,
+                                {
+                                    type: sequelize.QueryTypes.INSERT,
+                                }
+                            );
+
+                            // phần 3
+                            const so_cau_hoi_tung_chuyen_nganh = parseInt(
+                                Number(criteria.so_cau_hoi_phan_3) / 3
+                            );
+                            for (const chuyen_nganh_id of combination) {
+                                await sequelize.query(
+                                    `
+                                        INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan, chuyen_nganh_id)
+                                            SELECT chdt.cau_hoi_id, ${newExam.dataValues.de_thi_id}, 3, chdt.chuyen_nganh_id
+                                            FROM cau_hoi_de_thi chdt
+                                            INNER JOIN cau_hoi ch ON chdt.cau_hoi_id = ch.cau_hoi_id
+                                            WHERE chdt.chuyen_nganh_id = :chuyen_nganh_id
+                                            AND chdt.de_thi_id = ${exam.de_thi_id}
+                                            AND ch.trich_doan_id IS NOT NULL
+                                            ORDER BY ch.trich_doan_id ASC, RAND() LIMIT ${so_cau_hoi_tung_chuyen_nganh}
+                                    `,
+                                    {
+                                        type: sequelize.QueryTypes.INSERT,
+                                        replacements: {
+                                            chuyen_nganh_id:
+                                                Number(chuyen_nganh_id),
+                                        },
+                                    }
+                                );
+
+                                let limit_value = await sequelize.query(
+                                    `
+                                    SELECT COUNT(*) as count
+                                        FROM cau_hoi_de_thi
+                                        WHERE de_thi_id = ${newExam.dataValues.de_thi_id}
+                                        AND chuyen_nganh_id = :chuyen_nganh_id
+                                `,
+                                    {
+                                        type: sequelize.QueryTypes.SELECT,
+                                        replacements: {
+                                            chuyen_nganh_id:
+                                                Number(chuyen_nganh_id),
+                                        },
+                                    }
+                                );
+
+                                await sequelize.query(
+                                    `
+                                        INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan, chuyen_nganh_id)
+                                            SELECT chdt.cau_hoi_id, ${
+                                                newExam.dataValues.de_thi_id
+                                            }, 3, chdt.chuyen_nganh_id
+                                            FROM cau_hoi_de_thi chdt
+                                            INNER JOIN cau_hoi ch ON chdt.cau_hoi_id = ch.cau_hoi_id
+                                            WHERE chdt.chuyen_nganh_id = :chuyen_nganh_id 
+                                            AND chdt.de_thi_id = ${
+                                                exam.de_thi_id
+                                            }
+                                            AND ch.trich_doan_id IS NULL
+                                            ORDER BY ch.trich_doan_id ASC, RAND() 
+                                            LIMIT ${
+                                                so_cau_hoi_tung_chuyen_nganh -
+                                                limit_value[0].count
+                                            }
+                                    `,
+                                    {
+                                        type: sequelize.QueryTypes.INSERT,
+                                        replacements: {
+                                            chuyen_nganh_id:
+                                                Number(chuyen_nganh_id),
+                                        },
+                                    }
+                                );
+                            }
+                            await sequelize.query(
+                                `
+                                    INSERT INTO cau_hoi_de_thi (cau_hoi_id, de_thi_id, phan, chuyen_nganh_id)
+                                        SELECT chdt.cau_hoi_id, ${
+                                            newExam.dataValues.de_thi_id
+                                        }, 3, chdt.chuyen_nganh_id FROM cau_hoi_de_thi chdt
+                                        INNER JOIN cau_hoi ch ON chdt.cau_hoi_id = ch.cau_hoi_id
+                                        WHERE chdt.chuyen_nganh_id IN (${combination.join(
+                                            ','
+                                        )}) AND chdt.de_thi_id = ${
+                                    exam.de_thi_id
+                                }
+                                        AND ch.trich_doan_id IS NULL
+                                        AND chdt.cau_hoi_id NOT IN (SELECT cau_hoi_id
+                                        FROM cau_hoi_de_thi
+                                        WHERE de_thi_id = ${newExam.de_thi_id})
+                                        ORDER BY RAND() LIMIT ${
+                                            Number(criteria.so_cau_hoi_phan_3) -
+                                            so_cau_hoi_tung_chuyen_nganh * 3
+                                        }
+                                `,
+                                {
+                                    type: sequelize.QueryTypes.INSERT,
+                                }
+                            );
+                        }
+                    }
+                }, 500);
             } else {
                 return res.status(400).send({
                     status: 'error',

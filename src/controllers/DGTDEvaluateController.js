@@ -181,82 +181,104 @@ const download = async (req, res) => {
         let dap_ans;
 
         for (const selectedAnswer of selectedAnswers) {
-            if (
-                selectedAnswer.cau_hoi &&
-                selectedAnswer.cau_hoi.loai_cau_hoi === 1
-            ) {
+            result = false;
+            if (selectedAnswer.cau_hoi.loai_cau_hoi === 0) {
+                if (
+                    selectedAnswer.noi_dung_tra_loi &&
+                    selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an &&
+                    selectedAnswer.noi_dung_tra_loi.trim().toLowerCase() ==
+                        selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an.toLowerCase()
+                )
+                    result = true;
+            } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 1) {
                 // Câu trắc nghiệm
-                ket_qua_chons = selectedAnswer.ket_qua_chon
-                    .toString()
-                    .split('');
+                ket_qua_chons = selectedAnswer.ket_qua_chon.toString().split('');
                 dap_ans = selectedAnswer.cau_hoi.dap_ans;
                 if (
                     ket_qua_chons.every(
                         (ket_qua_chon, index) =>
-                            ket_qua_chon == dap_ans[index].dap_an_dung
+                            (ket_qua_chon === '1') === dap_ans[index].dap_an_dung
                     )
                 ) {
-                    if (selectedAnswer.cau_hoi.chuyen_nganh_id === 1) {
-                        phan_1 += parseFloat(selectedAnswer.cau_hoi.diem);
-                    } else if (selectedAnswer.cau_hoi.chuyen_nganh_id === 7) {
-                        phan_2 += parseFloat(selectedAnswer.cau_hoi.diem);
-                    } else {
-                        phan_3 += parseFloat(selectedAnswer.cau_hoi.diem);
-                    }
+                    result = true;
                 }
-            } else if (
-                selectedAnswer.cau_hoi &&
-                selectedAnswer.cau_hoi.loai_cau_hoi === 2
-            ) {
-                // Câu trắc nghiệm đúng sai
-                const ket_qua_chons = [
-                    ...selectedAnswer.ket_qua_chon.toString(),
-                ];
-                const dap_ans = selectedAnswer.cau_hoi.dap_ans;
-                const bangDiem = {
-                    0: 0,
-                    1: parseFloat(selectedAnswer.cau_hoi.diem) / 10,
-                    2: parseFloat(selectedAnswer.cau_hoi.diem) / 4,
-                    3: parseFloat(selectedAnswer.cau_hoi.diem) / 2,
-                };
-                let so_cau_dung = ket_qua_chons.reduce(
-                    (acc, ket_qua_chon, index) =>
-                        acc +
-                        ((ket_qua_chon === '1') === dap_ans[index].dap_an_dung),
-                    0
-                );
-                // if (so_cau_dung) {
-                //     ket_qua_diem.push(1);
-                //     continue;
-                // }
-                // if (so_cau_dung === 4) result = true;
-            } else {
-                // câu tự luận
+            } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 2) {
+                ket_qua_chons = selectedAnswer.ket_qua_chon.toString().split('');
+                dap_ans = selectedAnswer.cau_hoi.dap_ans;
                 if (
-                    selectedAnswer.cau_hoi &&
-                    selectedAnswer.cau_hoi.loai_cau_hoi === 0 &&
-                    selectedAnswer.noi_dung_tra_loi &&
-                    selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an &&
-                    selectedAnswer.noi_dung_tra_loi.trim().toLowerCase() ==
-                        selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an
-                            .replaceAll('<b>', '')
-                            .replaceAll('</b>', '')
-                            .replaceAll('<em>', '')
-                            .replaceAll('</em>', '')
-                            .replaceAll('<u>', '')
-                            .replaceAll('</u>', '')
-                            .trim()
-                            .toLowerCase()
+                    ket_qua_chons.every(
+                        (ket_qua_chon, index) =>
+                            (ket_qua_chon === '1') === dap_ans[index].dap_an_dung
+                    )
                 ) {
-                    if (selectedAnswer.cau_hoi.chuyen_nganh_id === 1) {
-                        phan_1 += parseFloat(selectedAnswer.cau_hoi.diem);
-                    } else if (selectedAnswer.cau_hoi.chuyen_nganh_id === 7) {
-                        phan_2 += parseFloat(selectedAnswer.cau_hoi.diem);
-                    } else {
-                        phan_3 += parseFloat(selectedAnswer.cau_hoi.diem);
-                    }
-                    diem_tu_luan += parseFloat(selectedAnswer.cau_hoi.diem);
+                    result = true;
                 }
+            } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 3) {
+                // nếu không chọn thì để là "_"
+                ket_qua_chons = selectedAnswer.ket_qua_chon.toString().split('');
+                dap_ans = selectedAnswer.cau_hoi.dap_ans;
+                if (
+                    ket_qua_chons.every(
+                        (ket_qua_chon, index) =>
+                            ket_qua_chon !== '_' &&
+                            (ket_qua_chon === '1') === dap_ans[index].dap_an_dung
+                    )
+                ) {
+                    result = true;
+                }
+            } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 4) {
+                // nếu không chọn thì để là "_"
+                ket_qua_chons = selectedAnswer.ket_qua_chon.toString().split('');
+                dap_ans = selectedAnswer.cau_hoi.dap_ans;
+                if (
+                    ket_qua_chons.every(
+                        (ket_qua_chon, index) =>
+                            ket_qua_chon !== '_' &&
+                            (ket_qua_chon === '1') === dap_ans[index].dap_an_dung
+                    )
+                ) {
+                    result = true;
+                }
+            } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 5) {
+                // nếu không nhập thì để là "_"
+                noi_dung_dap_ans = selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an
+                    ? selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an.split(';')
+                    : '';
+                if (
+                    selectedAnswer.noi_dung_tra_loi &&
+                    noi_dung_dap_ans &
+                        selectedAnswer.noi_dung_tra_loi
+                            .split(';')
+                            .every(
+                                (noi_dung_tra_loi, index) =>
+                                    noi_dung_tra_loi.trim().toLowerCase() ===
+                                    noi_dung_dap_ans[index].trim().toLowerCase()
+                            )
+                ) {
+                    result = true;
+                }
+            } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 6) {
+                // nếu không nhập thì để là "_"
+                noi_dung_dap_ans = selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an
+                    ? selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an.split(';')
+                    : '';
+                if (
+                    selectedAnswer.noi_dung_tra_loi &&
+                    noi_dung_dap_ans &
+                        selectedAnswer.noi_dung_tra_loi
+                            .split(';')
+                            .every(
+                                (noi_dung_tra_loi, index) =>
+                                    noi_dung_tra_loi.trim().toLowerCase() ===
+                                    noi_dung_dap_ans[index].trim().toLowerCase()
+                            )
+                ) {
+                    result = true;
+                }
+            }
+            if (result) {
+                ket_qua_diem += parseFloat(selectedAnswer.cau_hoi.diem);
+                so_cau_tra_loi_dung++;
             }
         }
 

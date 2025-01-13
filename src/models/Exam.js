@@ -18,6 +18,9 @@ const dethi = sequelize.define(
         mo_ta: {
             type: DataTypes.STRING,
         },
+        to_hop: {
+            type: DataTypes.STRING,
+        },
         tong_diem: {
             type: DataTypes.FLOAT(10, 2),
         },
