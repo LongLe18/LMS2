@@ -204,7 +204,11 @@ const postCreateDGNL = async (req, res) => {
     const exam = await Exam.findOne({
         where: {
             khoa_hoc_id,
-            to_hop: `1,7,${chuyen_nganh_ids.split(',').sort((a, b) => a - b).join(',')}`
+            to_hop: `1,7,${chuyen_nganh_ids
+                .split(',')
+                .map((item) => item.trim())
+                .sort((a, b) => a - b)
+                .join(',')}`,
         },
         order: sequelize.literal('RAND()'),
     });
