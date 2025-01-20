@@ -950,7 +950,7 @@ const putUpdate = async (req, res) => {
 
 const publish = async (req, res) => {
     const exam = await Exam.findOne({
-        attributes: ['xuat_ban', 'de_mau', 'khoa_hoc_id'],
+        attributes: ['de_thi_id', 'xuat_ban', 'de_mau', 'khoa_hoc_id'],
         where: {
             de_thi_id: req.params.id,
         },
