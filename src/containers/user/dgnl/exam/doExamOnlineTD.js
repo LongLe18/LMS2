@@ -851,6 +851,7 @@ export default function ExamOnlineDetaiDGTD() {
                         {(provided) => (
                             <div ref={provided.innerRef} {...provided.droppableProps} style={{margin: 12}}>
                                 <Space wrap >
+                                {/* .filter(item => !selectedGaps.some(obj => obj.userWord === item.trim().replace(/\s+/g, ''))) */}
                                     {question?.cau_hoi?.lua_chon?.noi_dung?.split(';').map((lua_chon, index) => (
                                         <Draggable key={`${question?.cau_hoi_id + index}`}
                                             draggableId={(question?.cau_hoi_id + index).toString()} index={index}
