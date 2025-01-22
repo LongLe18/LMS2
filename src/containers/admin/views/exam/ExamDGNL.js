@@ -145,7 +145,7 @@ const ExamDGNLAdminPage = () => {
       key: 'loai_de_thi_id',
       responsive: ['md'],
       render: (loai_de_thi_id) => (
-        <span>{loai_de_thi_id === 5 ? 'Đề thi mẫu ĐGNL': 'Đề thi mẫu ĐGNL BK'}</span>
+        <span>{loai_de_thi_id === 5 ? 'Đề thi mẫu ĐGNL': 'Đề thi mẫu ĐGTD BK'}</span>
       )
     },
     {

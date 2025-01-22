@@ -219,7 +219,7 @@ const routes = [
     }, {
       parent: "question",
       path: "/admin/question/examDgnl",
-      name: "Đề mẫu ĐGNL",
+      name: "Đề mẫu ĐGNL/ĐGTD",
       icon: <FileOutlined />,
       render: (props) => <ExamDGNLAdminPage {...props}/>
     }, {

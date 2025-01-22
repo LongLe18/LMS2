@@ -621,14 +621,14 @@ const Criteria = () => {
             responsive: ['md'],
         },
         {
-            title: 'Số câu hỏi phần Văn học',
+            title: 'Số câu hỏi phần Đọc hiểu',
             dataIndex: 'so_cau_hoi_phan_2',
             key: 'so_cau_hoi_phan_2',
             width: 180,
             responsive: ['md'],
         },
         {
-            title: 'Thời gian phần Văn học',
+            title: 'Thời gian phần Đọc hiểu',
             dataIndex: 'thoi_gian_phan_2',
             key: 'thoi_gian_phan_2',
             width: 150,

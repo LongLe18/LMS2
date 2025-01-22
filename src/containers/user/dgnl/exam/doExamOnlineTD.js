@@ -851,7 +851,7 @@ export default function ExamOnlineDetaiDGTD() {
                         {(provided) => (
                             <div ref={provided.innerRef} {...provided.droppableProps} style={{margin: 12}}>
                                 <Space wrap >
-                                    {question?.cau_hoi?.lua_chon?.noi_dung?.split(';').filter(item => !selectedGaps.some(obj => obj.userWord === item.trim().replace(/\s+/g, ''))).map((lua_chon, index) => (
+                                    {question?.cau_hoi?.lua_chon?.noi_dung?.split(';').map((lua_chon, index) => (
                                         <Draggable key={`${question?.cau_hoi_id + index}`}
                                             draggableId={(question?.cau_hoi_id + index).toString()} index={index}
                                         >
@@ -902,14 +902,7 @@ export default function ExamOnlineDetaiDGTD() {
                                 <div style={{fontSize: 18, marginBottom: 8, marginRight: 12}}>
                                     {index + 1}. 
                                 </div>
-                                {lua_chons.length > 0 && <div style={{fontSize: 18, color: 'red'}}>
-                                    Đáp án đã chọn: {lua_chons?.map((lua_chon, indexLuaChon) => {
-                                        return (
-                                            `${indexLuaChon + 1}. ${lua_chon}; `
-                                        )
-                                    })}
-                                </div>
-                                }
+                                
                                 {
                                     partCauhoi.map((chi_tiet, index_2) => {
                                         return (
@@ -950,6 +943,28 @@ export default function ExamOnlineDetaiDGTD() {
                                                                                 className="cursor-move m-0"
                                                                                 color="blue"
                                                                             >
+                                                                                {/* <MathJax.Provider>
+                                                                                    {selectedGaps[index + index_2]?.userWord.split('\n').filter(item => item !== '').map((item, index_cauhoi) => {
+                                                                                        return (
+                                                                                            <div className="title-exam-content" key={index_cauhoi}>
+                                                                                                {
+                                                                                                    (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
+                                                                                                        <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}><Image src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question2_${index_cauhoi}`}></Image></div>
+                                                                                                    ) : 
+                                                                                                    (
+                                                                                                        <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
+                                                                                                            return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
+                                                                                                                <MathJax.Node key={index2} formula={item2} />
+                                                                                                            ) : (
+                                                                                                                <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                                                                            )
+                                                                                                        })}</div>
+                                                                                                    )
+                                                                                                }
+                                                                                            </div>
+                                                                                        )}
+                                                                                    )}
+                                                                                </MathJax.Provider> */}
                                                                                 {selectedGaps[index + index_2]?.userWord}
                                                                             </Tag>
                                                                         )}
@@ -971,6 +986,38 @@ export default function ExamOnlineDetaiDGTD() {
                         )
                     })}
                 </div>
+                {lua_chons.length > 0 && <div style={{fontSize: 18, color: 'green'}}>
+                    Đáp án đã chọn: {lua_chons?.map((lua_chon, indexLuaChon) => {
+                            return (
+                                <Row key={indexLuaChon}>
+                                    {indexLuaChon + 1}.
+                                    <MathJax.Provider>
+                                        {lua_chon.split('\n').filter(item => item !== '').map((item, index_cauhoi) => {
+                                            return (
+                                                <div className="title-exam-content" key={index_cauhoi}>
+                                                    {
+                                                        (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
+                                                            <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}><Image src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question2_${index_cauhoi}`}></Image></div>
+                                                        ) : 
+                                                        (
+                                                            <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
+                                                                return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
+                                                                    <MathJax.Node key={index2} formula={item2} />
+                                                                ) : (
+                                                                    <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                                )
+                                                            })}</div>
+                                                        )
+                                                    }
+                                                </div>
+                                            )}
+                                        )}
+                                    </MathJax.Provider>
+                                </Row>
+                            )
+                        })}
+                    </div>
+                }
             </>
         )
     };
