@@ -54,26 +54,26 @@ const ExamViewDGNL = (props) => {
         },
     ];
 
-    const dataSourceTableDGTDBK = [
-        {
-            key: '1',
-            content: `Mức độ 1: Tư duy tái hiện`,
-            note: `Thể hiện khả năng nhớ lại kiến thức, thực hiện tư duy theo những quy trình đã biết.\n
-                Các hành động tư duy cần đánh giá: xác định, tìm kiếm, lựa chọn, nhắc lại, đặt tên, ghép nối ...`,
-        },
-        {
-            key: '2',
-            content: `Mức độ 2: Tư duy suy luận`,
-            note: `Thể hiện khả năng lập luận có căn cứ, thực hiện tư duy phân tích, tổng hợp dựa theo vận dụng quy trình thích ứng với điều kiện.\n
-                Các hành động tư duy cần đánh giá: phân loại, so sánh, chỉ được minh chứng, tổng hợp, vận dụng, đưa ra lí lẽ, suy luận, giải thích, áp dụng, tóm tắt …`,
-        },
-        {
-            key: '3',
-            content: `Mức độ 3: Tư duy bậc cao`,
-            note: `Thiết lập và thực hiện được các mô hình đánh giá, giải thích dựa trên bằng chứng.\n
-                Các hành động tư duy cần đánh giá: phân tích, đánh giá, phân biệt, phán đoán, lập luận (nhiều bước), kiểm tra giả thuyết…`,
-        },
-    ];
+    // const dataSourceTableDGTDBK = [
+    //     {
+    //         key: '1',
+    //         content: `Mức độ 1: Tư duy tái hiện`,
+    //         note: `Thể hiện khả năng nhớ lại kiến thức, thực hiện tư duy theo những quy trình đã biết.\n
+    //             Các hành động tư duy cần đánh giá: xác định, tìm kiếm, lựa chọn, nhắc lại, đặt tên, ghép nối ...`,
+    //     },
+    //     {
+    //         key: '2',
+    //         content: `Mức độ 2: Tư duy suy luận`,
+    //         note: `Thể hiện khả năng lập luận có căn cứ, thực hiện tư duy phân tích, tổng hợp dựa theo vận dụng quy trình thích ứng với điều kiện.\n
+    //             Các hành động tư duy cần đánh giá: phân loại, so sánh, chỉ được minh chứng, tổng hợp, vận dụng, đưa ra lí lẽ, suy luận, giải thích, áp dụng, tóm tắt …`,
+    //     },
+    //     {
+    //         key: '3',
+    //         content: `Mức độ 3: Tư duy bậc cao`,
+    //         note: `Thiết lập và thực hiện được các mô hình đánh giá, giải thích dựa trên bằng chứng.\n
+    //             Các hành động tư duy cần đánh giá: phân tích, đánh giá, phân biệt, phán đoán, lập luận (nhiều bước), kiểm tra giả thuyết…`,
+    //     },
+    // ];
 
     const columns = [
         {
@@ -192,6 +192,7 @@ const ExamViewDGNL = (props) => {
                         });
                     } else {
                         if (course?.data?.loai_kct === 0) setIsJoinExam(1);
+                        else if (course?.data?.loai_kct === 3) confirmExam();
                         else setIsJoinExam(2)
                         getCriteriaDG(course?.data?.loai_kct === 0);
                     }
@@ -304,7 +305,7 @@ const ExamViewDGNL = (props) => {
                     {course.status === 'success' &&
                         <>
                             <div className="header-exam">
-                                <h1 style={{color: 'rgba(229, 100, 19, 0.92)'}}>GIỚI THIỆU BÀI THI THỬ TRẢI NGHIỆM KỲ THI ĐÁNH GIÁ TƯ DUY (HSA)</h1>
+                                <h1 style={{color: 'rgba(229, 100, 19, 0.92)'}}>GIỚI THIỆU BÀI THI THỬ TRẢI NGHIỆM KỲ THI ĐÁNH GIÁ TƯ DUY (TSA)</h1>
                             </div>
                             <div>
                                 <h5 className="text-black" style={{fontWeight: 600}}>MỤC ĐÍCH BÀI THI TRẢI NGHIỆM</h5>
@@ -316,7 +317,7 @@ const ExamViewDGNL = (props) => {
                                 <div style={{textAlign: 'center'}}>
                                     <img style={{marginTop: 12}} src={require('assets/img/cau-truc-bai-thi-dgtd-bach-khoa.jpg').default} alt='banner1'/>
                                 </div>
-                                <h5 style={{marginTop: 8, fontWeight: 600}}>1. Mức độ đánh giá tư duy</h5>
+                                {/* <h5 style={{marginTop: 8, fontWeight: 600}}>1. Mức độ đánh giá tư duy</h5>
                                 <Table className='table-structure' style={{ whiteSpace: 'break-spaces', textAlign: 'left', fontSize: 20}} dataSource={dataSourceTableDGTDBK} columns={columns} pagination={false}/>
                                 <h5 style={{marginTop: 8, fontWeight: 600}}>2. Lĩnh vực đánh giá</h5>
                                 <div style={{fontSize: 18 }}>
@@ -343,7 +344,7 @@ const ExamViewDGNL = (props) => {
                                     <br/>- Kéo thả (chọn sẵn trong menu)
 
                                     <br/>Đề thi đánh giá tư duy có những đặc thù rất riêng do vậy học sinh tham gia bắt buộc nên tham khảo và làm thử đề thi trước khi dự thi.
-                                </div>
+                                </div> */}
                                 
                             </div>
                             <div style={{textAlign: 'center', marginTop: 12, height: 50}}>

@@ -4,6 +4,7 @@
     display: flex;
     flex-direction: column;
     margin: 16px 0;
+    align-items: center;
 }
 
 .body-dgtd {
@@ -43,6 +44,14 @@
     align-items: center;
 }
 
+.body-dgtd .title-index-question {
+    display: inline-block;
+    color: #fff;
+    font-size: 16px;
+    background: rgb(40, 156, 40);
+    border: 2px solid rgb(40, 156, 40) !important;
+}
+
 .body-dgtd .content-answer-question ul {
     margin: 0;
     padding: 0;
@@ -62,7 +71,15 @@
     position: absolute;
     top: 8px;
 }
-  
+.answer .ant-radio-inner, .multi-choice .ant-checkbox-inner {
+    width: 24px;
+    height: 24px;
+}
+
+.radio-result .ant-radio-checked .ant-radio-inner {
+    background-color: #3da844;
+}
+
 .content-answer-question .btn-onClick p {
     display: inline-block;
 }
@@ -208,15 +225,21 @@
 
 .fill-box-question .empty-box {
     cursor: pointer;
-    border-radius: 3px;
+    border-radius: 5px;
     display: inline-block;
     min-width: 66px;
     height: 25px;
-    border: 1px solid #c1c1c1 !important;
+    border: 1px dashed rgb(153, 153, 153) !important;
+    background-color: rgb(241, 234, 217);
     opacity: 1 !important;
     margin: 0 5px;
     padding: 0 10px;
     vertical-align: middle;
+}
+
+.fill-box-question .box-filled {
+    border: 1px dashed rgb(153, 153, 153) !important;
+    background-color: rgb(241, 234, 217);
 }
 
 .btn-DS {
@@ -235,7 +258,32 @@
     font-size: 20px;
 }
 
-.cursor-move {
-    font-size: 20px;
-    padding: 7px 14px;
+.word-bank {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    border: 1px solid rgb(204, 204, 204);
+    border-radius: 10px;
+    padding: 12px;
+    margin: 12px;
+}
+
+.tag-word {
+    font-size: 18px;
+    padding: 5px 10px;
+    border: 1px solid rgb(204, 204, 204);
+    border-radius: 5px;
+    background-color: rgb(241, 234, 217);
+    color: #000;
+    opacity: 1;
+    user-select: none;
+    min-width: 80px;
+    min-height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shadow-isDragged {
+    opacity: 0.5;
 }

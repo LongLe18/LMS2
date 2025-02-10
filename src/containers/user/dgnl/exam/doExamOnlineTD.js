@@ -844,25 +844,28 @@ export default function ExamOnlineDetaiDGTD() {
         let selectedGaps = gaps.filter(item => item.questionId === question.cau_hoi_id);
         return (
             <>
-                <div style={{fontSize: 20}}>Kéo thả các đáp án vào vị trí thích hợp:</div>
+                <div style={{fontSize: 18, color: 'rgb(153, 153, 153)'}}>Chú ý: Kéo thả đáp án phù hợp vào chổ trống</div>
                     
                 <div className='fill-box-question'>
-                    <Droppable droppableId="word-bank" direction="horizontal" >
+                    <Droppable droppableId="word-bank" direction="horizontal">
                         {(provided) => (
                             <div ref={provided.innerRef} {...provided.droppableProps} style={{margin: 12}}>
-                                <Space wrap >
+                                <Space wrap className='word-bank'>
                                 {/* .filter(item => !selectedGaps.some(obj => obj.userWord === item.trim().replace(/\s+/g, ''))) */}
                                     {question?.cau_hoi?.lua_chon?.noi_dung?.split(';').map((lua_chon, index) => (
-                                        <Draggable key={`${question?.cau_hoi_id + index}`}
+                                        <Draggable key={`${question?.cau_hoi_id + index}`} 
+                                            isDragDisabled={selectedGaps.some(obj => obj.userWord === lua_chon.trim().replace(/\s+/g, ''))}
                                             draggableId={(question?.cau_hoi_id + index).toString()} index={index}
                                         >
                                             {(provided, snapshot) => (
-                                                <Tag style={{fontSize: 20, padding: '7px 14px'}} key={`${question?.cau_hoi_id + index}`} 
+                                                <Tag style={{fontSize: 20, padding: '7px 14px', borderRadius: 5}} key={`${question?.cau_hoi_id + index}`} 
                                                     ref={provided.innerRef}
                                                     {...provided.draggableProps}
                                                     {...provided.dragHandleProps}
-                                                    className={`cursor-move ${snapshot.isDragging ? 'shadow-lg' : ''}`}
-                                                    color="blue"
+                                                    className={`tag-word ${snapshot.isDragging ? 'shadow-lg' : ''}
+                                                        ${selectedGaps.some(obj => obj.userWord === lua_chon.trim().replace(/\s+/g, '')) ? 'shadow-isDragged' : ''}
+                                                    `}
+                                                    color="orange"
                                                 >   
                                                     <MathJax.Provider>
                                                         {lua_chon.split('\n').filter(item => item !== '').map((item, index_cauhoi) => {
@@ -941,8 +944,8 @@ export default function ExamOnlineDetaiDGTD() {
                                                                                 ref={provided.innerRef}
                                                                                 {...provided.draggableProps}
                                                                                 {...provided.dragHandleProps}
-                                                                                className="cursor-move m-0"
-                                                                                color="blue"
+                                                                                className="tag-word box-filled m-0"
+                                                                                color="orange"
                                                                             >
                                                                                 {/* <MathJax.Provider>
                                                                                     {selectedGaps[index + index_2]?.userWord.split('\n').filter(item => item !== '').map((item, index_cauhoi) => {
@@ -1065,7 +1068,7 @@ export default function ExamOnlineDetaiDGTD() {
         const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
         return (
             <div className="title-exam">
-                <TextArea placeholder='Nhập đáp án' rows={1} style={{width:"100%"}} disabled={!isDoing} 
+                <TextArea placeholder='Nhập đáp án' rows={1} style={{width:"100%", marginBottom: 12}} disabled={!isDoing} 
                     defaultValue={isAnswered !== undefined ? isAnswered.noi_dung : null}
                     onChange={(e) => {
                         localStorage.setItem('answerText', null);
@@ -1160,36 +1163,29 @@ export default function ExamOnlineDetaiDGTD() {
         );
     }
 
-    // giao diện câu hỏi đúng sai chọn nhiều
-    const renderMultiChoiceRightWrongQuestion = (question, key) => {
+    // giao diện câu hỏi chọn nhiều đúng sai 
+    const renderMultiChoiceRightWrongQuestion = (question, key, bool) => {
+        // bool: là biến kiểm tra xem câu hỏi hay là đáp án
         const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
         return (
             <div className="content-answer-question">
-                <span style={{marginRight: 8, fontSize: 20}}>Đúng</span>
-                <span style={{ fontSize: 20 }}>Sai</span>
-                <Row gutter={[20, 10]} className="multi-choice" style={{rowGap: 0}}>
+                {!bool &&
+                    <p className="result-exam-item">
+                        <span className="right-answer" style={{fontSize: 20}}>Đáp án đúng là: </span>
+                    </p>
+                }
+
+                <Row>
+                    <Col span={21}></Col>
+                    <Col span={3} style={{display: 'flex', justifyContent: 'space-around'}}>
+                        <span style={{ fontSize: 20, fontWeight: 600 }}>Đúng</span>
+                        <span style={{ fontSize: 20, fontWeight: 600 }}>Sai</span>
+                    </Col>
+                </Row>
+                <Row gutter={[20, 10]} className="multi-choice" style={{rowGap: 0, margin: 0}}>
                     {question.cau_hoi.dap_ans.map((answer, index) => {
                         return (
-                            <Row className={`answer`} style={{alignItems: 'center', width: '100%'}} key={index}>
-                                <Col span={3}>
-                                    <Radio.Group name="groupRightWrong" disabled={!isDoing}
-                                        defaultValue={isAnswered !== undefined ? isAnswered?.ket_qua_chon[index] === '1' : isAnswered?.ket_qua_chon[index] === '0' ? false : null}
-                                        onChange={(e) => {
-                                            setPause(true); // Tạm dừng để ngăn chặn việc thay đổi đáp án quá nhanh
-                                            dispatch(answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, 
-                                                (res) => {
-                                                    if (res.status === 'success') {
-                                                        answers = res.data;
-                                                        onChooseAnswer(question, renderAnswerKey(index), index, res.data, e.target.value)   
-                                                    }
-                                                }
-                                            ))
-                                        }}
-                                    >
-                                        <Radio value={true}>Đ</Radio>
-                                        <Radio value={false}>S</Radio>
-                                    </Radio.Group>
-                                </Col>
+                            <Row className={`answer`} style={{alignItems: 'center', width: '100%', marginBottom: 12}} key={index}>                  
                                 <Col span={21}>
                                     <div className="answer-content" style={{flexDirection: 'row', alignItems: 'center', paddingLeft: 0}}>
                                         <span style={{marginRight: 6}}>{renderAnswerKey(index)}. </span>
@@ -1215,6 +1211,36 @@ export default function ExamOnlineDetaiDGTD() {
                                             )}
                                         </MathJax.Provider>
                                     </div>
+                                </Col>
+                                <Col span={3}>
+                                    {bool ? 
+                                        <Radio.Group name="groupRightWrong" disabled={!isDoing}
+                                            defaultValue={isAnswered !== undefined ? isAnswered?.ket_qua_chon[index] === '1' : isAnswered?.ket_qua_chon[index] === '0' ? false : null}
+                                            onChange={(e) => {
+                                                setPause(true); // Tạm dừng để ngăn chặn việc thay đổi đáp án quá nhanh
+                                                dispatch(answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, 
+                                                    (res) => {
+                                                        if (res.status === 'success') {
+                                                            answers = res.data;
+                                                            onChooseAnswer(question, renderAnswerKey(index), index, res.data, e.target.value)   
+                                                        }
+                                                    }
+                                                ))
+                                            }}
+                                            style={{display: 'flex', justifyContent: 'space-around'}}
+                                        >
+                                            <Radio value={true}></Radio>
+                                            <Radio value={false}></Radio>
+                                        </Radio.Group>
+                                        :
+                                        <Radio.Group name="groupRightWrong" disabled={!isDoing} className='radio-result'
+                                            defaultValue={question.cau_hoi.dap_an_dungs.includes(index)}
+                                            style={{display: 'flex', justifyContent: 'space-around'}}
+                                        >
+                                            <Radio value={true}></Radio>
+                                            <Radio value={false}></Radio>
+                                        </Radio.Group>
+                                    }
                                 </Col>
                             </Row>
                         )
@@ -1252,24 +1278,24 @@ export default function ExamOnlineDetaiDGTD() {
                                                     }}
                                                 >
                                                     <Row className="answer-content" style={{flexDirection: 'row'}}>       
-                                                        <div style={{marginRight: 6}}>{renderAnswerKey(index)}. </div>      
                                                         <MathJax.Provider>
                                                             {answer.noi_dung_dap_an.split('\n').map((item, index_cauhoi) => {
                                                                 return (
                                                                     <div className="help-answer-content" key={index_cauhoi}> 
-                                                                    {
-                                                                        (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                                            <Image src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></Image>
-                                                                        ) : (
-                                                                            item.split('$').map((item2, index2) => {
-                                                                                return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
-                                                                                    <MathJax.Node key={index2} formula={item2} />
-                                                                                ) : (
-                                                                                    <span style={{fontFamily: 'MJXc-TeX-main-R, MJXc-TeX-main-Rw'}} key={index2} dangerouslySetInnerHTML={{ __html: item2 }}></span>
-                                                                                )
-                                                                            })
-                                                                        )
-                                                                    }
+                                                                        {renderAnswerKey(index)}.
+                                                                        {
+                                                                            (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
+                                                                                <Image src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></Image>
+                                                                            ) : (
+                                                                                item.split('$').map((item2, index2) => {
+                                                                                    return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
+                                                                                        <MathJax.Node key={index2} formula={item2} />
+                                                                                    ) : (
+                                                                                        <span style={{fontFamily: 'MJXc-TeX-main-R, MJXc-TeX-main-Rw'}} key={index2} dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                                                    )
+                                                                                })
+                                                                            )
+                                                                        }
                                                                     </div>
                                                                 )}
                                                             )}
@@ -1618,16 +1644,12 @@ export default function ExamOnlineDetaiDGTD() {
             {(exam?.status === 'success' && (examUser?.status === 'success' || examUser?.data?.status === 'success')) && 
                 <Layout style={{ minHeight: '100vh' }}>
                     <Header className='header-dgtd'>
-                        <h5 style={{textTransform: 'uppercase'}} >{exam.data.ten_de_thi}</h5>
-                        <h6 style={{marginBottom: 0, fontWeight: 700, display: isDoing ? 'block' : 'none'}}>
+                        <h4 style={{textTransform: 'uppercase', color: '#ff6a00'}} >{exam.data.ten_de_thi}</h4>
+                        <h5 style={{marginBottom: 0, fontWeight: 700, display: isDoing ? 'block' : 'none', color: '#1890ff'}}>
                             Phần thi: {
-                                (() => {
-                                    if (state.sectionExam === 1 || examUser.data.phan_dang_lam === 1) return 'Tư duy Toán học';
-                                    else if (state.sectionExam === 2 || examUser.data.phan_dang_lam === 2) return 'Tư duy Đọc hiểu';
-                                    else return 'Tư duy khoa học/Giải quyết vấn đề';
-                                })()
+                                state.sectionExam === 1 ? 'Tư duy Toán học' : state.sectionExam === 2 ? 'Tư duy Đọc hiểu' : 'Tư duy khoa học/Giải quyết vấn đề'
                             }
-                        </h6>
+                        </h5>
                     </Header>
                     <Layout className={`${isDoing ? 'doing-exam' : 'history-exam'}`}>
                         <Content className='body-dgtd'>
@@ -1672,7 +1694,8 @@ export default function ExamOnlineDetaiDGTD() {
                                                 if (indexQuestion === currentQuestion) {
                                                     if (question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom !== undefined && question.cau_hoi.exceprtTo !== undefined) {
                                                         partQuestions = exam?.data?.cau_hoi_de_this.slice(question.cau_hoi.exceprtFrom, question.cau_hoi.exceprtTo + 1);
-                                                        exceprt = <Col md={12} style={{overflowY: 'scroll', maxHeight: 800}}>
+                                                        exceprt = 
+                                                        <Col md={12} style={{overflowY: 'scroll', maxHeight: 800}}>
                                                             {(question.cau_hoi?.trich_doan?.loai_trich_doan_id !== 0) &&
                                                                 <>
                                                                     <span className="exceprt-label">
@@ -1714,7 +1737,7 @@ export default function ExamOnlineDetaiDGTD() {
                                                         return (
                                                             <Row gutter={12} key={question.cau_hoi.cau_hoi_id} style={{background: '#fff', borderRadius: 8}}>
                                                                 {exceprt}
-                                                                <Col md={12} style={{overflowY: 'scroll', maxHeight: 800, overflowX: 'hidden'}}>
+                                                                <Col md={12} id='side-questions' style={{overflowY: 'scroll', maxHeight: 800, overflowX: 'hidden'}}>
                                                                     {partQuestions.map((subQuestion, indexSubQuestion) => {
                                                                         let questionComponent;
                                                                         switch (subQuestion?.cau_hoi?.loai_cau_hoi) {
@@ -1760,8 +1783,8 @@ export default function ExamOnlineDetaiDGTD() {
                                                                             case 3:  // Đúng sai chọn nhiều 
                                                                                 questionComponent = 
                                                                                 <>
-                                                                                    {renderMultiChoiceRightWrongQuestion(subQuestion, indexSubQuestion)}
-                                                                                    {!isDoing && renderAnswerResult(subQuestion)}
+                                                                                    {renderMultiChoiceRightWrongQuestion(subQuestion, indexSubQuestion, true)}
+                                                                                    {!isDoing && renderMultiChoiceRightWrongQuestion(subQuestion, false)}
                                                                                     {!isDoing && renderSoluntionUI(subQuestion)}
                                                                                 </>
                                                                                 break;
@@ -1779,7 +1802,10 @@ export default function ExamOnlineDetaiDGTD() {
 
                                                                         return (
                                                                             <>
-                                                                                <div style={{fontSize: 20, fontWeight: 700}}>Câu {indexSubQuestion + currentQuestion + 1} [{getTypeQuestion(subQuestion.cau_hoi.loai_cau_hoi)}]</div>
+                                                                                <div className='title-index-question' id={indexSubQuestion + currentQuestion + 1}
+                                                                                    style={{fontSize: 20, fontWeight: 700}}>
+                                                                                    Câu {indexSubQuestion + currentQuestion + 1} [{getTypeQuestion(subQuestion.cau_hoi.loai_cau_hoi)}]
+                                                                                </div>
                                                                                 {renderTitleQuestion(subQuestion)}
                                                                                 {questionComponent}
                                                                             </>
@@ -1793,7 +1819,7 @@ export default function ExamOnlineDetaiDGTD() {
                                                             return (
                                                                 <Card key={question.cau_hoi.cau_hoi_id} 
                                                                     title={
-                                                                        <span>Câu {currentQuestion + 1} [{getTypeQuestion(question.cau_hoi.loai_cau_hoi)}]</span>
+                                                                        <div className='title-index-question'>Câu {currentQuestion + 1} [{getTypeQuestion(question.cau_hoi.loai_cau_hoi)}]</div>
                                                                     }
                                                                     extra={
                                                                         <Tooltip title="Đánh dấu câu hỏi">
@@ -1812,7 +1838,7 @@ export default function ExamOnlineDetaiDGTD() {
                                                             return (
                                                                 <DragDropContext onDragEnd={handleDragEnd} key={question.cau_hoi.cau_hoi_id}>
                                                                     <Card title={
-                                                                        <span>Câu {currentQuestion + 1} [{getTypeQuestion(question.cau_hoi.loai_cau_hoi)}]</span>
+                                                                        <div className='title-index-question'>Câu {currentQuestion + 1} [{getTypeQuestion(question.cau_hoi.loai_cau_hoi)}]</div>
                                                                     }
                                                                         extra={
                                                                             <Tooltip title="Đánh dấu câu hỏi">
@@ -1832,7 +1858,7 @@ export default function ExamOnlineDetaiDGTD() {
                                                             return (
                                                                 <Card key={question.cau_hoi.cau_hoi_id} 
                                                                     title={
-                                                                        <span>Câu {currentQuestion + 1} [{getTypeQuestion(question.cau_hoi.loai_cau_hoi)}]</span>
+                                                                        <div className='title-index-question'>Câu {currentQuestion + 1} [{getTypeQuestion(question.cau_hoi.loai_cau_hoi)}]</div>
                                                                     }
                                                                     extra={
                                                                         <Tooltip title="Đánh dấu câu hỏi">
@@ -1850,7 +1876,7 @@ export default function ExamOnlineDetaiDGTD() {
                                                             return (
                                                                 <Card key={question.cau_hoi.cau_hoi_id} 
                                                                     title={
-                                                                        <span>Câu {currentQuestion + 1} [{getTypeQuestion(question.cau_hoi.loai_cau_hoi)}]</span>
+                                                                        <div className='title-index-question'>Câu {currentQuestion + 1} [{getTypeQuestion(question.cau_hoi.loai_cau_hoi)}]</div>
                                                                     }
                                                                     extra={
                                                                         <Tooltip title="Đánh dấu câu hỏi">
@@ -1869,7 +1895,7 @@ export default function ExamOnlineDetaiDGTD() {
                                                             return (
                                                                 <Card key={question.cau_hoi.cau_hoi_id} 
                                                                     title={
-                                                                        <span>Câu {currentQuestion + 1} [{getTypeQuestion(question.cau_hoi.loai_cau_hoi)}]</span>
+                                                                        <div className='title-index-question'>Câu {currentQuestion + 1} [{getTypeQuestion(question.cau_hoi.loai_cau_hoi)}]</div>
                                                                     }
                                                                     extra={
                                                                         <Tooltip title="Đánh dấu câu hỏi">
@@ -1888,7 +1914,7 @@ export default function ExamOnlineDetaiDGTD() {
                                                             return (
                                                                 <Card key={question.cau_hoi.cau_hoi_id} 
                                                                     title={
-                                                                        <span>Câu {currentQuestion + 1} [{getTypeQuestion(question.cau_hoi.loai_cau_hoi)}]</span>
+                                                                        <div className='title-index-question'>Câu {currentQuestion + 1} [{getTypeQuestion(question.cau_hoi.loai_cau_hoi)}]</div>
                                                                     }
                                                                     extra={
                                                                         <Tooltip title="Đánh dấu câu hỏi">
@@ -1898,8 +1924,8 @@ export default function ExamOnlineDetaiDGTD() {
                                                                     style={{ width: '100%', borderRadius: 8 }}
                                                                 >
                                                                     {renderTitleQuestion(question)}
-                                                                    {renderMultiChoiceRightWrongQuestion(question, index)}
-                                                                    {!isDoing && renderAnswerResult(question)}
+                                                                    {renderMultiChoiceRightWrongQuestion(question, index, true)}
+                                                                    {!isDoing && renderMultiChoiceRightWrongQuestion(question, false)}
                                                                     {!isDoing && renderSoluntionUI(question)}
                                                                 </Card>
                                                             )
@@ -1907,7 +1933,7 @@ export default function ExamOnlineDetaiDGTD() {
                                                             return (
                                                                 <Card key={question.cau_hoi.cau_hoi_id} 
                                                                     title={
-                                                                        <span>Câu {currentQuestion + 1} [{getTypeQuestion(question.cau_hoi.loai_cau_hoi)}]</span>
+                                                                        <div className='title-index-question'>Câu {currentQuestion + 1} [{getTypeQuestion(question.cau_hoi.loai_cau_hoi)}]</div>
                                                                     }
                                                                     extra={
                                                                         <Tooltip title="Đánh dấu câu hỏi">
@@ -1951,7 +1977,7 @@ export default function ExamOnlineDetaiDGTD() {
                                     >
                                         Câu tiếp
                                     </Button>
-                                    <h6 style={{marginBottom: 0}}>Thời gian còn lại: <b>{secondsToMinutes(countSection)}</b></h6>
+                                    <h6 style={{marginBottom: 0, display: !isDoing ? 'none' : 'block'}}>Thời gian còn lại: <b>{secondsToMinutes(countSection)}</b></h6>
                                 </Row>
                                 <div>
                                     <Button 
@@ -1967,9 +1993,9 @@ export default function ExamOnlineDetaiDGTD() {
                         {sidebarVisible && (
                             <Sider width={500} className='list-question-side' style={{maxHeight: 500}}>
                                 <div style={{ display: !isDoing ? 'block' : 'none', padding: 16 }}>
-                                    <h6>Kết quả điểm: <b>{examUser.data.ket_qua_diem}</b></h6> 
+                                    <h5 style={{color: 'rgb(255, 106, 0)'}}>Kết quả điểm: <b>{examUser.data.ket_qua_diem}</b></h5> 
                                 </div>
-                                <div style={{ padding: 16 }}>
+                                <div style={{ display: !isDoing ? 'none' : 'block', padding: 16 }}>
                                     <h6>Thời gian còn lại: <b>{secondsToMinutes(countSection)}</b></h6> 
                                 </div>
                                 <Row style={{ padding: 16, paddingTop: 0 }} justify={'center'}>
@@ -2026,7 +2052,18 @@ export default function ExamOnlineDetaiDGTD() {
                                                                 key={indexQuestion} 
                                                                 style={{ margin: '4px' }}
                                                                 onClick={() => {
-                                                                    setCurrentQuestion(indexQuestion)
+                                                                    // Chuyển câu hỏi chỉ áp dụng cho phần 1
+                                                                    if (state.sectionExam === 1) setCurrentQuestion(indexQuestion); 
+                                                                    else {
+                                                                        const element = document?.getElementById(indexQuestion + 1);
+                                                                        if (element) {
+                                                                            const offset = 120; // height of your fixed header
+                                                                            const sideQuestions = document.getElementById('side-questions');
+                                                                            const elementOffset = element.offsetTop - sideQuestions.offsetTop; // Calculate the position relative to sideQuestions
+                                                                            const scrollPosition = elementOffset - offset; // Adjust for the fixed header
+                                                                            sideQuestions.scrollTo({ top: scrollPosition, behavior: "smooth" });
+                                                                        } else setCurrentQuestion(indexQuestion);
+                                                                    }
                                                                 }}
                                                             >
                                                                 {indexQuestion + 1}
