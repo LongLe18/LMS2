@@ -1364,43 +1364,46 @@ const ExamOnlineDetai = () => {
                                                     <div className={"section-sum detail-title-section"} style={{margin: '12px 0px'}}>Tổng điểm</div>
                                                 </Col>
                                                 <Col xs={{ span: 22, offset: 1 }} lg={{ span: 3, }}>
-                                                    {Array.from({ length: exam.data.so_phan }).map((_, index) => {
-                                                        const startIndex = index === 0 ? 0 : Array.from({ length: index }).reduce((sum, _, i) => sum + exam.data[`so_cau_hoi_phan_${i + 1}`], 0);
-                                                        const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${index + 1}`];
-                                                        const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
-                                                        const number = partQuestions.map((question, index) => {
-                                                            let number = 0;
-                                                            if (!isDoing && examUser.status === 'success') {
-                                                                if (examUser.data.dap_an_da_chons) {
-                                                                    let currentSubmitAnswer = examUser.data.dap_an_da_chons.find((item) => item.cau_hoi_id === question.cau_hoi.cau_hoi_id);
-                                                                    if (question.cau_hoi.dap_an_dungs && currentSubmitAnswer !== undefined) {
-                                                                        if (question.cau_hoi.loai_cau_hoi === 1 || question.cau_hoi.loai_cau_hoi === 2) { // Câu trắc nghiệm
-                                                                            let answerRight = convertAnswer(question.cau_hoi.dap_an_dungs);
-                                                                            if (currentSubmitAnswer && answerRight === currentSubmitAnswer.ket_qua_chon) {
-                                                                                number = number + 1;
-                                                                            } 
-                                                                        } else { // Câu tự luận
-                                                                            if (currentSubmitAnswer && question?.cau_hoi.dap_ans[0]?.noi_dung_dap_an
-                                                                                .replaceAll('<b>', '')
-                                                                                .replaceAll('</b>', '')
-                                                                                .replaceAll('<em>', '')
-                                                                                .replaceAll('</em>', '')
-                                                                                .replaceAll('<u>', '')
-                                                                                .replaceAll('</u>', '')
-                                                                                .trim()
-                                                                                .toLowerCase() === (currentSubmitAnswer?.noi_dung_tra_loi)?.toLowerCase()) {
-                                                                                number = number + 1;
-                                                                            } 
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
-                                                            return number;
-                                                        })
-                                                        return (
-                                                            <div className={`section-${index} detail-title-section`} style={{margin: '12px 0px'}}>{number.reduce((partialSum, a) => partialSum + a, 0)}</div>
-                                                        )
-                                                    })}
+                                                    {Array.from({ length: exam.data.so_phan }).map((_, index) => 
+                                                        <div className={`section-${index} detail-title-section`} style={{margin: '12px 0px'}}>{examUser.data.diem_cac_phan.split(',')[index]}</div>
+                                                    // {
+                                                        // const startIndex = index === 0 ? 0 : Array.from({ length: index }).reduce((sum, _, i) => sum + exam.data[`so_cau_hoi_phan_${i + 1}`], 0);
+                                                        // const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${index + 1}`];
+                                                        // const partQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
+                                                        // const number = partQuestions.map((question, index) => {
+                                                        //     let number = 0;
+                                                        //     if (!isDoing && examUser.status === 'success') {
+                                                        //         if (examUser.data.dap_an_da_chons) {
+                                                        //             let currentSubmitAnswer = examUser.data.dap_an_da_chons.find((item) => item.cau_hoi_id === question.cau_hoi.cau_hoi_id);
+                                                        //             if (question.cau_hoi.dap_an_dungs && currentSubmitAnswer !== undefined) {
+                                                        //                 if (question.cau_hoi.loai_cau_hoi === 1 || question.cau_hoi.loai_cau_hoi === 2) { // Câu trắc nghiệm
+                                                        //                     let answerRight = convertAnswer(question.cau_hoi.dap_an_dungs);
+                                                        //                     if (currentSubmitAnswer && answerRight === currentSubmitAnswer.ket_qua_chon) {
+                                                        //                         number = number + 1;
+                                                        //                     } 
+                                                        //                 } else { // Câu tự luận
+                                                        //                     if (currentSubmitAnswer && question?.cau_hoi.dap_ans[0]?.noi_dung_dap_an
+                                                        //                         .replaceAll('<b>', '')
+                                                        //                         .replaceAll('</b>', '')
+                                                        //                         .replaceAll('<em>', '')
+                                                        //                         .replaceAll('</em>', '')
+                                                        //                         .replaceAll('<u>', '')
+                                                        //                         .replaceAll('</u>', '')
+                                                        //                         .trim()
+                                                        //                         .toLowerCase() === (currentSubmitAnswer?.noi_dung_tra_loi)?.toLowerCase()) {
+                                                        //                         number = number + 1;
+                                                        //                     } 
+                                                        //                 }
+                                                        //             }
+                                                        //         }
+                                                        //     }
+                                                        //     return number;
+                                                        // })
+                                                        // return (
+                                                        //     <div className={`section-${index} detail-title-section`} style={{margin: '12px 0px'}}>{examUser.data.diem_cac_phan.split(',')[index]}</div>
+                                                        // )
+                                                    // }
+                                                    )}
                                                     <div className={`section-sum detail-title-section`} style={{margin: '12px 0px'}}>{examUser.data.ket_qua_diem}</div>
                                                 </Col>
                                             </Row>

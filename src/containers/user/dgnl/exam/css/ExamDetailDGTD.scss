@@ -48,8 +48,8 @@
     display: inline-block;
     color: #fff;
     font-size: 16px;
-    background: rgb(40, 156, 40);
-    border: 2px solid rgb(40, 156, 40) !important;
+    background: rgb(26, 135, 58);
+    border: 2px solid rgb(26, 135, 58) !important;
 }
 
 .body-dgtd .content-answer-question ul {
@@ -262,7 +262,7 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    border: 1px solid rgb(204, 204, 204);
+    border: 1px solid rgb(249, 99, 0);
     border-radius: 10px;
     padding: 12px;
     margin: 12px;
@@ -271,10 +271,10 @@
 .tag-word {
     font-size: 18px;
     padding: 5px 10px;
-    border: 1px solid rgb(204, 204, 204);
+    border: 1px solid rgb(0, 176, 80);
     border-radius: 5px;
-    background-color: rgb(241, 234, 217);
-    color: #000;
+    background-color: rgb(255, 219, 105);
+    color: rgb(0, 176, 80);
     opacity: 1;
     user-select: none;
     min-width: 80px;
@@ -286,4 +286,7 @@
 
 .shadow-isDragged {
     opacity: 0.5;
+    border: 1px solid rgb(225, 255, 239);
+    background-color: rgb(255, 246, 217);
+    color: rgb(143, 255, 196);
 }

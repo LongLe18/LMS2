@@ -539,24 +539,24 @@ export default function ExamOnlineDetaiDGTD() {
         }))
     }
 
-    const getTypeQuestion = (type) => {
-        switch (type) {
-            case 0:
-                return 'Tự luận';
-            case 1:
-                return 'Trắc nghiệm';
-            case 2:
-                return 'Trắc nghiệm nhiều lựa chọn';
-            case 3:
-                return 'Nhiều lựa chọn đúng sai';
-            case 4:
-                return 'Đúng sai';
-            case 5:
-                return 'Tự luận nhiều vị trí'
-            default:
-                return 'Kéo thả';
-        }
-    }
+    // const getTypeQuestion = (type) => {
+    //     switch (type) {
+    //         case 0:
+    //             return 'Tự luận';
+    //         case 1:
+    //             return 'Trắc nghiệm';
+    //         case 2:
+    //             return 'Trắc nghiệm nhiều lựa chọn';
+    //         case 3:
+    //             return 'Nhiều lựa chọn đúng sai';
+    //         case 4:
+    //             return 'Đúng sai';
+    //         case 5:
+    //             return 'Tự luận nhiều vị trí'
+    //         default:
+    //             return 'Kéo thả';
+    //     }
+    // }
 
     // hàm xử lý chọn đáp án
     const onChooseAnswer = (question, answerKey, index, answered, value) => {
@@ -947,7 +947,7 @@ export default function ExamOnlineDetaiDGTD() {
                                                                                 className="tag-word box-filled m-0"
                                                                                 color="orange"
                                                                             >
-                                                                                {/* <MathJax.Provider>
+                                                                                <MathJax.Provider>
                                                                                     {selectedGaps[index + index_2]?.userWord.split('\n').filter(item => item !== '').map((item, index_cauhoi) => {
                                                                                         return (
                                                                                             <div className="title-exam-content" key={index_cauhoi}>
@@ -968,8 +968,8 @@ export default function ExamOnlineDetaiDGTD() {
                                                                                             </div>
                                                                                         )}
                                                                                     )}
-                                                                                </MathJax.Provider> */}
-                                                                                {selectedGaps[index + index_2]?.userWord}
+                                                                                </MathJax.Provider>
+                                                                                {/* {selectedGaps[index + index_2]?.userWord} */}
                                                                             </Tag>
                                                                         )}
                                                                     </Draggable>
@@ -1804,7 +1804,7 @@ export default function ExamOnlineDetaiDGTD() {
                                                                             <>
                                                                                 <div className='title-index-question' id={indexSubQuestion + currentQuestion + 1}
                                                                                     style={{fontSize: 20, fontWeight: 700}}>
-                                                                                    Câu {indexSubQuestion + currentQuestion + 1} [{getTypeQuestion(subQuestion.cau_hoi.loai_cau_hoi)}]
+                                                                                    Câu {indexSubQuestion + currentQuestion + 1}
                                                                                 </div>
                                                                                 {renderTitleQuestion(subQuestion)}
                                                                                 {questionComponent}
@@ -1819,7 +1819,7 @@ export default function ExamOnlineDetaiDGTD() {
                                                             return (
                                                                 <Card key={question.cau_hoi.cau_hoi_id} 
                                                                     title={
-                                                                        <div className='title-index-question'>Câu {currentQuestion + 1} [{getTypeQuestion(question.cau_hoi.loai_cau_hoi)}]</div>
+                                                                        <div className='title-index-question'>Câu {currentQuestion + 1}</div>
                                                                     }
                                                                     extra={
                                                                         <Tooltip title="Đánh dấu câu hỏi">
@@ -1838,7 +1838,7 @@ export default function ExamOnlineDetaiDGTD() {
                                                             return (
                                                                 <DragDropContext onDragEnd={handleDragEnd} key={question.cau_hoi.cau_hoi_id}>
                                                                     <Card title={
-                                                                        <div className='title-index-question'>Câu {currentQuestion + 1} [{getTypeQuestion(question.cau_hoi.loai_cau_hoi)}]</div>
+                                                                        <div className='title-index-question'>Câu {currentQuestion + 1}</div>
                                                                     }
                                                                         extra={
                                                                             <Tooltip title="Đánh dấu câu hỏi">
@@ -1858,7 +1858,7 @@ export default function ExamOnlineDetaiDGTD() {
                                                             return (
                                                                 <Card key={question.cau_hoi.cau_hoi_id} 
                                                                     title={
-                                                                        <div className='title-index-question'>Câu {currentQuestion + 1} [{getTypeQuestion(question.cau_hoi.loai_cau_hoi)}]</div>
+                                                                        <div className='title-index-question'>Câu {currentQuestion + 1}</div>
                                                                     }
                                                                     extra={
                                                                         <Tooltip title="Đánh dấu câu hỏi">
@@ -1876,7 +1876,7 @@ export default function ExamOnlineDetaiDGTD() {
                                                             return (
                                                                 <Card key={question.cau_hoi.cau_hoi_id} 
                                                                     title={
-                                                                        <div className='title-index-question'>Câu {currentQuestion + 1} [{getTypeQuestion(question.cau_hoi.loai_cau_hoi)}]</div>
+                                                                        <div className='title-index-question'>Câu {currentQuestion + 1}</div>
                                                                     }
                                                                     extra={
                                                                         <Tooltip title="Đánh dấu câu hỏi">
@@ -1895,7 +1895,7 @@ export default function ExamOnlineDetaiDGTD() {
                                                             return (
                                                                 <Card key={question.cau_hoi.cau_hoi_id} 
                                                                     title={
-                                                                        <div className='title-index-question'>Câu {currentQuestion + 1} [{getTypeQuestion(question.cau_hoi.loai_cau_hoi)}]</div>
+                                                                        <div className='title-index-question'>Câu {currentQuestion + 1}</div>
                                                                     }
                                                                     extra={
                                                                         <Tooltip title="Đánh dấu câu hỏi">
@@ -1914,7 +1914,7 @@ export default function ExamOnlineDetaiDGTD() {
                                                             return (
                                                                 <Card key={question.cau_hoi.cau_hoi_id} 
                                                                     title={
-                                                                        <div className='title-index-question'>Câu {currentQuestion + 1} [{getTypeQuestion(question.cau_hoi.loai_cau_hoi)}]</div>
+                                                                        <div className='title-index-question'>Câu {currentQuestion + 1}</div>
                                                                     }
                                                                     extra={
                                                                         <Tooltip title="Đánh dấu câu hỏi">
@@ -1933,7 +1933,7 @@ export default function ExamOnlineDetaiDGTD() {
                                                             return (
                                                                 <Card key={question.cau_hoi.cau_hoi_id} 
                                                                     title={
-                                                                        <div className='title-index-question'>Câu {currentQuestion + 1} [{getTypeQuestion(question.cau_hoi.loai_cau_hoi)}]</div>
+                                                                        <div className='title-index-question'>Câu {currentQuestion + 1}</div>
                                                                     }
                                                                     extra={
                                                                         <Tooltip title="Đánh dấu câu hỏi">
