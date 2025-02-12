@@ -863,7 +863,7 @@ export default function ExamOnlineDetaiDGTD() {
                                                     {...provided.draggableProps}
                                                     {...provided.dragHandleProps}
                                                     className={`tag-word ${snapshot.isDragging ? 'shadow-lg' : ''}
-                                                        ${selectedGaps.some(obj => obj.userWord === lua_chon.trim().replace(/\s+/g, '')) ? 'shadow-isDragged' : ''}
+                                                        ${selectedGaps.some(obj => obj.userWord === lua_chon.trim()) ? 'shadow-isDragged' : ''}
                                                     `}
                                                     color="orange"
                                                 >   
