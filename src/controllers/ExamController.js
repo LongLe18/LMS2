@@ -1312,8 +1312,11 @@ const stateChange = async (req, res) => {
 const forceDelete = async (req, res) => {
     const examChild = await Exam.findOne({
         where: {
-            de_cha_id: req.params.id,
-        },
+            [Op.or]: [
+                { de_cha_id: req.params.id },
+                { de_mau_id: req.params.id }
+            ]
+        }
     });
     if (examChild) {
         return res.status(400).send({
