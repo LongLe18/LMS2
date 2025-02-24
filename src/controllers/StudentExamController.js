@@ -576,13 +576,6 @@ const putUpdatev2 = async (req, res) => {
                         ket_qua_chon == dap_ans[index].dap_an_dung
                 )
             ) {
-                if (selectedAnswer.cau_hoi.chuyen_nganh_id === 1) {
-                    phan_1 += parseFloat(selectedAnswer.cau_hoi.diem);
-                } else if (selectedAnswer.cau_hoi.chuyen_nganh_id === 7) {
-                    phan_2 += parseFloat(selectedAnswer.cau_hoi.diem);
-                } else {
-                    phan_3 += parseFloat(selectedAnswer.cau_hoi.diem);
-                }
                 result = true;
             }
         } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 2) {
@@ -621,19 +614,20 @@ const putUpdatev2 = async (req, res) => {
                         .trim()
                         .toLowerCase()
             ) {
-                if (selectedAnswer.cau_hoi.chuyen_nganh_id === 1) {
-                    phan_1 += parseFloat(selectedAnswer.cau_hoi.diem);
-                } else if (selectedAnswer.cau_hoi.chuyen_nganh_id === 7) {
-                    phan_2 += parseFloat(selectedAnswer.cau_hoi.diem);
-                } else {
-                    phan_3 += parseFloat(selectedAnswer.cau_hoi.diem);
-                }
                 result = true;
             }
         }
         if (result) {
             ket_qua_diem += parseFloat(selectedAnswer.cau_hoi.diem);
             so_cau_tra_loi_dung++;
+
+            if (selectedAnswer.cau_hoi.chuyen_nganh_id === 1) {
+                phan_1 += parseFloat(selectedAnswer.cau_hoi.diem);
+            } else if (selectedAnswer.cau_hoi.chuyen_nganh_id === 7) {
+                phan_2 += parseFloat(selectedAnswer.cau_hoi.diem);
+            } else {
+                phan_3 += parseFloat(selectedAnswer.cau_hoi.diem);
+            }
         }
     }
     let exam = await sequelize.query(
@@ -830,6 +824,14 @@ const putUpdateDGTD = async (req, res) => {
         if (result) {
             ket_qua_diem += parseFloat(selectedAnswer.cau_hoi.diem);
             so_cau_tra_loi_dung++;
+
+            if (selectedAnswer.cau_hoi.chuyen_nganh_id === 10) {
+                phan_1 += parseFloat(selectedAnswer.cau_hoi.diem);
+            } else if (selectedAnswer.cau_hoi.chuyen_nganh_id === 11) {
+                phan_2 += parseFloat(selectedAnswer.cau_hoi.diem);
+            } else {
+                phan_3 += parseFloat(selectedAnswer.cau_hoi.diem);
+            }
         }
     }
     let exam = await sequelize.query(
