@@ -228,9 +228,12 @@ const ProfilePage = () => {
             title: 'Tên đề thi',
             dataIndex: 'ten_de_thi',
             key: 'ten_de_thi',
-            render: (ten_de_thi, item) => (
-                <Link to={`/luyen-tap/lich-su/${item.de_thi_id}/${item.dthv_id}`}>{ten_de_thi}</Link>
-            )
+            render: (ten_de_thi, item) => {
+                if (item?.phan_dang_lam) {
+                    return ten_de_thi
+                } else 
+                    return <Link to={`/luyen-tap/lich-su/${item.de_thi_id}/${item.dthv_id}`}>{ten_de_thi}</Link>
+            }
         },
         {
             title: 'Ngày',
@@ -464,285 +467,283 @@ const ProfilePage = () => {
     };
 
     return (
-        <>
-            <Layout className="main-app">
-                <Helmet>
-                    <title>Thông tin tài khoản</title>
-                </Helmet>   
-                <Content className="app-content">
-                    <div className="header-exam">
-                        <h1>Tài khoản cá nhân</h1>
-                    </div>
-                    <Container>
-                        <Row>
-                            <Col xl={8} sm={24} xs={24} className="cate-form-block">
-                                <Card bordered={false} style={{ textAlign: "center" }}>
-                                    <Avatar src={info.anh_dai_dien !== null ? config.API_URL + info.anh_dai_dien : defaultImage} size={150} shape='circle' />
-                                    <br/>
-                                    <h3 className='mt-4'>{info.ho_ten}</h3>
-                                    {/* {state.activeTab === '1' && */}
-                                        <>
-                                            <Card>
-                                                <Row>
-                                                    <Row style={{width: '100%', justifyContent: 'center'}}>
-                                                        {/* <h5 className='bold full-width'>Họ và tên: </h5> */}
-                                                        <h5 style={{wordBreak: 'break-word', fontSize: 18}}>{info.ho_ten}</h5>
-                                                    </Row>
-                                                    <Row style={{width: '100%', justifyContent: 'center'}}>
-                                                        {/* <h5 className='bold full-width'>Email: </h5> */}
-                                                        <h5 style={{wordBreak: 'break-word'}}>{info.email}</h5>
-                                                    </Row>
-                                                    <Row style={{width: '100%', justifyContent: 'center'}}>
-                                                        {/* <h5 className='bold full-width'>Giới tính: </h5> */}
-                                                        <h5 style={{wordBreak: 'break-word'}}>{info.gioi_tinh}</h5>
-                                                    </Row>                 
-                                                    <Row style={{width: '100%', justifyContent: 'center'}}>
-                                                        {/* <h5 className='bold full-width'>Ngày sinh: </h5> */}
-                                                        <h5 style={{wordBreak: 'break-word'}}>{ info.ngay_sinh !== null ? moment(info.ngay_sinh).utc(7).format(config.DATE_FORMAT_SHORT) : ''}</h5>
-                                                    </Row>
-                                                    <Row style={{width: '100%', justifyContent: 'center'}}>
-                                                        {/* <h5 className='bold full-width'>Số điện thoại: </h5> */}
-                                                        <h5 style={{wordBreak: 'break-word'}}>{info.sdt}</h5>
-                                                    </Row>
-                                                    <Row style={{width: '100%', justifyContent: 'center'}}>   
-                                                        {/* <h5 className='bold full-width' >Trường học: </h5> */}
-                                                        <h5 style={{wordBreak: 'break-word'}}>{info.truong_hoc}</h5>
-                                                    </Row>   
-                                                    <Row style={{width: '100%', justifyContent: 'center'}}>   
-                                                        {/* <h5 className='bold full-width' >Tỉnh/Thành phố: </h5> */}
-                                                        <h5 style={{wordBreak: 'break-word'}}>{info.tinh}</h5>
-                                                    </Row>   
-                                                    <Row style={{width: '100%', justifyContent: 'center'}}>
-                                                        {/* <h5 className='bold full-width'>Vai trò:</h5> */}
-                                                        <Tag color={json_token.role === 0 ? 'green' : 'red'} key={json_token.role} style={{fontSize: '16px', padding:'8px', margin: '4px'}}>
-                                                            {json_token.role === 0 ? 'Học viên' : 'Giáo viên'}
-                                                        </Tag>
-                                                    </Row>
-                                                    <Row style={{width: '100%', justifyContent: 'center'}}>
-                                                        {/* <h5 className='bold full-width'>Địa chỉ: </h5> */}
-                                                        <h5 style={{wordBreak: 'break-word'}}>{info.dia_chi}</h5>
-                                                    </Row>       
-                                                    <Row style={{width: '100%', justifyContent: 'center'}}>   
-                                                        {/* <h5 className='bold full-width'>Giới thiệu: </h5> */}
-                                                        {/* <br/> */}
-                                                        <h5 style={{wordBreak: 'break-word'}}>{info.gioi_thieu}</h5>
-                                                    </Row>  
-                                                    <Row style={{width: '100%', justifyContent: 'center'}}>
-                                                        {/* <h5 className='bold full-width'>Ngày tạo: </h5> */}
-                                                        {/* <span>Lần cuối đăng nhập: </span> */}
-                                                        <h5 style={{wordBreak: 'break-word'}}>{moment(info.ngay_tao).utc(7).format(config.DATE_FORMAT_SHORT)}</h5>
-                                                    </Row> 
+        <Layout className="main-app">
+            <Helmet>
+                <title>Thông tin tài khoản</title>
+            </Helmet>   
+            <Content className="app-content">
+                <div className="header-exam">
+                    <h1>Tài khoản cá nhân</h1>
+                </div>
+                <Container>
+                    <Row>
+                        <Col xl={8} sm={24} xs={24} className="cate-form-block">
+                            <Card bordered={false} style={{ textAlign: "center" }}>
+                                <Avatar src={info.anh_dai_dien !== null ? config.API_URL + info.anh_dai_dien : defaultImage} size={150} shape='circle' />
+                                <br/>
+                                <h3 className='mt-4'>{info.ho_ten}</h3>
+                                {/* {state.activeTab === '1' && */}
+                                    <>
+                                        <Card>
+                                            <Row>
+                                                <Row style={{width: '100%', justifyContent: 'center'}}>
+                                                    {/* <h5 className='bold full-width'>Họ và tên: </h5> */}
+                                                    <h5 style={{wordBreak: 'break-word', fontSize: 18}}>{info.ho_ten}</h5>
                                                 </Row>
-                                            </Card>
-                                            <Card>
-                                                {renderCoursePaid()}
-                                            </Card>
-                                        </>
-                                    {/* } */}
-                                </Card>
-                            </Col>
-                            <Col xl={16} sm={24} xs={24} className="cate-form-block">
-                                <Card bordered={false} >
-                                    <Tabs defaultActiveKey={state.activeTab} activeKey={state.activeTab} onChange={onChangeTab}>
-                                        <TabPane tab="Thông tin" key="1">
-                                            {(historyPractice.chuyen_de !== undefined) && 
-                                                <Card >
-                                                    <Row>
-                                                        <Col xl={12} sm={24} xs={24}>
-                                                            <h5 style={{color: 'green', fontWeight: 700}}>Lịch sử ôn luyện</h5>
-                                                        </Col>
-                                                        <Col xl={12} sm={24} xs={24}>
-                                                            {renderCourse()}
-                                                        </Col>
-                                                    </Row>
-                                                    <Row className='chart-history-practice'>
-                                                        <Col xl={6} sm={24} xs={24} className="chart-history-practice-left-info">
-                                                            <div>
-                                                                <p style={{color: 'green'}}>Tổng điểm</p>
-                                                                <p><QuestionCircleOutlined/> {historyPractice.diem}</p>
-                                                                <p style={{color: 'green'}}>điểm</p>
-                                                            </div>
-                                                            <div>
-                                                                <p style={{color: 'green'}}>Đã làm</p>
-                                                                <p><FileDoneOutlined/> {historyPractice.so_bai_lam}</p>
-                                                                <p style={{color: 'green'}}>bài kiểm tra</p>
-                                                            </div>
-                                                        </Col>
-                                                        <Divider type="vertical" style={{height: 'auto'}} />
-                                                        <Col xl={17} sm={24} xs={24}>
-                                                            <div className='pie-chart'>
-                                                                <Doughnut data={dataPieChart} options={options}/>
-                                                            </div>
-                                                        </Col>
-                                                    </Row>
-                                                </Card>
-                                            }
-                                            <br/>
-                                            {/* {DetailHistoryPractice.length > 0 &&
-                                                <Card>
-                                                    <Row>
-                                                        <Col xl={12} sm={24} xs={24}>
-                                                            <h5 style={{color: 'green', fontWeight: 700}}>Chi tiết ôn luyện</h5>
-                                                        </Col>
-                                                        <Col xl={12} sm={24} xs={24}>
-                                                            <Select style={{width: '100%'}} defaultValue={time}
-                                                                showSearch={false}
-                                                                placeholder="Chọn thời gian"
-                                                                onChange={(time) => setTime(time)}
-                                                            >
-                                                                <Option value={1}>Theo ngày</Option>
-                                                                <Option value={2}>Theo tuần</Option>
-                                                            </Select>
-                                                        </Col>
-                                                    </Row>
-                                                    <Row className='chart-history-practice-2'>
-                                                        <Line options={options} data={dataLine} />
-                                                    </Row>
-                                                </Card>
-                                            } */}
-                                            {/* <br/> */}
-                                            <Card>
+                                                <Row style={{width: '100%', justifyContent: 'center'}}>
+                                                    {/* <h5 className='bold full-width'>Email: </h5> */}
+                                                    <h5 style={{wordBreak: 'break-word'}}>{info.email}</h5>
+                                                </Row>
+                                                <Row style={{width: '100%', justifyContent: 'center'}}>
+                                                    {/* <h5 className='bold full-width'>Giới tính: </h5> */}
+                                                    <h5 style={{wordBreak: 'break-word'}}>{info.gioi_tinh}</h5>
+                                                </Row>                 
+                                                <Row style={{width: '100%', justifyContent: 'center'}}>
+                                                    {/* <h5 className='bold full-width'>Ngày sinh: </h5> */}
+                                                    <h5 style={{wordBreak: 'break-word'}}>{ info.ngay_sinh !== null ? moment(info.ngay_sinh).utc(7).format(config.DATE_FORMAT_SHORT) : ''}</h5>
+                                                </Row>
+                                                <Row style={{width: '100%', justifyContent: 'center'}}>
+                                                    {/* <h5 className='bold full-width'>Số điện thoại: </h5> */}
+                                                    <h5 style={{wordBreak: 'break-word'}}>{info.sdt}</h5>
+                                                </Row>
+                                                <Row style={{width: '100%', justifyContent: 'center'}}>   
+                                                    {/* <h5 className='bold full-width' >Trường học: </h5> */}
+                                                    <h5 style={{wordBreak: 'break-word'}}>{info.truong_hoc}</h5>
+                                                </Row>   
+                                                <Row style={{width: '100%', justifyContent: 'center'}}>   
+                                                    {/* <h5 className='bold full-width' >Tỉnh/Thành phố: </h5> */}
+                                                    <h5 style={{wordBreak: 'break-word'}}>{info.tinh}</h5>
+                                                </Row>   
+                                                <Row style={{width: '100%', justifyContent: 'center'}}>
+                                                    {/* <h5 className='bold full-width'>Vai trò:</h5> */}
+                                                    <Tag color={json_token.role === 0 ? 'green' : 'red'} key={json_token.role} style={{fontSize: '16px', padding:'8px', margin: '4px'}}>
+                                                        {json_token.role === 0 ? 'Học viên' : 'Giáo viên'}
+                                                    </Tag>
+                                                </Row>
+                                                <Row style={{width: '100%', justifyContent: 'center'}}>
+                                                    {/* <h5 className='bold full-width'>Địa chỉ: </h5> */}
+                                                    <h5 style={{wordBreak: 'break-word'}}>{info.dia_chi}</h5>
+                                                </Row>       
+                                                <Row style={{width: '100%', justifyContent: 'center'}}>   
+                                                    {/* <h5 className='bold full-width'>Giới thiệu: </h5> */}
+                                                    {/* <br/> */}
+                                                    <h5 style={{wordBreak: 'break-word'}}>{info.gioi_thieu}</h5>
+                                                </Row>  
+                                                <Row style={{width: '100%', justifyContent: 'center'}}>
+                                                    {/* <h5 className='bold full-width'>Ngày tạo: </h5> */}
+                                                    {/* <span>Lần cuối đăng nhập: </span> */}
+                                                    <h5 style={{wordBreak: 'break-word'}}>{moment(info.ngay_tao).utc(7).format(config.DATE_FORMAT_SHORT)}</h5>
+                                                </Row> 
+                                            </Row>
+                                        </Card>
+                                        <Card>
+                                            {renderCoursePaid()}
+                                        </Card>
+                                    </>
+                                {/* } */}
+                            </Card>
+                        </Col>
+                        <Col xl={16} sm={24} xs={24} className="cate-form-block">
+                            <Card bordered={false} >
+                                <Tabs defaultActiveKey={state.activeTab} activeKey={state.activeTab} onChange={onChangeTab}>
+                                    <TabPane tab="Thông tin" key="1">
+                                        {(historyPractice.chuyen_de !== undefined) && 
+                                            <Card >
                                                 <Row>
                                                     <Col xl={12} sm={24} xs={24}>
-                                                        <h5 style={{color: 'green', fontWeight: 700}}>Chi tiết bài làm</h5>
+                                                        <h5 style={{color: 'green', fontWeight: 700}}>Lịch sử ôn luyện</h5>
                                                     </Col>
                                                     <Col xl={12} sm={24} xs={24}>
-                                                        <Select style={{width: '100%'}} defaultValue={state.longTime}
+                                                        {renderCourse()}
+                                                    </Col>
+                                                </Row>
+                                                <Row className='chart-history-practice'>
+                                                    <Col xl={6} sm={24} xs={24} className="chart-history-practice-left-info">
+                                                        <div>
+                                                            <p style={{color: 'green'}}>Tổng điểm</p>
+                                                            <p><QuestionCircleOutlined/> {historyPractice.diem}</p>
+                                                            <p style={{color: 'green'}}>điểm</p>
+                                                        </div>
+                                                        <div>
+                                                            <p style={{color: 'green'}}>Đã làm</p>
+                                                            <p><FileDoneOutlined/> {historyPractice.so_bai_lam}</p>
+                                                            <p style={{color: 'green'}}>bài kiểm tra</p>
+                                                        </div>
+                                                    </Col>
+                                                    <Divider type="vertical" style={{height: 'auto'}} />
+                                                    <Col xl={17} sm={24} xs={24}>
+                                                        <div className='pie-chart'>
+                                                            <Doughnut data={dataPieChart} options={options}/>
+                                                        </div>
+                                                    </Col>
+                                                </Row>
+                                            </Card>
+                                        }
+                                        <br/>
+                                        {/* {DetailHistoryPractice.length > 0 &&
+                                            <Card>
+                                                <Row>
+                                                    <Col xl={12} sm={24} xs={24}>
+                                                        <h5 style={{color: 'green', fontWeight: 700}}>Chi tiết ôn luyện</h5>
+                                                    </Col>
+                                                    <Col xl={12} sm={24} xs={24}>
+                                                        <Select style={{width: '100%'}} defaultValue={time}
                                                             showSearch={false}
                                                             placeholder="Chọn thời gian"
-                                                            onChange={(time) => setState({...state, longTime: time})}
+                                                            onChange={(time) => setTime(time)}
                                                         >
-                                                            <Option value={0}>Hôm nay</Option>
-                                                            <Option value={1}>Hôm qua</Option>
-                                                            <Option value={7}>7 ngày gần đây</Option>
-                                                            <Option value={15}>15 ngày gần đây</Option>
-                                                            <Option value={30}>30 ngày gần đây</Option>
+                                                            <Option value={1}>Theo ngày</Option>
+                                                            <Option value={2}>Theo tuần</Option>
                                                         </Select>
                                                     </Col>
-                                                    
-                                                    <Table className="table-striped-rows" style={{width: '100%'}}
-                                                        columns={columns2} dataSource={DetailHistory} 
-                                                    />
-                                                    
+                                                </Row>
+                                                <Row className='chart-history-practice-2'>
+                                                    <Line options={options} data={dataLine} />
                                                 </Row>
                                             </Card>
-                                        </TabPane>
-                                        <TabPane tab="Chỉnh sửa" key="2">
+                                        } */}
+                                        {/* <br/> */}
+                                        <Card>
                                             <Row>
-                                                <Col xl={24} sm={24} xs={24} className="cate-form-block edit-form">
-                                                    <Form layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={EditUser}>
-                                                        <Row gutter={25}>
-                                                            <Col xl={12} sm={24} xs={24} className="cate-form-block">
-                                                                <Form.Item
-                                                                    className="input-col"
-                                                                    label="Họ và tên"
-                                                                    name="ho_ten"
-                                                                    >
-                                                                        <Input placeholder=""/>
-                                                                </Form.Item>
-                                                                <Form.Item
-                                                                    className="input-col"
-                                                                    label="Giới tính"
-                                                                    name="gioi_tinh"
-                                                                >
-                                                                    {renderGender()}
-                                                                </Form.Item>
-                                                                <Form.Item
-                                                                    name="email"
-                                                                    label="Email"
-                                                                    rules={[
-                                                                        { type: 'email', message: 'Không đúng định dạng E-mail.' },
-                                                                        { required: true, message: 'Email là trường bắt buộc.' },
-                                                                    ]}
-                                                                >
-                                                                    <Input size="normal" placeholder='Email' />
-                                                                </Form.Item>
-                                                                <Form.Item className="input-col" name="dia_chi" label='Địa chỉ'>
-                                                                    <Input size="normal" placeholder='Địa chỉ' />
-                                                                </Form.Item>
-                                                            </Col>
-                                                            <Col xl={12} sm={24} xs={24} className="cate-form-block">
-                                                                <Form.Item name="sdt" label="Số điện thoại">
-                                                                    <Input size="normal" type={"tel"} placeholder='Số điện thoại' />
-                                                                </Form.Item>
-                                                                <Form.Item name="ngay_sinh" label="Ngày sinh">
-                                                                    <DatePicker onChange={onChange} placeholder='Ngày sinh'/>
-                                                                </Form.Item>
-                                                                <Form.Item name="truong_hoc" label="Trường học">
-                                                                    <Input size="normal" placeholder='Trường học' />
-                                                                </Form.Item>
-                                                                <Form.Item name="ttp_id" label="Tỉnh/Thành phố" 
-                                                                    rules={[{ required: true, message: 'Tỉnh/Thành phố là trường bắt buộc.' }]}
-                                                                >
-                                                                    {renderProvince()}
-                                                                </Form.Item>
-                                                            </Col>
-                                                            <Col xl={24} sm={24} xs={24} className="cate-form-block">
-                                                                <Form.Item className="input-col" name="gioi_thieu" label='Giới thiệu'>
-                                                                    <TextArea rows={2} />
-                                                                </Form.Item>
-                                                            </Col>
-                                                        </Row>
-                                                        <Form.Item className="input-col" label="Hình đại diện" name="anh_dai_dien" rules={[]}>
-                                                            <Dragger {...propsImage} maxCount={1}
-                                                                listType="picture"
-                                                                className="upload-list-inline"
-                                                            >
-                                                                <p className="ant-upload-drag-icon">
-                                                                <UploadOutlined />
-                                                                </p>
-                                                                <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
-                                                            </Dragger>
-                                                        </Form.Item>
-                                                        <Form.Item className="button-col" style={{marginBottom: 0}}>
-                                                            <Button shape="round" type="primary" htmlType="submit" >
-                                                                Cập nhật
-                                                            </Button>   
-                                                        </Form.Item>
-                                                    </Form>
+                                                <Col xl={12} sm={24} xs={24}>
+                                                    <h5 style={{color: 'green', fontWeight: 700}}>Chi tiết bài làm</h5>
                                                 </Col>
+                                                <Col xl={12} sm={24} xs={24}>
+                                                    <Select style={{width: '100%'}} defaultValue={state.longTime}
+                                                        showSearch={false}
+                                                        placeholder="Chọn thời gian"
+                                                        onChange={(time) => setState({...state, longTime: time})}
+                                                    >
+                                                        <Option value={0}>Hôm nay</Option>
+                                                        <Option value={1}>Hôm qua</Option>
+                                                        <Option value={7}>7 ngày gần đây</Option>
+                                                        <Option value={15}>15 ngày gần đây</Option>
+                                                        <Option value={30}>30 ngày gần đây</Option>
+                                                    </Select>
+                                                </Col>
+                                                
+                                                <Table className="table-striped-rows" style={{width: '100%'}}
+                                                    columns={columns2} dataSource={DetailHistory} 
+                                                />
+                                                
                                             </Row>
-                                        </TabPane>
-                                        <TabPane tab="Đổi mật khẩu" key="3">
-                                            <Form layout="vertical" className="category-form" form={form2} autoComplete="off" onFinish={changePassword}>
-                                                <Form.Item
-                                                    className="input-col"
-                                                    label="Mật khẩu cũ"
-                                                    name="mat_khau_cu"
-                                                    rules={[
-                                                        { required: true, message: 'Mật khẩu cũ là trường bắt buộc.'},
-                                                    ]}
-                                                >
-                                                        <Input.Password placeholder="Mật khẩu cũ" />
-                                                </Form.Item>
-                                                <Form.Item
-                                                    className="input-col"
-                                                    label="Mật khẩu mới"
-                                                    name="mat_khau_moi"
-                                                    rules={[
-                                                        { required: true, message: 'Mật khẩu là trường bắt buộc.'},
-                                                        { pattern: new RegExp(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/), 
-                                                            message: 'Mật khẩu chưa đúng dạng gồm: Chữ hoa, chữ thường, ký tự đặc biệt, số, ít nhất 8 kí tự' 
-                                                        },
-                                                    ]}
-                                                >
-                                                        <Input.Password placeholder="Mật khẩu mới" />
-                                                </Form.Item>
-                                                <Form.Item className="button-col" style={{marginBottom: 0}}>
-                                                    <Button shape="round" type="primary" htmlType="submit" >
-                                                        Cập nhật
-                                                    </Button>   
-                                                </Form.Item>
-                                            </Form>
-                                        </TabPane> 
-                                    </Tabs>
-                                </Card>
-                            </Col>
-                        </Row>
-                    </Container>
-                </Content>
-            </Layout>
-        </>
+                                        </Card>
+                                    </TabPane>
+                                    <TabPane tab="Chỉnh sửa" key="2">
+                                        <Row>
+                                            <Col xl={24} sm={24} xs={24} className="cate-form-block edit-form">
+                                                <Form layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={EditUser}>
+                                                    <Row gutter={25}>
+                                                        <Col xl={12} sm={24} xs={24} className="cate-form-block">
+                                                            <Form.Item
+                                                                className="input-col"
+                                                                label="Họ và tên"
+                                                                name="ho_ten"
+                                                                >
+                                                                    <Input placeholder=""/>
+                                                            </Form.Item>
+                                                            <Form.Item
+                                                                className="input-col"
+                                                                label="Giới tính"
+                                                                name="gioi_tinh"
+                                                            >
+                                                                {renderGender()}
+                                                            </Form.Item>
+                                                            <Form.Item
+                                                                name="email"
+                                                                label="Email"
+                                                                rules={[
+                                                                    { type: 'email', message: 'Không đúng định dạng E-mail.' },
+                                                                    { required: true, message: 'Email là trường bắt buộc.' },
+                                                                ]}
+                                                            >
+                                                                <Input size="normal" placeholder='Email' />
+                                                            </Form.Item>
+                                                            <Form.Item className="input-col" name="dia_chi" label='Địa chỉ'>
+                                                                <Input size="normal" placeholder='Địa chỉ' />
+                                                            </Form.Item>
+                                                        </Col>
+                                                        <Col xl={12} sm={24} xs={24} className="cate-form-block">
+                                                            <Form.Item name="sdt" label="Số điện thoại">
+                                                                <Input size="normal" type={"tel"} placeholder='Số điện thoại' />
+                                                            </Form.Item>
+                                                            <Form.Item name="ngay_sinh" label="Ngày sinh">
+                                                                <DatePicker onChange={onChange} placeholder='Ngày sinh'/>
+                                                            </Form.Item>
+                                                            <Form.Item name="truong_hoc" label="Trường học">
+                                                                <Input size="normal" placeholder='Trường học' />
+                                                            </Form.Item>
+                                                            <Form.Item name="ttp_id" label="Tỉnh/Thành phố" 
+                                                                rules={[{ required: true, message: 'Tỉnh/Thành phố là trường bắt buộc.' }]}
+                                                            >
+                                                                {renderProvince()}
+                                                            </Form.Item>
+                                                        </Col>
+                                                        <Col xl={24} sm={24} xs={24} className="cate-form-block">
+                                                            <Form.Item className="input-col" name="gioi_thieu" label='Giới thiệu'>
+                                                                <TextArea rows={2} />
+                                                            </Form.Item>
+                                                        </Col>
+                                                    </Row>
+                                                    <Form.Item className="input-col" label="Hình đại diện" name="anh_dai_dien" rules={[]}>
+                                                        <Dragger {...propsImage} maxCount={1}
+                                                            listType="picture"
+                                                            className="upload-list-inline"
+                                                        >
+                                                            <p className="ant-upload-drag-icon">
+                                                            <UploadOutlined />
+                                                            </p>
+                                                            <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
+                                                        </Dragger>
+                                                    </Form.Item>
+                                                    <Form.Item className="button-col" style={{marginBottom: 0}}>
+                                                        <Button shape="round" type="primary" htmlType="submit" >
+                                                            Cập nhật
+                                                        </Button>   
+                                                    </Form.Item>
+                                                </Form>
+                                            </Col>
+                                        </Row>
+                                    </TabPane>
+                                    <TabPane tab="Đổi mật khẩu" key="3">
+                                        <Form layout="vertical" className="category-form" form={form2} autoComplete="off" onFinish={changePassword}>
+                                            <Form.Item
+                                                className="input-col"
+                                                label="Mật khẩu cũ"
+                                                name="mat_khau_cu"
+                                                rules={[
+                                                    { required: true, message: 'Mật khẩu cũ là trường bắt buộc.'},
+                                                ]}
+                                            >
+                                                    <Input.Password placeholder="Mật khẩu cũ" />
+                                            </Form.Item>
+                                            <Form.Item
+                                                className="input-col"
+                                                label="Mật khẩu mới"
+                                                name="mat_khau_moi"
+                                                rules={[
+                                                    { required: true, message: 'Mật khẩu là trường bắt buộc.'},
+                                                    { pattern: new RegExp(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/), 
+                                                        message: 'Mật khẩu chưa đúng dạng gồm: Chữ hoa, chữ thường, ký tự đặc biệt, số, ít nhất 8 kí tự' 
+                                                    },
+                                                ]}
+                                            >
+                                                    <Input.Password placeholder="Mật khẩu mới" />
+                                            </Form.Item>
+                                            <Form.Item className="button-col" style={{marginBottom: 0}}>
+                                                <Button shape="round" type="primary" htmlType="submit" >
+                                                    Cập nhật
+                                                </Button>   
+                                            </Form.Item>
+                                        </Form>
+                                    </TabPane> 
+                                </Tabs>
+                            </Card>
+                        </Col>
+                    </Row>
+                </Container>
+            </Content>
+        </Layout>
     )
 }
 

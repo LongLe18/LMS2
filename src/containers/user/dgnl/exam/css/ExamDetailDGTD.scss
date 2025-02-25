@@ -153,12 +153,17 @@
 }
 
 .selected {
-    background: rgb(24, 144, 255);
-    color: #fff;
+    background-color: rgb(244, 238, 0);
+    color: #000;
 }
 
 .marked {
     border-color: #ff6a00;
+}
+
+.isDone {
+    background: rgb(24, 144, 255);
+    color: #fff;
 }
 
 .list-question-side {

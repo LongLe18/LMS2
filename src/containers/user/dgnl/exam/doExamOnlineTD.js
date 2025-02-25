@@ -48,6 +48,7 @@ export default function ExamOnlineDetaiDGTD() {
     const [PauseModal, contextHolder] = Modal.useModal();
     const [countSection, setCountSection] = useState(3600);
     const [currentQuestion, setCurrentQuestion] = useState(0);
+    const [currentScrollQuestion, setCurrentScrollQuestion] = useState(0);
     const [sidebarVisible, setSidebarVisible] = useState(true);
     const [timeToDoAllSection, setTimeToDoAllSection] = useState(null); // Thời gian làm bài các phần
     const [loadingExportFile, setLoadingExportFile] = useState(false);
@@ -248,6 +249,7 @@ export default function ExamOnlineDetaiDGTD() {
         }
         
         let index = 0;
+        console.log(source, result, destination, gaps)
         if (destination.droppableId.startsWith("gap")) {
             if (source.index !== 0) index = 1 * source?.index;
             const word = exam?.data?.cau_hoi_de_this?.find((w) => (w.cau_hoi_id + index).toString() === result.draggableId);
@@ -737,8 +739,8 @@ export default function ExamOnlineDetaiDGTD() {
                                                         })}
                                                         {index2 < partQuestion.length - 1 && (<span style={{display: 'none'}}>{indexOfEmptyBox += 1}</span>)}
                                                         {index2 < partQuestion.length - 1 && (
-                                                            <Input className={`empty-box`} id={indexOfEmptyBox} style={{maxWidth: 120}} placeholder='Nhập đáp án' rows={1} disabled={!isDoing} 
-                                                                defaultValue={(isAnswered !== undefined) ? answerTemp[indexOfEmptyBox - 1] : null}
+                                                            <Input className={`empty-box`} id={indexOfEmptyBox + 100} style={{maxWidth: 120}} placeholder='Nhập đáp án' rows={1} disabled={!isDoing} 
+                                                                defaultValue={(isAnswered !== undefined) ? answerTemp[indexOfEmptyBox - 100 - 1] : null}
                                                                 onChange={(e) => {
                                                                     // Xử lý lưu đáp án đã nhập
                                                                     while (answerTemp.length < partQuestion.length - 1) {
@@ -821,7 +823,8 @@ export default function ExamOnlineDetaiDGTD() {
                                             return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
                                                 <MathJax.Node key={index2} formula={item2} />
                                             ) : (
-                                                <span style={{fontFamily: 'MJXc-TeX-main-R, MJXc-TeX-main-Rw'}} key={index2} dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                <span key={index2} dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                // style={{fontFamily: 'MJXc-TeX-main-R, MJXc-TeX-main-Rw'}}
                                             )
                                         })
                                     )
@@ -854,7 +857,7 @@ export default function ExamOnlineDetaiDGTD() {
                                 {/* .filter(item => !selectedGaps.some(obj => obj.userWord === item.trim().replace(/\s+/g, ''))) */}
                                     {question?.cau_hoi?.lua_chon?.noi_dung?.split(';').map((lua_chon, index) => (
                                         <Draggable key={`${question?.cau_hoi_id + index}`} 
-                                            isDragDisabled={selectedGaps.some(obj => obj.userWord === lua_chon.trim().replace(/\s+/g, ''))}
+                                            isDragDisabled={selectedGaps.some(obj => obj.userWord === lua_chon.trim())}
                                             draggableId={(question?.cau_hoi_id + index).toString()} index={index}
                                         >
                                             {(provided, snapshot) => (
@@ -903,32 +906,31 @@ export default function ExamOnlineDetaiDGTD() {
                         const partCauhoi = cau_hoi?.noi_dung?.split('{ENTER}');
                         return (
                             <Row key={index}>
-                                <div style={{fontSize: 18, marginBottom: 8, marginRight: 12}}>
-                                    {index + 1}. 
-                                </div>
-                                
                                 {
-                                    partCauhoi.map((chi_tiet, index_2) => {
-                                        return (
-                                            <div style={{fontSize: 18, marginBottom: 8}} key={index_2}>
-                                                {chi_tiet.split('\n').map((item, index) => {
-                                                    return (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                        <div style={{display: 'flex', justifyContent: 'center', width: '100%'}} key={index}>
-                                                            <Image src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question4_${index}`}></Image>
-                                                        </div>
-                                                    ) : 
-                                                    (
-                                                        <span key={index}>{item.split('$').map((item2, index2) => {
-                                                            return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
-                                                                <MathJax.Node key={index2} formula={item2} />
-                                                            ) : (
-                                                                <span key={index2} dangerouslySetInnerHTML={{ __html: item2 }}></span>
-                                                            )
-                                                        })}</span>
-                                                    )
-                                                })}
+                                    <div style={{fontSize: 18, marginBottom: 8}}>
+                                        {index + 1}. 
+                                        {partCauhoi.map((chi_tiet, index_2) => {
+                                            const contentQuestion_1 = chi_tiet.split('\n').map((item, index) => {
+                                                return (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
+                                                    <div style={{display: 'flex', justifyContent: 'center', width: '100%'}} key={index}>
+                                                        <Image src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question4_${index}`}></Image>
+                                                    </div>
+                                                ) : 
+                                                (
+                                                    <span key={index}>{item.split('$').map((item2, index2) => {
+                                                        return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
+                                                            <MathJax.Node key={index2} formula={item2} />
+                                                        ) : (
+                                                            <span key={index2} dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                        )
+                                                    })}</span>
+                                                )
+                                            })
 
-                                                {(isDoing && index_2 < partCauhoi.length - 1) && (
+                                            let contentQuestion_2;
+                                            let contentQuestion_3;
+                                            if (isDoing && index_2 < partCauhoi.length - 1) {
+                                                contentQuestion_2 = 
                                                     <Droppable droppableId={`gap-${index + index_2}`}>
                                                         {(provided, snapshot) => (
                                                             <div ref={provided.innerRef} style={{display: 'inline-block'}}
@@ -978,13 +980,13 @@ export default function ExamOnlineDetaiDGTD() {
                                                             </div>
                                                         )}
                                                     </Droppable>
-                                                )}
-                                                {(!isDoing && index_2 < partCauhoi.length - 1) && (
-                                                    <div className={`empty-box`}></div>
-                                                )}
-                                            </div>
-                                        )
-                                    })
+                                            }
+                                            if (!isDoing && index_2 < partCauhoi.length - 1) {
+                                                contentQuestion_3 = <div className={`empty-box`}></div>;
+                                            }
+                                            return contentQuestion_1.concat(contentQuestion_2).concat(contentQuestion_3);
+                                        })}
+                                    </div>
                                 }
                             </Row>
                         )
@@ -1134,7 +1136,7 @@ export default function ExamOnlineDetaiDGTD() {
                                                 ))
                                             }}
                                         >
-                                            <span className="answer-label">Đ</span>
+                                            <span className="answer-label"></span>
                                         </button>
                                     </div>
                                     <div style={{width: '12%'}}>
@@ -1151,7 +1153,7 @@ export default function ExamOnlineDetaiDGTD() {
                                                 ))
                                             }}
                                         >
-                                            <span className="answer-label">S</span>
+                                            <span className="answer-label"></span>
                                         </button>
                                     </div>
                                 </div>
@@ -1187,7 +1189,7 @@ export default function ExamOnlineDetaiDGTD() {
                         return (
                             <Row className={`answer`} style={{alignItems: 'center', width: '100%', marginBottom: 12}} key={index}>                  
                                 <Col span={21}>
-                                    <div className="answer-content" style={{flexDirection: 'row', alignItems: 'center', paddingLeft: 0}}>
+                                    <div className="answer-content" style={{flexDirection: 'row', paddingLeft: 0}}>
                                         <span style={{marginRight: 6}}>{renderAnswerKey(index)}. </span>
                                         <MathJax.Provider>
                                             {answer.noi_dung_dap_an.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
@@ -1483,6 +1485,8 @@ export default function ExamOnlineDetaiDGTD() {
                         if (state.sectionExam === exam.data.so_phan) return;
                         else {
                             countDown();
+                            setCurrentQuestion(0);
+                            setCurrentScrollQuestion(0);
                             clearInterval(timerId?.current); // Dừng đếm thời gian section
                             clearInterval(timeCount?.current); // Dừng đếm thời gian làm bài
     
@@ -1499,7 +1503,6 @@ export default function ExamOnlineDetaiDGTD() {
                                     setCountSection((preCount) => preCount - 1);
                                 }, 1000);
                                 setResults([]); 
-                                setCurrentQuestion(0);
                                 window.scrollTo({ top: 0, behavior: "smooth" });
                                 // thiết lập tiếp bộ đếm thời gian làm bài
                                 dispatch(examActions.getExamUser({ id: params.idExamUser }, (res) => {
@@ -1638,6 +1641,42 @@ export default function ExamOnlineDetaiDGTD() {
         )
     }
 
+    // danh sách nút chức năng footer của đề thi
+    const renderFooterButton = () => {
+        return (
+            <Row style={{marginTop: 16}} align={'middle'} justify={'space-between'}>
+                <Row align={'middle'}>
+                    <Button type="primary" className='btn-chinh' style={{ marginRight: 12, display: state.sectionExam > 1 ? 'none' : 'block' }} 
+                        onClick={() => {
+                            if (currentQuestion <= 0) return; 
+                            else setCurrentQuestion(currentQuestion - 1);
+                        }}
+                    >
+                        Câu trước
+                    </Button>
+                    <Button type="primary" className='btn-chinh' style={{ marginRight: 12, display: state.sectionExam > 1 ? 'none' : 'block' }} 
+                        onClick={() => {
+                            if (currentQuestion >= exam.data[`so_cau_hoi_phan_${state.sectionExam}`] - 1) return; 
+                            else setCurrentQuestion(currentQuestion + 1);
+                        }}
+                    >
+                        Câu tiếp
+                    </Button>
+                    <h6 style={{marginBottom: 0, display: !isDoing ? 'none' : 'block'}}>Thời gian còn lại: <b>{secondsToMinutes(countSection)}</b></h6>
+                </Row>
+                <div>
+                    <Button 
+                        type="primary" 
+                        onClick={() => setSidebarVisible(!sidebarVisible)} 
+                        style={{ marginLeft: 'auto', background: '#f26725', borderColor: '#f26725', borderRadius: 10 }}
+                    >
+                        {sidebarVisible ? 'Ẩn menu' : 'Hiện menu'}
+                    </Button>
+                </div>
+            </Row>
+        )
+    }
+    
     return (
         <Spin spinning={loadingExportFile}>
             {loading && <LoadingCustom />}
@@ -1670,6 +1709,24 @@ export default function ExamOnlineDetaiDGTD() {
                                                 trước khi rời phòng thi
                                             </p>
                                         </div>
+                                        <Row className='title-section' justify={'center'}>
+                                            <Col xs={{ span: 22, offset: 1 }} lg={{ span: 16 }}>
+                                                {Array.from({ length: exam.data.so_phan }).map((_, index) => {
+                                                    return (
+                                                        <div className={`section-${index} detail-title-section`} style={{margin: '12px 0px'}}>Phần {index + 1}: {index === 0 ? `Tư duy Toán học (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)` 
+                                                            : index === 1 ? `Tư duy Đọc hiểu (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)`
+                                                            : `Tư duy khoa học/Giải quyết vấn đề (${exam.data[`so_cau_hoi_phan_${index + 1}`]} câu, ${exam.data[`thoi_gian_phan_${index + 1}`]} phút)`}</div>
+                                                    )
+                                                })}
+                                                <div className={"section-sum detail-title-section"} style={{margin: '12px 0px'}}>Tổng điểm</div>
+                                            </Col>
+                                            <Col xs={{ span: 22, offset: 1 }} lg={{ span: 3, }}>
+                                                {Array.from({ length: exam.data.so_phan }).map((_, index) => 
+                                                    <div className={`section-${index} detail-title-section`} style={{margin: '12px 0px'}}>{examUser.data.diem_cac_phan.split(',')[index]}</div>
+                                                )}
+                                                <div className={`section-sum detail-title-section`} style={{margin: '12px 0px'}}>{examUser.data.ket_qua_diem}</div>
+                                            </Col>
+                                        </Row>
                                         <div style={{fontSize: 22, textAlign: 'center', marginBottom: 12}}>Click
                                             <Button type="text" onClick={() => exportEvaluationDGTD()}
                                                 style={{fontSize: 22, color: 'red'}}
@@ -1801,11 +1858,20 @@ export default function ExamOnlineDetaiDGTD() {
                                                                         }
 
                                                                         return (
-                                                                            <>
-                                                                                <div className='title-index-question' id={indexSubQuestion + currentQuestion + 1}
-                                                                                    style={{fontSize: 20, fontWeight: 700}}>
-                                                                                    Câu {indexSubQuestion + currentQuestion + 1}
-                                                                                </div>
+                                                                            <>  
+                                                                                <Row justify={'space-between'}>
+                                                                                    <div className='title-index-question' id={indexSubQuestion + currentQuestion + 1}
+                                                                                        style={{fontSize: 20, fontWeight: 700}}>
+                                                                                        Câu {indexSubQuestion + currentQuestion + 1}
+                                                                                    </div>
+                                                                                    <Tooltip title={subQuestion?.danh_dau === 1 ? "Bỏ đánh dấu câu hỏi" : "Đánh dấu câu hỏi"}>
+                                                                                        <Button shape="circle" 
+                                                                                            style={{borderColor: subQuestion?.danh_dau === 1 ? 'blue' : '', marginRight: 8}}
+                                                                                            icon={<BookOutlined color={subQuestion?.danh_dau === 1 && 'blue'}/>} 
+                                                                                            onClick={() => handleMarkQuestion(subQuestion)}
+                                                                                        />
+                                                                                    </Tooltip>
+                                                                                </Row>
                                                                                 {renderTitleQuestion(subQuestion)}
                                                                                 {questionComponent}
                                                                             </>
@@ -1822,8 +1888,11 @@ export default function ExamOnlineDetaiDGTD() {
                                                                         <div className='title-index-question'>Câu {currentQuestion + 1}</div>
                                                                     }
                                                                     extra={
-                                                                        <Tooltip title="Đánh dấu câu hỏi">
-                                                                            <Button shape="circle" icon={<BookOutlined />} onClick={() => handleMarkQuestion(question)}/>
+                                                                        <Tooltip title={question?.danh_dau === 1 ? "Bỏ đánh dấu câu hỏi" : "Đánh dấu câu hỏi"}>
+                                                                            <Button shape="circle" style={{borderColor: question?.danh_dau === 1 ? 'blue' : ''}}
+                                                                                icon={<BookOutlined color={question?.danh_dau === 1 && 'blue'}/>} 
+                                                                                onClick={() => handleMarkQuestion(question)}
+                                                                            />
                                                                         </Tooltip>
                                                                     } 
                                                                     style={{ width: '100%', borderRadius: 8 }}
@@ -1841,8 +1910,11 @@ export default function ExamOnlineDetaiDGTD() {
                                                                         <div className='title-index-question'>Câu {currentQuestion + 1}</div>
                                                                     }
                                                                         extra={
-                                                                            <Tooltip title="Đánh dấu câu hỏi">
-                                                                                <Button shape="circle" icon={<BookOutlined />} onClick={() => handleMarkQuestion()}/>
+                                                                            <Tooltip title={question?.danh_dau === 1 ? "Bỏ đánh dấu câu hỏi" : "Đánh dấu câu hỏi"}>
+                                                                                <Button shape="circle" style={{borderColor: question?.danh_dau === 1 ? 'blue' : ''}}
+                                                                                    icon={<BookOutlined color={question?.danh_dau === 1 && 'blue'}/>} 
+                                                                                    onClick={() => handleMarkQuestion(question)}
+                                                                                />
                                                                             </Tooltip>
                                                                         } 
                                                                         style={{ width: '100%', borderRadius: 8 }}
@@ -1861,8 +1933,11 @@ export default function ExamOnlineDetaiDGTD() {
                                                                         <div className='title-index-question'>Câu {currentQuestion + 1}</div>
                                                                     }
                                                                     extra={
-                                                                        <Tooltip title="Đánh dấu câu hỏi">
-                                                                            <Button shape="circle" icon={<BookOutlined />} onClick={() => handleMarkQuestion(question)}/>
+                                                                        <Tooltip title={question?.danh_dau === 1 ? "Bỏ đánh dấu câu hỏi" : "Đánh dấu câu hỏi"}>
+                                                                            <Button shape="circle" style={{borderColor: question?.danh_dau === 1 ? 'blue' : ''}}
+                                                                                icon={<BookOutlined color={question?.danh_dau === 1 && 'blue'}/>} 
+                                                                                onClick={() => handleMarkQuestion(question)}
+                                                                            />
                                                                         </Tooltip>
                                                                     } 
                                                                     style={{ width: '100%', borderRadius: 8 }}
@@ -1879,8 +1954,11 @@ export default function ExamOnlineDetaiDGTD() {
                                                                         <div className='title-index-question'>Câu {currentQuestion + 1}</div>
                                                                     }
                                                                     extra={
-                                                                        <Tooltip title="Đánh dấu câu hỏi">
-                                                                            <Button shape="circle" icon={<BookOutlined />} onClick={() => handleMarkQuestion(question)}/>
+                                                                        <Tooltip title={question?.danh_dau === 1 ? "Bỏ đánh dấu câu hỏi" : "Đánh dấu câu hỏi"}>
+                                                                            <Button shape="circle" style={{borderColor: question?.danh_dau === 1 ? 'blue' : ''}}
+                                                                                icon={<BookOutlined color={question?.danh_dau === 1 && 'blue'}/>} 
+                                                                                onClick={() => handleMarkQuestion(question)}
+                                                                            />
                                                                         </Tooltip>
                                                                     } 
                                                                     style={{ width: '100%', borderRadius: 8 }}
@@ -1898,8 +1976,11 @@ export default function ExamOnlineDetaiDGTD() {
                                                                         <div className='title-index-question'>Câu {currentQuestion + 1}</div>
                                                                     }
                                                                     extra={
-                                                                        <Tooltip title="Đánh dấu câu hỏi">
-                                                                            <Button shape="circle" icon={<BookOutlined />} onClick={() => handleMarkQuestion(question)}/>
+                                                                        <Tooltip title={question?.danh_dau === 1 ? "Bỏ đánh dấu câu hỏi" : "Đánh dấu câu hỏi"}>
+                                                                            <Button shape="circle" style={{borderColor: question?.danh_dau === 1 ? 'blue' : ''}}
+                                                                                icon={<BookOutlined color={question?.danh_dau === 1 && 'blue'}/>} 
+                                                                                onClick={() => handleMarkQuestion(question)}
+                                                                            />
                                                                         </Tooltip>
                                                                     } 
                                                                     style={{ width: '100%', borderRadius: 8 }}
@@ -1917,8 +1998,11 @@ export default function ExamOnlineDetaiDGTD() {
                                                                         <div className='title-index-question'>Câu {currentQuestion + 1}</div>
                                                                     }
                                                                     extra={
-                                                                        <Tooltip title="Đánh dấu câu hỏi">
-                                                                            <Button shape="circle" icon={<BookOutlined />} onClick={() => handleMarkQuestion(question)}/>
+                                                                        <Tooltip title={question?.danh_dau === 1 ? "Bỏ đánh dấu câu hỏi" : "Đánh dấu câu hỏi"}>
+                                                                            <Button shape="circle" style={{borderColor: question?.danh_dau === 1 ? 'blue' : ''}}
+                                                                                icon={<BookOutlined color={question?.danh_dau === 1 && 'blue'}/>} 
+                                                                                onClick={() => handleMarkQuestion(question)}
+                                                                            />
                                                                         </Tooltip>
                                                                     } 
                                                                     style={{ width: '100%', borderRadius: 8 }}
@@ -1936,8 +2020,11 @@ export default function ExamOnlineDetaiDGTD() {
                                                                         <div className='title-index-question'>Câu {currentQuestion + 1}</div>
                                                                     }
                                                                     extra={
-                                                                        <Tooltip title="Đánh dấu câu hỏi">
-                                                                            <Button shape="circle" icon={<BookOutlined />} onClick={() => handleMarkQuestion(question)}/>
+                                                                        <Tooltip title={question?.danh_dau === 1 ? "Bỏ đánh dấu câu hỏi" : "Đánh dấu câu hỏi"}>
+                                                                            <Button shape="circle" style={{borderColor: question?.danh_dau === 1 ? 'blue' : ''}}
+                                                                                icon={<BookOutlined color={question?.danh_dau === 1 && 'blue'}/>} 
+                                                                                onClick={() => handleMarkQuestion(question)}
+                                                                            />
                                                                         </Tooltip>
                                                                     } 
                                                                     style={{ width: '100%', borderRadius: 8 }}
@@ -1959,129 +2046,131 @@ export default function ExamOnlineDetaiDGTD() {
                                 return null;
                             })}
                             
-                            <Row style={{marginTop: 16}} align={'middle'} justify={'space-between'}>
-                                <Row  align={'middle'}>
-                                    <Button type="primary" className='btn-chinh' style={{ marginRight: 12 }} 
-                                        onClick={() => {
-                                            if (currentQuestion <= 0) return; 
-                                            else setCurrentQuestion(currentQuestion - 1);
-                                        }}
-                                    >
-                                        Câu trước
-                                    </Button>
-                                    <Button type="primary" className='btn-chinh' style={{ marginRight: 12 }} 
-                                        onClick={() => {
-                                            if (currentQuestion >= exam.data[`so_cau_hoi_phan_${state.sectionExam}`] - 1) return; 
-                                            else setCurrentQuestion(currentQuestion + 1);
-                                        }}
-                                    >
-                                        Câu tiếp
-                                    </Button>
-                                    <h6 style={{marginBottom: 0, display: !isDoing ? 'none' : 'block'}}>Thời gian còn lại: <b>{secondsToMinutes(countSection)}</b></h6>
-                                </Row>
-                                <div>
-                                    <Button 
-                                        type="primary" 
-                                        onClick={() => setSidebarVisible(!sidebarVisible)} 
-                                        style={{ marginLeft: 'auto', background: '#f26725', borderColor: '#f26725' }}
-                                    >
-                                        {sidebarVisible ? 'Ẩn menu' : 'Hiện menu'}
-                                    </Button>
-                                </div>
-                            </Row>
+                            {!sidebarVisible && 
+                                renderFooterButton()
+                            }
                         </Content>
                         {sidebarVisible && (
-                            <Sider width={500} className='list-question-side' style={{maxHeight: 500}}>
-                                <div style={{ display: !isDoing ? 'block' : 'none', padding: 16 }}>
-                                    <h5 style={{color: 'rgb(255, 106, 0)'}}>Kết quả điểm: <b>{examUser.data.ket_qua_diem}</b></h5> 
-                                </div>
-                                <div style={{ display: !isDoing ? 'none' : 'block', padding: 16 }}>
-                                    <h6>Thời gian còn lại: <b>{secondsToMinutes(countSection)}</b></h6> 
-                                </div>
-                                <Row style={{ padding: 16, paddingTop: 0 }} justify={'center'}>
-                                    {(state.sectionExam === exam.data.so_phan) ?
-                                        <Button type="primary" onClick={() => submitExam()}
-                                            style={{ display: isDoing ? 'block' : 'none', marginBottom: 16, marginRight: 12, background: '#ff6a00', 
-                                                borderColor: '#ff6a00', width: '25%', borderRadius: 20 }}
-                                        >
-                                            Nộp bài
-                                        </Button>
-                                        :
-                                        <>
-                                            <Button type="primary" onClick={() => handlePrevSectionExam()}
-                                                style={{ marginBottom: 16, marginRight: 12, background: '#ff6a00', 
-                                                    borderColor: '#ff6a00', width: '25%', borderRadius: 20, 
-                                                    display: !isDoing ? 'block' : 'none', }}
-                                            >
-                                                Phần trước
-                                            </Button>
-                                            <Button type="primary" onClick={() => handleNextSectionExam()}
-                                                style={{ marginBottom: 16, marginRight: 12, background: '#ff6a00', 
+                            <Row style={{flexDirection: 'column', marginRight: 8}}>
+                                <Sider width={500} className='list-question-side' style={{maxHeight: 500}}>
+                                    <div style={{ display: !isDoing ? 'block' : 'none', padding: 16 }}>
+                                        <h5 style={{color: 'rgb(255, 106, 0)'}}>Kết quả điểm: <b>{examUser.data.ket_qua_diem}</b></h5> 
+                                    </div>
+                                    <div style={{ display: !isDoing ? 'none' : 'block', padding: 16 }}>
+                                        <h6>Thời gian còn lại: <b>{secondsToMinutes(countSection)}</b></h6> 
+                                    </div>
+                                    <Row style={{ padding: 16, paddingTop: 0 }} justify={'center'}>
+                                        {(state.sectionExam === exam.data.so_phan && isDoing) ?
+                                            <Button type="primary" onClick={() => submitExam()}
+                                                style={{ display: isDoing ? 'block' : 'none', marginBottom: 16, marginRight: 12, background: '#ff6a00', 
                                                     borderColor: '#ff6a00', width: '25%', borderRadius: 20 }}
                                             >
-                                                Phần tiếp theo
+                                                Nộp bài
                                             </Button>
-                                        </> 
-                                    }   
-                                </Row>
-                                <Row align={'middle'} style={{ padding: 16, paddingTop: 0, display: isDoing ? 'flex' : 'none' }}>
-                                    <h6 style={{margin: 0}}>Chỉ thị màu sắc: </h6>
-                                    <button className='a-tag' style={{borderRadius: 8, marginLeft: 6}}>0</button>
-                                    <button className='a-tag selected' style={{borderRadius: 8, marginLeft: 6}}>0</button>
-                                    <button className='a-tag marked' style={{borderRadius: 8, marginLeft: 6}}>0</button>
-                                </Row>
-                                <Row align={'middle'} style={{ padding: 16, paddingTop: 0, display: !isDoing ? 'flex' : 'none' }}>
-                                    <h6 style={{margin: 0}}>Chỉ thị màu sắc: </h6>
-                                    <button className='a-tag right-answer' style={{borderRadius: 8, marginLeft: 6}}>Đ</button>
-                                    <button className='a-tag wrong-answer' style={{borderRadius: 8, marginLeft: 6}}>S</button>
-                                </Row>
-                                <div className='list-question-area'>
-                                    {Array.from({ length: exam.data.so_phan }).map((_, index) => {
-                                        if (index + 1 === state.sectionExam) {
-                                            const startIndex = index === 0 ? 0 : Array.from({ length: index }).reduce((sum, _, i) => sum + exam.data[`so_cau_hoi_phan_${i + 1}`], 0);
-                                            const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${index + 1}`];
-                                            const sectionQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
-                                            return (
-                                                <>
-                                                    {sectionQuestions.map((question, indexQuestion) => {
-                                                        return (
-                                                            <button className={`a-tag ${!isDoing ? isCorrectAnswer(question.cau_hoi) : ''} 
-                                                                    ${results.find((it) => it.cau_hoi_id === question.cau_hoi.cau_hoi_id) ? 'selected' : ''} ${currentQuestion === indexQuestion ? 'selected' : ''}
-                                                                    ${question?.danh_dau === 1 ? 'marked' : ''}`
-                                                                }
-                                                                key={indexQuestion} 
-                                                                style={{ margin: '4px' }}
-                                                                onClick={() => {
-                                                                    // Chuyển câu hỏi chỉ áp dụng cho phần 1
-                                                                    if (state.sectionExam === 1) setCurrentQuestion(indexQuestion); 
-                                                                    else {
-                                                                        const element = document?.getElementById(indexQuestion + 1);
-                                                                        if (element) {
-                                                                            const offset = 120; // height of your fixed header
-                                                                            const sideQuestions = document.getElementById('side-questions');
-                                                                            const elementOffset = element.offsetTop - sideQuestions.offsetTop; // Calculate the position relative to sideQuestions
-                                                                            const scrollPosition = elementOffset - offset; // Adjust for the fixed header
-                                                                            sideQuestions.scrollTo({ top: scrollPosition, behavior: "smooth" });
-                                                                        } else setCurrentQuestion(indexQuestion);
+                                        :
+                                            <>
+                                                <Button type="primary" onClick={() => handlePrevSectionExam()}
+                                                    style={{ marginBottom: 16, marginRight: 12, background: '#ff6a00', 
+                                                        borderColor: '#ff6a00', width: '25%', borderRadius: 20, 
+                                                        display: !isDoing ? 'block' : 'none', }}
+                                                >
+                                                    Phần trước
+                                                </Button>
+                                                <Button type="primary" onClick={() => handleNextSectionExam()}
+                                                    style={{ marginBottom: 16, marginRight: 12, background: '#ff6a00', 
+                                                        borderColor: '#ff6a00', width: '25%', borderRadius: 20 }}
+                                                >
+                                                    Phần tiếp theo
+                                                </Button>
+                                            </> 
+                                        }   
+                                    </Row>
+                                    <Row align={'middle'} style={{ padding: 16, paddingTop: 0, display: isDoing ? 'flex' : 'none' }}>
+                                        <h6 style={{margin: 0}}>Chỉ thị màu sắc: </h6>
+                                        <Tooltip title="Câu hỏi chưa làm">
+                                            <button className='a-tag' style={{borderRadius: 8, marginLeft: 6}}>0</button>
+                                        </Tooltip>
+                                        <Tooltip title="Câu hỏi đã làm">
+                                            <button className='a-tag isDone' style={{borderRadius: 8, marginLeft: 6}}>0</button>
+                                        </Tooltip>
+                                        <Tooltip title="Câu hỏi đang làm">
+                                            <button className='a-tag selected' style={{borderRadius: 8, marginLeft: 6}}>0</button>
+                                        </Tooltip>
+                                        <Tooltip title="Câu hỏi được đánh dấu">
+                                            <button className='a-tag marked' style={{borderRadius: 8, marginLeft: 6}}>0</button>
+                                        </Tooltip>
+                                    </Row>
+                                    <Row align={'middle'} style={{ padding: 16, paddingTop: 0, display: !isDoing ? 'flex' : 'none' }}>
+                                        <h6 style={{margin: 0}}>Chỉ thị màu sắc: </h6>
+                                        <Tooltip title="Câu trả lời đúng">
+                                            <button className='a-tag right-answer' style={{borderRadius: 8, marginLeft: 6}}>Đ</button>
+                                        </Tooltip>
+                                        <Tooltip title="Câu trả lời sai">
+                                            <button className='a-tag wrong-answer' style={{borderRadius: 8, marginLeft: 6}}>S</button>
+                                        </Tooltip>
+                                    </Row>
+                                    <div className='list-question-area'>
+                                        {Array.from({ length: exam.data.so_phan }).map((_, index) => {
+                                            if (index + 1 === state.sectionExam) {
+                                                const startIndex = index === 0 ? 0 : Array.from({ length: index }).reduce((sum, _, i) => sum + exam.data[`so_cau_hoi_phan_${i + 1}`], 0);
+                                                const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${index + 1}`];
+                                                const sectionQuestions = exam.data.cau_hoi_de_this.slice(startIndex, endIndex);
+                                                return (
+                                                    <>
+                                                        {sectionQuestions.map((question, indexQuestion) => {
+                                                            return (
+                                                                <button className={`a-tag 
+                                                                        ${results.find((it) => it.cau_hoi_id === question.cau_hoi.cau_hoi_id) ? 'isDone' : ''} 
+                                                                        ${(currentQuestion === indexQuestion && state.sectionExam === 1) || (currentScrollQuestion === indexQuestion && state.sectionExam > 1) ? 'selected' : ''}
+                                                                        ${question?.danh_dau === 1 ? 'marked' : ''}
+                                                                        ${!isDoing ? isCorrectAnswer(question.cau_hoi) : ''}`
                                                                     }
-                                                                }}
-                                                            >
-                                                                {indexQuestion + 1}
-                                                            </button>
-                                                        )
-                                                    })}
-                                                </>
-                                            )
-                                        }
-                                        return null;
-                                    })}
-                                    
-                                </div>
-                                <div style={{ padding: 16, display: isDoing ? 'block' : 'none' }}>
-                                    <h6>Bạn đã hoàn thành {results.length}/{exam.data[`so_cau_hoi_phan_${state.sectionExam}`]}</h6> 
-                                    <Progress percent={(results.length/exam.data[`so_cau_hoi_phan_${state.sectionExam}`]) * 100} />
-                                </div>
-                            </Sider>
+                                                                    key={indexQuestion} 
+                                                                    style={{ margin: '4px' }}
+                                                                    onClick={() => {
+                                                                        // Chuyển câu hỏi chỉ áp dụng cho phần 1
+                                                                        if (state.sectionExam === 1) setCurrentQuestion(indexQuestion); 
+                                                                        else {
+                                                                            const element = document?.getElementById(indexQuestion + 1);
+                                                                            if (element) {
+                                                                                const offset = 120; // height of your fixed header
+                                                                                const sideQuestions = document.getElementById('side-questions');
+                                                                                const elementOffset = element.offsetTop - sideQuestions.offsetTop; // Calculate the position relative to sideQuestions
+                                                                                const scrollPosition = elementOffset - offset; // Adjust for the fixed header
+                                                                                sideQuestions.scrollTo({ top: scrollPosition, behavior: "smooth" });
+                                                                                setCurrentScrollQuestion(indexQuestion);
+                                                                            } else {
+                                                                                // nếu là câu hỏi có trích đoạn nhưng không có 'exceprtFrom' và 'exceprtTo'
+                                                                                if (question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom === undefined && question.cau_hoi.exceprtTo === undefined) {
+                                                                                    const length = indexQuestion.toString().length;
+                                                                                    setCurrentQuestion(indexQuestion - (length > 1 ? indexQuestion.toString()[1] : indexQuestion));
+                                                                                    setCurrentScrollQuestion(indexQuestion);
+                                                                                } else {
+                                                                                    setCurrentQuestion(indexQuestion);
+                                                                                    setCurrentScrollQuestion(indexQuestion);
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }}
+                                                                >
+                                                                    {indexQuestion + 1}
+                                                                </button>
+                                                            )
+                                                        })}
+                                                    </>
+                                                )
+                                            }
+                                            return null;
+                                        })}
+                                        
+                                    </div>
+                                    <div style={{ padding: 16, display: isDoing ? 'block' : 'none' }}>
+                                        <h6>Bạn đã hoàn thành {results.length}/{exam.data[`so_cau_hoi_phan_${state.sectionExam}`]}</h6> 
+                                        <Progress percent={(results.length/exam.data[`so_cau_hoi_phan_${state.sectionExam}`]) * 100} />
+                                    </div>
+                                </Sider>
+                                {renderFooterButton()}
+                            </Row>
                         )}
                     </Layout>
                 </Layout>
