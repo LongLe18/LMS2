@@ -747,7 +747,6 @@ export default function ExamOnlineDetaiDGTD() {
         const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
         let answerTemp = [];
         if (isAnswered) answerTemp = isAnswered?.noi_dung?.split(';');
-
         let indexOfEmptyBox = 0; // Số thứ tự ô trống    
         return (
             <div className="title-exam">
@@ -783,14 +782,13 @@ export default function ExamOnlineDetaiDGTD() {
                                                         contentQuestion_2 = <span style={{display: 'none'}}>{indexOfEmptyBox += 1}</span>;
                                                         contentQuestion_3 = 
                                                             <Input className={`empty-box`} id={indexOfEmptyBox + 100} style={{maxWidth: 120}} placeholder='Nhập đáp án' rows={1} disabled={!isDoing} 
-                                                                defaultValue={(isAnswered !== undefined) ? answerTemp[indexOfEmptyBox - 100 - 1] : null}
+                                                                defaultValue={(isAnswered !== undefined) ? answerTemp[indexOfEmptyBox - 1] : null}
                                                                 onChange={(e) => {
                                                                     // Xử lý lưu đáp án đã nhập
                                                                     while (answerTemp.length < partQuestion.length - 1) {
                                                                         answerTemp.push('');
                                                                     }
-                                                                    answerTemp[e.target.id - 1] = e.target.value;
-                                                                    
+                                                                    answerTemp[e.target.id - 101] = e.target.value;
                                                                     localStorage.setItem('answerText', null);
                                                                     localStorage.setItem('question', null);
                                                                     localStorage.setItem('answerText', answerTemp.join(';'));
@@ -1015,7 +1013,6 @@ export default function ExamOnlineDetaiDGTD() {
                                                                                         )}
                                                                                     )}
                                                                                 </MathJax.Provider>
-                                                                                {/* {selectedGaps[index + index_2]?.userWord} */}
                                                                             </Tag>
                                                                         )}
                                                                     </Draggable>
@@ -1025,9 +1022,9 @@ export default function ExamOnlineDetaiDGTD() {
                                                         )}
                                                     </Droppable>
                                             }
-                                            if (isDoing && index_2 < partCauhoi.length - 1) {
-                                                contentQuestion_3 = <div className={`empty-box`}></div>;
-                                            }
+                                            // if (isDoing && index_2 < partCauhoi.length - 1) {
+                                            //     // contentQuestion_3 = <div className={`empty-box`}></div>;
+                                            // }
                                             return contentQuestion_1.concat(contentQuestion_2).concat(contentQuestion_3);
                                         })}
                                     </div>
