@@ -71,21 +71,7 @@ export default function ExamOnlineDetaiDGTD() {
     
     const textAnswer = useDebounce(localStorage.getItem('answerText'), 500);
 
-    const [gaps, setGaps] = useState([
-        { id: "gap-0" }, { id: "gap-1" },
-        { id: "gap-2" }, { id: "gap-3" },
-        { id: "gap-4" }, { id: "gap-5" },
-        { id: "gap-6" }, { id: "gap-7" },
-        { id: "gap-8" }, { id: "gap-9" },
-        { id: "gap-10" }, { id: "gap-11" },
-        { id: "gap-12" }, { id: "gap-13" },
-        { id: "gap-14" }, { id: "gap-15" },
-        { id: "gap-16" }, { id: "gap-17" },
-        { id: "gap-18" }, { id: "gap-19" },
-        { id: "gap-20" }, { id: "gap-21" },
-        { id: "gap-22" }, { id: "gap-23" },
-        { id: "gap-24" }, { id: "gap-25" },
-    ])
+    const [gaps, setGaps] = useState(Array.from({ length: 200 }, (_, i) => ({ id: `gap-${i}`, userWord: undefined, questionId: null })));
 
     useEffect(() => {
         const callback = (res) => {
@@ -101,28 +87,50 @@ export default function ExamOnlineDetaiDGTD() {
                     );
                     const endIndex = startIndex + res?.data[`so_cau_hoi_phan_${state.sectionExam}`];
                     const partQuestions = res?.data?.cau_hoi_de_this?.slice(startIndex, endIndex);
-                    
                     dispatch(
                         answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, (resAnswered) => {
                             if (resAnswered.status === 'success' && resAnswered.data.length > 0) {
-                                const filteredArray = resAnswered.data.filter(item1 =>
-                                    partQuestions.some(item2 => item1.cau_hoi_id === item2.cau_hoi_id)
-                                );
+                                const filteredArray = resAnswered.data
+                                    .filter(item1 => partQuestions.some(item2 => item1.cau_hoi_id === item2.cau_hoi_id))
+                                    .map(item1 => {
+                                        const matchedItem = partQuestions.find(item2 => item1.cau_hoi_id === item2.cau_hoi_id);
+                                        return { ...item1, loai_cau_hoi: matchedItem?.cau_hoi?.loai_cau_hoi };
+                                    });
                                 let temp = [];
                                 filteredArray.map(item => {
-                                    if ((item.ket_qua_chon !== null) && (item.ket_qua_chon !== '')) {// Câu trắc nghiệm
+                                    if (item.loai_cau_hoi === 1 || item.loai_cau_hoi === 2 || item.loai_cau_hoi === 3 || item.loai_cau_hoi === 4) {// Câu trắc nghiệm
                                         temp.push({ cau_hoi_id: item.cau_hoi_id, dap_an: renderAnswerKeyV2(item.ket_qua_chon)[0], 
                                             loai_dap_an: true, gia_tri_dap_an: renderAnswerKeyV2(item.ket_qua_chon)[1],
                                             ket_qua_chon: item.ket_qua_chon });
                                     }
                                     else {// câu tự luận
+                                        if (item.loai_cau_hoi === 6) {
+                                            const noi_dung = item?.noi_dung_tra_loi?.split(';');
+                                            // setGaps
+                                            setGaps((prevGaps) => {
+                                                let gapIndex = 0;
+                                        
+                                                return prevGaps.map((gap) => {
+                                                    if (gap.questionId === null && gapIndex < noi_dung.length) {
+                                                        const updatedGap = {
+                                                            ...gap,
+                                                            userWord: noi_dung[gapIndex],
+                                                            questionId: item.cau_hoi_id
+                                                        };
+                                                        gapIndex++;
+                                                        return updatedGap;
+                                                    }
+                                                    return gap;
+                                                });
+                                            });
+                                        }
                                         temp.push({ cau_hoi_id: item.cau_hoi_id, noi_dung: item.noi_dung_tra_loi, 
                                             loai_dap_an: false, gia_tri_dap_an: item.noi_dung_tra_loi,
-                                            ket_qua_chon: item.noi_dung_tra_lo });
+                                            ket_qua_chon: item.noi_dung_tra_loi });
                                     }
                                     return null;
                                 })
-                                setResults([...results, ...temp.filter(item => item.dap_an?.length !== 0)]);
+                                setResults([...results, ...temp.filter(item => item.ket_qua_chon?.length !== 0)]);
                                 filteredArray.map(item => answers.push(item));
                             }
                         })
@@ -148,28 +156,51 @@ export default function ExamOnlineDetaiDGTD() {
                     );
                     const endIndex = startIndex + res?.data[`so_cau_hoi_phan_${sectionIndex}`];
                     const partQuestions = res?.data?.cau_hoi_de_this?.slice(startIndex, endIndex);
-                    
+
                     dispatch(
                         answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, (resAnswered) => {
                             if (resAnswered.status === 'success' && resAnswered.data.length > 0) {
-                                const filteredArray = resAnswered.data.filter(item1 =>
-                                    partQuestions.some(item2 => item1.cau_hoi_id === item2.cau_hoi_id)
-                                );
+                                const filteredArray = resAnswered.data
+                                    .filter(item1 => partQuestions.some(item2 => item1.cau_hoi_id === item2.cau_hoi_id))
+                                    .map(item1 => {
+                                        const matchedItem = partQuestions.find(item2 => item1.cau_hoi_id === item2.cau_hoi_id);
+                                        return { ...item1, loai_cau_hoi: matchedItem?.cau_hoi?.loai_cau_hoi };
+                                    });
                                 let temp = [];
                                 filteredArray.map(item => {
-                                    if ((item.ket_qua_chon !== null) && (item.ket_qua_chon !== '')) {// Câu trắc nghiệm
+                                    if (item.loai_cau_hoi === 1 || item.loai_cau_hoi === 2 || item.loai_cau_hoi === 3 || item.loai_cau_hoi === 4) {// Câu trắc nghiệm
                                         temp.push({ cau_hoi_id: item.cau_hoi_id, dap_an: renderAnswerKeyV2(item.ket_qua_chon)[0], 
                                             loai_dap_an: true, gia_tri_dap_an: renderAnswerKeyV2(item.ket_qua_chon)[1],
-                                            ket_qua_chon: item.ket_qua_chon });
+                                            ket_qua_chon: item.ket_qua_chon, loai_cau_hoi: item.loai_cau_hoi });
                                     }
-                                    else {// câu tự luận
+                                    else { // câu tự luận
+                                        if (item.loai_cau_hoi === 6) {
+                                            const noi_dung = item?.noi_dung_tra_loi?.split(';');
+                                            // setGaps
+                                            setGaps((prevGaps) => {
+                                                let gapIndex = 0;
+                                        
+                                                return prevGaps.map((gap) => {
+                                                    if (gap.questionId === null && gapIndex < noi_dung.length) {
+                                                        const updatedGap = {
+                                                            ...gap,
+                                                            userWord: noi_dung[gapIndex],
+                                                            questionId: item.cau_hoi_id
+                                                        };
+                                                        gapIndex++;
+                                                        return updatedGap;
+                                                    }
+                                                    return gap;
+                                                });
+                                            });
+                                        }
                                         temp.push({ cau_hoi_id: item.cau_hoi_id, noi_dung: item.noi_dung_tra_loi, 
                                             loai_dap_an: false, gia_tri_dap_an: item.noi_dung_tra_loi,
-                                            ket_qua_chon: item.noi_dung_tra_lo });
+                                            ket_qua_chon: item.noi_dung_tra_loi, loai_cau_hoi: item.loai_cau_hoi });
                                     }
                                     return null;
                                 })
-                                setResults([...results, ...temp.filter(item => item.dap_an?.length !== 0)]);
+                                setResults([...results, ...temp.filter(item => item.ket_qua_chon?.length !== 0)]);
                                 filteredArray.map(item => answers.push(item));
                             }
                         })
@@ -249,7 +280,6 @@ export default function ExamOnlineDetaiDGTD() {
         }
         
         let index = 0;
-        console.log(source, result, destination, gaps)
         if (destination.droppableId.startsWith("gap")) {
             if (source.index !== 0) index = 1 * source?.index;
             const word = exam?.data?.cau_hoi_de_this?.find((w) => (w.cau_hoi_id + index).toString() === result.draggableId);
@@ -335,8 +365,17 @@ export default function ExamOnlineDetaiDGTD() {
             if (examUser.data.dap_an_da_chons) {
                 let currentSubmitAnswer = examUser.data.dap_an_da_chons.find((item) => (item.cau_hoi_id === question.cau_hoi_id && item.ket_qua_chon !== '0000'));
                 if (question.dap_an_dungs && currentSubmitAnswer !== undefined) {
-                    if (question.loai_cau_hoi === 1 || question.loai_cau_hoi === 2 || question.loai_cau_hoi === 3 || question.loai_cau_hoi === 4) { // Câu trắc nghiệm
+                    if (question.loai_cau_hoi === 1 || question.loai_cau_hoi === 2 || question.loai_cau_hoi === 3) { // Câu trắc nghiệm
                         let answerRight = convertAnswer(question.dap_an_dungs, currentSubmitAnswer?.ket_qua_chon);
+                        if (currentSubmitAnswer && answerRight === currentSubmitAnswer.ket_qua_chon) {
+                            isRight = 'right-answer';
+                        } else if (currentSubmitAnswer && answerRight !== currentSubmitAnswer.ket_qua_chon) {
+                            isRight = 'wrong-answer';
+                        }
+                    } else if (question.loai_cau_hoi === 4) {
+                        // currentSubmitAnswer?.ket_qua_chon = '0' => chọn 'Sai'
+                        // currentSubmitAnswer?.ket_qua_chon = '1' => chọn 'Đúng'
+                        let answerRight = question?.dap_ans[0]?.noi_dung_dap_an === 'Đúng' ? '1' : '0';
                         if (currentSubmitAnswer && answerRight === currentSubmitAnswer.ket_qua_chon) {
                             isRight = 'right-answer';
                         } else if (currentSubmitAnswer && answerRight !== currentSubmitAnswer.ket_qua_chon) {
@@ -726,19 +765,23 @@ export default function ExamOnlineDetaiDGTD() {
                                     ) : 
                                     (
                                         <div style={{textAlign: 'justify'}}>
-                                            {partQuestion.map((item2, index2) => {
-                                                const partCauhoi = item2.split('$');
-                                                return (
-                                                    <div key={index2}>
-                                                        {partCauhoi.map((chi_tiet, index_2) => {
-                                                            return (item.indexOf('$' + chi_tiet + '$') !== -1 && (chi_tiet.includes('{') || chi_tiet.includes('\\')) && (!chi_tiet.includes('\\underline') && !chi_tiet.includes('\\bold') && !chi_tiet.includes('\\italic'))) ? (
+                                            <div>
+                                                {partQuestion.map((item2, index2) => {
+                                                    const partCauhoi = item2.split('$');
+                                                    const contentQuestion_1 =  partCauhoi.map((chi_tiet, index_2) => {
+                                                        return (
+                                                            (item.indexOf('$' + chi_tiet + '$') !== -1 && (chi_tiet.includes('{') || chi_tiet.includes('\\')) && (!chi_tiet.includes('\\underline') && !chi_tiet.includes('\\bold') && !chi_tiet.includes('\\italic'))) ? (
                                                                 <MathJax.Node key={index_2} formula={chi_tiet} />
                                                             ) : (
                                                                 <span dangerouslySetInnerHTML={{ __html: chi_tiet }}></span>
                                                             )
-                                                        })}
-                                                        {index2 < partQuestion.length - 1 && (<span style={{display: 'none'}}>{indexOfEmptyBox += 1}</span>)}
-                                                        {index2 < partQuestion.length - 1 && (
+                                                        )
+                                                    })
+                                                    let contentQuestion_2;
+                                                    let contentQuestion_3;
+                                                    if (index2 < partQuestion.length - 1) {
+                                                        contentQuestion_2 = <span style={{display: 'none'}}>{indexOfEmptyBox += 1}</span>;
+                                                        contentQuestion_3 = 
                                                             <Input className={`empty-box`} id={indexOfEmptyBox + 100} style={{maxWidth: 120}} placeholder='Nhập đáp án' rows={1} disabled={!isDoing} 
                                                                 defaultValue={(isAnswered !== undefined) ? answerTemp[indexOfEmptyBox - 100 - 1] : null}
                                                                 onChange={(e) => {
@@ -754,10 +797,10 @@ export default function ExamOnlineDetaiDGTD() {
                                                                     localStorage.setItem('question', JSON.stringify(question));   
                                                                 }
                                                             }/>
-                                                        )}
-                                                    </div>
-                                                )
-                                            })}
+                                                    }
+                                                    return contentQuestion_1.concat(contentQuestion_2).concat(contentQuestion_3);      
+                                                })}
+                                            </div>
                                         </div>
                                     )
                                 }
@@ -840,10 +883,6 @@ export default function ExamOnlineDetaiDGTD() {
 
     // Hàm UI câu hỏi kéo thả
     const questionDragAndDrop = (question, key) => {
-        const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);  
-        let lua_chons = ''
-        if (isAnswered) lua_chons = isAnswered?.noi_dung?.replace(/\n/g, "").split(';').filter(item => item !== '');
-        
         let selectedGaps = gaps.filter(item => item.questionId === question.cau_hoi_id);
         return (
             <>
@@ -857,7 +896,7 @@ export default function ExamOnlineDetaiDGTD() {
                                 {/* .filter(item => !selectedGaps.some(obj => obj.userWord === item.trim().replace(/\s+/g, ''))) */}
                                     {question?.cau_hoi?.lua_chon?.noi_dung?.split(';').map((lua_chon, index) => (
                                         <Draggable key={`${question?.cau_hoi_id + index}`} 
-                                            isDragDisabled={selectedGaps.some(obj => obj.userWord === lua_chon.trim())}
+                                            isDragDisabled={selectedGaps?.some(obj => obj.userWord === lua_chon.trim()) || !isDoing}
                                             draggableId={(question?.cau_hoi_id + index).toString()} index={index}
                                         >
                                             {(provided, snapshot) => (
@@ -866,7 +905,7 @@ export default function ExamOnlineDetaiDGTD() {
                                                     {...provided.draggableProps}
                                                     {...provided.dragHandleProps}
                                                     className={`tag-word ${snapshot.isDragging ? 'shadow-lg' : ''}
-                                                        ${selectedGaps.some(obj => obj.userWord === lua_chon.trim()) ? 'shadow-isDragged' : ''}
+                                                        ${selectedGaps?.some(obj => obj.userWord === lua_chon.trim()) ? 'shadow-isDragged' : ''}
                                                     `}
                                                     color="orange"
                                                 >   
@@ -929,9 +968,12 @@ export default function ExamOnlineDetaiDGTD() {
 
                                             let contentQuestion_2;
                                             let contentQuestion_3;
-                                            if (isDoing && index_2 < partCauhoi.length - 1) {
+                                            if (index_2 < partCauhoi.length - 1) {
                                                 contentQuestion_2 = 
-                                                    <Droppable droppableId={`gap-${index + index_2}`}>
+                                                    <Droppable droppableId={selectedGaps[index + index_2]?.id ? 
+                                                        selectedGaps[index + index_2]?.id : 
+                                                        `gap-${gaps?.filter(gap => gap.userWord)?.length + index + index_2}`}
+                                                    >
                                                         {(provided, snapshot) => (
                                                             <div ref={provided.innerRef} style={{display: 'inline-block'}}
                                                                 {...provided.droppableProps}
@@ -940,7 +982,9 @@ export default function ExamOnlineDetaiDGTD() {
                                                                 } ${selectedGaps[index  + index_2]?.userWord ? 'border-solid border-blue-500' : 'empty-box'}`}
                                                             >
                                                                 {selectedGaps[index + index_2]?.userWord && (
-                                                                    <Draggable draggableId={`gap-${index + index_2}-word`} index={index + index_2}>
+                                                                    <Draggable draggableId={`gap-${gaps?.filter(gap => gap.userWord)?.length + index + index_2}-word`} 
+                                                                        index={gaps?.filter(gap => gap.userWord)?.length + index + index_2}
+                                                                    >
                                                                         {(provided) => (
                                                                             <Tag
                                                                                 ref={provided.innerRef}
@@ -981,7 +1025,7 @@ export default function ExamOnlineDetaiDGTD() {
                                                         )}
                                                     </Droppable>
                                             }
-                                            if (!isDoing && index_2 < partCauhoi.length - 1) {
+                                            if (isDoing && index_2 < partCauhoi.length - 1) {
                                                 contentQuestion_3 = <div className={`empty-box`}></div>;
                                             }
                                             return contentQuestion_1.concat(contentQuestion_2).concat(contentQuestion_3);
@@ -992,38 +1036,6 @@ export default function ExamOnlineDetaiDGTD() {
                         )
                     })}
                 </div>
-                {lua_chons.length > 0 && <div style={{fontSize: 18, color: 'green'}}>
-                    Đáp án đã chọn: {lua_chons?.map((lua_chon, indexLuaChon) => {
-                            return (
-                                <Row key={indexLuaChon}>
-                                    {indexLuaChon + 1}.
-                                    <MathJax.Provider>
-                                        {lua_chon.split('\n').filter(item => item !== '').map((item, index_cauhoi) => {
-                                            return (
-                                                <div className="title-exam-content" key={index_cauhoi}>
-                                                    {
-                                                        (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                            <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}><Image src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question2_${index_cauhoi}`}></Image></div>
-                                                        ) : 
-                                                        (
-                                                            <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
-                                                                return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
-                                                                    <MathJax.Node key={index2} formula={item2} />
-                                                                ) : (
-                                                                    <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
-                                                                )
-                                                            })}</div>
-                                                        )
-                                                    }
-                                                </div>
-                                            )}
-                                        )}
-                                    </MathJax.Provider>
-                                </Row>
-                            )
-                        })}
-                    </div>
-                }
             </>
         )
     };
@@ -1081,7 +1093,26 @@ export default function ExamOnlineDetaiDGTD() {
                 }/>
             </div>
         );
-    };  
+    };   
+
+    const isCorrectQuestionDungSai = (question, index, boolCheck) => {
+        // return true / false / null
+        // boolCheck: true => Lựa chọn option đúng
+        // boolCheck: false => Lựa chọn option sai
+
+        let currentSubmitAnswer = results.find((item) => item.cau_hoi_id === question.cau_hoi_id);
+        if (!currentSubmitAnswer || !question?.dap_ans) return null; // No answer submitted or no answer available
+
+        if (boolCheck) {
+            if (question?.dap_ans[0]?.noi_dung_dap_an === 'Đúng') return true;
+            if (currentSubmitAnswer?.ket_qua_chon === '0') return null;
+            return false;
+        } else {
+            if (question?.dap_ans[0]?.noi_dung_dap_an === 'Sai') return true;
+            if (currentSubmitAnswer?.ket_qua_chon === '1') return null;
+            return false;
+        }
+    }  
 
     // Hàm UI câu hỏi đúng sai
     const renderRightWrongQuestion = (question, key) => {
@@ -1124,7 +1155,10 @@ export default function ExamOnlineDetaiDGTD() {
                                     </div>
                                     <div style={{width: '12%'}}>
                                         <button id={`button-Right-${index}`} disabled={!isDoing}
-                                            className={`btn-DS ${isAnswered && isAnswered.ket_qua_chon[index] === '1' ? 'active' : '' }`}
+                                            className={`btn-DS ${isAnswered && isAnswered.ket_qua_chon[index] === '1' ? 'active' : '' }
+                                                ${(!isDoing && isCorrectQuestionDungSai(question.cau_hoi, index, true) !== null && !isCorrectQuestionDungSai(question.cau_hoi, index, true))  ? 'incorrect' : ''}
+                                                ${(!isDoing && isCorrectQuestionDungSai(question.cau_hoi, index, true) !== null && isCorrectQuestionDungSai(question.cau_hoi, index, true)) ? 'correct' : ''}`
+                                            }
                                             onClick={() => {
                                                 dispatch(answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, 
                                                     (res) => {
@@ -1141,7 +1175,10 @@ export default function ExamOnlineDetaiDGTD() {
                                     </div>
                                     <div style={{width: '12%'}}>
                                         <button id={`button-Wrong-${index}`} disabled={!isDoing}
-                                            className={`btn-DS ${isAnswered && isAnswered.ket_qua_chon[index] === '0' ? 'active' : '' }`}
+                                            className={`btn-DS ${isAnswered && isAnswered.ket_qua_chon[index] === '0' ? 'active' : '' }
+                                                ${(!isDoing && isCorrectQuestionDungSai(question.cau_hoi, index, false) !== null && !isCorrectQuestionDungSai(question.cau_hoi, index, false))  ? 'incorrect' : ''}
+                                                ${(!isDoing && isCorrectQuestionDungSai(question.cau_hoi, index, false) !== null && isCorrectQuestionDungSai(question.cau_hoi, index, false)) ? 'correct' : ''}`
+                                            }
                                             onClick={() => {
                                                 dispatch(answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, 
                                                     (res) => {
@@ -1189,7 +1226,7 @@ export default function ExamOnlineDetaiDGTD() {
                         return (
                             <Row className={`answer`} style={{alignItems: 'center', width: '100%', marginBottom: 12}} key={index}>                  
                                 <Col span={21}>
-                                    <div className="answer-content" style={{flexDirection: 'row', paddingLeft: 0}}>
+                                    <div className="answer-content" style={{flexDirection: 'row', paddingLeft: 0, alignItems: 'center'}}>
                                         <span style={{marginRight: 6}}>{renderAnswerKey(index)}. </span>
                                         <MathJax.Provider>
                                             {answer.noi_dung_dap_an.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
@@ -1375,11 +1412,11 @@ export default function ExamOnlineDetaiDGTD() {
                                     else {// câu tự luận
                                         temp.push({ cau_hoi_id: item.cau_hoi_id, noi_dung: item.noi_dung_tra_loi, 
                                             loai_dap_an: false, gia_tri_dap_an: item.noi_dung_tra_loi,
-                                            ket_qua_chon: item.noi_dung_tra_lo });
+                                            ket_qua_chon: item.noi_dung_tra_loi });
                                     }
                                     return null;
                                 })
-                                setResults([...results, ...temp.filter(item => item.dap_an?.length !== 0)]);
+                                setResults([...results, ...temp.filter(item => item.ket_qua_chon?.length !== 0)]);
                             }
                             resAnswered.data.map(item => answers.push(item));
                         }
@@ -1535,24 +1572,47 @@ export default function ExamOnlineDetaiDGTD() {
                 dispatch(
                     answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, (resAnswered) => {
                         if (resAnswered.status === 'success' && resAnswered.data.length > 0) {
-                            const filteredArray = resAnswered.data.filter(item1 =>
-                                partQuestions.some(item2 => item1.cau_hoi_id === item2.cau_hoi_id)
-                            );
+                            const filteredArray = resAnswered.data
+                                .filter(item1 => partQuestions.some(item2 => item1.cau_hoi_id === item2.cau_hoi_id))
+                                .map(item1 => {
+                                    const matchedItem = partQuestions.find(item2 => item1.cau_hoi_id === item2.cau_hoi_id);
+                                    return { ...item1, loai_cau_hoi: matchedItem?.cau_hoi?.loai_cau_hoi };
+                            });
                             let temp = [];
                             filteredArray.map(item => {
-                                if ((item.ket_qua_chon !== null) && (item.ket_qua_chon !== '')) {// Câu trắc nghiệm
+                                if (item.loai_cau_hoi === 1 || item.loai_cau_hoi === 2 || item.loai_cau_hoi === 3 || item.loai_cau_hoi === 4) {// Câu trắc nghiệm
                                     temp.push({ cau_hoi_id: item.cau_hoi_id, dap_an: renderAnswerKeyV2(item.ket_qua_chon)[0], 
                                         loai_dap_an: true, gia_tri_dap_an: renderAnswerKeyV2(item.ket_qua_chon)[1],
-                                        ket_qua_chon: item.ket_qua_chon });
+                                        ket_qua_chon: item.ket_qua_chon, loai_cau_hoi: item.loai_cau_hoi });
                                 }
-                                else {// câu tự luận
+                                else { // câu tự luận
+                                    if (item.loai_cau_hoi === 6) {
+                                        const noi_dung = item?.noi_dung_tra_loi?.split(';');
+                                        // setGaps
+                                        setGaps((prevGaps) => {
+                                            let gapIndex = 0;
+                                    
+                                            return prevGaps.map((gap) => {
+                                                if (gap.questionId === null && gapIndex < noi_dung.length) {
+                                                    const updatedGap = {
+                                                        ...gap,
+                                                        userWord: noi_dung[gapIndex],
+                                                        questionId: item.cau_hoi_id
+                                                    };
+                                                    gapIndex++;
+                                                    return updatedGap;
+                                                }
+                                                return gap;
+                                            });
+                                        });
+                                    }
                                     temp.push({ cau_hoi_id: item.cau_hoi_id, noi_dung: item.noi_dung_tra_loi, 
                                         loai_dap_an: false, gia_tri_dap_an: item.noi_dung_tra_loi,
-                                        ket_qua_chon: item.noi_dung_tra_lo });
+                                        ket_qua_chon: item.noi_dung_tra_loi, loai_cau_hoi: item.loai_cau_hoi });
                                 }
                                 return null;
                             })
-                            setResults([...results, ...temp.filter(item => item.dap_an?.length !== 0)]);
+                            setResults([...results, ...temp.filter(item => item.ket_qua_chon?.length !== 0)]);
                             filteredArray.map(item => answers.push(item));
                         }
                     })
@@ -1568,6 +1628,8 @@ export default function ExamOnlineDetaiDGTD() {
     const handlePrevSectionExam = () => {
         if (state.sectionExam <= 1) return;
         else {
+            setCurrentQuestion(0);
+            setCurrentScrollQuestion(0);
             setState(prevState => ({
                 ...prevState,
                 sectionExam: prevState.sectionExam - 1
@@ -1662,7 +1724,7 @@ export default function ExamOnlineDetaiDGTD() {
                     >
                         Câu tiếp
                     </Button>
-                    <h6 style={{marginBottom: 0, display: !isDoing ? 'none' : 'block'}}>Thời gian còn lại: <b>{secondsToMinutes(countSection)}</b></h6>
+                    {/* <h6 style={{marginBottom: 0, display: !isDoing ? 'none' : 'block'}}>Thời gian còn lại: <b>{secondsToMinutes(countSection)}</b></h6> */}
                 </Row>
                 <div>
                     <Button 
@@ -1861,7 +1923,8 @@ export default function ExamOnlineDetaiDGTD() {
                                                                             <>  
                                                                                 <Row justify={'space-between'}>
                                                                                     <div className='title-index-question' id={indexSubQuestion + currentQuestion + 1}
-                                                                                        style={{fontSize: 20, fontWeight: 700}}>
+                                                                                        style={{fontSize: 20, fontWeight: 700}}
+                                                                                    >
                                                                                         Câu {indexSubQuestion + currentQuestion + 1}
                                                                                     </div>
                                                                                     <Tooltip title={subQuestion?.danh_dau === 1 ? "Bỏ đánh dấu câu hỏi" : "Đánh dấu câu hỏi"}>
@@ -2133,11 +2196,8 @@ export default function ExamOnlineDetaiDGTD() {
                                                                         else {
                                                                             const element = document?.getElementById(indexQuestion + 1);
                                                                             if (element) {
-                                                                                const offset = 120; // height of your fixed header
                                                                                 const sideQuestions = document.getElementById('side-questions');
-                                                                                const elementOffset = element.offsetTop - sideQuestions.offsetTop; // Calculate the position relative to sideQuestions
-                                                                                const scrollPosition = elementOffset - offset; // Adjust for the fixed header
-                                                                                sideQuestions.scrollTo({ top: scrollPosition, behavior: "smooth" });
+                                                                                sideQuestions.scrollTo({ top: element.offsetTop, behavior: "smooth" });
                                                                                 setCurrentScrollQuestion(indexQuestion);
                                                                             } else {
                                                                                 // nếu là câu hỏi có trích đoạn nhưng không có 'exceprtFrom' và 'exceprtTo'

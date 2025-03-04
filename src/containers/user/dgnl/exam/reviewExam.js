@@ -134,6 +134,7 @@ const ReviewExamPage = () => {
         );
     };
 
+    // Hiện thị đáp án đúng
     const renderAnswerResult = (question) => {
         if (exam.status === 'success') {
             return (
@@ -203,32 +204,31 @@ const ReviewExamPage = () => {
         return sum;
     };  
 
-    const convertAnswer = (dap_an_dungs) => {
-        let A = '0';
-        let B = '0'
-        let C = '0'
-        let D = '0'
-        dap_an_dungs.map((answer, index) => {
-            if (answer === 0) A = '1';
-            else if (answer === 1) B = '1';
-            else if (answer === 2) C = '1';
-            else if (answer === 3) D = '1';
-            return null;
-        })
-        return A + B + C + D;
-    };
+    // const convertAnswer = (dap_an_dungs) => {
+    //     let A = '0';
+    //     let B = '0'
+    //     let C = '0'
+    //     let D = '0'
+    //     dap_an_dungs.map((answer, index) => {
+    //         if (answer === 0) A = '1';
+    //         else if (answer === 1) B = '1';
+    //         else if (answer === 2) C = '1';
+    //         else if (answer === 3) D = '1';
+    //         return null;
+    //     })
+    //     return A + B + C + D;
+    // };
 
     const isCorrectQuestionDungSai = (question, index, boolCheck) => {
         // return true / false
         // boolCheck: true => Lựa chọn option đúng
         // boolCheck: false => Lựa chọn option sai
 
-        if (question?.dap_an_dungs) {
+        if (question?.dap_ans) {
             if (boolCheck) {
-                if (convertAnswer(question?.dap_an_dungs)[index] === '1') return true;
-                return false;
+                return question?.dap_ans[0]?.noi_dung_dap_an === 'Đúng';
             } else {
-                return convertAnswer(question?.dap_an_dungs)[index] === '0';
+                return question?.dap_ans[0]?.noi_dung_dap_an === 'Sai';
             }
         }
     }   
@@ -255,47 +255,39 @@ const ReviewExamPage = () => {
     // giao diện câu hỏi Đúng sai
     const renderRightWrongQuestion = (isAnswered, index, question, answer) => {
         return (
-            <div className='wrongrightAnswer'>
-                <button id={`button-Right-${index}`}
-                    className={`btn-DS ${isAnswered && isAnswered.ket_qua_chon[index] === '1' ? 'active' : '' } 
-                        ${!isCorrectQuestionDungSai(question.cau_hoi, index, true)  ? 'no-thing' : ''}
-                        ${isCorrectQuestionDungSai(question.cau_hoi, index, true) ? 'correct' : ''}`
-                    }
-                >
-                    <span style={{color: 'white'}}>Đ</span>
-                </button>
-                <button id={`button-Wrong-${index}`}
-                    className={`btn-DS ${isAnswered && isAnswered.ket_qua_chon[index] === '0' ? 'active' : '' }
-                        ${!isCorrectQuestionDungSai(question.cau_hoi, index, false) ? `no-thing` : ''}
-                        ${isCorrectQuestionDungSai(question.cau_hoi, index, false) ? 'correct' : ''}`
-                    }
-                >
-                    <span style={{color: 'white'}}>S</span>
-                </button>
-                <div className="option-answer">
-                    <MathJax.Provider>
-                        {answer.noi_dung_dap_an.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
-                            return (
-                                <div className="option-answer-content" key={index_cauhoi}>
-                                    {
-                                        (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                            <Image src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></Image>
-                                        ) : 
-                                        (
-                                            <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
-                                                return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
-                                                    <MathJax.Node key={index2} formula={item2} />
-                                                ) : (
-                                                    <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
-                                                )
-                                            })}</div>
-                                        )
-                                    }
-                                </div>
-                            )}
-                        )}
-                    </MathJax.Provider>
-                </div>
+            <div>
+
+                <Row style={{marginTop: 12}}>
+                    <div className="option-answer"></div>
+                    <div style={{fontWeight: 700, width: '12%', fontSize: 16}}>ĐÚNG</div>
+                    <div style={{fontWeight: 700, width: '12%', fontSize: 16}}>SAI</div>
+                </Row>
+                <Row>
+                    <div className="option-answer"></div>
+                    <div className='wrongrightAnswer' style={{width: '24%'}}>
+                        <div style={{width: '50%'}}>
+                            <button id={`button-Right-${index}`}
+                                className={`btn-DS ${isAnswered && isAnswered.ket_qua_chon[index] === '1' ? 'active' : '' } 
+                                    ${!isCorrectQuestionDungSai(question.cau_hoi, index, true)  ? 'no-thing' : ''}
+                                    ${isCorrectQuestionDungSai(question.cau_hoi, index, true) ? 'correct' : ''}`
+                                }
+                            >
+                                <span style={{color: 'white'}}></span>
+                            </button>
+
+                        </div>
+                        <div style={{width: '50%'}}>
+                            <button id={`button-Wrong-${index}`}
+                                className={`btn-DS ${isAnswered && isAnswered.ket_qua_chon[index] === '0' ? 'active' : '' }
+                                    ${!isCorrectQuestionDungSai(question.cau_hoi, index, false) ? `no-thing` : ''}
+                                    ${isCorrectQuestionDungSai(question.cau_hoi, index, false) ? 'correct' : ''}`
+                                }
+                            >
+                                <span style={{color: 'white'}}></span>
+                            </button>
+                        </div>
+                    </div>
+                </Row>
             </div>
         )
     }
@@ -304,7 +296,7 @@ const ReviewExamPage = () => {
     const renderDragDropQuestion = (question, index) => {
         return (
             <>
-                <div style={{fontSize: 20}}>Kéo thả các đáp án vào vị trí thích hợp:</div>
+                <div style={{fontSize: 20, color: 'rgb(153, 153, 153)'}}>Chú ý: Kéo thả đáp án phù hợp vào chổ trống</div>
                     
                 <div className='fill-box-question'>
                     <div style={{margin: 12}}>
@@ -346,36 +338,34 @@ const ReviewExamPage = () => {
                         const partCauhoi = cau_hoi?.noi_dung?.split('{ENTER}');
                         return (
                             <Row key={index}>
-                                <div style={{fontSize: 18, marginBottom: 8, marginRight: 12}}>
-                                    {index + 1}. 
-                                </div>
-                                {
-                                    partCauhoi.map((chi_tiet, index_2) => {
-                                        return (
-                                            <div style={{fontSize: 18, marginBottom: 8}} key={index_2}>
-                                                {chi_tiet.split('\n').map((item, index) => {
-                                                    return (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                        <div style={{display: 'flex', justifyContent: 'center', width: '100%'}} key={index}>
-                                                            <Image src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question4_${index}`}></Image>
-                                                        </div>
-                                                    ) : 
-                                                    (
-                                                        <span key={index}>{item.split('$').map((item2, index2) => {
-                                                            return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
-                                                                <MathJax.Node key={index2} formula={item2} />
-                                                            ) : (
-                                                                <span key={index2} dangerouslySetInnerHTML={{ __html: item2 }}></span>
-                                                            )
-                                                        })}</span>
+                                {index + 1}. 
+                                <div style={{fontSize: 18, marginBottom: 8}}>
+                                    {partCauhoi.map((chi_tiet, index_2) => {
+                                        const contentQuestion_1 = chi_tiet.split('\n').map((item, index) => {
+                                            return (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
+                                                <div style={{display: 'flex', justifyContent: 'center', width: '100%'}} key={index}>
+                                                    <Image src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question4_${index}`}></Image>
+                                                </div>
+                                            ) : 
+                                            (
+                                                <span key={index}>{item.split('$').map((item2, index2) => {
+                                                    return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
+                                                        <MathJax.Node key={index2} formula={item2} />
+                                                    ) : (
+                                                        <span key={index2} dangerouslySetInnerHTML={{ __html: item2 }}></span>
                                                     )
-                                                })}
-                                                {index_2 < partCauhoi.length - 1 && (
-                                                    <div className={`empty-box`}></div>
-                                                )}
-                                            </div>
-                                        )
-                                    })
-                                }
+                                                })}</span>
+                                            )
+                                        })
+
+                                        let contentQuestion2;
+                                        if (index_2 < partCauhoi.length - 1) {
+                                            contentQuestion2 = <div className={`empty-box`}></div>;
+                                        }
+                                            return contentQuestion_1.concat(contentQuestion2);
+                                        })
+                                    }
+                                </div>
                             </Row>
                         )
                     })}
@@ -423,17 +413,10 @@ const ReviewExamPage = () => {
 
     // giao diện câu hỏi đúng sai chọn nhiều
     const renderMultiChoiceRightWrongQuestion = (question, answer, index) => {
-        console.log(question, answer);
         return (
-            <button style={{width:"100%"}}
-                className="btn-onclick"
-            >
-                <div className={`answer`} style={{alignItems: 'center'}}>
-                    <Radio.Group name="groupRightWrong" defaultValue={answer.dap_an_dung}>
-                        <Radio value={true}>Đ</Radio>
-                        <Radio value={false}>S</Radio>
-                    </Radio.Group>
-                    <div className="answer-content" style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Row className={`answer`} style={{alignItems: 'center', width: '100%', marginBottom: 12}}>
+                <Col span={21}>
+                    <div className="answer-content" style={{flexDirection: 'row', marginTop: 0, paddingLeft: 0}}>
                         <span style={{marginRight: 6}}>{renderAnswerKey(index)}. </span>
                         <MathJax.Provider>
                             {answer.noi_dung_dap_an.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
@@ -457,8 +440,16 @@ const ReviewExamPage = () => {
                             )}
                         </MathJax.Provider>
                     </div>
-                </div>
-            </button>
+                </Col>
+                <Col span={3}>
+                    <Radio.Group name="groupRightWrong" defaultValue={answer.dap_an_dung} 
+                        style={{display: 'flex', justifyContent: 'space-around'}}
+                    >
+                        <Radio value={true}></Radio>
+                        <Radio value={false}></Radio>
+                    </Radio.Group>
+                </Col>
+            </Row>
         );
     }
 
@@ -588,10 +579,13 @@ const ReviewExamPage = () => {
                                                          
                                     <div className="content-answer-question">
                                         {question.cau_hoi.loai_cau_hoi === 3 &&
-                                            <>
-                                                <span style={{marginRight: 8}}>Đúng</span>
-                                                <span>Sai</span>
-                                            </>
+                                            <Row>
+                                                <Col span={21}></Col>
+                                                <Col span={3} style={{display: 'flex', justifyContent: 'space-around'}}>
+                                                    <span style={{ fontSize: 20, fontWeight: 600 }}>Đúng</span>
+                                                    <span style={{ fontSize: 20, fontWeight: 600 }}>Sai</span>
+                                                </Col>
+                                            </Row>
                                         }
 
                                         <Row gutter={[20, 10]} className="multi-choice">
@@ -652,7 +646,7 @@ const ReviewExamPage = () => {
                                                 description={
                                                     <div className="help-answer">
                                                         <MathJax.Provider>
-                                                            {question.cau_hoi.loi_giai.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
+                                                            {question?.cau_hoi?.loi_giai?.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
                                                                 return (
                                                                     <div className="help-answer-content" key={index_cauhoi}> 
                                                                     {
