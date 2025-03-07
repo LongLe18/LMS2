@@ -440,6 +440,7 @@ const getById = async (req, res) => {
                         ].join(', ')})`
                     ),
                 ],
+                [sequelize.col('cau_hoi_de_this.cau_hoi.trich_doan_id'), 'ASC'],
                 [sequelize.col('dap_an_id'), 'ASC'],
             ],
         });
@@ -467,6 +468,7 @@ const getById = async (req, res) => {
             },
             order: [
                 [sequelize.col('phan'), 'ASC'],
+                [sequelize.col('cau_hoi_de_this.cau_hoi.trich_doan_id'), 'ASC'],
                 [sequelize.col('chdt_id'), 'ASC'],
                 [sequelize.col('dap_an_id'), 'ASC'],
             ],
