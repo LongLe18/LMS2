@@ -14,6 +14,7 @@ router.put('/:id', authToken, tryCatch(studentExamController.putUpdate));
 router.delete('/:id/force', authToken, authRole([2], 6), tryCatch(studentExamController.forceDelete));
 router.delete('/clear/:id', authToken, authRole([2], 6), tryCatch(studentExamController.clearAll));
 router.get('/user', authToken, tryCatch(studentExamController.getUser));
+router.get('/export-dgnl/:id', authToken, tryCatch(studentExamController.exportDGNL));
 router.get('/export-report', authToken, tryCatch(studentExamController.exportReport));
 router.get('/dgnl', authToken, tryCatch(studentExamController.getAllDGNL));
 router.get('/by-exam', authToken, tryCatch(studentExamController.getByExamId));

@@ -33,6 +33,9 @@ const khoahoc = sequelize.define(
         kct_id: {
             type: DataTypes.INTEGER,
         },
+        lkh_id: {
+            type: DataTypes.INTEGER,
+        },
         trang_thai: {
             type: DataTypes.BOOLEAN,
         },

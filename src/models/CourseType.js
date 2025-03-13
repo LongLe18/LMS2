@@ -1,28 +1,16 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../utils/db');
 
-const dapandachon = sequelize.define(
-    'dap_an_da_chon',
+const loaikhoahoc = sequelize.define(
+    'loai_khoa_hoc',
     {
-        dadc_id: {
+        lkh_id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
         },
-        ket_qua_chon: {
+        ten: {
             type: DataTypes.STRING,
-        },
-        noi_dung_tra_loi: {
-            type: DataTypes.STRING,
-        },
-        ket_qua: {
-            type: DataTypes.BOOLEAN,
-        },
-        dthv_id: {
-            type: DataTypes.INTEGER,
-        },
-        cau_hoi_id: {
-            type: DataTypes.INTEGER,
         },
         nguoi_tao: {
             type: DataTypes.STRING,
@@ -39,10 +27,10 @@ const dapandachon = sequelize.define(
     },
     {
         sequelize,
-        modelName: 'dap_an_da_chon',
+        modelName: 'loai_khoa_hoc',
         freezeTableName: true,
         timestamps: false,
     }
 );
 
-module.exports = dapandachon;
+module.exports = loaikhoahoc;

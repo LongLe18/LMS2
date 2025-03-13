@@ -48,6 +48,7 @@ const evaluateRouter = require('./evaluate');
 const dgnlEvaluateRouter = require('./dgnlevaluate');
 const dgtdCriteriaRouter = require('./dgtdcriteria');
 const dgtdEvaluateRouter = require('./dgtdevaluate');
+const courseTypeRouter = require('./coursetype');
 
 function route(app) {
     app.use('/auth', authenRouter);
@@ -100,6 +101,7 @@ function route(app) {
     app.use('/evaluate-dgnl', dgnlEvaluateRouter);
     app.use('/dgtd-criteria', dgtdCriteriaRouter);
     app.use('/evaluate-dgtd', dgtdEvaluateRouter);
+    app.use('/course-type', courseTypeRouter);
 }
 
 module.exports = route;

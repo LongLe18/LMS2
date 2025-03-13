@@ -20,8 +20,20 @@ const {
     Province,
     DGNLCriteria,
     DGTDCriteria,
+    Majoring,
+    Exceprt,
 } = require('../models');
 const sequelize = require('../utils/db');
+
+function removeVietnameseTones(str) {
+    return str
+        .normalize('NFD') // Tách dấu khỏi ký tự
+        .replace(/[\u0300-\u036f]/g, '') // Xóa dấu
+        .replace(/đ/g, 'd')
+        .replace(/Đ/g, 'D') // Chuyển đ -> d
+        .replace(/\s+/g, '_') // Thay khoảng trắng bằng _
+        .toLowerCase(); // Chuyển về chữ thường (nếu cần)
+}
 
 const getAll = async (req, res) => {
     let filter = {};
@@ -403,6 +415,7 @@ const putUpdate = async (req, res) => {
     let ket_qua_chons;
     let dap_ans;
     let result;
+    let correctQuestionIds = [];
     for (const selectedAnswer of selectedAnswers) {
         result = false;
         if (selectedAnswer.cau_hoi.loai_cau_hoi === 1) {
@@ -458,7 +471,24 @@ const putUpdate = async (req, res) => {
         if (result) {
             ket_qua_diem += parseFloat(selectedAnswer.cau_hoi.diem);
             so_cau_tra_loi_dung++;
+            correctQuestionIds.push(selectedAnswer.cau_hoi_id);
         }
+    }
+
+    if (correctQuestionIds.length !== 0) {
+        await sequelize.query(
+            `
+            UPDATE dap_an_da_chon 
+            SET ket_qua = true 
+            WHERE dthv_id = :dthv_id 
+            AND cau_hoi_id IN (${correctQuestionIds.join(', ')})`,
+            {
+                replacements: {
+                    dthv_id: req.params.id,
+                },
+                type: sequelize.QueryTypes.UPDATE,
+            }
+        );
     }
     let exam = await sequelize.query(
         `
@@ -564,6 +594,7 @@ const putUpdatev2 = async (req, res) => {
     let phan_1 = 0;
     let phan_2 = 0;
     let phan_3 = 0;
+    let correctQuestionIds = [];
     for (const selectedAnswer of selectedAnswers) {
         result = false;
         if (selectedAnswer.cau_hoi.loai_cau_hoi === 1) {
@@ -628,7 +659,24 @@ const putUpdatev2 = async (req, res) => {
             } else {
                 phan_3 += parseFloat(selectedAnswer.cau_hoi.diem);
             }
+            correctQuestionIds.push(selectedAnswer.cau_hoi_id);
         }
+    }
+
+    if (correctQuestionIds.length !== 0) {
+        await sequelize.query(
+            `
+            UPDATE dap_an_da_chon 
+            SET ket_qua = true 
+            WHERE dthv_id = :dthv_id 
+            AND cau_hoi_id IN (${correctQuestionIds.join(', ')})`,
+            {
+                replacements: {
+                    dthv_id: req.params.id,
+                },
+                type: sequelize.QueryTypes.UPDATE,
+            }
+        );
     }
     let exam = await sequelize.query(
         `
@@ -725,6 +773,7 @@ const putUpdateDGTD = async (req, res) => {
     let phan_1 = 0;
     let phan_2 = 0;
     let phan_3 = 0;
+    let correctQuestionIds = [];
     for (const selectedAnswer of selectedAnswers) {
         result = false;
         if (selectedAnswer.cau_hoi.loai_cau_hoi === 0) {
@@ -832,7 +881,24 @@ const putUpdateDGTD = async (req, res) => {
             } else {
                 phan_3 += parseFloat(selectedAnswer.cau_hoi.diem);
             }
+            correctQuestionIds.push(selectedAnswer.cau_hoi_id);
         }
+    }
+
+    if (correctQuestionIds.length !== 0) {
+        await sequelize.query(
+            `
+            UPDATE dap_an_da_chon 
+            SET ket_qua = true 
+            WHERE dthv_id = :dthv_id 
+            AND cau_hoi_id IN (${correctQuestionIds.join(', ')})`,
+            {
+                replacements: {
+                    dthv_id: req.params.id,
+                },
+                type: sequelize.QueryTypes.UPDATE,
+            }
+        );
     }
     let exam = await sequelize.query(
         `
@@ -1029,6 +1095,176 @@ const exportReport = async (req, res) => {
     }
 };
 
+const exportDGNL = async (req, res) => {
+    try {
+        const content = fs.readFileSync(
+            path.join(
+                process.cwd(),
+                '/public/templates/export_student_exam.xlsx'
+            )
+        );
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.load(content);
+
+        workbook.creator = 'Me';
+        workbook.lastModifiedBy = 'Her';
+        workbook.created = new Date();
+        const workSheet = workbook.getWorksheet('Sheet1');
+
+        const student = await Student.findOne({
+            attributes: ['hoc_vien_id', 'ho_ten', 'email'],
+            where: {
+                hoc_vien_id: req.userId,
+            },
+        });
+
+        const exam = await Exam.findOne({
+            attributes: ['de_thi_id', 'ten_de_thi'],
+            include: [
+                {
+                    model: StudentExam,
+                    attributes: [],
+                    required: true, // Chỉ lấy các Exam có StudentExam liên quan
+                    where: { dthv_id: req.params.id }, // Điều kiện where phải nằm trong include
+                },
+            ],
+        });
+
+        const list = await ExamQuestion.findAll({
+            attributes: ['chdt_id', 'phan'],
+            include: [
+                {
+                    model: Question,
+                    attributes: ['cau_hoi_id', 'noi_dung', 'mdch_id'],
+                    include: [
+                        {
+                            model: Exceprt,
+                            attributes: ['trich_doan_id', 'noi_dung'],
+                        },
+                        {
+                            model: SelectedAnswer,
+                            attributes: ['dadc_id', 'ket_qua'],
+                        },
+                        {
+                            model: Majoring,
+                            attributes: ['chuyen_nganh_id', 'ten_chuyen_nganh'],
+                        },
+                    ],
+                },
+            ],
+            where: {
+                de_thi_id: exam.de_thi_id,
+            },
+            order: [[sequelize.col('chdt_id'), 'ASC']],
+        });
+
+        let indexCol;
+        let indexRow;
+        let count;
+        let row;
+        let phan;
+        let order = 1;
+        workSheet.getCell('E4').value = student.email;
+        workSheet.getCell('E5').value = student.ho_ten;
+
+        indexRow = 2;
+        for (const item of list) {
+            if (phan !== item.phan) {
+                indexRow = indexRow + 4;
+                row = workSheet.getRow(indexRow);
+
+                row.getCell(1).font = {
+                    name: 'Aptos Narrow',
+                    bold: true,
+                    size: 11,
+                };
+                row.getCell(1).fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'c3d69c' },
+                };
+                if (item.phan === 1) {
+                    row.getCell(1).value = 'ĐỊNH TÍNH';
+                } else if (item.phan === 2) {
+                    row.getCell(1).value = 'ĐỊNH LƯỢNG';
+                } else if (item.phan === 3) {
+                    row.getCell(1).value = 'KHOA HỌC';
+                } else if (item.phan === 4) {
+                    row.getCell(1).value = 'TIẾNG ANH';
+                }
+
+                order = 1;
+                phan = item.phan;
+            } else {
+                row = workSheet.getRow(indexRow);
+
+                row.getCell(1).value = `Câu ${order}`;
+                row.getCell(2).value = (
+                    (item.cau_hoi.trich_doan
+                        ? item.cau_hoi.trich_doan.noi_dung
+                        : '') + item.cau_hoi.noi_dung
+                )
+                    .replaceAll(
+                        '\\begin{center}\\includegraphics[scale = 0.5]{',
+                        ''
+                    )
+                    .replaceAll('}\\end{center}\\', '')
+                    .replaceAll('<strong>', '')
+                    .replaceAll('</strong>', '')
+                    .replaceAll('<em>', '')
+                    .replaceAll('</em>', '')
+                    .replaceAll('<b>', '')
+                    .replaceAll('</b>', '');
+                row.getCell(3).value =
+                    item.cau_hoi.chuyen_nganh.ten_chuyen_nganh;
+                row.getCell(4).value =
+                    item.cau_hoi.mdch_id === 1
+                        ? 'Nhận biết'
+                        : item.cau_hoi.mdch_id === 2
+                        ? 'Thông hiểu'
+                        : item.cau_hoi.mdch_id === 3
+                        ? 'Vận dụng'
+                        : 'Vận dụng cao';
+                row.getCell(5).value =
+                    item.cau_hoi.dap_an_da_chons.length === 0
+                        ? 'X'
+                        : item.cau_hoi.dap_an_da_chons[0].ket_qua
+                        ? 'Đ'
+                        : 'S';
+
+                order++;
+            }
+
+            indexRow++;
+        }
+        // res.status(200).send({
+        //     status: 'error',
+        //     data: list,
+        // });
+        const filename = removeVietnameseTones(exam.ten_de_thi) + '.xlsx';
+        res.setHeader(
+            'Content-Type',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        );
+        res.setHeader(
+            'Content-Disposition',
+            `attachment; filename="${filename.toUpperCase()}"; filename*=UTF-8''${encodeURIComponent(
+                filename
+            )}`
+        );
+        await workbook.xlsx.write(res);
+
+        return res.end();
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({
+            status: 'error',
+            data: null,
+            message: err,
+        });
+    }
+};
+
 module.exports = {
     getAll,
     getById,
@@ -1046,4 +1282,5 @@ module.exports = {
     getByExamIdDGNL,
     putUpdateDGTD,
     postCreateDGTD,
+    exportDGNL,
 };
