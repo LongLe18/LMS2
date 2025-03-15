@@ -52,6 +52,9 @@ const ExceprtType = require('./ExceprtType');
 const QuestionDetail = require('./QuestionDetail');
 const Option = require('./Option');
 const CourseType = require('./CourseType');
+const Media = require('./Media');
+const ExamSetMedia = require('./ExamSetMedia');
+const ExamSet = require('./ExamSet');
 
 //khoa ngoai khoahoc
 Program.hasMany(Course, { foreignKey: 'kct_id', constraints: false });
@@ -399,6 +402,18 @@ Option.belongsTo(Question, {
 CourseType.hasMany(Course, { foreignKey: 'lkh_id', constraints: false });
 Course.belongsTo(CourseType, { foreignKey: 'lkh_id', constraints: false });
 
+ExamSet.hasMany(ExamSetMedia, {
+    foreignKey: 'bo_de_thi_id',
+    constraints: false,
+});
+ExamSetMedia.belongsTo(ExamSet, {
+    foreignKey: 'bo_de_thi_id',
+    constraints: false,
+});
+
+ExamSetMedia.hasOne(Media, { foreignKey: 'tep_tin_id', constraints: false });
+Media.belongsTo(ExamSetMedia, { foreignKey: 'tep_tin_id', constraints: false });
+
 module.exports = {
     Course,
     Lesson,
@@ -454,4 +469,7 @@ module.exports = {
     QuestionDetail,
     Option,
     CourseType,
+    ExamSetMedia,
+    Media,
+    ExamSet,
 };

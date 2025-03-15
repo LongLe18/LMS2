@@ -5,10 +5,13 @@ const {
     Student,
     Province,
     CourseType,
+    CourseMedia,
+    Media,
 } = require('../models');
 const { Op } = require('sequelize');
 const fs = require('fs');
 const sequelize = require('../utils/db');
+const { checkFileType } = require('../middlewares/upload');
 
 //[GET] course?id
 const getAll = async (req, res) => {
@@ -419,26 +422,26 @@ const getByIDProgram = async (req, res) => {
 const getStatistical = async (req, res) => {
     const { count, rows } = await Course.findAndCountAll({
         attributes: [
-            "khoa_hoc_id",
-            "ten_khoa_hoc",
-            "trang_thai",
-            "ngay_bat_dau",
-            "ngay_ket_thuc",
+            'khoa_hoc_id',
+            'ten_khoa_hoc',
+            'trang_thai',
+            'ngay_bat_dau',
+            'ngay_ket_thuc',
             [
                 sequelize.literal(`(SELECT COUNT(khoa_hoc_hoc_vien.hoc_vien_id) 
                                    FROM khoa_hoc_hoc_vien 
                                    WHERE khoa_hoc_hoc_vien.khoa_hoc_id = khoa_hoc.khoa_hoc_id)`),
-                "so_luong",
+                'so_luong',
             ],
         ],
         include: [
             {
                 model: Program,
-                attributes: ["kct_id", "ten_khung_ct"],
+                attributes: ['kct_id', 'ten_khung_ct'],
             },
             {
                 model: CourseType,
-                attributes: ["lkh_id", "ten"],
+                attributes: ['lkh_id', 'ten'],
             },
         ],
         where: {

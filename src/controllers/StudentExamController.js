@@ -1237,10 +1237,7 @@ const exportDGNL = async (req, res) => {
 
             indexRow++;
         }
-        // res.status(200).send({
-        //     status: 'error',
-        //     data: list,
-        // });
+        
         const filename = removeVietnameseTones(exam.ten_de_thi) + '.xlsx';
         res.setHeader(
             'Content-Type',

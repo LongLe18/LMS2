@@ -14,8 +14,9 @@ function checkMimeTypeCallback(file, cb) {
         'image/bmp',
         'video/mp4',
         'application/pdf',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     ];
-    const filetypes = /jpg|jpeg|png|gif|bmp|mp4|pdf/;
+    const filetypes = /jpg|jpeg|png|gif|bmp|mp4|pdf|doc|docx/;
     const mimetype = mimeTypes.includes(file.mimetype);
     const checkExtname = filetypes.test(extname(file.originalname));
     if (mimetype && checkExtname) {
@@ -48,6 +49,7 @@ function checkFileType(file) {
             'application/pdf',
             'application/msword',
             'application/vnd.ms-powerpoint',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             'application/vnd.openxmlformats-officedocument.presentationml.presentation',
             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ].includes(mimeType)
@@ -104,4 +106,4 @@ const upload = multer({
     },
 });
 
-module.exports = { upload };
+module.exports = { upload, checkFileType };

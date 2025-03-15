@@ -13,6 +13,7 @@ router.post(
     ]),
     tryCatch(courseController.postCreate)
 );
+
 //router.get('/create', authToken, authRole([2], 6), tryCatch(courseController.getCreate));
 router.get('/:id/edit', authToken, authRole([2], 6), tryCatch(courseController.getUpdate));
 router.put(
