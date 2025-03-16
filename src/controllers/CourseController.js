@@ -29,9 +29,11 @@ const getAll = async (req, res) => {
         where: {
             ...(req.query.kct_id && { kct_id: req.query.kct_id }),
             ...(req.query.trang_thai && { trang_thai: req.query.trang_thai }),
-
             ...(req.query.lkh_id && {
                 lkh_id: req.query.lkh_id,
+            }),
+            ...(req.query.loai_kct && {
+                '$khung_chuong_trinh.loai_kct$': req.query.loai_kct,
             }),
             ...(req.query.search && {
                 [Op.or]: [
