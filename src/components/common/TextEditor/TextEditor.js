@@ -568,11 +568,13 @@ const TextEditorWidget = (props) => {
                                         <div className="math-item-content" key={index_cauhoi}> 
                                         {
                                             (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}><Image src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></Image></div>
+                                                <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
+                                                    <Image src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_cauhoi_${index_cauhoi}`}></Image>
+                                                </div>
                                             ) : (
                                                 <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
                                                     return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
-                                                        <MathJax.Node key={index2} formula={item2} />
+                                                        <MathJax.Node key={index2} formula={'{{f}^{5}}(x)'} />
                                                     ) : (
                                                         <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
                                                     )

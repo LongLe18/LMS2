@@ -40,14 +40,57 @@ const CoursesUser = (props) => {
     const [courseOfUser] = useFetch(`/student/list/course`);
 
     const typeProgrammes = [
-        { id: 1, name: 'Kiểm tra trình độ đầu vào', name2: 'Kiểm tra trình độ đầu vào Online', idElement: 'testEntrance', description: 'Bài kiểm tra được xây dựng bởi đội ngũ các Thầy Cô uy tín, nhiều năm kinh \n nghiệm giảng dạy nhằm đánh giá đúng trình độ đầu vào của mỗi HS' },
-        { id: 0, name: 'Thi thử ĐGNL - ĐGTD', name2: 'Thi thử ĐGNL - ĐHQGHN (HSA), ĐGTD - ĐHBK (TSA) Online', idElement: 'testCapacity', description: 'Trải nghiệm làm bài thi ĐGNL ĐHQGHN (HSA) và ĐGTD (TSA) trên phần mềm thi thử \n giống như khi làm bài HSA - TSA trên thực tế ở tổ chức tại ĐHQGHN, ĐHBK ...' },
-        { id: 2, name: 'Khóa luyện thi hàng đầu', name2: 'Luyện thi ĐGNL (HSA), ĐGTD (TSA)', idElement: 'study', description: 'Được xây dựng và thiết kế bởi đội ngũ giáo viên, chuyên gia uy tín hàng đầu đến từ ĐHQGHN, ĐHSP HN, ĐHBK ...' },
+        { name: 'Kiểm tra trình độ đầu vào',
+            idElement: 'testEntrance', 
+            subItem: [{
+                id: 1,
+                name: 'Kiểm tra trình độ đầu vào Online', 
+                idElement: '', 
+            }],
+            description: 'Bài kiểm tra được xây dựng bởi đội ngũ các Thầy Cô uy tín, nhiều năm kinh \n nghiệm giảng dạy nhằm đánh giá đúng trình độ đầu vào của mỗi HS' 
+        },
+        { name: 'Thi thử ĐGNL - ĐGTD', 
+            idElement: 'testCapacity',
+            subItem: [{
+                id: 0,
+                name: 'Thi thử ĐGNL - ĐHQGHN (HSA) Online', 
+                idElement: '', 
+            }, {
+                id: 3,
+                name: 'Thi thử ĐGTD - ĐHQGHN (TSA) Online',
+                idElement: ''
+            }],
+            description: 'Trải nghiệm làm bài thi ĐGNL ĐHQGHN (HSA) và ĐGTD (TSA) trên phần mềm thi thử \n giống như khi làm bài HSA - TSA trên thực tế ở tổ chức tại ĐHQGHN, ĐHBK ...' 
+        },
+        { name: 'Khóa luyện thi hàng đầu', 
+            subItem: [{
+                id: 2,
+                name: 'Luyện thi ĐGNL (HSA), ĐGTD (TSA)', 
+                idElement: 'studyDGNL', 
+            }, {
+                id: 4,
+                name: 'Luyện thi tốt nghiệp THCS, THPT',
+                idElement: 'studyTHCS'
+            }],
+            description: 'Được xây dựng và thiết kế bởi đội ngũ giáo viên, chuyên gia uy tín hàng đầu đến từ ĐHQGHN, ĐHSP HN, ĐHBK ...' 
+        },
+        { name: 'Giáo trình, học liệu, bộ đề thi chuẩn',
+            subItem: [{
+                id: 5,
+                name: 'Học liệu, giáo trình, trải nghiệm giáo dục, steam - stem, ...', 
+                idElement: 'study', 
+            }, {
+                id: 6,
+                name: 'Bộ đề thi chuẩn được cập nhật mới theo từng năm',
+                idElement: 'examSample'
+            }],
+            description: 'Được xây dựng và thiết kế bởi đội ngũ giáo viên, chuyên gia uy tín hàng đầu đến từ ĐHQGHN, ĐHSP HN, ĐHBK ...' 
+        }
     ];
 
     useEffect(() => {
         dispatch(receiptAction.getRECEIPTsUser({ status: 1 }));
-        dispatch(courseAction.getCourses({ idkct: '', status: '', search: '' }))
+        dispatch(courseAction.getCourses({ idkct: '', status: '', search: '', pageSize: 99999999, pageIndex: 1 }))
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     if (coursesUser.status === 'success' && courses.status === 'success') {
@@ -107,7 +150,7 @@ const CoursesUser = (props) => {
                             {(courseOfUser.length > 0) ? (
                                 typeProgrammes.map((item, index) => {
                                     return (
-                                        <div key={index} id={item.idElement}>
+                                        <div key={'programmes_' + index} id={item.idElement}>
                                             <h3 className="section-title section-title-center" style={{marginTop: 24, marginBottom: 0}}>
                                                 <b></b>
                                                 <MenuOutlined style={{color: 'rgb(21, 87, 21)', fontSize: 20, marginLeft: 6}}/>
@@ -125,35 +168,42 @@ const CoursesUser = (props) => {
                                                     <StarOutlined style={{margin: '0 12px 12px 0', color: '#ff6c00', fontSize: 24}}/>
                                                 </div>
                                             </div>
-                                            <div key={index} className="main-section" id={item.idElement}>
-                                                <div className="header-section">
-                                                    <h3 className="section-title section-title-center" style={{marginBottom: 0, marginTop: 0}}>
-                                                        <span className="section-title-main">{item.name2}</span>
-                                                    </h3>
-                                                    <Link style={{borderRadius: 8, margin: '12px 15px', display: 'flex', alignItems: 'center', padding: '0px 16px'}} 
-                                                        className="ant-btn ant-btn-default ant-btn-lg"
-                                                        to={`/luyen-tap/khoa-hoc-cua-ban/${item.id}`}
-                                                    >
-                                                        Xem tất cả <RightOutlined style={{marginLeft: 8}}/>
-                                                    </Link>
-                                                </div>
-                                                {item.id === 0 ?
-                                                    <CardSlider id={index} 
-                                                        courses={courseOfUser.filter((course) => course.loai_kct === 0 || course.loai_kct === 3)} 
-                                                        link={`/luyen-tap/danh-gia-nang-luc/`}
-                                                    />
-                                                    : item.id === 1 ?
-                                                    <CardSlider id={index} 
-                                                        courses={courseOfUser.filter((course) => course.loai_kct === 1)} 
-                                                        link={`/luyen-tap/kiem-tra/`}
-                                                    />
-                                                    :
-                                                    <CardSlider id={index} 
-                                                        courses={courseOfUser.filter((course) => course.loai_kct === 2)} 
-                                                        link={`/luyen-tap/luyen-tap/`}
-                                                    />
-                                                }                        
-                                            </div>
+
+                                            {item.subItem.map((subItem, subIndex) => {
+                                                const courseTypeMap = {
+                                                    0: { loai_kct: 0, link: "/luyen-tap/danh-gia-nang-luc/" },
+                                                    1: { loai_kct: 1, link: "/luyen-tap/kiem-tra/" },
+                                                    2: { loai_kct: 2, link: "/luyen-tap/luyen-tap/" },
+                                                    3: { loai_kct: 3, link: "/luyen-tap/danh-gia-nang-luc/" },
+                                                    4: { loai_kct: 4, link: "/luyen-tap/luyen-tap/" },
+                                                    5: { loai_kct: 5, link: "/luyen-tap/luyen-tap/" },
+                                                    6: { loai_kct: 6, link: "/luyen-tap/luyen-tap/" }
+                                                };
+                                                
+                                                const courseType = courseTypeMap[subItem.id] || { loai_kct: 6, link: "/luyen-tap/danh-gia-nang-luc/" };
+                                                
+                                                return (
+                                                    <div className="main-section" key={`key_subItem` + {subIndex}} id={subItem.idElement}>
+                                                        <div className="header-section">
+                                                            <h3 className="section-title section-title-center" style={{ marginBottom: 0, marginTop: 0 }}>
+                                                                <span className="section-title-main">{subItem.name}</span>
+                                                            </h3>
+                                                            <Link
+                                                                style={{ borderRadius: 8, margin: "12px 15px", display: "flex", alignItems: "center", padding: "0px 16px" }}
+                                                                className="ant-btn ant-btn-default ant-btn-lg"
+                                                                to={`/luyen-tap/khoa-hoc-cua-ban/${subItem.id}`}
+                                                            >
+                                                                Xem tất cả <RightOutlined style={{ marginLeft: 8 }} />
+                                                            </Link>
+                                                        </div>
+                                                        <CardSlider
+                                                            id={index}
+                                                            courses={courseOfUser.filter((course) => course.loai_kct === courseType.loai_kct)}
+                                                            link={courseType.link}
+                                                        />
+                                                    </div>
+                                                );
+                                            })}
                                         </div>
                                     )
                                 })

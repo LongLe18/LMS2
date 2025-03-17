@@ -140,7 +140,7 @@ const Exceprt = (props) => {
         }, {
             id: 3,
             tieu_de: 'Dựa vào dữ liệu sau đây để trả lời các câu hỏi từ'
-        }, , {
+        }, {
             id: 4,
             tieu_de: 'Đọc đoạn thông tin sau và trả lời các câu hỏi từ'
         }, {
@@ -158,7 +158,8 @@ const Exceprt = (props) => {
         }, {
             id: 9,
             tieu_de: 'Answer each question from'
-        }]
+        }];
+
         let options = [];
         options = data.map((item) => (
             <Option key={item.id} value={item.id} >{item.tieu_de}</Option>

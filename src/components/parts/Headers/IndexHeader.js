@@ -61,7 +61,7 @@ function IndexHeader(props) {
   useEffect(() => {
     const callback = (res) => {
       if (res.status === 'success') {
-        dispatch(courseAction.getCourses({ idkct: '', status: 1, search: '' }));
+        dispatch(courseAction.getCourses({ idkct: '', status: 1, search: '', pageSize: 99999999, pageIndex: 1 }));
       }
     }
     dispatch(menuAction.getMenus({}, callback));

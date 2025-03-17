@@ -10,15 +10,13 @@ const PracticeDetailPage = () => {
     let id = useParams(); // { id: '1' }
     const hashids = new Hashids();
     return (
-        <>
-            <div className="section section-navbars">
-                <Container >
-                    <HeaderDetailPage id={hashids.decode(id.id)}></HeaderDetailPage>
-                    <br/>
-                    <BodyDetailPage id={hashids.decode(id.id)} idCourse={hashids.decode(id.idCourse)}></BodyDetailPage>
-                </Container>
-            </div>
-        </>
+        <div className="section section-navbars">
+            <Container >
+                <HeaderDetailPage id={hashids.decode(id.id)}></HeaderDetailPage>
+                <br/>
+                <BodyDetailPage id={hashids.decode(id.id)} idCourse={hashids.decode(id.idCourse)}></BodyDetailPage>
+            </Container>
+        </div>
     )
 
 }

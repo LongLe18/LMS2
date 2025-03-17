@@ -96,7 +96,7 @@ const ProgramPage = () => {
             responsive: ['md'],
             render: (trang_thai) => (
                 <Tag color={trang_thai === true ? 'green' : 'red'} key={trang_thai}>
-                {trang_thai === true ? "Đang hoạt động" : "Đã dừng"}
+                    {trang_thai === true ? "Đang hoạt động" : "Đã dừng"}
                 </Tag>
             ),
         },
@@ -105,11 +105,32 @@ const ProgramPage = () => {
             dataIndex: 'loai_kct',
             key: 'loai_kct',
             responsive: ['md'],
-            render: (loai_kct) => (
-                <Tag color={loai_kct === 0 ? 'green' : loai_kct === 1 ? 'orange' : loai_kct === 3 ? 'geekblue' : 'blue'} key={loai_kct}>
-                    {loai_kct === 1 ? "Thi thử Online" : loai_kct === 0 ? "Đánh giá năng lực" : loai_kct === 3 ? 'Đánh giá tư duy BK' : 'Ôn luyện'}
-                </Tag>
-            ),
+            render: (loai_kct) => {
+                let color;
+                if (loai_kct === 0) color = 'green';
+                else if (loai_kct === 1) color = 'orange';
+                else if (loai_kct === 3) color = 'geekblue';
+                else if (loai_kct === 4) color = 'cyan';
+                else if (loai_kct === 5) color = 'lime';
+                else if (loai_kct === 6) color = 'volcano';
+                else color = 'blue';
+
+                const getLoaiKctText = (loai_kct) => {
+                    if (loai_kct === 1) return "Kiểm tra đầu vào";
+                    if (loai_kct === 0) return "Thi thử ĐGNL";
+                    if (loai_kct === 2) return 'Luyện thi ĐGNL, ĐGTD';
+                    if (loai_kct === 4) return 'Luyện thi tốt nghiệp THCS, THPT';
+                    if (loai_kct === 5) return 'Học liệu, giáo trình';
+                    if (loai_kct === 6) return 'Bộ đề thi';
+                    return 'Thi thử ĐGTD';
+                };
+
+                return (
+                    <Tag color={color} key={loai_kct}>
+                        {getLoaiKctText(loai_kct)}
+                    </Tag>
+                );
+            },
         },
         {
             title: 'Mô tả',
@@ -292,7 +313,7 @@ const ProgramPage = () => {
                         <Form.Item
                             name="loai_kct"
                             label="Loại khung chương trình"
-                            initialValue={0}
+                            initialValue={1}
                             rules={[
                             {
                                 required: true,

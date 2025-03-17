@@ -161,7 +161,6 @@ const Course = () => {
     
     const courses = useSelector(state => state.course.list.result);
     const programmes = useSelector(state => state.programme.list.result);
-    // const loading = useSelector(state => state.course.list.loading);
     const error = useSelector(state => state.course.list.error);
 
     const course = useSelector(state => state.course.item.result);
@@ -202,7 +201,8 @@ const Course = () => {
         }
         return (
             <Select
-                showSearch={false}
+                showSearch={true}
+                filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
                 placeholder="Chọn khung chương trình"
             >
             {options}

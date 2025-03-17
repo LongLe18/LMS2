@@ -104,8 +104,8 @@ const CourseCatalog = ({ idTypeKCT, typeProgramme, courseOfUser }) => {
       return null;
     }
   
-    const filteredCourses = Number(idTypeKCT) === 0
-        ? courseOfUser.filter(course => course.loai_kct === 0 || course.loai_kct === 3)
+    const filteredCourses = Number(idTypeKCT) === 0 || Number(idTypeKCT) === 3
+        ? courseOfUser.filter(course => course.khung_chuong_trinh.loai_kct === 0 || course.khung_chuong_trinh.loai_kct === 3)
         : courseOfUser.filter(course => course.loai_kct === selectedProgramType.id);
   
     return (
@@ -134,7 +134,7 @@ const BusinessTypeProgramePageUser = (props) => {
     ];
     
     useEffect(() => {
-        dispatch(courseAction.getCourses({ idkct: '', status: 1, search: '' }, (res) => {
+        dispatch(courseAction.getCourses({ idkct: '', status: 1, search: '', pageSize: 99999999, pageIndex: 1 }, (res) => {
             if (res.status === 'success') {
                 res.data.sort((objA, objB) => Number(new Date(objB.ngay_bat_dau)) - Number(new Date(objA.ngay_bat_dau)));
                 // setDataInit(res.data);
@@ -167,43 +167,43 @@ const BusinessTypeProgramePageUser = (props) => {
 
     const search = (values) => {
         if (values.ten_khoa_hoc !== undefined && values.linh_vuc_id !== undefined && values.kct_id !== undefined) {
-            dispatch(courseAction.getCourses({ idkct: values.kct_id, status: 1, search: values.ten_khoa_hoc, idLinhVuc: values.linh_vuc_id }, (res) => {
+            dispatch(courseAction.getCourses({ idkct: values.kct_id, status: 1, search: values.ten_khoa_hoc, idLinhVuc: values.linh_vuc_id, pageSize: 99999999, pageIndex: 1 }, (res) => {
                 if (res.status === 'success') {
                     setDataSearch(res.data);
                 }
             }));
         } else if (values.ten_khoa_hoc !== undefined && values.linh_vuc_id !== undefined) {
-            dispatch(courseAction.getCourses({ idkct: '', status: 1, search: values.ten_khoa_hoc, idLinhVuc: values.linh_vuc_id }, (res) => {
+            dispatch(courseAction.getCourses({ idkct: '', status: 1, search: values.ten_khoa_hoc, idLinhVuc: values.linh_vuc_id, pageSize: 99999999, pageIndex: 1 }, (res) => {
                 if (res.status === 'success') {
                     setDataSearch(res.data);
                 }
             }));
         } else if (values.linh_vuc_id !== undefined && values.kct_id !== undefined) {
-            dispatch(courseAction.getCourses({ idkct: values.kct_id, status: 1, search: '', idLinhVuc: values.linh_vuc_id }, (res) => {
+            dispatch(courseAction.getCourses({ idkct: values.kct_id, status: 1, search: '', idLinhVuc: values.linh_vuc_id, pageSize: 99999999, pageIndex: 1 }, (res) => {
                 if (res.status === 'success') {
                     setDataSearch(res.data);
                 }
             }));
         } else if (values.ten_khoa_hoc !== undefined && values.kct_id !== undefined) {
-            dispatch(courseAction.getCourses({ idkct: values.kct_id, status: 1, search: values.ten_khoa_hoc, idLinhVuc: '' }, (res) => {
+            dispatch(courseAction.getCourses({ idkct: values.kct_id, status: 1, search: values.ten_khoa_hoc, idLinhVuc: '', pageSize: 99999999, pageIndex: 1 }, (res) => {
                 if (res.status === 'success') {
                     setDataSearch(res.data);
                 }
             }));
         } else if (values.kct_id !== undefined) {
-            dispatch(courseAction.getCourses({ idkct: values.kct_id, status: 1, search: '', }, (res) => {
+            dispatch(courseAction.getCourses({ idkct: values.kct_id, status: 1, search: '', pageSize: 99999999, pageIndex: 1 }, (res) => {
                 if (res.status === 'success') {
                     setDataSearch(res.data);
                 }
             }));
         } else if (values.ten_khoa_hoc !== undefined) {
-            dispatch(courseAction.getCourses({ idkct: '', status: 1, search: values.ten_khoa_hoc }, (res) => {
+            dispatch(courseAction.getCourses({ idkct: '', status: 1, search: values.ten_khoa_hoc, pageSize: 99999999, pageIndex: 1 }, (res) => {
                 if (res.status === 'success') {
                     setDataSearch(res.data);
                 }
             }));
         } else if (values.linh_vuc_id !== undefined) {
-            dispatch(courseAction.getCourses({ idkct: '', status: 1, idLinhVuc: values.linh_vuc_id, search: '' }, (res) => {
+            dispatch(courseAction.getCourses({ idkct: '', status: 1, idLinhVuc: values.linh_vuc_id, search: '', pageSize: 99999999, pageIndex: 1 }, (res) => {
                 if (res.status === 'success') {
                     setDataSearch(res.data);
                 }

@@ -110,7 +110,7 @@ function Lesson() {
   useEffect(() => {
     dispatch(lessonActions.filterLessons({ idCourse: '', idModule: filter.mo_dun_id, idThematic: filter.chuyen_de_id, status: '', search: filter.search, 
       start: filter.start, end: filter.end}));
-    dispatch(courseActions.getCourses({ idkct: '', status: '', search: '' }));
+    dispatch(courseActions.getCourses({ idkct: '', status: '', search: '', pageSize: 99999999, pageIndex: 1 }));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   

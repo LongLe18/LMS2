@@ -84,7 +84,7 @@ const SampleQuestion = (props) => {
         dispatch(questionActions.getQuestions({ kct_id: '', chuyen_nganh_id: '', pageSize: pageSize, pageIndex: pageIndex }));
         if (paramtypeExamUrl !== 'DGTD') dispatch(examActions.getExam({ id: idExam }, callback));
         else dispatch(examActions.getExam({ id: idExam, type: 'dgtd' }, callback));
-        dispatch(courseActions.getCourses({ idkct: '', status: 1, search: '' }));
+        dispatch(courseActions.getCourses({ idkct: '', status: 1, search: '', pageSize: 99999999, pageIndex: 1 }));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {

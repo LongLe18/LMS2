@@ -85,7 +85,7 @@ const ExamDetailPage = () => {
     const [questionForm] = Form.useForm();
     const [currentStep, setCurrentStep] = useState(0);
     const [currentQuestion, setCurrentQuestion] = useState(defaultQuestion);
-    const [isOpenEditor, setIsOpenEditor] = useState(false);
+    // const [isOpenEditor, setIsOpenEditor] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
     
     const exam = useSelector(state => state.exam.item.result);
@@ -144,7 +144,7 @@ const ExamDetailPage = () => {
 
         dispatch(examActions.getExam({ id: id }, callback));
         dispatch(typeExamActions.getTypes());
-        dispatch(courseActions.getCourses({ idkct: '', status: '', search: '' }));
+        dispatch(courseActions.getCourses({ idkct: '', status: '', search: '', pageSize: 99999999, pageIndex: 1 }));
         dispatch(questionActions.getQuestionsExam({ idQuestion: '', idExam: id }));
         dispatch(exceprtActions.getExceprts({ pageSize: 1000000000, pageIndex: 1, id: '' }));
         dispatch(majorActions.getMajors()); // request chuyên ngành
@@ -1292,7 +1292,7 @@ const ExamDetailPage = () => {
                                                     questionForm.resetFields();
                                                     questionForm.setFieldsValue(defaultQuestion);
                                                     setCurrentQuestion(defaultQuestion);
-                                                    setIsOpenEditor(false);
+                                                    // setIsOpenEditor(false);
                                                     setState({ ...state, isEdit: false })
                                                 }}
                                                 size="large"
@@ -1302,7 +1302,7 @@ const ExamDetailPage = () => {
                                             <Button
                                                 type="primary"
                                                 onClick={() => {
-                                                    setIsOpenEditor(false);
+                                                    // setIsOpenEditor(false);
                                                     setTimeout(() => {
                                                         questionForm.submit();
                                                     }, 600);

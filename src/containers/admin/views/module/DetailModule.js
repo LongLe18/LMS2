@@ -119,7 +119,7 @@ const DetailModule = () => {
     useEffect(() => {
         dispatch(partActions.getModule({ id: id.id }));
         dispatch(programmeAction.getProgrammes({ status: '' }));
-        dispatch(courseActions.getCourses({ idkct: '', status: '', search: '' }));
+        dispatch(courseActions.getCourses({ idkct: '', status: '', search: '', pageSize: 99999999, pageIndex: 1 }));
         dispatch(majorActions.getMajors());
         dispatch(userActions.getTeachers({ idMajor: '', status: '1', startDay: '', endDay: '', search: '' }));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -167,7 +167,8 @@ const DetailModule = () => {
         }   
         return (
             <Select
-                showSearch={false} value={state.courseId}
+                showSearch={true} value={state.courseId}
+                filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
                 loading={loadingcourses}
                 onChange={(khoa_hoc_id) => setState({khoa_hoc_id, ...state, isChanged: true })}
                 placeholder="Chọn khóa học"

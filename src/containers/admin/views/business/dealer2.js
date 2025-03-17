@@ -119,9 +119,9 @@ const DealerPage = (props) => {
             <Select
                 showSearch={false}
                 placeholder="Chọn khung chương trình"
-                onChange={(kct_id) => dispatch(courseAction.getCourses({ idkct: kct_id, status: '', search: '' }))}
+                onChange={(kct_id) => dispatch(courseAction.getCourses({ idkct: kct_id, status: '', search: '', pageSize: 99999999, pageIndex: 1 }))}
             >
-            {options}
+                {options}
             </Select>
         );
     };
@@ -268,128 +268,126 @@ const DealerPage = (props) => {
     }, [filter]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
-        <>
-            <div className="content">
-                <Col xl={24} className="body-content">
-                    <Row className="app-main">
-                        <Col xl={24} sm={24} xs={24}>
-                            <AppFilter
-                                title="Quản lý chiết khấu"
-                                isShowStatus={false}
-                                isShowSearchBox={true}
-                                isShowDatePicker={false}
-                                courses={courses.data}
-                                isShowCourse={true}
-                                isRangeDatePicker={false}
-                                onFilterChange={(field, value) => onFilterChange(field, value)}
-                            />
-                        </Col>
-                    </Row>
-                </Col>
-                {(dealers.status === 'success') && 
-                    <Table className="table-striped-rows" columns={columns} dataSource={data} />
-                }
-                <Row>
-                    <Col xl={24} sm={24} xs={24} className="cate-form-block">
-                        {(state.isEdit && dealer.status === 'success' && dealers) 
-                            ? <h5>Sửa thông tin chiết khấu</h5> 
-                            : <h5>Thêm mới chiết khấu</h5>}  
-                        <Form layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={submitForm}>
-                            <Form.Item
-                                className="input-col"
-                                label="Khung chương trình"
-                                name="kct_id"
-                                rules={[
-                                    {
-                                    required: true,
-                                    message: 'Khung chương trình là trường bắt buộc.',
-                                    },
-                                ]}
-                                >
-                                    {renderProgrammes()}
-                            </Form.Item>
-                            <Form.Item
-                                className="input-col"
-                                label="Khóa học"
-                                name="khoa_hoc_id"
-                                rules={[
-                                    {
-                                    required: true,
-                                    message: 'Khóa học là trường bắt buộc.',
-                                    },
-                                ]}
-                                >
-                                    {renderCourses()}
-                            </Form.Item>
-                            <Form.Item
-                                className="input-col"
-                                label="Giáo viên"
-                                name="giao_vien_id"
-                                rules={[
-                                    {
-                                    required: true,
-                                    message: 'Giáo viên là trường bắt buộc.',
-                                    },
-                                ]}
-                                >
-                                    {renderTeachers()}
-                            </Form.Item>
-                            <Form.Item
-                                className="input-col"
-                                label="Số lượng"
-                                name="so_luong"
-                                rules={[
-                                    {
-                                        required: !state.isEdit,
-                                        message: 'Số lượng là trường bắt buộc.',
-                                    },
-                                ]}
-                                >
-                                    <InputNumber placeholder="Nhập số lượng phiếu chiết khấu" style={{width: '100%'}} disabled={state.isEdit}/>
-                            </Form.Item>
-                            <Form.Item
-                                className="input-col"
-                                label="Chiết khấu học viên"
-                                name="chiet_khau_sv"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Chiết khấu học viên là trường bắt buộc.',
-                                    },
-                                ]}
-                                >
-                                    <InputNumber placeholder="Nhập tỉ lệ chiết khấu" style={{width: '100%'}}/>
-                            </Form.Item>
-                            <Form.Item
-                                className="input-col"
-                                label="Chiết khấu đại lý"
-                                name="chiet_khau_gv"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Chiết khấu đại lý là trường bắt buộc.',
-                                    },
-                                ]}
-                                >
-                                    <InputNumber placeholder="Nhập tỉ lệ chiết khấu" style={{width: '100%'}}/>
-                            </Form.Item>
-                            <Form.Item className="button-col">
-                                <Space>
-                                    <Button shape="round" type="primary" htmlType="submit" >
-                                        {(state.isEdit && dealer.status === 'success' && dealer.data) ? 'Cập nhật' : 'Thêm mới'}   
-                                    </Button>
-                                    {(state.isEdit && dealer.status === 'success' && dealer.data) 
-                                    ?   <Button shape="round" type="danger" onClick={() => cancelEdit()} > 
-                                            Hủy bỏ
-                                        </Button>
-                                    : ''}    
-                                </Space>    
-                            </Form.Item>
-                        </Form>
+        <div className="content">
+            <Col xl={24} className="body-content">
+                <Row className="app-main">
+                    <Col xl={24} sm={24} xs={24}>
+                        <AppFilter
+                            title="Quản lý chiết khấu"
+                            isShowStatus={false}
+                            isShowSearchBox={true}
+                            isShowDatePicker={false}
+                            courses={courses.data}
+                            isShowCourse={true}
+                            isRangeDatePicker={false}
+                            onFilterChange={(field, value) => onFilterChange(field, value)}
+                        />
                     </Col>
                 </Row>
-            </div>
-        </>
+            </Col>
+            {(dealers.status === 'success') && 
+                <Table className="table-striped-rows" columns={columns} dataSource={data} />
+            }
+            <Row>
+                <Col xl={24} sm={24} xs={24} className="cate-form-block">
+                    {(state.isEdit && dealer.status === 'success' && dealers) 
+                        ? <h5>Sửa thông tin chiết khấu</h5> 
+                        : <h5>Thêm mới chiết khấu</h5>}  
+                    <Form layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={submitForm}>
+                        <Form.Item
+                            className="input-col"
+                            label="Khung chương trình"
+                            name="kct_id"
+                            rules={[
+                                {
+                                required: true,
+                                message: 'Khung chương trình là trường bắt buộc.',
+                                },
+                            ]}
+                            >
+                                {renderProgrammes()}
+                        </Form.Item>
+                        <Form.Item
+                            className="input-col"
+                            label="Khóa học"
+                            name="khoa_hoc_id"
+                            rules={[
+                                {
+                                required: true,
+                                message: 'Khóa học là trường bắt buộc.',
+                                },
+                            ]}
+                            >
+                                {renderCourses()}
+                        </Form.Item>
+                        <Form.Item
+                            className="input-col"
+                            label="Giáo viên"
+                            name="giao_vien_id"
+                            rules={[
+                                {
+                                required: true,
+                                message: 'Giáo viên là trường bắt buộc.',
+                                },
+                            ]}
+                            >
+                                {renderTeachers()}
+                        </Form.Item>
+                        <Form.Item
+                            className="input-col"
+                            label="Số lượng"
+                            name="so_luong"
+                            rules={[
+                                {
+                                    required: !state.isEdit,
+                                    message: 'Số lượng là trường bắt buộc.',
+                                },
+                            ]}
+                            >
+                                <InputNumber placeholder="Nhập số lượng phiếu chiết khấu" style={{width: '100%'}} disabled={state.isEdit}/>
+                        </Form.Item>
+                        <Form.Item
+                            className="input-col"
+                            label="Chiết khấu học viên"
+                            name="chiet_khau_sv"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Chiết khấu học viên là trường bắt buộc.',
+                                },
+                            ]}
+                            >
+                                <InputNumber placeholder="Nhập tỉ lệ chiết khấu" style={{width: '100%'}}/>
+                        </Form.Item>
+                        <Form.Item
+                            className="input-col"
+                            label="Chiết khấu đại lý"
+                            name="chiet_khau_gv"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Chiết khấu đại lý là trường bắt buộc.',
+                                },
+                            ]}
+                            >
+                                <InputNumber placeholder="Nhập tỉ lệ chiết khấu" style={{width: '100%'}}/>
+                        </Form.Item>
+                        <Form.Item className="button-col">
+                            <Space>
+                                <Button shape="round" type="primary" htmlType="submit" >
+                                    {(state.isEdit && dealer.status === 'success' && dealer.data) ? 'Cập nhật' : 'Thêm mới'}   
+                                </Button>
+                                {(state.isEdit && dealer.status === 'success' && dealer.data) 
+                                ?   <Button shape="round" type="danger" onClick={() => cancelEdit()} > 
+                                        Hủy bỏ
+                                    </Button>
+                                : ''}    
+                            </Space>    
+                        </Form.Item>
+                    </Form>
+                </Col>
+            </Row>
+        </div>
     )
 };
 

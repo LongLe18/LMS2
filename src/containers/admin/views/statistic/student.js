@@ -186,7 +186,7 @@ const StatisticStudent = (props) => {
 
     useEffect(() => {
         // call get statistic course
-        dispatch(courseActions.getCourses({ idkct: '', status: '', search: '' }));
+        dispatch(courseActions.getCourses({ idkct: '', status: '', search: '', pageSize: 99999999, pageIndex: 1 }));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const onFilterChange = (field, value) => {
@@ -220,39 +220,35 @@ const StatisticStudent = (props) => {
     };
 
     return (
-        <>
-            <div className="content">
-                <Col xl={24} className="body-content">
-                    <Row className="app-main">
-                        <Col xl={24} sm={24} xs={24}>
-                                <>
-                                    <AppFilter
-                                        title="Thống kê học viên"
-                                        totalStudent={data.length}
-                                        isShowStatus={state.activeTab === '2' ? true : false}
-                                        status={PropStatusFilter}
-                                        isShowCourse={state.activeTab === '2' ? false : true}
-                                        courses={courses.data}
-                                        isShowSearchBox={state.activeTab === '2' ? false : true}
-                                        isShowDatePicker={false}
-                                        isRangeDatePicker={false}
-                                        dataExportStatisticStudent={state.activeTab === '2' && detail}
-                                        onFilterChange={(field, value) => onFilterChange(field, value)}
-                                    />
-                                </>
-                        </Col>
-                    </Row>
-                </Col>
-                <Tabs defaultActiveKey={state.activeTab} activeKey={state.activeTab} onChange={onChangeTab}>
-                    <TabPane tab="Thống kê khóa học" key="1">
-                        <Table className="table-striped-rows" columns={columns} dataSource={data} />
-                    </TabPane>
-                    <TabPane tab="Chi tiết Thống kê khóa học" disabled key="2">
-                        <Table className="table-striped-rows" columns={columns2} dataSource={detail} />
-                    </TabPane>
-                </Tabs>      
-            </div>
-        </>
+        <div className="content">
+            <Col xl={24} className="body-content">
+                <Row className="app-main">
+                    <Col xl={24} sm={24} xs={24}>
+                        <AppFilter
+                            title="Thống kê học viên"
+                            totalStudent={data.length}
+                            isShowStatus={state.activeTab === '2' ? true : false}
+                            status={PropStatusFilter}
+                            isShowCourse={state.activeTab === '2' ? false : true}
+                            courses={courses.data}
+                            isShowSearchBox={state.activeTab === '2' ? false : true}
+                            isShowDatePicker={false}
+                            isRangeDatePicker={false}
+                            dataExportStatisticStudent={state.activeTab === '2' && detail}
+                            onFilterChange={(field, value) => onFilterChange(field, value)}
+                        />
+                    </Col>
+                </Row>
+            </Col>
+            <Tabs defaultActiveKey={state.activeTab} activeKey={state.activeTab} onChange={onChangeTab}>
+                <TabPane tab="Thống kê khóa học" key="1">
+                    <Table className="table-striped-rows" columns={columns} dataSource={data} />
+                </TabPane>
+                <TabPane tab="Chi tiết Thống kê khóa học" disabled key="2">
+                    <Table className="table-striped-rows" columns={columns2} dataSource={detail} />
+                </TabPane>
+            </Tabs>      
+        </div>
     )
 };
 

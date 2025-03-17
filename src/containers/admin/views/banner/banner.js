@@ -62,7 +62,7 @@ const BannerCoursePage = (props) => {
         dispatch(advertiseAction.getAdsCourses({ status: '' }));
         dispatch(advertiseAction.getAdsDocs({ status: '' }));
         dispatch(advertiseAction.getAdsTeachers({ status: '' }));
-        dispatch(courseAction.getCourses({ idkct: '', status: '', search: '' }));
+        dispatch(courseAction.getCourses({ idkct: '', status: '', search: '', pageSize: 99999999, pageIndex: 1 }));
         dispatch(userAction.getTeachers({ idMajor: '', status: '', startDay: '', endDay: '', search: '' }));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -182,7 +182,7 @@ const BannerCoursePage = (props) => {
             render: (qctl_id) => (
                 <Space size="middle">
                     <Button  type="button" onClick={() => EditAdsDoc(qctl_id)} className="ant-btn ant-btn-round ant-btn-primary">Sửa</Button>
-                    <Button shape="round" onClick={() => DeleteDoc(qctl_id)} type="danger"  >Xóa</Button> 
+                    <Button shape="round" onClick={() => DeleteDoc(qctl_id)} type="danger">Xóa</Button> 
                 </Space>
             ),
         },
@@ -416,16 +416,19 @@ const BannerCoursePage = (props) => {
     };
 
     //////////////////// Xử lý CRUD quảng cáo khóa học
-    const renderCourse = () => {
+    const renderCourses = () => {
         let options = [];
         if (courses.status === 'success') {
-            options = courses.data.filter((course) => course.loai_kct === 2).map((course) => (
+            options = courses.data
+            .filter((course) => course.khung_chuong_trinh.loai_kct === 2 || course.khung_chuong_trinh.loai_kct === 4 || course.khung_chuong_trinh.loai_kct === 5)
+            .map((course) => (
                 <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
             ))
         }
         return (
             <Select
-                showSearch={false}
+                showSearch={true}
+                filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
                 loading={loadingCourses}
                 placeholder="Chọn khóa học"
             >
@@ -723,7 +726,7 @@ const BannerCoursePage = (props) => {
                                         },
                                     ]}
                                 >
-                                    {renderCourse()}
+                                    {renderCourses()}
                                 </Form.Item>
                                 <Form.Item
                                     className="input-col"
@@ -778,7 +781,7 @@ const BannerCoursePage = (props) => {
                                         },
                                     ]}
                                 >
-                                    {renderCourse()}
+                                    {renderCourses()}
                                 </Form.Item>
                                 <Form.Item
                                     className="input-col"

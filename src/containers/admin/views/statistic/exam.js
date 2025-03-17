@@ -147,7 +147,7 @@ const StatisticExam = (props) => {
         //         fetchStatiscal(res.data[0].de_thi_id);
         //     }
         // }
-        dispatch(courseActions.getCourses({ idkct: '', status: '', search: '' }));
+        dispatch(courseActions.getCourses({ idkct: '', status: '', search: '', pageSize: 99999999, pageIndex: 1 }));
         // dispatch(examActions.filterExam({ idCourse: '', idModule: '', idThematic: '', status: '', search: '', 
         //     start: '', end: '', idType: '', publish: 1, offset: '', limit: 1000000 }, callback));
         
@@ -157,7 +157,7 @@ const StatisticExam = (props) => {
     const renderCourseForPractice = () => {
         let options = [];
         if (courses.status === 'success') {
-            options = courses.data.filter((course) => course.loai_kct === 2).map((course) => (
+            options = courses.data.filter((course) => course.khung_chuong_trinh.loai_kct === 2 || course.khung_chuong_trinh.loai_kct === 4 || course.khung_chuong_trinh.loai_kct === 5).map((course) => (
                 <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id}>{course.ten_khoa_hoc}</Option>
             ))
         }
@@ -180,7 +180,7 @@ const StatisticExam = (props) => {
     const renderCourseForTryExam = () => {
         let options = [];
         if (courses.status === 'success') {
-            options = courses.data.filter((course) => course.loai_kct === 1).map((course) => (
+            options = courses.data.filter((course) => course.khung_chuong_trinh.loai_kct === 1).map((course) => (
                 <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id}>{course.ten_khoa_hoc}</Option>
             ))
         }
@@ -203,7 +203,7 @@ const StatisticExam = (props) => {
     const renderCourseForDGNL = () => {
         let options = [];
         if (courses.status === 'success') {
-            options = courses.data.filter((course) => course.loai_kct === 0).map((course) => (
+            options = courses.data.filter((course) => course.khung_chuong_trinh.loai_kct === 0 || course.khung_chuong_trinh.loai_kct === 3).map((course) => (
                 <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id}>{course.ten_khoa_hoc}</Option>
             ))
         }

@@ -329,7 +329,7 @@ const ExamOnlineDetai = () => {
             if (course?.data.loai_kct === 0) dispatch(examActions.editExamDGNLUser({ idExam: params.idExamUser, formData: info }))
             else dispatch(examActions.editExamUser({ idExam: params.idExamUser, formData: info }))
         }
-    }, [timeToDo]);
+    }, [timeToDo]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         // Khi hết thời gian mà đang ở phần cuối => nộp bài

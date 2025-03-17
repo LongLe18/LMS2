@@ -224,7 +224,7 @@
   align-items: center;
   padding: 16px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  border: solid 1px green;
+  border: solid 1px rgb(252, 169, 38);
 }
 
 .trang-chu .intro-trang-chu img {

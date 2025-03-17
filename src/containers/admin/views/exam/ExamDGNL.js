@@ -64,7 +64,7 @@ const ExamDGNLAdminPage = () => {
     useEffect(() => {
       dispatch(typeExamActions.getTypes());
       dispatch(majorActions.getMajors());
-      dispatch(courseActions.getCourses({ idkct: '', status: 1, search: '' })); // lấy khoá học đang hoạt động
+      dispatch(courseActions.getCourses({ idkct: '', status: 1, search: '', pageSize: 99999999, pageIndex: 1 })); // lấy khoá học đang hoạt động
       dispatch(programmeActions.getProgrammes({ status: 1 }, (res) => {
         if (res.status === 'success') {
           setProgrammes(res.data.filter(item => item.loai_kct === 0 || item.loai_kct === 3));
@@ -93,7 +93,7 @@ const ExamDGNLAdminPage = () => {
 
     const handleCancel = () => {
       setIsModalVisible(false);
-      dispatch(courseActions.getCourses({ idkct: '', status: 1, search: '' }));
+      dispatch(courseActions.getCourses({ idkct: '', status: 1, search: '', pageSize: 99999999, pageIndex: 1 }));
       // Gọi lại API lấy ds đề thi theo filter khoá học
       dispatch(examActions.filterExamDGNL({ idCourse: filter.khoa_hoc_id, kct_id: filter.kct_id, 
         status: filter.trang_thai, publish: tabs, pageIndex: pageIndex, pageSize: pageSize 
@@ -102,7 +102,7 @@ const ExamDGNLAdminPage = () => {
 
     const handleFastOk = () => {
       if (!spinning) {
-        dispatch(courseActions.getCourses({ idkct: '', status: 1, search: '' }));
+        dispatch(courseActions.getCourses({ idkct: '', status: 1, search: '', pageSize: 99999999, pageIndex: 1 }));
         // Gọi lại API lấy ds đề thi theo filter khoá học
         dispatch(examActions.filterExamDGNL({ idCourse: filter.khoa_hoc_id, kct_id: filter.kct_id, 
           status: filter.trang_thai, publish: tabs, pageIndex: pageIndex, pageSize: pageSize 
@@ -319,6 +319,8 @@ const ExamDGNLAdminPage = () => {
                   case 6: // ĐGTD
                     setProgrammes(res.data.filter(item => item.loai_kct === 3));
                     break;
+                  default: 
+                    break;
                 }
               }
             }));
@@ -346,7 +348,7 @@ const ExamDGNLAdminPage = () => {
       <Select
           showSearch={false}
           placeholder="Chọn khung chương trình"
-          onChange={(kct_id) => dispatch(courseActions.getCourses({ idkct: kct_id, status: 1, search: '' }))}
+          onChange={(kct_id) => dispatch(courseActions.getCourses({ idkct: kct_id, status: 1, search: '', pageSize: 99999999, pageIndex: 1 }))}
       >
         {options}
       </Select>
@@ -356,7 +358,7 @@ const ExamDGNLAdminPage = () => {
   const renderCourse = () => {
       let options = [];
       if (courses.status === 'success') {
-        options = courses.data.filter((course) => course.trang_thai === 1).map((type) => (
+        options = courses.data.filter((course) => course.trang_thai === true).map((type) => (
           <Option key={type.khoa_hoc_id} value={type.khoa_hoc_id} >{type.ten_khoa_hoc}</Option>
         ))
       }
@@ -715,7 +717,7 @@ const ExamDGNLAdminPage = () => {
                             isShowCourse={true}
                             isShowStatus={true}
                             isShowSearchBox={false}
-                            courses={courses.data.filter((course) => course.loai_kct === 0 || course.loai_kct === 3)}
+                            courses={courses.data.filter((course) => course.khung_chuong_trinh.loai_kct === 0 || course.khung_chuong_trinh.loai_kct === 3)}
                             onFilterChange={(field, value) => onFilterChange(field, value)}
                           />
                         }

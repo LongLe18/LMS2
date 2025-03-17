@@ -132,7 +132,7 @@ const AccountPage = () => {
     }
 
     useEffect(() => {
-      dispatch(courseActions.getCourses({ idkct: '', status: '', search: '' }, (res) => {
+      dispatch(courseActions.getCourses({ idkct: '', status: '', search: '', pageSize: 99999999, pageIndex: 1 }, (res) => {
         form.resetFields();
         setState({ ...state, isEdit: false });
       }));

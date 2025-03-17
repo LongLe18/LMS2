@@ -151,7 +151,7 @@ const DetailLesson = () => {
     };
 
     useEffect(() => {
-        dispatch(courseActions.getCourses({ idkct: 1, status: '', search: '' }));
+        dispatch(courseActions.getCourses({ idkct: 1, status: '', search: '', pageSize: 99999999, pageIndex: 1 }));
         dispatch(programmeAction.getProgrammes({ status: '' }));
         dispatch(lessonActions.getLesson({ id: id.id }));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -191,7 +191,7 @@ const DetailLesson = () => {
       };
 
       if (lesson.status === 'success' && courses.status === 'success') {
-        dispatch(courseActions.getCourses({ idkct: lesson.data.kct_id, status: '', search: '' }, callback));
+        dispatch(courseActions.getCourses({ idkct: lesson.data.kct_id, status: '', search: '', pageSize: 99999999, pageIndex: 1 }, callback));
       }
     }, [lesson]);  // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -206,7 +206,7 @@ const DetailLesson = () => {
             <Select
                 showSearch={false}
                 placeholder="Chọn khung chương trình"
-                onChange={(kct_id) => dispatch(courseActions.getCourses({ idkct: kct_id, status: '', search: '' }))}
+                onChange={(kct_id) => dispatch(courseActions.getCourses({ idkct: kct_id, status: '', search: '', pageSize: 99999999, pageIndex: 1 }))}
             >
             {options}
             </Select>

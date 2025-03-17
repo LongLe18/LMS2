@@ -133,9 +133,9 @@ const DiscountPage = (props) => {
             <Select
                 showSearch={false}
                 placeholder="Chọn khung chương trình"
-                onChange={(kct_id) => dispatch(courseAction.getCourses({ idkct: kct_id, status: '', search: '' }))}
+                onChange={(kct_id) => dispatch(courseAction.getCourses({ idkct: kct_id, status: '', search: '', pageSize: 99999999, pageIndex: 1 }))}
             >
-            {options}
+                {options}
             </Select>
         );
     };
@@ -270,127 +270,125 @@ const DiscountPage = (props) => {
     };
 
     return (
-        <>
-            <div className='content'>
-                <Row className="app-main">
-                    <Col xl={24} className="body-content">
+        <div className='content'>
+            <Row className="app-main">
+                <Col xl={24} className="body-content">
+                    <Row>
+                        <Col xl={24} sm={24} xs={24}>
+                            <AppFilter
+                            title="Danh sách khuyến mãi"
+                            isShowCourse={true}
+                            isShowModule={false}
+                            isShowThematic={false}
+                            isShowStatus={true}
+                            isShowSearchBox={false}
+                            isShowDatePicker={false}
+                            isRangeDatePicker={false}
+                            courses={courses.data}
+                            onFilterChange={(field, value) => onFilterChange(field, value)}
+                            />
+                        </Col>
+                    </Row>
+                </Col>
+            </Row>
+            <Table className="table-striped-rows" columns={columns} dataSource={state.dataDiscounts} />
+            <Row>
+                <Col xl={24} sm={24} xs={24} className="cate-form-block">
+                    {loading && <LoadingCustom/>}  
+                    {(state.isEdit && discount.status === 'success' && discount) ? <h5>Sửa thông tin khuyến mãi khóa học</h5> : <h5>Thêm mới khuyến mãi</h5>}  
+                    <Form layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={submitForm}>  
+                        <Form.Item
+                            className="input-col"
+                            label="Khung chương trình"
+                            name="kct_id"
+                            rules={[
+                                {
+                                required: true,
+                                message: 'Khung chương trình là trường bắt buộc.',
+                                },
+                            ]}
+                            >
+                                {renderProgrammes()}
+                        </Form.Item>
+                        <Form.Item
+                            className="input-col"
+                            label="Khóa học"
+                            name="khoa_hoc_id"
+                            rules={[
+                                {
+                                required: true,
+                                message: 'Khóa học là trường bắt buộc.',
+                                },
+                            ]}
+                            >
+                                {renderCourses()}
+                        </Form.Item>
+                        <Form.Item
+                            className="input-col"
+                            label="Mức giảm giá"
+                            name="muc_giam_gia"
+                            rules={[
+                                {
+                                required: true,
+                                message: 'Mức giảm giá là trường bắt buộc.',
+                                },
+                            ]}
+                            >
+                                <InputNumber placeholder='Nhập mức giảm giá cho khóa học' style={{width: '100%'}}/>
+                        </Form.Item>
+                        <Form.Item
+                            className="input-col"
+                            label="Trạng thái"
+                            name="trang_thai"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Trạng thái giá là trường bắt buộc.',
+                                },
+                            ]}
+                            >
+                                {renderStatus()}
+                        </Form.Item>
                         <Row>
-                            <Col xl={24} sm={24} xs={24}>
-                                <AppFilter
-                                title="Danh sách khuyến mãi"
-                                isShowCourse={true}
-                                isShowModule={false}
-                                isShowThematic={false}
-                                isShowStatus={true}
-                                isShowSearchBox={false}
-                                isShowDatePicker={false}
-                                isRangeDatePicker={false}
-                                courses={courses.data}
-                                onFilterChange={(field, value) => onFilterChange(field, value)}
-                                />
-                            </Col>
-                        </Row>
-                    </Col>
-                </Row>
-                <Table className="table-striped-rows" columns={columns} dataSource={state.dataDiscounts} />
-                <Row>
-                    <Col xl={24} sm={24} xs={24} className="cate-form-block">
-                        {loading && <LoadingCustom/>}  
-                        {(state.isEdit && discount.status === 'success' && discount) ? <h5>Sửa thông tin khuyến mãi khóa học</h5> : <h5>Thêm mới khuyến mãi</h5>}  
-                        <Form layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={submitForm}>  
                             <Form.Item
                                 className="input-col"
-                                label="Khung chương trình"
-                                name="kct_id"
-                                rules={[
-                                    {
-                                    required: true,
-                                    message: 'Khung chương trình là trường bắt buộc.',
-                                    },
-                                ]}
-                                >
-                                    {renderProgrammes()}
-                            </Form.Item>
-                            <Form.Item
-                                className="input-col"
-                                label="Khóa học"
-                                name="khoa_hoc_id"
-                                rules={[
-                                    {
-                                    required: true,
-                                    message: 'Khóa học là trường bắt buộc.',
-                                    },
-                                ]}
-                                >
-                                    {renderCourses()}
-                            </Form.Item>
-                            <Form.Item
-                                className="input-col"
-                                label="Mức giảm giá"
-                                name="muc_giam_gia"
-                                rules={[
-                                    {
-                                    required: true,
-                                    message: 'Mức giảm giá là trường bắt buộc.',
-                                    },
-                                ]}
-                                >
-                                    <InputNumber placeholder='Nhập mức giảm giá cho khóa học' style={{width: '100%'}}/>
-                            </Form.Item>
-                            <Form.Item
-                                className="input-col"
-                                label="Trạng thái"
-                                name="trang_thai"
+                                label="Ngày bắt đầu / ngày kết thúc khóa học"
+                                name="ngay_bat_dau"
                                 rules={[
                                     {
                                         required: true,
-                                        message: 'Trạng thái giá là trường bắt buộc.',
-                                    },
-                                ]}
-                                >
-                                    {renderStatus()}
-                            </Form.Item>
-                            <Row>
-                                <Form.Item
-                                    className="input-col"
-                                    label="Ngày bắt đầu / ngày kết thúc khóa học"
-                                    name="ngay_bat_dau"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Ngày bắt đầu / ngày kết thúc là trường bắt buộc.',
-                                            },
-                                    ]}
-                                >
-                                  <RangePicker
-                                    format="YYYY-MM-DD"
-                                    onChange={onChangeStart}
-                                    locale={{
-                                        lang: {
-                                            locale: 'en_US',
-                                            rangePlaceholder: ['Từ ngày', 'Đến ngày'],
+                                        message: 'Ngày bắt đầu / ngày kết thúc là trường bắt buộc.',
                                         },
-                                    }}
-                                  />
-                                </Form.Item>     
-                            </Row>
-                            <Form.Item className="button-col">
-                                <Space>
-                                    <Button shape="round" type="primary" htmlType="submit" >
-                                        {(state.isEdit && discount.status === 'success' && discount.data) ? 'Cập nhật' : 'Thêm mới'}   
+                                ]}
+                            >
+                                <RangePicker
+                                format="YYYY-MM-DD"
+                                onChange={onChangeStart}
+                                locale={{
+                                    lang: {
+                                        locale: 'en_US',
+                                        rangePlaceholder: ['Từ ngày', 'Đến ngày'],
+                                    },
+                                }}
+                                />
+                            </Form.Item>     
+                        </Row>
+                        <Form.Item className="button-col">
+                            <Space>
+                                <Button shape="round" type="primary" htmlType="submit" >
+                                    {(state.isEdit && discount.status === 'success' && discount.data) ? 'Cập nhật' : 'Thêm mới'}   
+                                </Button>
+                                {(state.isEdit && discount.status === 'success' && discount.data) 
+                                ?   <Button shape="round" type="danger" onClick={() => cancelEdit()} > 
+                                        Hủy bỏ
                                     </Button>
-                                    {(state.isEdit && discount.status === 'success' && discount.data) 
-                                    ?   <Button shape="round" type="danger" onClick={() => cancelEdit()} > 
-                                            Hủy bỏ
-                                        </Button>
-                                    : ''}    
-                                </Space>    
-                            </Form.Item>
-                        </Form>
-                    </Col>
-                </Row>
-            </div>
-        </>
+                                : ''}    
+                            </Space>    
+                        </Form.Item>
+                    </Form>
+                </Col>
+            </Row>
+        </div>
     )
 };
 

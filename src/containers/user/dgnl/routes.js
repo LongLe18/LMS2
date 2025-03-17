@@ -52,7 +52,8 @@ const routes = [
         path: '/luyen-tap/chi-tiet-luyen-tap/:id/:idCourse',
         exact: true,
         hidden: true,
-        render: (props) => (shouldHaveAccessPermission('detail', '/luyen-tap/chi-tiet-luyen-tap/:id/:idCourse') ? <PracticeDetailPage {...props}/> : <Redirect to="/auth/hocvien"/>),
+        // render: (props) => (shouldHaveAccessPermission('detail', '/luyen-tap/chi-tiet-luyen-tap/:id/:idCourse') ? <PracticeDetailPage {...props}/> : <Redirect to="/auth/hocvien"/>),
+        render: (props) => <PracticeDetailPage {...props}/>
     },
     {
         id: 'practicedetail',

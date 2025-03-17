@@ -51,7 +51,7 @@ const EvaluationPage = () => {
         dispatch(examActions.filterExam({ idCourse: '', idModule: '', idThematic: '', status: '', search: '', 
             start: '', end: '', idType: 4, publish: 1, offset: '', limit: 1000000 }));
         // request danh sách khóa học
-        dispatch(courseActions.getCourses({ idkct: '', status: '', search: '' }));
+        dispatch(courseActions.getCourses({ idkct: '', status: '', search: '', pageSize: 99999999, pageIndex: 1 }));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
@@ -192,11 +192,11 @@ const EvaluationPage = () => {
         let options = [];
         if (courses.status === 'success') {
             if (state.activeTab === '1') {
-                options = courses.data.filter((item) => item.loai_kct === 0).map((course) => (
+                options = courses.data.filter((item) => item.khung_chuong_trinh.loai_kct === 0).map((course) => (
                     <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
                 ))
             } else if (state.activeTab === '2') {
-                options = courses.data.filter((item) => item.loai_kct === 3).map((course) => (
+                options = courses.data.filter((item) => item.khung_chuong_trinh.loai_kct === 3).map((course) => (
                     <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
                 ))
             } else return null;

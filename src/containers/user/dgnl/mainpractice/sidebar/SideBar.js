@@ -131,142 +131,140 @@ function SideBarComponent() {
     };
 
     return (
-        <>
-            <div className="navbar-collapse widget">
-                <span className="widget-title "><span>KHÓA HỌC TRỰC TUYẾN</span></span>
-                <ul className="product-categories">
-                    {(courseAds.status === 'success' && coursesAdsFilter) && coursesAdsFilter.map(({ khoa_hoc_id, ten_khoa_hoc }) => (
-                        <li key={khoa_hoc_id} className="cat-item cat-item-187"><NavLink to={"/luyen-tap/luyen-tap/" + hashids.encode(khoa_hoc_id)} >{ten_khoa_hoc}</NavLink></li>
-                    ))
-                    }
-                    {errorcourseAds && <p>{errorcourseAds}</p>}
-                </ul>
-                
-                <div className="section slider pt-o" id="carousel">
-                    <div className="mt-4" style={{textAlign: "center"}}>
-                        <h5 className="blue-text">THÔNG TIN GIÁO VIÊN VÀ KHÓA HỌC ONLINE</h5>
-                    </div>
-                    {TeachersAdsFilter.length > 0 && 
-                    <Card className="page-carousel">
-                        <Carousel
+        <div className="navbar-collapse widget">
+            <span className="widget-title "><span>KHÓA HỌC TRỰC TUYẾN</span></span>
+            <ul className="product-categories">
+                {(courseAds.status === 'success' && coursesAdsFilter) && coursesAdsFilter.map(({ khoa_hoc_id, ten_khoa_hoc }) => (
+                    <li key={khoa_hoc_id} className="cat-item cat-item-187"><NavLink to={"/luyen-tap/luyen-tap/" + hashids.encode(khoa_hoc_id)} >{ten_khoa_hoc}</NavLink></li>
+                ))
+                }
+                {errorcourseAds && <p>{errorcourseAds}</p>}
+            </ul>
+            
+            <div className="section slider pt-o" id="carousel">
+                <div className="mt-4" style={{textAlign: "center"}}>
+                    <h5 className="blue-text">THÔNG TIN GIÁO VIÊN VÀ KHÓA HỌC ONLINE</h5>
+                </div>
+                {TeachersAdsFilter.length > 0 && 
+                <Card className="page-carousel">
+                    <Carousel
+                    activeIndex={activeIndex}
+                    next={next}
+                    previous={previous}
+                    >
+                    <CarouselIndicators
+                        items={TeachersAdsFilter}
                         activeIndex={activeIndex}
-                        next={next}
-                        previous={previous}
+                        onClickHandler={goToIndex}
+                    />
+                    {TeachersAdsFilter && TeachersAdsFilter.map((item) => {
+                        return (
+                        <CarouselItem
+                            onExiting={onExiting}
+                            onExited={onExited}
+                            key={item.anh_dai_dien}
                         >
-                        <CarouselIndicators
-                            items={TeachersAdsFilter}
-                            activeIndex={activeIndex}
-                            onClickHandler={goToIndex}
-                        />
-                        {TeachersAdsFilter && TeachersAdsFilter.map((item) => {
-                            return (
-                            <CarouselItem
-                                onExiting={onExiting}
-                                onExited={onExited}
-                                key={item.anh_dai_dien}
-                            >
-                                <img src={item.anh_dai_dien !== null ? config.API_URL + item.anh_dai_dien : defaultImage} alt={item.ten_giao_vien} className="img-no-padding img-responsive img-widget" />
-                                <CarouselCaption
-                                captionText={item.ten_giao_vien}
-                                captionHeader={item.ten_khoa_hoc}
-                                />
-                            </CarouselItem>
-                            );
-                        })}
-                        <a
-                            className="left carousel-control carousel-control-prev"
-                            data-slide="prev"
-                            href="#pablo"
-                            onClick={(e) => {
-                            e.preventDefault();
+                            <img src={item.anh_dai_dien !== null ? config.API_URL + item.anh_dai_dien : defaultImage} alt={item.ten_giao_vien} className="img-no-padding img-responsive img-widget" />
+                            <CarouselCaption
+                            captionText={item.ten_giao_vien}
+                            captionHeader={item.ten_khoa_hoc}
+                            />
+                        </CarouselItem>
+                        );
+                    })}
+                    <a
+                        className="left carousel-control carousel-control-prev"
+                        data-slide="prev"
+                        href="#pablo"
+                        onClick={(e) => {
+                        e.preventDefault();
                             previous();
-                            }}
-                            role="button"
-                        >
-                            <span className="fa fa-angle-left" />
-                            <span className="sr-only">Previous</span>
-                        </a>
-                        <a
-                            className="right carousel-control carousel-control-next"
-                            data-slide="next"
-                            href="#pablo"
-                            onClick={(e) => { 
-                            e.preventDefault();
+                        }}
+                        role="button"
+                    >
+                        <span className="fa fa-angle-left" />
+                        <span className="sr-only">Previous</span>
+                    </a>
+                    <a
+                        className="right carousel-control carousel-control-next"
+                        data-slide="next"
+                        href="#pablo"
+                        onClick={(e) => { 
+                        e.preventDefault();
                             next();
-                            }}
-                            role="button"
-                        >
-                            <span className="fa fa-angle-right" />
-                            <span className="sr-only">Next</span>
-                        </a>
-                        </Carousel>
-                    </Card>  
-                    }                                
-                </div>{" "}
+                        }}
+                        role="button"
+                    >
+                        <span className="fa fa-angle-right" />
+                        <span className="sr-only">Next</span>
+                    </a>
+                    </Carousel>
+                </Card>  
+                }                                
+            </div>{" "}
 
-                <div className="section slider pt-o" id="carousel">
-                    <div className="mt-4" style={{textAlign: "center"}}>
-                        <h5 className="blue-text">DANH MỤC TÀI LIỆU THAM KHẢO</h5>
-                    </div>
-                    {DocsAdsFilter.length > 0 &&
-                    <Card className="page-carousel" style={{margin: 0}}>
-                        <Carousel
+            <div className="section slider pt-o" id="carousel">
+                <div className="mt-4" style={{textAlign: "center"}}>
+                    <h5 className="blue-text">DANH MỤC TÀI LIỆU THAM KHẢO</h5>
+                </div>
+                {DocsAdsFilter.length > 0 &&
+                <Card className="page-carousel" style={{margin: 0}}>
+                    <Carousel
+                    activeIndex={activeIndex2}
+                    next={next2}
+                    previous={previous2}
+                    >
+                    <CarouselIndicators
+                        items={DocsAdsFilter}
                         activeIndex={activeIndex2}
-                        next={next2}
-                        previous={previous2}
+                        onClickHandler={goToIndex2}
+                    />
+                    {DocsAdsFilter.map((item) => {
+                        return (
+                        <CarouselItem
+                            onExiting={onExiting2}
+                            onExited={onExited2}
+                            key={item.anh_dai_dien}
                         >
-                        <CarouselIndicators
-                            items={DocsAdsFilter}
-                            activeIndex={activeIndex2}
-                            onClickHandler={goToIndex2}
-                        />
-                        {DocsAdsFilter.map((item) => {
-                            return (
-                            <CarouselItem
-                                onExiting={onExiting2}
-                                onExited={onExited2}
-                                key={item.anh_dai_dien}
-                            >
-                                <img src={item.anh_dai_dien !== null ? config.API_URL + item.anh_dai_dien : defaultImage} alt={item.ten_tai_lieu} className="img-no-padding img-responsive img-widget"/>
-                                <CarouselCaption
-                                captionText={item.ten_tai_lieu}
-                                />
-                            </CarouselItem>
-                            );
-                        })}
-                        <a
-                            className="left carousel-control carousel-control-prev"
-                            data-slide="prev"
-                            href="#pablo"
-                            onClick={(e) => {
-                            e.preventDefault();
+                            <img src={item.anh_dai_dien !== null ? config.API_URL + item.anh_dai_dien : defaultImage} alt={item.ten_tai_lieu} className="img-no-padding img-responsive img-widget"/>
+                            <CarouselCaption
+                            captionText={item.ten_tai_lieu}
+                            />
+                        </CarouselItem>
+                        );
+                    })}
+                    <a
+                        className="left carousel-control carousel-control-prev"
+                        data-slide="prev"
+                        href="#pablo"
+                        onClick={(e) => {
+                        e.preventDefault();
                             previous2();
-                            }}
-                            role="button"
-                        >
-                            <span className="fa fa-angle-left" />
-                            <span className="sr-only">Previous</span>
-                        </a>
-                        <a
-                            className="right carousel-control carousel-control-next"
-                            data-slide="next"
-                            href="#pablo"
-                            onClick={(e) => { 
-                            e.preventDefault();
+                        }}
+                        role="button"
+                    >
+                        <span className="fa fa-angle-left" />
+                        <span className="sr-only">Previous</span>
+                    </a>
+                    <a
+                        className="right carousel-control carousel-control-next"
+                        data-slide="next"
+                        href="#pablo"
+                        onClick={(e) => { 
+                        e.preventDefault();
                             next2();
-                            }}
-                            role="button"
-                        >
-                            <span className="fa fa-angle-right" />
-                            <span className="sr-only">Next</span>
-                        </a>
-                        </Carousel>
-                    </Card>                     
-                    }             
-                </div>{" "}
+                        }}
+                        role="button"
+                    >
+                        <span className="fa fa-angle-right" />
+                        <span className="sr-only">Next</span>
+                    </a>
+                    </Carousel>
+                </Card>                     
+                }             
+            </div>{" "}
 
-            </div>
-        </>
+        </div>
     )
 }
 

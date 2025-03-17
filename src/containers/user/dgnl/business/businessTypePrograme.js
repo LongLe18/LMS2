@@ -16,6 +16,7 @@ import config from '../../../../configs/index';
 // component
 import { Layout, Row, Col, Button, Input, Select, Form, Menu } from 'antd';
 import CarouselCustom from 'components/parts/Carousel/Carousel';
+import FooterBusiness from "components/parts/Footers/FooterBusiness";
 // import CardSlider from 'components/parts/CardSlider/CardSlier';
 import { BookOutlined, BarsOutlined, } from '@ant-design/icons';
 
@@ -43,18 +44,45 @@ const BusinessTypeProgramePage = (props) => {
     const programmes = useSelector(state => state.programme.list.result);
     const programmeCourses = useSelector(state => state.programme.courses.result);
 
-    const typeProgramme = [
-        { id: 1, name: 'Kiểm tra trình độ đầu vào', name2: 'Kiểm tra trình độ đầu vào Online', idElement: 'testEntrance', description: 'Bài kiểm tra được xây dựng bởi đội ngũ các Thầy Cô uy tín, nhiều năm kinh \n nghiệm giảng dạy nhằm đánh giá đúng trình độ đầu vào của mỗi HS' },
-        { id: 0, name: 'Thi thử ĐGNL - ĐGTD', name2: 'Thi thử ĐGNL - ĐHQGHN (HSA), ĐGTD - ĐHBK (TSA) Online', idElement: 'testCapacity', description: 'Trải nghiệm làm bài thi ĐGNL ĐHQGHN (HSA) và ĐGTD (TSA) trên phần mềm thi thử \n giống như khi làm bài HSA - TSA trên thực tế ở tổ chức tại ĐHQGHN, ĐHBK ...' },
-        { id: 2, name: 'Khóa luyện thi hàng đầu', name2: 'Luyện thi ĐGNL (HSA), ĐGTD (TSA)', idElement: 'study', description: 'Được xây dựng và thiết kế bởi đội ngũ giáo viên, chuyên gia uy tín hàng đầu đến từ ĐHQGHN, ĐHSP HN, ĐHBK ...' },
+    const typeProgrammes = [
+        {
+            id: 1,
+            name: 'Kiểm tra trình độ đầu vào Online', 
+            idElement: 'testEntrance', 
+        },
+        { 
+            id: 0,
+            name: 'Thi thử ĐGNL - ĐHQGHN (HSA) Online', 
+            idElement: 'testCapacity', 
+        }, 
+        {
+            id: 3,
+            name: 'Thi thử ĐGTD - ĐHQGHN (TSA) Online',
+            idElement: 'testCapacity'
+        }, {
+            id: 2,
+            name: 'Luyện thi ĐGNL (HSA), ĐGTD (TSA)', 
+            idElement: 'study', 
+        }, {
+            id: 4,
+            name: 'Luyện thi tốt nghiệp THCS, THPT',
+            idElement: 'study'
+        }, {
+            id: 5,
+            name: 'Học liệu, giáo trình, trải nghiệm giáo dục, steam - stem, ...', 
+            idElement: 'study', 
+        }, {
+            id: 6,
+            name: 'Bộ đề thi chuẩn được cập nhật mới theo từng năm',
+            idElement: 'examSample'
+        }
     ];
     
     useEffect(() => {
-        dispatch(courseAction.getCourses({ idkct: '', status: 1, search: '' }, (res) => {
+        dispatch(courseAction.getCourses({ idkct: '', status: 1, search: '', pageSize: 99999999, pageIndex: 1 }, (res) => {
             if (res.status === 'success') {
                 res.data.sort((objA, objB) => Number(new Date(objB.ngay_bat_dau)) - Number(new Date(objA.ngay_bat_dau)));
                 setDataInit(res.data);
-                // dataInit.push(...courses.data);    
             }
         }));
         dispatch(programmeAction.getProgrammes({ status: '' }));
@@ -101,43 +129,43 @@ const BusinessTypeProgramePage = (props) => {
 
     const search = (values) => {
         if (values.ten_khoa_hoc !== undefined && values.linh_vuc_id !== undefined && values.kct_id !== undefined) {
-            dispatch(courseAction.getCourses({ idkct: values.kct_id, status: 1, search: values.ten_khoa_hoc, idLinhVuc: values.linh_vuc_id }, (res) => {
+            dispatch(courseAction.getCourses({ idkct: values.kct_id, status: 1, search: values.ten_khoa_hoc, idLinhVuc: values.linh_vuc_id, pageSize: 99999999, pageIndex: 1 }, (res) => {
                 if (res.status === 'success') {
                     setDataSearch(res.data);
                 }
             }));
         } else if (values.ten_khoa_hoc !== undefined && values.linh_vuc_id !== undefined) {
-            dispatch(courseAction.getCourses({ idkct: '', status: 1, search: values.ten_khoa_hoc, idLinhVuc: values.linh_vuc_id }, (res) => {
+            dispatch(courseAction.getCourses({ idkct: '', status: 1, search: values.ten_khoa_hoc, idLinhVuc: values.linh_vuc_id, pageSize: 99999999, pageIndex: 1 }, (res) => {
                 if (res.status === 'success') {
                     setDataSearch(res.data);
                 }
             }));
         } else if (values.linh_vuc_id !== undefined && values.kct_id !== undefined) {
-            dispatch(courseAction.getCourses({ idkct: values.kct_id, status: 1, search: '', idLinhVuc: values.linh_vuc_id }, (res) => {
+            dispatch(courseAction.getCourses({ idkct: values.kct_id, status: 1, search: '', idLinhVuc: values.linh_vuc_id, pageSize: 99999999, pageIndex: 1 }, (res) => {
                 if (res.status === 'success') {
                     setDataSearch(res.data);
                 }
             }));
         } else if (values.ten_khoa_hoc !== undefined && values.kct_id !== undefined) {
-            dispatch(courseAction.getCourses({ idkct: values.kct_id, status: 1, search: values.ten_khoa_hoc, idLinhVuc: '' }, (res) => {
+            dispatch(courseAction.getCourses({ idkct: values.kct_id, status: 1, search: values.ten_khoa_hoc, idLinhVuc: '', pageSize: 99999999, pageIndex: 1 }, (res) => {
                 if (res.status === 'success') {
                     setDataSearch(res.data);
                 }
             }));
         } else if (values.kct_id !== undefined) {
-            dispatch(courseAction.getCourses({ idkct: values.kct_id, status: 1, search: '', }, (res) => {
+            dispatch(courseAction.getCourses({ idkct: values.kct_id, status: 1, search: '', pageSize: 99999999, pageIndex: 1 }, (res) => {
                 if (res.status === 'success') {
                     setDataSearch(res.data);
                 }
             }));
         } else if (values.ten_khoa_hoc !== undefined) {
-            dispatch(courseAction.getCourses({ idkct: '', status: 1, search: values.ten_khoa_hoc }, (res) => {
+            dispatch(courseAction.getCourses({ idkct: '', status: 1, search: values.ten_khoa_hoc, pageSize: 99999999, pageIndex: 1 }, (res) => {
                 if (res.status === 'success') {
                     setDataSearch(res.data);
                 }
             }));
         } else if (values.linh_vuc_id !== undefined) {
-            dispatch(courseAction.getCourses({ idkct: '', status: 1, idLinhVuc: values.linh_vuc_id, search: '' }, (res) => {
+            dispatch(courseAction.getCourses({ idkct: '', status: 1, idLinhVuc: values.linh_vuc_id, search: '', pageSize: 99999999, pageIndex: 1 }, (res) => {
                 if (res.status === 'success') {
                     setDataSearch(res.data);
                 }
@@ -289,9 +317,9 @@ const BusinessTypeProgramePage = (props) => {
                     
                     <Row gutter={16}>
                         {
-                            typeProgramme.filter((type) => type.id === Number(idTypeKCT)).map((item, index) => {
+                            typeProgrammes.filter((type) => type.id === Number(idTypeKCT)).map((item, index) => {
                                 return (
-                                    <Col Col xl={24} md={24} xs={24}>
+                                    <Col Col xl={24} md={24} xs={24} key={'key_' + index}>
                                         <h3 className="section-title section-title-center" style={{marginTop: 24}}>
                                             <b></b>
                                             <span style={{justifyContent: 'center', textTransform: 'uppercase', 
@@ -302,7 +330,7 @@ const BusinessTypeProgramePage = (props) => {
                                             <b></b>
                                         </h3>
                                         <Row gutter={[16, 16]} className="list-cate-items">
-                                            {courses.status === 'success' && courses.data.filter(course => course.loai_kct === item.id).map((cate, index) => {
+                                            {courses.status === 'success' && courses.data.filter(course => course.khung_chuong_trinh.loai_kct === item.id).map((cate, index) => {
                                                 return (
                                                     <Col xl={5} sm={12} xs={12} className="course-cate-row" key={cate.key}>
                                                         <div className="course-cate-box">
@@ -313,7 +341,7 @@ const BusinessTypeProgramePage = (props) => {
                                                                 </Link>
                                                             </div>
                                                             <div className="box-text pb-1">
-                                                                <h3 className="course-cate-title">
+                                                                <h3 className="course-cate-title" style={{minHeight: 38}}>
                                                                     <Link to={`/luyen-tap/gioi-thieu-khoa-hoc/${hashids.encode(cate.khoa_hoc_id)}`}>{cate.ten_khoa_hoc}</Link>
                                                                 </h3>
                                                                 <p className="course-cate-description">
@@ -373,6 +401,7 @@ const BusinessTypeProgramePage = (props) => {
             </Helmet>
             <Content className="app-content ">
                 {renderCourses()}
+                <FooterBusiness course={true}/>
             </Content>
         </Layout>
     )

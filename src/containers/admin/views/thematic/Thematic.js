@@ -115,7 +115,7 @@ const Thematic = () => {
     useEffect(() => {
       dispatch(thematicActions.filterThematics({ idCourse: '', idModule: filter.mo_dun_id, status: '', search: filter.search, 
         start: filter.start, end: filter.end}));
-        dispatch(courseActions.getCourses({ idkct: '', status: '', search: '' }));
+        dispatch(courseActions.getCourses({ idkct: '', status: '', search: '', pageSize: 99999999, pageIndex: 1 }));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
     
     const onFilterChange = (field, value) => {

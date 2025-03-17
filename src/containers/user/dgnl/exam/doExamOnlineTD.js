@@ -42,6 +42,7 @@ export default function ExamOnlineDetaiDGTD() {
     const [pause, setPause] = useState(false);
     const [results, setResults] = useState([]);
     const [isDoing, setIsDoing] = useState(true);
+    // eslint-disable-next-line no-unused-vars
     const [startTime, setStartTime] = useState(0);
     const [timeToDo, setTimeToDo] = useState(null); // Thời gian làm bài
     // const [listQuestion, setListQuestion] = useState(); // danh sách câu hỏi
@@ -942,94 +943,93 @@ export default function ExamOnlineDetaiDGTD() {
                     {question?.cau_hoi?.cau_hoi_chi_tiets?.map((cau_hoi, index) => {
                         const partCauhoi = cau_hoi?.noi_dung?.split('{ENTER}');
                         return (
-                            <Row key={index}>
-                                {
-                                    <div style={{fontSize: 18, marginBottom: 8}}>
-                                        {index + 1}. 
-                                        {partCauhoi.map((chi_tiet, index_2) => {
-                                            const contentQuestion_1 = chi_tiet.split('\n').map((item, index) => {
-                                                return (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                    <div style={{display: 'flex', justifyContent: 'center', width: '100%'}} key={index}>
-                                                        <Image src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question4_${index}`}></Image>
-                                                    </div>
-                                                ) : 
-                                                (
-                                                    <span key={index}>{item.split('$').map((item2, index2) => {
-                                                        return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
-                                                            <MathJax.Node key={index2} formula={item2} />
-                                                        ) : (
-                                                            <span key={index2} dangerouslySetInnerHTML={{ __html: item2 }}></span>
-                                                        )
-                                                    })}</span>
-                                                )
-                                            })
+                            <div key={'cau_hoi_chi_tiet_' + index} style={{fontSize: 20, marginBottom: 8, display:'-webkit-box'}}>
+                                {`${index + 1}.`} 
+                                <MathJax.Provider>
+                                    {partCauhoi.map((chi_tiet, index_2) => {
+                                        const contentQuestion_1 = chi_tiet.split('\n').map((item, index) => {
+                                            return (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
+                                                <div style={{display: 'flex', justifyContent: 'center', width: '100%'}} key={index}>
+                                                    <Image src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question4_${index}`}></Image>
+                                                </div>
+                                            ) : 
+                                            (
+                                                <>
+                                                {item.split('$').map((item2, index2) => {
+                                                    return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
+                                                        <MathJax.Node key={index2} formula={item2} />
+                                                    ) : (
+                                                        <span style={{marginLeft: 6, marginRight: 6}} key={index2} dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                    )
+                                                })}</>
+                                            )
+                                        })
 
-                                            let contentQuestion_2;
-                                            let contentQuestion_3;
-                                            if (index_2 < partCauhoi.length - 1) {
-                                                contentQuestion_2 = 
-                                                    <Droppable droppableId={selectedGaps[index + index_2]?.id ? 
-                                                        selectedGaps[index + index_2]?.id : 
-                                                        `gap-${gaps?.filter(gap => gap.userWord)?.length + index + index_2}`}
-                                                    >
-                                                        {(provided, snapshot) => (
-                                                            <div ref={provided.innerRef} style={{display: 'inline-block'}}
-                                                                {...provided.droppableProps}
-                                                                className={`${
-                                                                    snapshot.isDraggingOver ? 'bg-gray-50' : ''
-                                                                } ${selectedGaps[index  + index_2]?.userWord ? 'border-solid border-blue-500' : 'empty-box'}`}
-                                                            >
-                                                                {selectedGaps[index + index_2]?.userWord && (
-                                                                    <Draggable draggableId={`gap-${gaps?.filter(gap => gap.userWord)?.length + index + index_2}-word`} 
-                                                                        index={gaps?.filter(gap => gap.userWord)?.length + index + index_2}
-                                                                    >
-                                                                        {(provided) => (
-                                                                            <Tag
-                                                                                ref={provided.innerRef}
-                                                                                {...provided.draggableProps}
-                                                                                {...provided.dragHandleProps}
-                                                                                className="tag-word box-filled m-0"
-                                                                                color="orange"
-                                                                            >
-                                                                                <MathJax.Provider>
-                                                                                    {selectedGaps[index + index_2]?.userWord.split('\n').filter(item => item !== '').map((item, index_cauhoi) => {
-                                                                                        return (
-                                                                                            <div className="title-exam-content" key={index_cauhoi}>
-                                                                                                {
-                                                                                                    (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                                                                        <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}><Image src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question2_${index_cauhoi}`}></Image></div>
-                                                                                                    ) : 
-                                                                                                    (
-                                                                                                        <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
-                                                                                                            return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
-                                                                                                                <MathJax.Node key={index2} formula={item2} />
-                                                                                                            ) : (
-                                                                                                                <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
-                                                                                                            )
-                                                                                                        })}</div>
-                                                                                                    )
-                                                                                                }
-                                                                                            </div>
-                                                                                        )}
+                                        let contentQuestion_2;
+                                        // let contentQuestion_3;
+                                        if (index_2 < partCauhoi.length - 1) {
+                                            contentQuestion_2 = 
+                                                <Droppable droppableId={selectedGaps[index + index_2]?.id ? 
+                                                    selectedGaps[index + index_2]?.id : 
+                                                    `gap-${gaps?.filter(gap => gap.userWord)?.length + index + index_2}`}
+                                                >
+                                                    {(provided, snapshot) => (
+                                                        <div ref={provided.innerRef} style={{display: 'inline-block'}}
+                                                            {...provided.droppableProps}
+                                                            className={`${
+                                                                snapshot.isDraggingOver ? 'bg-gray-50' : ''
+                                                            } ${selectedGaps[index  + index_2]?.userWord ? 'border-solid border-blue-500' : 'empty-box'}`}
+                                                        >
+                                                            {selectedGaps[index + index_2]?.userWord && (
+                                                                <Draggable draggableId={`gap-${gaps?.filter(gap => gap.userWord)?.length + index + index_2}-word`} 
+                                                                    index={gaps?.filter(gap => gap.userWord)?.length + index + index_2}
+                                                                >
+                                                                    {(provided) => (
+                                                                        <Tag
+                                                                            ref={provided.innerRef}
+                                                                            {...provided.draggableProps}
+                                                                            {...provided.dragHandleProps}
+                                                                            className="tag-word box-filled m-0"
+                                                                            color="orange"
+                                                                        >
+                                                                            <MathJax.Provider>
+                                                                                {selectedGaps[index + index_2]?.userWord.split('\n').filter(item => item !== '').map((item, index_cauhoi) => {
+                                                                                    return (
+                                                                                        <div className="title-exam-content" key={index_cauhoi}>
+                                                                                            {
+                                                                                                (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
+                                                                                                    <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}><Image src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question2_${index_cauhoi}`}></Image></div>
+                                                                                                ) : 
+                                                                                                (
+                                                                                                    <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
+                                                                                                        return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
+                                                                                                            <MathJax.Node key={index2} formula={item2} />
+                                                                                                        ) : (
+                                                                                                            <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                                                                        )
+                                                                                                    })}</div>
+                                                                                                )
+                                                                                            }
+                                                                                        </div>
                                                                                     )}
-                                                                                </MathJax.Provider>
-                                                                            </Tag>
-                                                                        )}
-                                                                    </Draggable>
-                                                                )}
-                                                                {provided.placeholder}
-                                                            </div>
-                                                        )}
-                                                    </Droppable>
-                                            }
-                                            // if (isDoing && index_2 < partCauhoi.length - 1) {
-                                            //     // contentQuestion_3 = <div className={`empty-box`}></div>;
-                                            // }
-                                            return contentQuestion_1.concat(contentQuestion_2).concat(contentQuestion_3);
-                                        })}
-                                    </div>
-                                }
-                            </Row>
+                                                                                )}
+                                                                            </MathJax.Provider>
+                                                                        </Tag>
+                                                                    )}
+                                                                </Draggable>
+                                                            )}
+                                                            {provided.placeholder}
+                                                        </div>
+                                                    )}
+                                                </Droppable>
+                                        }
+                                        // if (isDoing && index_2 < partCauhoi.length - 1) {
+                                        //     // contentQuestion_3 = <div className={`empty-box`}></div>;
+                                        // }
+                                        return contentQuestion_1.concat(contentQuestion_2);
+                                    })}
+                                </MathJax.Provider>
+                            </div>
                         )
                     })}
                 </div>

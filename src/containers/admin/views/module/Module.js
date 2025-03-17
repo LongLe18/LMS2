@@ -51,7 +51,7 @@ const ModuleCate = (props) => {
       dispatch(programmeAction.getProgrammes({ status: '' }));
       dispatch(majorActions.getMajors());
 
-      dispatch(courseActions.getCourses({ idkct: '', status: '', search: '' }));
+      dispatch(courseActions.getCourses({ idkct: '', status: '', search: '', pageSize: 99999999, pageIndex: 1 }));
 
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -265,7 +265,7 @@ const ModuleCate = (props) => {
             <Select
               showSearch={false}
               placeholder="Chọn khung chương trình"
-              onChange={(kct_id) => dispatch(courseActions.getCourses({ idkct: kct_id, status: '', search: '' }))}
+              onChange={(kct_id) => dispatch(courseActions.getCourses({ idkct: kct_id, status: '', search: '', pageSize: 99999999, pageIndex: 1 }))}
             >
             {options}
             </Select>
@@ -281,7 +281,8 @@ const ModuleCate = (props) => {
       }
       return (
         <Select
-          showSearch={false} value={state.courseId}
+          showSearch={true} value={state.courseId}
+          filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
           loading={loadingcourses}
           onChange={(khoa_hoc_id) => setState({khoa_hoc_id, ...state, isChanged: true })}
           placeholder="Chọn khóa học"
@@ -451,7 +452,7 @@ const ModuleCate = (props) => {
                               isShowSearchBox={true}
                               isShowDatePicker={true}
                               isRangeDatePicker={true}
-                              courses={courses.data?.filter((course) => course.loai_kct === 2)}
+                              courses={courses.data?.filter((course) => course.khung_chuong_trinh.loai_kct === 2 || course.khung_chuong_trinh.loai_kct === 4 || course.khung_chuong_trinh.loai_kct === 5)}
                               onFilterChange={(field, value) => onFilterChange(field, value)}
                           />
                         </Col>

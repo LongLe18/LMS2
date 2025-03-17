@@ -303,7 +303,7 @@ const ReviewExamPage = () => {
                         <Space wrap >
                             {question?.cau_hoi?.lua_chon?.noi_dung?.split(';').map((lua_chon, index) => (
                                 <Tag style={{fontSize: 20, padding: '7px 14px'}}
-                                    key={index}
+                                    key={'tag_' + index}
                                     className={`cursor-move`}
                                     color="blue"
                                 >
@@ -333,31 +333,30 @@ const ReviewExamPage = () => {
                             ))}
                         </Space>
                     </div>
-                        
+                    
                     {question?.cau_hoi?.cau_hoi_chi_tiets?.map((cau_hoi, index) => {
                         const partCauhoi = cau_hoi?.noi_dung?.split('{ENTER}');
                         return (
-                            <Row key={index}>
+                            <div key={'cau_hoi_chi_tiet_' + index} style={{fontSize: 20, marginBottom: 8, display:'-webkit-box'}}>
                                 {index + 1}. 
-                                <div style={{fontSize: 18, marginBottom: 8}}>
+                                <MathJax.Provider>
                                     {partCauhoi.map((chi_tiet, index_2) => {
-                                        const contentQuestion_1 = chi_tiet.split('\n').map((item, index) => {
+                                        const contentQuestion_1 = chi_tiet.split('\n').filter(item => item !== '').map((item, index) => {
                                             return (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
                                                 <div style={{display: 'flex', justifyContent: 'center', width: '100%'}} key={index}>
                                                     <Image src={config.API_URL + `/${item?.match(regex)[1]}`} alt={`img_question4_${index}`}></Image>
                                                 </div>
                                             ) : 
                                             (
-                                                <span key={index}>{item.split('$').map((item2, index2) => {
+                                                <>{item.split('$').map((item2, index2) => {
                                                     return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
                                                         <MathJax.Node key={index2} formula={item2} />
                                                     ) : (
-                                                        <span key={index2} dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                        <span style={{marginLeft: 6, marginRight: 6}} key={index2} dangerouslySetInnerHTML={{ __html: item2 }}></span>
                                                     )
-                                                })}</span>
-                                            )
-                                        })
-
+                                                })}</>
+                                        )})
+                                        
                                         let contentQuestion2;
                                         if (index_2 < partCauhoi.length - 1) {
                                             contentQuestion2 = <div className={`empty-box`}></div>;
@@ -365,8 +364,8 @@ const ReviewExamPage = () => {
                                             return contentQuestion_1.concat(contentQuestion2);
                                         })
                                     }
-                                </div>
-                            </Row>
+                                </MathJax.Provider>
+                            </div>
                         )
                     })}
                 </div>
@@ -593,7 +592,7 @@ const ReviewExamPage = () => {
                                                 const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
                                                 return (
                                                     <Col xs={24} sm={24} md={getAnswerCols(question.cau_hoi.cot_tren_hang)} key={index}>
-                                                        <ul key={index}>
+                                                        <ul key={'key_' + index}>
                                                             <li className={`item ${isAnswered && isAnswered.dap_an === renderAnswerKey(index) ? 'active' : ''}`}>
                                                                 {(question.cau_hoi.loai_cau_hoi === 1) ?
                                                                     <button  style={{width:"100%"}}
@@ -707,7 +706,7 @@ const ReviewExamPage = () => {
                         <div className="header-exam">
                             <h1>{exam.data.ten_de_thi}</h1>
                         </div>
-                        <div class="wraper-exam"  style={{ padding: '0' }}>{renderExam()}</div>
+                        <div className="wraper-exam"  style={{ padding: '0' }}>{renderExam()}</div>
                     </Content>
                 </Layout>
             }

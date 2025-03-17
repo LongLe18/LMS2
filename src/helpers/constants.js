@@ -194,10 +194,13 @@ const EXAM_ANSWER_VIEW_LIST = [
 ];
 
 const TYPE_PROGRAMES = [
-  { label: 'Thi thử Online', value: 1 },
-  { label: 'Đánh giá năng lực', value: 0 },
-  { label: 'Đánh giá tư duy Bách khoa', value: 3 },
-  { label: 'Ôn luyện', value: 2 },
+  { label: 'Kiểm tra đầu vào', value: 1 },
+  { label: 'Thi thử ĐGNL', value: 0 },
+  { label: 'Thi thử ĐGTD', value: 3 },
+  { label: 'Luyện thi ĐGNL, ĐGTD', value: 2 },
+  { label: 'Luyện thi tốt nghiệp THCS, THPT', value: 4 },
+  { label: 'Học liệu, giáo trình', value: 5 },
+  { label: 'Bộ đề thi', value: 6 },
 ];
 
 const QUESTIONS_FORMATS = [{ label: 'Câu hỏi lựa chọn', value: 'LUA_CHON' }];

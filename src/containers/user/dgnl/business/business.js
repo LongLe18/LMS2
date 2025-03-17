@@ -27,7 +27,7 @@ const BusinessPage = () => {
     const courses = useSelector(state => state.course.list.result);
 
     useEffect(() => {
-        dispatch(courseAction.getCourses({ idkct: idKCT, status: 1, search: '' }))
+        dispatch(courseAction.getCourses({ idkct: idKCT, status: 1, search: '', pageSize: 99999999, pageIndex: 1 }))
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     if (courses.status === 'success') {

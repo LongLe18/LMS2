@@ -73,7 +73,7 @@ const ExamAdminPage = () => {
         offset: pageIndex, limit: pageSize 
       }));
       dispatch(typeExamActions.getTypes());
-      dispatch(courseActions.getCourses({ idkct: '', status: 1, search: '' })); // lấy khoá học đang hoạt động
+      dispatch(courseActions.getCourses({ idkct: '', status: 1, search: '', pageSize: 99999999, pageIndex: 1 })); // lấy khoá học đang hoạt động
       dispatch(programmeActions.getProgrammes({ status: 1 })); // lấy khung chương trình đang hoạt động
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -101,7 +101,7 @@ const ExamAdminPage = () => {
 
     const handleCancel = () => {
       setIsModalVisible(false);
-      dispatch(courseActions.getCourses({ idkct: '', status: 1, search: '' }));
+      dispatch(courseActions.getCourses({ idkct: '', status: 1, search: '', pageSize: 99999999, pageIndex: 1 }));
       // Gọi lại API lấy ds đề thi theo filter khoá học
       dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, 
         idThematic: filter.chuyen_de_id, status: filter.trang_thai, search: filter.search, 
@@ -110,7 +110,7 @@ const ExamAdminPage = () => {
 
     const handleFastOk = () => {
       if (!spinning) {
-        dispatch(courseActions.getCourses({ idkct: '', status: 1, search: '' }));
+        dispatch(courseActions.getCourses({ idkct: '', status: 1, search: '', pageSize: 99999999, pageIndex: 1 }));
         // Gọi lại API lấy ds đề thi theo filter khoá học
         dispatch(examActions.filterExam({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, 
           idThematic: filter.chuyen_de_id, status: filter.trang_thai, search: filter.search, 
@@ -324,7 +324,7 @@ const ExamAdminPage = () => {
         <Select
             showSearch={false}
             placeholder="Chọn khung chương trình"
-            onChange={(kct_id) => dispatch(courseActions.getCourses({ idkct: kct_id, status: 1, search: '' }))}
+            onChange={(kct_id) => dispatch(courseActions.getCourses({ idkct: kct_id, status: 1, search: '', pageSize: 99999999, pageIndex: 1 }))}
         >
           {options}
         </Select>
@@ -343,7 +343,7 @@ const ExamAdminPage = () => {
       <Select
           showSearch={false}
           placeholder="Chọn khung chương trình"
-          onChange={(kct_id) => dispatch(courseActions.getCourses({ idkct: kct_id, status: 1, search: '' }))}
+          onChange={(kct_id) => dispatch(courseActions.getCourses({ idkct: kct_id, status: 1, search: '', pageSize: 99999999, pageIndex: 1 }))}
       >
         {options}
       </Select>
@@ -362,7 +362,7 @@ const ExamAdminPage = () => {
       <Select
           showSearch={false}
           placeholder="Chọn khung chương trình"
-          onChange={(kct_id) => dispatch(courseActions.getCourses({ idkct: kct_id, status: 1, search: '' }))}
+          onChange={(kct_id) => dispatch(courseActions.getCourses({ idkct: kct_id, status: 1, search: '', pageSize: 99999999, pageIndex: 1 }))}
       >
         {options}
       </Select>

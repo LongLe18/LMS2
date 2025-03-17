@@ -197,7 +197,7 @@ const ThematicCate = () => {
           showSearch={true}
           filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
           placeholder="Chọn khung chương trình"
-          onChange={(kct_id) => dispatch(courseActions.getCourses({ idkct: kct_id, status: '', search: '' }))}
+          onChange={(kct_id) => dispatch(courseActions.getCourses({ idkct: kct_id, status: '', search: '', pageSize: 99999999, pageIndex: 1 }))}
         >
         {options}
         </Select>

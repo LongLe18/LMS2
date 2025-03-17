@@ -98,21 +98,21 @@ const ContentComponent = (props) => {
                     <div className="forgot-password">
                         Bạn quên mật khẩu?
                         <Button
-                        type="link"
-                        onClick={() => {
-                            window.location.href = config.BASE_URL + '/auth/forgot-password';
-                        }}
+                            type="link"
+                            onClick={() => {
+                                window.location.href = config.BASE_URL + '/auth/forgot-password';
+                            }}
                         >
-                        Lấy lại mật khẩu
+                            Lấy lại mật khẩu
                         </Button>
                     </div>
                     <div className="forgot-password">
                         Bạn chưa có tài khoản?
                         <Button
-                        type="link"
-                        onClick={() => {
-                            window.location.href = config.BASE_URL + '/auth/register';
-                        }}
+                            type="link"
+                            onClick={() => {
+                                window.location.href = config.BASE_URL + '/auth/register';
+                            }}
                         >
                         Đăng ký ngay
                         </Button>

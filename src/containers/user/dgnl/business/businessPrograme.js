@@ -54,7 +54,7 @@ const BusinessProgramePage = (props) => {
             }
         }
 
-        dispatch(courseAction.getCourses({ idkct: idKCT, status: 1, search: '' }));
+        dispatch(courseAction.getCourses({ idkct: idKCT, status: 1, search: '', pageSize: 99999999, pageIndex: 1 }));
         dispatch(programmeAction.getProgramme({ id: idKCT }, callback));
         dispatch(programmeAction.getProgrammeCourses());
     }, []); // eslint-disable-line react-hooks/exhaustive-deps

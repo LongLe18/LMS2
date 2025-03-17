@@ -345,23 +345,23 @@ const IntroCoursePage = () => {
                                                 <span>Bạn có muốn thi thử khóa học?</span>
                                             </Button>
                                         :
-                                            // <Link to={`/luyen-tap/luyen-tap/${hashids.encode(idCourse)}`} className='devvn_buy_now'>
-                                            //     <strong>Thi thử</strong>
-                                            //     <span>Bạn có muốn thi thử khóa học?</span>
-                                            // </Link>
-                                            <Button onClick={() => {
-                                                if (localStorage.getItem('userToken')) {
-                                                    history.push(`/luyen-tap/nguoi-dung/khoa-hoc`);
-                                                } else {
-                                                    notification.error({
-                                                        message: 'Thông báo',
-                                                        description: 'Bạn chưa đăng ký tài khoản, vui lòng đăng ký để vào học',
-                                                    });
-                                                }
-                                            }} className='devvn_buy_now'>
-                                                <strong style={{fontWeight: 400}}>Thi thử / Học thử</strong>
-                                                <span>Bạn có muốn thi thử / học thử ?</span>
-                                            </Button>
+                                            <Link to={`/luyen-tap/luyen-tap/${idCourse}`} className='devvn_buy_now'>
+                                                <strong>Thi thử / học thử</strong>
+                                                <span>Bạn có muốn thi thử / học thử khóa học?</span>
+                                            </Link>
+                                            // <Button onClick={() => {
+                                            //     if (localStorage.getItem('userToken')) {
+                                            //         history.push(`/luyen-tap/nguoi-dung/khoa-hoc`);
+                                            //     } else {
+                                            //         notification.error({
+                                            //             message: 'Thông báo',
+                                            //             description: 'Bạn chưa đăng ký tài khoản, vui lòng đăng ký để vào học',
+                                            //         });
+                                            //     }
+                                            // }} className='devvn_buy_now'>
+                                            //     <strong style={{fontWeight: 400}}>Thi thử / Học thử</strong>
+                                            //     <span>Bạn có muốn thi thử / học thử ?</span>
+                                            // </Button>
                                         }
                                     </>
                                 :   <Link to="#" className='devvn_exist_now' onClick={(event) => event.preventDefault()}>

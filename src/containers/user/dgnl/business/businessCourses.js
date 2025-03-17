@@ -29,10 +29,9 @@ const { Content } = Layout;
 const { Option } = Select;
 
 const CoursesPage = (props) => {
-    // eslint-disable-next-line no-unused-vars
     const hashids = new Hashids();
 
-    const [dataInit, setDataInit] = useState([]);
+    // const [dataInit, setDataInit] = useState([]);
     const [dataSearch, setDataSearch] = useState([]);
     const [courseOfUser] = useFetch(`/student/list/course`);
     
@@ -44,19 +43,62 @@ const CoursesPage = (props) => {
     const programmeCourses = useSelector(state => state.programme.courses.result);
 
     const typeProgrammes = [
-        { id: 1, name: 'Kiểm tra trình độ đầu vào', name2: 'Kiểm tra trình độ đầu vào Online', idElement: 'testEntrance', description: 'Bài kiểm tra được xây dựng bởi đội ngũ các Thầy Cô uy tín, nhiều năm kinh \n nghiệm giảng dạy nhằm đánh giá đúng trình độ đầu vào của mỗi HS' },
-        { id: 0, name: 'Thi thử ĐGNL - ĐGTD', name2: 'Thi thử ĐGNL - ĐHQGHN (HSA), ĐGTD - ĐHBK (TSA) Online', idElement: 'testCapacity', description: 'Trải nghiệm làm bài thi ĐGNL ĐHQGHN (HSA) và ĐGTD (TSA) trên phần mềm thi thử \n giống như khi làm bài HSA - TSA trên thực tế ở tổ chức tại ĐHQGHN, ĐHBK ...' },
-        { id: 2, name: 'Khóa luyện thi hàng đầu', name2: 'Luyện thi ĐGNL (HSA), ĐGTD (TSA)', idElement: 'study', description: 'Được xây dựng và thiết kế bởi đội ngũ giáo viên, chuyên gia uy tín hàng đầu đến từ ĐHQGHN, ĐHSP HN, ĐHBK ...' },
+        { name: 'Kiểm tra trình độ đầu vào',
+            idElement: 'testEntrance', 
+            subItem: [{
+                id: 1,
+                name: 'Kiểm tra trình độ đầu vào Online', 
+                idElement: '', 
+            }],
+            description: 'Bài kiểm tra được xây dựng bởi đội ngũ các Thầy Cô uy tín, nhiều năm kinh \n nghiệm giảng dạy nhằm đánh giá đúng trình độ đầu vào của mỗi HS' 
+        },
+        { name: 'Thi thử ĐGNL - ĐGTD', 
+            idElement: 'testCapacity',
+            subItem: [{
+                id: 0,
+                name: 'Thi thử ĐGNL - ĐHQGHN (HSA) Online', 
+                idElement: '', 
+            }, {
+                id: 3,
+                name: 'Thi thử ĐGTD - ĐHQGHN (TSA) Online',
+                idElement: ''
+            }],
+            description: 'Trải nghiệm làm bài thi ĐGNL ĐHQGHN (HSA) và ĐGTD (TSA) trên phần mềm thi thử \n giống như khi làm bài HSA - TSA trên thực tế ở tổ chức tại ĐHQGHN, ĐHBK ...' 
+        },
+        { name: 'Khóa luyện thi hàng đầu', 
+            subItem: [{
+                id: 2,
+                name: 'Luyện thi ĐGNL (HSA), ĐGTD (TSA)', 
+                idElement: 'studyDGNL', 
+            }, {
+                id: 4,
+                name: 'Luyện thi tốt nghiệp THCS, THPT',
+                idElement: 'studyTHCS'
+            }],
+            description: 'Được xây dựng và thiết kế bởi đội ngũ giáo viên, chuyên gia uy tín hàng đầu đến từ ĐHQGHN, ĐHSP HN, ĐHBK ...' 
+        },
+        { name: 'Giáo trình, học liệu, bộ đề thi chuẩn',
+            subItem: [{
+                id: 5,
+                name: 'Học liệu, giáo trình, trải nghiệm giáo dục, steam - stem, ...', 
+                idElement: 'study', 
+            }, {
+                id: 6,
+                name: 'Bộ đề thi chuẩn được cập nhật mới theo từng năm',
+                idElement: 'examSample'
+            }],
+            description: 'Được xây dựng và thiết kế bởi đội ngũ giáo viên, chuyên gia uy tín hàng đầu đến từ ĐHQGHN, ĐHSP HN, ĐHBK ...' 
+        }
     ];
     
     useEffect(() => {
-        dispatch(courseAction.getCourses({ idkct: '', status: 1, search: '' }, (res) => {
-            if (res.status === 'success') {
-                res.data.sort((objA, objB) => Number(new Date(objB.ngay_bat_dau)) - Number(new Date(objA.ngay_bat_dau)));
-                setDataInit(res.data);
-                // dataInit.push(...courses.data);    
-            }
-        }));
+        // dispatch(courseAction.getCourses({ idkct: '', status: 1, search: '' }, (res) => {
+        //     if (res.status === 'success') {
+        //         res.data.sort((objA, objB) => Number(new Date(objB.ngay_bat_dau)) - Number(new Date(objA.ngay_bat_dau)));
+        //         setDataInit(res.data);
+        //         // dataInit.push(...courses.data);    
+        //     }
+        // }));
         dispatch(programmeAction.getProgrammes({ status: '' }));
         dispatch(programmeAction.getProgrammeCourses());
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -74,7 +116,7 @@ const CoursesPage = (props) => {
                 placeholder="Chọn khung chương trình"
                 maxTagCount="responsive"
             >
-                <Option value='' >Tất cả</Option>
+                    <Option value='' >Tất cả</Option>
                 {options}
             </Select>
         );
@@ -101,43 +143,43 @@ const CoursesPage = (props) => {
 
     const search = (values) => {
         if (values.ten_khoa_hoc !== undefined && values.linh_vuc_id !== undefined && values.kct_id !== undefined) {
-            dispatch(courseAction.getCourses({ idkct: values.kct_id, status: 1, search: values.ten_khoa_hoc, idLinhVuc: values.linh_vuc_id }, (res) => {
+            dispatch(courseAction.getCourses({ idkct: values.kct_id, status: 1, search: values.ten_khoa_hoc, idLinhVuc: values.linh_vuc_id, pageSize: 99999999, pageIndex: 1 }, (res) => {
                 if (res.status === 'success') {
                     setDataSearch(res.data);
                 }
             }));
         } else if (values.ten_khoa_hoc !== undefined && values.linh_vuc_id !== undefined) {
-            dispatch(courseAction.getCourses({ idkct: '', status: 1, search: values.ten_khoa_hoc, idLinhVuc: values.linh_vuc_id }, (res) => {
+            dispatch(courseAction.getCourses({ idkct: '', status: 1, search: values.ten_khoa_hoc, idLinhVuc: values.linh_vuc_id, pageSize: 99999999, pageIndex: 1 }, (res) => {
                 if (res.status === 'success') {
                     setDataSearch(res.data);
                 }
             }));
         } else if (values.linh_vuc_id !== undefined && values.kct_id !== undefined) {
-            dispatch(courseAction.getCourses({ idkct: values.kct_id, status: 1, search: '', idLinhVuc: values.linh_vuc_id }, (res) => {
+            dispatch(courseAction.getCourses({ idkct: values.kct_id, status: 1, search: '', idLinhVuc: values.linh_vuc_id, pageSize: 99999999, pageIndex: 1 }, (res) => {
                 if (res.status === 'success') {
                     setDataSearch(res.data);
                 }
             }));
         } else if (values.ten_khoa_hoc !== undefined && values.kct_id !== undefined) {
-            dispatch(courseAction.getCourses({ idkct: values.kct_id, status: 1, search: values.ten_khoa_hoc, idLinhVuc: '' }, (res) => {
+            dispatch(courseAction.getCourses({ idkct: values.kct_id, status: 1, search: values.ten_khoa_hoc, idLinhVuc: '', pageSize: 99999999, pageIndex: 1 }, (res) => {
                 if (res.status === 'success') {
                     setDataSearch(res.data);
                 }
             }));
         } else if (values.kct_id !== undefined) {
-            dispatch(courseAction.getCourses({ idkct: values.kct_id, status: 1, search: '', }, (res) => {
+            dispatch(courseAction.getCourses({ idkct: values.kct_id, status: 1, search: '', pageSize: 99999999, pageIndex: 1 }, (res) => {
                 if (res.status === 'success') {
                     setDataSearch(res.data);
                 }
             }));
         } else if (values.ten_khoa_hoc !== undefined) {
-            dispatch(courseAction.getCourses({ idkct: '', status: 1, search: values.ten_khoa_hoc }, (res) => {
+            dispatch(courseAction.getCourses({ idkct: '', status: 1, search: values.ten_khoa_hoc, pageSize: 99999999, pageIndex: 1 }, (res) => {
                 if (res.status === 'success') {
                     setDataSearch(res.data);
                 }
             }));
         } else if (values.linh_vuc_id !== undefined) {
-            dispatch(courseAction.getCourses({ idkct: '', status: 1, idLinhVuc: values.linh_vuc_id, search: '' }, (res) => {
+            dispatch(courseAction.getCourses({ idkct: '', status: 1, idLinhVuc: values.linh_vuc_id, search: '', pageSize: 99999999, pageIndex: 1 }, (res) => {
                 if (res.status === 'success') {
                     setDataSearch(res.data);
                 }
@@ -217,8 +259,8 @@ const CoursesPage = (props) => {
                                     src={require("assets/img/trang-chu-3.png").default}
                                 />
                                 <div className="descripion-intro">
-                                    <h4 style={{fontSize: 22}}>Kiểm tra</h4>
-                                    <h6 style={{textTransform: 'uppercase', color: 'green'}}>Đánh giá đầu vào</h6>
+                                    <h4 style={{fontSize: 22}}>Phần mềm kiểm tra trình độ, phân lớp đầu vào đầu vào</h4>
+                                    {/* <h6 style={{textTransform: 'uppercase', color: 'green'}}>Đánh giá đầu vào</h6> */}
                                     <span className='descripion'>Tham gia các kì thi thử sức và làm quen với các hình thức thi mới nhất trên nền tảng công nghệ</span>
                                     <Button type="primary" style={{borderRadius: 8}} size={'large'} 
                                         onClick={() => document.getElementById("testEntrance").scrollIntoView({
@@ -237,8 +279,8 @@ const CoursesPage = (props) => {
                                     src={require("assets/img/trang-chu-2.png").default}
                                 />
                                 <div className="descripion-intro">
-                                    <h4 style={{fontSize: 22}}>Kiểm tra</h4>
-                                    <h6 style={{textTransform: 'uppercase', color: 'green'}}>ĐGNL HSA - TSA</h6>
+                                    <h4 style={{fontSize: 22}}>Phần mềm thi thử ĐGNL, ĐGTD HSA - TSA Online</h4>
+                                    {/* <h6 style={{textTransform: 'uppercase', color: 'green'}}>ĐGNL HSA - TSA</h6> */}
                                     <span className='descripion'>Trải nghiệm làm bài thi HSA trên phần mềm thi thử giống như tham gia kỳ thi HSA thực tế</span>
                                     <Button type="primary" style={{borderRadius: 8}} size={'large'} 
                                         onClick={() => document.getElementById("testCapacity").scrollIntoView({
@@ -257,11 +299,68 @@ const CoursesPage = (props) => {
                                     src={require("assets/img/trang-chu-1.png").default}
                                 />
                                 <div className="descripion-intro">
-                                    <h4 style={{fontSize: 22}}>Luyện thi</h4>
-                                    <h6 style={{textTransform: 'uppercase', color: 'green'}}>Online - offline</h6>
-                                    <span className='descripion'>Cung cấp thông tin đầy đủ về các khóa học, bài giảng chất lượng và lộ trình học tập mới nhất</span>
+                                    <h4 style={{fontSize: 22}}>Khóa Luyện thi ĐGNL, ĐGTD HSA - TSA</h4>
+                                    {/* <h6 style={{textTransform: 'uppercase', color: 'green'}}>Online - offline</h6> */}
+                                    <span className='descripion'>Cung cấp thông tin đầy đủ về các khóa học, bài giảng chất lượng và lộ trình học tập mới nhất để thi ĐGNL, ĐGTD</span>
+                                    <Button type="primary" style={{borderRadius: 8}} size={'large'} 
+                                        onClick={() => document.getElementById("studyDGNL").scrollIntoView({
+                                            behavior: "smooth"
+                                        })}
+                                    >
+                                        Chi tiết ...
+                                    </Button>
+                                </div>
+                            </div>
+                        </Col>
+                        <Col xl={8} md={12} xs={24}>
+                            <div className="intro-trang-chu" style={{display: 'flex'}}>
+                                <img alt="..."  style={{borderRadius: 6}}
+                                    className="img-no-padding img-responsive"
+                                    src={require("assets/img/trang-chu-2.png").default}
+                                />
+                                <div className="descripion-intro">
+                                    <h4 style={{fontSize: 22}}>Khóa Luyện thi tốt nghiệp trường THCS, THPT</h4>
+                                    <span className='descripion'>Cung cấp thông tin đầy đủ về các khóa học, bài giảng chất lượng và lộ trình học tập mới nhất để thi THCS, THPT</span>
+                                    <Button type="primary" style={{borderRadius: 8}} size={'large'} 
+                                        onClick={() => document.getElementById("studyTHCS").scrollIntoView({
+                                            behavior: "smooth"
+                                        })}
+                                    >
+                                        Chi tiết ...
+                                    </Button>
+                                </div>
+                            </div>
+                        </Col>
+                        <Col xl={8} md={12} xs={24}>
+                            <div className="intro-trang-chu" style={{display: 'flex'}}>
+                                <img alt="..."  style={{borderRadius: 6}}
+                                    className="img-no-padding img-responsive"
+                                    src={require("assets/img/trang-chu-1.png").default}
+                                />
+                                <div className="descripion-intro">
+                                    <h4 style={{fontSize: 22}}>Học liệu, giáo trình chuẩn, trải nghiệm STEAM-STEM</h4>
+                                    <span className='descripion'>Cung cấp thông tin đầy đủ về các chương trình khóa học, giáo trình phục vụ thi STEM</span>
                                     <Button type="primary" style={{borderRadius: 8}} size={'large'} 
                                         onClick={() => document.getElementById("study").scrollIntoView({
+                                            behavior: "smooth"
+                                        })}
+                                    >
+                                        Chi tiết ...
+                                    </Button>
+                                </div>
+                            </div>
+                        </Col>
+                        <Col xl={8} md={12} xs={24}>
+                            <div className="intro-trang-chu" style={{display: 'flex'}}>
+                                <img alt="..."  style={{borderRadius: 6}}
+                                    className="img-no-padding img-responsive"
+                                    src={require("assets/img/trang-chu-3.png").default}
+                                />
+                                <div className="descripion-intro">
+                                    <h4 style={{fontSize: 22}}>Bộ đề thi HSA - TSA chuẩn, cập nhật mới từng năm</h4>
+                                    <span className='descripion'>Cung cấp thông tin đầy đủ về các bộ đề thi HSA - TSA theo từng năm để học viên ôn tập</span>
+                                    <Button type="primary" style={{borderRadius: 8}} size={'large'} 
+                                        onClick={() => document.getElementById("examSample").scrollIntoView({
                                             behavior: "smooth"
                                         })}
                                     >
@@ -390,7 +489,7 @@ const CoursesPage = (props) => {
                     {(courses.status === 'success' && programmes.status === 'success' && programmes.data.length > 0) && 
                         typeProgrammes.map((item, index) => {
                             return (
-                                <div key={index} id={item.idElement}>
+                                <div key={'key_' + index} id={item.idElement}>
                                     <h3 className="section-title section-title-center" style={{marginTop: 24, marginBottom: 6}}>
                                         <b></b>
                                         <MenuOutlined style={{color: 'rgb(21, 87, 21)', fontSize: 20, marginLeft: 6}}/>
@@ -409,29 +508,32 @@ const CoursesPage = (props) => {
                                             <StarOutlined style={{margin: '0 12px 12px 0', color: '#ff6c00', fontSize: 24}}/>
                                         </div>
                                     </div>
-                                    <div className="main-section">
-                                        <div className="header-section">
-                                            <h3 className="section-title section-title-center" style={{marginBottom: 0, marginTop: 0}}>
-                                                <span className="section-title-main">{item.name2}</span>
-                                            </h3>
-                                            <Link style={{borderRadius: 8, margin: '12px 15px', display: 'flex', alignItems: 'center', padding: '0px 16px'}} 
-                                                className="ant-btn ant-btn-default ant-btn-lg"
-                                                to={`/luyen-tap/loai-chuong-trinh/${item.id}`}
-                                            >
-                                                Xem tất cả <RightOutlined style={{marginLeft: 8}}/>
-                                            </Link>
+                                    {item.subItem.map((subItem, subIndex) => (
+                                        <div className="main-section" key={'key_subItem_' + subIndex} id={subItem.idElement}>
+                                            <div className="header-section">
+                                                <h3 className="section-title section-title-center" style={{marginBottom: 0, marginTop: 0}}>
+                                                    <span className="section-title-main">{subItem.name}</span>
+                                                </h3>
+                                                <Link style={{borderRadius: 8, margin: '12px 15px', display: 'flex', alignItems: 'center', padding: '0px 16px'}} 
+                                                    className="ant-btn ant-btn-default ant-btn-lg"
+                                                    to={`/luyen-tap/loai-chuong-trinh/${subItem.id}`}
+                                                >
+                                                    Xem tất cả <RightOutlined style={{marginLeft: 8}}/>
+                                                </Link>
+                                            </div>
+                                            {programmes.data.length > 0 && 
+                                                <CardSlider id={index} 
+                                                    courses={courses.data.filter(course => course.khung_chuong_trinh.loai_kct === subItem.id).sort((a, b) => {
+                                                        if (a.ten_khoa_hoc < b.ten_khoa_hoc) return -1;
+                                                        if (a.ten_khoa_hoc > b.ten_khoa_hoc) return 1;
+                                                        return 0;
+                                                    })} 
+                                                    link={`/luyen-tap/gioi-thieu-khoa-hoc/`}
+                                                />
+                                            }
                                         </div>
-                                        {programmes.data.length > 0 && 
-                                            <CardSlider id={index} 
-                                                courses={courses.data.filter(course => course.loai_kct === item.id).sort((a, b) => {
-                                                    if (a.ten_khoa_hoc < b.ten_khoa_hoc) return -1;
-                                                    if (a.ten_khoa_hoc > b.ten_khoa_hoc) return 1;
-                                                    return 0;
-                                                })} 
-                                                link={`/luyen-tap/gioi-thieu-khoa-hoc/`}
-                                            />
-                                        }
-                                    </div>
+                                    ))}
+                                    
                                 </div>
                             )
                         })

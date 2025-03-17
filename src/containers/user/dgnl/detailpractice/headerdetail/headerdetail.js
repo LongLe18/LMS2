@@ -25,6 +25,7 @@ const HeaderDetailPage = (props) => {
     const course = useSelector(state => state.course.item.result);
     const loading = useSelector(state => state.part.item.loading);
     const error = useSelector(state => state.part.item.error);
+
     useEffect(() => {
         dispatch(moduleAction.getModule({ id: props.id }))
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -44,9 +45,10 @@ const HeaderDetailPage = (props) => {
             { (course.status === 'success' && module.status === "success" && thematic.status === "success") && <Row className="header-detail" style={{margin: 0}}>
                 <Col md="4" style={{textAlign: "center"}} className="mt-4">
                     <Card className="shadow-box">
-                        <img alt="..." style={{maxHeight: "288px"}}
+                        <img src={module?.data?.anh_dai_dien ? config.API_URL + `${module?.data?.anh_dai_dien}` : require('assets/img/default.jpg').default} 
+                            alt={module?.data?.ten_mo_dun} 
                             className="img-no-padding img-responsive"
-                            src={config.API_URL + module.data.anh_dai_dien}
+                            style={{maxHeight: "288px"}}
                         />
                         <div className="title ml-2 mr-2 mt-0 mb-0">
                             <h4 className="blue-text bold mt-0">{module.data.ten_mo_dun}</h4>

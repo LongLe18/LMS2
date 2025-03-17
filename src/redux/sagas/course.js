@@ -7,7 +7,9 @@ import { get } from 'lodash';
 
 function* fetchCourses(payload) {
     try {
-        let endpoint = `${config.API_URL}/course?kct_id=${payload.params.idkct}&trang_thai=${payload.params.status}&search=${payload.params.search}`;
+        let endpoint = config.API_URL + `/course?kct_id=${payload.params.idkct}&trang_thai=${payload.params.status}&search=${payload.params.search}`;
+        if (payload.params.lkh_id) endpoint = endpoint + `&lkh_id=${payload.params.lkh_id}`;
+        if (payload.params.pageIndex && payload.params.pageSize) endpoint = endpoint + `&pageIndex=${payload.params.pageIndex}&pageSize=${payload.params.pageSize}`;
         const response = yield call(getApi, endpoint);
         const result = yield response.data;
         yield put({ type: actions.course.GET_COURSES_SUCCESS, result: result });

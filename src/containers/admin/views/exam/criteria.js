@@ -142,7 +142,7 @@ const Criteria = () => {
 
     useEffect(() => {
         dispatch(criteriaAction.getCriteriasCourse({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
-        dispatch(courseAction.getCourses({ idkct: '', status: '', search: '' }));
+        dispatch(courseAction.getCourses({ idkct: '', status: '', search: '', pageSize: 99999999, pageIndex: 1 }));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const columns = [
@@ -1288,25 +1288,25 @@ const Criteria = () => {
         let options = [];
         if (courses.status === 'success') {
             if (state.activeTab === '4') {
-                options = courses.data.filter((item) => item.loai_kct === 1).map((course) => (
+                options = courses.data.filter((item) => item.khung_chuong_trinh.loai_kct === 1).map((course) => (
                     <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
                 ))
             } else if (state.activeTab === '5') { // ĐGNL 
-                let temp = courses.data.filter((item) => item.loai_kct === 0);
+                let temp = courses.data.filter((item) => item.khung_chuong_trinh.loai_kct === 0);
                 if (!require.isEdit) temp = temp.filter(item => !dataCriteriaDGNL.some(comp => comp.khoa_hoc_id === item.khoa_hoc_id));
 
                 options = temp.map((course) => (
                     <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
                 ))
             } else if (state.activeTab === '6') {
-                let temp = courses.data.filter((item) => item.loai_kct === 3);
+                let temp = courses.data.filter((item) => item.khung_chuong_trinh.loai_kct === 3);
                 if (!require.isEdit) temp = temp.filter(item => !dataCriteriaDGNL.some(comp => comp.khoa_hoc_id === item.khoa_hoc_id));
 
                 options = temp.map((course) => (
                     <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
                 ))
             } else {
-                options = courses.data.filter((item) => item.loai_kct === 2).map((course) => (
+                options = courses.data.filter((item) => item.khung_chuong_trinh.loai_kct === 2 || item.khung_chuong_trinh.loai_kct === 4 || item.khung_chuong_trinh.loai_kct === 5).map((course) => (
                     <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
                 ))
             }
@@ -1314,7 +1314,8 @@ const Criteria = () => {
 
         return (
             <Select
-                showSearch={false} value={state.courseId}
+                showSearch={true} value={state.courseId}
+                filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
                 loading={loadingcourses}
                 onChange={(khoa_hoc_id) => {
                     setState({khoa_hoc_id, ...state, isChanged: true })
@@ -1808,7 +1809,7 @@ const Criteria = () => {
                                 <AppFilter
                                     title={"Tiêu chí đề thi tổng hợp"}
                                     isShowCourse={true}
-                                    courses={courses.data?.filter((course) => course.loai_kct === 2)}
+                                    courses={courses.data?.filter((course) => course.khung_chuong_trinh.loai_kct === 1)}
                                     onFilterChange={(field, value) => onFilterChange(field, value)}
                                 />
                             </Col>
@@ -1841,7 +1842,7 @@ const Criteria = () => {
                                 <AppFilter
                                     title={"Tiêu chí đề thi mô đun"}
                                     isShowCourse={true}
-                                    courses={courses.data?.filter((course) => course.loai_kct === 2)}
+                                    courses={courses.data?.filter((course) => course.khung_chuong_trinh.loai_kct === 2 || course.khung_chuong_trinh.loai_kct === 4 || course.khung_chuong_trinh.loai_kct === 5)}
                                     onFilterChange={(field, value) => onFilterChange(field, value)}
                                 />
                             </Col>
@@ -1875,7 +1876,7 @@ const Criteria = () => {
                                 <AppFilter
                                     title={"Tiêu chí đề thi chuyên đề"}
                                     isShowCourse={true}
-                                    courses={courses.data?.filter((course) => course.loai_kct === 2)}
+                                    courses={courses.data?.filter((course) => course.khung_chuong_trinh.loai_kct === 2 || course.khung_chuong_trinh.loai_kct === 4 || course.khung_chuong_trinh.loai_kct === 5)}
                                     onFilterChange={(field, value) => onFilterChange(field, value)}
                                 />
                             </Col>
@@ -1910,7 +1911,7 @@ const Criteria = () => {
                                         <AppFilter
                                             title={"Tiêu chí đề thi online"}
                                             isShowCourse={true}
-                                            courses={courses.data?.filter((course) => course.loai_kct === 1)}
+                                            courses={courses.data?.filter((course) => course.khung_chuong_trinh.loai_kct === 1)}
                                             onFilterChange={(field, value) => onFilterChange(field, value)}
                                         />
                                     </Col>
@@ -1944,7 +1945,7 @@ const Criteria = () => {
                                         <AppFilter
                                             title={"Tiêu chí đề thi ĐGNL"}
                                             isShowCourse={true}
-                                            courses={courses.data?.filter((course) => course.loai_kct === 0)}
+                                            courses={courses.data?.filter((course) => course.khung_chuong_trinh.loai_kct === 0)}
                                             onFilterChange={(field, value) => onFilterChange(field, value)}
                                         />
                                     </Col>
@@ -1980,7 +1981,7 @@ const Criteria = () => {
                                         <AppFilter
                                             title={"Tiêu chí đề thi ĐGTD"}
                                             isShowCourse={true}
-                                            courses={courses.data?.filter((course) => course.loai_kct === 3)}
+                                            courses={courses.data?.filter((course) => course.khung_chuong_trinh.loai_kct === 3)}
                                             onFilterChange={(field, value) => onFilterChange(field, value)}
                                         />
                                     </Col>

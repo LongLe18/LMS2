@@ -17,7 +17,7 @@ import * as courseAction from '../../../redux/actions/course';
 const FooterBusiness = (props) => {
     const [dataInit, setdataInit] = useState([]);
     let history = useHistory();
-    const idTypeCourse = useParams().idKCT;
+    const idTypeCourse = useParams().idTypeKCT;
     const hashids = new Hashids();
     
     const dispatch = useDispatch();
@@ -30,9 +30,9 @@ const FooterBusiness = (props) => {
             }
         };
 
-        if (props.course) dispatch(courseAction.getCourses({ idkct: '', status: 1, search: '' }, callback));
-        else {
-            if (idTypeCourse !== undefined) dispatch(courseAction.getCourses({ idkct: idTypeCourse, status: 1, search: '' }, callback));
+        if (props.course) dispatch(courseAction.getCourses({ idkct: '', status: 1, search: '', pageSize: 99999999, pageIndex: 1 }, callback));
+        else if (idTypeCourse !== undefined) {
+            dispatch(courseAction.getCourses({ idkct: idTypeCourse, status: 1, search: '', pageSize: 99999999, pageIndex: 1 }, callback));
         }
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
     
@@ -82,15 +82,17 @@ const FooterBusiness = (props) => {
                         //     </div>
                         // </div>
                         <Row gutter={[16, 16]} className="list-cate-items">
-                            {dataInit.map((cate, index) => {
+                            {dataInit.filter(item => item.loai_kct === 2 || item.loai_kct === 4 || item.loai_kct === 5).map((cate, index) => {
                                 if (index >= 4) 
                                 {
                                     return (
                                         <Col xl={6} sm={12} xs={12} className="course-cate-row" key={cate.khoa_hoc_id}>
                                             <div className="course-cate-box">
-                                                <div className="image-box">
+                                                <div className="image-box" >
                                                     <a href={`/luyen-tap/gioi-thieu-khoa-hoc/${hashids.encode(cate.khoa_hoc_id)}`}>
-                                                        <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} />
+                                                        <img src={ cate.anh_dai_dien ? config.API_URL + `${cate.anh_dai_dien}` : defaultImage} alt={cate.ten_khoa_hoc} 
+                                                            style={{maxHeight: 'none', height: 250}}
+                                                        />
                                                     </a>
                                                 </div>
                                                 <div className="box-text" style={{paddingBottom: 8}}>

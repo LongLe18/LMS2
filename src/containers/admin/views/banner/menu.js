@@ -89,7 +89,7 @@ const MenuPage = (props) => {
         dispatch(menuAction.getTypesMenus());
         dispatch(menuAction.getMenus());
         dispatch(programmeAction.getProgrammes({ status: '' }));
-        dispatch(courseAction.getCourses({ idkct: 1, status: 1, search: '' })); // call default API với id khung chương trình là 1
+        dispatch(courseAction.getCourses({ idkct: 1, status: 1, search: '', pageSize: 99999999, pageIndex: 1 })); // call default API với id khung chương trình là 1
         dispatch(moduleAction.getModulesByIdCourse2({ idCourse: 1 })) // call default API với id khóa học là 1 
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -135,10 +135,10 @@ const MenuPage = (props) => {
                 showSearch={false}
                 placeholder="Chọn khung chương trình"
                 onChange={(kct_id) => {
-                    dispatch(courseAction.getCourses({ idkct: kct_id, status: '', search: '' }));
+                    dispatch(courseAction.getCourses({ idkct: kct_id, status: '', search: '', pageSize: 99999999, pageIndex: 1 }));
                 }}
             >
-            {options}
+                {options}
             </Select>
         );
     };
@@ -152,7 +152,8 @@ const MenuPage = (props) => {
         }
         return (
             <Select
-                showSearch={false}
+                showSearch={true}
+                filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
                 placeholder="Chọn khóa học"
                 onChange={(khoa_hoc_id) => {
                     dispatch(moduleAction.getModulesByIdCourse2({ idCourse: khoa_hoc_id }));

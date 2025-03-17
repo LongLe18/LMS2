@@ -169,7 +169,7 @@ const OnlineExamDetailPage = () => {
         else dispatch(examActions.getExam({ id: id, type: 'dgtd' }, callback));
 
         dispatch(programmeActions.getProgrammes({ status: '' }));
-        dispatch(courseActions.getCourses({ idkct: '', status: '', search: '' }));
+        dispatch(courseActions.getCourses({ idkct: '', status: '', search: '', pageSize: 99999999, pageIndex: 1 }));
         dispatch(typeExamActions.getTypes());
         dispatch(exceprtActions.getExceprts({ pageSize: 1000000000, pageIndex: 1, id: '' }));
         dispatch(majorActions.getMajors()); // request chuyên ngành
@@ -260,12 +260,14 @@ const OnlineExamDetailPage = () => {
                             res.data.lua_chon.noi_dung.split(';').map((item, index) => {
                                 const newTag = { id: `${Date.now()}-${index}`, text: item.trim()};
                                 tempLuaChons.push(newTag);
+                                return null;
                             })
                             setTagsLuaChon(tempLuaChons);
 
                             res.data.dap_ans[0].noi_dung_dap_an.split(';').map((item, index) => {
                                 const newTag = { id: `${Date.now()}-${index + tempLuaChons.length}`, text: item.trim()};
                                 dap_ans.push(newTag);
+                                return null;
                             })
                             setTagDapAnDungs(dap_ans);
 
