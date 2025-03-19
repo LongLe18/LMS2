@@ -702,6 +702,141 @@ const forceDelete = async (req, res) => {
     });
 };
 
+const getExamSet = async (req, res) => {
+    const course = await Course.findOne({
+        include: [
+            {
+                model: CourseMedia,
+                required: true,
+                include: [
+                    {
+                        model: Media,
+                        attributes: ['tep_tin_id', 'ten', 'duong_dan'],
+                        required: true,
+                    },
+                ],
+            },
+        ],
+        where: {
+            khoa_hoc_id: req.params.id,
+        },
+    });
+
+    res.status(200).send({
+        status: 'success',
+        data: course,
+        message: null,
+    });
+};
+
+const deleteExamSet = async (req, res) => {
+    const course = await Course.findOne({
+        where: {
+            khoa_hoc_id: req.params.id,
+        },
+        attributes: ['anh_dai_dien'],
+    });
+    if (course.anh_dai_dien && fs.existsSync(`public${Course.anh_dai_dien}`))
+        fs.unlinkSync(`public${course.anh_dai_dien}`);
+
+    await Course.destroy({
+        where: {
+            khoa_hoc_id: req.params.id,
+        },
+    });
+
+    const examSetMedias = await CourseMedia.findAll({
+        where:{
+            khoa_hoc_id: req.params.id,
+        }
+    })
+
+    for(const examSetMedia of examSetMedias){
+        const media = await Media.findOne({
+            where:{
+                tep_tin_id: CourseMedia.tep_tin_id,
+            }
+        })
+        if (media.duong_dan && fs.existsSync(`public${media.duong_dan}`))
+            fs.unlinkSync(`public${media.duong_dan}`);
+        await Media.destroy({
+            where: {
+                tep_tin_id: CourseMedia.tep_tin_id,
+            },
+        });
+    }
+    
+    res.status(200).send({
+        status: 'success',
+        data: null,
+        message: null,
+    });
+};
+
+const uploadFileExams = async (req, res) => {
+    const { files } = req.files;
+
+    if (files.length === 0) {
+        res.status(400).send({
+            status: 'error',
+            data: null,
+            message: null,
+        });
+    }
+
+    for (const file of files) {
+        const media = await Media.create({
+            loai: checkFileType(file),
+            ten: file.originalname,
+            duong_dan: `${file.destination.replace('public', '')}/${
+                file.destination
+            }`,
+        });
+        await CourseMedia.create({
+            tep_tin_id: media.tep_tin_id,
+            khoa_hoc_id: req.params.id,
+        });
+    }
+
+    res.status(200).send({
+        status: 'success',
+        data: null,
+        message: null,
+    });
+};
+
+const deleteFileExam = async (req, res) => {
+    const courseMedia = await CourseMedia.findOne({
+        where:{
+            khtt_id: req.params.id
+        }
+    })
+    await CourseMedia.destroy({
+        where: {
+            khtt_id: req.params.id
+        },
+    });
+
+    const media = await Media.findOne({
+        where:{
+            tep_tin_id: courseMedia.tep_tin_id,
+        }
+    })
+    if (media.duong_dan && fs.existsSync(`public${media.duong_dan}`))
+        fs.unlinkSync(`public${media.duong_dan}`);
+    await Media.destroy({
+        where: {
+            tep_tin_id: courseMedia.tep_tin_id,
+        },
+    });
+
+    res.status(200).send({
+        status: 'success',
+        data: null,
+        message: 'deleted',
+    });
+};
+
 module.exports = {
     getStatistical,
     getAll,
@@ -723,4 +858,8 @@ module.exports = {
     addStudent,
     getStudents,
     getAddStudents,
+    getExamSet,
+    deleteExamSet,
+    uploadFileExams,
+    deleteFileExam
 };

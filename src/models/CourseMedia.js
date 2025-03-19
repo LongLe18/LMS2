@@ -1,15 +1,15 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../utils/db');
 
-const bodethiteptin = sequelize.define(
-    'bo_de_thi_tep_tin',
+const khoahocteptin = sequelize.define(
+    'khoa_hoc_tep_tin',
     {
-        bdttt_id: {
+        khtt_id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
         },
-        bo_de_thi_id: {
+        khoa_hoc_id: {
             type: DataTypes.INTEGER,
         },
         tep_tin_id: {
@@ -18,10 +18,10 @@ const bodethiteptin = sequelize.define(
     },
     {
         sequelize,
-        modelName: 'bo_de_thi_tep_tin',
+        modelName: 'khoa_hoc_tep_tin',
         freezeTableName: true,
         timestamps: false,
     }
 );
 
-module.exports = bodethiteptin;
+module.exports = khoahocteptin;

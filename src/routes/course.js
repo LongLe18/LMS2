@@ -13,9 +13,16 @@ router.post(
     ]),
     tryCatch(courseController.postCreate)
 );
-
+router.post(
+    '/:id/upload-file-exam', authToken, authRole([2], 6),
+    upload.fields([
+        { name: 'files', maxCount: 10 },
+    ]),
+    tryCatch(courseController.uploadFileExams)
+);
 //router.get('/create', authToken, authRole([2], 6), tryCatch(courseController.getCreate));
 router.get('/:id/edit', authToken, authRole([2], 6), tryCatch(courseController.getUpdate));
+router.get('/:id/exam-set', authToken, authRole([2], 6), tryCatch(courseController.getExamSet));
 router.put(
     '/:id', authToken, authRole([2], 6), 
     upload.fields([
@@ -24,6 +31,8 @@ router.put(
     ]),
     tryCatch(courseController.putUpdate)
 );
+router.delete('/:id/exam-set', authToken, authRole([2], 6), tryCatch(courseController.deleteExamSet));
+router.delete('/file-exam/:id', authToken, authRole([2], 6), tryCatch(courseController.deleteFileExam));
 router.delete('/:id', authToken, authRole([2], 6), tryCatch(courseController.deleteById));
 router.delete('/:id/force', authToken, authRole([2], 6), tryCatch(courseController.forceDelete));
 router.patch('/:id/restore', authToken, authRole([2], 6), tryCatch(courseController.restore));
