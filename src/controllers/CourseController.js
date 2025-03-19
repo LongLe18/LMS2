@@ -746,17 +746,17 @@ const deleteExamSet = async (req, res) => {
     });
 
     const examSetMedias = await CourseMedia.findAll({
-        where:{
+        where: {
             khoa_hoc_id: req.params.id,
-        }
-    })
+        },
+    });
 
-    for(const examSetMedia of examSetMedias){
+    for (const examSetMedia of examSetMedias) {
         const media = await Media.findOne({
-            where:{
+            where: {
                 tep_tin_id: CourseMedia.tep_tin_id,
-            }
-        })
+            },
+        });
         if (media.duong_dan && fs.existsSync(`public${media.duong_dan}`))
             fs.unlinkSync(`public${media.duong_dan}`);
         await Media.destroy({
@@ -765,7 +765,7 @@ const deleteExamSet = async (req, res) => {
             },
         });
     }
-    
+
     res.status(200).send({
         status: 'success',
         data: null,
@@ -790,7 +790,7 @@ const uploadFileExams = async (req, res) => {
             ten: file.originalname,
             duong_dan: `${file.destination.replace('public', '')}/${
                 file.destination
-            }`,
+            }/${file.filename}`,
         });
         await CourseMedia.create({
             tep_tin_id: media.tep_tin_id,
@@ -807,21 +807,21 @@ const uploadFileExams = async (req, res) => {
 
 const deleteFileExam = async (req, res) => {
     const courseMedia = await CourseMedia.findOne({
-        where:{
-            khtt_id: req.params.id
-        }
-    })
+        where: {
+            khtt_id: req.params.id,
+        },
+    });
     await CourseMedia.destroy({
         where: {
-            khtt_id: req.params.id
+            khtt_id: req.params.id,
         },
     });
 
     const media = await Media.findOne({
-        where:{
+        where: {
             tep_tin_id: courseMedia.tep_tin_id,
-        }
-    })
+        },
+    });
     if (media.duong_dan && fs.existsSync(`public${media.duong_dan}`))
         fs.unlinkSync(`public${media.duong_dan}`);
     await Media.destroy({
@@ -861,5 +861,5 @@ module.exports = {
     getExamSet,
     deleteExamSet,
     uploadFileExams,
-    deleteFileExam
+    deleteFileExam,
 };
