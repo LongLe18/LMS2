@@ -407,8 +407,8 @@ CourseMedia.belongsTo(Course, {
     constraints: false,
 });
 
-CourseMedia.hasOne(Media, { foreignKey: 'tep_tin_id', constraints: false });
-Media.belongsTo(CourseMedia, { foreignKey: 'tep_tin_id', constraints: false });
+CourseMedia.hasOne(Media, { foreignKey: 'tep_tin_id', sourceKey: 'tep_tin_id', constraints: false });
+Media.belongsTo(CourseMedia, { foreignKey: 'tep_tin_id', targetKey: 'tep_tin_id', constraints: false });
 
 module.exports = {
     Course,
