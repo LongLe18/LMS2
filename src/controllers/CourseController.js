@@ -745,23 +745,23 @@ const deleteExamSet = async (req, res) => {
         },
     });
 
-    const examSetMedias = await CourseMedia.findAll({
+    const courseMedias = await CourseMedia.findAll({
         where: {
             khoa_hoc_id: req.params.id,
         },
     });
 
-    for (const examSetMedia of examSetMedias) {
+    for (const courseMedia of courseMedias) {
         const media = await Media.findOne({
             where: {
-                tep_tin_id: CourseMedia.tep_tin_id,
+                tep_tin_id: courseMedia.tep_tin_id,
             },
         });
         if (media.duong_dan && fs.existsSync(`public${media.duong_dan}`))
             fs.unlinkSync(`public${media.duong_dan}`);
         await Media.destroy({
             where: {
-                tep_tin_id: CourseMedia.tep_tin_id,
+                tep_tin_id: courseMedia.tep_tin_id,
             },
         });
     }
@@ -785,12 +785,13 @@ const uploadFileExams = async (req, res) => {
     }
 
     for (const file of files) {
+        console.log(file);
         const media = await Media.create({
             loai: checkFileType(file),
             ten: file.originalname,
             duong_dan: `${file.destination.replace('public', '')}/${
-                file.destination
-            }/${file.filename}`,
+                file.filename
+            }`,
         });
         await CourseMedia.create({
             tep_tin_id: media.tep_tin_id,
