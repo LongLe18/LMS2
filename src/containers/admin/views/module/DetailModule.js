@@ -142,27 +142,31 @@ const DetailModule = () => {
     
     const renderProgramme = () => {
         let options = [];
-          if (programmes.status === 'success') {
-              options = programmes.data.filter((programme) => programme.loai_kct === 2).map((programme) => (
-                  <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
-              ))
-          }
-          return (
-              <Select
-                  showSearch={false}
-                  placeholder="Chọn khung chương trình"
-                  onChange={(kct_id) => dispatch(courseActions.getCourses({ idkct: kct_id, status: '', search: '' }))}
-              >
-              {options}
-              </Select>
-        );
+            if (programmes.status === 'success') {
+                options = programmes.data
+                .filter((programme) => programme.loai_kct === 2 || programme.loai_kct === 4 || programme.loai_kct === 5)
+                .map((programme) => (
+                    <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
+                ))
+            }
+            return (
+                <Select
+                    showSearch={false}
+                    placeholder="Chọn khung chương trình"
+                    onChange={(kct_id) => dispatch(courseActions.getCourses({ idkct: kct_id, status: '', search: '' }))}
+                >
+                    {options}
+                </Select>
+        )   ;
     };
 
     const renderParents = () => {
         let options = [];
         if (courses.status === 'success') {
-            options = courses.data.map((course) => (
-            <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
+            options = courses.data
+            .filter((course) => course.khung_chuong_trinh.loai_kct === 2 || course.khung_chuong_trinh.loai_kct === 4 || course.khung_chuong_trinh.loai_kct === 5)
+            .map((course) => (
+                <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
             ))
         }   
         return (

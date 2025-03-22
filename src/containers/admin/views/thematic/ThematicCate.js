@@ -78,6 +78,7 @@ const ThematicCate = () => {
           }
         }));
       dispatch(programmeActions.getProgrammes({ status: '' }));
+      dispatch(courseActions.getCourses({ idkct: '', status: '', search: '', pageSize: 99999999, pageIndex: 1 }));
       dispatch(majorActions.getClass());
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -188,7 +189,9 @@ const ThematicCate = () => {
     const renderProgramme = () => {
       let options = [];
         if (programmes.status === 'success') {
-            options = programmes.data.filter((programme) => programme.loai_kct === 2).map((programme) => (
+            options = programmes.data
+            .filter((programme) => programme.loai_kct === 2 || programme.loai_kct === 4 || programme.loai_kct === 5)
+            .map((programme) => (
                 <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
             ))
         }
@@ -207,7 +210,8 @@ const ThematicCate = () => {
     const renderClasses = () => {
       let options = [];
       if (classes.status === 'success') {
-        options = classes.data.map((course) => (
+        options = classes.data
+        .map((course) => (
           <Option key={course.lop_id} value={course.lop_id} >{course.ten_lop}</Option>
         ))
       }
@@ -224,7 +228,9 @@ const ThematicCate = () => {
     const renderCourses = () => {
       let options = [];
       if (courses.status === 'success') {
-        options = courses.data.map((course) => (
+        options = courses.data
+        .filter((course) => course.khung_chuong_trinh.loai_kct === 2 || course.khung_chuong_trinh.loai_kct === 4 || course.khung_chuong_trinh.loai_kct === 5)
+        .map((course) => (
           <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
         ))
       }
@@ -394,7 +400,7 @@ const ThematicCate = () => {
                                   isShowSearchBox={true}
                                   isShowDatePicker={false}
                                   isRangeDatePicker={false}
-                                  courses={courses.data}
+                                  courses={courses.data?.filter((course) => course.khung_chuong_trinh.loai_kct === 2 || course.khung_chuong_trinh.loai_kct === 4 || course.khung_chuong_trinh.loai_kct === 5)}
                                   onFilterChange={(field, value) => onFilterChange(field, value)}
                               />
                           </Col>

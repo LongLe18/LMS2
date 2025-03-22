@@ -381,6 +381,13 @@ import {
     loadOptionQuestion,
 } from './optionQuestion';
 
+import {
+    loadDeleteSetExam,
+    loadSetExam,
+    loadUploadSetExam,
+    loadDeleteFileSetExam,
+} from './setExam';
+
 export default function* rootSaga() {
     yield all([
         // major
@@ -709,5 +716,10 @@ export default function* rootSaga() {
         loadDeleteOptionQuestion(),
         loadEditOptionQuestion(),
         loadOptionQuestion(),
+        // Bộ đề thi
+        loadDeleteFileSetExam(),
+        loadDeleteSetExam(),
+        loadSetExam(),
+        loadUploadSetExam(),
     ]);
 }

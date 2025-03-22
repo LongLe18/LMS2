@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import './css/CourseCates.css';
 import './css/business.css';
 import './css/Testimonials.css';
+import constants from '../../../../helpers/constants';
 
 import { Helmet } from 'react-helmet';
 import { Link, useParams } from "react-router-dom";
@@ -10,15 +11,13 @@ import Hashids from 'hashids';
 // helper
 import defaultImage from 'assets/img/default.jpg';
 import config from '../../../../configs/index';
-// import moment from "moment";
-// import useFetch from "hooks/useFetch";
 
 // component
 import { Layout, Row, Col, Button, Input, Select, Form, Menu } from 'antd';
 import CarouselCustom from 'components/parts/Carousel/Carousel';
 import FooterBusiness from "components/parts/Footers/FooterBusiness";
-// import CardSlider from 'components/parts/CardSlider/CardSlier';
-import { BookOutlined, BarsOutlined, } from '@ant-design/icons';
+import CardSlider from 'components/parts/CardSlider/CardSlider';
+import { BookOutlined, BarsOutlined, StarOutlined, MenuOutlined, } from '@ant-design/icons';
 
 // redux
 import { useSelector, useDispatch } from 'react-redux';
@@ -32,10 +31,9 @@ const { Option } = Select;
 const BusinessTypeProgramePage = (props) => {
     const idTypeKCT = useParams().idTypeKCT;
     const hashids = new Hashids();
-    // eslint-disable-next-line no-unused-vars
-    const [dataInit, setDataInit] = useState([]);
+    const [dataInit, setDataInit] = useState([]); // eslint-disable-next-line no-unused-vars
     const [dataSearch, setDataSearch] = useState([]);
-    // const [courseOfUser] = useFetch(`/student/list/course`);
+    const [selectedTab, setSelectedTab] = useState(1);
     
     const dispatch = useDispatch();
 
@@ -47,34 +45,48 @@ const BusinessTypeProgramePage = (props) => {
     const typeProgrammes = [
         {
             id: 1,
-            name: 'Kiểm tra trình độ đầu vào Online', 
-            idElement: 'testEntrance', 
+            name: 'Kiểm tra trình độ đầu vào',
+            name2: 'Kiểm tra trình độ đầu vào Online', 
+            idElement: 'testEntrance',
+            description: 'Bài kiểm tra được xây dựng bởi đội ngũ các Thầy Cô uy tín, nhiều năm kinh \n nghiệm giảng dạy nhằm đánh giá đúng trình độ đầu vào của mỗi HS'
         },
         { 
             id: 0,
-            name: 'Thi thử ĐGNL - ĐHQGHN (HSA) Online', 
-            idElement: 'testCapacity', 
+            name: 'Thi thử ĐGNL - ĐGTD', 
+            name2: 'Thi thử ĐGNL - ĐHQGHN (HSA) Online', 
+            idElement: 'testCapacity',
+            description: 'Trải nghiệm làm bài thi ĐGNL ĐHQGHN (HSA) và ĐGTD (TSA) trên phần mềm thi thử \n giống như khi làm bài HSA - TSA trên thực tế ở tổ chức tại ĐHQGHN, ĐHBK ...' 
         }, 
         {
             id: 3,
-            name: 'Thi thử ĐGTD - ĐHQGHN (TSA) Online',
-            idElement: 'testCapacity'
+            name: 'Thi thử ĐGNL - ĐGTD', 
+            name2: 'Thi thử ĐGTD - ĐHQGHN (TSA) Online',
+            idElement: 'testCapacity',
+            description: 'Trải nghiệm làm bài thi ĐGNL ĐHQGHN (HSA) và ĐGTD (TSA) trên phần mềm thi thử \n giống như khi làm bài HSA - TSA trên thực tế ở tổ chức tại ĐHQGHN, ĐHBK ...',
         }, {
             id: 2,
-            name: 'Luyện thi ĐGNL (HSA), ĐGTD (TSA)', 
+            name: 'Khóa luyện thi hàng đầu', 
+            name2: 'Luyện thi ĐGNL (HSA), ĐGTD (TSA)', 
+            description: 'Được xây dựng và thiết kế bởi đội ngũ giáo viên, chuyên gia uy tín hàng đầu đến từ ĐHQGHN, ĐHSP HN, ĐHBK ...' ,
             idElement: 'study', 
         }, {
             id: 4,
-            name: 'Luyện thi tốt nghiệp THCS, THPT',
-            idElement: 'study'
+            name: 'Khóa luyện thi hàng đầu', 
+            name2: 'Luyện thi tốt nghiệp THCS, THPT',
+            idElement: 'study',
+            description: 'Được xây dựng và thiết kế bởi đội ngũ giáo viên, chuyên gia uy tín hàng đầu đến từ ĐHQGHN, ĐHSP HN, ĐHBK ...' 
         }, {
             id: 5,
-            name: 'Học liệu, giáo trình, trải nghiệm giáo dục, steam - stem, ...', 
+            name: 'Giáo trình, học liệu, bộ đề thi chuẩn',
+            name2: 'Học liệu, giáo trình, trải nghiệm giáo dục, steam - stem, ...', 
             idElement: 'study', 
+            description: 'Được xây dựng và thiết kế bởi đội ngũ giáo viên, chuyên gia uy tín hàng đầu đến từ ĐHQGHN, ĐHSP HN, ĐHBK ...' 
         }, {
             id: 6,
-            name: 'Bộ đề thi chuẩn được cập nhật mới theo từng năm',
-            idElement: 'examSample'
+            name: 'Giáo trình, học liệu, bộ đề thi chuẩn',
+            name2: 'Bộ đề thi chuẩn được cập nhật mới theo từng năm',
+            idElement: 'examSample',
+            description: 'Được xây dựng và thiết kế bởi đội ngũ giáo viên, chuyên gia uy tín hàng đầu đến từ ĐHQGHN, ĐHSP HN, ĐHBK ...' 
         }
     ];
     
@@ -88,7 +100,7 @@ const BusinessTypeProgramePage = (props) => {
         dispatch(programmeAction.getProgrammes({ status: '' }));
         dispatch(programmeAction.getProgrammeCourses());
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
-    
+
     const renderProgramme = () => {
         let options = [];
         if (programmes.status === 'success') {
@@ -314,14 +326,71 @@ const BusinessTypeProgramePage = (props) => {
                             </Row>
                         </>
                     )}
-                    
-                    <Row gutter={16}>
+
+                    {(Number(idTypeKCT) === 2 || Number(idTypeKCT) === 4 || Number(idTypeKCT) === 5) ?
+                        typeProgrammes.filter((type) => type.id === Number(idTypeKCT)).map((item, index) => {
+                            return (
+                                <div key={'key_' + index}>
+                                    <h3 className="section-title section-title-center" style={{marginTop: 24}}>
+                                        <b></b>
+                                        <MenuOutlined style={{color: 'rgb(25, 105, 45)', fontSize: 20, marginLeft: 6}}/>
+                                        <span style={{justifyContent: 'center', textTransform: 'uppercase', 
+                                            color: 'rgb(25, 105, 45)', fontWeight: 700, margin: '0 15px'}}
+                                        >
+                                            {item.name}
+                                        </span>
+                                        <b></b>
+                                    </h3>
+                                    <div className="description-course">
+                                        <div dangerouslySetInnerHTML={{__html: item.description}} className="description-course-item"></div>
+                                        <div>
+                                            <StarOutlined style={{margin: '0 12px 12px 0', color: '#ff6c00', fontSize: 24}}/>
+                                            <StarOutlined style={{margin: '0 12px 12px 0', color: '#ff6c00', fontSize: 24}}/>
+                                            <StarOutlined style={{margin: '0 12px 12px 0', color: '#ff6c00', fontSize: 24}}/>
+                                        </div>
+                                    </div>
+                                    <div className="main-section" >
+                                        <div className="header-section" style={{background: 'white'}}>
+                                            <h3 className="section-title section-title-center" 
+                                                style={{marginBottom: 0, marginTop: 0, borderLeft: '5px rgb(25, 105, 45) solid'}}
+                                            >
+                                                <span className="section-title-main" style={{color: 'rgb(25, 105, 45)'}}>{item.name2}</span>
+                                            </h3>
+                                        </div>
+                                        <Row className="button-tabs" gutter={16}>
+                                            {constants.TYPE_COURSES.map((item, index) => (
+                                                <Col span={8} key={'keytab_' + item.value}>
+                                                    <div className={`tab-courses ${selectedTab === item.value ? 'active-tab' : ''}`}
+                                                        onClick={() => setSelectedTab(item.value)}
+                                                    >
+                                                        {item.label}
+                                                    </div>
+                                                </Col>
+                                            ))}
+                                        </Row>
+                                        <CardSlider id={index}
+                                            courses={courses?.data?.filter(course => course?.loai_khoa_hoc?.lkh_id === selectedTab)
+                                                .filter(course => course?.khung_chuong_trinh?.loai_kct === Number(idTypeKCT))
+                                                .sort((a, b) => {
+                                                    if (a.ten_khoa_hoc < b.ten_khoa_hoc) return -1;
+                                                    if (a.ten_khoa_hoc > b.ten_khoa_hoc) return 1;
+                                                    return 0;
+                                            })} 
+                                            link={`/luyen-tap/gioi-thieu-khoa-hoc/`}
+                                        />
+                                    </div>
+                                </div>
+                            )
+                        })   
+                    :
+                        <Row gutter={16}>
                         {
                             typeProgrammes.filter((type) => type.id === Number(idTypeKCT)).map((item, index) => {
                                 return (
                                     <Col Col xl={24} md={24} xs={24} key={'key_' + index}>
                                         <h3 className="section-title section-title-center" style={{marginTop: 24}}>
                                             <b></b>
+                                            <MenuOutlined style={{color: 'rgb(21, 87, 21)', fontSize: 20, marginLeft: 6}}/>
                                             <span style={{justifyContent: 'center', textTransform: 'uppercase', 
                                                 color: 'rgb(21, 87, 21)', fontWeight: 700, margin: '0 15px'}}
                                             >
@@ -329,6 +398,14 @@ const BusinessTypeProgramePage = (props) => {
                                             </span>
                                             <b></b>
                                         </h3>
+                                        <div className="description-course">
+                                            <div dangerouslySetInnerHTML={{__html: item.description}} className="description-course-item"></div>
+                                            <div>
+                                                <StarOutlined style={{margin: '0 12px 12px 0', color: '#ff6c00', fontSize: 24}}/>
+                                                <StarOutlined style={{margin: '0 12px 12px 0', color: '#ff6c00', fontSize: 24}}/>
+                                                <StarOutlined style={{margin: '0 12px 12px 0', color: '#ff6c00', fontSize: 24}}/>
+                                            </div>
+                                        </div>
                                         <Row gutter={[16, 16]} className="list-cate-items">
                                             {courses.status === 'success' && courses.data.filter(course => course.khung_chuong_trinh.loai_kct === item.id).map((cate, index) => {
                                                 return (
@@ -361,7 +438,10 @@ const BusinessTypeProgramePage = (props) => {
                                 )
                             })
                         }
-                    </Row>
+                        </Row>
+                    }
+
+                    
                 
                     {/* {(courses.status === 'success' && programmes.status === 'success' && programmes.data.length > 0) && 
                         typeProgramme.filter((type) => type.id === idTypeKCT).map((item, index) => {

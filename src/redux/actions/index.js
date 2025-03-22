@@ -25,6 +25,7 @@ import * as footer from './footer';
 import * as contact from './contact';
 import * as evaluate from './evaluate';
 import * as optionQuestion from './optionQuestion';
+import * as setExam from './setExam';
 
 export { 
     advertise,
@@ -54,4 +55,5 @@ export {
     contact,
     evaluate,
     optionQuestion,
+    setExam,
 }

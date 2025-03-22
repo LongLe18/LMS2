@@ -123,9 +123,9 @@ const IntroCoursePage = () => {
         const callback = (res) => {
             if (res.status === 'success') {
                 if (res.data !== null) {
-                    var current = new Date();
-                    var start = new Date(res.data.ngay_bat_dau);
-                    var end = new Date(res.data.ngay_ket_thuc);
+                    let current = new Date();
+                    let start = new Date(res.data.ngay_bat_dau);
+                    let end = new Date(res.data.ngay_ket_thuc);
                     if (res.data.trang_thai === true && current >= start && current <= end) {
                         setRemainedMoney({ ...remainedMoney, muc_giam_gia: res.data.muc_giam_gia, ngay_bat_dau: res.data.ngay_bat_dau, ngay_ket_thuc: res.data.ngay_ket_thuc });
                     }

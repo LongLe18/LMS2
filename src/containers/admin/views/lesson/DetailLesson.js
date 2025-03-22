@@ -22,11 +22,10 @@ import * as lessonActions from '../../../../redux/actions/lesson';
 import { useSelector, useDispatch } from "react-redux";
 
 // pdf
-import { Viewer } from '@react-pdf-viewer/core';
+import { Viewer, Worker } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
-import { Worker } from '@react-pdf-viewer/core';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -198,7 +197,9 @@ const DetailLesson = () => {
     const renderProgramme = () => {
       let options = [];
         if (programmes.status === 'success') {
-            options = programmes.data.map((programme) => (
+            options = programmes.data
+            .filter((programme) => programme.loai_kct === 2 || programme.loai_kct === 4 || programme.loai_kct === 5)
+            .map((programme) => (
                 <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
             ))
         }
@@ -216,7 +217,9 @@ const DetailLesson = () => {
     const renderCourses = () => {
       let options = [];
       if (courses.status === 'success') {
-        options = courses.data.map((course) => (
+        options = courses.data
+        .filter((course) => course.khung_chuong_trinh.loai_kct === 2 || course.khung_chuong_trinh.loai_kct === 4 || course.khung_chuong_trinh.loai_kct === 5)
+        .map((course) => (
           <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
         ))
       }

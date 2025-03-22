@@ -23,7 +23,7 @@ const Card = ({ ten_khoa_hoc, anh_dai_dien, khoa_hoc_id, link }) => {
     );
 };
 
-const CardSlider = ({ courses, id, link }) => {
+const CardSlider = ({ courses, id, link, key }) => {
     const hashids = new Hashids();
 
     const scrollLeft = () => {
@@ -57,7 +57,7 @@ const CardSlider = ({ courses, id, link }) => {
     };
 
     return (
-        <div className="card-slider">
+        <div className="card-slider" key={key}>
             <button className="scroll-button left" onClick={scrollLeft}><LeftOutlined style={{fontSize: 14}}/></button>
             <div className="cards-container" id={`cards-container-${id}`}>
                 {courses?.map((course, index) => (

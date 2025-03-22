@@ -1,6 +1,7 @@
 import { Redirect } from 'react-router-dom';
 
 import PracticeMainPage from './mainpractice/practicechoose';
+import ExamSetOfUserPage from './mainpractice/examSet';
 import PracticeDetailPage from './detailpractice/detailpractice';
 import { shouldHaveAccessPermission } from 'helpers/common.helper';
 import ExamPage from './exam/exam';
@@ -46,6 +47,13 @@ const routes = [
         exact: true,
         hidden: true,
         render: (props) => <PracticeMainPage {...props}/>,
+    },
+    {
+        id: "luyen-tap",
+        path: "/luyen-tap/bo-de-thi/:id",
+        exact: true,
+        hidden: true,
+        render: (props) => <ExamSetOfUserPage {...props}/>,
     },
     {
         id: 'chi-tiet-luyen-tap',

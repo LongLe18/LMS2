@@ -139,9 +139,8 @@ const Thematic = () => {
 
     return (
       <>
-      {/* {loading && <LoadingCustom/>} */}
         <div className="content">
-        <Row className="app-main">
+          <Row className="app-main">
             <Col xl={24} className="body-content">
               <Row>
                 <Col xl={24} sm={24} xs={24}>
@@ -162,8 +161,8 @@ const Thematic = () => {
                 </Col>
               </Row>
               </Col>
-          </Row>
-          <Row className="select-action-group" gutter={[8, 8]}>
+            </Row>
+            <Row className="select-action-group" gutter={[8, 8]}>
             <Col xl={12} sm={12} xs={24}>
               
             </Col>
@@ -179,10 +178,10 @@ const Thematic = () => {
             
           <Table className="table-striped-rows" columns={columns} dataSource={data}/>
         </div>
-      {error && notification.error({
-        message: 'Thông báo',
-        description: 'Lấy dữ liệu chuyên đề thất bại',
-      })}
+        {error && notification.error({
+          message: 'Thông báo',
+          description: 'Lấy dữ liệu chuyên đề thất bại',
+        })}
       </>
     );
 }

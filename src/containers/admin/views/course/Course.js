@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 
+import constants from '../../../../helpers/constants';
 import config from '../../../../configs/index';
 import defaultImage from 'assets/img/default.jpg';
 import moment from "moment";
 // react plugin for creating notifications over the dashboard
 import { Table, Tag, Button, Row, Col, notification, Space, Avatar, Form, Input, 
-  Upload, message, DatePicker, Select, Modal, Pagination } from 'antd';
+  Upload, message, DatePicker, Select, Modal, Pagination, Radio } from 'antd';
 import { UploadOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
 // component
@@ -148,6 +149,7 @@ const Course = () => {
         ngay_ket_thuc: '',
         isEdit: false,
         courseData: {},
+        isShowTypeCourse: false,
     })
 
     const [filter, setFilter] = useState({
@@ -196,7 +198,7 @@ const Course = () => {
       let options = [];
         if (programmes.status === 'success') {
             options = programmes.data.map((programme) => (
-                <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
+                <Option key={programme.kct_id} value={programme.kct_id + '_' + programme.loai_kct} >{programme.ten_khung_ct}</Option>
             ))
         }
         return (
@@ -204,8 +206,16 @@ const Course = () => {
                 showSearch={true}
                 filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
                 placeholder="Chọn khung chương trình"
+                onChange={(value) => {
+                  if (value.split('_')[1] === '2' || value.split('_')[1] === '4') {
+                    setState({...state, isShowTypeCourse: true});
+                  }
+                  else {
+                    setState({...state, isShowTypeCourse: false});
+                  }
+                }}
             >
-            {options}
+              {options}
             </Select>
       );
     };
@@ -302,7 +312,10 @@ const Course = () => {
         formData.append('ten_khoa_hoc', values.ten_khoa_hoc);
         formData.append('ngay_bat_dau', state.ngay_bat_dau);
         formData.append('ngay_ket_thuc', state.ngay_ket_thuc );
-        formData.append('kct_id', values.kct_id);
+        formData.append('kct_id', values.kct_id.split('_')[0]);
+        if (values.kct_id.split('_')[1] === '2' || values.kct_id.split('_')[1] === '4') { // kiểm tra khung chương trình = 2 hoặc 4 là các khung ôn luyện
+          formData.append('lkh_id', values.lkh_id);
+        }
         formData.append('mo_ta', values.mo_ta !== undefined ? values.mo_ta : '');
         // video , image
         if (state.fileImg !== '')
@@ -379,7 +392,6 @@ const Course = () => {
                   </Row>
               </Col>
           </Row>
-        {/* {loading && <LoadingCustom/>} */}
             {data.length > 0 && 
               <>
                 <Table className="table-striped-rows" columns={columns} dataSource={data} pagination={false}/>
@@ -423,6 +435,21 @@ const Course = () => {
                             >
                                 <Input placeholder="Nhập tên khoá học"/>
                         </Form.Item>
+                        {state.isShowTypeCourse &&
+                          <Form.Item
+                              className="input-col"
+                              label="Loại khóa học"
+                              name="lkh_id"
+                              rules={[
+                                  {
+                                  required: state.isShowTypeCourse,
+                                  message: 'Loại khóa học là trường bắt buộc.',
+                                  },
+                              ]}
+                          >
+                            <Radio.Group options={constants.TYPE_COURSES}  />  
+                          </Form.Item>
+                        }
                         <Row>
                             <Form.Item
                                 className="input-col"

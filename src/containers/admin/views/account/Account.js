@@ -40,9 +40,9 @@ const AccountPage = () => {
     const [pageIndex, setPageIndex] = useState(1);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [pageSize, setPageSize] = useState(10);
-    const [visiable, setVisible] = useState(false);
-    const [visiableFastlyCreateAccount, setVisibleFastlyCreateAccount] = useState(false);
-    const [province, setProvinces] = useState([]);
+    const [visible, setVisible] = useState(false);
+    const [visibleFastlyCreateAccount, setVisibleFastlyCreateAccount] = useState(false);
+    const [provinces, setProvinces] = useState([]);
 
     const student = useSelector(state => state.user.user.result);
     const courses = useSelector(state => state.course.list.result);
@@ -306,8 +306,8 @@ const AccountPage = () => {
 
     const renderProvince = () => {
       let options = [];
-      if (province.length !== 0) {
-          options = province.map((province) => (
+      if (provinces.length !== 0) {
+          options = provinces.map((province) => (
               <Option key={province.ttp_id} value={province.ttp_id} >{province.ten}</Option>
           ));
       }
@@ -579,10 +579,8 @@ const AccountPage = () => {
     };
 
     const onSubmitAddStudentToCourse = (values) => {
-
       const callback = (res) => {
         // lấy tên khoá học bằng với idCourse
-
         if (res.status === 200 && res.statusText === 'OK' && res.data.status === 'success') {
           notification.success({
             message: 'Thành công',
@@ -697,7 +695,7 @@ const AccountPage = () => {
                     isRangeDatePicker={true}
                     isSearchProvinces={true}
                     // dataExportStudent={data.length > 0 ? data : []}
-                    provinces={province.length > 0 ? province: []}
+                    provinces={provinces.length > 0 ? provinces: []}
                     onFilterChange={(field, value) => onFilterChange(field, value)}
                   />
               </Col>
@@ -888,7 +886,7 @@ const AccountPage = () => {
             footer={null}
             mask={true}
             centered={true}
-            visible={visiable}
+            visible={visible}
             onOk={handleOk}
             onCancel={handleCancel}
             width={500}
@@ -904,7 +902,7 @@ const AccountPage = () => {
             footer={null}
             mask={true}
             centered={true}
-            visible={visiableFastlyCreateAccount}
+            visible={visibleFastlyCreateAccount}
             onOk={() => setVisibleFastlyCreateAccount(false)}
             onCancel={() => setVisibleFastlyCreateAccount(false)}
             width={500}

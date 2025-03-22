@@ -19,7 +19,7 @@ import { Layout, Row, Col, Button } from 'antd';
 // import CarouselCustom from 'components/parts/Carousel/Carousel';
 import NoRecord from "components/common/NoRecord";
 import { StarOutlined, RightOutlined, MenuOutlined } from '@ant-design/icons';
-import CardSlider from 'components/parts/CardSlider/CardSlier';
+import CardSlider from 'components/parts/CardSlider/CardSlider';
 import SideBarComponent from "../mainpractice/sidebar/SideBar";
 
 // redux
@@ -177,10 +177,10 @@ const CoursesUser = (props) => {
                                                     3: { loai_kct: 3, link: "/luyen-tap/danh-gia-nang-luc/" },
                                                     4: { loai_kct: 4, link: "/luyen-tap/luyen-tap/" },
                                                     5: { loai_kct: 5, link: "/luyen-tap/luyen-tap/" },
-                                                    6: { loai_kct: 6, link: "/luyen-tap/luyen-tap/" }
+                                                    6: { loai_kct: 6, link: "/luyen-tap/bo-de-thi/" }
                                                 };
                                                 
-                                                const courseType = courseTypeMap[subItem.id] || { loai_kct: 6, link: "/luyen-tap/danh-gia-nang-luc/" };
+                                                const courseType = courseTypeMap[subItem.id];
                                                 
                                                 return (
                                                     <div className="main-section" key={`key_subItem` + {subIndex}} id={subItem.idElement}>
@@ -211,7 +211,7 @@ const CoursesUser = (props) => {
                                 <NoRecord title={'Bạn chưa mua khóa học nào'} subTitle={''}/>
                             }
                             {/* Tài liệu */}
-                            <div >
+                            <div style={{display: 'none'}}>
                                 <h3 className="section-title section-title-center" style={{marginTop: 24, marginBottom: 6}}>
                                     <b></b>
                                     <MenuOutlined style={{color: 'rgb(21, 87, 21)', fontSize: 20, marginLeft: 6}}/>

@@ -13,7 +13,7 @@ import config from '../../../../configs/index';
 // component
 import { Layout, Row, Col, Button, Input, Select, Form, Menu } from 'antd';
 import CarouselCustom from 'components/parts/Carousel/Carousel';
-// import CardSlider from 'components/parts/CardSlider/CardSlier';
+// import CardSlider from 'components/parts/CardSlider/CardSlider';
 import { BookOutlined, BarsOutlined, } from '@ant-design/icons';
 
 // hooks

@@ -15,6 +15,7 @@ import ProfilePage from './views/account/profile.js';
 import ExamAdminPage from './views/exam/Exam.js';
 import ExamDGNLAdminPage from './views/exam/ExamDGNL.js';
 import ExamDetailPage from './views/exam/ExamDetail.js';
+import ExamSetPage from './views/exam/ExamSet.js';
 import OnlineExamDetailPage from './views/exam/ExamDetailOnline.js';
 import SampleQuestion from './views/exam/sampleQuestion.js';
 import Criteria from './views/exam/criteria.js';
@@ -234,14 +235,14 @@ const routes = [
       name: "Danh mục câu hỏi",
       icon: <QuestionCircleOutlined />,
       render: (props) => <QuestionPage {...props}/>
+    },
+    {
+      parent: "question",
+      path: "/admin/question/exam-set",
+      name: "Bộ đề thi",
+      icon: <FileTextOutlined />,
+      render: (props) => <ExamSetPage {...props}/>
     }
-    // {
-    //   parent: "question",
-    //   path: "/admin/generation/exam",
-    //   name: "Sinh đề",
-    //   icon: <FileTextOutlined />,
-    //   render: (props) => <GenerateExam {...props}/>
-    // }
   ]
   },
   {
@@ -256,13 +257,15 @@ const routes = [
       name: "Học viên - Khóa học",
       icon: <BookOutlined />,
       render: (props) => <CourseStudentPage {...props}/>
-    },{
-      parent: "business",
-      path: "/admin/business/book",
-      name: "Tài liệu",
-      icon: <FileTextOutlined />,
-      render: (props) => (shouldHaveAccessPermission('all', '/admin/business/book') ? <DocumentPage {...props}/> : <Redirect to="/"/>)
-    }, {
+    },
+    // {
+    //   parent: "business",
+    //   path: "/admin/business/book",
+    //   name: "Tài liệu",
+    //   icon: <FileTextOutlined />,
+    //   render: (props) => (shouldHaveAccessPermission('all', '/admin/business/book') ? <DocumentPage {...props}/> : <Redirect to="/"/>)
+    // }, 
+    {
       parent: "business",
       path: "/admin/business/discount",
       name: "Khuyến mãi",

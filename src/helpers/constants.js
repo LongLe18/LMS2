@@ -203,6 +203,12 @@ const TYPE_PROGRAMES = [
   { label: 'Bộ đề thi', value: 6 },
 ];
 
+const TYPE_COURSES = [
+  { label: 'Ôn luyện nền tảng', value: 1 },
+  { label: 'Ôn luyện chuyên đề', value: 2 },
+  { label: 'Luyện đề thi thực chiến', value: 3 },
+];
+
 const QUESTIONS_FORMATS = [{ label: 'Câu hỏi lựa chọn', value: 'LUA_CHON' }];
 
 const ANSWER_OPTIONS = [
@@ -247,6 +253,7 @@ const constants = {
     COLUMN_TYPE,
     FORMAT_TYPES,
     PAGE_SIZE_OPTIONS,
+    TYPE_COURSES,
 };
 
 export default constants;

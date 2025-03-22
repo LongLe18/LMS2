@@ -117,11 +117,11 @@ const ProgramPage = () => {
 
                 const getLoaiKctText = (loai_kct) => {
                     if (loai_kct === 1) return "Kiểm tra đầu vào";
-                    if (loai_kct === 0) return "Thi thử ĐGNL";
-                    if (loai_kct === 2) return 'Luyện thi ĐGNL, ĐGTD';
-                    if (loai_kct === 4) return 'Luyện thi tốt nghiệp THCS, THPT';
-                    if (loai_kct === 5) return 'Học liệu, giáo trình';
-                    if (loai_kct === 6) return 'Bộ đề thi';
+                    else if (loai_kct === 0) return "Thi thử ĐGNL";
+                    else if (loai_kct === 2) return 'Luyện thi ĐGNL, ĐGTD';
+                    else if (loai_kct === 4) return 'Luyện thi tốt nghiệp THCS, THPT';
+                    else if (loai_kct === 5) return 'Học liệu, giáo trình';
+                    else if (loai_kct === 6) return 'Bộ đề thi';
                     return 'Thi thử ĐGTD';
                 };
 

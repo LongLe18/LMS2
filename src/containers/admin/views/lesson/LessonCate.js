@@ -145,7 +145,9 @@ const LessonCate = () => {
     const renderProgramme = () => {
       let options = [];
         if (programmes.status === 'success') {
-            options = programmes.data.filter((programme) => programme.loai_kct === 2).map((programme) => (
+            options = programmes.data
+            .filter((programme) => programme.loai_kct === 2 || programme.loai_kct === 4 || programme.loai_kct === 5)
+            .map((programme) => (
                 <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
             ))
         }
@@ -164,7 +166,9 @@ const LessonCate = () => {
     const renderCourses = () => {
       let options = [];
       if (courses.status === 'success') {
-        options = courses.data.map((course) => (
+        options = courses.data
+        .filter((course) => course.khung_chuong_trinh.loai_kct === 2 || course.khung_chuong_trinh.loai_kct === 4 || course.khung_chuong_trinh.loai_kct === 5)
+        .map((course) => (
           <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
         ))
       }

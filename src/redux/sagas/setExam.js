@@ -1,0 +1,96 @@
+import { notification } from 'antd';
+import { call, put, takeEvery } from 'redux-saga/effects';
+import config from '../../configs/index';
+import { postApiAuth, deleteApiAuth, getApiAuth } from '../services/api';
+import * as actions from '../actions';
+import { get } from 'lodash';
+
+
+function* fetchSetExam(payload) {
+    try {
+        let endpoint = `${config.API_URL}/course/${payload.params.id}/exam-set`;
+        const response = yield call(getApiAuth, endpoint);
+        const result = yield response.data;
+        yield put({ type: actions.setExam.GET_SETEXAM_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.setExam.GET_SETEXAM_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        notification.error({
+            message: get(error, 'response.data.error', 'Tải dữ liệu bộ đề thi thất bại ' + messageError),
+        });
+    }
+}
+
+function* uploadSetExam(payload) {
+    try {
+        let endpoint = config.API_URL + `/course/${payload.params.id}/upload-file-exam`;
+        const response = yield call(postApiAuth, endpoint, payload.params.formData); 
+        const result = yield response;
+        yield put({ type: actions.setExam.UPLOAD_SETEXAM_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.setExam.UPLOAD_SETEXAM_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        notification.error({
+            message: get(error, 'response.data.error', 'Thêm bộ đề thi mới thất bại ' + messageError),
+        });
+    }
+}
+
+function* deleteSetExam(payload) {
+    try {
+        let endpoint = config.API_URL + `/course/${payload.params.id}/exam-set`;
+        const response = yield call(deleteApiAuth, endpoint); 
+        const result = yield response;
+        yield put({ type: actions.setExam.DELETE_SETEXAM_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.setExam.DELETE_SETEXAM_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        notification.error({
+            message: get(error, 'response.data.error', 'Xóa bộ đề thi thất bại ' + messageError),
+        });
+    }
+}
+
+function* deleteFileSetExam(payload) {
+    try {
+        let endpoint = config.API_URL + `/course/file-exam/${payload.params.id}`;
+        const response = yield call(deleteApiAuth, endpoint); 
+        const result = yield response;
+        yield put({ type: actions.setExam.DELETE_FILE_SETEXAM_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.setExam.DELETE_FILE_SETEXAM_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        notification.error({
+            message: get(error, 'response.data.error', 'Xóa bộ đề thi thất bại ' + messageError),
+        });
+    }
+}
+
+
+export function* loadSetExam() {
+    yield takeEvery(actions.setExam.GET_SETEXAM, fetchSetExam);
+}
+
+export function* loadUploadSetExam() {
+    yield takeEvery(actions.setExam.UPLOAD_SETEXAM, uploadSetExam);
+}
+
+export function* loadDeleteSetExam() {
+    yield takeEvery(actions.setExam.DELETE_SETEXAM, deleteSetExam);
+}
+
+export function* loadDeleteFileSetExam() {
+    yield takeEvery(actions.setExam.DELETE_FILE_SETEXAM, deleteFileSetExam);
+}

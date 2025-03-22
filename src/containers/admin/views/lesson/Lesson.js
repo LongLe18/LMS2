@@ -179,7 +179,7 @@ function Lesson() {
                       isShowSearchBox={true}
                       isShowDatePicker={true}
                       isRangeDatePicker={true}
-                      courses={courses.data}
+                      courses={courses.data?.filter((course) => course.khung_chuong_trinh.loai_kct === 2 || course.khung_chuong_trinh.loai_kct === 4 || course.khung_chuong_trinh.loai_kct === 5)}
                       onFilterChange={(field, value) => onFilterChange(field, value)}
                    />
                 }
