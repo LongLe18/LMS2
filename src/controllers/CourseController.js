@@ -729,6 +729,38 @@ const getExamSet = async (req, res) => {
     });
 };
 
+const getExamSetByUser = async (req, res) => {
+    const course = await Course.findOne({
+        include: [
+            {
+                model: CourseMedia,
+                required: true,
+                include: [
+                    {
+                        model: Media,
+                        attributes: ['tep_tin_id', 'ten', 'duong_dan'],
+                        required: true,
+                    },
+                ],
+            },
+            {
+                model: CourseStudent,
+                required: true,
+            },
+        ],
+        where: {
+            khoa_hoc_id: req.params.id,
+            '$khoa_hoc_hoc_viens.hoc_vien_id$': req.userId
+        },
+    });
+
+    res.status(200).send({
+        status: 'success',
+        data: course,
+        message: null,
+    });
+};
+
 const deleteExamSet = async (req, res) => {
     const course = await Course.findOne({
         where: {
@@ -785,7 +817,6 @@ const uploadFileExams = async (req, res) => {
     }
 
     for (const file of files) {
-        console.log(file);
         const media = await Media.create({
             loai: checkFileType(file),
             ten: file.originalname,
@@ -863,4 +894,5 @@ module.exports = {
     deleteExamSet,
     uploadFileExams,
     deleteFileExam,
+    getExamSetByUser
 };

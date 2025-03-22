@@ -22,6 +22,7 @@ router.post(
 );
 //router.get('/create', authToken, authRole([2], 6), tryCatch(courseController.getCreate));
 router.get('/:id/edit', authToken, authRole([2], 6), tryCatch(courseController.getUpdate));
+router.get('/u/:id/exam-set', authToken, tryCatch(courseController.getExamSetByUser));
 router.get('/:id/exam-set', authToken, authRole([2], 6), tryCatch(courseController.getExamSet));
 router.put(
     '/:id', authToken, authRole([2], 6), 
