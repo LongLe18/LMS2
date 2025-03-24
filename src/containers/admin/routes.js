@@ -22,7 +22,7 @@ import Criteria from './views/exam/criteria.js';
 import Exceprt from './views/exam/Exceprt.js';
 import BannerCoursePage from './views/banner/banner.js';
 import ProgramPage from './views/program/program.js';
-import DocumentPage from './views/business/document.js';
+// import DocumentPage from './views/business/document.js';
 import MenuPage from './views/banner/menu.js';
 import BussinessCourses from './views/business/course.js';
 import CourseStudentPage from './views/business/courseStudent.js';

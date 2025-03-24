@@ -29,7 +29,7 @@ const ExamSetOfUserPage = (props) => {
     const error = useSelector(state => state.setExam.item.error);
 
     useEffect(() => {
-        dispatch(setExamAction.getSetExam({ id: hashids.decode(params.id) }));
+        dispatch(setExamAction.getSetExam({ id: hashids.decode(params.id), user: true }));
     }, [params.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useScrollToTop();
@@ -54,7 +54,7 @@ const ExamSetOfUserPage = (props) => {
         <div className="section section-navbars">
             {/* <Slider /> */}
             <div className="title" style={{textAlign: "center"}}>
-                <h3 className="blue-text bold">{setExam.data.ten_khoa_hoc}</h3>
+                <h3 className="blue-text bold">{setExam?.data?.ten_khoa_hoc}</h3>
             </div>
             <Row>
                 
@@ -68,13 +68,13 @@ const ExamSetOfUserPage = (props) => {
                         
                         <Row id="row-content">
                             <div className="title" style={{width: "100%", textAlign: "center", margin:"20px 10px"}}>
-                                <h4 className="blue-text bold">ĐỀ THI TRONG {setExam.data.ten_khoa_hoc}</h4>
+                                <h4 className="blue-text bold">ĐỀ THI TRONG {setExam?.data?.ten_khoa_hoc}</h4>
                             </div>
                             <br />
                             <Col md="8" >
                                 <List
                                     bordered
-                                    dataSource={setExam.data.khoa_hoc_tep_tins}
+                                    dataSource={setExam?.data?.khoa_hoc_tep_tins}
                                     renderItem={(file, index) => (
                                         <List.Item
                                             actions={[
@@ -85,8 +85,8 @@ const ExamSetOfUserPage = (props) => {
                                         >
                                             <Skeleton avatar loading={false} title={false} active>
                                                 <List.Item.Meta
-                                                    avatar={<Avatar src={file.tep_tin.ten.includes('pdf') ? adope : docIcon} />}
-                                                    title={<span style={{fontWeight: 600, fontSize: 16}}>{file.tep_tin.ten}</span>}
+                                                    avatar={<Avatar src={file?.tep_tin?.ten.includes('pdf') ? adope : docIcon} />}
+                                                    title={<span style={{fontWeight: 600, fontSize: 16}}>{file?.tep_tin?.ten}</span>}
                                                 />
                                             </Skeleton>
                                         </List.Item>

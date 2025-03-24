@@ -9,6 +9,9 @@ import { get } from 'lodash';
 function* fetchSetExam(payload) {
     try {
         let endpoint = `${config.API_URL}/course/${payload.params.id}/exam-set`;
+        if (payload.params.user) {
+            endpoint = `${config.API_URL}/course/u/${payload.params.id}/exam-set`;
+        }
         const response = yield call(getApiAuth, endpoint);
         const result = yield response.data;
         yield put({ type: actions.setExam.GET_SETEXAM_SUCCESS, result: result });
