@@ -82,7 +82,7 @@ const FooterBusiness = (props) => {
                         //     </div>
                         // </div>
                         <Row gutter={[16, 16]} className="list-cate-items">
-                            {dataInit
+                            {dataInit.slice(0, 16)
                             // .filter(item => item.loai_kct === 2 || item.loai_kct === 4 || item.loai_kct === 5)
                             .map((cate, index) => {
                                 if (index >= 4) 
@@ -127,7 +127,7 @@ const FooterBusiness = (props) => {
                     </h2>
                     {dataInit.length > 0 && (
                         <Row gutter={[16, 16]} className="list-cate-items">
-                            {dataInit.map((cate, index) => {
+                            {dataInit.slice(0, 16).map((cate, index) => {
                                 if (index >= 4) 
                                 {
                                     return (

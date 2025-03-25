@@ -70,6 +70,15 @@ const BodyDetailPage = (props) => {
             .catch(error => notification.error({ message: error.message }));
     }
 
+    const notificationNotExistCourse = (error) => {
+        return (
+            notification.error({
+                message: 'Lỗi',
+                description: 'Có lỗi xảy ra khi lấy dữ liệu',
+            })
+        )
+    }
+
     useEffect(() => {
         dispatch(thematicActions.getThematicsByIdModule({ 'idModule': props?.id }));  
         if (userToken) {
@@ -195,7 +204,7 @@ const BodyDetailPage = (props) => {
             {loading && <LoadingCustom/>}
             <div className="body-detail" style={{padding: 12}}>   
                 <div className="title text-center mb-0">
-                    <h3 className="red-text bold" style={{fontSize: 24}}>ĐỀ CƯƠNG CHI TIẾT CỦA KHOÁ HỌC</h3>
+                    <h3 className="red-text bold" style={{fontSize: 24}}>ĐỀ CƯƠNG CHI TIẾT CỦA KHOÁ HỌCz</h3>
                 </div>
 
                 <Row gutter={[16, 16]}>
@@ -214,13 +223,19 @@ const BodyDetailPage = (props) => {
                                                 key={chuyen_de_id}
                                             >
                                                 <div style={{ paddingLeft: 20 }}>
-                                                    <div className="btn-thematic" onClick={() => existCourse ? OnHandleThematic(chuyen_de_id) : showModal()}>
+                                                    <div className="btn-thematic" 
+                                                        onClick={() => !userToken ? showModal() : existCourse ? OnHandleThematic(chuyen_de_id) : notificationNotExistCourse()}
+                                                    >
                                                         <PushpinOutlined /> VIDEO BÀI GIẢNG
                                                     </div>
-                                                    <div className="btn-thematic" onClick={() => existCourse ? OnHandleThematic(chuyen_de_id) : showModal()}>
+                                                    <div className="btn-thematic" 
+                                                        onClick={() => !userToken ? showModal() : existCourse ? OnHandleThematic(chuyen_de_id) : notificationNotExistCourse()}
+                                                    >
                                                         <PushpinOutlined /> BÀI GIẢNG (PDF)
                                                     </div>
-                                                    <div className="btn-thematic" onClick={() => existCourse ? window.location.href = `/luyen-tap/chuyen-de/xem/${hashids.encode(chuyen_de_id)}/${hashids.encode(props.idCourse)}` : showModal()}>
+                                                    <div className="btn-thematic" 
+                                                        onClick={() => !userToken ? showModal() : existCourse ? window.location.href = `/luyen-tap/chuyen-de/xem/${hashids.encode(chuyen_de_id)}/${hashids.encode(props.idCourse)}` : notificationNotExistCourse()}
+                                                    >
                                                         <PushpinOutlined /> BÀI KIỂM TRA
                                                     </div>
                                                 </div>

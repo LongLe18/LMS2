@@ -363,219 +363,216 @@ const ContentDetailPage = (props) => {
     };
 
     return (
-        <>
-            <div className="body-detail">   
-                <div className="title text-center mb-0">
-                    <h3 className="red-text bold" style={{margin: '5px'}}>NỘI DUNG HỌC TẬP</h3>
-                </div>
-                <Row className="body-detail-button" style={{marginBottom:"30px"}}>                      
+        <div className="body-detail">   
+            <div className="title text-center mb-0">
+                <h3 className="red-text bold" style={{margin: '5px'}}>NỘI DUNG HỌC TẬP</h3>
+            </div>
+            <Row className="body-detail-button" style={{marginBottom:"30px"}}>                      
+                <Col md="2">
+                    <Button color="success" type="button" onClick={() => showVideo()}>VIDEO BÀI GIẢNG</Button>
+                </Col>
+                <Col md="2">
+                    <Button color="success" type="button" onClick={() => showPDF()}>BÀI GIẢNG (PDF)</Button>
+                </Col>
+                {existCriteria &&
                     <Col md="2">
-                        <Button color="success" type="button" onClick={() => showVideo()}>VIDEO BÀI GIẢNG</Button>
+                        <Link to={"/luyen-tap/chuyen-de/xem/" + hashids.encode(props.idThematic) + '/' + hashids.encode(props.idCourse)}>
+                            <Button color="success" type="button">BÀI KIỂM TRA</Button>
+                        </Link>
                     </Col>
-                    <Col md="2">
-                        <Button color="success" type="button" onClick={() => showPDF()}>BÀI GIẢNG (PDF)</Button>
+                }
+                <Col md="2">
+                    <Button color="success" type="button" onClick={() => document.getElementById("review").scrollIntoView()}>HỎI ĐÁP</Button>
+                </Col>
+            </Row>
+            <Row className="body-detail-button mb-4">
+                {(state.showPDF && pdf !== null) && 
+                    <div style={{width: "90%", height: '1000px'}}>
+                        <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.6.347/build/pdf.worker.min.js">
+                            <Viewer fileUrl={config.API_URL + pdf.link_bai_giang} plugins={[defaultLayoutPluginInstance]} defaultScale={1.25} />
+                        </Worker> 
+                    </div>
+                }
+                <div className="video-content">  
+                    <Col md="8">
+                        {state.showVideo && 
+                            <Player
+                                playsInline
+                                src={videosrc}
+                            >
+                                <ControlBar>
+                                    <PlaybackRateMenuButton rates={[2, 1.5, 1.25, 1, 0.75, 0.5]} />
+                                </ControlBar>
+                            </Player>
+                        }  
                     </Col>
-                    {existCriteria &&
-                        <Col md="2">
-                            <Link to={"/luyen-tap/chuyen-de/xem/" + hashids.encode(props.idThematic) + '/' + hashids.encode(props.idCourse)}>
-                                <Button color="success" type="button">BÀI KIỂM TRA</Button>
-                            </Link>
-                        </Col>
-                    }
-                    <Col md="2">
-                        <Button color="success" type="button" onClick={() => document.getElementById("review").scrollIntoView()}>HỎI ĐÁP</Button>
+                    <Col md="4">
+                        {(state.showVideo && video.length > 0 ) && 
+                            <div className="widget cate__mobile" style={{height:"100%", justifyContent:"flex-start"}}>
+                                <span className="widget-title" style={{backgroundColor: "#ff4e00", backgroundImage: "linear-gradient(315deg, #ff4e00 0%, #ec9f05 74%)"}}>
+                                    <span>DANH MỤC BÀI GIẢNG</span>
+                                </span> 
+                                <ul className="product-categories">
+                                    {video.map((item, index) => {
+                                        return (
+                                            <li className="cat-item cat-item-187" key={index}>
+                                                <button className="text-left" style={{marginLeft:"10px"}} onClick={() => OnRenderVideo(item.link_bai_giang)}>{item.ten_bai_giang}</button>
+                                            </li>
+                                        )
+                                    })}
+                                </ul>
+                            </div>}
                     </Col>
-                </Row>
-                <Row className="body-detail-button mb-4">
-                    {(state.showPDF && pdf !== null) && 
-                        <div style={{width: "90%", height: '1000px'}}>
-                            <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.6.347/build/pdf.worker.min.js">
-                                <Viewer fileUrl={config.API_URL + pdf.link_bai_giang} plugins={[defaultLayoutPluginInstance]} defaultScale={1.25} />
-                            </Worker> 
-                        </div>
-                    }
-                    <div className="video-content">  
-                        <Col md="8">
-                            {state.showVideo && 
-                                <Player
-                                    playsInline
-                                    src={videosrc}
-                                >
-                                    <ControlBar>
-                                        <PlaybackRateMenuButton rates={[2, 1.5, 1.25, 1, 0.75, 0.5]} />
-                                    </ControlBar>
-                                </Player>
-                            }  
-                        </Col>
-                        <Col md="4">
-                            {(state.showVideo && video.length > 0 ) && 
-                                <div className="widget cate__mobile" style={{height:"100%", justifyContent:"flex-start"}}>
-                                    <span className="widget-title" style={{backgroundColor: "#ff4e00", backgroundImage: "linear-gradient(315deg, #ff4e00 0%, #ec9f05 74%)"}}>
-                                        <span>DANH MỤC BÀI GIẢNG</span>
-                                    </span> 
-                                    <ul className="product-categories">
-                                        {video.map((item, index) => {
+                </div>                       
+            </Row>      
+            {/* Bình luận */}
+            {comments.status === 'success' &&
+            <Row className="body-detail-button mb-4">
+                <div className='product-footer' style={{width: '90%'}}>
+                    <div className='woocommerce-tabs wc-tabs-wrapper container tabbed-content'>
+                        <ul className='tabs wc-tabs product-tabs small-nav-collapse nav nav-uppercase nav-line'>
+                            <li className="reviews_tab active" id="tab-title-reviews" role="tab" aria-controls="tab-reviews">
+                                <a href="#tab-reviews">Bình luận ({state.comment !== '' ? state.comment.length : '0'})</a>
+                            </li>
+                        </ul>
+                        <div className='woocommerce-Tabs-panel woocommerce-Tabs-panel--reviews panel entry-content active'>
+                            <div className='tab-panels'>
+                                {/* Show comment */}
+                                {state.comment !== '' &&
+                                    state.comment.map((comment, index) => {
+                                        if (index < state.soluongShowComment) {
                                             return (
-                                                <li className="cat-item cat-item-187" key={index}>
-                                                    <button className="text-left" style={{marginLeft:"10px"}} onClick={() => OnRenderVideo(item.link_bai_giang)}>{item.ten_bai_giang}</button>
-                                                </li>
-                                            )
-                                        })}
-                                    </ul>
-                                </div>}
-                        </Col>
-                    </div>                       
-                </Row>      
-                {/* Bình luận */}
-                {comments.status === 'success' &&
-                <Row className="body-detail-button mb-4">
-                    <div className='product-footer' style={{width: '90%'}}>
-                        <div className='woocommerce-tabs wc-tabs-wrapper container tabbed-content'>
-                            <ul className='tabs wc-tabs product-tabs small-nav-collapse nav nav-uppercase nav-line'>
-                                <li className="reviews_tab active" id="tab-title-reviews" role="tab" aria-controls="tab-reviews">
-                                    <a href="#tab-reviews">Bình luận ({state.comment !== '' ? state.comment.length : '0'})</a>
-                                </li>
-                            </ul>
-                            <div className='woocommerce-Tabs-panel woocommerce-Tabs-panel--reviews panel entry-content active'>
-                                <div className='tab-panels'>
-                                    {/* Show comment */}
-                                    {state.comment !== '' &&
-                                        state.comment.map((comment, index) => {
-                                            if (index < state.soluongShowComment) {
-                                                return (
-                                                    <ul>
-                                                        {/* Main comment */}
-                                                        <li>
-                                                            <Row className="comment">
-                                                                <Col xs="4" sm="1" className="avatar-user">
-                                                                    <Row style={{height: '100%', flexDirection: 'column'}}>
-                                                                        <Avatar size={"large"} src={comment.anh_dai_dien !== null ? config.API_URL + comment.anh_dai_dien : defaultImage} />
-                                                                    </Row>
-                                                                </Col>
-                                                                <Col xs="20" sm="8" className="content-user">
-                                                                    <span className="name-user">{comment.ten_hoc_vien}</span>
-                                                                    <div className="content-comment">
-                                                                        <div dangerouslySetInnerHTML={{ __html: comment.noi_dung }}></div><br/>
-                                                                        {comment.anh_dinh_kem !== null && <img src={config.API_URL + comment.anh_dinh_kem} alt="ảnh bình luận"/>}
-                                                                    </div>
-                                                                </Col>
-                                                                {comment.hoc_vien_id === JSON.parse(localStorage.getItem('userInfo')).hoc_vien_id &&
-                                                                    <Col>
-                                                                        <Dropdown overlay={
-                                                                            <Menu
-                                                                                items={[
-                                                                                    {
-                                                                                        label: <Button color="link" size='large' style={{width: '100%'}} onClick={() => deleteComment(comment.binh_luan_id, 1, false)}>Xóa</Button>,
-                                                                                        key: '1',
-                                                                                    },
-                                                                                ]}
-                                                                            />
-                                                                        } 
-                                                                        trigger={['click']}>
-                                                                            <a href="#/" onClick={(e) => e.preventDefault()}>
-                                                                                <Space>
-                                                                                    <DashOutlined />
-                                                                                </Space>
-                                                                            </a>
-                                                                        </Dropdown>
-                                                                    </Col>
-                                                                }
-                                                            </Row>
-                                                            <ul>
-                                                                <Row>
-                                                                    <Col xs="4" sm="1" ></Col>
-                                                                    <Col xs="20" sm="8">
-                                                                        <Row>
-                                                                            <li><Button style={{margin: 0, fontSize: '12px'}} color="link" onClick={() => replyComment(comment.binh_luan_id)}>Phản hồi</Button></li>
-                                                                            <li><Button style={{margin: 0, fontSize: '12px', maxWidth: '250px', width: '250px'}} color="link">{diff(comment.ngay_tao)}</Button></li>
-                                                                        </Row>
-                                                                    </Col>
+                                                <ul>
+                                                    {/* Main comment */}
+                                                    <li>
+                                                        <Row className="comment">
+                                                            <Col xs="4" sm="1" className="avatar-user">
+                                                                <Row style={{height: '100%', flexDirection: 'column'}}>
+                                                                    <Avatar size={"large"} src={comment.anh_dai_dien !== null ? config.API_URL + comment.anh_dai_dien : defaultImage} />
                                                                 </Row>
-                                                            </ul>
-                                                        </li>
-                                                        {/* Sub Comment */}
-                                                        <div id={comment.binh_luan_id}>
-
-                                                        {comment.so_binh_luan_phu > 0 &&                                                  
+                                                            </Col>
+                                                            <Col xs="20" sm="8" className="content-user">
+                                                                <span className="name-user">{comment.ten_hoc_vien}</span>
+                                                                <div className="content-comment">
+                                                                    <div dangerouslySetInnerHTML={{ __html: comment.noi_dung }}></div><br/>
+                                                                    {comment.anh_dinh_kem !== null && <img src={config.API_URL + comment.anh_dinh_kem} alt="ảnh bình luận"/>}
+                                                                </div>
+                                                            </Col>
+                                                            {comment.hoc_vien_id === JSON.parse(localStorage.getItem('userInfo')).hoc_vien_id &&
+                                                                <Col>
+                                                                    <Dropdown overlay={
+                                                                        <Menu
+                                                                            items={[
+                                                                                {
+                                                                                    label: <Button color="link" size='large' style={{width: '100%'}} onClick={() => deleteComment(comment.binh_luan_id, 1, false)}>Xóa</Button>,
+                                                                                    key: '1',
+                                                                                },
+                                                                            ]}
+                                                                        />
+                                                                    } 
+                                                                    trigger={['click']}>
+                                                                        <a href="#/" onClick={(e) => e.preventDefault()}>
+                                                                            <Space>
+                                                                                <DashOutlined />
+                                                                            </Space>
+                                                                        </a>
+                                                                    </Dropdown>
+                                                                </Col>
+                                                            }
+                                                        </Row>
+                                                        <ul>
                                                             <Row>
                                                                 <Col xs="4" sm="1" ></Col>
                                                                 <Col xs="20" sm="8">
-                                                                    <ArrowRightOutlined />
-                                                                    {/* Button render more sub comment */}
-                                                                    <Button onClick={() => renderMoreSubComment(comment.binh_luan_id)} style={{margin: 0}} color="link">{comment.so_binh_luan_phu} phản hồi</Button> 
+                                                                    <Row>
+                                                                        <li><Button style={{margin: 0, fontSize: '12px'}} color="link" onClick={() => replyComment(comment.binh_luan_id)}>Phản hồi</Button></li>
+                                                                        <li><Button style={{margin: 0, fontSize: '12px', maxWidth: '250px', width: '250px'}} color="link">{diff(comment.ngay_tao)}</Button></li>
+                                                                    </Row>
                                                                 </Col>
                                                             </Row>
-                                                        }
-                                                        </div>
-                                                    </ul>
-                                                )
-                                            } else return null;
-                                        }) 
-                                    }
-                                    {(comments.data.length > 1 && state.soluongShowComment < comments.data.length) && 
-                                        <div className="more-content">
-                                            <Button style={{maxWidth: '200px', width: '200px'}} color="link" onClick={() => renderMoreComment()}>Xem thêm bình luận</Button>
-                                        </div>
-                                    }
-                                    <br/>
-                                    <Row id='review' className='woocommerce-Reviews'>
-                                        <Col span={24}>
-                                            <div className='col-inner' id='review_form'>
-                                                <div className='review-form-inner has-border'>
-                                                    <div id='response' className='comment-respond'>
-                                                        <Form layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={submitComment}>
-                                                            <Form.Item 
-                                                                className="input-col"
-                                                                label="Nhận xét của bạn *"
-                                                                name="nhan_xet"
-                                                                rules={[
-                                                                    {
-                                                                    required: true,
-                                                                    message: 'Nhận xét là trường bắt buộc.',
-                                                                    },
-                                                                ]}
-                                                                >
-                                                                    <TextEditorWidget2
-                                                                        placeholder="Bình luận bài giảng"
-                                                                        showToolbar={true}
-                                                                        isMinHeight200={true}
-                                                                        isSimple={false}
-                                                                    />
-                                                            </Form.Item>
-                                                            <Form.Item className="input-col" label="Hình ảnh" name="hinh_anh" rules={[]}>
-                                                                <Dragger {...propsImage} maxCount={1}
-                                                                    listType="picture"
-                                                                    className="upload-list-inline"
-                                                                >
-                                                                    <p className="ant-upload-drag-icon"><UploadOutlined /></p>
-                                                                    <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
-                                                                </Dragger>
-                                                            </Form.Item>
-                                                            <Form.Item className="button-col">
-                                                                {state.isReplied === false ?
-                                                                <Button type="primary" size='large'>GỬI ĐI</Button>  
-                                                                :   
-                                                                    <>
-                                                                        <Button type="primary" size='large'>GỬI ĐI</Button>  
-                                                                        <Button type="primary" onClick={() => cancelReply()} size='large'>HỦY</Button>  
-                                                                    </>
-                                                                }
-                                                            </Form.Item>
-                                                        </Form>
+                                                        </ul>
+                                                    </li>
+                                                    {/* Sub Comment */}
+                                                    <div id={comment.binh_luan_id}>
+
+                                                    {comment.so_binh_luan_phu > 0 &&                                                  
+                                                        <Row>
+                                                            <Col xs="4" sm="1" ></Col>
+                                                            <Col xs="20" sm="8">
+                                                                <ArrowRightOutlined />
+                                                                {/* Button render more sub comment */}
+                                                                <Button onClick={() => renderMoreSubComment(comment.binh_luan_id)} style={{margin: 0}} color="link">{comment.so_binh_luan_phu} phản hồi</Button> 
+                                                            </Col>
+                                                        </Row>
+                                                    }
                                                     </div>
+                                                </ul>
+                                            )
+                                        } else return null;
+                                    }) 
+                                }
+                                {(comments.data.length > 1 && state.soluongShowComment < comments.data.length) && 
+                                    <div className="more-content">
+                                        <Button style={{maxWidth: '200px', width: '200px'}} color="link" onClick={() => renderMoreComment()}>Xem thêm bình luận</Button>
+                                    </div>
+                                }
+                                <br/>
+                                <Row id='review' className='woocommerce-Reviews'>
+                                    <Col span={24}>
+                                        <div className='col-inner' id='review_form'>
+                                            <div className='review-form-inner has-border'>
+                                                <div id='response' className='comment-respond'>
+                                                    <Form layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={submitComment}>
+                                                        <Form.Item 
+                                                            className="input-col"
+                                                            label="Nhận xét của bạn *"
+                                                            name="nhan_xet"
+                                                            rules={[
+                                                                {
+                                                                required: true,
+                                                                message: 'Nhận xét là trường bắt buộc.',
+                                                                },
+                                                            ]}
+                                                            >
+                                                                <TextEditorWidget2
+                                                                    placeholder="Bình luận bài giảng"
+                                                                    showToolbar={true}
+                                                                    isMinHeight200={true}
+                                                                    isSimple={false}
+                                                                />
+                                                        </Form.Item>
+                                                        <Form.Item className="input-col" label="Hình ảnh" name="hinh_anh" rules={[]}>
+                                                            <Dragger {...propsImage} maxCount={1}
+                                                                listType="picture"
+                                                                className="upload-list-inline"
+                                                            >
+                                                                <p className="ant-upload-drag-icon"><UploadOutlined /></p>
+                                                                <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
+                                                            </Dragger>
+                                                        </Form.Item>
+                                                        <Form.Item className="button-col">
+                                                            {state.isReplied === false ?
+                                                            <Button type="primary" size='large'>GỬI ĐI</Button>  
+                                                            :   
+                                                                <>
+                                                                    <Button type="primary" size='large'>GỬI ĐI</Button>  
+                                                                    <Button type="primary" onClick={() => cancelReply()} size='large'>HỦY</Button>  
+                                                                </>
+                                                            }
+                                                        </Form.Item>
+                                                    </Form>
                                                 </div>
                                             </div>
-                                        </Col>
-                                    </Row>
-                                </div>
+                                        </div>
+                                    </Col>
+                                </Row>
                             </div>
                         </div>
-                    </div>    
-                </Row>   
-                }
-            </div>
-            
-        </>
+                    </div>
+                </div>    
+            </Row>   
+            }
+        </div>
     )
 }
 

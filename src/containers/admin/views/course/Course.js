@@ -53,6 +53,15 @@ const Course = () => {
           responsive: ['md'],
         },
         {
+          title: 'Loại khóa học',
+          dataIndex: 'khoa_hoc',
+          key: 'khoa_hoc',
+          responsive: ['md'],
+          render: (ten_khung_ct, khoa_hoc) => (
+            khoa_hoc?.loai_khoa_hoc?.ten
+          )
+        },
+        {
           title: 'Khung chương trình',
           dataIndex: 'ten_khung_ct',
           key: 'ten_khung_ct',

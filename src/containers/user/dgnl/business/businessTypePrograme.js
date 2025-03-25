@@ -33,7 +33,7 @@ const BusinessTypeProgramePage = (props) => {
     const hashids = new Hashids();
     const [dataInit, setDataInit] = useState([]); // eslint-disable-next-line no-unused-vars
     const [dataSearch, setDataSearch] = useState([]);
-    const [selectedTab, setSelectedTab] = useState(1);
+    const [selectedTabs, setSelectedTabs] = useState({});
     
     const dispatch = useDispatch();
 
@@ -100,6 +100,13 @@ const BusinessTypeProgramePage = (props) => {
         dispatch(programmeAction.getProgrammes({ status: '' }));
         dispatch(programmeAction.getProgrammeCourses());
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+    const handleTabClick = (khungCT, value) => {
+        setSelectedTabs(prev => ({
+            ...prev,
+            [khungCT]: value,
+        }));
+    };
 
     const renderProgramme = () => {
         let options = [];
@@ -209,8 +216,22 @@ const BusinessTypeProgramePage = (props) => {
             items.push(getItem(item.ten_khung_ct, <BookOutlined />, item.kct_id, children, 'item'));
         });
     }
-    
+
     const renderCourses = () => {
+        const data = courses?.data?.filter(course => course?.khung_chuong_trinh?.loai_kct === Number(idTypeKCT));
+        const khoaHocTheoKhung = data
+        ?.sort((a, b) => {
+            return a.khung_chuong_trinh.thu_tu - b.khung_chuong_trinh.thu_tu;
+        })
+        ?.reduce((acc, khoaHoc) => {
+            const khungCT = khoaHoc.khung_chuong_trinh.ten_khung_ct;
+            if (!acc[khungCT]) {
+                acc[khungCT] = [];
+            }
+            acc[khungCT].push(khoaHoc);
+            return acc;
+        }, {});
+
         return (
             <div className="list-course-cate">        
                 <div className="wraper wraper-list-course-cate-index">
@@ -327,7 +348,7 @@ const BusinessTypeProgramePage = (props) => {
                         </>
                     )}
 
-                    {(Number(idTypeKCT) === 2 || Number(idTypeKCT) === 4 || Number(idTypeKCT) === 5) ?
+                    {(Number(idTypeKCT) === 2 || Number(idTypeKCT) === 4 || Number(idTypeKCT) === 5) ? (
                         typeProgrammes.filter((type) => type.id === Number(idTypeKCT)).map((item, index) => {
                             return (
                                 <div key={'key_' + index}>
@@ -337,7 +358,7 @@ const BusinessTypeProgramePage = (props) => {
                                         <span style={{justifyContent: 'center', textTransform: 'uppercase', 
                                             color: 'rgb(25, 105, 45)', fontWeight: 700, margin: '0 15px'}}
                                         >
-                                            {item.name}
+                                            {item.name2}
                                         </span>
                                         <b></b>
                                     </h3>
@@ -349,39 +370,44 @@ const BusinessTypeProgramePage = (props) => {
                                             <StarOutlined style={{margin: '0 12px 12px 0', color: '#ff6c00', fontSize: 24}}/>
                                         </div>
                                     </div>
-                                    <div className="main-section" >
-                                        <div className="header-section" style={{background: 'white'}}>
-                                            <h3 className="section-title section-title-center" 
-                                                style={{marginBottom: 0, marginTop: 0, borderLeft: '5px rgb(25, 105, 45) solid'}}
-                                            >
-                                                <span className="section-title-main" style={{color: 'rgb(25, 105, 45)'}}>{item.name2}</span>
-                                            </h3>
-                                        </div>
-                                        <Row className="button-tabs" gutter={16}>
-                                            {constants.TYPE_COURSES.map((item, index) => (
-                                                <Col span={8} key={'keytab_' + item.value}>
-                                                    <div className={`tab-courses ${selectedTab === item.value ? 'active-tab' : ''}`}
-                                                        onClick={() => setSelectedTab(item.value)}
+                                    {khoaHocTheoKhung && Object.keys(khoaHocTheoKhung).map((khungCT, indexKCT) => {
+                                        const selectedTab = selectedTabs[khungCT] || constants.TYPE_COURSES[0].value;
+                                        return (
+                                            <div className="main-section" key={'key_' + indexKCT}>
+                                                <div className="header-section" style={{background: 'white'}}>
+                                                    <h3 className="section-title section-title-center" 
+                                                        style={{marginBottom: 0, marginTop: 0, borderLeft: '5px rgb(25, 105, 45) solid'}}
                                                     >
-                                                        {item.label}
-                                                    </div>
-                                                </Col>
-                                            ))}
-                                        </Row>
-                                        <CardSlider id={index}
-                                            courses={courses?.data?.filter(course => course?.loai_khoa_hoc?.lkh_id === selectedTab)
-                                                .filter(course => course?.khung_chuong_trinh?.loai_kct === Number(idTypeKCT))
-                                                .sort((a, b) => {
-                                                    if (a.ten_khoa_hoc < b.ten_khoa_hoc) return -1;
-                                                    if (a.ten_khoa_hoc > b.ten_khoa_hoc) return 1;
-                                                    return 0;
-                                            })} 
-                                            link={`/luyen-tap/gioi-thieu-khoa-hoc/`}
-                                        />
-                                    </div>
+                                                        <span className="section-title-main" style={{color: 'rgb(25, 105, 45)'}}>{khungCT}</span>
+                                                    </h3>
+                                                </div>
+                                                <Row className="button-tabs" gutter={16}>
+                                                    {constants.TYPE_COURSES.map((item, index) => (
+                                                        <Col span={8} key={'keytab_' + item.value}>
+                                                            <div className={`tab-courses ${selectedTab === item.value ? 'active-tab' : ''}`}
+                                                                onClick={() => handleTabClick(khungCT, item.value)}
+                                                            >
+                                                                {item.label}
+                                                            </div>
+                                                        </Col>
+                                                    ))}
+                                                </Row>
+                                                <CardSlider id={indexKCT}
+                                                    courses={khoaHocTheoKhung[khungCT].filter(course => course?.loai_khoa_hoc?.lkh_id === selectedTab)
+                                                        .sort((a, b) => {
+                                                            if (a.ten_khoa_hoc < b.ten_khoa_hoc) return -1;
+                                                            if (a.ten_khoa_hoc > b.ten_khoa_hoc) return 1;
+                                                            return 0;
+                                                    })} 
+                                                    link={`/luyen-tap/gioi-thieu-khoa-hoc/`}
+                                                />
+                                            </div>
+                                        )
+                                    })}
                                 </div>
                             )
                         })   
+                    )
                     :
                         <Row gutter={16}>
                         {

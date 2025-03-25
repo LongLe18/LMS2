@@ -5,7 +5,8 @@ import config from '../../../../configs/index';
 import moment from "moment";
 
 // react plugin for creating notifications over the dashboard
-import { Table, Tag, Button, Row, Col, notification, Space, Form, Input, Upload, message, Radio, Modal, } from 'antd';
+import { Table, Tag, Button, Row, Col, notification, Space, Form, Input, 
+    Upload, message, Radio, Modal, InputNumber } from 'antd';
 import { UploadOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
 // component
@@ -133,6 +134,12 @@ const ProgramPage = () => {
             },
         },
         {
+            title: 'Thứ tự',
+            dataIndex: 'thu_tu',
+            key: 'thu_tu',
+            responsive: ['md'],
+        },
+        {
             title: 'Mô tả',
             dataIndex: 'mo_ta',
             key: 'mo_ta',
@@ -223,6 +230,7 @@ const ProgramPage = () => {
         formData.append('ten_khung_ct', values.ten_khung_ct);
         formData.append('mo_ta', values.mo_ta ? values.mo_ta : '');
         formData.append('loai_kct', values.loai_kct);
+        formData.append('thu_tu', values.thu_tu);
         // video , image
         if (state.fileImg !== '')
             formData.append('anh_dai_dien', state.fileImg !== undefined ? state.fileImg : '');
@@ -315,13 +323,26 @@ const ProgramPage = () => {
                             label="Loại khung chương trình"
                             initialValue={1}
                             rules={[
-                            {
-                                required: true,
-                                message: 'Loại khung chương trình là trường bắt buộc.',
-                            },
+                                {
+                                    required: true,
+                                    message: 'Loại khung chương trình là trường bắt buộc.',
+                                },
                             ]}
                         >
                             <Radio.Group options={constants.TYPE_PROGRAMES}  />
+                        </Form.Item>
+                        <Form.Item
+                            name="thu_tu"
+                            label="Thứ tự"
+                            initialValue={1}
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Thứ tự xuất hiện của khung chương trình là trường bắt buộc.',
+                                },
+                            ]}
+                        >
+                            <InputNumber style={{width: '100%'}} placeholder='Thứ tự xuất hiện của khung chương trình' size="normal" />
                         </Form.Item>
                         <Form.Item
                             className="input-col"
