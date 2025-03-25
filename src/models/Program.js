@@ -21,6 +21,9 @@ const khungchuongtrinh = sequelize.define(
         anh_dai_dien: {
             type: DataTypes.STRING,
         },
+        thu_tu: {
+            type: DataTypes.INTEGER,
+        },
         trang_thai: {
             type: DataTypes.BOOLEAN,
         },

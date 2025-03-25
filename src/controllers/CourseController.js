@@ -19,7 +19,7 @@ const getAll = async (req, res) => {
         include: [
             {
                 model: Program,
-                attributes: ['kct_id', 'ten_khung_ct', 'loai_kct'],
+                attributes: ['kct_id', 'ten_khung_ct', 'loai_kct', 'thu_tu'],
             },
             {
                 model: CourseType,
