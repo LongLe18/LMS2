@@ -832,10 +832,10 @@ const deleteExamSet = async (req, res) => {
 };
 
 const uploadFileExams = async (req, res) => {
-    const { files } = req.files;
+    const { files, file_review } = req.files;
     let tep_tin_cha_id;
 
-    if (files.length !== 2) {
+    if (files.length === 0||file_review.length===0) {
         return res.status(400).send({
             status: 'error',
             data: null,
@@ -843,24 +843,30 @@ const uploadFileExams = async (req, res) => {
         });
     }
 
-    for (const file of files) {
-        const media = await Media.create({
-            loai: checkFileType(file),
-            ten: file.originalname,
-            duong_dan: `${file.destination.replace('public', '')}/${
-                file.filename
-            }`,
-        });
-        await CourseMedia.create({
-            tep_tin_id: media.tep_tin_id,
-            khoa_hoc_id: req.params.id,
-            ...(tep_tin_cha_id && {
-                tep_tin_cha_id,
-            }),
-        });
+    const media = await Media.create({
+        loai: checkFileType(files[0]),
+        ten: files[0].originalname,
+        duong_dan: `${files[0].destination.replace('public', '')}/${
+            files[0].filename
+        }`,
+    });
+    await CourseMedia.create({
+        tep_tin_id: media.tep_tin_id,
+        khoa_hoc_id: req.params.id,
+    });
 
-        tep_tin_cha_id = media.tep_tin_id;
-    }
+    const media_review = await Media.create({
+        loai: checkFileType(file_review[0]),
+        ten: file_review[0].originalname,
+        duong_dan: `${file_review[0].destination.replace('public', '')}/${
+            file_review[0].filename
+        }`,
+    });
+    await CourseMedia.create({
+        tep_tin_id: media_review.tep_tin_id,
+        khoa_hoc_id: req.params.id,
+        tep_tin_cha_id: media.tep_tin_id
+    });
 
     res.status(200).send({
         status: 'success',

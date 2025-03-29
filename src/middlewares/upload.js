@@ -1,7 +1,7 @@
 const multer = require('multer');
 const crypto = require('crypto');
 const { v4: uuid } = require('uuid');
-const {extname} = require('path');
+const { extname } = require('path');
 const moment = require('moment');
 const fs = require('fs');
 
@@ -15,8 +15,13 @@ function checkMimeTypeCallback(file, cb) {
         'video/mp4',
         'application/pdf',
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/zip',
+        'application/x-rar-compressed',
+        'application/x-7z-compressed',
+        'application/x-tar',
+        'application/gzip',
     ];
-    const filetypes = /jpg|jpeg|png|gif|bmp|mp4|pdf|doc|docx/;
+    const filetypes = /jpg|jpeg|png|gif|bmp|mp4|pdf|doc|docx|zip|rar|7z|tar|gz/;
     const mimetype = mimeTypes.includes(file.mimetype);
     const checkExtname = filetypes.test(extname(file.originalname));
     if (mimetype && checkExtname) {
@@ -27,12 +32,13 @@ function checkMimeTypeCallback(file, cb) {
 }
 
 const MEDIA_TYPE = {
-    IMAGE : 'IMAGE',
-    VIDEO : 'VIDEO',
-    AUDIO : 'AUDIO',
-    DOCUMENT : 'DOCUMENT',
-    MISC : 'MISC',
-}
+    IMAGE: 'IMAGE',
+    VIDEO: 'VIDEO',
+    AUDIO: 'AUDIO',
+    DOCUMENT: 'DOCUMENT',
+    ARCHIVE: 'ARCHIVE',
+    MISC: 'MISC',
+};
 
 function checkFileType(file) {
     // Read the file's MIME type
@@ -55,13 +61,23 @@ function checkFileType(file) {
         ].includes(mimeType)
     ) {
         return MEDIA_TYPE.DOCUMENT;
+    } else if (
+        [
+            'application/zip',
+            'application/x-rar-compressed',
+            'application/x-7z-compressed',
+            'application/x-tar',
+            'application/gzip',
+        ].includes(mimeType)
+    ) {
+        return MEDIA_TYPE.ARCHIVE;
     } else {
         // File is of some other type
         return MEDIA_TYPE.MISC;
     }
 }
 
-function getFilePathByType(type){
+function getFilePathByType(type) {
     switch (type) {
         case MEDIA_TYPE.IMAGE:
             return 'image';
@@ -71,6 +87,8 @@ function getFilePathByType(type){
             return 'document';
         case MEDIA_TYPE.AUDIO:
             return 'audio';
+        case MEDIA_TYPE.ARCHIVE:
+            return 'archive';
         default:
             return 'misc';
     }
@@ -90,7 +108,9 @@ const storage = multer.diskStorage({
         const ymdPath = `${moment().format('YYYY_MM_DD')}`;
         const fileTypePath = getFilePathByType(checkFileType(file));
         const filePath = `/upload/${fileTypePath}/${ymdPath}`;
-        const filename = `${moment().unix()}-${uuid()}${extname(file.originalname)}`
+        const filename = `${moment().unix()}-${uuid()}${extname(
+            file.originalname
+        )}`;
         req.body[file.fieldname] = `${filePath}/${filename}`;
         cb(null, filename);
     },

@@ -14,9 +14,10 @@ router.post(
     tryCatch(courseController.postCreate)
 );
 router.post(
-    '/:id/upload-file-exam', authToken,
+    '/:id/upload-file-exam', authToken, authRole([2], 6),
     upload.fields([
-        { name: 'files', maxCount: 2 },
+        { name: 'files', maxCount: 1 },
+        { name: 'file_review', maxCount: 1 },
     ]),
     tryCatch(courseController.uploadFileExams)
 );
