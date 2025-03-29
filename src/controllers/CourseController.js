@@ -738,7 +738,12 @@ const getExamSetByUser = async (req, res) => {
                 include: [
                     {
                         model: Media,
-                        attributes: ['tep_tin_id', 'ten', 'duong_dan'],
+                        attributes: [
+                            'tep_tin_id',
+                            'ten',
+                            'duong_dan',
+                            'tep_tin_cha_id',
+                        ],
                         required: true,
                     },
                 ],
@@ -850,11 +855,11 @@ const uploadFileExams = async (req, res) => {
             tep_tin_id: media.tep_tin_id,
             khoa_hoc_id: req.params.id,
             ...(tep_tin_cha_id && {
-                tep_tin_cha_id
+                tep_tin_cha_id,
             }),
         });
-        
-        tep_tin_cha_id = media.tep_tin_id
+
+        tep_tin_cha_id = media.tep_tin_id;
     }
 
     res.status(200).send({
