@@ -13,7 +13,10 @@ const khoahocteptin = sequelize.define(
             type: DataTypes.INTEGER,
         },
         tep_tin_id: {
-            type: DataTypes.STRING,
+            type: DataTypes.INTEGER,
+        },
+        tep_tin_cha_id: {
+            type: DataTypes.INTEGER,
         },
     },
     {

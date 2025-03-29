@@ -750,7 +750,28 @@ const getExamSetByUser = async (req, res) => {
         ],
         where: {
             khoa_hoc_id: req.params.id,
-            '$khoa_hoc_hoc_viens.hoc_vien_id$': req.userId
+            '$khoa_hoc_hoc_viens.hoc_vien_id$': req.userId,
+        },
+    });
+
+    res.status(200).send({
+        status: 'success',
+        data: course,
+        message: null,
+    });
+};
+
+const getReviewExamSet = async (req, res) => {
+    const course = await CourseMedia.findOne({
+        include: [
+            {
+                model: Media,
+                attributes: ['tep_tin_id', 'ten', 'duong_dan'],
+                required: true,
+            },
+        ],
+        where: {
+            tep_tin_cha_id: req.params.id,
         },
     });
 
@@ -807,9 +828,10 @@ const deleteExamSet = async (req, res) => {
 
 const uploadFileExams = async (req, res) => {
     const { files } = req.files;
+    let tep_tin_cha_id;
 
-    if (files.length === 0) {
-        res.status(400).send({
+    if (files.length !== 2) {
+        return res.status(400).send({
             status: 'error',
             data: null,
             message: null,
@@ -827,7 +849,12 @@ const uploadFileExams = async (req, res) => {
         await CourseMedia.create({
             tep_tin_id: media.tep_tin_id,
             khoa_hoc_id: req.params.id,
+            ...(tep_tin_cha_id && {
+                tep_tin_cha_id
+            }),
         });
+        
+        tep_tin_cha_id = media.tep_tin_id
     }
 
     res.status(200).send({
@@ -894,5 +921,6 @@ module.exports = {
     deleteExamSet,
     uploadFileExams,
     deleteFileExam,
-    getExamSetByUser
+    getExamSetByUser,
+    getReviewExamSet,
 };

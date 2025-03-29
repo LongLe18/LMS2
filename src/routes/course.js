@@ -14,14 +14,15 @@ router.post(
     tryCatch(courseController.postCreate)
 );
 router.post(
-    '/:id/upload-file-exam', authToken, authRole([2], 6),
+    '/:id/upload-file-exam', authToken,
     upload.fields([
-        { name: 'files', maxCount: 10 },
+        { name: 'files', maxCount: 2 },
     ]),
     tryCatch(courseController.uploadFileExams)
 );
 //router.get('/create', authToken, authRole([2], 6), tryCatch(courseController.getCreate));
 router.get('/:id/edit', authToken, authRole([2], 6), tryCatch(courseController.getUpdate));
+router.get('/exam-set/review/:id', authToken, tryCatch(courseController.getReviewExamSet));
 router.get('/u/:id/exam-set', authToken, tryCatch(courseController.getExamSetByUser));
 router.get('/:id/exam-set', authToken, authRole([2], 6), tryCatch(courseController.getExamSet));
 router.put(
