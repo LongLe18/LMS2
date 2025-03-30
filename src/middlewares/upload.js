@@ -21,6 +21,7 @@ function checkMimeTypeCallback(file, cb) {
         'application/x-tar',
         'application/gzip',
         'application/vnd.rar',
+        'application/octet-stream',
     ];
     const filetypes = /jpg|jpeg|png|gif|bmp|mp4|pdf|doc|docx|zip|rar|7z|tar|gz/;
     const mimetype = mimeTypes.includes(file.mimetype);
@@ -71,6 +72,7 @@ function checkFileType(file) {
             'application/x-tar',
             'application/gzip',
             'application/vnd.rar',
+            'application/octet-stream',
         ].includes(mimeType)
     ) {
         return MEDIA_TYPE.ARCHIVE;
