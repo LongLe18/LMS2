@@ -776,6 +776,7 @@ const getExamSetv2 = async (req, res) => {
         ],
         where: {
             khoa_hoc_id: req.params.id,
+            '$khoa_hoc_tep_tins.tep_tin_cha_id$': { [Op.ne]: null },
         },
     });
 
