@@ -8,11 +8,13 @@ const {
     CourseMedia,
     Media,
     Staff,
+    ExamSetStudent,
 } = require('../models');
 const { Op } = require('sequelize');
 const fs = require('fs');
 const sequelize = require('../utils/db');
 const { checkFileType } = require('../middlewares/upload');
+const path = require('path');
 
 //[GET] course?id
 const getAll = async (req, res) => {
@@ -959,6 +961,59 @@ const updateExamSet = async (req, res) => {
     });
 };
 
+const downloadExamSet = async (req, res) => {
+    const media = await Media.findOne({
+        where: {
+            tep_tin_id: req.params.id
+        }
+    })
+
+    const course = await Course.findOne({
+        include: [
+            {
+                model: CourseMedia,
+                required: true,
+                where: {
+                    tep_tin_id: req.params.id, // Truy vấn trực tiếp trong include thay vì `where` bên ngoài
+                },
+            },
+            {
+                model: CourseStudent,
+                required: true,
+                where: {
+                    hoc_vien_id: req.userId, // Truy vấn trực tiếp trong include thay vì `where` bên ngoài
+                },
+            },
+        ],
+    });
+
+    const examSetStudent = await ExamSetStudent.findOne({
+        include: [
+            {
+                model: CourseMedia,
+                required: true,
+            },
+        ],
+        where: {
+            '$khoa_hoc_tep_tin.tep_tin_id$': req.params.id,
+            hoc_vien_id: req.userId,
+        },
+    });
+
+    if (course || examSetStudent) {
+        const filePath = path.join(process.cwd(), '/public', media.duong_dan);
+        res.setHeader('Content-Disposition', `attachment; filename="${media.ten}"`);
+        res.setHeader('Content-Type', 'application/octet-stream');
+
+        return res.sendFile(filePath);
+    } 
+
+    return res.status(404).json({
+        status: 'error',
+        message: 'Bạn không có quyền truy cập vào tệp này'
+    });
+};
+
 const deleteFileExam = async (req, res) => {
     const courseMedia = await CourseMedia.findOne({
         where: {
@@ -1020,4 +1075,5 @@ module.exports = {
     getReviewExamSet,
     getExamSetv2,
     updateExamSet,
+    downloadExamSet
 };
