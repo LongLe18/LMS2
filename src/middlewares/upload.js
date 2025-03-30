@@ -20,9 +20,11 @@ function checkMimeTypeCallback(file, cb) {
         'application/x-7z-compressed',
         'application/x-tar',
         'application/gzip',
+        'application/vnd.rar',
     ];
     const filetypes = /jpg|jpeg|png|gif|bmp|mp4|pdf|doc|docx|zip|rar|7z|tar|gz/;
     const mimetype = mimeTypes.includes(file.mimetype);
+    console.log(file.mimetype)
     const checkExtname = filetypes.test(extname(file.originalname));
     if (mimetype && checkExtname) {
         return cb(null, true);
@@ -68,6 +70,7 @@ function checkFileType(file) {
             'application/x-7z-compressed',
             'application/x-tar',
             'application/gzip',
+            'application/vnd.rar',
         ].includes(mimeType)
     ) {
         return MEDIA_TYPE.ARCHIVE;
