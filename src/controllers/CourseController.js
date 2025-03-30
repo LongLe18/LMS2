@@ -723,10 +723,7 @@ const getExamSet = async (req, res) => {
                         include: [
                             {
                                 model: Staff,
-                                attributes: [
-                                    'nhan_vien_id',
-                                    'ho_ten',
-                                ],
+                                attributes: ['nhan_vien_id', 'ho_ten'],
                             },
                         ],
                     },
@@ -765,10 +762,7 @@ const getExamSetv2 = async (req, res) => {
                         include: [
                             {
                                 model: Staff,
-                                attributes: [
-                                    'nhan_vien_id',
-                                    'ho_ten',
-                                ],
+                                attributes: ['nhan_vien_id', 'ho_ten'],
                             },
                         ],
                     },
@@ -777,13 +771,20 @@ const getExamSetv2 = async (req, res) => {
         ],
         where: {
             khoa_hoc_id: req.params.id,
-            '$khoa_hoc_tep_tins.tep_tin_cha_id$': { [Op.ne]: null },
         },
     });
 
+    const plainCourse = course.get({ plain: true });
+
+    for (const khoa_hoc_tep_tin of plainCourse.khoa_hoc_tep_tins) {
+        if (!khoa_hoc_tep_tin.tep_tin_cha_id) {
+            delete khoa_hoc_tep_tin.tep_tin.duong_dan;
+        }
+    }
+
     res.status(200).send({
         status: 'success',
-        data: course,
+        data: plainCourse,
         message: null,
     });
 };
@@ -797,11 +798,7 @@ const getExamSetByUser = async (req, res) => {
                 include: [
                     {
                         model: Media,
-                        attributes: [
-                            'tep_tin_id',
-                            'ten',
-                            'duong_dan',
-                        ],
+                        attributes: ['tep_tin_id', 'ten', 'duong_dan'],
                         required: true,
                     },
                 ],
@@ -1022,5 +1019,5 @@ module.exports = {
     getExamSetByUser,
     getReviewExamSet,
     getExamSetv2,
-    updateExamSet
+    updateExamSet,
 };
