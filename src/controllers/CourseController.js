@@ -757,6 +757,7 @@ const getExamSetv2 = async (req, res) => {
                         attributes: [
                             'tep_tin_id',
                             'ten',
+                            'duong_dan',
                             'ngay_tao',
                             'nguoi_tao',
                         ],
