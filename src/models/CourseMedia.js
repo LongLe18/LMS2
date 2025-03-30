@@ -9,6 +9,9 @@ const khoahocteptin = sequelize.define(
             autoIncrement: true,
             primaryKey: true,
         },
+        gia_tien: {
+            type: DataTypes.FLOAT,
+        },
         khoa_hoc_id: {
             type: DataTypes.INTEGER,
         },

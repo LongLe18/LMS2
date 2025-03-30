@@ -7,6 +7,7 @@ const {
     CourseType,
     CourseMedia,
     Media,
+    Staff,
 } = require('../models');
 const { Op } = require('sequelize');
 const fs = require('fs');
@@ -711,8 +712,64 @@ const getExamSet = async (req, res) => {
                 include: [
                     {
                         model: Media,
-                        attributes: ['tep_tin_id', 'ten', 'duong_dan'],
+                        attributes: [
+                            'tep_tin_id',
+                            'ten',
+                            'duong_dan',
+                            'ngay_tao',
+                            'nguoi_tao',
+                        ],
                         required: true,
+                        include: [
+                            {
+                                model: Staff,
+                                attributes: [
+                                    'nhan_vien_id',
+                                    'ho_ten',
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+        ],
+        where: {
+            khoa_hoc_id: req.params.id,
+        },
+    });
+
+    res.status(200).send({
+        status: 'success',
+        data: course,
+        message: null,
+    });
+};
+
+const getExamSetv2 = async (req, res) => {
+    const course = await Course.findOne({
+        include: [
+            {
+                model: CourseMedia,
+                required: true,
+                include: [
+                    {
+                        model: Media,
+                        attributes: [
+                            'tep_tin_id',
+                            'ten',
+                            'ngay_tao',
+                            'nguoi_tao',
+                        ],
+                        required: true,
+                        include: [
+                            {
+                                model: Staff,
+                                attributes: [
+                                    'nhan_vien_id',
+                                    'ho_ten',
+                                ],
+                            },
+                        ],
                     },
                 ],
             },
@@ -742,7 +799,6 @@ const getExamSetByUser = async (req, res) => {
                             'tep_tin_id',
                             'ten',
                             'duong_dan',
-                            'tep_tin_cha_id',
                         ],
                         required: true,
                     },
@@ -833,9 +889,8 @@ const deleteExamSet = async (req, res) => {
 
 const uploadFileExams = async (req, res) => {
     const { files, file_review } = req.files;
-    let tep_tin_cha_id;
 
-    if (files.length === 0||file_review.length===0) {
+    if (files.length === 0 || file_review.length === 0) {
         return res.status(400).send({
             status: 'error',
             data: null,
@@ -865,8 +920,19 @@ const uploadFileExams = async (req, res) => {
     await CourseMedia.create({
         tep_tin_id: media_review.tep_tin_id,
         khoa_hoc_id: req.params.id,
-        tep_tin_cha_id: media.tep_tin_id
+        tep_tin_cha_id: media.tep_tin_id,
     });
+
+    await Course.update(
+        {
+            tai_de: true,
+        },
+        {
+            where: {
+                khoa_hoc_id: req.params.id,
+            },
+        }
+    );
 
     res.status(200).send({
         status: 'success',
@@ -934,4 +1000,5 @@ module.exports = {
     deleteFileExam,
     getExamSetByUser,
     getReviewExamSet,
+    getExamSetv2
 };

@@ -54,6 +54,7 @@ const Option = require('./Option');
 const CourseType = require('./CourseType');
 const Media = require('./Media');
 const CourseMedia = require('./CourseMedia');
+const ExamSetStudent = require('./ExamSetStudent');
 
 //khoa ngoai khoahoc
 Program.hasMany(Course, { foreignKey: 'kct_id', constraints: false });
@@ -407,8 +408,28 @@ CourseMedia.belongsTo(Course, {
     constraints: false,
 });
 
-CourseMedia.hasOne(Media, { foreignKey: 'tep_tin_id', sourceKey: 'tep_tin_id', constraints: false });
-Media.belongsTo(CourseMedia, { foreignKey: 'tep_tin_id', targetKey: 'tep_tin_id', constraints: false });
+CourseMedia.hasOne(Media, {
+    foreignKey: 'tep_tin_id',
+    sourceKey: 'tep_tin_id',
+    constraints: false,
+});
+Media.belongsTo(CourseMedia, {
+    foreignKey: 'tep_tin_id',
+    targetKey: 'tep_tin_id',
+    constraints: false,
+});
+
+ExamSetStudent.hasOne(CourseMedia, {
+    foreignKey: 'khtt_id',
+    sourceKey: 'khtt_id',
+    constraints: false,
+});
+
+Media.hasOne(Staff, {
+    foreignKey: 'nhan_vien_id',
+    sourceKey: 'nguoi_tao',
+    constraints: false,
+});
 
 module.exports = {
     Course,
@@ -467,4 +488,5 @@ module.exports = {
     CourseType,
     CourseMedia,
     Media,
+    ExamSetStudent,
 };

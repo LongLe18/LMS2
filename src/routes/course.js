@@ -26,6 +26,7 @@ router.get('/:id/edit', authToken, authRole([2], 6), tryCatch(courseController.g
 router.get('/exam-set/review/:id', authToken, tryCatch(courseController.getReviewExamSet));
 router.get('/u/:id/exam-set', authToken, tryCatch(courseController.getExamSetByUser));
 router.get('/:id/exam-set', authToken, authRole([2], 6), tryCatch(courseController.getExamSet));
+router.get('/:id/exam-set/v2', tryCatch(courseController.getExamSetv2));
 router.put(
     '/:id', authToken, authRole([2], 6), 
     upload.fields([

@@ -30,6 +30,9 @@ const khoahoc = sequelize.define(
         ngay_ket_thuc: {
             type: DataTypes.DATE,
         },
+        tai_de: {
+            type: DataTypes.BOOLEAN,
+        },
         kct_id: {
             type: DataTypes.INTEGER,
         },
