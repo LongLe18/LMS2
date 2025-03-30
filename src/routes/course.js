@@ -28,6 +28,10 @@ router.get('/u/:id/exam-set', authToken, tryCatch(courseController.getExamSetByU
 router.get('/:id/exam-set', authToken, authRole([2], 6), tryCatch(courseController.getExamSet));
 router.get('/:id/exam-set/v2', tryCatch(courseController.getExamSetv2));
 router.put(
+    '/exam-set/:id', authToken, authRole([2], 6), 
+    tryCatch(courseController.updateExamSet)
+);
+router.put(
     '/:id', authToken, authRole([2], 6), 
     upload.fields([
         { name: 'anh_dai_dien', maxCount: 1 },

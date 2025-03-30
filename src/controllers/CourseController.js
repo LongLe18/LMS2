@@ -941,6 +941,25 @@ const uploadFileExams = async (req, res) => {
     });
 };
 
+const updateExamSet = async (req, res) => {
+    await CourseMedia.update(
+        {
+            gia_tien: req.body.gia_tien,
+        },
+        {
+            where: {
+                khtt_id: req.params.id,
+            },
+        }
+    );
+
+    res.status(200).send({
+        status: 'success',
+        data: null,
+        message: null,
+    });
+};
+
 const deleteFileExam = async (req, res) => {
     const courseMedia = await CourseMedia.findOne({
         where: {
@@ -1000,5 +1019,6 @@ module.exports = {
     deleteFileExam,
     getExamSetByUser,
     getReviewExamSet,
-    getExamSetv2
+    getExamSetv2,
+    updateExamSet
 };
