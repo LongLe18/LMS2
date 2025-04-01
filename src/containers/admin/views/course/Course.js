@@ -169,6 +169,7 @@ const Course = () => {
       kct_id: ''
     });
     const [pageIndex, setPageIndex] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
     
     const courses = useSelector(state => state.course.list.result);
     const programmes = useSelector(state => state.programme.list.result);
@@ -180,7 +181,7 @@ const Course = () => {
     useEffect(() => {
       dispatch(programmeAction.getProgrammes({ status: '' }));
       dispatch(courseAction.filterCourses({ status: '', search: filter.search, 
-        start: filter.start, end: filter.end, pageIndex: pageIndex}, (res) => {
+        start: filter.start, end: filter.end, pageIndex: pageIndex, pageSize: pageSize}, (res) => {
           if (res.status === 'success') {
             res.data = (res.data.map((module, index) => {
               return {...module, 'key': index};
@@ -193,7 +194,7 @@ const Course = () => {
     
     useEffect(() => {
       dispatch(courseAction.filterCourses({ status: filter.trang_thai === 2 ? '' : filter.trang_thai, search: filter.search,
-        start: filter.start, end: filter.end, kct_id: filter.kct_id, pageIndex: pageIndex }, (res) => {
+        start: filter.start, end: filter.end, kct_id: filter.kct_id, pageIndex: pageIndex, pageSize: pageSize }, (res) => {
           if (res.status === 'success') {
             res.data = (res.data.map((module, index) => {
               return {...module, 'key': index};
@@ -201,7 +202,7 @@ const Course = () => {
             setData([...res.data]);
           }
       }));
-  }, [pageIndex]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [pageIndex, pageSize]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const renderProgramme = () => {
       let options = [];
@@ -216,7 +217,7 @@ const Course = () => {
                 filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
                 placeholder="Chọn khung chương trình"
                 onChange={(value) => {
-                  if (value.split('_')[1] === '2' || value.split('_')[1] === '4') {
+                  if (value.split('_')[1] === '2' || value.split('_')[1] === '4' || value.split('_')[1] === '5') {
                     setState({...state, isShowTypeCourse: true});
                   }
                   else {
@@ -252,7 +253,7 @@ const Course = () => {
   
     useEffect(() => {
       dispatch(courseAction.filterCourses({ status: filter.trang_thai === 2 ? '' : filter.trang_thai, search: filter.search,
-        start: filter.start, end: filter.end, kct_id: filter.kct_id, pageIndex: pageIndex }, (res) => {
+        start: filter.start, end: filter.end, kct_id: filter.kct_id, pageIndex: pageIndex, pageSize: pageSize }, (res) => {
           if (res.status === 'success') {
             res.data = (res.data.map((module, index) => {
               return {...module, 'key': index};
@@ -282,6 +283,13 @@ const Course = () => {
                         course.data.ngay_ket_thuc !== null ? moment(course.data.ngay_ket_thuc, "YYYY/MM/DD") : null],
             }           
           form.setFieldsValue(course.data);
+          form.setFieldValue('kct_id', course.data.kct_id + '_' + course.data.loai_kct);
+          if (course.data.loai_kct === 2 || course.data.loai_kct === 4 || course.data.loai_kct === 5) {
+            setState({...state, isShowTypeCourse: true});
+          }
+          else {
+            setState({...state, isShowTypeCourse: false});
+          }
         }
     }, [course]);  // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -297,7 +305,7 @@ const Course = () => {
               form.resetFields();
               setState({ ...state, isEdit: false });
               dispatch(courseAction.filterCourses({ status: filter.trang_thai === 2 ? '' : filter.trang_thai, search: filter.search,
-                start: filter.start, end: filter.end, pageIndex: pageIndex }, (res) => {
+                start: filter.start, end: filter.end, pageIndex: pageIndex, pageSize: pageSize }, (res) => {
                   if (res.status === 'success') {
                     res.data = (res.data.map((module, index) => {
                       return {...module, 'key': index};
@@ -322,7 +330,7 @@ const Course = () => {
         formData.append('ngay_bat_dau', state.ngay_bat_dau);
         formData.append('ngay_ket_thuc', state.ngay_ket_thuc );
         formData.append('kct_id', values.kct_id.split('_')[0]);
-        if (values.kct_id.split('_')[1] === '2' || values.kct_id.split('_')[1] === '4') { // kiểm tra khung chương trình = 2 hoặc 4 là các khung ôn luyện
+        if (values.kct_id.split('_')[1] === '2' || values.kct_id.split('_')[1] === '4' || values.kct_id.split('_')[1] === '5') { // kiểm tra khung chương trình = 2 hoặc 4 là các khung ôn luyện
           formData.append('lkh_id', values.lkh_id);
         }
         formData.append('mo_ta', values.mo_ta !== undefined ? values.mo_ta : '');
@@ -348,7 +356,7 @@ const Course = () => {
           const callback = (res) => {
             if (res.statusText === 'OK' && res.status === 200) {
               dispatch(courseAction.filterCourses({ status: filter.trang_thai === 2 ? '' : filter.trang_thai, search: filter.search,
-                  start: filter.start, end: filter.end, pageIndex: pageIndex }, (res) => {
+                  start: filter.start, end: filter.end, pageIndex: pageIndex, pageSize: pageSize }, (res) => {
                     if (res.status === 'success') {
                       res.data = (res.data.map((module, index) => {
                         return {...module, 'key': index};
@@ -375,6 +383,11 @@ const Course = () => {
     // event thay đổi trang
     const onChange = (page) => {
       setPageIndex(page);
+    };
+
+    // event đổi pageSize
+    const onShowSizeChange = (current, pageSize) => {
+      setPageSize(pageSize)
     };
 
     return(
@@ -405,7 +418,13 @@ const Course = () => {
               <>
                 <Table className="table-striped-rows" columns={columns} dataSource={data} pagination={false}/>
                 <br/>
-                <Pagination current={pageIndex} onChange={onChange} total={courses?.totalCount}/>
+                <Pagination showSizeChanger 
+                  onShowSizeChange={onShowSizeChange} 
+                  current={pageIndex} 
+                  pageSize={pageSize} 
+                  onChange={onChange} 
+                  total={courses?.totalCount}
+                />
                 <br/>
               </>
             }

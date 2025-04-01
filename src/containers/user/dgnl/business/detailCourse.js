@@ -6,17 +6,18 @@ import './css/intro.css';
 // helper
 import axios from 'axios';
 import defaultImage from 'assets/img/reference/stem.jpg';
+import zipIcon from 'assets/img/exam/zip-icon.png';
 import config from '../../../../configs/index';
-// import * as CurrencyFormat from 'react-currency-format';
+import * as CurrencyFormat from 'react-currency-format';
 import Hashids from 'hashids';
-// import moment from 'moment';
+import moment from 'moment';
 import jwt_decode from 'jwt-decode';
 
 // component
-import { Layout, Row, Col, Button, Modal, notification, Form, Input } from 'antd';
+import { Layout, Row, Col, Button, Modal, notification, Form, Input, List, Skeleton } from 'antd';
 import { FacebookOutlined, TwitterOutlined, MailOutlined, LinkedinOutlined, CrownFilled, BookOutlined, StarFilled,
     UsergroupAddOutlined, MenuOutlined, BankFilled, EyeInvisibleOutlined, EyeTwoTone,
-    UserOutlined, LockOutlined } from '@ant-design/icons';
+    UserOutlined, LockOutlined, DollarOutlined, DownloadOutlined, EyeOutlined } from '@ant-design/icons';
 import AppBreadCrumb from 'components/parts/breadcrumb/AppBreadCrumb';
 import SideBarComponent from '../mainpractice/sidebar/SideBar';
 import NoRecord from 'components/common/NoRecord';
@@ -31,6 +32,7 @@ import * as descriptionCourseAction from '../../../../redux/actions/descriptionC
 import * as courseAction from '../../../../redux/actions/course';
 import * as discountAction from '../../../../redux/actions/discount';
 import * as userActions from '../../../../redux/actions/user';
+import * as setExamAction from '../../../../redux/actions/setExam';
 
 const { Content } = Layout;
 // const { TextArea } = Input;
@@ -41,7 +43,10 @@ const IntroCoursePage = () => {
     const hashids = new Hashids();
     const dispatch = useDispatch();
     const captchaRef = useRef(null);
-    const [visiable, setVisible] = useState(false);
+    const [visible, setVisible] = useState(false);
+    const [fileList, setFileList] = useState([]);
+    const [previewFile, setPreviewFile] = useState(null);
+    const [isModalOpenExam, setIsModalOpenExam] = useState(false);
 
     const description = useSelector(state => state.descriptionCourse.item.result);
     const LoadingDescription = useSelector(state => state.descriptionCourse.item.loading);
@@ -134,13 +139,67 @@ const IntroCoursePage = () => {
         };
         
         dispatch(descriptionCourseAction.getDescriptionCourse({ id: hashids.decode(idCourse) }));
-        dispatch(courseAction.getCourse({ id: hashids.decode(idCourse) }));
+        dispatch(courseAction.getCourse({ id: hashids.decode(idCourse) }, (res) => {
+            if (!userToken) {
+                if (res.status === 'success' && res.data) {
+                    dispatch(setExamAction.getSetExam({ id: hashids.decode(idCourse), v2: true }, (res) => {
+                        if (res.status === 'success' && res.data) {
+                            const fileMap = {};
+                            res?.data.khoa_hoc_tep_tins.forEach((file) => {
+                                if (file.tep_tin.ten.endsWith(".zip") || file.tep_tin.ten.endsWith(".rar")) {
+                                    fileMap[file.tep_tin.tep_tin_id] = { zip: file.tep_tin, pdf: null };
+                                } else if (file.tep_tin.ten.endsWith(".pdf")) {
+                                    if (fileMap[file.tep_tin_cha_id]) {
+                                        fileMap[file.tep_tin_cha_id].pdf = file.tep_tin;
+                                    }
+                                }
+                            });
+                            setFileList(Object.values(fileMap));
+                        } 
+                    }));
+                }
+            }
+        }));
+
         dispatch(discountAction.getDiscountByCourse({ idCourse: hashids.decode(idCourse) }, callback));
         if (userToken) {
             getCourseOfUser();
+            dispatch(setExamAction.getUserSetExam({  }, (res) => {
+                if (res.status === 'success' && res.data) {
+                    const pdfMap = new Map(res.data.map(item => {
+                        const pdfName = item.khoa_hoc_tep_tin.tep_tin.ten.replace(/\.pdf$/, "");
+                        return [pdfName, item.khoa_hoc_tep_tin.tep_tin];
+                    }));
+                    
+                    dispatch(setExamAction.getSetExam({ id: hashids.decode(idCourse), v2: true }, (res) => {
+                        if (res.status === 'success' && res.data) {
+                            const fileMap = {};
+                            res?.data.khoa_hoc_tep_tins.forEach((file) => {
+                                if (file.tep_tin.ten.endsWith(".zip") || file.tep_tin.ten.endsWith(".rar")) {
+                                    fileMap[file.tep_tin.tep_tin_id] = { zip: file.tep_tin, pdf: null };
+                                } else if (file.tep_tin.ten.endsWith(".pdf")) {
+                                    if (fileMap[file.tep_tin_cha_id]) {
+                                        fileMap[file.tep_tin_cha_id].pdf = file.tep_tin;
+                                    }
+                                }
+                            });
+
+                            const updatedA = Object.values(fileMap).map(item => {
+                                const zipName = item.zip.ten.replace(/\.zip$/, "");
+                                if (pdfMap.has(zipName)) {
+                                    return { ...item, pdf: pdfMap.get(zipName), isExist: true };
+                                }
+                                return item;
+                            });
+                            setFileList(Object.values(updatedA));
+                        } 
+                    }));
+
+                }
+            }));
         }
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
+    
     const handleOk = () => {
         setVisible(false);
     };
@@ -260,6 +319,36 @@ const IntroCoursePage = () => {
     //     }
     // };
 
+    // Xem trước file đề thi của KCT Bộ đề thi
+    const handlePreviewExam = (pdf) => {
+        if (pdf) {
+            setPreviewFile(config.API_URL + pdf.duong_dan);
+            setIsModalOpenExam(true);
+        }
+    };
+
+    // download File
+    const downloadFileExam = async (file) => {
+        try {
+            if (file?.isExist) {
+                const link = document.createElement("a");
+                link.href = config.API_URL + file?.pdf?.duong_dan;
+                link.download = file?.zip?.ten;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                notification.warning({
+                    message: 'Thông báo',
+                    description: 'Bạn chưa đăng ký bộ đề thi này',
+                });
+                return;
+            }
+        } catch (error) {
+            console.error('Download error:', error);
+        }
+    }
+
     const renderIntro = () => {
         return (
             <Row className='wraper wraper-list-course-cate-index' style={{marginTop: '30px'}}>
@@ -268,34 +357,42 @@ const IntroCoursePage = () => {
                         <Row className='product__mobile'>
                             <Col span={12} className="product-img">
                                 <img style={{borderRadius: 12}}
-                                    src={course.data.anh_dai_dien !== null ? config.API_URL + course.data.anh_dai_dien : defaultImage} alt="Ảnh đại diện" 
+                                    src={course?.data?.anh_dai_dien !== null ? config.API_URL + course?.data?.anh_dai_dien : defaultImage} alt="Ảnh đại diện" 
                                 />
                             </Col>
                             <Col span={12} className='product-info summary entry-summary col col-fit product-summary'>
                                 <h1 className='product-title product_title entry-title'>
-            	                    {course.data.ten_khoa_hoc}
+            	                    {course?.data?.ten_khoa_hoc}
                                 </h1>
                                 <div className="product-short-description">
-                                    {description.data.mo_ta_chung !== null ?
-                                        <p dangerouslySetInnerHTML={{ __html: description.data.mo_ta_chung }}></p> 
+                                    {description?.data?.mo_ta_chung !== null ?
+                                        <p dangerouslySetInnerHTML={{ __html: description?.data?.mo_ta_chung }}></p> 
                                     : ''}
                                 </div>
-                                {/* Giá góc */}
-                                {/* <div className='product-price'>
-                                    <div className='product-total-price'>
-                                        <h5 style={{fontWeight: 'bolder', fontSize: '16px'}}>Tổng tiền:</h5>
-                                        <h4 style={{marginLeft: '10px', fontSize: '16px'}}>
-                                            <strong>
-                                                <CurrencyFormat 
-                                                    value={description.data.gia_goc !== null ? description.data.gia_goc : 0} 
-                                                    displayType={'text'} thousandSeparator={true} suffix={'VNĐ'}
-                                                    style={{textDecoration: remainedMoney.muc_giam_gia !== 0 ? 'line-through' : 'none'}}
-                                                    />
-                                            </strong>
-                                        </h4>
-                                        {remainedMoney.muc_giam_gia !== 0 && <h5 style={{color: 'red', marginLeft: '10px', fontSize: '16px'}}>-{remainedMoney.muc_giam_gia}%</h5>}
-                                    </div>
-                                </div> */}
+                                {/* Giá gốc */}
+                                {course?.data?.loai_kct === 6 && 
+                                    <>
+                                        <div className='product-price'>
+                                            <div className='product-total-price'>
+                                                <h5 style={{fontWeight: 700, fontSize: '18px'}}>Giá trọn bộ:</h5>
+                                                <h4 style={{marginLeft: '10px', fontSize: '18px'}}>
+                                                    <strong>
+                                                        <CurrencyFormat 
+                                                            value={description?.data?.gia_goc !== null ? description?.data?.gia_goc : 0} 
+                                                            displayType={'text'} thousandSeparator={true} suffix={'VNĐ'}
+                                                            style={{textDecoration: remainedMoney.muc_giam_gia !== 0 ? 'line-through' : 'none'}}
+                                                        />
+                                                    </strong>
+                                                </h4>
+                                                {remainedMoney.muc_giam_gia !== 0 && <h5 style={{color: 'red', marginLeft: '10px', fontSize: '16px'}}>-{remainedMoney.muc_giam_gia}%</h5>}
+                                            </div>
+                                        </div>
+                                        <div className='product-note'>
+                                            <span>- Đặt mua cả gói sẽ được tải toàn bộ tài liệu đã, đang và sẽ cập nhật trong gói.</span>
+                                            <span>- Tiết kiệm hơn tải lẻ 30-50%</span>
+                                        </div>
+                                    </>
+                                }
                                 {/* Ưu đãi */}
                                 {/* {(remainedMoney.ngay_bat_dau !== '' && remainedMoney.ngay_ket_thuc !== '') &&
                                     <div className='product-price'>
@@ -329,7 +426,7 @@ const IntroCoursePage = () => {
                                         </div>
                                     </div>
                                 } */}
-                                { !existCourse ?
+                                {!existCourse ?
                                     <>
                                         {/* <Link to='#' className='devvn_buy_now' onClick={() => goToPayment()}>
                                             <strong>Đăng ký học ngay</strong>
@@ -344,25 +441,12 @@ const IntroCoursePage = () => {
                                                 <strong style={{fontWeight: 400}}>Thi thử</strong>
                                                 <span>Bạn có muốn thi thử khóa học?</span>
                                             </Button>
-                                        :
+                                        : (course.data.loai_kct !== 1 && course.data.loai_kct !== 6) ?
                                             <Link to={`/luyen-tap/luyen-tap/${idCourse}`} className='devvn_buy_now'>
                                                 <strong>Thi thử / học thử</strong>
                                                 <span>Bạn có muốn thi thử / học thử khóa học?</span>
                                             </Link>
-                                            // <Button onClick={() => {
-                                            //     if (localStorage.getItem('userToken')) {
-                                            //         history.push(`/luyen-tap/nguoi-dung/khoa-hoc`);
-                                            //     } else {
-                                            //         notification.error({
-                                            //             message: 'Thông báo',
-                                            //             description: 'Bạn chưa đăng ký tài khoản, vui lòng đăng ký để vào học',
-                                            //         });
-                                            //     }
-                                            // }} className='devvn_buy_now'>
-                                            //     <strong style={{fontWeight: 400}}>Thi thử / Học thử</strong>
-                                            //     <span>Bạn có muốn thi thử / học thử ?</span>
-                                            // </Button>
-                                        }
+                                        : null}
                                     </>
                                 :   <Link to="#" className='devvn_exist_now' onClick={(event) => event.preventDefault()}>
                                         <strong>Bạn đã mua khóa học này</strong>
@@ -375,98 +459,160 @@ const IntroCoursePage = () => {
                                         <Link to={"https://luyenthidgnl.vn/danh-muc-khoa-hoc/hoc-truc-tuyen/"} rel="tag">Học trực tuyến</Link>
                                     </span>
                                 </div>
-                                <div className='social-icons share-icons share-row relative'>
-                                    <Button block shape="round" icon={<FacebookOutlined />} 
-                                        className='icon button circle is-outline tooltip whatsapp show-for-medium tooltipstered'>
-                                    </Button>
-                                    <Button block shape="round" icon={<TwitterOutlined />} 
-                                        className='icon button circle is-outline tooltip whatsapp show-for-medium tooltipstered'>
-                                    </Button>
-                                    <Button block shape="round" icon={<MailOutlined />} 
-                                        className='icon button circle is-outline tooltip whatsapp show-for-medium tooltipstered'>
-                                    </Button>
-                                    <Button block shape="round" icon={<LinkedinOutlined />} 
-                                        className='icon button circle is-outline tooltip whatsapp show-for-medium tooltipstered'>
-                                    </Button>
-                                </div>
+                                {course?.data?.loai_kct !== 6 &&
+                                    <div className='social-icons share-icons share-row relative'>
+                                        <Button block shape="round" icon={<FacebookOutlined />} 
+                                            className='icon button circle is-outline tooltip whatsapp show-for-medium tooltipstered'>
+                                        </Button>
+                                        <Button block shape="round" icon={<TwitterOutlined />} 
+                                            className='icon button circle is-outline tooltip whatsapp show-for-medium tooltipstered'>
+                                        </Button>
+                                        <Button block shape="round" icon={<MailOutlined />} 
+                                            className='icon button circle is-outline tooltip whatsapp show-for-medium tooltipstered'>
+                                        </Button>
+                                        <Button block shape="round" icon={<LinkedinOutlined />} 
+                                            className='icon button circle is-outline tooltip whatsapp show-for-medium tooltipstered'>
+                                        </Button>
+                                    </div>
+                                }
                             </Col>
                         </Row>
                     </div>
-                    <div className='product-info-detail'>
-                        <div className='content-detail'>
-                            <h4 className='title-content-detail uppercase'>
-                                <CrownFilled style={{marginRight: '10px'}} /> Giới thiệu chung
-                            </h4>
-                            <div className='info-item'>
-                                <ul>
-                                    {description.data.gioi_thieu !== null ?
-                                        <div dangerouslySetInnerHTML={{ __html: description.data.gioi_thieu }}></div> :
-                                        <u><strong>Tên khóa học:</strong></u>
-                                    }
-                                    {/* {description.data.mo_ta_chung !== null ?
-                                        <div dangerouslySetInnerHTML={{ __html: description.data.mo_ta_chung }}></div> 
-                                    : ''} */}
-                                </ul>
+                    {course?.data?.loai_kct !== 6 ? 
+                        <div className='product-info-detail'>
+                            <div className='content-detail'>
+                                <h4 className='title-content-detail uppercase'>
+                                    <CrownFilled style={{marginRight: '10px'}} /> Giới thiệu chung
+                                </h4>
+                                <div className='info-item'>
+                                    <ul>
+                                        {description?.data?.gioi_thieu !== null ?
+                                            <div dangerouslySetInnerHTML={{ __html: description?.data?.gioi_thieu }}></div> :
+                                            <u><strong>Tên khóa học:</strong></u>
+                                        }
+                                        {/* {description.data.mo_ta_chung !== null ?
+                                            <div dangerouslySetInnerHTML={{ __html: description.data.mo_ta_chung }}></div> 
+                                        : ''} */}
+                                    </ul>
+                                </div>
                             </div>
-                        </div>
-                        <div className='content-detail'>
-                            <h4 className='title-content-detail uppercase'>
-                                <BookOutlined style={{marginRight: '10px'}} /> Hình thức đào tạo
-                            </h4>
-                            <div className="info-item">
-                                <ul>
-                                    {description.data.hinh_thuc_dao_tao !== null ?
-                                        <div dangerouslySetInnerHTML={{ __html: description.data.hinh_thuc_dao_tao }}></div>
-                                    : ''}
-                                </ul>
-                            </div>
-                        </div>
-                        <div className="content-detail">
-                                <h4 className="title-content-detail uppercase">
-                                    <StarFilled style={{marginRight: '10px'}}/> Mục tiêu và cam kết
+                            <div className='content-detail'>
+                                <h4 className='title-content-detail uppercase'>
+                                    <BookOutlined style={{marginRight: '10px'}} /> Hình thức đào tạo
                                 </h4>
                                 <div className="info-item">
                                     <ul>
-                                        {description.data.muc_tieu_cam_ket !== null ?
-                                            <div dangerouslySetInnerHTML={{ __html: description.data.muc_tieu_cam_ket }}></div>
+                                        {description?.data?.hinh_thuc_dao_tao !== null ?
+                                            <div dangerouslySetInnerHTML={{ __html: description?.data?.hinh_thuc_dao_tao }}></div>
                                         : ''}
                                     </ul>
                                 </div>
-                        </div>
-                        <div className="content-detail">
-                            <h4 className="title-content-detail uppercase">
-                                <UsergroupAddOutlined style={{marginRight: '10px'}}/> Đối tượng đào tạo
-                            </h4>
-                            {description.data.doi_tuong !== null ?
-                                <div className="info-item" dangerouslySetInnerHTML={{ __html: description.data.doi_tuong }}></div>
-                            : ''}
-                        </div>
-                        <div className="content-detail content-detail-nd">
-                            <h4 className="title-content-detail uppercase">
-                                <MenuOutlined style={{marginRight: '10px'}}/> Nội dung chi tiết khóa học
-                            </h4>
-                            {description.data.noi_dung_chi_tiet !== null ? 
-                                <div className="info-item" dangerouslySetInnerHTML={{ __html: description.data.noi_dung_chi_tiet }}></div>
-                            : ''}
-                        </div>
-                        <div className="content-detail">
-                            <h4 className="title-content-detail uppercase">
-                                <BankFilled style={{marginRight: '10px'}}/> Xếp lớp và thời gian đào tạo
-                            </h4>
-                            {description.data.xep_lop_thoi_gian !== null ?
-                                <div className="info-item" dangerouslySetInnerHTML={{ __html: description.data.xep_lop_thoi_gian }}></div>
-                            : ''}
-                        </div>    
-                        {/* <div className="content-detail content-detail-nd">
-                            <h4 className="title-content-detail uppercase">
-                                <DollarOutlined style={{marginRight: '10px'}}/> Học phí
-                            </h4>
-                            <div className="info-item">
-                                Để có thông tin và tư vấn chi tiết về học phí đối với mỗi khóa học các bậc phụ huynh và các em học sinh hãy gọi theo số Hotline: 
-                                <a href="tel:1900633234">1900.633.234</a> hoặc <Link to="#">Click vào đây để nhận được tư vấn trực tiếp</Link>
                             </div>
-                        </div>    */}
-                    </div>
+                            <div className="content-detail">
+                                    <h4 className="title-content-detail uppercase">
+                                        <StarFilled style={{marginRight: '10px'}}/> Mục tiêu và cam kết
+                                    </h4>
+                                    <div className="info-item">
+                                        <ul>
+                                            {description?.data?.muc_tieu_cam_ket !== null ?
+                                                <div dangerouslySetInnerHTML={{ __html: description?.data?.muc_tieu_cam_ket }}></div>
+                                            : ''}
+                                        </ul>
+                                    </div>
+                            </div>
+                            <div className="content-detail">
+                                <h4 className="title-content-detail uppercase">
+                                    <UsergroupAddOutlined style={{marginRight: '10px'}}/> Đối tượng đào tạo
+                                </h4>
+                                {description?.data?.doi_tuong !== null ?
+                                    <div className="info-item" dangerouslySetInnerHTML={{ __html: description?.data?.doi_tuong }}></div>
+                                : ''}
+                            </div>
+                            <div className="content-detail content-detail-nd">
+                                <h4 className="title-content-detail uppercase">
+                                    <MenuOutlined style={{marginRight: '10px'}}/> Nội dung chi tiết khóa học
+                                </h4>
+                                {description?.data?.noi_dung_chi_tiet !== null ? 
+                                    <div className="info-item" dangerouslySetInnerHTML={{ __html: description?.data?.noi_dung_chi_tiet }}></div>
+                                : ''}
+                            </div>
+                            <div className="content-detail">
+                                <h4 className="title-content-detail uppercase">
+                                    <BankFilled style={{marginRight: '10px'}}/> Xếp lớp và thời gian đào tạo
+                                </h4>
+                                {description?.data?.xep_lop_thoi_gian !== null ?
+                                    <div className="info-item" dangerouslySetInnerHTML={{ __html: description?.data?.xep_lop_thoi_gian }}></div>
+                                : ''}
+                            </div>    
+                            <div className="content-detail content-detail-nd">
+                                <h4 className="title-content-detail uppercase">
+                                    <DollarOutlined style={{marginRight: '10px'}}/> Học phí
+                                </h4>
+                                <div className="info-item">
+                                    Để có thông tin và tư vấn chi tiết về học phí đối với mỗi khóa học các bậc phụ huynh và các em học sinh hãy gọi theo số Hotline: 
+                                    <a href="tel:1900633234">1900.633.234</a> hoặc <Link to="#">Click vào đây để nhận được tư vấn trực tiếp</Link>
+                                </div>
+                            </div>   
+                        </div>
+                    : 
+                        <div className='list-course-exam'>
+                            <div className='course-exam-content'>DANH SÁCH TÀI LIỆU TRONG KHÓA HỌC</div>
+                            <List
+                                bordered
+                                dataSource={fileList}
+                                renderItem={(file, index) => (
+                                    <List.Item
+                                        actions={[
+                                            <Link key={'price' + index} to='#' 
+                                                onClick={() => {window.location.href = '/luyen-tap/trang-chu'}}
+                                            >
+                                                <span style={{color: '#000', fontWeight: 700}}>Phí tải lẻ: <span style={{color: 'red'}}>LIÊN HỆ</span></span>
+                                            </Link>,
+                                            <Button key={'button1' + index} 
+                                                shape="round" type="danger"  icon={<DownloadOutlined />} 
+                                                onClick={() => {
+                                                    if (localStorage.getItem('userToken') === null) {
+                                                        notification.warning({
+                                                            message: 'Thông báo',
+                                                            description: 'Bạn cần đăng nhập để tải tài liệu.',
+                                                        });
+                                                        return;
+                                                    }
+                                                    downloadFileExam(file);
+                                                }}
+                                            >
+                                                Tải
+                                            </Button> , 
+                                            <Button key={'button2' + index} shape="round" type="primary" 
+                                                icon={<EyeOutlined />}
+                                                onClick={() => handlePreviewExam(file?.pdf)}
+                                            >
+                                                Xem thử
+                                            </Button>
+                                        ]}
+                                    >
+                                        <Skeleton avatar loading={false} title={false} active>
+                                            <List.Item.Meta
+                                                avatar={<img style={{width: 50}} src={zipIcon} alt={'zip_' + index}/>}
+                                                title={<Row style={{fontWeight: 600, fontSize: 16}}
+                                                >
+                                                    {file?.zip?.ten}
+                                                </Row>}
+                                                description={
+                                                    <Row>
+                                                        Ngày upload: {moment(file?.zip?.ngay_tao).utc(7).format(config.DATE_FORMAT_SHORT)}
+                                                        <span style={{marginLeft: 12}}>Người tạo: {file?.zip?.nguoi_tao ? file?.zip?.nguoi_tao : 'admin'}</span>
+                                                        {file?.isExist && <span style={{color: 'green', marginLeft: 12, fontWeight: 700}}>File này bạn có thể tải</span>}
+                                                    </Row>
+                                                }
+
+                                            />
+                                        </Skeleton>
+                                    </List.Item>
+                                )}
+                            />
+                        </div>
+                    }
                 </Col>
                 <Col span={6} className="list-course-advertisement">
                     <SideBarComponent />
@@ -483,7 +629,7 @@ const IntroCoursePage = () => {
             <Content className="app-content">
                 <AppBreadCrumb list={breadcrumbs} hidden={false} />
                 {(LoadingCourse && LoadingDescription) && <LoadingCustom />}
-                {(course.status === 'success' && course.data && description.status === 'success' && description.data) ? renderIntro(): <NoRecord />}
+                {(course.status === 'success' && course.data && description.status === 'success') ? renderIntro(): <NoRecord />}
                 <FooterBusiness course={true} />
                 <Modal
                     className="cra-auth-modal"
@@ -493,12 +639,21 @@ const IntroCoursePage = () => {
                     footer={null}
                     mask={true}
                     centered={true}
-                    visible={visiable}
+                    visible={visible}
                     onOk={handleOk}
                     onCancel={handleCancel}
                     width={480}
                 >
                     {renderLogin()}
+                </Modal>
+                <Modal
+                    title="Xem trước đề thi"
+                    open={isModalOpenExam}
+                    onCancel={() => setIsModalOpenExam(false)}
+                    footer={null}
+                    width={800}
+                >
+                    {previewFile && <iframe src={previewFile} width="100%" height="500px" title="PDF Preview" />}
                 </Modal>
             </Content>
         </Layout>

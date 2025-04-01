@@ -6,8 +6,9 @@ import moment from 'moment';
 import axios from 'axios';
 // antd
 import { Button, Table, Avatar, Modal, Form, Upload, List, Skeleton,
-    message, notification, Spin, Pagination, Tag, Space } from 'antd';
-import { UploadOutlined, ExclamationCircleOutlined, DownloadOutlined, } from '@ant-design/icons';
+    message, notification, Spin, Pagination, Tag, Space, 
+    Select} from 'antd';
+import { UploadOutlined, ExclamationCircleOutlined, DownloadOutlined, PlusCircleOutlined, } from '@ant-design/icons';
 
 // component
 import AppFilter from 'components/common/AppFilter';
@@ -19,8 +20,10 @@ import { useSelector, useDispatch } from "react-redux";
 import * as courseAction from '../../../../redux/actions/course';
 import * as programmeAction from '../../../../redux/actions/programme';
 import * as setExamAction from '../../../../redux/actions/setExam';
+import * as userAction from '../../../../redux/actions/user';
 
 const { Dragger } = Upload;
+const { Option } = Select;
 
 const ExamSetPage = () => {
     const dispatch = useDispatch();
@@ -36,13 +39,16 @@ const ExamSetPage = () => {
     const [state, setState] = useState({
         fileImg: '',
         idCourse: '',
+        idFile: ''
     });
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isModalDetailVisible, setIsModalDetailVisible] = useState(false);
+    const [isModalAddUserToSetExam, setIsModalAddUserToSetExam] = useState(false);
     const [spinning, setSpinning] = useState(false);
     const [pageIndex, setPageIndex] = useState(1);
 
     const programmes = useSelector(state => state.programme.list.result);
+    const students = useSelector(state => state.user.listUser.result);
 
     const columns = [
         {
@@ -97,7 +103,7 @@ const ExamSetPage = () => {
             render: (date) => (
               moment(date).utc(7).format(config.DATE_FORMAT_SHORT)
             )
-          },
+        },
         {
           title: 'Tùy chọn',
           key: 'khoa_hoc_id',
@@ -142,20 +148,22 @@ const ExamSetPage = () => {
         action: '#',
 
         beforeUpload: file => {
-        // check loại file => chỉ cho upload file word
-        const isDocx = file.type === 'application/msword' || 
-            file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
-            file.type === 'application/pdf';
-        if (!isDocx) {
-            message.error(`${file.name} có định dạng không phải là file docx`);
-            return false;
-        }
-        // check dung lượng file trên 5mb => không cho upload
-        if (file.size > 5242880) {
-            message.error(`${file.name} dung lượng file quá lớn`);
-            return false;
-        }
-            return isDocx || Upload.LIST_IGNORE;
+            // check loại file => chỉ cho upload file word
+            const isDocx = file.type === 'application/msword' || 
+                file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
+                file.type === 'application/pdf' ||
+                file.type === 'application/zip' || file.type === '' ||
+                file.type === 'application/x-zip-compressed' || file.type === 'application/x-rar-compressed';
+            if (!isDocx) {
+                message.error(`${file.name} có định dạng không được hỗ trợ (pdf, word, zip)`);
+                return false;
+            }
+            // check dung lượng file trên 5mb => không cho upload
+            if (file.size > 5242880) {
+                message.error(`${file.name} dung lượng file quá lớn`);
+                return false;
+            }
+                return isDocx || Upload.LIST_IGNORE;
         },
 
         onChange(info) {
@@ -169,7 +177,7 @@ const ExamSetPage = () => {
                 onSuccess("ok");
             }, 0);
         },
-    
+        
         onRemove(e) {
             setState({ ...state, fileImg: '' });
         },
@@ -177,6 +185,9 @@ const ExamSetPage = () => {
 
     useEffect(() => {
         dispatch(programmeAction.getProgrammes({ status: '' }));
+        dispatch(userAction.getStudents({ search: '', startDay: '', 
+            endDay: '', status: 1, pageIndex: 1, 
+            pageSize: 999999999, province: '' }));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
@@ -234,7 +245,11 @@ const ExamSetPage = () => {
             return;
         }
         const formData = new FormData();
-        values.file_de_thi.fileList.map((file => formData.append('files', file.originFileObj)))
+        values.file_de_thi.fileList.map((file => 
+            file.originFileObj.name.includes('zip') || file.originFileObj.name.includes('rar') ? 
+            formData.append('files', file.originFileObj) : 
+            formData.append('file_review', file.originFileObj)
+        ))
         
         setSpinning(true);
         await axios.post(
@@ -242,7 +257,10 @@ const ExamSetPage = () => {
             formData, 
             {
                 timeout: 1800000,
-                headers: { "content-type": "multipart/form-data", Authorization: `Bearer ${localStorage.getItem('userToken')}`, },
+                headers: { "content-type": "multipart/form-data", 
+                    Authorization: `Bearer ${localStorage.getItem('userToken')}`, 
+                    Accept: '*/*',
+                },
             }
         ).then(
             res => {
@@ -273,29 +291,90 @@ const ExamSetPage = () => {
     const renderModalUploadFile = () => {
         return (
             <Spin spinning={spinning} tip="Đang upload đề thi. Quá trình này sẽ mất thời gian, bạn xin vui lòng chờ">
-              <h2 className="form-title">Upload đề thi</h2>
-              <Form form={form} onFinish={UploadExam}
-                className="login-form app-form" name="login-form" 
-              >
-                
-                <Form.Item className="input-col" label="File đề thi" name="file_de_thi" rules={[]}>
-                    <Dragger {...propsFile} maxCount={3}
-                        listType="picture"
-                        className="upload-list-inline"
-                    >
-                        <p className="ant-upload-drag-icon">
-                        <UploadOutlined />
-                        </p>
-                        <p className="ant-upload-text bold">Click hoặc kéo thả đề thi vào đây</p>
-                    </Dragger>
-                </Form.Item>
-                <Form.Item className="button-col" style={{marginBottom: 0}}>
-                    <Button shape="round" type="primary" htmlType="submit" >Upload đề thi</Button>
-                </Form.Item>
-              </Form>
+                <h2 className="form-title">Upload đề thi</h2>
+                <Form form={form} onFinish={UploadExam}
+                    className="login-form app-form" name="login-form" 
+                >
+                    
+                    <Form.Item className="input-col" label="File đề thi" name="file_de_thi" rules={[]}>
+                        <Dragger {...propsFile} maxCount={3}
+                            listType="picture"
+                            className="upload-list-inline"
+                        >
+                            <p className="ant-upload-drag-icon">
+                            <UploadOutlined />
+                            </p>
+                            <p className="ant-upload-text bold">Click hoặc kéo thả đề thi vào đây</p>
+                        </Dragger>
+                    </Form.Item>
+                    <div style={{color: 'red', fontWeight: 700, marginBottom: 8}}>Lưu ý: File xem trước và file nén bộ đề phải cùng tên</div>
+                    <Form.Item className="button-col" style={{marginBottom: 0}}>
+                        <Button shape="round" type="primary" htmlType="submit" >Upload đề thi</Button>
+                    </Form.Item>
+                </Form>
           </Spin>
         )
     };
+
+    const addUserToSetExam = (values) => {
+        setSpinning(true);
+        const formData = {
+            "khtt_id": state.idFile,
+            "hoc_vien_id": values.hoc_vien_id,
+            "khoa_hoc_id": state.idCourse
+        }
+        dispatch(setExamAction.AddUserToSetExam({ formData }, (res) => {
+            if (res.statusText === 'OK' && res.status === 200) {
+                setSpinning(false);
+                notification.success({
+                    message: 'Thành công',
+                    description: 'Thêm học viên vào bộ đề thi thành công',
+                })
+                setIsModalAddUserToSetExam(false);
+            } else {
+                notification.error({
+                    message: 'Thông báo',
+                    description: 'Thêm học viên vào bộ đề thi thất bại',
+                })
+                setSpinning(false);
+            }
+        }));
+    }
+
+    // modal thêm người dùng vào đề thi
+    const renderModalAddUserToSetExam = () => {
+        let options = [];
+        options = students?.data?.map((item, index) => (
+            <Option key={item.hoc_vien_id} value={item.hoc_vien_id} >{item.ho_ten}</Option>
+        ));
+
+        return (
+            <Spin spinning={spinning} tip="Đang thêm học viên vào bộ đề thi">
+                <h2 className="form-title">Thêm học viên vào bộ đề thi</h2>
+                <Form form={form} onFinish={addUserToSetExam}
+                    className="login-form app-form" name="login-form" 
+                >
+                    <Form.Item className="input-col" label="Người dùng" name="hoc_vien_id" 
+                        rules={[{ required: true, message: 'Vui lòng chọn người dùng' }]}
+                    >
+                        <Select
+                            showSearch
+                            placeholder="Chọn người dùng"
+                            optionFilterProp="children"
+                            filterOption={(input, option) => option?.children?.toLowerCase().includes(input?.toLowerCase())}
+                            style={{ width: '100%' }}
+                            className="select-col"
+                        >
+                            {options}
+                        </Select>
+                    </Form.Item>
+                    <Form.Item className="button-col" style={{marginBottom: 0}}>
+                        <Button shape="round" type="primary" htmlType="submit" >Xác nhận</Button>
+                    </Form.Item>
+                </Form>
+          </Spin>
+        )
+    }
 
     // xoá file đề thi
     const deleteFileSetExam = (id, khoahoc_id) => {
@@ -335,7 +414,7 @@ const ExamSetPage = () => {
     const downloadFileExam = async (file) => {
         try {
             const link = document.createElement("a");
-            link.href = 'https://hsaplus.edu.vn:3003' + file.tep_tin.duong_dan;
+            link.href = config.API_URL + file.tep_tin.duong_dan;
             link.download = file.tep_tin.ten;
             document.body.appendChild(link);
             link.click();
@@ -426,21 +505,49 @@ const ExamSetPage = () => {
                     renderItem={(file, index) => (
                         <List.Item
                             actions={[
-                                <Button key={'button1' + index} shape="round" type="danger" onClick={() => deleteFileSetExam(file.khtt_id, file.khoa_hoc_id)} >Xóa</Button> , 
+                                <Button key={'button1' + index} 
+                                    shape="round" type="danger" 
+                                    onClick={() => deleteFileSetExam(file.khtt_id, file.khoa_hoc_id)} 
+                                >
+                                    Xóa
+                                </Button> , 
                                 <Button key={'button2' + index} shape="round" type="primary" onClick={() => downloadFileExam(file)}>
                                     <DownloadOutlined />
+                                </Button>,
+                                <Button key={'button1' + index} 
+                                    shape="round" type="primary"
+                                    onClick={() => {
+                                        setIsModalAddUserToSetExam(true);
+                                        setState({ ...state, idFile: file.khtt_id, idCourse: file.khoa_hoc_id });
+                                    }} 
+                                >
+                                    <PlusCircleOutlined />
                                 </Button>
                             ]}
                         >
                             <Skeleton avatar loading={false} title={false} active>
-                                <List.Item.Meta
+                                <List.Item.Meta style={{marginTop: 4}}
                                     avatar={<Avatar src={file.tep_tin.ten.includes('pdf') ? adope : docIcon} />}
-                                    title={<span style={{fontWeight: 600, fontSize: 16}}>{file.tep_tin.ten}</span>}
+                                    title={<a target="_blank" rel="noopener noreferrer" 
+                                        style={{fontWeight: 600, fontSize: 16}}
+                                        href={config.API_URL + file.tep_tin.duong_dan} 
+                                    >
+                                        {file.tep_tin.ten}
+                                    </a>}
                                 />
                             </Skeleton>
                         </List.Item>
-                )}
+                    )}
                 />
+            </Modal>
+            <Modal visible={isModalAddUserToSetExam} mask={true} centered={true} className="cra-exam-modal" wrapClassName="cra-exam-modal-container"                                   
+                onOk={() => setIsModalAddUserToSetExam(false)} 
+                onCancel={() => setIsModalAddUserToSetExam(false)}
+                maskStyle={{ background: 'rgba(0, 0, 0, 0.8)' }}
+                maskClosable={false}
+                footer={null}
+            >
+                {renderModalAddUserToSetExam()}
             </Modal>
         </div>
     )

@@ -478,7 +478,40 @@ const StatisticExam = (props) => {
                                 const url = window.URL.createObjectURL(new Blob([response.data]));
                                 const link = document.createElement('a');
                                 link.href = url;
-                                link.setAttribute('download', `${moment(record.ngay_thi).utc(7).format('ddmmYY')}_${record.ho_ten}.pdf`); // Replace with your file name and extension
+                                link.setAttribute('download', `${moment(record.ngay_thi).utc(7).format('ddmmYY')}_${record?.hoc_vien?.ho_ten}.pdf`); // Replace with your file name and extension
+                                document.body.appendChild(link);
+                                link.click();
+                                link.parentNode.removeChild(link);
+                                setLoadingExportFile(false);
+                            } catch (error) {
+                                notification.warn({
+                                    message: 'Cảnh báo',
+                                    description: 'Chưa có dữ liệu đánh giá của khóa học',
+                                })
+                                console.error('Download error:', error);
+                            }
+                        }}
+                    >
+                        Tải đánh giá
+                    </Button>
+                    <Button type='primary' style={{borderRadius: 6, marginRight: 6, marginBottom: 6}}
+                        onClick={async () => {
+                            try {
+                                setLoadingExportFile(true)
+                                const response = await axios({
+                                    url: `${config.API_URL}/student_exam/export-dgnl/${dthv_id}`, 
+                                    method: 'GET',
+                                    responseType: 'blob', 
+                                    headers: {
+                                        Authorization: `Bearer ${localStorage.getItem('userToken')}`,
+                                    }
+                                });
+                    
+                                // Create a URL for the file
+                                const url = window.URL.createObjectURL(new Blob([response.data]));
+                                const link = document.createElement('a');
+                                link.href = url;
+                                link.setAttribute('download', `${moment(record.ngay_thi).utc(7).format('ddmmYY')}_${record?.hoc_vien?.ho_ten}.xlsx`); // Replace with your file name and extension
                                 document.body.appendChild(link);
                                 link.click();
                                 link.parentNode.removeChild(link);

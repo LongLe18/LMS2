@@ -277,6 +277,6 @@ color: #f26d7d;
 
 .tab-courses.active-tab {
   background-color: white; /* Change to your preferred color */
-  color: rgb(25, 134, 58);
+  color: red;
   border-color: white;
 }

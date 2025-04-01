@@ -2105,10 +2105,7 @@ export default function ExamOnlineDetaiDGTD() {
                                 }
                                 return null;
                             })}
-                            
-                            {!sidebarVisible && 
-                                renderFooterButton()
-                            }
+                            {renderFooterButton()}
                         </Content>
                         {sidebarVisible && (
                             <Row style={{flexDirection: 'column', marginRight: 8}}>
@@ -2226,7 +2223,6 @@ export default function ExamOnlineDetaiDGTD() {
                                         <Progress percent={(results.length/exam.data[`so_cau_hoi_phan_${state.sectionExam}`]) * 100} />
                                     </div>
                                 </Sider>
-                                {renderFooterButton()}
                             </Row>
                         )}
                     </Layout>

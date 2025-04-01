@@ -12,6 +12,9 @@ function* fetchSetExam(payload) {
         if (payload.params.user) {
             endpoint = `${config.API_URL}/course/u/${payload.params.id}/exam-set`;
         }
+        if (payload.params.v2) {
+            endpoint = `${config.API_URL}/course/${payload.params.id}/exam-set/v2`;
+        }
         const response = yield call(getApiAuth, endpoint);
         const result = yield response.data;
         yield put({ type: actions.setExam.GET_SETEXAM_SUCCESS, result: result });
@@ -20,6 +23,24 @@ function* fetchSetExam(payload) {
         }
     } catch (error) {
         yield put({ type: actions.setExam.GET_SETEXAM_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        notification.error({
+            message: get(error, 'response.data.error', 'Tải dữ liệu bộ đề thi thất bại ' + messageError),
+        });
+    }
+}
+
+function* fetchUserSetExam(payload) {
+    try {
+        let endpoint = `${config.API_URL}/examset-student/u`;
+        const response = yield call(getApiAuth, endpoint);
+        const result = yield response.data;
+        yield put({ type: actions.setExam.GET_USER_SETEXAM_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.setExam.GET_USER_SETEXAM_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
         notification.error({
             message: get(error, 'response.data.error', 'Tải dữ liệu bộ đề thi thất bại ' + messageError),
@@ -38,6 +59,24 @@ function* uploadSetExam(payload) {
         }
     } catch (error) {
         yield put({ type: actions.setExam.UPLOAD_SETEXAM_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        notification.error({
+            message: get(error, 'response.data.error', 'Thêm bộ đề thi mới thất bại ' + messageError),
+        });
+    }
+}
+
+function* addUserToSetExam(payload) {
+    try {
+        let endpoint = config.API_URL + `/examset-student`;
+        const response = yield call(postApiAuth, endpoint, payload.params.formData); 
+        const result = yield response;
+        yield put({ type: actions.setExam.ADD_USER_TO_SETEXAM_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.setExam.ADD_USER_TO_SETEXAM_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
         notification.error({
             message: get(error, 'response.data.error', 'Thêm bộ đề thi mới thất bại ' + messageError),
@@ -88,6 +127,14 @@ export function* loadSetExam() {
 
 export function* loadUploadSetExam() {
     yield takeEvery(actions.setExam.UPLOAD_SETEXAM, uploadSetExam);
+}
+
+export function* loadAddUserToSetExam() {
+    yield takeEvery(actions.setExam.ADD_USER_TO_SETEXAM, addUserToSetExam);
+}
+
+export function* loadUserSetExam() {
+    yield takeEvery(actions.setExam.GET_USER_SETEXAM, fetchUserSetExam);
 }
 
 export function* loadDeleteSetExam() {

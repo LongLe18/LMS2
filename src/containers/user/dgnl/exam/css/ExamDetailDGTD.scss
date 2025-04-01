@@ -276,10 +276,11 @@
 .tag-word {
     font-size: 18px;
     padding: 5px 10px;
-    border: 1px solid rgb(0, 176, 80);
+    border: 1px solid #87c1e8;
     border-radius: 5px;
-    background-color: rgb(255, 219, 105);
-    color: rgb(0, 176, 80);
+    background: rgb(34,195,188);
+    background: linear-gradient(0deg, rgba(34,195,188,0.7707676820728291) 0%, rgba(45,253,230,1) 100%);
+    color: #000;
     opacity: 1;
     user-select: none;
     min-width: 80px;
@@ -287,6 +288,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Đổ bóng nhẹ */
 }
 
 .shadow-isDragged {

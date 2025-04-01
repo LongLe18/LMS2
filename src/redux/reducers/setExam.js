@@ -10,6 +10,11 @@ const initState = {
         loading: false,
         result: {},
         error: null,
+    },
+    user: {
+        loading: false,
+        result: {},
+        error: null,
     }
 }
 
@@ -78,6 +83,38 @@ export default function setExamReducer(state = initState, action) {
             return {
                 ...state,
                 item: { ...state.item, loading: false, error: action.error },
+            };
+        // add user to set Exam
+        case setExamActions.ADD_USER_TO_SETEXAM:
+            return {
+                ...state,
+                user: { ...state.user, loading: true },
+            };
+        case setExamActions.ADD_USER_TO_SETEXAM_SUCCESS:
+            return {
+                ...state,
+                user: { ...state.user, loading: false, result: action.result },
+            };
+        case setExamActions.ADD_USER_TO_SETEXAM_FAILED:
+            return {
+                ...state,
+                user: { ...state.user, loading: false, error: action.error },
+            };
+        // get user's set Exam
+        case setExamActions.GET_USER_SETEXAM:
+            return {
+                ...state,
+                user: { ...state.user, loading: true },
+            };
+        case setExamActions.GET_USER_SETEXAM_SUCCESS:
+            return {
+                ...state,
+                user: { ...state.user, loading: false, result: action.result },
+            };
+        case setExamActions.GET_USER_SETEXAM_FAILED:
+            return {
+                ...state,
+                user: { ...state.user, loading: false, error: action.error },
             };
         default:
             return state;
