@@ -22,6 +22,7 @@ function checkMimeTypeCallback(file, cb) {
         'application/gzip',
         'application/vnd.rar',
         'application/octet-stream',
+        'application/msword'
     ];
     const filetypes = /jpg|jpeg|png|gif|bmp|mp4|pdf|doc|docx|zip|rar|7z|tar|gz/;
     const mimetype = mimeTypes.includes(file.mimetype);

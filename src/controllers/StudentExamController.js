@@ -1114,7 +1114,7 @@ const exportDGNL = async (req, res) => {
         const student = await Student.findOne({
             attributes: ['hoc_vien_id', 'ho_ten', 'email'],
             where: {
-                hoc_vien_id: req.userId,
+                hoc_vien_id: 10957,
             },
         });
 
