@@ -1111,23 +1111,23 @@ const exportDGNL = async (req, res) => {
         workbook.created = new Date();
         const workSheet = workbook.getWorksheet('Sheet1');
 
-        const student = await Student.findOne({
-            attributes: ['hoc_vien_id', 'ho_ten', 'email'],
-            where: {
-                hoc_vien_id: 10957,
-            },
-        });
-
         const exam = await Exam.findOne({
             attributes: ['de_thi_id', 'ten_de_thi'],
             include: [
                 {
                     model: StudentExam,
-                    attributes: [],
+                    attributes: ['hoc_vien_id'],
                     required: true, // Chỉ lấy các Exam có StudentExam liên quan
                     where: { dthv_id: req.params.id }, // Điều kiện where phải nằm trong include
                 },
             ],
+        });
+
+        const student = await Student.findOne({
+            attributes: ['hoc_vien_id', 'ho_ten', 'email'],
+            where: {
+                hoc_vien_id: exam.de_thi_hoc_viens[0].hoc_vien_id,
+            },
         });
 
         const list = await ExamQuestion.findAll({
@@ -1238,14 +1238,14 @@ const exportDGNL = async (req, res) => {
             indexRow++;
         }
         
-        const filename = removeVietnameseTones(exam.ten_de_thi) + '.xlsx';
+        const filename = removeVietnameseTones(exam.ten_de_thi).toUpperCase() + '.xlsx';
         res.setHeader(
             'Content-Type',
             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         );
         res.setHeader(
             'Content-Disposition',
-            `attachment; filename="${filename.toUpperCase()}"; filename*=UTF-8''${encodeURIComponent(
+            `attachment; filename="${filename}"; filename*=UTF-8''${encodeURIComponent(
                 filename
             )}`
         );
