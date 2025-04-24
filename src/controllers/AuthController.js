@@ -1,6 +1,14 @@
 ﻿const { redirect } = require('express/lib/response');
 const CourseStudent = require('../models/CourseStudent');
-const { Student, Staff, Teacher, Role, Token } = require('../models');
+const {
+    Student,
+    Staff,
+    Teacher,
+    Role,
+    Token,
+    PositionPermission,
+    Permission,
+} = require('../models');
 const security = require('../utils/security');
 const sendMail = require('../services/mail');
 const crypto = require('crypto');
@@ -10,21 +18,24 @@ const axios = require('axios');
 const { captcha, oauth } = require('../config');
 
 const getAll = async (req, res) => {
-    let offset=0;
-    let limit=100;
-    if(req.query.offset&&req.query.limit){
-        offset=req.query.offset;
-        limit=req.query.limit;
+    let offset = 0;
+    let limit = 100;
+    if (req.query.offset && req.query.limit) {
+        offset = req.query.offset;
+        limit = req.query.limit;
     }
-    const sum_index= await sequelize.query(`
+    const sum_index = await sequelize.query(
+        `
         SELECT COUNT(*) AS sum_index FROM (
         (SELECT ho_ten, email, ngay_tao FROM hoc_vien
         UNION
         SELECT ho_ten, email, ngay_tao FROM nhan_vien
         UNION
         SELECT ho_ten, email, ngay_tao FROM giao_vien) AS user)`,
-        {type: sequelize.QueryTypes.SELECT});
-    const user=await sequelize.query(`
+        { type: sequelize.QueryTypes.SELECT }
+    );
+    const user = await sequelize.query(
+        `
         SELECT * FROM (
         (SELECT ho_ten, email, anh_dai_dien, ngay_tao FROM hoc_vien
         UNION
@@ -32,13 +43,15 @@ const getAll = async (req, res) => {
         UNION 
         SELECT ho_ten, email, anh_dai_dien, ngay_tao FROM giao_vien) AS user) 
         ORDER BY ngay_tao DESC LIMIT :offset, :limit
-    `,{
-        replacements:{
-            offset: parseInt(offset),
-            limit: parseInt(limit)
-        },
-        type: sequelize.QueryTypes.SELECT
-    });
+    `,
+        {
+            replacements: {
+                offset: parseInt(offset),
+                limit: parseInt(limit),
+            },
+            type: sequelize.QueryTypes.SELECT,
+        }
+    );
     res.status(200).send({
         status: 'success',
         data: user,
@@ -47,67 +60,67 @@ const getAll = async (req, res) => {
     });
 };
 
-const getByUser=async (req, res) => {
-  let student = await Student.findOne({
-    where: {
-        hoc_vien_id: req.userId
-    },
-  });
-  if (student) {
-    res.status(200).send({
-      status: 'success',
-      data: student,
-      message: null,
+const getByUser = async (req, res) => {
+    let student = await Student.findOne({
+        where: {
+            hoc_vien_id: req.userId,
+        },
     });
-    return;
-  }
-  res.status(401).send({
-    status: 'error',
-    data: null,
-    message: null,
-  });
-}
+    if (student) {
+        res.status(200).send({
+            status: 'success',
+            data: student,
+            message: null,
+        });
+        return;
+    }
+    res.status(401).send({
+        status: 'error',
+        data: null,
+        message: null,
+    });
+};
 
-const postLoginv2=async (req, res) => {
-  let student = await Student.findOne({
-    where: {
-        email: req.body.email,
-    },
-  });
-  if (student) {
-      if (security.comparePassword(student.mat_khau, req.body.mat_khau)) {
-          if(student.trang_thai===false || student.trang_thai === 2){
-              res.status(200).send({
-                  status: 'fail',
-                  data: null,
-                  message: `Tài khoản chưa được kích hoạt`,
-              });
-              return;
-          }
-          const accessToken = security.generateToken(
-              { userId: student.hoc_vien_id, role: 0 },
-              '5h'
-          );
-          const refreshToken = security.generateRefreshToken({
-              userId: student.hoc_vien_id,
-              role: 0,
-          });
-          res.status(200).send({
-              access_token: accessToken,
-              token_type: 'Bearer',
-              expires_in: '5h',
-              refresh_token: refreshToken,
-              scope: 'create',
-          });
-          return;
-      } 
+const postLoginv2 = async (req, res) => {
+    let student = await Student.findOne({
+        where: {
+            email: req.body.email,
+        },
+    });
+    if (student) {
+        if (security.comparePassword(student.mat_khau, req.body.mat_khau)) {
+            if (student.trang_thai === false || student.trang_thai === 2) {
+                res.status(200).send({
+                    status: 'fail',
+                    data: null,
+                    message: `Tài khoản chưa được kích hoạt`,
+                });
+                return;
+            }
+            const accessToken = security.generateToken(
+                { userId: student.hoc_vien_id, role: 0 },
+                '5h'
+            );
+            const refreshToken = security.generateRefreshToken({
+                userId: student.hoc_vien_id,
+                role: 0,
+            });
+            res.status(200).send({
+                access_token: accessToken,
+                token_type: 'Bearer',
+                expires_in: '5h',
+                refresh_token: refreshToken,
+                scope: 'create',
+            });
+            return;
+        }
     }
     res.status(200).send({
         status: 'fail',
         data: null,
         message: 'Email hoặc mật khẩu không đúng',
     });
-}
+};
 
 //[POST] login
 const postLogin = async (req, res) => {
@@ -125,20 +138,27 @@ const postLogin = async (req, res) => {
         //     `https://www.google.com/recaptcha/api/siteverify?secret=${captcha.secretKey}&response=${token}`
         // );
         if (res.status(200)) {
-            let student = await Student.findOne({
+            const student = await Student.findOne({
                 where: {
                     email: req.body.email,
                 },
             });
             if (student) {
-                if (security.comparePassword(student.mat_khau, req.body.mat_khau)) {
-                    if(student.trang_thai===false || student.trang_thai === 2){
-                        res.status(200).send({
+                if (
+                    security.comparePassword(
+                        student.mat_khau,
+                        req.body.mat_khau
+                    )
+                ) {
+                    if (
+                        student.trang_thai === false ||
+                        student.trang_thai === 2
+                    ) {
+                        return res.status(200).send({
                             status: 'fail',
                             data: null,
                             message: `Tài khoản chưa được kích hoạt`,
                         });
-                        return;
                     }
                     const accessToken = security.generateToken(
                         { userId: student.hoc_vien_id, role: 0 },
@@ -175,39 +195,36 @@ const postLogin = async (req, res) => {
                     //     });
                     //     return;
                     // }
-                    res.status(200).send({
+                    return res.status(200).send({
                         access_token: accessToken,
                         token_type: 'Bearer',
                         expires_in: '5h',
                         refresh_token: refreshToken,
                         scope: 'create',
                     });
-                    return;
-                } 
-            } 
-        } else{
-            res.status(200).send({
+                }
+            }
+        } else {
+            return res.status(200).send({
                 status: 'fail',
                 data: null,
                 message: 'Captcha is incorrect',
             });
-            return;
-        } 
+        }
     } else if (req.query.loai_tai_khoan == 2) {
-        let teacher = await Teacher.findOne({
+        const teacher = await Teacher.findOne({
             where: {
                 email: req.body.email,
             },
-        });    
+        });
         if (teacher) {
             if (security.comparePassword(teacher.mat_khau, req.body.mat_khau)) {
-                if(!teacher.trang_thai){
-                    res.status(200).send({
+                if (!teacher.trang_thai) {
+                    return res.status(200).send({
                         status: 'fail',
                         data: null,
                         message: `Tài khoản chưa được kích hoạt`,
                     });
-                    return;
                 }
                 const accessToken = security.generateToken(
                     { userId: teacher.giao_vien_id, role: 1 },
@@ -217,31 +234,29 @@ const postLogin = async (req, res) => {
                     userId: teacher.giao_vien_id,
                     role: 1,
                 });
-                res.status(200).send({
+                return res.status(200).send({
                     access_token: accessToken,
                     token_type: 'Bearer',
                     expires_in: '5h',
                     refresh_token: refreshToken,
                     scope: 'create',
                 });
-                return;
-            } 
+            }
         }
     } else if (req.query.loai_tai_khoan == 3) {
-        let staff = await Staff.findOne({
+        const staff = await Staff.findOne({
             where: {
                 email: req.body.email,
             },
         });
         if (staff) {
             if (security.comparePassword(staff.mat_khau, req.body.mat_khau)) {
-                if(!staff.trang_thai){
-                    res.status(200).send({
+                if (!staff.trang_thai) {
+                    return res.status(200).send({
                         status: 'fail',
                         data: null,
                         message: `Tài khoản chưa được kích hoạt`,
                     });
-                    return;
                 }
                 const role = await Role.findOne({
                     where: {
@@ -250,7 +265,13 @@ const postLogin = async (req, res) => {
                 });
                 const type = `${role.quyen_he_thong}${role.quyen_nhan_su}${role.quyen_kinh_doanh}${role.quyen_khao_thi}`;
                 const accessToken = security.generateToken(
-                    { userId: staff.nhan_vien_id, role: 2, type: type },
+                    {
+                        userId: staff.nhan_vien_id,
+                        role: 2,
+                        positionId: staff.chuc_vu_id,
+                        departmentId: staff.don_vi_id,
+                        type: type,
+                    },
                     '5h'
                 );
                 const refreshToken = security.generateRefreshToken({
@@ -258,24 +279,39 @@ const postLogin = async (req, res) => {
                     role: 2,
                     type: type,
                 });
-                res.status(200).send({
+
+                const positionPermissions = await PositionPermission.findAll({
+                    include: [
+                        {
+                            model: Permission,
+                        },
+                    ],
+                    where: {
+                        chuc_vu_id: staff.chuc_vu_id,
+                    },
+                });
+                const permissions = positionPermissions.map(
+                    (item) => item.quyen_truy_cap.hanh_dong
+                );
+
+                return res.status(200).send({
                     access_token: accessToken,
                     token_type: 'Bearer',
                     expires_in: '5h',
                     refresh_token: refreshToken,
                     scope: 'create',
+                    permissions,
                 });
-                return;
-            } 
-        } 
+            }
+        }
     }
-    res.status(200).send({
-      status: 'fail',
-      data: null,
-      message: `Email hoặc mật khẩu không đúng`,
-  });
-};
 
+    return res.status(200).send({
+        status: 'fail',
+        data: null,
+        message: `Email hoặc mật khẩu không đúng`,
+    });
+};
 
 const postRegister = async (req, res) => {
     if (req.query.loai_tai_khoan == '1') {
@@ -283,31 +319,32 @@ const postRegister = async (req, res) => {
         await axios.post(
             `https://www.google.com/recaptcha/api/siteverify?secret=${captcha.secretKey}&response=${token}`
         );
-        if(!req.body.email.match(
-          /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-        )){
+        if (
+            !req.body.email.match(
+                /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            )
+        ) {
             res.status(404).send({
-              status: 'error',
-              data: null,
-              message: 'Email is not valid',
+                status: 'error',
+                data: null,
+                message: 'Email is not valid',
             });
             return;
         }
-        if(res.status(200)){
+        if (res.status(200)) {
             let student = await Student.findOne({
                 where: {
                     email: req.body.email,
                 },
             });
-            if (student){
+            if (student) {
                 res.status(409).send({
                     status: 'fail',
                     data: null,
                     message: 'Email already exists!',
                 });
                 return;
-            }
-            else {
+            } else {
                 req.body.mat_khau = security.hashPassword(req.body.mat_khau);
                 student = await Student.create({
                     ...req.body,
@@ -317,7 +354,11 @@ const postRegister = async (req, res) => {
                     { gmail: student.email, accountType: 0 },
                     '5h'
                 );
-                const content={gmail: req.body.email, token: token, ho_ten: student.ho_ten};
+                const content = {
+                    gmail: req.body.email,
+                    token: token,
+                    ho_ten: student.ho_ten,
+                };
                 await sendMail(content, 1);
                 res.status(200).send({
                     status: 'success',
@@ -327,22 +368,24 @@ const postRegister = async (req, res) => {
                 return;
             }
         }
-    } 
+    }
     res.status(404).send({
-      status: 'error',
-      data: null,
-      message: null,
+        status: 'error',
+        data: null,
+        message: null,
     });
 };
 
 const postRegisterv2 = async (req, res) => {
-    if(!req.body.email.match(
-      /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    )){
+    if (
+        !req.body.email.match(
+            /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        )
+    ) {
         res.status(200).send({
-          status: 'error',
-          data: null,
-          message: 'Email không hợp lệ',
+            status: 'error',
+            data: null,
+            message: 'Email không hợp lệ',
         });
         return;
     }
@@ -351,14 +394,13 @@ const postRegisterv2 = async (req, res) => {
             email: req.body.email,
         },
     });
-    if (student){
+    if (student) {
         res.status(200).send({
             status: 'fail',
             data: null,
             message: 'Email đã được sử dụng',
         });
-    }
-    else {
+    } else {
         req.body.mat_khau = security.hashPassword(req.body.mat_khau);
         student = await Student.create({
             ...req.body,
@@ -368,7 +410,11 @@ const postRegisterv2 = async (req, res) => {
             { gmail: student.email, accountType: 0 },
             '5h'
         );
-        const content={gmail: req.body.email, token: token, ho_ten: student.ho_ten};
+        const content = {
+            gmail: req.body.email,
+            token: token,
+            ho_ten: student.ho_ten,
+        };
         await sendMail(content, 1);
         res.status(200).send({
             status: 'success',
@@ -379,19 +425,22 @@ const postRegisterv2 = async (req, res) => {
 };
 
 const postLogout = async (req, res) => {
-    if(req.role==0){
+    if (req.role == 0) {
         let tokenDB = await Token.findOne({
             where: {
-                nguoi_tao: req.userId
-            }
-        }) // lấy token trong db
-        await Token.update({
-            trang_thai: tokenDB?.trang_thai - 1,
-        },{
-            where:{
                 nguoi_tao: req.userId,
+            },
+        }); // lấy token trong db
+        await Token.update(
+            {
+                trang_thai: tokenDB?.trang_thai - 1,
+            },
+            {
+                where: {
+                    nguoi_tao: req.userId,
+                },
             }
-        });
+        );
     }
     res.status(200).send({
         status: 'success',
@@ -403,23 +452,25 @@ const postLogout = async (req, res) => {
 const postLogoutV2 = async (req, res) => {
     let tokenDB = await Token.findOne({
         where: {
-            nguoi_tao: req.body.userId
-        }
-    }) // lấy token trong db
-    await Token.update({
-        trang_thai: tokenDB?.trang_thai - 1,
-    },{
-        where:{
             nguoi_tao: req.body.userId,
+        },
+    }); // lấy token trong db
+    await Token.update(
+        {
+            trang_thai: tokenDB?.trang_thai - 1,
+        },
+        {
+            where: {
+                nguoi_tao: req.body.userId,
+            },
         }
-    });
+    );
     res.status(200).send({
         status: 'success',
         data: null,
         message: 'Logout success!',
     });
 };
-
 
 const changePass = async (req, res) => {
     const hassPass = security.hashPassword(req.body.mat_khau_moi);
@@ -497,10 +548,10 @@ const changePass = async (req, res) => {
         }
     }
     res.status(200).send({
-      status: 'fail',
-      data: null,
-      message: 'Sai mật khẩu',
-  });
+        status: 'fail',
+        data: null,
+        message: 'Sai mật khẩu',
+    });
 };
 
 const authGoogle = async (req, res) => {
@@ -512,13 +563,16 @@ const authGoogle = async (req, res) => {
         });
         if (student) {
             if (student.trang_thai != 1) {
-                await Student.update({
-                    trang_thai: true
-                },{
-                    where:{
-                        hoc_vien_id: student.hoc_vien_id
+                await Student.update(
+                    {
+                        trang_thai: true,
+                    },
+                    {
+                        where: {
+                            hoc_vien_id: student.hoc_vien_id,
+                        },
                     }
-                })
+                );
             }
         } else {
             const password = security.generatePassword();
@@ -528,12 +582,15 @@ const authGoogle = async (req, res) => {
                 mat_khau: security.hashPassword(password),
                 trang_thai: 1,
             });
-            const content={gmail: req.user.emails[0].value, password: password, ho_ten: req.user.displayName};
+            const content = {
+                gmail: req.user.emails[0].value,
+                password: password,
+                ho_ten: req.user.displayName,
+            };
             await sendMail(content, 3);
         }
         res.redirect(oauth.REDIRECT_DOMAIN + req.query.url);
-    } 
-    else{
+    } else {
         res.status(404).send({
             status: 'error',
             data: null,
@@ -556,25 +613,27 @@ const forgetPassword = async (req, res) => {
         await axios.post(
             `https://www.google.com/recaptcha/api/siteverify?secret=${captcha.secretKey}&response=${token}`
         );
-        if(!req.body.email.match(
-          /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-        )){
+        if (
+            !req.body.email.match(
+                /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            )
+        ) {
             res.status(404).send({
-              status: 'error',
-              data: null,
-              message: 'Email is not valid',
+                status: 'error',
+                data: null,
+                message: 'Email is not valid',
             });
             return;
         }
         if (res.status(200)) {
             const password = security.generatePassword();
-            const student=await Student.findOne({
-                where:{
+            const student = await Student.findOne({
+                where: {
                     trang_thai: true,
                     email: req.body.email,
-                }
-            })
-            if(student){
+                },
+            });
+            if (student) {
                 await Student.update(
                     {
                         mat_khau: security.hashPassword(password),
@@ -585,7 +644,11 @@ const forgetPassword = async (req, res) => {
                         },
                     }
                 );
-                const content={ho_ten: student.ho_ten, gmail: req.body.email, password: password};
+                const content = {
+                    ho_ten: student.ho_ten,
+                    gmail: req.body.email,
+                    password: password,
+                };
                 await sendMail(content, 2);
                 res.status(200).send({
                     status: 'success',
@@ -594,7 +657,7 @@ const forgetPassword = async (req, res) => {
                 });
                 return;
             }
-        } else{
+        } else {
             res.status(200).send({
                 status: 'fail',
                 data: null,
@@ -602,32 +665,34 @@ const forgetPassword = async (req, res) => {
             });
             return;
         }
-    } 
+    }
     res.status(404).send({
-      status: 'error',
-      data: null,
-      message: null,
+        status: 'error',
+        data: null,
+        message: null,
     });
 };
 
 const forgotPasswordv2 = async (req, res) => {
-    if(!req.body.email.match(
-      /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    )){
+    if (
+        !req.body.email.match(
+            /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        )
+    ) {
         res.status(200).send({
-          status: 'error',
-          data: null,
-          message: 'Email không hợp lệ',
+            status: 'error',
+            data: null,
+            message: 'Email không hợp lệ',
         });
         return;
     }
-    const student=await Student.findOne({
-        where:{
+    const student = await Student.findOne({
+        where: {
             trang_thai: true,
             email: req.body.email,
-        }
-    })
-    if(student){
+        },
+    });
+    if (student) {
         const password = security.generatePassword();
         await Student.update(
             {
@@ -639,14 +704,18 @@ const forgotPasswordv2 = async (req, res) => {
                 },
             }
         );
-        const content={ho_ten: student.ho_ten, gmail: req.body.email, password: password};
+        const content = {
+            ho_ten: student.ho_ten,
+            gmail: req.body.email,
+            password: password,
+        };
         await sendMail(content, 2);
         res.status(200).send({
             status: 'success',
             data: null,
             message: null,
         });
-    }else{
+    } else {
         res.status(200).send({
             status: 'fail',
             data: null,
@@ -679,20 +748,20 @@ const confirm = async (req, res) => {
 };
 
 const putUpdate = async (req, res) => {
-  await Student.update(
-    {...req.body},
-    {
-      where:{
-        hoc_vien_id: req.userId
-      }
-  }
-  )
-  res.status(200).send({
-    status: 'success',
-    data: null,
-    message: null,
-});
-}
+    await Student.update(
+        { ...req.body },
+        {
+            where: {
+                hoc_vien_id: req.userId,
+            },
+        }
+    );
+    res.status(200).send({
+        status: 'success',
+        data: null,
+        message: null,
+    });
+};
 
 /**
  * [POST]
@@ -703,9 +772,11 @@ const postRegisterv3 = async (req, res) => {
     await axios.post(
         `https://www.google.com/recaptcha/api/siteverify?secret=${captcha.secretKey}&response=${token}`
     );
-    if(!req.body.email.match(
-        /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    )){
+    if (
+        !req.body.email.match(
+            /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        )
+    ) {
         res.status(404).send({
             status: 'error',
             data: null,
@@ -713,24 +784,23 @@ const postRegisterv3 = async (req, res) => {
         });
         return;
     }
-    if(res.status(200)){
+    if (res.status(200)) {
         let student = await Student.findOne({
             where: {
                 email: req.body.email,
             },
         });
-        if (student){
+        if (student) {
             res.status(409).send({
                 status: 'fail',
                 data: null,
                 message: 'Email already exists!',
             });
             return;
-        }
-        else {
+        } else {
             const password = security.generatePassword();
             req.body.mat_khau = security.hashPassword(password);
-            req.body.code= `NET21_${req.body.sdt}`;
+            req.body.code = `NET21_${req.body.sdt}`;
             student = await Student.create({
                 ...req.body,
                 trang_thai: 2,
@@ -739,12 +809,17 @@ const postRegisterv3 = async (req, res) => {
                 { gmail: student.email, accountType: 0 },
                 '5h'
             );
-            const content={gmail: req.body.email, password: password, ho_ten: req.body.ho_ten, token: token};
+            const content = {
+                gmail: req.body.email,
+                password: password,
+                ho_ten: req.body.ho_ten,
+                token: token,
+            };
             await sendMail(content, 6);
             await CourseStudent.create({
                 hoc_vien_id: student.hoc_vien_id,
-                khoa_hoc_id: 32
-            })
+                khoa_hoc_id: 32,
+            });
             res.status(200).send({
                 status: 'success',
                 data: null,
@@ -800,5 +875,5 @@ module.exports = {
     postRegisterv2,
     forgotPasswordv2,
     putUpdate,
-    confirmv2
+    confirmv2,
 };

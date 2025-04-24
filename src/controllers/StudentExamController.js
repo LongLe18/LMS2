@@ -1237,12 +1237,212 @@ const exportDGNL = async (req, res) => {
 
             indexRow++;
         }
-        
-        const filename = removeVietnameseTones(exam.ten_de_thi).toUpperCase() + '.xlsx';
+
+        const filename =
+            removeVietnameseTones(exam.ten_de_thi).toUpperCase() + '.xlsx';
         res.setHeader(
             'Content-Type',
             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         );
+        res.setHeader(
+            'Content-Disposition',
+            `attachment; filename="${filename}"; filename*=UTF-8''${encodeURIComponent(
+                filename
+            )}`
+        );
+        await workbook.xlsx.write(res);
+
+        return res.end();
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({
+            status: 'error',
+            data: null,
+            message: err,
+        });
+    }
+};
+
+const exportDGNLv2 = async (req, res) => {
+    try {
+        const content = fs.readFileSync(
+            path.join(
+                process.cwd(),
+                '/public/templates/export_student_exam.xlsx'
+            )
+        );
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.load(content);
+
+        workbook.creator = 'Me';
+        workbook.lastModifiedBy = 'Her';
+        workbook.created = new Date();
+        const workSheet = workbook.getWorksheet('Sheet1');
+
+        const exams = await Exam.findAll({
+            attributes: ['de_thi_id', 'ten_de_thi'],
+            include: [
+                {
+                    model: StudentExam,
+                    attributes: ['hoc_vien_id'],
+                    required: true,
+                    include: [
+                        {
+                            model: Student,
+                            attributes: ['hoc_vien_id', 'ho_ten', 'email'],
+                            required: true,
+                        },
+                    ],
+                    where: {
+                        dthv_id: {
+                            [Op.in]: req.query.dthv_ids.split(',').map(Number), // giả sử bạn truyền danh sách ID trong req.body.ids
+                        },
+                    },
+                },
+            ],
+        });
+
+        let indexCol;
+        let indexRow;
+        let count;
+        let row;
+        let phan;
+        let order = 1;
+        indexRow = 4;
+        for (const exam of exams) {
+            const list = await ExamQuestion.findAll({
+                attributes: ['chdt_id', 'phan'],
+                include: [
+                    {
+                        model: Question,
+                        attributes: ['cau_hoi_id', 'noi_dung', 'mdch_id'],
+                        include: [
+                            {
+                                model: Exceprt,
+                                attributes: ['trich_doan_id', 'noi_dung'],
+                            },
+                            {
+                                model: SelectedAnswer,
+                                attributes: ['dadc_id', 'ket_qua'],
+                            },
+                            {
+                                model: Majoring,
+                                attributes: [
+                                    'chuyen_nganh_id',
+                                    'ten_chuyen_nganh',
+                                ],
+                            },
+                        ],
+                    },
+                ],
+                where: {
+                    de_thi_id: exam.de_thi_id,
+                },
+                order: [[sequelize.col('chdt_id'), 'ASC']],
+            });
+
+            row = workSheet.getRow(indexRow);
+            row.getCell(2).font = {
+                name: 'Aptos Narrow',
+                bold: true,
+                size: 11,
+            };
+            row.getCell(2).value = 'Email';
+            row.getCell(5).font = {
+                color: { argb: '467886' }, // màu chữ
+                underline: true,           // gạch chân
+            };
+            row.getCell(5).value = exam.de_thi_hoc_viens[0].hoc_vien.email;
+
+            row = workSheet.getRow(indexRow+1);
+            row.getCell(2).font = {
+                name: 'Aptos Narrow',
+                bold: true,
+                size: 11,
+            };
+            row.getCell(2).value = 'Họ tên';
+            row.getCell(5).value = exam.de_thi_hoc_viens[0].hoc_vien.ho_ten;
+
+            for (const item of list) {
+                if (phan !== item.phan) {
+                    indexRow = indexRow + 2;
+                    row = workSheet.getRow(indexRow);
+
+                    row.getCell(1).font = {
+                        name: 'Aptos Narrow',
+                        bold: true,
+                        size: 11,
+                    };
+                    row.getCell(1).fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'c3d69c' },
+                    };
+                    if (item.phan === 1) {
+                        row.getCell(1).value = 'ĐỊNH TÍNH';
+                    } else if (item.phan === 2) {
+                        row.getCell(1).value = 'ĐỊNH LƯỢNG';
+                    } else if (item.phan === 3) {
+                        row.getCell(1).value = 'KHOA HỌC';
+                    } else if (item.phan === 4) {
+                        row.getCell(1).value = 'TIẾNG ANH';
+                    }
+
+                    order = 1;
+                    phan = item.phan;
+                } else {
+                    row = workSheet.getRow(indexRow);
+
+                    row.getCell(1).value = `Câu ${order}`;
+                    row.getCell(2).value = (
+                        (item.cau_hoi.trich_doan
+                            ? item.cau_hoi.trich_doan.noi_dung
+                            : '') + item.cau_hoi.noi_dung
+                    )
+                        .replaceAll(
+                            '\\begin{center}\\includegraphics[scale = 0.5]{',
+                            ''
+                        )
+                        .replaceAll('}\\end{center}\\', '')
+                        .replaceAll('<strong>', '')
+                        .replaceAll('</strong>', '')
+                        .replaceAll('<em>', '')
+                        .replaceAll('</em>', '')
+                        .replaceAll('<b>', '')
+                        .replaceAll('</b>', '');
+                    row.getCell(3).value =
+                        item.cau_hoi.chuyen_nganh.ten_chuyen_nganh;
+                    row.getCell(4).value =
+                        item.cau_hoi.mdch_id === 1
+                            ? 'Nhận biết'
+                            : item.cau_hoi.mdch_id === 2
+                            ? 'Thông hiểu'
+                            : item.cau_hoi.mdch_id === 3
+                            ? 'Vận dụng'
+                            : 'Vận dụng cao';
+                    row.getCell(5).value =
+                        item.cau_hoi.dap_an_da_chons.length === 0
+                            ? 'X'
+                            : item.cau_hoi.dap_an_da_chons[0].ket_qua
+                            ? 'Đ'
+                            : 'S';
+
+                    order++;
+                }
+
+                indexRow++;
+            }
+            indexRow += 3;
+        }
+
+        const filename =
+            removeVietnameseTones('danh_sach_ket_qua_thi').toUpperCase() +
+            '.xlsx';
+        res.setHeader(
+            'Content-Type',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        );
+        21;
         res.setHeader(
             'Content-Disposition',
             `attachment; filename="${filename}"; filename*=UTF-8''${encodeURIComponent(
@@ -1280,4 +1480,5 @@ module.exports = {
     putUpdateDGTD,
     postCreateDGTD,
     exportDGNL,
+    exportDGNLv2,
 };

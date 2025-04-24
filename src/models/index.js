@@ -55,6 +55,10 @@ const CourseType = require('./CourseType');
 const Media = require('./Media');
 const CourseMedia = require('./CourseMedia');
 const ExamSetStudent = require('./ExamSetStudent');
+const Permission = require('./Permission');
+const Position = require('./Position');
+const PositionPermission = require('./PositionPermission');
+const Department = require('./Department');
 
 //khoa ngoai khoahoc
 Program.hasMany(Course, { foreignKey: 'kct_id', constraints: false });
@@ -431,6 +435,39 @@ Media.hasOne(Staff, {
     constraints: false,
 });
 
+PositionPermission.hasOne(Position, {
+    foreignKey: 'chuc_vu_id',
+    sourceKey: 'chuc_vu_id',
+    constraints: false,
+});
+Position.hasMany(PositionPermission, {
+    foreignKey: 'chuc_vu_id',
+    sourceKey: 'chuc_vu_id',
+    constraints: false,
+});
+
+PositionPermission.hasOne(Permission, {
+    foreignKey: 'qtc_id',
+    sourceKey: 'qtc_id',
+    constraints: false,
+});
+Permission.hasMany(PositionPermission, {
+    foreignKey: 'qtc_id',
+    sourceKey: 'qtc_id',
+    constraints: false,
+});
+
+Teacher.hasOne(Position, {
+    foreignKey: 'chuc_vu_id',
+    sourceKey: 'chuc_vu_id',
+    constraints: false,
+});
+Teacher.hasOne(Department, {
+    foreignKey: 'don_vi_id',
+    sourceKey: 'don_vi_id',
+    constraints: false,
+});
+
 module.exports = {
     Course,
     Lesson,
@@ -489,4 +526,8 @@ module.exports = {
     CourseMedia,
     Media,
     ExamSetStudent,
+    Permission,
+    Position,
+    PositionPermission,
+    Department,
 };

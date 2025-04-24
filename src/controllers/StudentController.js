@@ -392,35 +392,35 @@ const postCreate = async (req, res) => {
         },
     });
     if (student)
-        res.status(409).send({
+        return res.status(409).send({
             status: 'fail',
             data: student,
             message: 'Email already exists',
         });
-    else {
-        const password = security.generatePassword();
-        await Student.create({
-            ...req.body,
-            mat_khau: security.hashPassword(password),
-            trang_thai: 1,
-        });
-        const content = {
-            gmail: req.body.email,
-            password: password,
-            ho_ten: req.body.ho_ten,
-        };
-        await sendMail(content, 3);
-        student = await Student.findOne({
-            where: {
-                email: req.body.email,
-            },
-        });
-        res.status(200).send({
-            status: 'success',
-            data: student,
-            message: null,
-        });
-    }
+
+    const password = security.generatePassword();
+    await Student.create({
+        ...req.body,
+        mat_khau: security.hashPassword(password),
+        trang_thai: 1,
+    });
+    const content = {
+        gmail: req.body.email,
+        password: password,
+        ho_ten: req.body.ho_ten,
+    };
+    await sendMail(content, 3);
+    student = await Student.findOne({
+        where: {
+            email: req.body.email,
+        },
+    });
+    
+    return res.status(200).send({
+        status: 'success',
+        data: student,
+        message: null,
+    });
 };
 
 //[POST] student/adminCreate
@@ -607,7 +607,7 @@ const forceDelete = async (req, res) => {
         where: {
             hoc_vien_id: req.params.id,
         },
-    })
+    });
     res.send({
         status: 'success',
         data: null,
@@ -669,7 +669,7 @@ const postCreateMoreByPrefix = async (req, res) => {
         }
     );
 
-    res.status(200).send({
+    return res.status(200).send({
         status: 'success',
         message: 'Tạo nhiều tài khoản thành công!',
     });

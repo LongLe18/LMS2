@@ -9,20 +9,22 @@ const authToken = (req, res, next) => {
         const authorizationHeader = req.headers['authorization'];
         const token = authorizationHeader.split(' ')[1];
         if (!token) {
-            res.status(401).send('Unauthorized');
+            return res.status(401).send('Unauthorized');
         } else {
             const decodedToken = security.verifyToken(token);
             if (decodedToken.userId) {
                 req.userId = decodedToken.userId;
                 req.role = decodedToken.role;
                 req.type = decodedToken.type;
+                req.positionId = decodedToken.positionId;
+                req.departmentId = decodedToken.departmentId;
                 next();
             } else {
-                res.status(401).send('Unauthorized');
+                return res.status(401).send('Unauthorized');
             }
         }
     } catch (error) {
-        res.status(401).send('Unauthorized');
+        return res.status(401).send('Unauthorized');
     }
 };
 
@@ -30,24 +32,34 @@ const getToken = (req, res) => {
     const authorizationHeader = req.headers['authorization'];
     const token = authorizationHeader.split(' ')[1];
     return token;
-}
+};
 
 const authRole = (role, iType) => {
     return (req, res, next) => {
-        if(role.includes(req.role)) { // role của user có trong role được phép thực hiện
-            if(req.role==2){ // nhân viên
+        if (role.includes(req.role)) {
+            // role của user có trong role được phép thực hiện
+            if (req.role == 2) {
+                // nhân viên
                 if (req.type.charAt(iType) === '1') {
                     next();
                 } else {
-                    res.status(403).send('Bạn không có quyền thực hiện chức năng này');
+                    return res
+                        .status(403)
+                        .send('Bạn không có quyền thực hiện chức năng này');
                 }
-            }else if(req.role==1){ // giáo viên
+            } else if (req.role == 1) {
+                // giáo viên
                 next();
-            }else{ // học viên
-                res.status(403).send('Bạn không có quyền thực hiện chức năng này');
+            } else {
+                // học viên
+                return res
+                    .status(403)
+                    .send('Bạn không có quyền thực hiện chức năng này');
             }
-        }else{
-            res.status(403).send('Bạn không có quyền thực hiện chức năng này');
+        } else {
+            return res
+                .status(403)
+                .send('Bạn không có quyền thực hiện chức năng này');
         }
     };
 };

@@ -50,6 +50,10 @@ const dgtdCriteriaRouter = require('./dgtdcriteria');
 const dgtdEvaluateRouter = require('./dgtdevaluate');
 const courseTypeRouter = require('./coursetype');
 const examSetStudentRouter = require('./examsetstudent');
+const positionRouter = require('./position');
+const permissionRouter = require('./permission');
+const positionPermissionRouter = require('./positionpermission');
+const departmentRouter = require('./department');
 
 function route(app) {
     app.use('/auth', authenRouter);
@@ -104,6 +108,10 @@ function route(app) {
     app.use('/evaluate-dgtd', dgtdEvaluateRouter);
     app.use('/course-type', courseTypeRouter);
     app.use('/examset-student', examSetStudentRouter);
+    app.use('/position', positionRouter);
+    app.use('/permission', permissionRouter);
+    app.use('/position-permission', positionPermissionRouter);
+    app.use('/department', departmentRouter);
 }
 
 module.exports = route;

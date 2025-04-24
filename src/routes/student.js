@@ -4,18 +4,19 @@ const { tryCatch } = require('../middlewares/tryCatch');
 const studentController = require('../controllers/StudentController');
 const { upload } = require('../middlewares/upload');
 const { authToken, authRole } = require('../middlewares/auth');
+const permission = require('../middlewares/permission');
 
 router.post(
     '/create',
     authToken,
-    authRole([2], 2),
+    permission('student:create'),
     upload.single('anh_dai_dien'),
     tryCatch(studentController.postCreate)
 );
 router.post(
     '/create-by-prefix',
     authToken,
-    authRole([2], 2),
+    permission('student:createByPrefix'),
     tryCatch(studentController.postCreateMoreByPrefix)
 );
 

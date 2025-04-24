@@ -26,7 +26,7 @@ function checkMimeTypeCallback(file, cb) {
     ];
     const filetypes = /jpg|jpeg|png|gif|bmp|mp4|pdf|doc|docx|zip|rar|7z|tar|gz/;
     const mimetype = mimeTypes.includes(file.mimetype);
-    console.log(file.mimetype)
+    // console.log(file.mimetype)
     const checkExtname = filetypes.test(extname(file.originalname));
     if (mimetype && checkExtname) {
         return cb(null, true);

@@ -1,7 +1,4 @@
-const {
-    Teacher,
-    Majoring,
-} = require('../models');
+const { Teacher, Majoring, Position, Department } = require('../models');
 const security = require('../utils/security');
 const { Op } = require('sequelize');
 const fs = require('fs');
@@ -26,7 +23,7 @@ const getDealers = async (req, res) => {
     });
 };
 
-const getDealerUser =async (req, res) => {
+const getDealerUser = async (req, res) => {
     let dealers = await sequelize.query(
         `SELECT khoa_hoc.khoa_hoc_id, khoa_hoc.ten_khoa_hoc, chiet_khau_dai_ly.*, (SELECT COUNT(*) AS sl 
         FROM chiet_khau_dai_ly LEFT JOIN chiet_khau_chi_tiet ON chiet_khau_dai_ly.chiet_khau_id=chiet_khau_chi_tiet.chiet_khau_id 
@@ -37,10 +34,10 @@ const getDealerUser =async (req, res) => {
         chiet_khau_dai_ly.khoa_hoc_id=khoa_hoc_id) sl_ma_chua_ban FROM chiet_khau_dai_ly JOIN khoa_hoc 
         ON chiet_khau_dai_ly.khoa_hoc_id=khoa_hoc.khoa_hoc_id WHERE chiet_khau_dai_ly.giao_vien_id=:giao_vien_id`,
         {
-            replacements:{
-                giao_vien_id: parseInt(req.userId)
+            replacements: {
+                giao_vien_id: parseInt(req.userId),
             },
-            type: sequelize.QueryTypes.SELECT 
+            type: sequelize.QueryTypes.SELECT,
         }
     );
     res.status(200).send({
@@ -48,193 +45,170 @@ const getDealerUser =async (req, res) => {
         data: dealers,
         message: null,
     });
-}
+};
 
 const getStatistical = async (req, res) => {
-    const teachers= await sequelize.query(`
+    const teachers = await sequelize.query(
+        `
         SELECT giao_vien.giao_vien_id, giao_vien.ho_ten, COUNT(DISTINCT mo_dun.mo_dun_id) AS so_mo_dun, 
         COUNT(DISTINCT mo_dun.khoa_hoc_id) AS so_khoa_hoc FROM giao_vien LEFT JOIN mo_dun ON 
         mo_dun.giao_vien_id=giao_vien.giao_vien_id GROUP BY giao_vien.giao_vien_id, giao_vien.ho_ten`,
-        {type: sequelize.QueryTypes.SELECT});
+        { type: sequelize.QueryTypes.SELECT }
+    );
     res.status(200).send({
         status: 'success',
         data: teachers,
         message: null,
     });
-}
+};
 
 //[GET] teacher?id
 const getAll = async (req, res) => {
-    try {
-        let search = '';
-        let ngay_bat_dau = `2000-1-1`;
-        let ngay_ket_thuc = `2100-1-1`;
-        let filter = {};
-        if (req.query.ngay_bat_dau) {
-            ngay_bat_dau = req.query.ngay_bat_dau;
-        }
-        if (req.query.ngay_ket_thuc) {
-            ngay_ket_thuc = req.query.ngay_ket_thuc;
-        }
-        if (req.query.trang_thai) {
-            filter.trang_thai = req.query.trang_thai;
-        }
-        if (req.query.search) {
-            search = decodeURI(req.query.search);
-        }
-        if (req.query.chuyen_nganh_id) {
-            filter.chuyen_nganh_id = req.query.chuyen_nganh_id;
-        }
-        let count=await Teacher.count({
-            where:{
-                [Op.or]: {
-                    ho_ten: {
-                        [Op.like]: `%${search}%`,
+    const { count, rows } = await Teacher.findAndCountAll({
+        include: [
+            {
+                model: Position,
+                attributes: ['chuc_vu_id', 'ten'],
+            },
+            {
+                model: Department,
+                attributes: ['don_vi_id', 'ten'],
+            },
+            {
+                model: Majoring,
+                attributes: ['chuyen_nganh_id', 'ten_chuyen_nganh'],
+            },
+        ],
+        where: {
+            ...(req.positionCode === 'ADMIN_3' && {
+                don_vi_id: req.departmentId,
+            }),
+            ...(req.query.chuyen_nganh_id && {
+                chuyen_nganh_id: req.query.chuyen_nganh_id,
+            }),
+            ...(req.query.chuc_vu_id && { chuc_vu_id: req.query.chuc_vu_id }),
+            ...(req.query.don_vi_id && { don_vi_id: req.query.don_vi_id }),
+            ...(req.query.trang_thai && { trang_thai: req.query.trang_thai }),
+            ...(req.query.search && {
+                [Op.or]: [
+                    { ho_ten: { [Op.like]: `%${req.query.search}%` } },
+                    {
+                        '$don_vi.ten$': {
+                            [Op.like]: `%${req.query.search}%`,
+                        },
                     },
-                },
-                ngay_tao: {
-                    [Op.between]: [ngay_bat_dau, ngay_ket_thuc],
-                },
-                ...filter,
-            }
-        })
+                    {
+                        '$chuc_vu.ten$': {
+                            [Op.like]: `%${req.query.search}%`,
+                        },
+                    },
+                    {
+                        '$chuyen_nganh.ten$': {
+                            [Op.like]: `%${req.query.search}%`,
+                        },
+                    },
+                ],
+            }),
+        },
+        offset:
+            (Number(req.query.pageIndex || 1) - 1) *
+            Number(req.query.pageSize || 10),
+        limit: Number(req.query.pageSize || 10),
+        order: [
+            req.query.sortBy
+                ? req.query.sortBy.split(',')
+                : ['ngay_tao', 'DESC'],
+        ],
+    });
 
-        const authorizationHeader = req.headers['authorization'];
-        const token = authorizationHeader.split(' ')[1];
-        if (!token) {
-            res.status(401).send('Unauthorized');
-        } else {
-            const decodedToken = security.verifyToken(token);
-            if (decodedToken.role === 0) { // học viên
-                let teachers = await Teacher.findAll({
-                    where: {
-                        [Op.or]: {
-                            ho_ten: {
-                                [Op.like]: `%${search}%`,
-                            },
-                        },
-                        ngay_tao: {
-                            [Op.between]: [ngay_bat_dau, ngay_ket_thuc],
-                        },
-                        ...filter,
-                    },
-                    order: [['trang_thai','DESC'],['ngay_tao', 'DESC']],
-                    attributes:['giao_vien_id', 'ho_ten', 'anh_dai_dien'],
-                    limit: 100
-                });
-                res.status(200).send({
-                    status: 'success',
-                    data: teachers,
-                    count: count,
-                    message: null,
-                });
-            } else { // nhân viên hoặc giáo viên
-                let teachers = await Teacher.findAll({
-                    where: {
-                        [Op.or]: {
-                            ho_ten: {
-                                [Op.like]: `%${search}%`,
-                            },
-                        },
-                        ngay_tao: {
-                            [Op.between]: [ngay_bat_dau, ngay_ket_thuc],
-                        },
-                        ...filter,
-                    },
-                    order: [['trang_thai','DESC'],['ngay_tao', 'DESC']],
-                    attributes:['giao_vien_id', 'ho_ten', 'anh_dai_dien', 'ngay_tao', 'ngay_sinh', 'gioi_tinh', 'email', 'sdt','trang_thai'],
-                    limit: 100
-                });
-                res.status(200).send({
-                    status: 'success',
-                    data: teachers,
-                    count: count,
-                    message: null,
-                });
-            }
-        }
-    } catch (error) {
-        res.status(401).send(
-        {
-            status: 'fail',
-            data: null,
-            message: error,
-        });
-    }
+    // Loại bỏ field `password`
+    const sanitizedRows = rows.map((teacher) => {
+        const { mat_khau, ...rest } = teacher.toJSON(); // đảm bảo là plain object
+        return rest;
+    });
+
+    return res.status(200).send({
+        status: 'success',
+        data: sanitizedRows,
+        pageIndex: Number(req.query.pageIndex || 1),
+        pageSize: Number(req.query.pageSize || 10),
+        totalCount: count,
+        totalPage: Math.ceil(count / Number(req.query.pageSize || 10)),
+        message: null,
+    });
 };
 
 //[GET] teacher/:id
 const getById = async (req, res) => {
-    try {
-        const authorizationHeader = req.headers['authorization'];
-        const token = authorizationHeader.split(' ')[1];
-        if (!token) {
-            res.status(401).send({
-                status: 'success',
-                data: null,
-                message: 'Bạn không có quyền đọc thông tin người dùng này',
-            });
-        } else {
-            const decodedToken = security.verifyToken(token);
-            if (decodedToken.userId === Number(req.params.id) || decodedToken.role === 2 || decodedToken.role === 1) {
-                const teacher = await Teacher.findOne({
-                    where: {
-                        giao_vien_id: req.params.id,
-                    },
-                    attributes:['giao_vien_id', 'ho_ten', 'anh_dai_dien', 'chuyen_nganh_id',
-                        'ngay_tao', 'ngay_sinh', 'gioi_tinh', 'email', 'sdt', 'trang_thai', 'dia_chi', 'gioi_thieu']
-                });
-                res.status(200).send({
-                    status: 'success',
-                    data: teacher,
-                    message: null,
-                });
-            } else {
-                res.status(401).send(
-                {
-                    status: 'success',
-                    data: null,
-                    message: 'Bạn không có quyền đọc thông tin người dùng này',
-                });
-            }
-        }
-    } catch (error) {
-        res.status(401).send({
-            status: 'success',
+    const teacher = await Teacher.findOne({
+        where: {
+            giao_vien_id: req.params.id,
+        },
+    });
+    if (
+        req.positionCode === 'ADMIN_3' &&
+        teacher.don_vi_id !== req.departmentId
+    ) {
+        return res.status(403).json({
+            status: 'fail',
+            message: 'Access denied: you are not allowed to view this teacher',
             data: null,
-            message: 'Bạn không có quyền đọc thông tin người dùng này',
         });
     }
+
+    const { password, ...sanitizedTeacher } = teacher.toJSON();
+
+    return res.status(200).send({
+        status: 'success',
+        data: sanitizedTeacher,
+        message: null,
+    });
 };
 
 //[POST] teacher/create
 const postCreate = async (req, res) => {
-    let teacher = await Teacher.findOne({
+    if (
+        req.positionCode === 'ADMIN_3' &&
+        req.body.don_vi_id !== req.departmentId
+    ) {
+        return res.status(403).json({
+            status: 'fail',
+            message:
+                'Access denied: you are not allowed to create a teacher in another department',
+            data: null,
+        });
+    }
+
+    const teacherExist = await Teacher.findOne({
         where: {
             email: req.body.email,
         },
     });
-    if (teacher)
-        res.status(404).send({
+    if (teacherExist)
+        return res.status(404).send({
             status: 'fail',
             data: null,
             message: 'Email already exists',
         });
-    else {
-        const password = security.generatePassword();
-        teacher = await Teacher.create({
-            ...req.body,
-            mat_khau: security.hashPassword(password),
-            trang_thai: 1,
-        });
-        const content = { gmail: req.body.email, password: password, ho_ten: req.body.ho_ten === null ? 'người dùng' : req.body.ho_ten };
-        await sendMail(content, 3);
-        res.status(200).send({
-            status: 'success',
-            data: teacher,
-            message: null,
-        });
-    }
+
+    const password = security.generatePassword();
+    const teacher = await Teacher.create({
+        ...req.body,
+        mat_khau: security.hashPassword(password),
+        trang_thai: 1,
+    });
+    const content = {
+        gmail: req.body.email,
+        password: password,
+        ho_ten: req.body.ho_ten === null ? 'người dùng' : req.body.ho_ten,
+    };
+    await sendMail(content, 3);
+
+    return res.status(200).send({
+        status: 'success',
+        data: teacher,
+        message: null,
+    });
 };
 
 //[GET] teacher/:id
@@ -244,7 +218,18 @@ const getUpdate = async (req, res) => {
             giao_vien_id: req.params.id,
         },
     });
-    res.status(200).send({
+    if (
+        req.positionCode === 'ADMIN_3' &&
+        teacher.don_vi_id !== req.departmentId
+    ) {
+        return res.status(403).json({
+            status: 'fail',
+            message: 'Access denied: you are not allowed to view this teacher',
+            data: null,
+        });
+    }
+
+    return res.status(200).send({
         status: 'success',
         data: teacher,
         message: null,
@@ -253,79 +238,69 @@ const getUpdate = async (req, res) => {
 
 //[PUT] teacher/:id
 const putUpdate = async (req, res) => {
-    try {
-        const authorizationHeader = req.headers['authorization'];
-        const token = authorizationHeader.split(' ')[1];
-        if (!token) {
-            res.status(401).send({
-                status: 'success',
-                data: null,
-                message: 'Bạn không có quyền sửa thông tin người dùng này',
-            });
-        } else {
-            const decodedToken = security.verifyToken(token);
-            if (decodedToken.userId === Number(req.params.id) || decodedToken.role === 1 || decodedToken.role === 2) {
-                let teacher = await Teacher.findOne({
-                    where: {
-                        email: req.body.email,
-                        giao_vien_id: {
-                            [Op.ne]: req.params.id,
-                        },
-                    },
-                });
-                if (teacher)
-                    res.status(404).send({
-                        status: 'fail',
-                        data: null,
-                        message: 'Email already exists',
-                    });
-                else {
-                    teacher = await Teacher.findOne({
-                        where: {
-                            giao_vien_id: req.params.id,
-                        },
-                    });
-                    if (
-                        req.file &&
-                        teacher.anh_dai_dien &&
-                        fs.existsSync(`public${teacher.anh_dai_dien}`)
-                    )
-                        fs.unlinkSync(`public${teacher.anh_dai_dien}`);
-                    if (req.body.mat_khau)
-                        req.body.mat_khau = security.hashPassword(req.body.mat_khau);
-                    await Teacher.update(
-                        {
-                            ...req.body,
-                        },
-                        {
-                            where: {
-                                giao_vien_id: req.params.id,
-                            },
-                        }
-                    );
-                    res.status(200).send({
-                        status: 'success',
-                        data: null,
-                        message: null,
-                    });
-                }
-            } else {
-                res.status(401).send(
-                {
-                    status: 'success',
-                    data: null,
-                    message: 'Bạn không có quyền sửa thông tin người dùng này',
-                });
-            }
-        }
-    } catch (error) {
-        res.status(401).send({
-            status: 'success',
+    const teacherExist = await Teacher.findOne({
+        where: {
+            email: req.body.email,
+            giao_vien_id: {
+                [Op.ne]: req.params.id,
+            },
+        },
+    });
+    if (teacherExist)
+        return res.status(404).send({
+            status: 'fail',
             data: null,
-            message: 'Bạn không có quyền sửa thông tin người dùng này',
+            message: 'Email already exists',
+        });
+
+    const teacher = await Teacher.findOne({
+        where: {
+            giao_vien_id: req.params.id,
+        },
+    });
+    if (!teacher) {
+        return res.status(404).send({
+            status: 'fail',
+            data: null,
+            message: 'Teacher not found',
         });
     }
-    
+    if (
+        req.positionCode === 'ADMIN_3' &&
+        teacher.don_vi_id !== req.departmentId
+    ) {
+        return res.status(403).json({
+            status: 'fail',
+            message:
+                'Access denied: you are not allowed to update a teacher in another department',
+            data: null,
+        });
+    }
+
+    if (
+        req.file &&
+        teacher.anh_dai_dien &&
+        fs.existsSync(`public${teacher.anh_dai_dien}`)
+    )
+        fs.unlinkSync(`public${teacher.anh_dai_dien}`);
+    if (req.body.mat_khau)
+        req.body.mat_khau = security.hashPassword(req.body.mat_khau);
+    await Teacher.update(
+        {
+            ...req.body,
+        },
+        {
+            where: {
+                giao_vien_id: req.params.id,
+            },
+        }
+    );
+
+    return res.status(200).send({
+        status: 'success',
+        data: null,
+        message: null,
+    });
 };
 
 //[DELETE] teacher/:id
@@ -335,30 +310,30 @@ const stateChange = async (req, res) => {
             giao_vien_id: req.params.id,
         },
     });
-    if (teacher.trang_thai != 1) {
-        await Teacher.update(
-            {
-                trang_thai: 1,
-            },
-            {
-                where: {
-                    giao_vien_id: req.params.id,
-                },
-            }
-        );
-    } else if (teacher.trang_thai != 0) {
-        await Teacher.update(
-            {
-                trang_thai: 0,
-            },
-            {
-                where: {
-                    giao_vien_id: req.params.id,
-                },
-            }
-        );
+    if (
+        req.positionCode === 'ADMIN_3' &&
+        teacher.don_vi_id !== req.departmentId
+    ) {
+        return res.status(403).json({
+            status: 'fail',
+            message:
+                'Access denied: you are not allowed to update a teacher in another department',
+            data: null,
+        });
     }
-    res.status(200).send({
+
+    await Teacher.update(
+        {
+            trang_thai: !teacher.trang_thai,
+        },
+        {
+            where: {
+                giao_vien_id: req.params.id,
+            },
+        }
+    );
+
+    return res.status(200).send({
         status: 'success',
         data: null,
         message: null,
@@ -372,17 +347,28 @@ const forceDelete = async (req, res) => {
             giao_vien_id: req.params.id,
         },
     });
+
     if (
-        teacher.anh_dai_dien &&
-        fs.existsSync(`public${teacher.anh_dai_dien}`)
-    )
+        req.positionCode === 'ADMIN_3' &&
+        teacher.don_vi_id !== req.departmentId
+    ) {
+        return res.status(403).json({
+            status: 'fail',
+            message:
+                'Access denied: you are not allowed to remove a teacher in another department',
+            data: null,
+        });
+    }
+
+    if (teacher.anh_dai_dien && fs.existsSync(`public${teacher.anh_dai_dien}`))
         fs.unlinkSync(`public${teacher.anh_dai_dien}`);
     await Teacher.destroy({
         where: {
             giao_vien_id: req.params.id,
         },
     });
-    res.status(200).send({
+
+    return res.status(200).send({
         status: 'success',
         data: null,
         message: 'deleted',
