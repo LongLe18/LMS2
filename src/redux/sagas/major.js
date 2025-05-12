@@ -17,9 +17,16 @@ function* fetchClasses(payload) {
     } catch (error) {
         yield put({ type: actions.major.GET_CLASS_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu lớp thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu lớp thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -35,9 +42,16 @@ function* fetchMajors(payload) {
     } catch (error) {
         yield put({ type: actions.major.GET_MAJORS_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu chuyên ngành thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu chuyên ngành thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -53,9 +67,16 @@ function* fetchMajor(payload) {
     } catch (error) {
         yield put({ type: actions.major.GET_MAJOR_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu chuyên ngành thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu chuyên ngành thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -71,9 +92,16 @@ function* createMajor(payload) {
     } catch (error) {
         yield put({ type: actions.major.CREATE_MAJOR_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Thêm dữ liệu chuyên ngành thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Thêm chuyên ngành thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -89,9 +117,16 @@ function* editMajor(payload) {
     } catch (error) {
         yield put({ type: actions.major.EDIT_MAJOR_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Cập nhật thông tin chuyên ngành thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Cập nhật chuyên ngành thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -108,9 +143,16 @@ function* deleteMajor(payload) {
     } catch (error) {
         yield put({ type: actions.major.DELETE_MAJOR_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa chuyên ngành thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Xóa chuyên ngành thất bại' + messageError),
+            });
+        } 
     }
 }
 

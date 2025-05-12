@@ -26,6 +26,7 @@ import * as contact from './contact';
 import * as evaluate from './evaluate';
 import * as optionQuestion from './optionQuestion';
 import * as setExam from './setExam';
+import * as position from './position';
 
 export { 
     advertise,
@@ -56,4 +57,5 @@ export {
     evaluate,
     optionQuestion,
     setExam,
+    position,
 }

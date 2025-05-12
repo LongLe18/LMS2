@@ -11,6 +11,7 @@ import Course from "./views/course/Course";
 import AccountPage from './views/account/Account.js';
 import TeacherPage from './views/account/Teacher.js';
 import StaffPage from './views/account/Staff.js';
+import PermissionPage from './views/account/permission/Permission.js';
 import ProfilePage from './views/account/profile.js';
 import ExamAdminPage from './views/exam/Exam.js';
 import ExamDGNLAdminPage from './views/exam/ExamDGNL.js';
@@ -74,6 +75,7 @@ import {
   PhoneOutlined,
   FileOutlined,
   FileDoneOutlined,
+  SecurityScanOutlined,
 } from '@ant-design/icons';
 import StatisticExam from './views/statistic/exam.js';
 import QuestionPage from './views/exam/Question.js';
@@ -146,6 +148,13 @@ const routes = [
       name: "Nhân viên",
       icon: <UserOutlined />,
       render: (props) => (shouldHaveAccessPermission('all', '/admin/account/admin') ? <StaffPage {...props}/> : <Redirect to="/"/>) // OK
+    }, 
+    {
+      parent: "account",
+      path: "/admin/account/permission",
+      name: "Quản lý quyền",
+      icon: <SecurityScanOutlined />,
+      render: (props) => (shouldHaveAccessPermission('all', '/admin/account/permission') ? <PermissionPage {...props}/> : <Redirect to="/"/>) // OK
     }]
   },
   {

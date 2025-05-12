@@ -17,9 +17,16 @@ function* fetchEvaluations(payload) {
     } catch (error) {
         yield put({ type: actions.evaluate.GET_EVALUATES_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu đánh giá đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu đánh giá thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -35,9 +42,16 @@ function* fetchEvaluationsDGNL(payload) {
     } catch (error) {
         yield put({ type: actions.evaluate.GET_EVALUATES_DGNL_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu đánh giá đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu đánh giá thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -53,9 +67,16 @@ function* fetchEvaluationsDGTD(payload) {
     } catch (error) {
         yield put({ type: actions.evaluate.GET_EVALUATES_DGTD_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu đánh giá đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu đánh giá thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -71,9 +92,16 @@ function* fetchEvaluation(payload) {
     } catch (error) {
         yield put({ type: actions.evaluate.GET_EVALUATE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu đánh giá đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu đánh giá thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -89,9 +117,16 @@ function* fetchEvaluationDGNL(payload) {
     } catch (error) {
         yield put({ type: actions.evaluate.GET_EVALUATE_DGNL_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu đánh giá đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu đánh giá thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -107,9 +142,16 @@ function* fetchEvaluationDGTD(payload) {
     } catch (error) {
         yield put({ type: actions.evaluate.GET_EVALUATE_DGTD_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu đánh giá đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu đánh giá thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -125,9 +167,16 @@ function* createEvaluation(payload) {
     } catch (error) {
         yield put({ type: actions.evaluate.CREATE_EVALUATE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : error.response.data.message;
-        notification.error({
-            message: get(error, 'response.data.error', 'Thêm đánh giá mới thất bại: ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Thêm mới đánh giá thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -143,9 +192,16 @@ function* createEvaluationDGNL(payload) {
     } catch (error) {
         yield put({ type: actions.evaluate.CREATE_EVALUATE_DGNL_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : error.response.data.message;
-        notification.error({
-            message: get(error, 'response.data.error', 'Thêm đánh giá mới thất bại: ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Thêm mới đánh giá thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -161,9 +217,16 @@ function* createEvaluationDGTD(payload) {
     } catch (error) {
         yield put({ type: actions.evaluate.CREATE_EVALUATE_DGTD_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : error.response.data.message;
-        notification.error({
-            message: get(error, 'response.data.error', 'Thêm đánh giá mới thất bại: ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Thêm mới đánh giá thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -179,9 +242,16 @@ function* editEvaluation(payload) {
     } catch (error) {
         yield put({ type: actions.evaluate.EDIT_EVALUATE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Cập nhật thông tin đánh giá thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Cập nhật đánh giá thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -197,9 +267,16 @@ function* editEvaluationDGNL(payload) {
     } catch (error) {
         yield put({ type: actions.evaluate.EDIT_EVALUATE_DGNL_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Cập nhật thông tin đánh giá thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Cập nhật đánh giá thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -215,9 +292,16 @@ function* editEvaluationDGTD(payload) {
     } catch (error) {
         yield put({ type: actions.evaluate.EDIT_EVALUATE_DGTD_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Cập nhật thông tin đánh giá thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Cập nhật đánh giá thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -233,9 +317,16 @@ function* deleteEvaluation(payload) {
     } catch (error) {
         yield put({ type: actions.evaluate.DELETE_EVALUATE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa đánh giá thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Xóa đánh giá thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -251,9 +342,16 @@ function* deleteEvaluationDGNL(payload) {
     } catch (error) {
         yield put({ type: actions.evaluate.DELETE_EVALUATE_DGNL_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa đánh giá thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Xóa đánh giá thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -269,9 +367,16 @@ function* deleteEvaluationDGTD(payload) {
     } catch (error) {
         yield put({ type: actions.evaluate.DELETE_EVALUATE_DGTD_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa đánh giá thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Xóa đánh giá thất bại' + messageError),
+            });
+        } 
     }
 }
 

@@ -17,9 +17,16 @@ function* fetchComments(payload) {
     } catch (error) {
         yield put({ type: actions.comment.GET_COMMENTS_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu bình luận đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu bình luận đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -35,9 +42,16 @@ function* fetchComment(payload) {
     } catch (error) {
         yield put({ type: actions.comment.GET_COMMENT_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu bình luận đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu bình luận đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -53,9 +67,16 @@ function* createComment(payload) {
     } catch (error) {
         yield put({ type: actions.comment.CREATE_COMMENT_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Thêm bình luận mới thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Thêm mới bình luận đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -71,9 +92,16 @@ function* editComment(payload) {
     } catch (error) {
         yield put({ type: actions.comment.EDIT_COMMENT_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Cập nhật thông tin bình luận thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Cập nhật bình luận đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -89,9 +117,16 @@ function* deleteComment(payload) {
     } catch (error) {
         yield put({ type: actions.comment.DELETE_COMMENT_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa bình luận thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Xóa bình luận đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -109,9 +144,16 @@ function* fetchSubComments(payload) {
     } catch (error) {
         yield put({ type: actions.comment.GET_SUBCOMMENTS_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu bình luận đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu bình luận đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -127,9 +169,16 @@ function* fetchSubComment(payload) {
     } catch (error) {
         yield put({ type: actions.comment.GET_SUBCOMMENT_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu bình luận đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu bình luận đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -145,9 +194,16 @@ function* createSubComment(payload) {
     } catch (error) {
         yield put({ type: actions.comment.CREATE_SUBCOMMENT_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Thêm bình luận mới thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Thêm mới bình luận đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -163,9 +219,16 @@ function* editSubComment(payload) {
     } catch (error) {
         yield put({ type: actions.comment.EDIT_SUBCOMMENT_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Cập nhật thông tin bình luận thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Cập nhật bình luận đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -181,14 +244,18 @@ function* deleteSubComment(payload) {
     } catch (error) {
         yield put({ type: actions.comment.DELETE_SUBCOMMENT_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa bình luận thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Xóa bình luận đã thất bại ' + messageError),
+            });
+        } 
     }
 }
-
-
-
 
 export function* loadComments() {
     yield takeEvery(actions.comment.GET_COMMENTS, fetchComments);

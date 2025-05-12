@@ -1,22 +1,21 @@
 import { notification } from 'antd';
 import { call, put, takeEvery } from 'redux-saga/effects';
 import config from '../../configs/index';
-import { getApiAuth, putApiAuth, postApiAuth, deleteApiAuth } from '../services/api';
+import { getApi, postApiAuth, putApiAuth, deleteApiAuth } from '../services/api';
 import * as actions from '../actions';
 import { get } from 'lodash';
 
-//  tài liệu
-function* fetchDocs(payload) {
+function* fetchPermissions(payload) {
     try {
-        let endpoint = `${config.API_URL}/document?trang_thai=${payload.params.status}&loai_tai_lieu_id=${payload.params.typeId}&search=${payload.params.search}&ngay_bat_dau=${payload.params.start}&ngay_ket_thuc=${payload.params.end}`;
-        const response = yield call(getApiAuth, endpoint);
+        let endpoint = `${config.API_URL}/permission?pageIndex=${payload.params.pageIndex}&pageSize=${payload.params.pageSize}&search=${payload.params.search}`;
+        const response = yield call(getApi, endpoint);
         const result = yield response.data;
-        yield put({ type: actions.document.GET_DOCS_SUCCESS, result: result });
+        yield put({ type: actions.position.GET_PERMISSIONS_SUCCESS, result: result });
         if (payload.callback) {
             payload.callback(result);
         }
     } catch (error) {
-        yield put({ type: actions.document.GET_DOCS_FAILED, error: error });
+        yield put({ type: actions.position.GET_PERMISSIONS_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
         if (error.response.data.message === 'Forbidden: insufficient permissions') {
             notification.error({
@@ -25,23 +24,23 @@ function* fetchDocs(payload) {
         }
         else {
             notification.error({
-                message: get(error, 'response.data.error', 'Tải dữ liệu tài liệu thất bại' + messageError),
+                message: get(error, 'response.data.error', 'Xóa chức vụ thất bại ' + messageError),
             });
-        } 
+        }    
     }
 }
 
-function* fetchDoc(payload) {
+function* fetchPositions(payload) {
     try {
-        let endpoint = `${config.API_URL}/document/${payload.params.id}`;
-        const response = yield call(getApiAuth, endpoint);
+        let endpoint = `${config.API_URL}/position?pageIndex=${payload.params.pageIndex}&pageSize=${payload.params.pageSize}&search=${payload.params.search}`;
+        const response = yield call(getApi, endpoint);
         const result = yield response.data;
-        yield put({ type: actions.document.GET_DOC_SUCCESS, result: result });
+        yield put({ type: actions.position.GET_POSITIONS_SUCCESS, result: result });
         if (payload.callback) {
             payload.callback(result);
         }
     } catch (error) {
-        yield put({ type: actions.document.GET_DOC_FAILED, error: error });
+        yield put({ type: actions.position.GET_POSITIONS_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
         if (error.response.data.message === 'Forbidden: insufficient permissions') {
             notification.error({
@@ -50,23 +49,23 @@ function* fetchDoc(payload) {
         }
         else {
             notification.error({
-                message: get(error, 'response.data.error', 'Tải dữ liệu tài liệu thất bại' + messageError),
+                message: get(error, 'response.data.error', 'Xóa chức vụ thất bại ' + messageError),
             });
-        } 
+        }    
     }
 }
 
-function* changeStatusDoc(payload) {
+function* fetchPosition(payload) {
     try {
-        let endpoint = `${config.API_URL}/document/change-state/${payload.params.id}`;
-        const response = yield call(getApiAuth, endpoint);
+        let endpoint = `${config.API_URL}/position/${payload.params.id}`;
+        const response = yield call(getApi, endpoint);
         const result = yield response.data;
-        yield put({ type: actions.document.CHANGE_DOC_SUCCESS, result: result });
+        yield put({ type: actions.position.GET_POSITION_SUCCESS, result: result });
         if (payload.callback) {
             payload.callback(result);
         }
     } catch (error) {
-        yield put({ type: actions.document.CHANGE_DOC_FAILED, error: error });
+        yield put({ type: actions.position.GET_POSITION_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
         if (error.response.data.message === 'Forbidden: insufficient permissions') {
             notification.error({
@@ -75,23 +74,23 @@ function* changeStatusDoc(payload) {
         }
         else {
             notification.error({
-                message: get(error, 'response.data.error', 'Tải dữ liệu tài liệu thất bại' + messageError),
+                message: get(error, 'response.data.error', 'Xóa chức vụ thất bại ' + messageError),
             });
-        } 
+        }    
     }
 }
 
-function* createDoc(payload) {
+function* createPosition(payload) {
     try {
-        let endpoint = config.API_URL + '/document/create';
+        let endpoint = config.API_URL + '/position/create';
         const response = yield call(postApiAuth, endpoint, payload.params); 
         const result = yield response;
-        yield put({ type: actions.document.CREATE_DOC_SUCCESS, result: result });
+        yield put({ type: actions.position.CREATE_POSITION_SUCCESS, result: result });
         if (payload.callback) {
             payload.callback(result);
         }
     } catch (error) {
-        yield put({ type: actions.document.CREATE_DOC_FAILED, error: error });
+        yield put({ type: actions.position.CREATE_POSITION_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
         if (error.response.data.message === 'Forbidden: insufficient permissions') {
             notification.error({
@@ -100,23 +99,23 @@ function* createDoc(payload) {
         }
         else {
             notification.error({
-                message: get(error, 'response.data.error', 'Thêm mới tài liệu thất bại' + messageError),
+                message: get(error, 'response.data.error', 'Xóa chức vụ thất bại ' + messageError),
             });
-        } 
+        }    
     }
 }
 
-function* editDoc(payload) {
+function* editPosition(payload) {
     try {
-        let endpoint = config.API_URL + `/document/${payload.params.id}`;
+        let endpoint = config.API_URL + `/position/${payload.params.id}`;
         const response = yield call(putApiAuth, endpoint, payload.params.formData); 
         const result = yield response;
-        yield put({ type: actions.document.EDIT_DOC_SUCCESS, result: result });
+        yield put({ type: actions.position.EDIT_POSITION_SUCCESS, result: result });
         if (payload.callback) {
             payload.callback(result);
         }
     } catch (error) {
-        yield put({ type: actions.document.EDIT_DOC_FAILED, error: error });
+        yield put({ type: actions.position.EDIT_POSITION_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
         if (error.response.data.message === 'Forbidden: insufficient permissions') {
             notification.error({
@@ -125,23 +124,23 @@ function* editDoc(payload) {
         }
         else {
             notification.error({
-                message: get(error, 'response.data.error', 'Cập nhật tài liệu thất bại' + messageError),
+                message: get(error, 'response.data.error', 'Xóa chức vụ thất bại ' + messageError),
             });
-        } 
+        }    
     }
 }
 
-function* deleteDoc(payload) {
+function* deletePosition(payload) {
     try {
-        let endpoint = config.API_URL + `/document/${payload.params.id}`;
+        let endpoint = config.API_URL + `/position/${payload.params.id}`;
         const response = yield call(deleteApiAuth, endpoint); 
         const result = yield response;
-        yield put({ type: actions.document.DELETE_DOC_SUCCESS, result: result });
+        yield put({ type: actions.position.DELETE_POSITION_SUCCESS, result: result });
         if (payload.callback) {
             payload.callback(result);
         }
     } catch (error) {
-        yield put({ type: actions.document.DELETE_DOC_FAILED, error: error });
+        yield put({ type: actions.position.DELETE_POSITION_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
         if (error.response.data.message === 'Forbidden: insufficient permissions') {
             notification.error({
@@ -150,34 +149,32 @@ function* deleteDoc(payload) {
         }
         else {
             notification.error({
-                message: get(error, 'response.data.error', 'Xóa tài liệu thất bại' + messageError),
+                message: get(error, 'response.data.error', 'Xóa chức vụ thất bại ' + messageError),
             });
-        } 
+        }    
     }
 }
 
-/////////////////////////////////////////////////
-//////////////////////////////////////////////
-export function* loadDocs() {
-    yield takeEvery(actions.document.GET_DOCS, fetchDocs);
+export function* loadPermissions() {
+    yield takeEvery(actions.position.GET_PERMISSIONS, fetchPermissions);
 }
 
-export function* loadDoc() {
-    yield takeEvery(actions.document.GET_DOC, fetchDoc);
+export function* loadPositions() {
+    yield takeEvery(actions.position.GET_POSITIONS, fetchPositions);
 }
 
-export function* loadAddDoc() {
-    yield takeEvery(actions.document.CREATE_DOC, createDoc);
+export function* loadPosition() {
+    yield takeEvery(actions.position.GET_POSITION, fetchPosition);
 }
 
-export function* loadEditDoc() {
-    yield takeEvery(actions.document.EDIT_DOC, editDoc);
+export function* loadAddPosition() {
+    yield takeEvery(actions.position.CREATE_POSITION, createPosition);
 }
 
-export function* loadDeleteDoc() {
-    yield takeEvery(actions.document.DELETE_DOC, deleteDoc);
+export function* loadEditPosition() {
+    yield takeEvery(actions.position.EDIT_POSITION, editPosition);
 }
 
-export function* loadChangeStatusDoc() {
-    yield takeEvery(actions.document.CHANGE_DOC, changeStatusDoc);
+export function* loadDeletePosition() {
+    yield takeEvery(actions.position.DELETE_POSITION, deletePosition);
 }

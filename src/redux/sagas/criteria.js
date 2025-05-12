@@ -21,9 +21,16 @@ function* fetchCriteriasCourse(payload) {
     } catch (error) {
         yield put({ type: actions.criteria.GET_CRITERIAS_COURSE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -39,9 +46,16 @@ function* fetchCriteriaCourse(payload) {
     } catch (error) {
         yield put({ type: actions.criteria.GET_CRITERIA_COURSE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -56,9 +70,16 @@ function* createCriteriaCourse(payload) {
         }
     } catch (error) {
         yield put({ type: actions.criteria.CREATE_CRITERIA_COURSE_FAILED, error: error });
-        if (payload.callback) {
-            payload.callback(error);
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
         }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Thêm mới tiêu chí đã thất bại '),
+            });
+        } 
     }
 }
 
@@ -74,9 +95,16 @@ function* editCriteriaCourse(payload) {
     } catch (error) {
         yield put({ type: actions.criteria.EDIT_CRITERIA_COURSE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Cập nhật thông tin tiêu chí thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Cập nhật tiêu chí đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -92,9 +120,16 @@ function* deleteCriteaCourse(payload) {
     } catch (error) {
         yield put({ type: actions.criteria.DELETE_CRITERIA_COURSE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa tiêu chí thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Xóa tiêu chí đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -115,9 +150,16 @@ function* fetchCriteriasModule(payload) {
     } catch (error) {
         yield put({ type: actions.criteria.GET_CRITERIAS_MODULE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -133,9 +175,16 @@ function* fetchCriteriaModule(payload) {
     } catch (error) {
         yield put({ type: actions.criteria.GET_CRITERIA_MODULE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -151,9 +200,16 @@ function* fetchCriteriaByModule(payload) {
     } catch (error) {
         yield put({ type: actions.criteria.GET_CRITERIA_MODULE_ID_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -186,9 +242,16 @@ function* editCriteriaModule(payload) {
     } catch (error) {
         yield put({ type: actions.criteria.EDIT_CRITERIA_MODULE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Cập nhật thông tin tiêu chí thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Cập nhật tiêu chí đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -204,9 +267,16 @@ function* deleteCriteaModule(payload) {
     } catch (error) {
         yield put({ type: actions.criteria.DELETE_CRITERIA_MODULE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa tiêu chí thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Xóa tiêu chí đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -227,9 +297,16 @@ function* fetchCriteriasThematic(payload) {
     } catch (error) {
         yield put({ type: actions.criteria.GET_CRITERIAS_THEMATIC_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -245,9 +322,16 @@ function* fetchCriteriaThematic(payload) {
     } catch (error) {
         yield put({ type: actions.criteria.GET_CRITERIA_THEMATIC_ID_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -268,9 +352,16 @@ function* fetchCriteriaByThematic(payload) {
             }
         } else {
             let messageError = error.response.status === 403 ? error.response.data : '';
-            notification.error({
-                message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
-            });
+            if (error.response.data.message === 'Forbidden: insufficient permissions') {
+                notification.error({
+                    message: "Bạn không có quyền thực hiện chức năng này",
+                });
+            }
+            else {
+                notification.error({
+                    message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
+                });
+            } 
         }
     }
 }
@@ -286,9 +377,16 @@ function* createCriteriaThematic(payload) {
         }
     } catch (error) {
         yield put({ type: actions.criteria.CREATE_CRITERIA_THEMATIC_FAILED, error: error });
-        if (payload.callback) {
-            payload.callback(error);
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
         }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Thêm mới tiêu chí đã thất bại '),
+            });
+        } 
     }
 }
 
@@ -304,9 +402,16 @@ function* editCriteriaThematic(payload) {
     } catch (error) {
         yield put({ type: actions.criteria.EDIT_CRITERIA_THEMATIC_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Cập nhật thông tin tiêu chí thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Cập nhật tiêu chí đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -322,9 +427,16 @@ function* deleteCriteaThematic(payload) {
     } catch (error) {
         yield put({ type: actions.criteria.DELETE_CRITERIA_THEMATIC_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa tiêu chí thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Xóa tiêu chí đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -345,9 +457,16 @@ function* fetchCriteriasOnline(payload) {
     } catch (error) {
         yield put({ type: actions.criteria.GET_CRITERIAS_ONLINE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -363,9 +482,16 @@ function* fetchCriteriaOnline(payload) {
     } catch (error) {
         yield put({ type: actions.criteria.GET_CRITERIA_ONLINE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -398,9 +524,16 @@ function* editCriteriaOnline(payload) {
     } catch (error) {
         yield put({ type: actions.criteria.EDIT_CRITERIA_ONLINE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Cập nhật thông tin tiêu chí thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Cập nhật tiêu chí đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -416,9 +549,16 @@ function* deleteCriteaOnline(payload) {
     } catch (error) {
         yield put({ type: actions.criteria.DELETE_CRITERIA_ONLINE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa tiêu chí thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Xóa tiêu chí đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -439,9 +579,16 @@ function* fetchCriteriasDGNL(payload) {
     } catch (error) {
         yield put({ type: actions.criteria.GET_CRITERIAS_DGNL_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -457,9 +604,16 @@ function* fetchCriteriaDGNL(payload) {
     } catch (error) {
         yield put({ type: actions.criteria.GET_CRITERIA_DGNL_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -492,9 +646,16 @@ function* editCriteriaDGNL(payload) {
     } catch (error) {
         yield put({ type: actions.criteria.EDIT_CRITERIA_DGNL_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Cập nhật thông tin tiêu chí thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Cập nhật tiêu chí đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -510,9 +671,16 @@ function* deleteCriteaDGNL(payload) {
     } catch (error) {
         yield put({ type: actions.criteria.DELETE_CRITERIA_DGNL_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa tiêu chí thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Xóa tiêu chí đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -533,9 +701,16 @@ function* fetchCriteriasDGTD(payload) {
     } catch (error) {
         yield put({ type: actions.criteria.GET_CRITERIAS_DGTD_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -551,9 +726,16 @@ function* fetchCriteriaDGTD(payload) {
     } catch (error) {
         yield put({ type: actions.criteria.GET_CRITERIA_DGTD_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -586,9 +768,16 @@ function* editCriteriaDGTD(payload) {
     } catch (error) {
         yield put({ type: actions.criteria.EDIT_CRITERIA_DGTD_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Cập nhật thông tin tiêu chí thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Cập nhật tiêu chí đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -604,9 +793,16 @@ function* deleteCriteaDGTD(payload) {
     } catch (error) {
         yield put({ type: actions.criteria.DELETE_CRITERIA_DGTD_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa tiêu chí thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Xóa tiêu chí đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 

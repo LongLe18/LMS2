@@ -17,9 +17,16 @@ function* fetchProgrammes(payload) {
     } catch (error) {
         yield put({ type: actions.programme.GET_PROGRAMMES_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu Khung chương trình thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu Khung chương trình thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -35,9 +42,16 @@ function* fetchProgramme(payload) {
     } catch (error) {
         yield put({ type: actions.programme.GET_PROGRAMME_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu Khung chương trình thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu Khung chương trình thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -53,9 +67,16 @@ function* createProgramme(payload) {
     } catch (error) {
         yield put({ type: actions.programme.CREATE_PROGRAMME_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Thêm khung chương trình mới thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Thêm Khung chương trình thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -71,9 +92,16 @@ function* editProgramme(payload) {
     } catch (error) {
         yield put({ type: actions.programme.EDIT_PROGRAMME_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Cập nhật thông tin khung chương trình thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Cập nhật Khung chương trình thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -89,9 +117,16 @@ function* deleteProgramme(payload) {
     } catch (error) {
         yield put({ type: actions.programme.DELETE_PROGRAMME_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa khung chương trình thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Xóa Khung chương trình thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -108,9 +143,16 @@ function* fetchProgrammeCourses(payload) {
     } catch (error) {
         yield put({ type: actions.programme.GET_PROGRAMME_COURSES_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu menu thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu Khung chương trình thất bại' + messageError),
+            });
+        } 
     }
 }
 

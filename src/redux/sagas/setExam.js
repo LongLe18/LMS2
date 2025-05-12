@@ -24,9 +24,16 @@ function* fetchSetExam(payload) {
     } catch (error) {
         yield put({ type: actions.setExam.GET_SETEXAM_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu bộ đề thi thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu bộ đề thi thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -42,9 +49,16 @@ function* fetchUserSetExam(payload) {
     } catch (error) {
         yield put({ type: actions.setExam.GET_USER_SETEXAM_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu bộ đề thi thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu bộ đề thi thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -60,9 +74,16 @@ function* uploadSetExam(payload) {
     } catch (error) {
         yield put({ type: actions.setExam.UPLOAD_SETEXAM_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Thêm bộ đề thi mới thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Thêm bộ đề thi thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -78,9 +99,16 @@ function* addUserToSetExam(payload) {
     } catch (error) {
         yield put({ type: actions.setExam.ADD_USER_TO_SETEXAM_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Thêm bộ đề thi mới thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Thêm bộ đề thi thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -96,9 +124,16 @@ function* deleteSetExam(payload) {
     } catch (error) {
         yield put({ type: actions.setExam.DELETE_SETEXAM_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa bộ đề thi thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Xóa bộ đề thi thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -114,9 +149,16 @@ function* deleteFileSetExam(payload) {
     } catch (error) {
         yield put({ type: actions.setExam.DELETE_FILE_SETEXAM_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa bộ đề thi thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Xóa bộ đề thi thất bại' + messageError),
+            });
+        } 
     }
 }
 

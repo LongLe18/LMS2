@@ -20,9 +20,16 @@ function* fetchUserStaff(payload) {
       }
     } catch (error) {
       yield put({ type: actions.user.GET_USER_STAFF_FAILED, error });
-      // notification.error({
-      //   message: get(error, 'response.data.error', 'Tải dữ liệu thành viên thất bại ' + messageError),
-      // });
+      if (error.response.data.message === 'Forbidden: insufficient permissions') {
+        notification.error({
+            message: "Bạn không có quyền thực hiện chức năng này",
+        });
+      }
+      else {
+          notification.error({
+              message: get(error, 'response.data.error', 'Tải dữ liệu nhân viên thất bại'),
+          });
+      } 
     }
 }
 
@@ -41,9 +48,16 @@ function* fetchUserTeacher(payload) {
     }
   } catch (error) {
     yield put({ type: actions.user.GET_USER_TEACHER_FAILED, error });
-    notification.error({
-      message: get(error, 'response.data.error', 'Tải dữ liệu tài khoản thất bại '),
-    });
+    if (error.response.data.message === 'Forbidden: insufficient permissions') {
+      notification.error({
+          message: "Bạn không có quyền thực hiện chức năng này",
+      });
+    }
+    else {
+        notification.error({
+            message: get(error, 'response.data.error', 'Tải dữ liệu tài khoản thất bại'),
+        });
+    } 
   }
 }
 
@@ -80,9 +94,16 @@ function* fetchUsers(payload) {
     } catch (error) {
       yield put({ type: actions.user.GET_USERS_FAILED, error });
       let messageError = error.response.status === 403 ? error.response.data : '';
-      notification.error({
-        message: get(error, error.response.data.error, 'Tải danh sách thành viên thất bại ' + messageError),
-      });
+      if (error.response.data.message === 'Forbidden: insufficient permissions') {
+        notification.error({
+            message: "Bạn không có quyền thực hiện chức năng này",
+        });
+      }
+      else {
+          notification.error({
+              message: get(error, 'response.data.error', 'Tải dữ liệu tài khoản thất bại' + messageError),
+          });
+      }
     }
 }
 
@@ -98,9 +119,16 @@ function* fetchStudents(payload) {
   } catch (error) {
     yield put({ type: actions.user.GET_STUDENTS_FAILED, error });
     let messageError = error.response.status === 403 ? error.response.data : ''
-    notification.error({
-      message: get(error, error.response.data.error, 'Tải danh sách học viên thất bại ' + messageError),
-    });
+    if (error.response.data.message === 'Forbidden: insufficient permissions') {
+      notification.error({
+          message: "Bạn không có quyền thực hiện chức năng này",
+      });
+    }
+    else {
+        notification.error({
+            message: get(error, 'response.data.error', 'Tải dữ liệu học viên thất bại' + messageError),
+        });
+    }
   }
 }
 
@@ -116,9 +144,16 @@ function* fetchTeachers(payload) {
   } catch (error) {
     yield put({ type: actions.user.GET_TEACHERS_FAILED, error });
     let messageError = error.response.status === 403 ? error.response.data : '';
-    notification.error({
-      message: get(error, error.response.data.error, 'Tải danh sách giáo viên thất bại ' + messageError),
-    });
+    if (error.response.data.message === 'Forbidden: insufficient permissions') {
+      notification.error({
+          message: "Bạn không có quyền thực hiện chức năng này",
+      });
+    }
+    else {
+        notification.error({
+            message: get(error, 'response.data.error', 'Tải dữ liệu giáo viên thất bại' + messageError),
+        });
+    }
   }
 }
 
@@ -134,9 +169,16 @@ function* fetchStaffs(payload) {
   } catch (error) {
     yield put({ type: actions.user.GET_STAFFS_FAILED, error });
     let messageError = error.response.status === 403 ? error.response.data : '';
-    notification.error({
-      message: get(error, error.response.data.error, 'Tải danh sách nhân viên thất bại ' + messageError),
-    });
+    if (error.response.data.message === 'Forbidden: insufficient permissions') {
+      notification.error({
+          message: "Bạn không có quyền thực hiện chức năng này",
+      });
+    }
+    else {
+        notification.error({
+            message: get(error, 'response.data.error', 'Tải danh sách nhân viên thất bại' + messageError),
+        });
+    }
   }
 }
 
@@ -152,9 +194,16 @@ function* deleteUser(payload) {
     } catch (error) {
       yield put({ type: actions.user.DELETE_USER_FAILED, error });
       let messageError = error.response.status === 403 ? error.response.data : '';
-      notification.error({
-        message: get(error, 'response.data.error', 'Xóa thành viên thất bại ' + messageError),
-      });
+      if (error.response.data.message === 'Forbidden: insufficient permissions') {
+        notification.error({
+            message: "Bạn không có quyền thực hiện chức năng này",
+        });
+      }
+      else {
+          notification.error({
+              message: get(error, 'response.data.error', 'Xóa thành viên thất bại' + messageError),
+          });
+      }
     }
 }
 
@@ -170,9 +219,16 @@ function* deleteStudent(payload) {
   } catch (error) {
     yield put({ type: actions.user.DELETE_USER_FAILED, error });
     let messageError = error.response.status === 403 ? error.response.data : '';
-    notification.error({
-      message: get(error, 'response.data.error', 'Chuyển trạng thái học viên thất bại ' + messageError),
-    });
+    if (error.response.data.message === 'Forbidden: insufficient permissions') {
+      notification.error({
+          message: "Bạn không có quyền thực hiện chức năng này",
+      });
+    }
+    else {
+        notification.error({
+            message: get(error, 'response.data.error', 'Chuyển trạng thái học viên thất bại' + messageError),
+        });
+    }
   }
 }
 
@@ -188,9 +244,16 @@ function* deleteStudent2(payload) {
   } catch (error) {
     yield put({ type: actions.user.DELETE_STUDENT_FORCE_FAILED, error });
     let messageError = error.response.status === 403 ? error.response.data : '';
-    notification.error({
-      message: get(error, 'response.data.error', 'Xóa học viên thất bại ' + messageError),
-    });
+    if (error.response.data.message === 'Forbidden: insufficient permissions') {
+      notification.error({
+          message: "Bạn không có quyền thực hiện chức năng này",
+      });
+    }
+    else {
+        notification.error({
+            message: get(error, 'response.data.error', 'Xóa học viên thất bại' + messageError),
+        });
+    }
   }
 }
 
@@ -206,9 +269,16 @@ function* deleteStaff(payload) {
   } catch (error) {
     yield put({ type: actions.user.DELETE_USER_FAILED, error });
     let messageError = error.response.status === 403 ? error.response.data : '';
-    notification.error({
-      message: get(error, 'response.data.error', 'Xóa nhân viên thất bại ' + messageError),
-    });
+    if (error.response.data.message === 'Forbidden: insufficient permissions') {
+      notification.error({
+          message: "Bạn không có quyền thực hiện chức năng này",
+      });
+    }
+    else {
+        notification.error({
+            message: get(error, 'response.data.error', 'Xóa nhân viên thất bại' + messageError),
+        });
+    }
   }
 }
 
@@ -224,9 +294,16 @@ function* deleteTeacher(payload) {
   } catch (error) {
     yield put({ type: actions.user.DELETE_USER_FAILED, error });
     let messageError = error.response.status === 403 ? error.response.data : '';
-    notification.error({
-      message: get(error, 'response.data.error', 'Xóa giáo viên thất bại ' + messageError),
-    });
+    if (error.response.data.message === 'Forbidden: insufficient permissions') {
+      notification.error({
+          message: "Bạn không có quyền thực hiện chức năng này",
+      });
+    }
+    else {
+        notification.error({
+            message: get(error, 'response.data.error', 'Xóa giáo viên thất bại' + messageError),
+        });
+    }
   }
 }
 
@@ -242,9 +319,16 @@ function* deleteUsers(payload) {
     } catch (error) {
       yield put({ type: actions.user.DELETE_USERS_FAILED, error });
       let messageError = error.response.status === 403 ? error.response.data : '';
-      notification.error({
-        message: get(error, 'response.data.error', 'Xóa nhiều thành viên thất bại ' + messageError),
-      });
+      if (error.response.data.message === 'Forbidden: insufficient permissions') {
+        notification.error({
+            message: "Bạn không có quyền thực hiện chức năng này",
+        });
+      }
+      else {
+          notification.error({
+              message: get(error, 'response.data.error', 'Xóa thành viên thất bại' + messageError),
+          });
+      }
     }
 }
 
@@ -260,9 +344,16 @@ function* editUser(payload) {
     } catch (error) {
       yield put({ type: actions.user.EDIT_USER_FAILED, error });
       let messageError = error.response.status === 403 ? error.response.data : '';
-      notification.error({
-        message: get(error, 'response.data.error', 'Cập nhật thành viên thất bại ' + messageError),
-      });
+      if (error.response.data.message === 'Forbidden: insufficient permissions') {
+        notification.error({
+            message: "Bạn không có quyền thực hiện chức năng này",
+        });
+      }
+      else {
+          notification.error({
+              message: get(error, 'response.data.error', 'Cập nhật thành viên thất bại' + messageError),
+          });
+      }
     }
 }
 
@@ -278,9 +369,16 @@ function* editStaff(payload) {
   } catch (error) {
     yield put({ type: actions.user.EDIT_STAFF_FAILED, error });
     let messageError = error.response.status === 403 ? error.response.data : '';
-    notification.error({
-      message: get(error, 'response.data.error', 'Cập nhật thành viên thất bại ' + messageError),
-    });
+    if (error.response.data.message === 'Forbidden: insufficient permissions') {
+      notification.error({
+          message: "Bạn không có quyền thực hiện chức năng này",
+      });
+    }
+    else {
+        notification.error({
+            message: get(error, 'response.data.error', 'Cập nhật thành viên thất bại' + messageError),
+        });
+    }
   }
 }
 
@@ -296,9 +394,16 @@ function* editStudent(payload) {
   } catch (error) {
     yield put({ type: actions.user.EDIT_STUDENT_FAILED, error });
     let messageError = error.response.status === 403 ? error.response.data : '';
-    notification.error({
-      message: get(error, 'response.data.error', 'Cập nhật thành viên thất bại ' + messageError),
-    });
+    if (error.response.data.message === 'Forbidden: insufficient permissions') {
+      notification.error({
+          message: "Bạn không có quyền thực hiện chức năng này",
+      });
+    }
+    else {
+        notification.error({
+            message: get(error, 'response.data.error', 'Cập nhật thành viên thất bại' + messageError),
+        });
+    }
   }
 }
 
@@ -314,9 +419,16 @@ function* editTeacher(payload) {
   } catch (error) {
     yield put({ type: actions.user.EDIT_TEACHER_FAILED, error });
     let messageError = error.response.status === 403 ? error.response.data : '';
-    notification.error({
-      message: get(error, 'response.data.error', 'Cập nhật thành viên thất bại ' + messageError),
-    });
+    if (error.response.data.message === 'Forbidden: insufficient permissions') {
+      notification.error({
+          message: "Bạn không có quyền thực hiện chức năng này",
+      });
+    }
+    else {
+        notification.error({
+            message: get(error, 'response.data.error', 'Cập nhật thành viên thất bại' + messageError),
+        });
+    }
   }
 }
 
@@ -337,9 +449,16 @@ function* createUser(payload) {
     } catch (error) {
       yield put({ type: actions.user.CREATE_USER_FAILED, error });
       let messageError = error.response.status === 403 ? error.response.data : '';
-      notification.error({
-        message: get(error, 'response.data.error', 'Tạo mới thành viên thất bại ' + messageError),
-      });
+      if (error.response.data.message === 'Forbidden: insufficient permissions') {
+        notification.error({
+            message: "Bạn không có quyền thực hiện chức năng này",
+        });
+      }
+      else {
+          notification.error({
+              message: get(error, 'response.data.error', 'Tạo mới thành viên thất bại' + messageError),
+          });
+      }
     }
 }
 
@@ -355,9 +474,16 @@ function* createStudent(payload) {
   } catch (error) {
     yield put({ type: actions.user.CREATE_STUDENT_FAILED, error });
     let messageError = error.response.status === 403 ? error.response.data : error.response.data.message;
-    notification.error({
-      message: get(error, 'response.data.error', 'Tạo mới học viên thất bại: ' + messageError),
-    });
+    if (error.response.data.message === 'Forbidden: insufficient permissions') {
+      notification.error({
+          message: "Bạn không có quyền thực hiện chức năng này",
+      });
+    }
+    else {
+        notification.error({
+            message: get(error, 'response.data.error', 'Tạo mới học viên thất bại' + messageError),
+        });
+    }
   }
 }
 
@@ -373,9 +499,16 @@ function* createTeacher(payload) {
   } catch (error) {
     yield put({ type: actions.user.CREATE_TEACHER_FAILED, error });
     let messageError = error.response.status === 403 ? error.response.data : error.response.data.message;
-    notification.error({
-      message: get(error, 'response.data.error', 'Tạo mới giáo viên thất bại ' + messageError),
-    });
+    if (error.response.data.message === 'Forbidden: insufficient permissions') {
+      notification.error({
+          message: "Bạn không có quyền thực hiện chức năng này",
+      });
+    }
+    else {
+        notification.error({
+            message: get(error, 'response.data.error', 'Tạo mới giáo viên thất bại' + messageError),
+        });
+    }
   }
 }
 
@@ -391,15 +524,22 @@ function* createStaff(payload) {
   } catch (error) {
     yield put({ type: actions.user.CREATE_STAFF_FAILED, error });
     let messageError = error.response.status === 403 ? error.response.data : error.response.data.message;
-    notification.error({
-      message: get(error, 'response.data.error', 'Tạo mới nhân viên thất bại ' + messageError),
-    });
+    if (error.response.data.message === 'Forbidden: insufficient permissions') {
+      notification.error({
+          message: "Bạn không có quyền thực hiện chức năng này",
+      });
+    }
+    else {
+        notification.error({
+            message: get(error, 'response.data.error', 'Tạo mới nhân viên thất bại' + messageError),
+        });
+    }
   }
 }
 
 function* login(payload) {
     try {
-      const endpoint = config.API_URL + `/auth/login?loai_tai_khoan=${payload.params.type}`;
+      const endpoint = config.API_URL + `/auth/login/v${payload.params.type}`;
       const response = yield call(postApi, endpoint, payload.params.login);
       const data = yield response;
       if (data.data.status === "fail") {

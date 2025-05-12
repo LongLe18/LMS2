@@ -17,9 +17,16 @@ function* fetchDescriptionCourses(payload) {
     } catch (error) {
         yield put({ type: actions.description.GET_DESCRIPTION_COURSES_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu khóa học đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu khóa học đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -35,9 +42,16 @@ function* fetchDescriptionCourse(payload) {
     } catch (error) {
         yield put({ type: actions.description.GET_DESCRIPTION_COURSE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu khóa học đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu khóa học đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -53,9 +67,16 @@ function* createDescriptionCourse(payload) {
     } catch (error) {
         yield put({ type: actions.description.CREATE_DESCRIPTION_COURSE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Thêm mô tả khóa học mới thất bại: Mô tả khoá học này đã tồn tại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Thêm mô tả khóa học mới thất bại: Mô tả khoá học này đã tồn tại' + messageError),
+            });
+        } 
     }
 }
 
@@ -71,9 +92,16 @@ function* editDescriptionCourse(payload) {
     } catch (error) {
         yield put({ type: actions.description.EDIT_DESCRIPTION_COURSE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Cập nhật thông tin khóa học thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Cập nhật thông tin khóa học thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -89,9 +117,16 @@ function* deleteDescriptionCourse(payload) {
     } catch (error) {
         yield put({ type: actions.description.DELETE_DESCRIPTION_COURSE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa khóa học thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Xóa khóa học thất bại' + messageError),
+            });
+        } 
     }
 }
 

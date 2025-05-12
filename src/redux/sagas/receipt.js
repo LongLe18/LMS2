@@ -17,9 +17,16 @@ function* fetchReceipts(payload) {
     } catch (error) {
         yield put({ type: actions.receipt.GET_RECEIPTS_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu hóa đơn đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu hóa đơn thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -35,9 +42,16 @@ function* fetchReceipt(payload) {
     } catch (error) {
         yield put({ type: actions.receipt.GET_RECEIPT_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu hóa đơn đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu hóa đơn thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -53,9 +67,16 @@ function* createReceipt(payload) {
     } catch (error) {
         yield put({ type: actions.receipt.CREATE_RECEIPT_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Thêm hóa đơn mới thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Thêm mới hóa đơn thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -71,9 +92,16 @@ function* editReceipt(payload) {
     } catch (error) {
         yield put({ type: actions.receipt.EDIT_RECEIPT_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Cập nhật thông tin hóa đơn thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Cập nhật thông tin hóa đơn thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -89,9 +117,16 @@ function* deleteReceipt(payload) {
     } catch (error) {
         yield put({ type: actions.receipt.DELETE_RECEIPT_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa hóa đơn thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Xóa hóa đơn thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -107,9 +142,16 @@ function* changeStatusReceipt(payload) {
     } catch (error) {
         yield put({ type: actions.receipt.CHANGE_RECEIPT_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xử lý hóa đơn thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Xử lý hóa đơn thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -125,9 +167,16 @@ function* fetchReceiptsDetail(payload) {
     } catch (error) {
         yield put({ type: actions.receipt.GET_RECEIPTS_DETAIL_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu hóa đơn đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu hóa đơn thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -143,9 +192,16 @@ function* fetchReceiptDetail(payload) {
     } catch (error) {
         yield put({ type: actions.receipt.GET_RECEIPT_DETAIL_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu hóa đơn đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu hóa đơn thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -161,9 +217,16 @@ function* createReceiptDetail(payload) {
     } catch (error) {
         yield put({ type: actions.receipt.CREATE_RECEIPT_DETAIL_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Thêm hóa đơn mới đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Thêm mới hóa đơn thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -179,9 +242,16 @@ function* editReceiptDetail(payload) {
     } catch (error) {
         yield put({ type: actions.receipt.EDIT_RECEIPT_DETAIL_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Cập nhật thông tin hóa đơn thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Cập nhật hóa đơn thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -197,9 +267,16 @@ function* fetchReceiptsUser(payload) {
     } catch (error) {
         yield put({ type: actions.receipt.GET_RECEIPTS_USER_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu hóa đơn đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu hóa đơn thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -215,9 +292,16 @@ function* deleteReceiptDetail(payload) {
     } catch (error) {
         yield put({ type: actions.receipt.DELETE_RECEIPT_DETAIL_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa hóa đơn thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Xóa hóa đơn thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -233,9 +317,16 @@ function* fetchDetailReceiptsUser(payload) {
     } catch (error) {
         yield put({ type: actions.receipt.GET_RECEIPT_DETAIL_USER_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu hóa đơn đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu hóa đơn thất bại' + messageError),
+            });
+        } 
     }
 }
 

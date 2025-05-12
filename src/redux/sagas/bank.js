@@ -17,9 +17,16 @@ function* fetchBanks(payload) {
     } catch (error) {
         yield put({ type: actions.bank.GET_BANKS_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu ngân hàng đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu ngân hàng đã thất bại ' + messageError),
+            });
+        }  
     }
 }
 
@@ -35,9 +42,16 @@ function* fetchBank(payload) {
     } catch (error) {
         yield put({ type: actions.bank.GET_BANK_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu ngân hàng đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu ngân hàng đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -53,9 +67,16 @@ function* fectchFilter(payload) {
     } catch (error) {
         yield put({ type: actions.bank.FILTER_BANKS_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu ngân hàng thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu ngân hàng đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -72,9 +93,16 @@ function* createBank(payload) {
     } catch (error) {
         yield put({ type: actions.bank.CREATE_BANK_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Thêm ngân hàng mới thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Thêm mới ngân hàng đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -90,9 +118,16 @@ function* editBank(payload) {
     } catch (error) {
         yield put({ type: actions.bank.EDIT_BANK_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Cập nhật thông tin ngân hàng thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Cập nhật ngân hàng đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -108,9 +143,16 @@ function* deleteBank(payload) {
     } catch (error) {
         yield put({ type: actions.bank.DELETE_BANK_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa ngân hàng thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Xóa ngân hàng đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 

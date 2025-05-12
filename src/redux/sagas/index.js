@@ -390,6 +390,15 @@ import {
     loadUserSetExam,
 } from './setExam';
 
+import {
+    loadAddPosition,
+    loadDeletePosition,
+    loadEditPosition,
+    loadPosition,
+    loadPositions,
+    loadPermissions,
+} from './position';
+
 export default function* rootSaga() {
     yield all([
         // major
@@ -725,5 +734,12 @@ export default function* rootSaga() {
         loadUploadSetExam(),
         loadAddUserToSetExam(),
         loadUserSetExam(),
+        // chức vụ
+        loadAddPosition(),
+        loadDeletePosition(),
+        loadEditPosition(),
+        loadPosition(),
+        loadPositions(),
+        loadPermissions(),
     ]);
 }

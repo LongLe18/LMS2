@@ -17,9 +17,16 @@ function* fetchDiscounts(payload) {
     } catch (error) {
         yield put({ type: actions.discount.GET_DISCOUNTS_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu khuyến mãi đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu khuyến mãi đã thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -35,9 +42,16 @@ function* fetchDiscount(payload) {
     } catch (error) {
         yield put({ type: actions.discount.GET_DISCOUNT_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu khuyến mãi đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu khuyến mãi đã thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -53,9 +67,16 @@ function* fetchDiscountByCourse(payload) {
     } catch (error) {
         yield put({ type: actions.discount.GET_DISCOUNTS_BYCOURSE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu khuyến mãi thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu khuyến mãi đã thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -72,9 +93,16 @@ function* createDiscount(payload) {
     } catch (error) {
         yield put({ type: actions.discount.CREATE_DISCOUNT_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Thêm khuyến mãi mới thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Thêm mới khuyến mãi đã thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -90,9 +118,16 @@ function* editDiscount(payload) {
     } catch (error) {
         yield put({ type: actions.discount.EDIT_DISCOUNT_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Cập nhật thông tin khuyến mãi thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Cập nhật khuyến mãi đã thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -108,9 +143,16 @@ function* deleteDiscount(payload) {
     } catch (error) {
         yield put({ type: actions.discount.DELETE_DISCOUNT_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa khuyến mãi thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Xóa khuyến mãi đã thất bại' + messageError),
+            });
+        } 
     }
 }
 

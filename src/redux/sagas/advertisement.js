@@ -5,7 +5,7 @@ import { getApi, deleteApiAuth, putApiAuth, postApiAuth, getApiAuth } from '../s
 import * as actions from '../actions';
 import { get } from 'lodash';
 
-// QUảng cáo tài liệu
+// QUảng cáo 
 function* fetchAdsDocs(payload) {
     try {
         let endpoint = `${config.API_URL}/document_ad?trang_thai=${payload.params.status}`;
@@ -18,9 +18,16 @@ function* fetchAdsDocs(payload) {
     } catch (error) {
         yield put({ type: actions.advertise.GET_ADSDOCS_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu quảng cáo tài liệu đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu quảng cáo  đã thất bại ' + messageError),
+            });
+        }  
     }
 }
 
@@ -36,9 +43,16 @@ function* fetchAdsDoc(payload) {
     } catch (error) {
         yield put({ type: actions.advertise.GET_ADSDOC_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu quảng cáo tài liệu đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu quảng cáo  đã thất bại ' + messageError),
+            });
+        }  
     }
 }
 
@@ -54,9 +68,16 @@ function* changeStatusAdsDoc(payload) {
     } catch (error) {
         yield put({ type: actions.advertise.CHANGE_ADSDOC_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu quảng cáo tài liệu thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu quảng cáo  đã thất bại ' + messageError),
+            });
+        }  
     }
 }
 
@@ -72,9 +93,16 @@ function* createAdsDoc(payload) {
     } catch (error) {
         yield put({ type: actions.advertise.CREATE_ADSDOC_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Thêm quảng cáo tài liệu mới thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu quảng cáo  đã thất bại ' + messageError),
+            });
+        }  
     }
 }
 
@@ -90,9 +118,16 @@ function* editAdsDoc(payload) {
     } catch (error) {
         yield put({ type: actions.advertise.EDIT_ADSDOC_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Cập nhật thông tin quảng cáo tài liệu thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu quảng cáo  đã thất bại ' + messageError),
+            });
+        }  
     }
 }
 
@@ -108,9 +143,16 @@ function* deleteAdsDoc(payload) {
     } catch (error) {
         yield put({ type: actions.advertise.DELETE_ADSDOC_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa quảng cáo tài liệu thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu quảng cáo  đã thất bại ' + messageError),
+            });
+        }  
     }
 }
 
@@ -128,9 +170,16 @@ function* fetchAdsCourses(payload) {
     } catch (error) {
         yield put({ type: actions.advertise.GET_ADSCOURSES_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu quảng cáo khóa học đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu quảng cáo  đã thất bại ' + messageError),
+            });
+        }  
     }
 }
 
@@ -146,9 +195,16 @@ function* fetchAdsCourse(payload) {
     } catch (error) {
         yield put({ type: actions.advertise.GET_ADSCOURSE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu quảng cáo khóa học đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu quảng cáo  đã thất bại ' + messageError),
+            });
+        }  
     }
 }
 
@@ -164,9 +220,16 @@ function* changeStatusAdsCourse(payload) {
     } catch (error) {
         yield put({ type: actions.advertise.CHANGE_ADSCOURSE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu quảng cáo khóa học thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu quảng cáo  đã thất bại ' + messageError),
+            });
+        }  
     }
 }
 
@@ -182,9 +245,16 @@ function* createAdsCourse(payload) {
     } catch (error) {
         yield put({ type: actions.advertise.CREATE_ADSCOURSE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Thêm quảng cáo khóa học mới thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu quảng cáo  đã thất bại ' + messageError),
+            });
+        }  
     }
 }
 
@@ -200,9 +270,16 @@ function* editAdsCourse(payload) {
     } catch (error) {
         yield put({ type: actions.advertise.EDIT_ADSCOURSE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Cập nhật thông tin quảng cáo khóa học thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu quảng cáo  đã thất bại ' + messageError),
+            });
+        }  
     }
 }
 
@@ -218,9 +295,16 @@ function* deleteAdsCourse(payload) {
     } catch (error) {
         yield put({ type: actions.advertise.DELETE_ADSCOURSE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa quảng cáo khóa học thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu quảng cáo  đã thất bại ' + messageError),
+            });
+        }  
     }
 }
 
@@ -238,9 +322,16 @@ function* fetchAdsTeachers(payload) {
     } catch (error) {
         yield put({ type: actions.advertise.GET_ADSTEACHERS_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu quảng cáo giáo viên đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu quảng cáo  đã thất bại ' + messageError),
+            });
+        }  
     }
 }
 
@@ -256,9 +347,16 @@ function* fetchAdsTeacher(payload) {
     } catch (error) {
         yield put({ type: actions.advertise.GET_ADSTEACHER_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu quảng cáo giáo viên đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu quảng cáo  đã thất bại ' + messageError),
+            });
+        }  
     }
 }
 
@@ -274,9 +372,16 @@ function* changeStatusAdsTeacher(payload) {
     } catch (error) {
         yield put({ type: actions.advertise.CHANGE_ADSTEACHER_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu quảng cáo giáo viên thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu quảng cáo  đã thất bại ' + messageError),
+            });
+        }  
     }
 }
 
@@ -292,9 +397,16 @@ function* createAdsTeacher(payload) {
     } catch (error) {
         yield put({ type: actions.advertise.CREATE_ADSTEACHER_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Thêm quảng cáo giáo viên mới thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu quảng cáo  đã thất bại ' + messageError),
+            });
+        }  
     }
 }
 
@@ -310,9 +422,16 @@ function* editAdsTeacher(payload) {
     } catch (error) {
         yield put({ type: actions.advertise.EDIT_ADSTEACHER_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Cập nhật thông tin quảng cáo giáo viên thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu quảng cáo  đã thất bại ' + messageError),
+            });
+        }  
     }
 }
 
@@ -328,9 +447,16 @@ function* deleteAdsTeacher(payload) {
     } catch (error) {
         yield put({ type: actions.advertise.DELETE_ADSTEACHER_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa quảng cáo giáo viên thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu quảng cáo  đã thất bại ' + messageError),
+            });
+        }  
     }
 }
 

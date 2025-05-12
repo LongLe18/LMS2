@@ -17,9 +17,16 @@ function* fetchDealers(payload) {
     } catch (error) {
         yield put({ type: actions.dealer.GET_DEALERS_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu chiết khấu đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu chiết khấu đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -35,9 +42,16 @@ function* fetchDealersTeacher(payload) {
     } catch (error) {
         yield put({ type: actions.dealer.GET_DEALERS_TEACHER_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu chiết khấu đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu chiết khấu đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -53,9 +67,16 @@ function* fetchDealer(payload) {
     } catch (error) {
         yield put({ type: actions.dealer.GET_DEALER_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu chiết khấu đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu chiết khấu đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -71,9 +92,16 @@ function* fetchDealer2(payload) {
     } catch (error) {
         yield put({ type: actions.dealer.GET_DEALER2_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu chiết khấu đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu chiết khấu đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -89,9 +117,16 @@ function* createDealer(payload) {
     } catch (error) {
         yield put({ type: actions.dealer.CREATE_DEALER_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Thêm chiết khấu mới thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Thêm chiết khấu đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -107,9 +142,16 @@ function* editDealer(payload) {
     } catch (error) {
         yield put({ type: actions.dealer.EDIT_DEALER_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Cập nhật thông tin chiết khấu thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Cập nhật chiết khấu đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -125,9 +167,16 @@ function* deleteDealer(payload) {
     } catch (error) {
         yield put({ type: actions.dealer.DELETE_DEALER_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa chiết khấu thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Xóa chiết khấu đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -143,9 +192,16 @@ function* changeStatusDealer(payload) {
     } catch (error) {
         yield put({ type: actions.dealer.CHANGE_DEALER_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa chiết khấu thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu chiết khấu đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -161,9 +217,16 @@ function* fetchDealersDetail(payload) {
     } catch (error) {
         yield put({ type: actions.dealer.GET_DEALERS_DETAIL_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu chiết khấu đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu chiết khấu đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -179,9 +242,16 @@ function* fetchDealersDetailTeacher(payload) {
     } catch (error) {
         yield put({ type: actions.dealer.GET_DEALERS_DETAIL_TEACHER_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu chiết khấu đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu chiết khấu đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -197,9 +267,16 @@ function* fetchDealerDetail(payload) {
     } catch (error) {
         yield put({ type: actions.dealer.GET_DEALER_DETAIL_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu chiết khấu đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu chiết khấu đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -215,9 +292,16 @@ function* createDealerDetail(payload) {
     } catch (error) {
         yield put({ type: actions.dealer.CREATE_DEALER_DETAIL_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Thêm chiết khấu mới đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Thêm mới chiết khấu đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -233,9 +317,16 @@ function* editDealerDetail(payload) {
     } catch (error) {
         yield put({ type: actions.dealer.EDIT_DEALER_DETAIL_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Cập nhật thông tin chiết khấu thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Cập nhật chiết khấu đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -251,9 +342,16 @@ function* deleteDealerDetail(payload) {
     } catch (error) {
         yield put({ type: actions.dealer.DELETE_DEALER_DETAIL_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa chiết khấu thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Xóa chiết khấu đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -269,9 +367,16 @@ function* deleteDealersDetail(payload) {
     } catch (error) {
         yield put({ type: actions.dealer.DELETE_DEALERS_DETAIL_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa chiết khấu thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Xóa chiết khấu đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 

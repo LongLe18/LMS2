@@ -15,12 +15,18 @@ function* fetchQuestions(payload) {
             payload.callback(result);
         }
     } catch (error) {
-        console.log(error)
         yield put({ type: actions.quesiton.GET_QUESTIONS_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu câu hỏi đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu câu hỏi thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -36,9 +42,16 @@ function* fetchQuestion(payload) {
     } catch (error) {
         yield put({ type: actions.quesiton.GET_QUESTION_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu câu hỏi đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu câu hỏi thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -54,9 +67,16 @@ function* fectchFilter(payload) {
     } catch (error) {
         yield put({ type: actions.quesiton.FILTER_QUESTIONS_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu câu hỏi thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu câu hỏi thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -72,9 +92,16 @@ function* createQuestion(payload) {
     } catch (error) {
         yield put({ type: actions.quesiton.CREATE_QUESTION_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Thêm câu hỏi mới thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Thêm mới câu hỏi thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -90,9 +117,16 @@ function* editQuestion(payload) {
     } catch (error) {
         yield put({ type: actions.quesiton.EDIT_QUESTION_FAILED, error: error });
         let messageError = (error.response && error.response.status && error.response.status === 403) ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Cập nhật thông tin câu hỏi thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Cập nhật câu hỏi thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -108,9 +142,16 @@ function* deleteQuestion(payload) {
     } catch (error) {
         yield put({ type: actions.quesiton.DELETE_QUESTION_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa câu hỏi thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Xóa câu hỏi thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -127,9 +168,16 @@ function* fetchQuestionsExam(payload) {
     } catch (error) {
         yield put({ type: actions.quesiton.GET_QUESTIONS_EXAM_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu câu hỏi đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu câu hỏi thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -147,9 +195,16 @@ function* editQuestionExam(payload) {
     } catch (error) {
         yield put({ type: actions.quesiton.EDIT_QUESTION_EXAM_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Cập nhật dữ liệu câu hỏi đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Cập nhật câu hỏi thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -165,9 +220,16 @@ function* fetchQuestionExam(payload) {
     } catch (error) {
         yield put({ type: actions.quesiton.GET_QUESTION_EXAM_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu câu hỏi đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu câu hỏi thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -183,9 +245,16 @@ function* fetchQuestionsByExam(payload) {
     } catch (error) {
         yield put({ type: actions.quesiton.GET_QUESTIONS_BY_EXAM_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu câu hỏi đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu câu hỏi thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -201,9 +270,16 @@ function* createQuestionExam(payload) {
     } catch (error) {
         yield put({ type: actions.quesiton.CREATE_QUESTION_EXAM_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Thêm câu hỏi mới thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Thêm mới câu hỏi thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -219,9 +295,16 @@ function* deleteQuestionExam(payload) {
     } catch (error) {
         yield put({ type: actions.quesiton.DELETE_QUESTION_EXAM_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa câu hỏi thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Xóa câu hỏi thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -237,12 +320,18 @@ function* fetchDetailsQuestion(payload) {
             payload.callback(result);
         }
     } catch (error) {
-        console.log(error)
         yield put({ type: actions.quesiton.GET_DETAILS_QUESTION_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu câu hỏi chi tiết đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu câu hỏi chi tiết thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -258,9 +347,16 @@ function* createDetailsQuestion(payload) {
     } catch (error) {
         yield put({ type: actions.quesiton.CREATE_DETAIL_QUESTION_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Thêm câu hỏi chi tiết mới thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Thêm câu hỏi chi tiết mới thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -276,9 +372,16 @@ function* editDetailQuestion(payload) {
     } catch (error) {
         yield put({ type: actions.quesiton.EDIT_DETAIL_QUESTION_FAILED, error: error });
         let messageError = (error.response && error.response.status && error.response.status === 403) ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Cập nhật thông tin câu hỏi chi tiết thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Cập nhật thông tin câu hỏi chi tiết thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -294,9 +397,16 @@ function* deleteDetailQuestion(payload) {
     } catch (error) {
         yield put({ type: actions.quesiton.DELETE_DETAIL_QUESTION_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa câu hỏi chi tiết thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Xóa câu hỏi chi tiết thất bại' + messageError),
+            });
+        } 
     }
 }
 

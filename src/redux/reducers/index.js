@@ -28,6 +28,7 @@ import contact from './contact';
 import evaluate from './evaluate';
 import optionQuestion from './optionQuestion';
 import setExam from './setExam';
+import position from './position';
 
 export default combineReducers({ 
     programme,
@@ -58,4 +59,5 @@ export default combineReducers({
     evaluate,
     optionQuestion,
     setExam,
+    position,
 });

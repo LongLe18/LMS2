@@ -19,9 +19,16 @@ function* fetchCourses(payload) {
     } catch (error) {
         yield put({ type: actions.course.GET_COURSES_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu khóa học đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu khóa học đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -37,9 +44,16 @@ function* fetchCourse(payload) {
     } catch (error) {
         yield put({ type: actions.course.GET_COURSE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu khóa học đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu khóa học đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -57,9 +71,16 @@ function* fectchFilter(payload) {
     } catch (error) {
         yield put({ type: actions.course.FILTER_COURSES_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu khóa học thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu khóa học đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -76,9 +97,16 @@ function* createCourse(payload) {
     } catch (error) {
         yield put({ type: actions.course.CREATE_COURSE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Thêm khóa học mới thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Thêm mới khóa học đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -94,9 +122,16 @@ function* editCourse(payload) {
     } catch (error) {
         yield put({ type: actions.course.EDIT_COURSE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Cập nhật thông tin khóa học thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Cập nhật khóa học đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -112,9 +147,16 @@ function* deleteCourse(payload) {
     } catch (error) {
         yield put({ type: actions.course.DELETE_COURSE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa khóa học thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Xóa khóa học đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -130,9 +172,16 @@ function* addStudentToCourse(payload) {
     } catch (error) {
         yield put({ type: actions.course.ADD_STUDENT_COURSE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Thêm học viên vào khóa học thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Thêm học viên vào khóa học thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -148,9 +197,16 @@ function* fectchCourseStudent(payload) {
     } catch (error) {
         yield put({ type: actions.course.GET_COURSES_STUDENT_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu khóa học thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu khóa học đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -166,9 +222,16 @@ function* fectchStudentOfCourse(payload) {
     } catch (error) {
         yield put({ type: actions.course.GET_COURSES_STUDENT_DETAIL_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu khóa học thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu khóa học đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -184,9 +247,16 @@ function* deleteCourseStudent(payload) {
     } catch (error) {
         yield put({ type: actions.course.DELETE_COURSES_STUDENT_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa học viên trong khóa học thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Xóa khóa học đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 
@@ -202,9 +272,16 @@ function* fectchRemainStudentOfCourse(payload) {
     } catch (error) {
         yield put({ type: actions.course.GET_REMAIN_STUDENT_COURSE_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu khóa học thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu khóa học đã thất bại ' + messageError),
+            });
+        } 
     }
 }
 

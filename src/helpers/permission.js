@@ -162,6 +162,10 @@ export const PERMISSIONS = [
                     key: '/admin/account/admin'
                 }, 
                 {
+                    name: 'Phân quyền',
+                    key: '/admin/account/permission'
+                }, 
+                {
                     name: 'Chuyên nghành',
                     key: '/admin/account/major'
                 },

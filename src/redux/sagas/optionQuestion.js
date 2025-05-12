@@ -18,9 +18,16 @@ function* fetchOptionQuestion(payload) {
     } catch (error) {
         yield put({ type: actions.optionQuestion.GET_OPTIONQUESTON_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Tải dữ liệu Lựa chọn câu hỏi đã thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu Lựa chọn câu hỏi đã thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -36,9 +43,16 @@ function* createOptionQuestion(payload) {
     } catch (error) {
         yield put({ type: actions.optionQuestion.CREATE_OPTIONQUESTON_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Thêm Lựa chọn câu hỏi mới thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Thêm Lựa chọn câu hỏi đã thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -54,9 +68,16 @@ function* editOptionQuestion(payload) {
     } catch (error) {
         yield put({ type: actions.optionQuestion.EDIT_OPTIONQUESTON_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Cập nhật thông tin Lựa chọn câu hỏi thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Cập nhật Lựa chọn câu hỏi đã thất bại' + messageError),
+            });
+        } 
     }
 }
 
@@ -72,9 +93,16 @@ function* deleteOptionQuestion(payload) {
     } catch (error) {
         yield put({ type: actions.optionQuestion.DELETE_OPTIONQUESTON_FAILED, error: error });
         let messageError = error.response.status === 403 ? error.response.data : '';
-        notification.error({
-            message: get(error, 'response.data.error', 'Xóa Lựa chọn câu hỏi thất bại ' + messageError),
-        });
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Xóa Lựa chọn câu hỏi đã thất bại' + messageError),
+            });
+        } 
     }
 }
 
