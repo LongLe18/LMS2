@@ -26,7 +26,7 @@ router.put(
     authToken,
     permission('staff:update'),
     upload.single('anh_dai_dien'),
-    tryCatch(staffController.putUpdate)
+    tryCatch(staffController.update)
 );
 router.get(
     '/change-state/:id',

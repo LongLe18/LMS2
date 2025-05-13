@@ -409,7 +409,7 @@ const findOne = async (req, res) => {
         const [student] = await sequelize.query(
             `
             SELECT hoc_vien.hoc_vien_id, hoc_vien.ho_ten, hoc_vien.gioi_tinh, hoc_vien.email, hoc_vien.anh_dai_dien, hoc_vien.gioi_thieu, hoc_vien.ngay_tao,
-            hoc_vien.trang_thai, hoc_vien.sdt, hoc_vien.ngay_sinh, tinh_thanhpho.ten AS tinh, hoc_vien.ttp_id, hoc_vien.truong_hoc, hoc_vien.dia_chi, hoc_vien.university_unit
+            hoc_vien.trang_thai, hoc_vien.sdt, hoc_vien.ngay_sinh, tinh_thanhpho.ten AS tinh, hoc_vien.ttp_id, hoc_vien.truong_hoc, hoc_vien.dia_chi
             FROM hoc_vien 
             LEFT JOIN tinh_thanhpho ON hoc_vien.ttp_id = tinh_thanhpho.ttp_id 
             WHERE hoc_vien.hoc_vien_id = :hoc_vien_id

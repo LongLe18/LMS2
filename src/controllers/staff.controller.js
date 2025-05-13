@@ -55,7 +55,7 @@ const findOne = async (req, res) => {
         const staff = await sequelize.query(
             `
             SELECT nhan_vien.nhan_vien_id, nhan_vien.anh_dai_dien, nhan_vien.ho_ten, nhan_vien.email, nhan_vien.gioi_tinh, 
-            nhan_vien.gioi_thieu, nhan_vien.trang_thai, nhan_vien.sdt, nhan_vien.ngay_sinh, nhan_vien.dia_chi 
+            nhan_vien.chuc_vu_id, nhan_vien.gioi_thieu, nhan_vien.trang_thai, nhan_vien.sdt, nhan_vien.ngay_sinh, nhan_vien.dia_chi 
             FROM nhan_vien 
             WHERE nhan_vien.nhan_vien_id = :id
             `,
@@ -203,40 +203,6 @@ const update = async (req, res) => {
 
     if (req.body.mat_khau) {
         req.body.mat_khau = security.hashPassword(req.body.mat_khau);
-    }
-
-    const { quyen_he_thong, quyen_nhan_su, quyen_kinh_doanh, quyen_khao_thi } =
-        req.body;
-    if (
-        typeof quyen_he_thong !== 'undefined' &&
-        typeof quyen_nhan_su !== 'undefined' &&
-        typeof quyen_kinh_doanh !== 'undefined' &&
-        typeof quyen_khao_thi !== 'undefined'
-    ) {
-        let role = await Role.findOne({
-            where: {
-                quyen_he_thong,
-                quyen_nhan_su,
-                quyen_kinh_doanh,
-                quyen_khao_thi,
-            },
-        });
-
-        if (!role) {
-            role = await Role.create({
-                quyen_he_thong,
-                quyen_nhan_su,
-                quyen_kinh_doanh,
-                quyen_khao_thi,
-            });
-        }
-
-        req.body.phan_quyen_id = role.quyen_id;
-
-        delete req.body.quyen_he_thong;
-        delete req.body.quyen_nhan_su;
-        delete req.body.quyen_kinh_doanh;
-        delete req.body.quyen_khao_thi;
     }
 
     await Staff.update(req.body, {
