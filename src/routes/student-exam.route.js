@@ -53,6 +53,16 @@ router.get(
     tryCatch(studentExamController.exportDGNL)
 );
 router.get(
+    '/export-test/:id',
+    authToken,
+    tryCatch(studentExamController.exportTest)
+);
+router.get(
+    '/export-e-learning/:id',
+    authToken,
+    tryCatch(studentExamController.exportELearning)
+);
+router.get(
     '/export-report',
     authToken,
     tryCatch(studentExamController.exportReport)

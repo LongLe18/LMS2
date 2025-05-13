@@ -457,11 +457,6 @@ Permission.hasMany(PositionPermission, {
     constraints: false,
 });
 
-Teacher.hasOne(Position, {
-    foreignKey: 'chuc_vu_id',
-    sourceKey: 'chuc_vu_id',
-    constraints: false,
-});
 Teacher.hasOne(Department, {
     foreignKey: 'don_vi_id',
     sourceKey: 'don_vi_id',

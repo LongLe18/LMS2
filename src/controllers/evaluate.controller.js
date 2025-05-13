@@ -70,7 +70,7 @@ const findOne = async (req, res) => {
         }
     );
 
-    res.status(200).send({
+    return res.status(200).send({
         status: 'success',
         data: evaluate[0],
         message: null,

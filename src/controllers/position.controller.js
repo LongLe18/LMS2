@@ -49,6 +49,7 @@ const findOne = async (req, res) => {
 const create = async (req, res) => {
     const position = await Position.create({
         ...req.body,
+        nguoi_tao: req.userId
     });
 
     return res.status(200).send({
@@ -62,6 +63,7 @@ const update = async (req, res) => {
     await Position.update(
         {
             ...req.body,
+            nguoi_sua: req.userId
         },
         {
             where: {
@@ -84,6 +86,7 @@ const update = async (req, res) => {
         const newPermissions = qtc_ids.map((id) => ({
             chuc_vu_id: req.params.id,
             qtc_id: id,
+            nguoi_tao: req.userId
         }));
 
         // Thêm mới

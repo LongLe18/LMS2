@@ -42,9 +42,9 @@ const giaovien = sequelize.define(
         chuc_danh: {
             type: DataTypes.STRING,
         },
-        chuc_vu_id: {
-            type: DataTypes.INTEGER,
-        },
+        // chuc_vu_id: {
+        //     type: DataTypes.INTEGER,
+        // },
         don_vi_id: {
             type: DataTypes.INTEGER,
         },

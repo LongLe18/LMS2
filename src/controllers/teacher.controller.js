@@ -188,10 +188,6 @@ const findAll = async (req, res) => {
     const { count, rows } = await Teacher.findAndCountAll({
         include: [
             {
-                model: Position,
-                attributes: ['chuc_vu_id', 'ten'],
-            },
-            {
                 model: Department,
                 attributes: ['don_vi_id', 'ten'],
             },
@@ -207,7 +203,6 @@ const findAll = async (req, res) => {
             ...(req.query.chuyen_nganh_id && {
                 chuyen_nganh_id: req.query.chuyen_nganh_id,
             }),
-            ...(req.query.chuc_vu_id && { chuc_vu_id: req.query.chuc_vu_id }),
             ...(req.query.don_vi_id && { don_vi_id: req.query.don_vi_id }),
             ...(req.query.trang_thai && { trang_thai: req.query.trang_thai }),
             ...(req.query.search && {
@@ -215,11 +210,6 @@ const findAll = async (req, res) => {
                     { ho_ten: { [Op.like]: `%${req.query.search}%` } },
                     {
                         '$don_vi.ten$': {
-                            [Op.like]: `%${req.query.search}%`,
-                        },
-                    },
-                    {
-                        '$chuc_vu.ten$': {
                             [Op.like]: `%${req.query.search}%`,
                         },
                     },
