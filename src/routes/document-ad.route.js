@@ -12,20 +12,20 @@ router.post(
     authToken,
     permission('documentAd:create'),
     upload.single('anh_dai_dien'),
-    tryCatch(documentAdController.postCreate)
+    tryCatch(documentAdController.create)
 );
 router.put(
     '/:id',
     authToken,
     permission('documentAd:update'),
     upload.single('anh_dai_dien'),
-    tryCatch(documentAdController.putUpdate)
+    tryCatch(documentAdController.update)
 );
 router.delete(
     '/:id',
     authToken,
     permission('documentAd:remove'),
-    tryCatch(documentAdController.deleteById)
+    tryCatch(documentAdController.remove)
 );
 router.get(
     '/change-state/:id',
@@ -33,7 +33,7 @@ router.get(
     permission('documentAd:update'),
     tryCatch(documentAdController.stateChange)
 );
-router.get('/:id', tryCatch(documentAdController.getById));
-router.get('/', tryCatch(documentAdController.getAll));
+router.get('/:id', tryCatch(documentAdController.findOne));
+router.get('/', tryCatch(documentAdController.findAll));
 
 module.exports = router;
