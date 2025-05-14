@@ -759,7 +759,7 @@ const AccountPage = () => {
                           label="Ngày sinh"
                           name="ngay_sinh"
                         >
-                            <DatePicker
+                            <DatePicker 
                               placeholder='Ngày sinh'
                               format="YYYY-MM-DD"
                               onChange={onChangeStart}
@@ -771,6 +771,7 @@ const AccountPage = () => {
                               }}
                             />
                       </Form.Item>     
+
                       <Form.Item name="sdt" label="Số điện thoại" 
                           rules={[
                             { pattern: new RegExp(/^([0-9])([^\s-]).{8,}$/), 
@@ -780,6 +781,7 @@ const AccountPage = () => {
                       >
                           <Input size="normal" type={"tel"} placeholder='Số điện thoại' />
                       </Form.Item>
+
                       <Form.Item
                           name="email"
                           label="Email"
@@ -790,6 +792,7 @@ const AccountPage = () => {
                       >
                           <Input size="normal" placeholder='Email' />
                       </Form.Item>
+
                       <Form.Item
                           name="password"
                           label="Mật khẩu"
@@ -800,6 +803,7 @@ const AccountPage = () => {
                       >
                           <Input size="normal" placeholder='Mật khẩu' defaultValue={'Enno@123'} disabled={true}/>
                       </Form.Item>
+                      
                       <Form.Item
                           name="truong_hoc"
                           label="Trường học"

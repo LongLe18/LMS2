@@ -10,7 +10,7 @@ import useFetch from 'hooks/useFetch';
 import useDebounce from 'hooks/useDebounce';
 
 // component
-import { Row, Col, Table, Button, Tag, Select, notification, Pagination, Tabs, Spin } from 'antd';
+import { Row, Col, Table, Button, Tag, Select, notification, Pagination, Tabs, Spin, Tooltip } from 'antd';
 import AppFilter from "components/common/AppFilter";
 import ReactExport from "react-export-excel";
 
@@ -331,13 +331,13 @@ const StatisticExam = (props) => {
             key: 'dthv_id',
             responsive: ['md'],
             render: (dthv_id, record) => (
-                <> {state.activeTab === '1' && 
-                    <Button type='primary' style={{borderRadius: 6, marginRight: 6}}
+                <> 
+                <Button type='primary' style={{borderRadius: 6, marginRight: 6, marginBottom: 6}}
                         onClick={async () => {
                             try {
                                 setLoadingExportFile(true)
                                 const response = await axios({
-                                    url: `${config.API_URL}/evaluate/${dthv_id}/export-report`, 
+                                    url: state.activeTab === '1' ? `${config.API_URL}/student_exam/export-test/${dthv_id}` : `${config.API_URL}/student_exam/export-e-learning/${dthv_id}`, 
                                     method: 'GET',
                                     responseType: 'blob', 
                                     headers: {
@@ -349,7 +349,7 @@ const StatisticExam = (props) => {
                                 const url = window.URL.createObjectURL(new Blob([response.data]));
                                 const link = document.createElement('a');
                                 link.href = url;
-                                link.setAttribute('download', `${moment(record.ngay_thi).utc(7).format('ddmmYY')}_${record.ho_ten}.pdf`); // Replace with your file name and extension
+                                link.setAttribute('download', `${moment(record.ngay_thi).utc(7).format('ddmmYY')}_${record?.ho_ten}.xlsx`); // Replace with your file name and extension
                                 document.body.appendChild(link);
                                 link.click();
                                 link.parentNode.removeChild(link);
@@ -360,13 +360,49 @@ const StatisticExam = (props) => {
                                     description: 'Chưa có dữ liệu đánh giá của khóa học',
                                 })
                                 console.error('Download error:', error);
-                                setLoadingExportFile(false);
                             }
                         }}
                     >
                         Tải báo cáo
-                    </Button>
-                    }
+                </Button>
+                {state.activeTab === '1' && 
+                    <Tooltip title="Tải đánh giá nhận xét của học viên">
+                        <Button type='primary' style={{borderRadius: 6, marginRight: 6}}
+                            onClick={async () => {
+                                try {
+                                    setLoadingExportFile(true)
+                                    const response = await axios({
+                                        url: `${config.API_URL}/evaluate/${dthv_id}/export-report`, 
+                                        method: 'GET',
+                                        responseType: 'blob', 
+                                        headers: {
+                                            Authorization: `Bearer ${localStorage.getItem('userToken')}`,
+                                        }
+                                    });
+                        
+                                    // Create a URL for the file
+                                    const url = window.URL.createObjectURL(new Blob([response.data]));
+                                    const link = document.createElement('a');
+                                    link.href = url;
+                                    link.setAttribute('download', `${moment(record.ngay_thi).utc(7).format('ddmmYY')}_${record.ho_ten}.pdf`); // Replace with your file name and extension
+                                    document.body.appendChild(link);
+                                    link.click();
+                                    link.parentNode.removeChild(link);
+                                    setLoadingExportFile(false);
+                                } catch (error) {
+                                    notification.warn({
+                                        message: 'Cảnh báo',
+                                        description: 'Chưa có dữ liệu đánh giá của khóa học',
+                                    })
+                                    console.error('Download error:', error);
+                                    setLoadingExportFile(false);
+                                }
+                            }}
+                        >
+                            Tải đánh giá
+                        </Button>
+                    </Tooltip>
+                }
                     {/* Xem laị bài thi */}
                     <Button type='primary' style={{borderRadius: 6}}
                         onClick={() => {
@@ -603,7 +639,11 @@ const StatisticExam = (props) => {
                                 <Col xl={24} sm={24} xs={24}>
                                     {renderCourseForPractice()}
                                     {renderExams()}
-                                    <ExcelFile element={<Button type='primary'>Trích xuất file</Button>} filename={'baocao'}>
+                                    <ExcelFile element={
+                                        <Tooltip title='Báo cáo danh sách thi thử (có điểm từng phần thi)'>
+                                            <Button type='primary'>Trích xuất file</Button>
+                                        </Tooltip>
+                                        } filename={'baocao'}>
                                         <ExcelSheet data={data} name={'Thống kê điểm'}>
                                             <ExcelColumn label="Họ tên" value="ho_ten"/>
                                             <ExcelColumn label="Số điện thoại" value="sdt"/>
@@ -649,7 +689,10 @@ const StatisticExam = (props) => {
                                 <Col xl={24} sm={24} xs={24}>
                                     {renderCourseForTryExam()}
                                     {renderExams()}
-                                    <ExcelFile element={<Button type='primary'>Trích xuất file</Button>} filename={'baocao'}>
+                                    <ExcelFile element={<Tooltip title='Báo cáo danh sách thi thử (có điểm từng phần thi)'>
+                                            <Button type='primary'>Trích xuất file</Button>
+                                        </Tooltip>
+                                        } filename={'baocao'}>
                                         <ExcelSheet data={data} name={'Thống kê điểm'}>
                                             <ExcelColumn label="Họ tên" value="ho_ten"/>
                                             <ExcelColumn label="Số điện thoại" value="sdt"/>
@@ -669,7 +712,9 @@ const StatisticExam = (props) => {
                                             <ExcelColumn label="Ngày thi" value={(col) => moment(col.ngay_thi).utc(7).format(config.DATE_FORMAT)}/>
                                         </ExcelSheet>
                                     </ExcelFile>
-                                    <Button type='primary' style={{marginLeft: 8}} onClick={exportReportSummanry}>Tải kết quả</Button>
+                                    <Tooltip title='Báo cáo tổng hợp danh sách các đề thi thử'>
+                                        <Button type='primary' style={{marginLeft: 8}} onClick={exportReportSummanry}>Tải kết quả</Button>
+                                    </Tooltip>
                                 </Col>
                             </Row>
                         </Col>
@@ -696,7 +741,11 @@ const StatisticExam = (props) => {
                                 <Col xl={24} sm={24} xs={24}>
                                     {renderCourseForDGNL()}
                                     {/* <Button type='primary' style={{marginLeft: 8}} onClick={exportReportSummanry}>Tải kết quả</Button> */}
-                                    <ExcelFile element={<Button type='primary'>Tải kết quả</Button>} filename={'baocao'}>
+                                    <ExcelFile element={
+                                        <Tooltip title='Báo cáo danh sách thi thử (có điểm từng phần thi)'>
+                                            <Button type='primary'>Tải kết quả</Button>
+                                        </Tooltip>
+                                        } filename={'baocao'}>
                                         <ExcelSheet data={dataDGNL} name={'Thống kê điểm'}>
                                             <ExcelColumn label="Họ tên" value={(col) => col?.hoc_vien?.ho_ten}/>
                                             <ExcelColumn label="Số điện thoại" value={(col) => col?.hoc_vien?.sdt}/>

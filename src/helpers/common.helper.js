@@ -6,6 +6,67 @@ export const getUserInfo = () => {
     return localStorage.getItem('userInfo');
 }
 
+// const listTypePermission = ["accountBank",
+//   "answer",
+//   "auth",
+// //   "comment",
+// //   "contact",
+// //   "course",
+//   "courseAd",
+// //   "courseDescription",
+// //   "courseStudent",
+// //   "dealerDiscount",
+//   "department",
+//   "detailedDiscount",
+//   "detailedInvoice",
+// //   "dgtdCriteria",
+// //   "dgtdEvaluate",
+// //   "dgnlCriteria",
+// //   "dgnlEvaluate",
+// //   "discountCode",
+//   "document",
+//   "documentAd",
+//   "documentType",
+// //   "evaluate",
+// //   "exam",
+//   "examQuestion",
+// //   "examSet",
+//   "examSetStudent",
+//   "examset",
+// //   "exceprt",
+// //   "footer",
+//   "grade",
+// //   "invoice",
+// //   "lesson",
+//   "majoring",
+// //   "menu",
+//   "menuType",
+// //   "modun",
+// //   "modunCriteria",
+// //   "onlineCriteria",
+// //   "position",
+// //   "program",
+//   "province",
+// //   "question",
+// //   "staff",
+// //   "student",
+//   "studentExam",
+// //   "syntheticCriteria",
+// //   "teacher",
+//   "teacherCourseAd",
+// //   "thematic",
+// //   "thematicCriteria"
+// ]
+
+export const checkPermission = (key) => {
+    const userPermissions = localStorage.getItem('permissions').split(',');
+
+    return userPermissions.some(permission => {
+        const [type] = permission.split(':');
+        return type === key;
+    });
+}
+
 export const shouldHaveAccessPermission = (key, sub) => {
     var isAccssed = false;
     if (localStorage.getItem('userToken') === null) {

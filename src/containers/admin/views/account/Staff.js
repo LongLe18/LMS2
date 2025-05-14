@@ -6,11 +6,12 @@ import AppFilter from 'components/common/AppFilter';
 
 // antd
 import { Table, Tag, Button, Row, Col, notification, Space, Avatar, Form, Modal,
-  Input, Upload, message, Select, DatePicker, Checkbox, Timeline, Pagination } from 'antd';
+  Input, Upload, message, Select, DatePicker, Pagination } from 'antd';
 import { UploadOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
 // redux
 import * as userAction from '../../../../redux/actions/user';
+import * as positionAction from '../../../../redux/actions/position';
 import { useSelector, useDispatch } from "react-redux";
 
 // hooks
@@ -27,7 +28,7 @@ const StaffPage = () => {
 
     const dispatch = useDispatch();
     const staff = useSelector(state => state.user.staff.result);
-
+    const positions = useSelector((state) => state.position.list.result);
     const staffs = useSelector(state => state.user.listStaff.result);
     const errorstaffs = useSelector(state => state.user.listStaff.error);
 
@@ -73,7 +74,7 @@ const StaffPage = () => {
         trang_thai: true,
         vai_tro: 'nhân viên',
     };
-    const [permission, setPermission] = useState([]);
+    // const [permission, setPermission] = useState([]);
     const [state, setState] = useState({
         isEdit: false,
         idStudent: '',
@@ -94,7 +95,7 @@ const StaffPage = () => {
 
     useEffect(() => {
         dispatch(userAction.getStaffs({ search: filter.search, startDay: filter.start, 
-          endDay: filter.end, status: filter.trang_thai, pageIndex: pageIndex - 1, pageSize: pageSize }, (res) => {
+          endDay: filter.end, status: filter.trang_thai, pageIndex: pageIndex, pageSize: pageSize }, (res) => {
             if (res.status === 'success') {
               res.data = (res.data.map((staff) => {
                 return {...staff, 'vai_tro': 'nhân viên', 'key': staff.mat_khau, 'id': staff.nhan_vien_id };
@@ -105,6 +106,10 @@ const StaffPage = () => {
             }
           }));
     }, [pageSize, pageIndex]); // eslint-disable-line react-hooks/exhaustive-deps
+    
+    useEffect(() => {
+      dispatch(positionAction.getPositions({ pageIndex: 1, pageSize: 999999999999, search: '' }));
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const columns = [
         {
@@ -140,8 +145,8 @@ const StaffPage = () => {
           key: 'trang_thai',
           responsive: ['md'],
           render: (trang_thai) => (
-            <Tag color={trang_thai === 1 ? 'green' : trang_thai === 2 ? 'orange' : 'red'} key={trang_thai}>
-              {trang_thai === 1 ? "Hoạt động" : trang_thai === 2 ? "Chờ kích hoạt" : "Tạm dừng"}
+            <Tag color={trang_thai === true ? 'green' : trang_thai === false ? 'red' : 'orange'} key={trang_thai}>
+              {trang_thai === true ? "Hoạt động" : trang_thai === false ? "Tạm dừng" : "Chờ kích hoạt"}
             </Tag>
           ),
         },
@@ -187,7 +192,7 @@ const StaffPage = () => {
 
     useEffect(() => {
       dispatch(userAction.getStaffs({ search: filter.search, startDay: filter.start, 
-        endDay: filter.end, status: filter.trang_thai, pageIndex: pageIndex - 1, pageSize: pageSize }, (res) => {
+        endDay: filter.end, status: filter.trang_thai, pageIndex: pageIndex, pageSize: pageSize }, (res) => {
           if (res.status === 'success') {
             res.data = (res.data.map((staff) => {
               return {...staff, 'vai_tro': 'nhân viên', 'key': staff.mat_khau, 'id': staff.nhan_vien_id };
@@ -199,7 +204,7 @@ const StaffPage = () => {
 
     useMemo(() => {
       dispatch(userAction.getStaffs({ search: filter.search, startDay: filter.start, 
-        endDay: filter.end, status: filter.trang_thai, pageIndex: pageIndex - 1, pageSize: pageSize }, (res) => {
+        endDay: filter.end, status: filter.trang_thai, pageIndex: pageIndex, pageSize: pageSize }, (res) => {
           if (res.status === 'success') {
             res.data = (res.data.map((staff) => {
               return {...staff, 'vai_tro': 'nhân viên', 'key': staff.mat_khau, 'id': staff.nhan_vien_id };
@@ -237,7 +242,7 @@ const StaffPage = () => {
 
     const renderRole = () => {
         return (
-          <Select
+          <Select 
             value={state.form.vai_tro}
             onChange={(vai_tro) => setState({ ...state, vai_tro: vai_tro })}
             placeholder="Chọn vai trò"
@@ -247,20 +252,38 @@ const StaffPage = () => {
         );
     };
 
-    const renderPermission = () => {
-      return (
-        <Select mode='multiple'
-          value={permission}
-          onChange={(quyen) => setPermission(quyen)}
-          placeholder="Chọn quyền"
-        >
-          <Option value={'quyen_he_thong'} >Quyền hệ thống</Option>
-          <Option value={'quyen_nhan_su'} >Quyền nhân sự</Option>
-          <Option value={'quyen_kinh_doanh'} >Quyền kinh doanh</Option>
-          <Option value={'quyen_khao_thi'} >Quyền khảo thí</Option>
-        </Select>
+    const renderPosition = () => {
+      let options = [];
+        if (positions.status === 'success') {
+            options = positions.data.map((position) => (
+              <Option key={position.chuc_vu_id} value={position.chuc_vu_id } >{position.ten}</Option>
+            ))
+        }
+        return (
+          <Select
+              showSearch={true}
+              filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
+              placeholder="Chọn chức vụ"
+          >
+            {options}
+          </Select>
       );
-    };
+    }
+
+    // const renderPermission = () => {
+    //   return (
+    //     <Select mode='multiple'
+    //       value={permission}
+    //       onChange={(quyen) => setPermission(quyen)}
+    //       placeholder="Chọn quyền"
+    //     >
+    //       <Option value={'quyen_he_thong'} >Quyền hệ thống</Option>
+    //       <Option value={'quyen_nhan_su'} >Quyền nhân sự</Option>
+    //       <Option value={'quyen_kinh_doanh'} >Quyền kinh doanh</Option>
+    //       <Option value={'quyen_khao_thi'} >Quyền khảo thí</Option>
+    //     </Select>
+    //   );
+    // };
 
     const EditUser = (data) => {
       if (data.vai_tro === 'giáo viên') {
@@ -278,10 +301,7 @@ const StaffPage = () => {
 
     useEffect(() => {
       if (staff.status === 'success') {  
-        // let permissionSub = ['quyen_he_thong', 'quyen_nhan_su', 'quyen_kinh_doanh', 'quyen_khao_thi'];
-
-        form.setFieldsValue({ ...staff.data[0], 'vai_tro': 'nhân viên', 
-          // 'quyen': permissionSub, 
+        form.setFieldsValue({ ...staff.data[0], 
           'ngay_sinh': staff.data[0].ngay_sinh !== null ? moment(staff.data[0].ngay_sinh, "YYYY/MM/DD") : null, });
       }
     }, [staff]);  // eslint-disable-line react-hooks/exhaustive-deps
@@ -296,7 +316,7 @@ const StaffPage = () => {
           const callback = (res) => {
             if (res.status === 'success') {
               dispatch(userAction.getStaffs({ search: filter.search, startDay: filter.start, 
-                  endDay: filter.end, status: filter.trang_thai, pageIndex: pageIndex - 1, pageSize: pageSize }, (res) => {
+                  endDay: filter.end, status: filter.trang_thai, pageIndex: pageIndex, pageSize: pageSize }, (res) => {
                     if (res.status === 'success') {
                       res.data = (res.data.map((staff) => {
                         return {...staff, 'vai_tro': 'nhân viên', 'key': staff.mat_khau, 'id': staff.nhan_vien_id };
@@ -347,7 +367,7 @@ const StaffPage = () => {
             if (res.status === 'success') {
                 form.resetFields();
                 dispatch(userAction.getStaffs({ search: filter.search, startDay: filter.start, endDay: filter.end, 
-                  status: filter.trang_thai, pageIndex: pageIndex - 1, pageSize: pageSize }, (res) => {
+                  status: filter.trang_thai, pageIndex: pageIndex, pageSize: pageSize }, (res) => {
                     if (res.status === 'success') {
                       res.data = (res.data.map((staff) => {
                         return {...staff, 'vai_tro': 'nhân viên', 'key': staff.mat_khau, 'id': staff.nhan_vien_id };
@@ -372,7 +392,7 @@ const StaffPage = () => {
             let Parentpermission = ['quyen_he_thong', 'quyen_nhan_su', 'quyen_kinh_doanh', 'quyen_khao_thi'];
             let remainSubPermission = [];
 
-            if (values.quyen !== undefined) { // số quyền chọn
+            if (values?.quyen !== undefined) { // số quyền chọn
               values.quyen.map(value => {
                 if (values[value] !== undefined) {
                   let permission = ['0', '0'];
@@ -389,9 +409,9 @@ const StaffPage = () => {
                 return null;
               })
             };
-            remainSubPermission = Parentpermission.filter(element => values.quyen.indexOf(element) === -1);
+            remainSubPermission = Parentpermission.filter(element => values?.quyen?.indexOf(element) === -1);
             remainSubPermission.map((item) => formData.append(item, '00'));
-
+            formData.append('chuc_vu_id', values.chuc_vu_id);
             dispatch(userAction.editStaff( {formData: formData, nhan_vien_id: state.idStaff}, callback));
           } else if (values.vai_tro === 'giáo viên') {
             dispatch(userAction.editTeacher({formData: formData, giao_vien_id: state.idTeacher}, callback));
@@ -404,8 +424,8 @@ const StaffPage = () => {
               let Parentpermission = ['quyen_he_thong', 'quyen_nhan_su', 'quyen_kinh_doanh', 'quyen_khao_thi'];
               let remainSubPermission = [];
 
-              if (values.quyen !== undefined) {
-                values.quyen.map(value => {
+              if (values?.quyen !== undefined) {
+                values?.quyen.map(value => {
                   if (values[value] !== undefined) {
                     let permission = ['0', '0'];
                     values[value].map((item) => {
@@ -420,7 +440,8 @@ const StaffPage = () => {
                   return null;
                 })
               }
-              remainSubPermission = Parentpermission.filter(element => values.quyen.indexOf(element) === -1);
+              formData.append('chuc_vu_id', values.chuc_vu_id);
+              remainSubPermission = Parentpermission.filter(element => values?.quyen?.indexOf(element) === -1);
               remainSubPermission.map((item) => formData.append(item, '00'));
               dispatch(userAction.createStaff(formData, callback));
               break;
@@ -471,7 +492,7 @@ const StaffPage = () => {
             <>
               <Table className="table-striped-rows" columns={columns} dataSource={data} pagination={false}/>
               <br/>
-              <Pagination current={pageIndex} onChange={onChange} total={staffs.total} showSizeChanger onShowSizeChange={onShowSizeChange} defaultPageSize={pageSize}/>
+              <Pagination current={pageIndex} onChange={onChange} total={staffs.totalCount} showSizeChanger onShowSizeChange={onShowSizeChange} defaultPageSize={pageSize}/>
             </>
           }
           {(errorstaffs) && notification.error({
@@ -511,7 +532,7 @@ const StaffPage = () => {
                           name="ngay_sinh"
                           rules={[]}
                         >
-                            <DatePicker
+                            <DatePicker style={{ width: '100%' }} 
                               placeholder='Ngày sinh'
                               format="YYYY-MM-DD"
                               onChange={onChangeStart}
@@ -544,7 +565,7 @@ const StaffPage = () => {
                           <Input size="normal" placeholder='Địa chỉ' />
                       </Form.Item>
                       {/* Vai trò */}
-                      <Form.Item
+                      <Form.Item style={{display: 'none'}}
                           name="vai_tro"
                           label="Vai trò"
                           rules={[
@@ -554,8 +575,19 @@ const StaffPage = () => {
                       >
                           {renderRole()}
                       </Form.Item>
-                      {/* Quyền */}
+                      {/* Chức vụ */}
                       <Form.Item
+                          name="chuc_vu_id"
+                          label="Chức vụ"
+                          rules={[
+                              { required: true, message: 'Chức vụ là trường bắt buộc.' },
+                          ]}
+                      >
+                          {renderPosition()}
+                      </Form.Item>
+
+                      {/* Quyền */}
+                      {/* <Form.Item
                           name="quyen"
                           label="Quyền"
                           rules={[
@@ -621,7 +653,7 @@ const StaffPage = () => {
                             </Col>
                           }
                         </Row>
-                      }
+                      } */}
                       {/* Trạng thái */}
                       {(state.isEdit) ?  
                         <Form.Item 
@@ -664,9 +696,6 @@ const StaffPage = () => {
                               : ''}    
                           </Space>    
                       </Form.Item>
-                    <Timeline>
-                      <Timeline.Item style={{color: 'red', fontSize: '18px'}}>Lưu ý: Khi sửa phải chọn lại quyền</Timeline.Item>
-                    </Timeline>
                   </Form>
               </Col>
           </Row>

@@ -44,7 +44,10 @@ const InfoComponent = (props) => {
     }, [state.isLogin]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const onLogout = () => {
-        dispatch(userAction.logoutUser());
+        // dispatch(userAction.logoutUser());
+        localStorage.removeItem('userToken');
+        localStorage.removeItem('userInfo');
+        localStorage.removeItem('_grecaptcha');
         setState(state => ({ ...state, isLogin: false, info: {} }));
     };
 

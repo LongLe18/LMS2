@@ -43,7 +43,7 @@ import BankInfoPage from './views/system/bank.js';
 import FooterPage from './views/system/footer.js';
 import ContactPage from './views/system/contact.js';
 
-import { shouldHaveAccessPermission } from "helpers/common.helper.js";
+import { shouldHaveAccessPermission, checkPermission } from "helpers/common.helper.js";
 
 import {
   BookOutlined,
@@ -131,6 +131,7 @@ const routes = [
     sub: [{
       parent: "account",
       path: "/admin/account/student",
+      hide: checkPermission('student') === true ? false : true,
       name: "Học viên",
       icon: <OrderedListOutlined />,
       render: (props) => (shouldHaveAccessPermission('all', '/admin/account/student') ? <AccountPage {...props}/> : <Redirect to="/"/>) // OK
@@ -138,6 +139,7 @@ const routes = [
     {
       parent: "account",
       path: "/admin/account/teacher",
+      hide: checkPermission('teacher') === true ? false : true,
       name: "Giáo viên",
       icon: <UserOutlined />,
       render: (props) => (shouldHaveAccessPermission('all', '/admin/account/teacher') ? <TeacherPage {...props}/> : <Redirect to="/"/>) // OK
@@ -145,6 +147,7 @@ const routes = [
     {
       parent: "account",
       path: "/admin/account/admin",
+      hide: checkPermission('staff') === true ? false : true,
       name: "Nhân viên",
       icon: <UserOutlined />,
       render: (props) => (shouldHaveAccessPermission('all', '/admin/account/admin') ? <StaffPage {...props}/> : <Redirect to="/"/>) // OK
@@ -152,6 +155,7 @@ const routes = [
     {
       parent: "account",
       path: "/admin/account/permission",
+      hide: checkPermission('position') === true ? false : true,
       name: "Quản lý quyền",
       icon: <SecurityScanOutlined />,
       render: (props) => (shouldHaveAccessPermission('all', '/admin/account/permission') ? <PermissionPage {...props}/> : <Redirect to="/"/>) // OK
@@ -166,6 +170,7 @@ const routes = [
     sub: [{
       parent: "educate",
       path: "/admin/thematic/program",
+      hide: checkPermission('program') === true ? false : true,
       name: "Khung chương tình",
       icon: <DiffOutlined />,
       render: (props) => <ProgramPage {...props}/>
@@ -174,29 +179,34 @@ const routes = [
       parent: "educate",
       path: "/admin/thematic/course",
       name: "Khóa học",
+      hide: checkPermission('course') === true ? false : true,
       icon: <BookOutlined />,
       render: (props) => <Course {...props}/>
     }, {
       parent: "thematic",
       path: "/admin/thematic/cate",
+      hide: checkPermission('modun') === true ? false : true,
       name: "Danh mục mô đun",
       icon: <FolderOutlined />,
       render: (props) => (shouldHaveAccessPermission('all', '/admin/thematic/cate') ? <ModuleCate {...props}/> : <Redirect to="/"/>)
     }, {
       parent: "thematic",
       path: "/admin/thematic/thematic",
+      hide: checkPermission('thematic') === true ? false : true,
       name: "Chuyên đề",
       icon: <MenuOutlined />,
       render: (props) => (shouldHaveAccessPermission('all', '/admin/thematic/thematic') ? <ThematicCate {...props}/> : <Redirect to="/"/>)
     }, {
       parent: "lesson",
       path: "/admin/lesson/lesson",
+      hide: checkPermission('lesson') === true ? false : true,
       name: "Bài giảng",
       icon: <CalendarOutlined />,
       render: (props) => (shouldHaveAccessPermission('all', '/admin/lesson/lesson') ? <Lesson {...props}/> : <Redirect to="/"/>)
     }, {
       parent: "educate",
       path: "/admin/educate/course",
+      hide: checkPermission('courseDescription') === true ? false : true,
       name: "Thông tin Khóa học",
       icon: <FolderOutlined />,
       render: (props) => <BussinessCourses {...props}/>
@@ -212,35 +222,41 @@ const routes = [
       parent: "question",
       path: "/admin/question/criteria",
       name: "Tiêu chí đề thi",
+      hide: checkPermission('syntheticCriteria') === true ? false : true,
       icon: <CloudOutlined />,
       render: (props) => <Criteria {...props}/>
     }, {
       parent: "question",
       path: "/admin/question/excerpt",
+      hide: checkPermission('exceprt') === true ? false : true,
       name: "Trích đoạn đề thi",
       icon: <FileSearchOutlined />,
       render: (props) => <Exceprt {...props}/>
     }, {
       parent: "question",
       path: "/admin/question/exam",
+      hide: checkPermission('exam') === true ? false : true,
       name: "Đề luyện thi",
       icon: <FileTextOutlined />,
       render: (props) => <ExamAdminPage {...props}/>
     }, {
       parent: "question",
       path: "/admin/question/examDgnl",
+      hide: checkPermission('exam') === true ? false : true,
       name: "Đề mẫu ĐGNL/ĐGTD",
       icon: <FileOutlined />,
       render: (props) => <ExamDGNLAdminPage {...props}/>
     }, {
       parent: "question",
       path: "/admin/question/evaluation",
+      hide: checkPermission('evaluate') === true ? false : true,
       name: "Đánh giá",
       icon: <FileDoneOutlined />,
       render: (props) => <EvaluationPage {...props}/>
     }, {
       parent: "question",
       path: "/admin/question/question",
+      hide: checkPermission('question') === true ? false : true,
       name: "Danh mục câu hỏi",
       icon: <QuestionCircleOutlined />,
       render: (props) => <QuestionPage {...props}/>
@@ -248,6 +264,7 @@ const routes = [
     {
       parent: "question",
       path: "/admin/question/exam-set",
+      hide: checkPermission('examSet') === true ? false : true,
       name: "Bộ đề thi",
       icon: <FileTextOutlined />,
       render: (props) => <ExamSetPage {...props}/>
@@ -263,6 +280,7 @@ const routes = [
     sub: [{
       parent: "business",
       path: "/admin/business/courseStudent",
+      hide: checkPermission('courseStudent') === true ? false : true,
       name: "Học viên - Khóa học",
       icon: <BookOutlined />,
       render: (props) => <CourseStudentPage {...props}/>
@@ -278,23 +296,27 @@ const routes = [
       parent: "business",
       path: "/admin/business/discount",
       name: "Khuyến mãi",
+      hide: checkPermission('discountCode') === true ? false : true,
       icon: <MoneyCollectOutlined />,
       render: (props) => (shouldHaveAccessPermission('all', '/admin/business/discount') ? <DiscountPage {...props}/> : <Redirect to="/"/>)
     }, {
       parent: 'business',
       path: '/admin/business/dealer',
       name: 'Chiết khấu',
+      hide: checkPermission('dealerDiscount') === true ? false : true,
       icon:  <HddOutlined />,
       render: (props) => (shouldHaveAccessPermission('all', '/admin/business/dealer') ? <DealerPage {...props}/> : <Redirect to="/"/>)
     }, {
       parent: 'business',
       path: '/admin/business/receipt',
       name: 'Hóa đơn',
+      hide: checkPermission('invoice') === true ? false : true,
       icon: <ReconciliationOutlined />,
       render: (props) => (shouldHaveAccessPermission('all', '/admin/business/receipt') ? <ReceiptPage {...props}/> : <Redirect to="/"/>)
     }, {
       parent: 'business',
       path: '/admin/business/dealerTeacher',
+      hide: checkPermission('dealerDiscount') === true ? false : true,
       name: 'Đại lý',
       icon: <DesktopOutlined />,
       render: (props) => (shouldHaveAccessPermission('all', '/admin/business/dealerTeacher') ? <DealerTeacherPage {...props}/> : <Redirect to="/"/>)
@@ -304,7 +326,7 @@ const routes = [
     id: "reply",
     path: "/admin/reply",
     name: "Hỏi đáp",
-    hide: false,
+    hide: checkPermission('comment') === true ? false : true,
     icon: <SoundOutlined />,
     render: (props) => (shouldHaveAccessPermission('all', '/admin/reply') ? <ReplyPage {...props}/> : <Redirect to="/"/>)
   },    
@@ -324,6 +346,7 @@ const routes = [
     {
       parent: "banner",
       path: "/admin/banner/menu",
+      hide: checkPermission('menu') === true ? false : true,
       name: "Menu",
       icon: <CopyOutlined />,
       render: (props) => (shouldHaveAccessPermission('all', '/admin/banner/menu') ? <MenuPage {...props}/> : <Redirect to="/"/>) // OK
@@ -344,13 +367,15 @@ const routes = [
     }, {
       parent: 'system',
       path: '/admin/system/footer',
+      hide: checkPermission('footer') === true ? false : true,
       name: 'Footer',
       icon: <InfoCircleOutlined />,
       render: (props) => (shouldHaveAccessPermission('all', '/admin/system/footer') ? <FooterPage {...props}/> : <Redirect to="/"/>)
     }, {
       parent: 'system',
       path: '/admin/system/contact',
-      name: 'Contact',
+      hide: checkPermission('contact') === true ? false : true,
+      name: 'Liên hệ',
       icon: <PhoneOutlined />,
       render: (props) => (shouldHaveAccessPermission('all', '/admin/system/contact') ? <ContactPage {...props}/> : <Redirect to="/"/>)
     }]

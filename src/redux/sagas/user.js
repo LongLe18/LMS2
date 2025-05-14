@@ -159,7 +159,7 @@ function* fetchTeachers(payload) {
 
 function* fetchStaffs(payload) {
   try {
-    const endpoint = `${config.API_URL}/staff?trang_thai=${payload.params.status}&ngay_bat_dau=${payload.params.startDay}&ngay_ket_thuc=${payload.params.endDay}&search=${payload.params.search}&limit=${payload.params.pageSize}&offset=${payload.params.pageIndex}`;
+    const endpoint = `${config.API_URL}/staff?trang_thai=${payload.params.status}&ngay_bat_dau=${payload.params.startDay}&ngay_ket_thuc=${payload.params.endDay}&search=${payload.params.search}&pageSize=${payload.params.pageSize}&pageIndex=${payload.params.pageIndex}`;
     const response = yield call(getApiAuth, endpoint);
     const data = yield response.data;
     yield put({ type: actions.user.GET_STAFFS_SUCCESS, result: data });
@@ -551,6 +551,7 @@ function* login(payload) {
       else {
         yield put({ type: actions.user.LOGIN_USER_SUCCESS, result: data });
         localStorage.setItem('userToken', data.data.access_token);
+        localStorage.setItem('permissions', data.data.permissions);
         if (payload.callback) {
           payload.callback(data);
         }
@@ -572,6 +573,7 @@ function* logout(payload) {
       const response = yield call(postApiAuth, endpoint);
       localStorage.removeItem('userToken');
       localStorage.removeItem('userInfo');
+      localStorage.removeItem('permissions');
       localStorage.removeItem('_grecaptcha');
       const data = yield response;
       yield put({ type: actions.user.LOGOUT_USER_SUCCESS, result: data });

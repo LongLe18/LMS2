@@ -167,19 +167,22 @@ function Header(props) {
     if (localStorage.getItem('userToken') !== null) {
       const json_token = jwt_decode(localStorage.getItem('userToken'));
       if (json_token.role === 0) { // user fail
-        dispatch(userAction.getUserStudent());
+        dispatch(userAction.getUserStudent({ hoc_vien_id: json_token.userId }));
       } else if (json_token.role === 1) {
-        dispatch(userAction.getUserTeacher());
+        dispatch(userAction.getUserTeacher({ giao_vien_id: json_token.userId}));
       } else {
-        dispatch(userAction.getUserStaff());
+        dispatch(userAction.getUserStaff({ nhan_vien_id: json_token.userId }));
       }
-      dispatch(userAction.logoutUser({}, (res) => {
-        if (res.status === 200 && res.statusText === 'OK') {
-          setState(state => ({ ...state, isLogin: false, info: {} }));
-          if (json_token.role === 2) props.history.push('/auth/nhanvien');
-          else if (json_token.role === 1) props.history.push('/auth/giaovien');
-        }
-      }));
+      // dispatch(userAction.logoutUser({}, (res) => {
+        // if (res.status === 200 && res.statusText === 'OK') {
+        localStorage.removeItem('userToken');
+        localStorage.removeItem('userInfo');
+        localStorage.removeItem('_grecaptcha');
+        setState(state => ({ ...state, isLogin: false, info: {} }));
+        if (json_token.role === 2) props.history.push('/auth/nhanvien');
+        else if (json_token.role === 1) props.history.push('/auth/giaovien');
+        // }
+      // }));
     } 
   };
 

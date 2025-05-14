@@ -274,9 +274,6 @@ const PermissionPage = () => {
                             >
                                 <Input placeholder="Nhập mã chức vụ"/>
                             </Form.Item>
-                            {state.isEdit &&
-                                <PermissionForm permissions={permissions?.data} data={permission} onValuesChange={onChangePermissions}/>
-                            }
                             <Form.Item
                                 className="input-col"
                                 label="Mô tả"
@@ -285,6 +282,9 @@ const PermissionPage = () => {
                             >
                                 <TextArea rows={4} placeholder='Nhập mô tả'/>
                             </Form.Item>
+                            {state.isEdit &&
+                                <PermissionForm permissions={permissions?.data} data={permission} onValuesChange={onChangePermissions}/>
+                            }
                             <Form.Item className="button-col">
                                 <Space>
                                     <Button shape="round" type="primary" htmlType="submit" >
