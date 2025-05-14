@@ -10,19 +10,19 @@ router.post(
     '/create',
     authToken,
     permission('dgnlCriteria:create'),
-    tryCatch(dgnlCriteriaController.postCreate)
+    tryCatch(dgnlCriteriaController.create)
 );
 router.put(
     '/:id',
     authToken,
     permission('dgnlCriteria:update'),
-    tryCatch(dgnlCriteriaController.putUpdate)
+    tryCatch(dgnlCriteriaController.update)
 );
 router.delete(
     '/:id/force',
     authToken,
     permission('dgnlCriteria:remove'),
-    tryCatch(dgnlCriteriaController.forceDelete)
+    tryCatch(dgnlCriteriaController.remove)
 );
 router.get(
     '/all_admin',
@@ -41,6 +41,6 @@ router.get(
     authToken,
     tryCatch(dgnlCriteriaController.getByCourse)
 );
-router.get('/:id', tryCatch(dgnlCriteriaController.getById));
+router.get('/:id', tryCatch(dgnlCriteriaController.findOne));
 
 module.exports = router;

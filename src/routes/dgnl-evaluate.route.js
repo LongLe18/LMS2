@@ -29,7 +29,7 @@ router.get(
     authToken,
     tryCatch(dgnlEvaluateController.download)
 );
-router.get('/:id', authToken, tryCatch(dgnlEvaluateController.getById));
-router.get('/', authToken, tryCatch(dgnlEvaluateController.getAll));
+router.get('/:id', authToken, tryCatch(dgnlEvaluateController.findOne));
+router.get('/', authToken, tryCatch(dgnlEvaluateController.findAll));
 
 module.exports = router;

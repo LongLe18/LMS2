@@ -12,7 +12,7 @@ router.post(
     authToken,
     permission('program:create'),
     upload.single('anh_dai_dien'),
-    tryCatch(programController.postCreate)
+    tryCatch(programController.create)
 );
 // router.get(
 //     '/create',

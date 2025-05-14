@@ -29,7 +29,7 @@ router.get(
     authToken,
     tryCatch(evaluateController.download)
 );
-router.get('/:id', authToken, tryCatch(evaluateController.getById));
-router.get('/', authToken, tryCatch(evaluateController.getAll));
+router.get('/:id', authToken, tryCatch(evaluateController.findOne));
+router.get('/', authToken, tryCatch(evaluateController.findAll));
 
 module.exports = router;

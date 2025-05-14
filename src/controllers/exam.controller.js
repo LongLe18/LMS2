@@ -989,7 +989,7 @@ const getByIdDGTD = async (req, res) => {
     });
 };
 
-const postCreate = async (req, res) => {
+const create = async (req, res) => {
     const { de_thi_ma, loai_de_thi_id, mo_dun_id, khoa_hoc_id } = req.body;
 
     if (!de_thi_ma) {
@@ -1087,7 +1087,7 @@ const getUpdate = async (req, res) => {
     });
 };
 
-const putUpdate = async (req, res) => {
+const update = async (req, res) => {
     if (req.file) {
         const exam = await Exam.findOne({
             where: { de_thi_id: req.params.id },
@@ -1496,7 +1496,7 @@ const stateChange = async (req, res) => {
     });
 };
 
-const forceDelete = async (req, res) => {
+const remove = async (req, res) => {
     const examChild = await Exam.findOne({
         where: { de_cha_id: req.params.id },
     });
@@ -1631,7 +1631,7 @@ const reuse = async (req, res) => {
     });
 };
 
-const studentStatistic = async (req, res) => {
+const getStudentStatistic = async (req, res) => {
     const whereConditions = [
         'de_thi_hoc_vien.thoi_diem_ket_thuc IS NOT NULL',
         'de_thi_hoc_vien.de_thi_id = :de_thi_id',
@@ -1798,16 +1798,16 @@ module.exports = {
     getOneExam,
     findAll,
     findOne,
-    postCreate,
+    create,
     getUpdate,
-    putUpdate,
+    update,
     publish,
     stateChange,
-    forceDelete,
+    remove,
     clearAll,
     reuse,
     getSyntheticNew,
-    studentStatistic,
+    getStudentStatistic,
     uploadWordMedia,
     getByIdv2,
     getExamDGNL,

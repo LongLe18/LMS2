@@ -46,7 +46,7 @@ const getByExam = async (req, res) => {
     });
 };
 
-const getAll = async (req, res) => {
+const findAll = async (req, res) => {
     const { count, rows } = await Question.findAndCountAll({
         include: {
             model: Answer,
@@ -95,7 +95,7 @@ const getAll_admin = async (req, res) => {
     });
 };
 
-const getById = async (req, res) => {
+const findOne = async (req, res) => {
     const question = await Question.findOne({
         include: [
             {
@@ -119,7 +119,7 @@ const getById = async (req, res) => {
     });
 };
 
-const postCreate = async (req, res) => {
+const create = async (req, res) => {
     const { cot_tren_hang, noi_dung, ...rest } = req.body;
 
     const question = await Question.create({
@@ -151,7 +151,7 @@ const postCreate = async (req, res) => {
     });
 };
 
-const putUpdate = async (req, res) => {
+const update = async (req, res) => {
     const { noi_dung, ...rest } = req.body;
     await Question.update(
         {
@@ -189,7 +189,7 @@ const putUpdate = async (req, res) => {
     });
 };
 
-const forceDelete = async (req, res) => {
+const remove = async (req, res) => {
     const question = await Question.findOne({
         where: {
             cau_hoi_id: req.params.id,
@@ -390,12 +390,12 @@ const removeOption = async (req, res) => {
 
 module.exports = {
     getByExam,
-    getAll,
+    findAll,
     getAll_admin,
-    getById,
-    postCreate,
-    putUpdate,
-    forceDelete,
+    findOne,
+    create,
+    update,
+    remove,
     addDetails,
     addDetail,
     getDetails,
