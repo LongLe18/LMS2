@@ -920,7 +920,7 @@ const getExamSetv2 = async (req, res) => {
         include: [
             {
                 model: CourseMedia,
-                required: true,
+                // required: true,
                 include: [
                     {
                         model: Media,
@@ -931,7 +931,7 @@ const getExamSetv2 = async (req, res) => {
                             'ngay_tao',
                             'nguoi_tao',
                         ],
-                        required: true,
+                        // required: true,
                         include: [
                             {
                                 model: Staff,
