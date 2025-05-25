@@ -463,6 +463,17 @@ Teacher.hasOne(Department, {
     constraints: false,
 });
 
+Course.hasOne(Teacher, {
+    foreignKey: 'giao_vien_id',
+    sourceKey: 'giao_vien_id',
+    constraints: false,
+});
+Teacher.belongsTo(Course, {
+    foreignKey: 'giao_vien_id',
+    targetKey: 'giao_vien_id',
+    constraints: false,
+});
+
 module.exports = {
     Course,
     Lesson,

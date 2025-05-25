@@ -96,44 +96,6 @@ const create = async (req, res) => {
     const password = security.generatePassword();
     const hashedPassword = security.hashPassword(password);
 
-    let role = await sequelize.query(
-        `
-        SELECT phan_quyen.* 
-        FROM phan_quyen 
-        WHERE 
-            quyen_he_thong = :quyen_he_thong AND 
-            quyen_nhan_su = :quyen_nhan_su AND 
-            quyen_kinh_doanh = :quyen_kinh_doanh AND 
-            quyen_khao_thi = :quyen_khao_thi
-        `,
-        {
-            replacements: {
-                quyen_he_thong: req.body.quyen_he_thong,
-                quyen_nhan_su: req.body.quyen_nhan_su,
-                quyen_kinh_doanh: req.body.quyen_kinh_doanh,
-                quyen_khao_thi: req.body.quyen_khao_thi,
-            },
-            type: sequelize.QueryTypes.SELECT,
-        }
-    );
-
-    if (!role[0]) {
-        const newRole = await Role.create({
-            quyen_he_thong: req.body.quyen_he_thong,
-            quyen_nhan_su: req.body.quyen_nhan_su,
-            quyen_kinh_doanh: req.body.quyen_kinh_doanh,
-            quyen_khao_thi: req.body.quyen_khao_thi,
-        });
-        req.body.phan_quyen_id = newRole.quyen_id;
-    } else {
-        req.body.phan_quyen_id = role[0].quyen_id;
-    }
-
-    delete req.body.quyen_he_thong;
-    delete req.body.quyen_nhan_su;
-    delete req.body.quyen_kinh_doanh;
-    delete req.body.quyen_khao_thi;
-
     const staff = await Staff.create({
         ...req.body,
         mat_khau: hashedPassword,

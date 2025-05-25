@@ -1162,6 +1162,18 @@ const publish = async (req, res) => {
                 },
             }
         );
+
+        await Exam.update(
+            {
+                xuat_ban: false,
+                trang_thai: false,
+            },
+            {
+                where: {
+                    de_mau_id: exam.de_thi_id,
+                },
+            }
+        );
     } else {
         if (exam.loai_de_thi_id === 5) {
             const condition = await sequelize.query(
@@ -1457,7 +1469,7 @@ const publish = async (req, res) => {
         );
     }
 
-    res.status(200).send({
+    return res.status(200).send({
         status: 'success',
         data: null,
         message: null,

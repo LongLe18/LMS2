@@ -1,5 +1,5 @@
 const path = require('path');
-const { Op } = require('sequelize');
+const { Op, fn, literal } = require('sequelize');
 const fs = require('fs');
 
 const {
@@ -13,6 +13,9 @@ const {
     Media,
     Staff,
     ExamSetStudent,
+    Teacher,
+    Modun,
+    Thematic,
 } = require('../models');
 const sequelize = require('../utils/db');
 const { checkFileType } = require('../middlewares/upload.middleware');
@@ -669,7 +672,7 @@ const update = async (req, res) => {
     await Course.update(
         {
             ...req.body,
-            nguoi_sua: req.userId
+            nguoi_sua: req.userId,
         },
         {
             where: {
@@ -1253,6 +1256,60 @@ const removeFileExam = async (req, res) => {
     });
 };
 
+const dashboardByTeacher = async (req, res) => {
+    const result = await Course.findAll({
+        attributes: [
+            'giao_vien_id',
+            [
+                fn('COUNT', literal('DISTINCT `khoa_hoc`.`khoa_hoc_id`')),
+                'so_khoa_hoc',
+            ],
+            [
+                fn('COUNT', literal('DISTINCT `mo_duns`.`mo_dun_id`')),
+                'so_modun',
+            ],
+            [
+                fn('COUNT', literal('`mo_duns->chuyen_des`.`chuyen_de_id`')),
+                'so_chuyen_de',
+            ],
+            [
+                fn('COUNT', literal('`khoa_hoc_hoc_viens`.`hoc_vien_id`')),
+                'so_hoc_vien',
+            ],
+        ],
+        include: [
+            {
+                model: Modun,
+                attributes: [],
+                required: false,
+                include: [
+                    {
+                        model: Thematic,
+                        attributes: [],
+                        required: false,
+                    },
+                ],
+            },
+            {
+                model: CourseStudent,
+                attributes: [],
+                required: false,
+            },
+        ],
+        where: {
+            giao_vien_id: req.userId,
+        },
+        group: ['giao_vien_id'],
+        raw: true,
+    });
+
+    return res.status(200).send({
+        status: 'success',
+        data: result,
+        message: null,
+    });
+};
+
 module.exports = {
     getStatistical,
     findAll,
@@ -1282,4 +1339,5 @@ module.exports = {
     getExamSetv2,
     updateExamSet,
     downloadExamSet,
+    dashboardByTeacher,
 };

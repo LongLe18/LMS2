@@ -145,6 +145,12 @@ router.get(
     tryCatch(courseController.getAddStudents)
 );
 router.get('/by-program', tryCatch(courseController.getAllByProgram));
+router.get(
+    '/dashboard-by-teacher',
+    authToken,
+    permission('course:dashBoardByTeacher'),
+    tryCatch(courseController.dashboardByTeacher)
+);
 router.get('/:id', tryCatch(courseController.findOne));
 router.get('/', tryCatch(courseController.findAll));
 

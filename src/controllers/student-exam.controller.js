@@ -253,6 +253,8 @@ const postCreateDGNL = async (req, res) => {
                 .map((item) => item.trim())
                 .sort((a, b) => a - b)
                 .join(',')}`,
+            trang_thai: true,
+            xuat_ban: true,
         },
         order: sequelize.literal('RAND()'),
     });
@@ -1708,6 +1710,260 @@ const exportTest = async (req, res) => {
     }
 };
 
+const exportTestv2 = async (req, res) => {
+    try {
+        const content = fs.readFileSync(
+            path.join(
+                process.cwd(),
+                '/public/templates/export_student_exam.xlsx'
+            )
+        );
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.load(content);
+
+        workbook.creator = 'Me';
+        workbook.lastModifiedBy = 'Her';
+        workbook.created = new Date();
+        const workSheet = workbook.getWorksheet('Sheet1');
+
+        const exam = await Exam.findOne({
+            attributes: ['de_thi_id', 'ten_de_thi', 'khoa_hoc_id'],
+            include: [
+                {
+                    model: ExamQuestion,
+                    attributes: ['chdt_id', 'chuyen_nganh_id'],
+                    include: [
+                        {
+                            model: Question,
+                            attributes: ['cau_hoi_id', 'noi_dung', 'mdch_id'],
+                            include: [
+                                {
+                                    model: Exceprt,
+                                    attributes: ['trich_doan_id', 'noi_dung'],
+                                },
+                                {
+                                    model: Majoring,
+                                    attributes: [
+                                        'chuyen_nganh_id',
+                                        'ten_chuyen_nganh',
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+            where: {
+                de_thi_id: req.query.de_thi_id,
+            },
+            order: [[sequelize.col('chdt_id'), 'ASC']],
+        });
+
+        const criteria = await OnlineCriteria.findOne({
+            where: {
+                khoa_hoc_id: exam.khoa_hoc_id,
+            },
+        });
+
+        const studentExams = await StudentExam.findAll({
+            attributes: ['hoc_vien_id'],
+            include: [
+                {
+                    model: Student,
+                    attributes: ['hoc_vien_id', 'ho_ten', 'email'],
+                    required: true,
+                },
+                {
+                    model: Exam,
+                    attributes: ['de_thi_id'],
+                    include: [
+                        {
+                            model: ExamQuestion,
+                            attributes: ['chdt_id'],
+                            include: [
+                                {
+                                    model: Question,
+                                    attributes: ['cau_hoi_id'],
+                                    include: [
+                                        {
+                                            model: SelectedAnswer,
+                                            attributes: [
+                                                'dadc_id',
+                                                'ket_qua',
+                                                'cau_hoi_id',
+                                                'dthv_id',
+                                            ],
+                                            on: sequelize.literal(
+                                                '`de_thi->cau_hoi_de_this->cau_hoi`.`cau_hoi_id` = `de_thi->cau_hoi_de_this->cau_hoi->dap_an_da_chons`.`cau_hoi_id` AND `de_thi_hoc_vien`.`dthv_id` = `de_thi->cau_hoi_de_this->cau_hoi->dap_an_da_chons`.`dthv_id`'
+                                            ),
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+            where: {
+                dthv_id: {
+                    [Op.in]: req.query.dthv_ids.split(',').map(Number), // giả sử bạn truyền danh sách ID trong req.body.ids
+                },
+            },
+            logging: console.log, // In SQL thực tế ra console
+        });
+
+        let indexCol;
+        let indexRow;
+        let count;
+        let row;
+        let order = 1;
+        let questionIds = [];
+        let index = 1;
+        let phan_1 = 1;
+        let phan_2 = criteria.so_cau_hoi_phan_1 + phan_1;
+        let phan_3 = criteria.so_cau_hoi_phan_2 + phan_2;
+        let phan_4 = criteria.so_cau_hoi_phan_3 + phan_3;
+
+        indexRow = 2;
+        for (const item of exam.cau_hoi_de_this) {
+            if (
+                index === phan_1 ||
+                index === phan_2 ||
+                index === phan_3 ||
+                index === phan_4
+            ) {
+                indexRow = indexRow + 4;
+                row = workSheet.getRow(indexRow);
+
+                row.getCell(1).font = {
+                    name: 'Aptos Narrow',
+                    bold: true,
+                    size: 11,
+                };
+                row.getCell(1).fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'c3d69c' },
+                };
+                if (index === phan_1) {
+                    row.getCell(1).value = 'KĨ NĂNG TÍNH TOÁN';
+                } else if (index === phan_2) {
+                    row.getCell(1).value =
+                        'TƯ DUY LOGIC, PHÂN TÍCH VẤN ĐỀ VÀ GIẢI QUYẾT VẤN ĐỀ';
+                } else if (index === phan_3) {
+                    row.getCell(1).value =
+                        'KĨ NĂNG XỬ LÍ VÀ HIỂU VỀ CÁC SỐ LIỆU THỐNG KÊ';
+                } else if (index === phan_4) {
+                    row.getCell(1).value =
+                        'KĨ NĂNG TƯ DUY SÁNG TẠO VÀ NĂNG LỰC VẬN DỤNG';
+                }
+
+                order = 1;
+                indexRow++;
+            }
+            row = workSheet.getRow(indexRow);
+
+            row.getCell(1).value = `Câu ${order}`;
+            row.getCell(2).value = (
+                (item.cau_hoi?.trich_doan
+                    ? item.cau_hoi?.trich_doan?.noi_dung
+                    : '') + item.cau_hoi?.noi_dung
+            )
+                .replaceAll(
+                    '\\begin{center}\\includegraphics[scale = 0.5]{',
+                    ''
+                )
+                .replaceAll('}\\end{center}\\', '')
+                .replaceAll('<strong>', '')
+                .replaceAll('</strong>', '')
+                .replaceAll('<em>', '')
+                .replaceAll('</em>', '')
+                .replaceAll('<b>', '')
+                .replaceAll('</b>', '');
+            row.getCell(3).value = item.cau_hoi?.chuyen_nganh?.ten_chuyen_nganh;
+            row.getCell(4).value =
+                item.cau_hoi?.mdch_id === 1
+                    ? 'Nhận biết'
+                    : item.cau_hoi?.mdch_id === 2
+                    ? 'Thông hiểu'
+                    : item.cau_hoi?.mdch_id === 3
+                    ? 'Vận dụng'
+                    : 'Vận dụng cao';
+            // row.getCell(5).value =
+            //     item.cau_hoi?.dap_an_da_chons?.length === 0
+            //         ? 'X'
+            //         : item.cau_hoi?.dap_an_da_chons[0]?.ket_qua
+            //         ? 'Đ'
+            //         : 'S';
+
+            questionIds.push({
+                id: item.cau_hoi.cau_hoi_id,
+                index: indexRow, // hoặc bạn có thể bỏ index nếu muốn tính lại sau
+            });
+
+            index++;
+            order++;
+            indexRow++;
+        }
+
+        indexCol = 0;
+        indexRow = 4;
+        for (const item of studentExams) {
+            row = workSheet.getRow(indexRow);
+            const baseCell = row.getCell(5); // Cột 5 là gốc
+            const targetCellEmail = row.getCell(5 + indexCol);
+            targetCellEmail.style = { ...baseCell.style };
+            workSheet.getColumn(5 + indexCol).width =
+                workSheet.getColumn(5).width;
+            targetCellEmail.value = item.hoc_vien.email;
+
+            row = workSheet.getRow(indexRow + 1);
+            const targetCellName = row.getCell(5 + indexCol);
+            targetCellName.style = { ...row.getCell(5).style }; // Lấy style từ dòng dưới, cột 5
+            targetCellName.value = item.hoc_vien.ho_ten;
+
+            for (const item2 of item.de_thi.cau_hoi_de_this) {
+                const found = questionIds.find(
+                    (q) => q.id === item2.cau_hoi.cau_hoi_id
+                );
+                if (found) {
+                    row = workSheet.getRow(found.index);
+                    row.getCell(5 + indexCol).value =
+                        item2.cau_hoi.dap_an_da_chons.length === 0
+                            ? 'X'
+                            : item2.cau_hoi.dap_an_da_chons[0].ket_qua
+                            ? 'Đ'
+                            : 'S';
+                }
+            }
+            indexCol++;
+        }
+
+        const filename =
+            removeVietnameseTones(exam.ten_de_thi).toUpperCase() + '.xlsx';
+        res.setHeader(
+            'Content-Type',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        );
+        res.setHeader(
+            'Content-Disposition',
+            `attachment; filename="${filename}"; filename*=UTF-8''${encodeURIComponent(
+                filename
+            )}`
+        );
+        await workbook.xlsx.write(res);
+
+        return res.end();
+    } catch (err) {
+        console.log(err);
+        return res.status(500).send({
+            status: 'error',
+            data: null,
+            message: err,
+        });
+    }
+};
+
 const exportELearning = async (req, res) => {
     try {
         const content = fs.readFileSync(
@@ -1851,6 +2107,215 @@ const exportELearning = async (req, res) => {
     }
 };
 
+const exportELearningv2 = async (req, res) => {
+    try {
+        const content = fs.readFileSync(
+            path.join(
+                process.cwd(),
+                '/public/templates/export_student_examv2.xlsx'
+            )
+        );
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.load(content);
+
+        workbook.creator = 'Me';
+        workbook.lastModifiedBy = 'Her';
+        workbook.created = new Date();
+        const workSheet = workbook.getWorksheet('Sheet1');
+
+        const exam = await Exam.findOne({
+            attributes: ['de_thi_id', 'ten_de_thi', 'khoa_hoc_id'],
+            include: [
+                {
+                    model: ExamQuestion,
+                    attributes: ['chdt_id', 'chuyen_nganh_id'],
+                    include: [
+                        {
+                            model: Question,
+                            attributes: ['cau_hoi_id', 'noi_dung', 'mdch_id'],
+                            include: [
+                                {
+                                    model: Exceprt,
+                                    attributes: ['trich_doan_id', 'noi_dung'],
+                                },
+                                {
+                                    model: Majoring,
+                                    attributes: [
+                                        'chuyen_nganh_id',
+                                        'ten_chuyen_nganh',
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+            where: {
+                de_thi_id: req.query.de_thi_id,
+            },
+            order: [[sequelize.col('chdt_id'), 'ASC']],
+        });
+
+        const studentExams = await StudentExam.findAll({
+            attributes: ['hoc_vien_id'],
+            include: [
+                {
+                    model: Student,
+                    attributes: ['hoc_vien_id', 'ho_ten', 'email'],
+                    required: true,
+                },
+                {
+                    model: Exam,
+                    attributes: ['de_thi_id'],
+                    include: [
+                        {
+                            model: ExamQuestion,
+                            attributes: ['chdt_id'],
+                            include: [
+                                {
+                                    model: Question,
+                                    attributes: ['cau_hoi_id'],
+                                    include: [
+                                        {
+                                            model: SelectedAnswer,
+                                            attributes: [
+                                                'dadc_id',
+                                                'ket_qua',
+                                                'cau_hoi_id',
+                                                'dthv_id',
+                                            ],
+                                            on: sequelize.literal(
+                                                '`de_thi->cau_hoi_de_this->cau_hoi`.`cau_hoi_id` = `de_thi->cau_hoi_de_this->cau_hoi->dap_an_da_chons`.`cau_hoi_id` AND `de_thi_hoc_vien`.`dthv_id` = `de_thi->cau_hoi_de_this->cau_hoi->dap_an_da_chons`.`dthv_id`'
+                                            ),
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+            where: {
+                dthv_id: {
+                    [Op.in]: req.query.dthv_ids.split(',').map(Number), // giả sử bạn truyền danh sách ID trong req.body.ids
+                },
+            },
+            logging: console.log, // In SQL thực tế ra console
+        });
+
+        let indexCol;
+        let indexRow;
+        let count;
+        let row;
+        let order = 1;
+        let index = 1;
+        let questionIds = [];
+
+        indexRow = 7;
+        for (const item of exam.cau_hoi_de_this) {
+            row = workSheet.getRow(indexRow);
+
+            row.getCell(1).value = `Câu ${order}`;
+            row.getCell(2).value = (
+                (item.cau_hoi?.trich_doan
+                    ? item.cau_hoi?.trich_doan?.noi_dung
+                    : '') + item.cau_hoi?.noi_dung
+            )
+                .replaceAll(
+                    '\\begin{center}\\includegraphics[scale = 0.5]{',
+                    ''
+                )
+                .replaceAll('}\\end{center}\\', '')
+                .replaceAll('<strong>', '')
+                .replaceAll('</strong>', '')
+                .replaceAll('<em>', '')
+                .replaceAll('</em>', '')
+                .replaceAll('<b>', '')
+                .replaceAll('</b>', '');
+            row.getCell(3).value = item.cau_hoi?.chuyen_nganh?.ten_chuyen_nganh;
+            row.getCell(4).value =
+                item.cau_hoi?.mdch_id === 1
+                    ? 'Nhận biết'
+                    : item.cau_hoi?.mdch_id === 2
+                    ? 'Thông hiểu'
+                    : item.cau_hoi?.mdch_id === 3
+                    ? 'Vận dụng'
+                    : 'Vận dụng cao';
+            // row.getCell(5).value =
+            //     item.cau_hoi?.dap_an_da_chons?.length === 0
+            //         ? 'X'
+            //         : item.cau_hoi?.dap_an_da_chons[0]?.ket_qua
+            //         ? 'Đ'
+            //         : 'S';
+
+            questionIds.push({
+                id: item.cau_hoi.cau_hoi_id,
+                index: indexRow, // hoặc bạn có thể bỏ index nếu muốn tính lại sau
+            });
+
+            index++;
+            order++;
+            indexRow++;
+        }
+
+        indexCol = 0;
+        indexRow = 4;
+        for (const item of studentExams) {
+            row = workSheet.getRow(indexRow);
+            const baseCell = row.getCell(5); // Cột 5 là gốc
+            const targetCellEmail = row.getCell(5 + indexCol);
+            targetCellEmail.style = { ...baseCell.style };
+            workSheet.getColumn(5 + indexCol).width =
+                workSheet.getColumn(5).width;
+            targetCellEmail.value = item.hoc_vien.email;
+
+            row = workSheet.getRow(indexRow + 1);
+            const targetCellName = row.getCell(5 + indexCol);
+            targetCellName.style = { ...row.getCell(5).style }; // Lấy style từ dòng dưới, cột 5
+            targetCellName.value = item.hoc_vien.ho_ten;
+
+            for (const item2 of item.de_thi.cau_hoi_de_this) {
+                const found = questionIds.find(
+                    (q) => q.id === item2.cau_hoi.cau_hoi_id
+                );
+                if (found) {
+                    row = workSheet.getRow(found.index);
+                    row.getCell(5 + indexCol).value =
+                        item2.cau_hoi.dap_an_da_chons.length === 0
+                            ? 'X'
+                            : item2.cau_hoi.dap_an_da_chons[0].ket_qua
+                            ? 'Đ'
+                            : 'S';
+                }
+            }
+            indexCol++;
+        }
+
+        const filename =
+            removeVietnameseTones(exam.ten_de_thi).toUpperCase() + '.xlsx';
+        res.setHeader(
+            'Content-Type',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        );
+        res.setHeader(
+            'Content-Disposition',
+            `attachment; filename="${filename}"; filename*=UTF-8''${encodeURIComponent(
+                filename
+            )}`
+        );
+        await workbook.xlsx.write(res);
+
+        return res.end();
+    } catch (err) {
+        console.log(err);
+        return res.status(500).send({
+            status: 'error',
+            data: null,
+            message: err,
+        });
+    }
+};
+
 module.exports = {
     findAll,
     findOne,
@@ -1871,5 +2336,7 @@ module.exports = {
     exportDGNL,
     exportDGNLv2,
     exportTest,
+    exportTestv2,
     exportELearning,
+    exportELearningv2,
 };
