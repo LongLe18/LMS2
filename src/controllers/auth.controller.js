@@ -473,6 +473,7 @@ const forgetPassword = async (req, res) => {
                     ho_ten: student.ho_ten,
                     gmail: req.body.email,
                     password: password,
+                    auth_url: '/auth/hocvien',
                 };
                 await sendMail(content, 2);
 
@@ -496,6 +497,76 @@ const forgetPassword = async (req, res) => {
         data: null,
         message: null,
     });
+};
+
+const forgetPasswordv2 = async (req, res) => {
+    const password = security.generatePassword();
+    const staff = await Staff.findOne({
+        where: {
+            trang_thai: true,
+            email: req.body.email,
+        },
+    });
+    if (staff) {
+        await Staff.update(
+            {
+                mat_khau: security.hashPassword(password),
+            },
+            {
+                where: {
+                    email: req.body.email,
+                },
+            }
+        );
+        const content = {
+            ho_ten: staff.ho_ten,
+            gmail: req.body.email,
+            password: password,
+            auth_url: '/auth/nhanvien',
+        };
+        await sendMail(content, 2);
+
+        return res.status(200).send({
+            status: 'success',
+            data: null,
+            message: null,
+        });
+    }
+};
+
+const forgetPasswordv3 = async (req, res) => {
+    const password = security.generatePassword();
+    const teacher = await Teacher.findOne({
+        where: {
+            trang_thai: true,
+            email: req.body.email,
+        },
+    });
+    if (teacher) {
+        await Teacher.update(
+            {
+                mat_khau: security.hashPassword(password),
+            },
+            {
+                where: {
+                    email: req.body.email,
+                },
+            }
+        );
+        const content = {
+            ho_ten: teacher.ho_ten,
+            gmail: req.body.email,
+            password: password,
+            auth_url: '/auth/giaovien',
+        };
+        await sendMail(content, 2);
+
+        return res.status(200).send({
+            status: 'success',
+            data: null,
+            message: null,
+        });
+    }
 };
 
 const confirm = async (req, res) => {
@@ -571,6 +642,8 @@ module.exports = {
     authGoogle,
     authError,
     forgetPassword,
+    forgetPasswordv2,
+    forgetPasswordv3,
     confirm,
     getProfile,
     updateProfile,

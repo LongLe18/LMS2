@@ -18,6 +18,8 @@ router.post('/change-pass', authToken, tryCatch(authController.changePassword));
 router.get('/confirm/v2/:token', tryCatch(authController.confirmv2));
 router.get('/confirm/:token', tryCatch(authController.confirm));
 router.post('/forget-password', tryCatch(authController.forgetPassword));
+router.post('/forget-password-v2', tryCatch(authController.forgetPasswordv2));
+router.post('/forget-password-v3', tryCatch(authController.forgetPasswordv3));
 router.get('/of-user', authToken, tryCatch(authController.getProfile));
 router.put('/update', authToken, tryCatch(authController.updateProfile));
 //router.post('/password-recovery/:token', tryCatch(authController.passwordRecovery));
