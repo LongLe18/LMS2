@@ -1543,23 +1543,29 @@ const remove = async (req, res) => {
         // Folder không tồn tại thì bỏ qua
     }
 
-    // Xóa bảng phụ trước
+    // Xóa dap_an
     await sequelize.query(
-        `
-        DELETE FROM cau_hoi_de_thi WHERE cau_hoi_id IN 
-            (SELECT cau_hoi_id FROM cau_hoi WHERE de_thi_id = :de_thi_id);
-        DELETE FROM dap_an WHERE cau_hoi_id IN 
-            (SELECT cau_hoi_id FROM cau_hoi WHERE de_thi_id = :de_thi_id);
-        `,
+        `DELETE FROM dap_an WHERE cau_hoi_id IN 
+     (SELECT cau_hoi_id FROM cau_hoi WHERE de_thi_id = :de_thi_id)`,
         {
             replacements: { de_thi_id: parseInt(req.params.id) },
-            type: sequelize.QueryTypes.RAW,
+            type: sequelize.QueryTypes.DELETE,
+        }
+    );
+
+    // Xóa cau_hoi_de_thi
+    await sequelize.query(
+        `DELETE FROM cau_hoi_de_thi WHERE cau_hoi_id IN 
+     (SELECT cau_hoi_id FROM cau_hoi WHERE de_thi_id = :de_thi_id)`,
+        {
+            replacements: { de_thi_id: parseInt(req.params.id) },
+            type: sequelize.QueryTypes.DELETE,
         }
     );
 
     // Xóa dữ liệu chính
     await Promise.all([
-        Excerpt.destroy({ where: { de_thi_id: req.params.id } }),
+        Exceprt.destroy({ where: { de_thi_id: req.params.id } }),
         Question.destroy({ where: { de_thi_id: req.params.id } }),
         Answer.destroy({ where: { de_thi_id: req.params.id } }),
         ExamQuestion.destroy({ where: { de_thi_id: req.params.id } }),
