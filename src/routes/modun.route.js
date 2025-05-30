@@ -58,6 +58,7 @@ router.get('/by_course/:id', tryCatch(modunController.getByCourseId));
 router.get('/statistical/:id', tryCatch(modunController.getStatistical));
 router.get(
     '/:id',
+    authToken,
     permission('modun:findOne'),
     tryCatch(modunController.findOne)
 );
