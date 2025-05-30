@@ -79,6 +79,66 @@ const findAll = async (req, res) => {
     });
 };
 
+const findAllv2 = async (req, res) => {
+    const { count, rows } = await Course.findAndCountAll({
+        include: [
+            {
+                model: Program,
+                attributes: ['kct_id', 'ten_khung_ct', 'loai_kct', 'thu_tu'],
+            },
+            {
+                model: CourseType,
+                attributes: ['lkh_id', 'ten'],
+            },
+        ],
+        where: {
+            giao_vien_id: req.userId,
+            ...(req.query.kct_id && { kct_id: req.query.kct_id }),
+            ...(req.query.trang_thai && { trang_thai: req.query.trang_thai }),
+            ...(req.query.lkh_id && {
+                lkh_id: req.query.lkh_id,
+            }),
+            ...(req.query.loai_kct && {
+                '$khung_chuong_trinh.loai_kct$': req.query.loai_kct,
+            }),
+            ...(req.query.search && {
+                [Op.or]: [
+                    { ten_khoa_hoc: { [Op.like]: `%${req.query.search}%` } },
+                    {
+                        '$khung_chuong_trinh.ten_khung_ct$': {
+                            [Op.like]: `%${req.query.search}%`,
+                        },
+                    },
+                    {
+                        '$loai_khoa_hoc.ten$': {
+                            [Op.like]: `%${req.query.search}%`,
+                        },
+                    },
+                ],
+            }),
+        },
+        offset:
+            (Number(req.query.pageIndex || 1) - 1) *
+            Number(req.query.pageSize || 10),
+        limit: Number(req.query.pageSize || 10),
+        order: [
+            req.query.sortBy
+                ? req.query.sortBy.split(',')
+                : ['ngay_tao', 'DESC'],
+        ],
+    });
+
+    return res.status(200).send({
+        status: 'success',
+        data: rows,
+        pageIndex: Number(req.query.pageIndex || 1),
+        pageSize: Number(req.query.pageSize || 10),
+        totalCount: count,
+        totalPage: Math.ceil(count / Number(req.query.pageSize || 10)),
+        message: null,
+    });
+};
+
 const getAllByProgram = async (req, res) => {
     const { count, rows } = await Program.findAndCountAll({
         include: [
@@ -1340,4 +1400,5 @@ module.exports = {
     updateExamSet,
     downloadExamSet,
     dashboardByTeacher,
+    findAllv2,
 };

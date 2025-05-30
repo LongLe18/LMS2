@@ -151,6 +151,7 @@ router.get(
     permission('course:dashBoardByTeacher'),
     tryCatch(courseController.dashboardByTeacher)
 );
+router.get('/by-teacher', authToken, tryCatch(courseController.findAllv2));
 router.get('/:id', tryCatch(courseController.findOne));
 router.get('/', tryCatch(courseController.findAll));
 
