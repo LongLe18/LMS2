@@ -69,16 +69,18 @@ const getByThematic = async (req, res) => {
         include: [
             {
                 model: Modun,
+                required: true,
                 include: [
                     {
                         model: Thematic,
+                        required: true,
+                        where: {
+                            chuyen_de_id: req.params.id,
+                        },
                     },
                 ],
             },
         ],
-        where: {
-            '$mo_dun.chuyen_des.chuyen_de_id$': req.params.id,
-        },
     });
 
     if (thematicCriteria) {

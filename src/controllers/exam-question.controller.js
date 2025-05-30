@@ -14,10 +14,10 @@ const findAll = async (req, res) => {
     return res.status(200).send({
         status: 'success',
         data: rows,
-        pageIndex: pageIndex,
-        pageSize: pageSize,
+        pageIndex:  Number(req.query.pageIndex || 1),
+        pageSize: Number(req.query.pageSize || 10),
         totalCount: count,
-        totalPage: Math.ceil(count / pageSize),
+        totalPage: Math.ceil(count / Number(req.query.pageSize || 10)),
         message: null,
     });
 };
