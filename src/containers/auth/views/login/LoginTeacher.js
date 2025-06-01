@@ -107,7 +107,7 @@ const LoginTeacherPage = (props) => {
                                     Đăng ký
                                 </NavLink>{' '}
                                 |{' '}
-                                <NavLink className="login-form-forgot font-weight-5" to="/auth/forgot-password">
+                                <NavLink className="login-form-forgot font-weight-5" to="/auth/forgot-password?typeUser=2">
                                     Quên mật khẩu
                                 </NavLink>{' '}
                             </div>

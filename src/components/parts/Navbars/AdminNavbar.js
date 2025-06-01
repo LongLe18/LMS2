@@ -5,15 +5,10 @@ import {
   Navbar,
   NavbarToggler,
   NavbarBrand,
-  Nav,
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
   Container,
 } from "reactstrap";
-import { Avatar, Image, Badge, Row, Col, Tooltip } from "antd";
-import { NotificationOutlined, BellOutlined } from '@ant-design/icons';
+import { Avatar, Image, Badge, Row, Col, Tooltip, Menu, Dropdown } from "antd";
+import { BellOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import AutoLaTeX from 'react-autolatex';
 
 // helper
@@ -32,8 +27,8 @@ import * as notificationAction from '../../../redux/actions/notification';
 function Header(props) {
 
   const [isOpen, setIsOpen] = React.useState(false);
-  const [dropdownOpen, setDropdownOpen] = React.useState(false);
-  const [dropdownAlert, setDropdownAlert] = React.useState(false);
+  // const [dropdownOpen, setDropdownOpen] = React.useState(false);
+  // const [dropdownAlert, setDropdownAlert] = React.useState(false);
   const [color, setColor] = React.useState("transparent");
   const sidebarToggle = React.useRef();
   const [avatar, setAvatar] = React.useState(defaultImage);
@@ -47,12 +42,12 @@ function Header(props) {
     }
     setIsOpen(!isOpen);
   };
-  const dropdownToggle = (e) => {
-    setDropdownOpen(!dropdownOpen);
-  };
-  const dropdownToggleAlert = (e) => {
-    setDropdownAlert(!dropdownAlert);
-  };
+  // const dropdownToggle = (e) => {
+  //   setDropdownOpen(!dropdownOpen);
+  // };
+  // const dropdownToggleAlert = (e) => {
+  //   setDropdownAlert(!dropdownAlert);
+  // };
   const getBrand = () => {
     let brandName = "Default Brand";
     routes.map((prop, key) => {
@@ -186,16 +181,100 @@ function Header(props) {
     } 
   };
 
+  const menuAvatar = (
+    <Menu>
+      <Menu.Item icon={<UserOutlined />} key={"profile"}>
+        <button
+          style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+          onClick={(e) => {
+            e.preventDefault();
+            if (localStorage.getItem('userToken') !== null) {
+              const json_token = jwt_decode(localStorage.getItem('userToken'));
+              if (json_token.role === 1) { //giáo viên
+                props.history.push('/teacher/profile')
+              } else if (json_token.role === 2) { // nhân viên
+                props.history.push("/admin/profile")
+              }
+            }
+          }}
+        >
+          Tài khoản
+        </button>
+      </Menu.Item>
+      <Menu.Item icon={<BellOutlined />} key={"notification"}>
+        <button
+          style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+          onClick={() => {
+            if (localStorage.getItem('userToken') !== null) {
+              const json_token = jwt_decode(localStorage.getItem('userToken'));
+              if (json_token.role === 1) { //giáo viên
+                props.history.push('/teacher/reply')
+              } else if (json_token.role === 2) { // nhân viên
+                props.history.push('/admin/reply')
+              }
+          }
+          }}
+        >
+          Thông báo
+        </button>
+      </Menu.Item>
+      <Menu.Item icon={<LogoutOutlined />} key={"logout"}>
+        <button
+          style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+          onClick={() => onLogout()}
+        >
+          Đăng xuất
+        </button>
+      </Menu.Item>
+    </Menu>
+  );
+
+  const menuNotification = (
+    state.notification !== '' && <Menu>
+      <Menu.Item key={"length"}>
+        <a href="#">{state.notification.length} thông báo</a>
+      </Menu.Item>
+      <Menu.Item>
+        {state.notification.map((note, index) => 
+          <button key={index} onClick={() => handleSeenComment(note.thong_bao_id, note.link_lien_ket)} 
+            style={{background: !note.trang_thai ? '#f4f2f2' : 'white', border: 'none', cursor: 'pointer'}}>
+            <Row>
+              <Col xs={2} md={2} xl={2}>
+                <BellOutlined />
+              </Col>
+              
+              <Col xs={20} md={20} xl={20}>
+                <Tooltip title={<AutoLaTeX>{`${note.noi_dung} <br/> - Gửi lúc: ${moment(note.ngay_tao).isValid() ? moment(new Date(note.ngay_tao)).utc().format(config.DATE_FORMAT_SHORT) : '-'}`}</AutoLaTeX>} color="#2db7f5" placement="bottom">
+                  {note.noi_dung.length > 50 ? cutString(note.noi_dung, 50) + ' ... ' : note.noi_dung}  
+                </Tooltip>   
+              </Col>
+            </Row>
+          </button>
+        )}
+      </Menu.Item>
+      <Menu.Item>
+        <button  style={{ background: 'none', border: 'none', cursor: 'pointer' }} onClick={() => {
+            if (localStorage.getItem('userToken') !== null) {
+              const json_token = jwt_decode(localStorage.getItem('userToken'));
+              if (json_token.role === 1) { //giáo viên
+                props.history.push('/teacher/reply')
+              } else if (json_token.role === 2) { // nhân viên
+                props.history.push('/admin/reply')
+              }
+          }}}>Xem tất cả
+        </button>
+      </Menu.Item>
+    </Menu>
+  )
+
   return (
-    // add or remove classes depending if we are on full-screen-maps page or not
-    
     <Navbar
       color={
         props.location.pathname.indexOf("full-screen-maps") !== -1
           ? "dark"
           : color
       }
-      expand="lg" style={{maxHeight:"160px", zIndex: 1}}
+      expand="lg" style={{maxHeight:"80px", zIndex: 1}}
       className={
         props.location.pathname.indexOf("full-screen-maps") !== -1
           ? "navbar-absolute fixed-top"
@@ -233,96 +312,46 @@ function Header(props) {
         {/* Alert */}
         <div style={{display: 'flex'}}>
           <Collapse isOpen={isOpen} navbar className="justify-content-end">
-            <Nav navbar>
               {state.notification !== '' &&
-              <Dropdown nav 
-                    isOpen={dropdownAlert}
-                    toggle={(e) => dropdownToggleAlert(e)}>
-                <DropdownToggle caret nav>
-                  <a href="# " onClick={e => e.preventDefault()} className="ant-dropdown-link">
+                <Dropdown
+                  overlay={menuNotification}
+                >
+                  <a href="# " style={{marginRight: '40px'}}
+                   onClick={e => e.preventDefault()} className="ant-dropdown-link"
+                  >
                     <Badge count={state.notification.filter(item => item.trang_thai === false).length} offset={[6, 0]} size="small">
-                      <NotificationOutlined />
+                      <BellOutlined />
                     </Badge>
                   </a>
-                </DropdownToggle>
                 
-                <DropdownMenu right style={{width: '500px', textAlign: 'center', overflow: 'scroll', height: '500px'}}>
-                  <DropdownItem tag="a">{state.notification.length} thông báo</DropdownItem>
-                  {state.notification.map((note, index) => 
-                  <DropdownItem key={index} onClick={() => handleSeenComment(note.thong_bao_id, note.link_lien_ket)} 
-                    style={{background: !note.trang_thai ? '#f4f2f2' : 'white'}}>
-                    <Row>
-                      <Col xs={2} md={2} xl={2}>
-                        <BellOutlined />
-                      </Col>
-                      
-                      <Col xs={20} md={20} xl={20}>
-                        <Tooltip title={<AutoLaTeX>{`${note.noi_dung} <br/> - Gửi lúc: ${moment(note.ngay_tao).isValid() ? moment(new Date(note.ngay_tao)).utc().format(config.DATE_FORMAT_SHORT) : '-'}`}</AutoLaTeX>} color="#2db7f5" placement="bottom">
-                          {note.noi_dung.length > 50 ? cutString(note.noi_dung, 50) + ' ... ' : note.noi_dung}  
-                        </Tooltip>   
-                      </Col>
-                    </Row>
-                  </DropdownItem>
-                  )}
-                  <DropdownItem tag="a" onClick={() => {
-                    if (localStorage.getItem('userToken') !== null) {
-                      const json_token = jwt_decode(localStorage.getItem('userToken'));
-                      if (json_token.role === 1) { //giáo viên
-                        props.history.push('/teacher/reply')
-                      } else if (json_token.role === 2) { // nhân viên
-                        props.history.push('/admin/reply')
-                      }
-                  }}}>Xem tất cả</DropdownItem>
-                </DropdownMenu>
               </Dropdown>
               }
-            </Nav>
           </Collapse>
 
           <Collapse isOpen={isOpen} navbar className="justify-content-end">
-            <Nav navbar>
+            {/* <Nav navbar> */}
               <Dropdown
-                nav
-                isOpen={dropdownOpen}
-                toggle={(e) => dropdownToggle(e)}
-                >
-                <DropdownToggle caret nav>
-                  <Avatar size={48} 
-                    src={
-                      <Image
-                        src={avatar}
-                        style={{
-                          width: 48,
-                        }}
-                      />
-                    }
-                  ></Avatar>
-                </DropdownToggle>
-                <DropdownMenu right>
-                  <DropdownItem tag="a" onClick={() => {
-                    if (localStorage.getItem('userToken') !== null) {
-                      const json_token = jwt_decode(localStorage.getItem('userToken'));
-                      if (json_token.role === 1) { //giáo viên
-                        props.history.push('/teacher/profile')
-                      } else if (json_token.role === 2) { // nhân viên
-                        props.history.push("/admin/profile")
+                overlay={menuAvatar}
+              >
+                  <div style={{display: 'flex', alignItems: 'center', cursor: 'pointer'}}>
+                    <span style={{fontWeight: 600, marginRight: '10px'}}>
+                      {(localStorage.getItem('userToken') !== null && state?.info[0] !== undefined) ?
+                        state?.info[0]?.ho_ten : state?.info?.ho_ten
                       }
-                  }
-                  }}>Tài khoản</DropdownItem>
-                  <DropdownItem tag="a" onClick={() => {
-                    if (localStorage.getItem('userToken') !== null) {
-                      const json_token = jwt_decode(localStorage.getItem('userToken'));
-                      if (json_token.role === 1) { //giáo viên
-                        props.history.push('/teacher/reply')
-                      } else if (json_token.role === 2) { // nhân viên
-                        props.history.push('/admin/reply')
+                    </span>
+                    <Avatar size={48} 
+                      src={
+                        <Image
+                          src={avatar}
+                          style={{
+                            width: 48,
+                          }}
+                        />
                       }
-                  }
-                  }}>Thông báo</DropdownItem>
-                  <DropdownItem tag="a" onClick={() => onLogout()}>Đăng xuất</DropdownItem>
-                </DropdownMenu>
+                    ></Avatar>  
+                  </div>
               </Dropdown>
-            </Nav>
+            {/* </Nav> */}
           </Collapse>
         </div>
       </Container>

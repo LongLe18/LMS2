@@ -7,152 +7,223 @@ const { TabPane } = Tabs
 export default function PermissionForm({ permissions, data, onValuesChange }) {
     const [selectedPermissions, setSelectedPermissions] = useState([])
 
-    const labelPermissionType = [{
-        type: "accountBank",
-        label: "Ngân hàng"
-    }, {
+    const labelPermissionType = [
+    // {
+    //     type: "accountBank",
+    //     label: "Ngân hàng",
+    //     group: "Hệ thống"
+    // },
+    {
         type: "staff",
-        label: "Nhân viên"
+        label: "Nhân viên",
+        group: 'Thành viên',
     }, {
         type: "syntheticCriteria",
-        label: "Tiêu chí tổng hợp"
+        label: "Tiêu chí tổng hợp",
+        group: 'Tiêu chí đề thi'
     },
     {
-        type: "answer",
-        label: "Câu trả lời"
-    }, {
-        type: "auth",
-        label: "Xác thực"
-    }, {
-        type: "comment",
-        label: "Bình luận"
-    }, {
+        type: "footer",
+        label: "Footer",
+        group: 'Hệ thống'
+    },
+    // {
+    //     type: "answer",
+    //     label: "Câu trả lời",
+    //     group: 'Đề thi'
+    // },
+    // {
+    //     type: "auth",
+    //     label: "Xác thực",
+    //     group: 'Thành viên'
+    // }, 
+    // {
+    //     type: "comment",
+    //     label: "Bình luận",
+    //     group: 'Hỏi đáp'
+    // }, 
+    {
         type: "contact",
-        label: "Liên hệ"
+        label: "Liên hệ",
+        group: 'Hệ thống'
     }, {
         type: "course",
-        label: "Khóa học"
+        label: "Khóa học",
+        group: 'Đào tạo',
     }, {
         type: "courseAd",
-        label: "Quảng cáo khóa học"
+        label: "Quảng cáo khóa học",
+        group: 'Đào tạo'
     }, {
         type: "courseDescription",
-        label: "Mô tả khóa học"
+        label: "Mô tả khóa học",
+        group: 'Đào tạo'
     }, {
         type: "courseStudent",
-        label: "Học viên khóa học"
+        label: "Học viên khóa học",
+        group: 'Đào tạo'
     }, {
         type: "dealerDiscount",
-        label: "Giảm giá đại lý"
+        label: "Giảm giá đại lý",
+        group: 'Kinh doanh'
     }, {
         type: "department",
-        label: "Phòng ban"
+        label: "Phòng ban",
+        group: 'Hệ thống'
     }, {
         type: "detailedDiscount",
-        label: "chi tiết Giảm giá"
+        label: "chi tiết Giảm giá",
+        group: 'Kinh doanh'
     }, {
         type: "detailedInvoice",
-        label: "Chi tiết hóa đơn"
+        label: "Chi tiết hóa đơn",
+        group: 'Kinh doanh'
     }, {
         type: "dgnlCriteria",
-        label: "Tiêu chí ĐGNL"
+        label: "Tiêu chí ĐGNL",
+        group: 'Tiêu chí đề thi'
     }, {
         type: "dgnlEvaluate",
-        label: "Đánh giá ĐGNL"
+        label: "Đánh giá ĐGNL",
+        group: "Đề thi",
     }, {
         type: "dgtdCriteria",
-        label: "Tiêu chí ĐGTD"
+        label: "Tiêu chí ĐGTD",
+        group: 'Tiêu chí đề thi'
     }, {
         type: "dgtdEvaluate",
-        label: "Đánh giá ĐGTD"
+        label: "Đánh giá ĐGTD",
+        group: "Đề thi",
     }, {
         type: "discountCode",
-        label: "Mã giảm giá"
+        label: "Mã giảm giá",
+        group: 'Kinh doanh'
     }, {
         type: "document",
-        label: "Tài liệu"
+        label: "Tài liệu",
+        group: 'Kinh doanh'
     }, {
         type: "documentAd",
-        label: "Quảng cáo tài liệu"
+        label: "Quảng cáo tài liệu",
+        group: 'Kinh doanh'
     }, {
         type: "documentType",
-        label: "Loại tài liệu"
+        label: "Loại tài liệu",
+        group: 'Kinh doanh'
     }, {
         type: "evaluate",
-        label: "Đánh giá"
+        label: "Đánh giá",
+        group: 'Đề thi'
     }, {
         type: "exam",
-        label: "Đề thi"
+        label: "Đề thi",
+        group: 'Đề thi'
     }, {
         type: "examQuestion",
-        label: "Câu hỏi thi"
+        label: "Câu hỏi thi",
+        group: 'Đề thi'
     }, {
         type: "examSet",
-        label: "Bộ đề thi"
+        label: "Bộ đề thi",
+        group: 'Đề thi'
     }, {
         type: "examSetStudent",
-        label: "Bộ đề thi học viên"
+        label: "Bộ đề thi học viên",
+        group: 'Đề thi'
     }, {
         type: "exceprt",
-        label: "Trích đoạn"
+        label: "Trích đoạn",
+        group: 'Đào tạo'
     }, {
         type: "invoice",
-        label: "Hóa đơn"
+        label: "Hóa đơn",
+        group: 'Kinh doanh'
     }, {
         type: "lesson",
-        label: "Bài giảng"
+        label: "Bài giảng",
+        group: 'Đào tạo'
     }, {
         type: "majoring",
-        label: "Chuyên ngành"
+        label: "Chuyên ngành",
+        group: 'Đào tạo'
     }, {
         type: "menu",
-        label: "Menu"
+        label: "Menu",
+        group: 'Hệ thống'
     }, {
         type: "menuType",
-        label: "Loại menu"
+        label: "Loại menu",
+        group: 'Hệ thống'
     }, {
         type: "grade",
-        label: "Lớp"
+        label: "Lớp",
+        group: 'Đào tạo'
     }, {
         type: "modun",
         label: "Modun",
+        group: 'Đào tạo'
     }, {
         type: "modunCriteria",
-        label: "Tiêu chí modun"
+        label: "Tiêu chí modun",
+        group: 'Tiêu chí đề thi'
     }, {
         type: "onlineCriteria",
-        label: "Tiêu chí online"
+        label: "Tiêu chí online",
+        group: 'Tiêu chí đề thi'
     }, {
         type: "position",
-        label: "Chức vụ"
+        label: "Chức vụ",
+        group: 'Hệ thống'
     }, {
         type: "program",
-        label: "Khung chương trình"
+        label: "Khung chương trình",
+        group: 'Đào tạo'
     }, {
         type: "province",
-        label: "Tỉnh thành"
+        label: "Tỉnh thành",
+        group: 'Hệ thống'
     }, {
         type: "question",
-        label: "Câu hỏi"
+        label: "Câu hỏi",
+        group: 'Đề thi'
     }, {
         type: "student",
-        label: "Học viên"
+        label: "Học viên",
+        group: 'Thành viên'
     }, {
         type: "studentExam",
-        label: "Đề thi học viên"
+        label: "Đề thi học viên",
+        group: 'Đề thi'
     }, {
         type: "teacher",
-        label: "Giáo viên"
+        label: "Giáo viên",
+        group: 'Thành viên'
     }, {
         type: "teacherCourseAd",
-        label: "Quảng cáo giáo viên"
+        label: "Quảng cáo giáo viên",
+        group: 'Kinh doanh'
     }, {
         type: "thematic",
-        label: "Chuyên đề"
+        label: "Chuyên đề",
+        group: 'Đào tạo'
     }, {
         type: "thematicCriteria",
-        label: "Tiêu chí chuyên đề"
+        label: "Tiêu chí chuyên đề",
+        group: 'Tiêu chí đề thi'
     }];
+
+    const groupedLabelPermissions = useMemo(() => {
+        const grouped = {}
+      
+        labelPermissionType.forEach(({ group, type, label }) => {
+            if (!grouped[group]) {
+                grouped[group] = []
+            }
+            grouped[group].push({ type, label })
+        })
+      
+        return grouped
+    }, [])
 
     // Group permissions by loai
     const permissionsByType = useMemo(() => {
@@ -168,10 +239,6 @@ export default function PermissionForm({ permissions, data, onValuesChange }) {
         return grouped
     }, [permissions])
     
-    const permissionTypes = useMemo(() => {
-        return Object.keys(permissionsByType)
-    }, [permissionsByType]);
-
     useEffect(() => {
         if (data) {
             const selectedIds = data.map((item) => item.qtc_id)
@@ -202,7 +269,7 @@ export default function PermissionForm({ permissions, data, onValuesChange }) {
 
     const renderPermissionItems = (type) => {
         return <Row gutter={[16, 16]}>
-                {permissionsByType[type].map((permission) => (
+            {permissionsByType[type].map((permission) => (
                 <Col span={24} md={12} lg={8} key={permission.qtc_id}>
                     <div
                         key={permission.qtc_id}
@@ -227,13 +294,21 @@ export default function PermissionForm({ permissions, data, onValuesChange }) {
             getValueProps={(value) => ({ value })}
             getValueFromEvent={(e) => e}
         >
-                <Tabs defaultActiveKey={permissionTypes[0]} type="card">
-                    {permissionTypes.map((type) => (
-                        <TabPane tab={labelPermissionType.find((item) => item.type === type)?.label} key={type}>
-                            {renderPermissionItems(type)}
-                        </TabPane>
-                    ))}
-                </Tabs>
+            <Tabs type="card">
+                {Object.entries(groupedLabelPermissions).map(([groupName, types]) => (
+                    <TabPane tab={groupName} key={groupName}>
+                        <Tabs tabPosition="left" type="line">
+                            {types.map(({ type, label }) => (
+                                <TabPane tab={label} key={type}>
+                                    {permissionsByType[type]
+                                        ? renderPermissionItems(type)
+                                        : <Text type="secondary">Không có quyền nào</Text>}
+                                </TabPane>
+                            ))}
+                        </Tabs>
+                    </TabPane>
+                ))}
+            </Tabs>
         </Form.Item>
     )
 }

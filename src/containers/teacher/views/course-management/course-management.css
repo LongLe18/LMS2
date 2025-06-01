@@ -1,0 +1,109 @@
+.ant-collapse-header-text, .ant-card-head-title {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* Custom styles for course detail page */
+
+.detail-course {
+    margin-top: 24px;
+    padding: 24px;
+    background-color: "#f5f5f5";
+    min-height: "100vh";
+}
+
+.detail-course .ant-list-items {
+    border: none;
+}
+
+.detail-course .ant-list-split .ant-list-item:nth-child(2n + 1) {
+    background-color: transparent;
+}
+
+
+.detail-course .ant-list-item {
+    border-bottom: 1px solid #f0f0f0 !important;
+}
+  
+.detail-course  .ant-list-item:last-child {
+    border-bottom: none !important;
+}
+  
+.detail-course .ant-tabs-tab {
+    padding: 8px 0;
+    font-weight: 500;
+}
+  
+.detail-course .ant-tabs-tab-active {
+    color: #4c6ef5;
+}
+  
+.detail-course .ant-tabs-ink-bar {
+    background-color: #4c6ef5;
+}
+  
+.detail-course  .ant-tag {
+    border-radius: 12px;
+    font-size: 12px;
+    line-height: 1.2;
+    padding: 2px 8px;
+}
+  
+.detail-course .ant-card {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #f0f0f0;
+}
+  
+.detail-course .ant-btn-primary {
+    background-color: #4c6ef5;
+    border-color: #4c6ef5;
+}
+  
+.detail-course .ant-btn-primary:hover {
+    background-color: #364fc7;
+    border-color: #364fc7;
+}
+  
+.detail-course .ant-typography h4 {
+    color: #262626;
+    font-weight: 600;
+}
+  
+.detail-course .ant-typography p {
+    margin-bottom: 16px;
+}
+  
+.detail-course ul {
+    padding-left: 20px;
+}
+  
+.detail-course  ul li {
+    margin-bottom: 8px;
+}
+  
+  /* Dropdown menu styles */
+.detail-course .ant-dropdown-menu {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 4px 0;
+}
+  
+.detail-course .ant-dropdown-menu-item {
+    padding: 8px 16px;
+    font-size: 14px;
+}
+  
+.detail-course .ant-dropdown-menu-item:hover {
+    background-color: #f5f5f5;
+}
+  
+.detail-course .ant-dropdown-menu-item-danger:hover {
+    background-color: #fff2f0;
+    color: #ff4d4f;
+}
+  
+.detail-course .ant-dropdown-menu-item-icon {
+    margin-right: 8px;
+    font-size: 14px;
+}
+  

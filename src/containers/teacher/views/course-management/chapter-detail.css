@@ -1,0 +1,131 @@
+/* .ant-tabs-tab {
+    padding: 8px 16px !important;
+    border-radius: 6px !important;
+    margin-right: 8px !important;
+    font-weight: 500 !important;
+    border: none !important;
+    background-color: #f0f0f0 !important;
+    color: #8c8c8c !important;
+}
+  
+.ant-tabs-tab-active {
+    background-color: #dc4c64 !important;
+    color: #fff !important;
+} */
+
+.chapter-detail {
+    padding: "24px";
+    background-color: "#f5f5f5";
+    min-height: "100vh"
+}
+
+.chapter-detail .ant-list-items {
+    border: none;
+}
+
+.chapter-detail .ant-list-split .ant-list-item:nth-child(2n + 1) {
+    background-color: transparent;
+}
+
+.ant-tabs-ink-bar {
+    display: none !important;
+}
+  
+.ant-tabs-content-holder {
+    padding-top: 16px;
+}
+  
+.ant-list-item {
+    border-bottom: 1px solid #f0f0f0 !important;
+}
+  
+.ant-list-item:last-child {
+    border-bottom: none !important;
+}
+  
+.ant-card {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #f0f0f0;
+}
+  
+.ant-btn-primary {
+    background-color: #4c6ef5;
+    border-color: #4c6ef5;
+}
+  
+.ant-btn-primary:hover {
+    background-color: #364fc7;
+    border-color: #364fc7;
+}
+  
+.ant-typography h3 {
+    color: #262626;
+    font-weight: 600;
+}
+  
+.ant-typography h4 {
+    color: #262626;
+    font-weight: 600;
+}
+  
+.ant-typography p {
+    margin-bottom: 16px;
+}
+  
+.ant-tabs-nav {
+    margin-bottom: 0 !important;
+}
+
+.ant-tabs-nav-wrap {
+    padding: 0 !important;
+}
+  
+.ant-tabs-nav-list {
+    gap: 8px !important;
+}
+
+.ant-modal-header {
+    border-bottom: 1px solid #f0f0f0;
+    padding: 16px 24px;
+}
+  
+.ant-modal-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #262626;
+}
+  
+.ant-modal-body {
+    padding: 24px;
+}
+  
+.ant-form-item-label > label {
+    font-weight: 500;
+    color: #262626;
+}
+  
+.ant-upload-drag {
+    border: 2px dashed #d9d9d9;
+    border-radius: 6px;
+    background-color: #fafafa;
+    transition: border-color 0.3s;
+}
+  
+.ant-upload-drag:hover {
+    border-color: #4c6ef5;
+}
+  
+.ant-upload-drag-icon {
+    margin-bottom: 8px;
+}
+  
+.ant-upload-text {
+    color: #262626;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.ant-upload-hint {
+    font-size: 12px;
+    color: #8c8c8c;
+}

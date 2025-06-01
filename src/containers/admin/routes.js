@@ -355,7 +355,7 @@ const routes = [
   {
     id: "system",
     path: '/admin/system',
-    name: 'System',
+    name: 'Hệ thống',
     hide: false,
     icon: <SettingOutlined />,
     sub: [{

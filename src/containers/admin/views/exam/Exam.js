@@ -316,7 +316,7 @@ const ExamAdminPage = () => {
   const renderProgramme = () => {
       let options = [];
       if (programmes.status === 'success') {
-        options = programmes.data.filter((programme) => programme.loai_kct === 2).map((programme) => (
+        options = programmes.data.filter((programme) => programme.loai_kct === 2 || programme.loai_kct === 4).map((programme) => (
             <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
           ))
       }

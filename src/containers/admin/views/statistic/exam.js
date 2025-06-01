@@ -585,10 +585,10 @@ const StatisticExam = (props) => {
         setPageSize(pageSize);
     };
 
-    const exportReportSummanry = async () => {
+    const exportReportSummanry = async (dthv_ids) => {
         const token = localStorage.getItem('userToken');
         try {
-            const response = await axios.get(config.API_URL + `/student_exam/export-report?ngay_bat_dau=${filter.start}&ngay_ket_thuc=${filter.end}`, {
+            const response = await axios.get(config.API_URL + `/student_exam/export-dgnl-v2?dthv_ids=${dthv_ids}`, {
                 headers: { Authorization: `Bearer ${token}` },
                 responseType: 'blob',
             });
@@ -740,7 +740,11 @@ const StatisticExam = (props) => {
                             <Row className='app-main' style={{paddingTop: 0}}>
                                 <Col xl={24} sm={24} xs={24}>
                                     {renderCourseForDGNL()}
-                                    {/* <Button type='primary' style={{marginLeft: 8}} onClick={exportReportSummanry}>Tải kết quả</Button> */}
+                                    <Tooltip title='Báo cáo danh sách thi (có câu hỏi của đề thi)'>
+                                        <Button type='primary' style={{marginRight: 8}} 
+                                            onClick={() => exportReportSummanry(dataDGNL.map(item => item.dthv_id).join(','))}
+                                        >Tải báo cáo tổng hợp</Button>
+                                    </Tooltip>
                                     <ExcelFile element={
                                         <Tooltip title='Báo cáo danh sách thi thử (có điểm từng phần thi)'>
                                             <Button type='primary'>Tải kết quả</Button>

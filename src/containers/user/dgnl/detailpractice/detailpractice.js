@@ -9,6 +9,7 @@ import { Container } from "reactstrap";
 const PracticeDetailPage = () => {
     let id = useParams(); // { id: '1' }
     const hashids = new Hashids();
+    
     return (
         <div className="section section-navbars">
             <Container >

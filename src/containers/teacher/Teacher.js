@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import PerfectScrollbar from "perfect-scrollbar";
 import { Route, Switch, useLocation } from "react-router-dom";
 import { Layout } from "antd";
-import DemoNavbar from "../../components/parts/Navbars/AdminNavbar.js";
+import AdminNavbar from "../../components/parts/Navbars/AdminNavbar.js";
 import Sidebar from "../../components/parts/Sidebar/Sidebar";
 
 import routes from "./routes.js";
@@ -62,7 +62,7 @@ function TeacherPage(props) {
         collapsed={collapsed}
       />
       <Content className="main-panel" ref={mainPanel}>
-        <DemoNavbar {...props} onCollapse={onCollapse} collapsed={collapsed}/>
+        <AdminNavbar {...props} onCollapse={onCollapse} collapsed={collapsed}/>
         <br/><br/>
         <Switch>
           {myRouters.map((prop, key) => {

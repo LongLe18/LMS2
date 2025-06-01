@@ -1,13 +1,10 @@
 import React from "react";
 
-// import { Nav } from "reactstrap";
 import { Layout, Menu, Avatar } from "antd";
 import { PlusSquareOutlined } from "@ant-design/icons";
 // javascript plugin used to create scrollbars on windows
-// import PerfectScrollbar from "perfect-scrollbar";
 // import SubMenu from "./Submenu";
 import { NavLink, Link } from "react-router-dom";
-
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;

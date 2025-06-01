@@ -604,7 +604,15 @@ function* verify(payload) {
 
 function* forgotPassword(payload) {
   try {
-    const endpoint = config.API_URL + `/auth/forget-password?loai_tai_khoan=${payload.params.typeUser}`;
+    let endpoint = '';
+    console.log(payload.params.typeUser)
+    if (payload.params.typeUser === '1') {
+      endpoint = config.API_URL + `/auth/forget-password?loai_tai_khoan=${payload.params.typeUser}`
+    } else if (payload.params.typeUser === '2') {
+      endpoint = config.API_URL + `/auth/forget-password-v3?loai_tai_khoan=${payload.params.typeUser}`
+    } else { // nhân viên
+      endpoint = config.API_URL + `/auth/forget-password-v2?loai_tai_khoan=${payload.params.typeUser}`
+    }
     const response = yield call(postApi, endpoint, payload.params.email);
     const data = yield response.data;
     yield put({ type: actions.user.FORGOT_PASSWORD_SUCCESS, result: data });

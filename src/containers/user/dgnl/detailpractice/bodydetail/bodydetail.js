@@ -90,7 +90,14 @@ const BodyDetailPage = (props) => {
 
     const OnHandleThematic = (id) => {
         setidThematic(id);
-        dispatch(lessonActions.getLessonByIdThe({ "idThematic": id, idCourse: props.idCourse[0], idModule: props.id })) // Lấy dữ liệu cho lesson
+        dispatch(lessonActions.getLessonByIdThe({ "idThematic": id, idCourse: props.idCourse[0], idModule: props.id }, (response) => {
+            if (response.status === 'success') {
+                (response.data.video.length === 0 || response.data.pdf === null) && notification.warn({
+                    message: 'Thông báo',
+                    description: 'Bài giảng chưa được cập nhật.',
+                })
+            }
+        })) // Lấy dữ liệu cho lesson
     }
 
     const showModal = () => {
@@ -177,7 +184,7 @@ const BodyDetailPage = (props) => {
                         <Button
                             type="link"
                             onClick={() => {
-                                window.location.href = config.BASE_URL + '/auth/forgot-password';
+                                window.location.href = config.BASE_URL + '/auth/forgot-password?typeUser=1';
                             }}
                         >
                             Lấy lại mật khẩu
@@ -204,7 +211,7 @@ const BodyDetailPage = (props) => {
             {loading && <LoadingCustom/>}
             <div className="body-detail" style={{padding: 12}}>   
                 <div className="title text-center mb-0">
-                    <h3 className="red-text bold" style={{fontSize: 24}}>ĐỀ CƯƠNG CHI TIẾT CỦA KHOÁ HỌCz</h3>
+                    <h3 className="red-text bold" style={{fontSize: 24}}>ĐỀ CƯƠNG CHI TIẾT CỦA KHOÁ HỌC</h3>
                 </div>
 
                 <Row gutter={[16, 16]}>
@@ -262,9 +269,10 @@ const BodyDetailPage = (props) => {
                 message: get(errorLesson, 'response.data.error', 'Tải dữ liệu bài giảng thất bại: ' + errorLesson.response.data.message),
             })}    
             <br/>
-            {(idThematic !== 0 && lesson.status === 'success' && 
-                (lesson.data.video.length > 0 || lesson.data.pdf != null)) && 
+            {(idThematic !== 0 && lesson.status === 'success' && (
+                (lesson.data.video.length > 0 || lesson.data.pdf != null)) &&
                     <ContentDetailPage props={lesson} idThematic={idThematic} idModule={props.id} idCourse={props.idCourse}></ContentDetailPage>
+                    )
             }
             <Modal
                 className="cra-auth-modal"

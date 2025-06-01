@@ -128,6 +128,16 @@ const StaffPage = () => {
           responsive: ['md'],
         },
         {
+          title: 'Chức vụ',
+          dataIndex: 'chuc_vu_id',
+          key: 'chuc_vu_id',
+          responsive: ['md'],
+          render: (chuc_vu_id) => {
+            let position = positions.data.find((item) => item.chuc_vu_id === chuc_vu_id);
+            return position ? position.ten : 'Chưa xác định';
+          }
+        },
+        {
           title: 'Giới tính',
           dataIndex: 'gioi_tinh',
           key: 'gioi_tinh',

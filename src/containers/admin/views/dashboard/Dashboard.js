@@ -70,8 +70,6 @@ function Dashboard() {
   }
 
   return (
-    <>
-      
       <div className="content">
         
         <Row className="app-main home-screen" gutter={[30, 30]} style={{paddingLeft: 0}}>
@@ -268,7 +266,6 @@ function Dashboard() {
           </Col>
         </Row>
       </div>
-    </>
   );
 }
 

@@ -118,7 +118,7 @@ const BusinessProgramePage = (props) => {
                         <Button
                         type="link"
                         onClick={() => {
-                            window.location.href = config.BASE_URL + '/auth/forgot-password';
+                            window.location.href = config.BASE_URL + '/auth/forgot-password?typeUser=1';
                         }}
                         >
                         Lấy lại mật khẩu

@@ -16,6 +16,7 @@ import LoadingCustom from 'components/parts/loading/Loading';
 // redux
 import * as courseAction from '../../../../redux/actions/course';
 import * as programmeAction from '../../../../redux/actions/programme';
+import * as userActions from '../../../../redux/actions/user';
 import { useSelector, useDispatch } from "react-redux";
 
 const { Dragger } = Upload;
@@ -178,8 +179,11 @@ const Course = () => {
     const course = useSelector(state => state.course.item.result);
     const loadingCourse = useSelector(state => state.course.item.loading);
 
+    const teachers = useSelector(state => state.user.listTeacher.result);
+
     useEffect(() => {
       dispatch(programmeAction.getProgrammes({ status: '' }));
+      dispatch(userActions.getTeachers({ idMajor: '', status: '1', startDay: '', endDay: '', search: '' }));
       dispatch(courseAction.filterCourses({ status: '', search: filter.search, 
         start: filter.start, end: filter.end, pageIndex: pageIndex, pageSize: pageSize}, (res) => {
           if (res.status === 'success') {
@@ -202,7 +206,7 @@ const Course = () => {
             setData([...res.data]);
           }
       }));
-  }, [pageIndex, pageSize]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [pageIndex, pageSize]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const renderProgramme = () => {
       let options = [];
@@ -241,6 +245,24 @@ const Course = () => {
         );
     };
 
+    const renderTeacher = () => {
+      let options = [];
+      if (teachers.status === 'success') {
+        options = teachers.data.map((module) => (
+          <Option key={module.giao_vien_id} value={module.giao_vien_id} >{module.ho_ten}</Option>
+        ))
+      }
+      return (
+        <Select
+          showSearch={true}
+          placeholder="Chọn giáo viên"
+          filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
+        >
+          {options}
+        </Select>
+      );
+    };
+
     const onFilterChange = (field, value) => {
       if (field === 'ngay') {
         setFilter((state) => ({ ...state, start: value[0] }));  
@@ -276,23 +298,38 @@ const Course = () => {
 
     useEffect(() => {
         if (course.status === 'success') {
-            setState({ ...state, ngay_bat_dau: course.data.ngay_bat_dau, ngay_ket_thuc: course.data.ngay_ket_thuc });
-            course.data = {
-                ...course.data,
-                ngay_bat_dau: [course.data.ngay_bat_dau !== null ? moment(course.data.ngay_bat_dau, "YYYY/MM/DD") : null, 
-                        course.data.ngay_ket_thuc !== null ? moment(course.data.ngay_ket_thuc, "YYYY/MM/DD") : null],
-            }           
+          const ngay_bat_dau_raw = course?.data?.ngay_bat_dau;
+          const ngay_ket_thuc_raw = course?.data?.ngay_ket_thuc;
+
+          const ngay_bat_dau = ngay_bat_dau_raw !== null ? moment(ngay_bat_dau_raw, "YYYY/MM/DD") : null;
+          const ngay_ket_thuc = ngay_ket_thuc_raw !== null ? moment(ngay_ket_thuc_raw, "YYYY/MM/DD") : null;
+
+          
+          // setState({ ...state, ngay_bat_dau: course?.data?.ngay_bat_dau, ngay_ket_thuc: course?.data?.ngay_ket_thuc });
+          // Update course data with moment dates
+          course.data = {
+            ...course.data,
+            ngay_bat_dau: [ngay_bat_dau, ngay_ket_thuc],
+          };        
           form.setFieldsValue(course.data);
-          form.setFieldValue('kct_id', course.data.kct_id + '_' + course.data.loai_kct);
-          if (course.data.loai_kct === 2 || course.data.loai_kct === 4 || course.data.loai_kct === 5) {
-            setState({...state, isShowTypeCourse: true});
-          }
-          else {
-            setState({...state, isShowTypeCourse: false});
-          }
+          form.setFieldValue('kct_id', course.data.kct_id + '_' + course?.data?.khung_chuong_trinh.loai_kct);
+          const showTypeCourse = [2, 4, 5].includes(course?.data?.khung_chuong_trinh?.loai_kct);
+          setState(prev => ({
+            ...prev,
+            ngay_bat_dau: ngay_bat_dau_raw,
+            ngay_ket_thuc: ngay_ket_thuc_raw,
+            isShowTypeCourse: showTypeCourse
+          }));
+          
+          // if (course?.data?.khung_chuong_trinh?.loai_kct === 2 || course?.data?.khung_chuong_trinh?.loai_kct === 4 || course?.data?.khung_chuong_trinh?.loai_kct === 5) {
+          //   setState({...state, isShowTypeCourse: true});
+          // }
+          // else {
+          //   setState({...state, isShowTypeCourse: false});
+          // }
         }
     }, [course]);  // eslint-disable-line react-hooks/exhaustive-deps
-
+    
     const cancelEdit = () => {
         setState({ ...state, isEdit: false })
         form.resetFields();
@@ -329,10 +366,11 @@ const Course = () => {
         formData.append('ten_khoa_hoc', values.ten_khoa_hoc);
         formData.append('ngay_bat_dau', state.ngay_bat_dau);
         formData.append('ngay_ket_thuc', state.ngay_ket_thuc );
+        formData.append('giao_vien_id', values.giao_vien_id );
         formData.append('kct_id', values.kct_id.split('_')[0]);
         if (values.kct_id.split('_')[1] === '2' || values.kct_id.split('_')[1] === '4' || values.kct_id.split('_')[1] === '5') { // kiểm tra khung chương trình = 2 hoặc 4 là các khung ôn luyện
           formData.append('lkh_id', values.lkh_id);
-        }
+        } else formData.append('lkh_id', ''); // nếu không thì mặc định là 1
         formData.append('mo_ta', values.mo_ta !== undefined ? values.mo_ta : '');
         // video , image
         if (state.fileImg !== '')
@@ -456,12 +494,22 @@ const Course = () => {
                             name="ten_khoa_hoc"
                             rules={[
                                 {
-                                required: true,
-                                message: 'Tên khóa học là trường bắt buộc.',
+                                  required: true,
+                                  message: 'Tên khóa học là trường bắt buộc.',
                                 },
                             ]}
                             >
                                 <Input placeholder="Nhập tên khoá học"/>
+                        </Form.Item>
+                        <Form.Item className="input-col" label="Giáo viên" name="giao_vien_id"
+                          rules={[
+                            {
+                              required: true,
+                              message: 'Giáo viên là trường bắt buộc.',
+                            },
+                          ]}
+                        >
+                          {renderTeacher()}
                         </Form.Item>
                         {state.isShowTypeCourse &&
                           <Form.Item

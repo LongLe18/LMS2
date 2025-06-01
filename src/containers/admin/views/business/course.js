@@ -339,7 +339,12 @@ const BussinessCourses = (props) => {
                             className="input-col"
                             label="Giá gốc (Nhập liền không dấu. Ví dụ: 10000)"
                             name="gia_goc"
-                            rules={[]}
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Giá gốc là trường bắt buộc.',
+                                },
+                            ]}
                         >
                                 <Input placeholder='Giá gốc'/>
                         </Form.Item>

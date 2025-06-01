@@ -105,13 +105,11 @@ function IndexHeader(props) {
 
   const onClick = ({ key }) => {  
     if (key === '/auth/logout') {
-        dispatch(userAction.logoutUser({}, (res) => {
-          if (res.status === 200 && res.statusText === 'OK') {
-            setState(state => ({ ...state, isLogin: false, info: {} }));
-            history.push('/luyen-tap/trang-chu');
-          }
-        }));
-        
+        localStorage.removeItem('userToken');
+        localStorage.removeItem('userInfo');
+        localStorage.removeItem('_grecaptcha');
+        setState(state => ({ ...state, isLogin: false, info: {} }));
+        history.push('/luyen-tap/trang-chu');
     } else 
       window.location.href = config.BASE_URL + key;
   };
@@ -243,7 +241,7 @@ function IndexHeader(props) {
                     <Button
                     type="link"
                     onClick={() => {
-                        window.location.href = config.BASE_URL + '/auth/forgot-password';
+                        window.location.href = config.BASE_URL + '/auth/forgot-password?typeUser=1';
                     }}
                     >
                     Lấy lại mật khẩu
