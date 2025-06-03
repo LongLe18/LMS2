@@ -1810,6 +1810,176 @@ const getCriteriaByExamId = async (req, res) => {
     });
 };
 
+const findAllByThematicId = async (req, res) => {
+    const criteria = await ThematicCriteria.findOne({
+        where: { mo_dun_id: req.query.mo_dun_id },
+    });
+
+    let { count, rows } = await Exam.findAndCountAll({
+        attributes: ['de_thi_id', 'ten_de_thi'],
+        include: [
+            {
+                model: Course,
+                attributes: [],
+                required: true, // vì dùng điều kiện trong where
+            },
+        ],
+        where: {
+            loai_de_thi_id: 1,
+            '$khoa_hoc.giao_vien_id$': req.userId,
+            ...(req.query.kct_id && { kct_id: req.query.kct_id }),
+            ...(req.query.trang_thai && { trang_thai: req.query.trang_thai }),
+            ...(req.query.xuat_ban && { xuat_ban: req.query.xuat_ban }),
+            ...(req.query.khoa_hoc_id && {
+                khoa_hoc_id: req.query.khoa_hoc_id,
+            }),
+            ...(req.query.mo_dun_id && { mo_dun_id: req.query.mo_dun_id }),
+            ...(req.query.chuyen_de_id && {
+                chuyen_de_id: req.query.chuyen_de_id,
+            }),
+        },
+        offset:
+            (Number(req.query.pageIndex || 1) - 1) *
+            Number(req.query.pageSize || 10),
+        limit: Number(req.query.pageSize || 10),
+        order: [
+            req.query.sortBy
+                ? req.query.sortBy.split(',')
+                : ['ngay_tao', 'DESC'],
+        ],
+    });
+    rows = rows.map((exam) => {
+        const examData = exam.toJSON();
+
+        return {
+            ...examData,
+            thoi_gian: criteria?.thoi_gian || null,
+            so_cau_hoi: criteria?.so_cau_hoi || null,
+        };
+    });
+
+    return res.status(200).send({
+        status: 'success',
+        data: rows,
+        pageIndex: Number(req.query.pageIndex || 1),
+        pageSize: Number(req.query.pageSize || 10),
+        totalCount: count,
+        totalPage: Math.ceil(count / Number(req.query.pageSize || 10)),
+        message: null,
+    });
+};
+
+const findAllByModunId = async (req, res) => {
+    const criteria = await ModunCriteria.findOne({
+        where: { mo_dun_id: req.query.mo_dun_id },
+    });
+
+    let { count, rows } = await Exam.findAndCountAll({
+        attributes: ['de_thi_id', 'ten_de_thi'],
+        include: [
+            {
+                model: Course,
+                attributes: [],
+                required: true, // vì dùng điều kiện trong where
+            },
+        ],
+        where: {
+            loai_de_thi_id: 1,
+            '$khoa_hoc.giao_vien_id$': req.userId,
+            ...(req.query.kct_id && { kct_id: req.query.kct_id }),
+            ...(req.query.trang_thai && { trang_thai: req.query.trang_thai }),
+            ...(req.query.xuat_ban && { xuat_ban: req.query.xuat_ban }),
+            ...(req.query.khoa_hoc_id && {
+                khoa_hoc_id: req.query.khoa_hoc_id,
+            }),
+            ...(req.query.mo_dun_id && { mo_dun_id: req.query.mo_dun_id }),
+        },
+        offset:
+            (Number(req.query.pageIndex || 1) - 1) *
+            Number(req.query.pageSize || 10),
+        limit: Number(req.query.pageSize || 10),
+        order: [
+            req.query.sortBy
+                ? req.query.sortBy.split(',')
+                : ['ngay_tao', 'DESC'],
+        ],
+    });
+    rows = rows.map((exam) => {
+        const examData = exam.toJSON();
+
+        return {
+            ...examData,
+            thoi_gian: criteria?.thoi_gian || null,
+            so_cau_hoi: criteria?.so_cau_hoi || null,
+        };
+    });
+
+    return res.status(200).send({
+        status: 'success',
+        data: rows,
+        pageIndex: Number(req.query.pageIndex || 1),
+        pageSize: Number(req.query.pageSize || 10),
+        totalCount: count,
+        totalPage: Math.ceil(count / Number(req.query.pageSize || 10)),
+        message: null,
+    });
+};
+
+const findAllByCourseId = async (req, res) => {
+    const criteria = await SyntheticCriteria.findOne({
+        where: { khoa_hoc_id: req.query.khoa_hoc_id },
+    });
+
+    let { count, rows } = await Exam.findAndCountAll({
+        attributes: ['de_thi_id', 'ten_de_thi'],
+        include: [
+            {
+                model: Course,
+                attributes: [],
+                required: true, // vì dùng điều kiện trong where
+            },
+        ],
+        where: {
+            loai_de_thi_id: 1,
+            '$khoa_hoc.giao_vien_id$': req.userId,
+            ...(req.query.kct_id && { kct_id: req.query.kct_id }),
+            ...(req.query.trang_thai && { trang_thai: req.query.trang_thai }),
+            ...(req.query.xuat_ban && { xuat_ban: req.query.xuat_ban }),
+            ...(req.query.khoa_hoc_id && {
+                khoa_hoc_id: req.query.khoa_hoc_id,
+            }),
+        },
+        offset:
+            (Number(req.query.pageIndex || 1) - 1) *
+            Number(req.query.pageSize || 10),
+        limit: Number(req.query.pageSize || 10),
+        order: [
+            req.query.sortBy
+                ? req.query.sortBy.split(',')
+                : ['ngay_tao', 'DESC'],
+        ],
+    });
+    rows = rows.map((exam) => {
+        const examData = exam.toJSON();
+
+        return {
+            ...examData,
+            thoi_gian: criteria?.thoi_gian || null,
+            so_cau_hoi: criteria?.so_cau_hoi || null,
+        };
+    });
+
+    return res.status(200).send({
+        status: 'success',
+        data: rows,
+        pageIndex: Number(req.query.pageIndex || 1),
+        pageSize: Number(req.query.pageSize || 10),
+        totalCount: count,
+        totalPage: Math.ceil(count / Number(req.query.pageSize || 10)),
+        message: null,
+    });
+};
+
 module.exports = {
     getExamOnline,
     getSynthetic,
@@ -1831,4 +2001,7 @@ module.exports = {
     getExamDGNL,
     getCriteriaByExamId,
     getByIdDGTD,
+    findAllByThematicId,
+    findAllByModunId,
+    findAllByCourseId
 };

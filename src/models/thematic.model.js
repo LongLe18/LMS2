@@ -18,6 +18,9 @@ const chuyende = sequelize.define(
         mo_dun_id: {
             type: DataTypes.INTEGER,
         },
+        giao_vien_id: {
+            type: DataTypes.INTEGER,
+        },
         trang_thai: {
             type: DataTypes.BOOLEAN,
         },

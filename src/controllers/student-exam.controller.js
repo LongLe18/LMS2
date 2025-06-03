@@ -20,6 +20,7 @@ const {
     DGTDCriteria,
     Majoring,
     Exceprt,
+    Course,
 } = require('../models');
 const sequelize = require('../utils/db');
 
@@ -229,9 +230,16 @@ const findOne = async (req, res) => {
 };
 
 const create = async (req, res) => {
+    const exam = await Exam.findOne({
+        where: {
+            de_thi_id: req.body.de_thi_id,
+        },
+    });
     const studentExam = await StudentExam.create({
         ...req.body,
         hoc_vien_id: req.userId,
+        khoa_hoc_id: exam.khoa_hoc_id,
+        loai_de_thi_id: exam.loai_de_thi_id,
     });
 
     return res.status(200).send({
@@ -2316,6 +2324,107 @@ const exportELearningv2 = async (req, res) => {
     }
 };
 
+const dashBoardByTeacher = async (req, res) => {
+    const result = await sequelize.query(
+        `
+        SELECT
+            ldt.loai_de_thi_id,
+            ldt.mo_ta,
+            COUNT(CASE WHEN dthv.ket_qua_diem >= 80 THEN 1 END) AS gioi,
+            COUNT(CASE WHEN dthv.ket_qua_diem >= 65 AND dthv.ket_qua_diem < 80 THEN 1 END) AS kha,
+            COUNT(CASE WHEN dthv.ket_qua_diem >= 50 AND dthv.ket_qua_diem < 65 THEN 1 END) AS trungbinh,
+            COUNT(CASE WHEN dthv.ket_qua_diem < 50 THEN 1 END) AS kem
+        FROM
+            loai_de_thi ldt
+        LEFT JOIN de_thi_hoc_vien dthv ON ldt.loai_de_thi_id = dthv.loai_de_thi_id
+        LEFT JOIN khoa_hoc kh ON dthv.khoa_hoc_id = kh.khoa_hoc_id
+        WHERE
+            ldt.loai_de_thi_id IN (1, 2, 3)
+            AND kh.giao_vien_id = :giao_vien_id
+        GROUP BY
+            ldt.loai_de_thi_id, ldt.mo_ta
+        ORDER BY
+            ldt.loai_de_thi_id;
+        `,
+        {
+            type: sequelize.QueryTypes.SELECT,
+            replacements: {
+                giao_vien_id: req.userId,
+            },
+        }
+    );
+
+    return res.status(200).send({
+        status: 'success',
+        data: result,
+        message: null,
+    });
+};
+
+const findAllv2 = async (req, res) => {
+    const { count, rows } = await Exam.findAndCountAll({
+        attributes: ['de_thi_id', 'ten_de_thi', 'khoa_hoc_id', 'ngay_tao'],
+        include: [
+            {
+                model: StudentExam,
+                as: 'de_thi_hoc_viens',
+                attributes: [
+                    'dthv_id',
+                    'ngay_tao',
+                    'so_cau_tra_loi_dung',
+                    'so_cau_tra_loi_sai',
+                    'ket_qua_diem',
+                ],
+                required: true,
+                include: {
+                    model: Student,
+                    as: 'hoc_vien',
+                    attributes: ['hoc_vien_id', 'ho_ten'],
+                    required: true,
+                },
+            },
+            { model: Course, attributes: ['khoa_hoc_id', 'giao_vien_id'] },
+        ],
+        where: {
+            '$khoa_hoc.giao_vien_id$': req.userId,
+            ...(req.query.de_thi_id && { de_thi_id: req.query.de_thi_id }),
+            ...(req.query.khoa_hoc_id && {
+                khoa_hoc_id: req.query.khoa_hoc_id,
+            }),
+            ...(req.query.search && {
+                [Op.or]: [
+                    { ten_de_thi: { [Op.like]: `%${req.query.search}%` } },
+                    {
+                        '$de_thi_hoc_viens.hoc_vien.ho_ten$': {
+                            [Op.like]: `%${req.query.search}%`,
+                        },
+                    },
+                ],
+            }),
+        },
+        subQuery: false,
+        offset:
+            (Number(req.query.pageIndex || 1) - 1) *
+            Number(req.query.pageSize || 10),
+        limit: Number(req.query.pageSize || 10),
+        order: [
+            req.query.sortBy
+                ? req.query.sortBy.split(',')
+                : ['ngay_tao', 'DESC'],
+        ],
+    });
+
+    return res.status(200).send({
+        status: 'success',
+        data: rows,
+        pageIndex: Number(req.query.pageIndex || 1),
+        pageSize: Number(req.query.pageSize || 10),
+        totalCount: count,
+        totalPage: Math.ceil(count / Number(req.query.pageSize || 10)),
+        message: null,
+    });
+};
+
 module.exports = {
     findAll,
     findOne,
@@ -2339,4 +2448,6 @@ module.exports = {
     exportTestv2,
     exportELearning,
     exportELearningv2,
+    dashBoardByTeacher,
+    findAllv2,
 };

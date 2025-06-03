@@ -1,4 +1,6 @@
-const { Thematic, Modun, Course } = require('../models');
+const {fn, literal} = require('sequelize')
+
+const { Thematic, Modun, Course, Lesson } = require('../models');
 const sequelize = require('../utils/db');
 
 const getAllv2 = async (req, res) => {
@@ -179,8 +181,15 @@ const getCreate = async (req, res) => {
 };
 
 const create = async (req, res) => {
+    const modun = await Modun.findOne({
+        where:{
+            mo_dun_id: req.body.mo_dun_id,
+        }
+    })
+    
     const thematic = await Thematic.create({
         ...req.body,
+        giao_vien_id: modun.giao_vien_id,
         nguoi_tao: req.userId,
     });
 
@@ -314,6 +323,67 @@ const remove = async (req, res) => {
     });
 };
 
+const findAllv2 = async (req, res) => {
+    const { count, rows } = await Thematic.findAndCountAll({
+        include: [
+            {
+                model: Lesson,
+                attributes: [],
+                where: {
+                    trang_thai: true,
+                },
+                required: false
+            },
+        ],
+        attributes: {
+            include: [
+                // Đếm số lượng modun
+               [
+                literal(`SUM(CASE WHEN bai_giangs.loai_bai_giang = 'pdf' THEN 1 ELSE 0 END)`),
+                'so_tai_lieu',
+            ],
+            // Đếm số lượng bài giảng là video (loai_bai_giang = 1)
+            [
+                literal(`SUM(CASE WHEN bai_giangs.loai_bai_giang = 'video' THEN 1 ELSE 0 END)`),
+                'so_video',
+            ],
+            ],
+        },
+        where: {
+            giao_vien_id: req.userId,
+            ...(req.query.mo_dun_id && { mo_dun_id: req.query.mo_dun_id }),
+            ...(req.query.trang_thai && { trang_thai: req.query.trang_thai }),
+            ...(req.query.search && {
+                [Op.or]: [
+                    { ten_chuyen_de: { [Op.like]: `%${req.query.search}%` } },
+                    { mo_ta: { [Op.like]: `%${req.query.search}%` } },
+                ],
+            }),
+        },
+        offset:
+            (Number(req.query.pageIndex || 1) - 1) *
+            Number(req.query.pageSize || 10),
+        limit: Number(req.query.pageSize || 10),
+        order: [
+            req.query.sortBy
+                ? req.query.sortBy.split(',')
+                : ['ngay_tao', 'DESC'],
+        ],
+         group: ['chuyen_de.chuyen_de_id'],
+           subQuery: false,
+    });
+
+    return res.status(200).send({
+        status: 'success',
+        data: rows,
+        pageIndex: Number(req.query.pageIndex || 1),
+        pageSize: Number(req.query.pageSize || 10),
+        totalCount: count.length,
+        totalPage: Math.ceil(count.length / Number(req.query.pageSize || 10)),
+        message: null,
+    });
+};
+
 module.exports = {
     getAllv2,
     findAll,
@@ -327,4 +397,5 @@ module.exports = {
     getByModunId,
     restore,
     remove,
+    findAllv2
 };

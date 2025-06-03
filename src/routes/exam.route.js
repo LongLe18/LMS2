@@ -77,22 +77,10 @@ router.get(
     permission('exam:findOne'),
     tryCatch(examController.getOneExam)
 );
-router.get(
-    '/synthetic',
-    tryCatch(examController.getSynthetic)
-);
-router.get(
-    '/onlineExam',
-    tryCatch(examController.getExamOnline)
-);
-router.get(
-    '/student/:id',
-    tryCatch(examController.getStudentStatistic)
-);
-router.get(
-    '/synthetic/new',
-    tryCatch(examController.getSyntheticNew)
-);
+router.get('/synthetic', tryCatch(examController.getSynthetic));
+router.get('/onlineExam', tryCatch(examController.getExamOnline));
+router.get('/student/:id', tryCatch(examController.getStudentStatistic));
+router.get('/synthetic/new', tryCatch(examController.getSyntheticNew));
 router.get(
     '/reuse/:id',
     authToken,
@@ -111,6 +99,9 @@ router.get(
     permission('exam:findOne'),
     tryCatch(examController.getByIdDGTD)
 );
+router.get('/by-thematic', authToken, tryCatch(examController.findAllByThematicId));
+router.get('/by-modun', authToken, tryCatch(examController.findAllByModunId));
+router.get('/by-synthetic', authToken, tryCatch(examController.findAllByCourseId));
 router.get(
     '/:id',
     authToken,

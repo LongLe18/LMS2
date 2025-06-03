@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-const { Lesson } = require('../models');
+const { Lesson, Course, Modun, Thematic } = require('../models');
 const sequelize = require('../utils/db');
 const security = require('../utils/security');
 
@@ -591,6 +591,50 @@ const remove = async (req, res) => {
     });
 };
 
+const findAllv2 = async (req, res) => {
+    const { count, rows } = await Lesson.findAndCountAll({
+        include: {
+            model: Thematic,
+            attributes: []
+        },
+        where: {
+            '$chuyen_de.giao_vien_id$': req.userId,
+            ...(req.query.trang_thai && { trang_thai: req.query.trang_thai }),
+            ...(req.query.chuyen_de_id && {
+                chuyen_de_id: req.query.chuyen_de_id,
+            }),
+            ...(req.query.loai_bai_giang && {
+                loai_bai_giang: req.query.loai_bai_giang,
+            }),
+            ...(req.query.search && {
+                [Op.or]: [
+                    { ten_bai_giang: { [Op.like]: `%${req.query.search}%` } },
+                    { mo_ta: { [Op.like]: `%${req.query.search}%` } },
+                ],
+            }),
+        },
+        offset:
+            (Number(req.query.pageIndex || 1) - 1) *
+            Number(req.query.pageSize || 10),
+        limit: Number(req.query.pageSize || 10),
+        order: [
+            req.query.sortBy
+                ? req.query.sortBy.split(',')
+                : ['ngay_tao', 'DESC'],
+        ],
+    });
+
+    return res.status(200).send({
+        status: 'success',
+        data: rows,
+        pageIndex: Number(req.query.pageIndex || 1),
+        pageSize: Number(req.query.pageSize || 10),
+        totalCount: count,
+        totalPage: Math.ceil(count / Number(req.query.pageSize || 10)),
+        message: null,
+    });
+};
+
 module.exports = {
     //getAllv2,
     findAll,
@@ -604,4 +648,5 @@ module.exports = {
     deleteById,
     restore,
     remove,
+    findAllv2,
 };

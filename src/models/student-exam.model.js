@@ -57,6 +57,12 @@ const dethihocvien = sequelize.define(
         hoc_vien_id: {
             type: DataTypes.INTEGER,
         },
+        loai_de_thi_id: {
+            type: DataTypes.INTEGER,
+        },
+        khoa_hoc_id: {
+            type: DataTypes.INTEGER,
+        },
     },
     {
         sequelize,

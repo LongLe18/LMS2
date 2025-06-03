@@ -83,24 +83,48 @@ const findAllv2 = async (req, res) => {
     const { count, rows } = await Course.findAndCountAll({
         include: [
             {
-                model: Program,
-                attributes: ['kct_id', 'ten_khung_ct', 'loai_kct', 'thu_tu'],
-            },
-            {
                 model: CourseType,
                 attributes: ['lkh_id', 'ten'],
             },
+            {
+                model: Modun,
+                attributes: [],
+                where: {
+                    trang_thai: true,
+                },
+                include: [
+                    {
+                        model: Thematic,
+                        attributes: [],
+                        where: {
+                            trang_thai: true,
+                        },
+                    },
+                ],
+                required: false,
+            },
         ],
+        attributes: {
+            include: [
+                // Đếm số lượng modun
+                [
+                    fn('COUNT', literal('DISTINCT `mo_duns`.`mo_dun_id`')),
+                    'so_luong_modun',
+                ],
+                // Đếm số lượng thematic
+                [
+                    fn(
+                        'COUNT',
+                        literal('DISTINCT `mo_duns->chuyen_des`.`chuyen_de_id`')
+                    ),
+                    'so_luong_chuyen_de',
+                ],
+            ],
+        },
         where: {
             giao_vien_id: req.userId,
-            ...(req.query.kct_id && { kct_id: req.query.kct_id }),
             ...(req.query.trang_thai && { trang_thai: req.query.trang_thai }),
-            ...(req.query.lkh_id && {
-                lkh_id: req.query.lkh_id,
-            }),
-            ...(req.query.loai_kct && {
-                '$khung_chuong_trinh.loai_kct$': req.query.loai_kct,
-            }),
+            ...(req.query.lkh_id && { lkh_id: req.query.lkh_id }),
             ...(req.query.search && {
                 [Op.or]: [
                     { ten_khoa_hoc: { [Op.like]: `%${req.query.search}%` } },
@@ -117,6 +141,8 @@ const findAllv2 = async (req, res) => {
                 ],
             }),
         },
+        subQuery: false, // QUAN TRỌNG để `COUNT(DISTINCT)` hoạt động chính xác với include
+        group: ['khoa_hoc.khoa_hoc_id'],
         offset:
             (Number(req.query.pageIndex || 1) - 1) *
             Number(req.query.pageSize || 10),
@@ -133,8 +159,8 @@ const findAllv2 = async (req, res) => {
         data: rows,
         pageIndex: Number(req.query.pageIndex || 1),
         pageSize: Number(req.query.pageSize || 10),
-        totalCount: count,
-        totalPage: Math.ceil(count / Number(req.query.pageSize || 10)),
+        totalCount: count.length,
+        totalPage: Math.ceil(count.length / Number(req.query.pageSize || 10)),
         message: null,
     });
 };

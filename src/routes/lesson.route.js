@@ -64,6 +64,7 @@ router.get(
     authToken,
     tryCatch(lessonController.getByThematicId)
 );
+router.get('/by-teacher', authToken, tryCatch(lessonController.findAllv2)); //
 router.get('/:id', authToken, tryCatch(lessonController.findOne)); // không sử dụng
 router.get('/', authToken, tryCatch(lessonController.findAll)); //
 

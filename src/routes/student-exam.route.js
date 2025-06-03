@@ -84,6 +84,12 @@ router.get(
     authToken,
     tryCatch(studentExamController.getByExamIdDGNL)
 );
+router.get(
+    '/dashboard-by-teacher',
+    authToken,
+    tryCatch(studentExamController.dashBoardByTeacher)
+);
+router.get('/v2', authToken, tryCatch(studentExamController.findAllv2));
 router.get('/:id', authToken, tryCatch(studentExamController.findOne));
 router.get('/', authToken, tryCatch(studentExamController.findAll));
 

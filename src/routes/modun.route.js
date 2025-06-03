@@ -57,6 +57,11 @@ router.get('/v2', tryCatch(modunController.getAllv2));
 router.get('/by_course/:id', tryCatch(modunController.getByCourseId));
 router.get('/statistical/:id', tryCatch(modunController.getStatistical));
 router.get(
+    '/by-teacher',
+    authToken,
+    tryCatch(modunController.findAllv2)
+);
+router.get(
     '/:id',
     authToken,
     permission('modun:findOne'),

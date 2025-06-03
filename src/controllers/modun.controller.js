@@ -1,6 +1,7 @@
 const fs = require('fs');
+const { fn, literal } = require('sequelize');
 
-const { Modun, Exam, StudentExam } = require('../models');
+const { Modun, Exam, StudentExam, Course, Thematic } = require('../models');
 const sequelize = require('../utils/db');
 
 const getTeaching = async (req, res) => {
@@ -109,7 +110,7 @@ const findAll = async (req, res) => {
         LEFT JOIN khoa_hoc ON mo_dun.khoa_hoc_id = khoa_hoc.khoa_hoc_id
         LEFT JOIN tieu_chi_de_mo_dun ON mo_dun.mo_dun_id = tieu_chi_de_mo_dun.mo_dun_id
         ${whereClause}
-        ORDER BY mo_dun.mo_dun_id DESC
+        ORDER BY mo_dun.loai_tong_hop ASC, mo_dun.ngay_tao DESC
         LIMIT :limit OFFSET :offset
         `,
         {
@@ -576,8 +577,15 @@ const create = async (req, res) => {
         }
     }
 
+    const course = await Course.findOne({
+        where: {
+            khoa_hoc_id: req.body.khoa_hoc_id,
+        },
+    });
+
     const newModun = await Modun.create({
         ...req.body,
+        giao_vien_id: course.giao_vien_id,
         nguoi_tao: req.userId,
     });
 
@@ -727,6 +735,77 @@ const remove = async (req, res) => {
     });
 };
 
+const findAllv2 = async (req, res) => {
+    const { count, rows } = await Modun.findAndCountAll({
+        include: [
+            {
+                model: Thematic,
+                attributes: [],
+                where: {
+                    trang_thai: true,
+                },
+                required: false
+            },
+            {
+                model: Exam,
+                attributes: [],
+                where: {
+                    trang_thai: true,
+                    loai_de_thi_id: 2,
+                },
+                required: false
+            },
+        ],
+        attributes: {
+            include: [
+                // Đếm số lượng modun
+                [
+                    fn('COUNT', literal('DISTINCT `chuyen_des`.`chuyen_de_id`')),
+                    'so_luong_chuyen_de',
+                ],
+                // Đếm số lượng thematic
+                [
+                    fn('COUNT', literal('DISTINCT `de_this`.`de_thi_id`')),
+                    'so_luong_de_thi',
+                ],
+            ],
+        },
+        where: {
+            giao_vien_id: req.userId,
+            ...(req.query.trang_thai && { trang_thai: req.query.trang_thai }),
+            ...(req.query.khoa_hoc_id && { khoa_hoc_id: req.query.khoa_hoc_id }),
+            ...(req.query.search && {
+                [Op.or]: [
+                    { ten_mo_dun: { [Op.like]: `%${req.query.search}%` } },
+                    { mo_ta: { [Op.like]: `%${req.query.search}%` } },
+                ],
+            }),
+        },
+        subQuery: false, // QUAN TRỌNG để `COUNT(DISTINCT)` hoạt động chính xác với include
+        group: ['mo_dun.mo_dun_id'],
+        offset:
+            (Number(req.query.pageIndex || 1) - 1) *
+            Number(req.query.pageSize || 10),
+        limit: Number(req.query.pageSize || 10),
+        order: [
+            ['loai_tong_hop', 'ASC'],
+            req.query.sortBy
+                ? req.query.sortBy.split(',')
+                : ['ngay_tao', 'DESC'],
+        ],
+    });
+
+    return res.status(200).send({
+        status: 'success',
+        data: rows,
+        pageIndex: Number(req.query.pageIndex || 1),
+        pageSize: Number(req.query.pageSize || 10),
+        totalCount: count.length,
+        totalPage: Math.ceil(count.length / Number(req.query.pageSize || 10)),
+        message: null,
+    });
+};
+
 module.exports = {
     findAll,
     getAllv2,
@@ -741,4 +820,5 @@ module.exports = {
     remove,
     getByCourseId,
     getByUserCourse,
+    findAllv2,
 };

@@ -46,6 +46,7 @@ router.patch(
 router.get('/all', tryCatch(thematicController.getAllv2));
 router.get('/by_modun/:id', tryCatch(thematicController.getByModunId));
 router.get('/filter', tryCatch(thematicController.getByFilter));
+router.get('/by-teacher', authToken, tryCatch(thematicController.findAllv2));
 router.get('/:id', tryCatch(thematicController.findOne));
 router.get('/', tryCatch(thematicController.findAll));
 
