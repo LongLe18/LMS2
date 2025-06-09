@@ -27,6 +27,7 @@ router.delete(
     permission('comment:remove'),
     tryCatch(commentController.remove)
 );
+router.get('/v2', authToken, tryCatch(commentController.findAllv2));
 router.get(
     '/:id',
     authToken,

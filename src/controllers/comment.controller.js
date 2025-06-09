@@ -82,6 +82,36 @@ const findAll = async (req, res) => {
     });
 };
 
+const findAllv2 = async (req, res) => {
+    const { count, rows } = await Comment.findAndCountAll({
+        where: {
+            phu_trach_id: req.userId,
+            ...(req.query.search && {
+                [Op.or]: [{ noi_dung: { [Op.like]: `%${req.query.search}%` } }],
+            }),
+        },
+        offset:
+            (Number(req.query.pageIndex || 1) - 1) *
+            Number(req.query.pageSize || 10),
+        limit: Number(req.query.pageSize || 10),
+        order: [
+            req.query.sortBy
+                ? req.query.sortBy.split(',')
+                : ['ngay_tao', 'DESC'],
+        ],
+    });
+
+    return res.status(200).send({
+        status: 'success',
+        data: rows,
+        pageIndex: Number(req.query.pageIndex || 1),
+        pageSize: Number(req.query.pageSize || 10),
+        totalCount: count,
+        totalPage: Math.ceil(count / Number(req.query.pageSize || 10)),
+        message: null,
+    });
+};
+
 const findOne = async (req, res) => {
     let replacements = { binhLuanId: req.params.id };
     let query = `
@@ -265,4 +295,5 @@ module.exports = {
     create,
     update,
     remove,
+    findAllv2,
 };

@@ -129,11 +129,6 @@ const findAllv2 = async (req, res) => {
                 [Op.or]: [
                     { ten_khoa_hoc: { [Op.like]: `%${req.query.search}%` } },
                     {
-                        '$khung_chuong_trinh.ten_khung_ct$': {
-                            [Op.like]: `%${req.query.search}%`,
-                        },
-                    },
-                    {
                         '$loai_khoa_hoc.ten$': {
                             [Op.like]: `%${req.query.search}%`,
                         },

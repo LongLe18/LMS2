@@ -148,7 +148,6 @@ router.get('/by-program', tryCatch(courseController.getAllByProgram));
 router.get(
     '/dashboard-by-teacher',
     authToken,
-    permission('course:dashBoardByTeacher'),
     tryCatch(courseController.dashboardByTeacher)
 );
 router.get('/by-teacher', authToken, tryCatch(courseController.findAllv2));

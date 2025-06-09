@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const ExcelJS = require('exceljs');
-const { Op } = require('sequelize');
+const { Op, literal } = require('sequelize');
 
 const {
     Exam,
@@ -2374,6 +2374,12 @@ const findAllv2 = async (req, res) => {
                     'so_cau_tra_loi_dung',
                     'so_cau_tra_loi_sai',
                     'ket_qua_diem',
+                    [
+                        literal(
+                            `RANK() OVER (PARTITION BY de_thi_hoc_viens.de_thi_id ORDER BY ket_qua_diem DESC)`
+                        ),
+                        'xep_hang',
+                    ],
                 ],
                 required: true,
                 include: {
@@ -2388,6 +2394,9 @@ const findAllv2 = async (req, res) => {
         where: {
             '$khoa_hoc.giao_vien_id$': req.userId,
             ...(req.query.de_thi_id && { de_thi_id: req.query.de_thi_id }),
+            ...(req.query.loai_de_thi_id && {
+                loai_de_thi_id: req.query.loai_de_thi_id,
+            }),
             ...(req.query.khoa_hoc_id && {
                 khoa_hoc_id: req.query.khoa_hoc_id,
             }),
