@@ -696,14 +696,14 @@ const findOne = async (req, res) => {
         include: [
             {
                 model: Program,
-                attributes: ['loai_kct'],
+                attributes: ['kct_id', 'loai_kct'],
+            },
+            {
+                model: CourseType,
+                attributes: ['lkh_id', 'ten'],
             },
         ],
     });
-
-    if (course && course.Program) {
-        course.dataValues.loai_kct = course.Program.loai_kct;
-    }
 
     return res.status(200).send({
         status: 'success',
