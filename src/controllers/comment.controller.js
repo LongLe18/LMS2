@@ -1,7 +1,7 @@
 const fs = require('fs');
 const { Op } = require('sequelize');
 
-const { Comment, Notification, Course, Modun } = require('../models');
+const { Comment, Notification, Course, Modun, Student } = require('../models');
 const sequelize = require('../utils/db');
 
 const findAll = async (req, res) => {
@@ -94,6 +94,10 @@ const findAllv2 = async (req, res) => {
                 model: Modun,
                 attributes: ['mo_dun_id', 'ten_mo_dun'],
             },
+            {
+                model: Student,
+                attributes: ['hoc_vien_id', 'ho_ten'],
+            },
         ],
         where: {
             phu_trach_id: req.userId,
@@ -107,6 +111,11 @@ const findAllv2 = async (req, res) => {
                     },
                     {
                         '$khoa_hoc.ten_khoa_hoc$': {
+                            [Op.like]: `%${req.query.search}%`,
+                        },
+                    },
+                    {
+                        '$hoc_vien.ho_ten$': {
                             [Op.like]: `%${req.query.search}%`,
                         },
                     },
