@@ -1,6 +1,7 @@
 const fs = require('fs');
+const { Op } = require('sequelize');
 
-const { Comment, Notification } = require('../models');
+const { Comment, Notification, Course, Modun } = require('../models');
 const sequelize = require('../utils/db');
 
 const findAll = async (req, res) => {
@@ -84,10 +85,32 @@ const findAll = async (req, res) => {
 
 const findAllv2 = async (req, res) => {
     const { count, rows } = await Comment.findAndCountAll({
+        include: [
+            {
+                model: Course,
+                attributes: ['khoa_hoc_id', 'ten_khoa_hoc'],
+            },
+            {
+                model: Modun,
+                attributes: ['mo_dun_id', 'ten_mo_dun'],
+            },
+        ],
         where: {
             phu_trach_id: req.userId,
             ...(req.query.search && {
-                [Op.or]: [{ noi_dung: { [Op.like]: `%${req.query.search}%` } }],
+                [Op.or]: [
+                    { noi_dung: { [Op.like]: `%${req.query.search}%` } },
+                    {
+                        '$mo_dun.ten_mo_dun$': {
+                            [Op.like]: `%${req.query.search}%`,
+                        },
+                    },
+                    {
+                        '$khoa_hoc.ten_khoa_hoc$': {
+                            [Op.like]: `%${req.query.search}%`,
+                        },
+                    },
+                ],
             }),
         },
         offset:
