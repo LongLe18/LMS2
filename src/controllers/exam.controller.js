@@ -420,12 +420,43 @@ const findAll = async (req, res) => {
 
     const exams = await sequelize.query(
         `
-        SELECT de_thi.de_thi_id, de_thi.ten_de_thi, de_thi.trang_thai, de_thi.ngay_tao, de_thi.xuat_ban, loai_de_thi.mo_ta, khoa_hoc.ten_khoa_hoc, mo_dun.ten_mo_dun, chuyen_de.ten_chuyen_de
+        SELECT 
+            de_thi.de_thi_id, 
+            de_thi.ten_de_thi, 
+            de_thi.trang_thai, 
+            de_thi.ngay_tao, 
+            de_thi.xuat_ban, 
+            khoa_hoc.ten_khoa_hoc, 
+            mo_dun.ten_mo_dun, 
+            chuyen_de.ten_chuyen_de,
+            tieu_chi_de_chuyen_de.thoi_gian tcdcd_thoi_gian,
+            tieu_chi_de_chuyen_de.so_cau_hoi tcdcd_so_cau_hoi,
+            tieu_chi_de_mo_dun.thoi_gian tcdmd_thoi_gian,
+            tieu_chi_de_mo_dun.so_cau_hoi tcdmd_so_cau_hoi,
+            tieu_chi_de_tong_hop.thoi_gian tcdth_thoi_gian,
+            tieu_chi_de_tong_hop.so_cau_hoi tcdth_so_cau_hoi,
+            tieu_chi_de_thi_online.thoi_gian tcdol_thoi_gian,
+            tieu_chi_de_thi_online.so_cau_hoi tcdol_so_cau_hoi,
+            tieu_chi_de_thi_dgnl.thoi_gian tcddgnl_thoi_gian,
+            tieu_chi_de_thi_dgnl.so_cau_hoi tcddgnl_so_cau_hoi,
+            tieu_chi_de_thi_dgtd.thoi_gian tcddgtd_thoi_gian,
+            tieu_chi_de_thi_dgtd.so_cau_hoi tcddgtd_so_cau_hoi
         FROM de_thi
         LEFT JOIN khoa_hoc ON de_thi.khoa_hoc_id = khoa_hoc.khoa_hoc_id
         LEFT JOIN mo_dun ON de_thi.mo_dun_id = mo_dun.mo_dun_id
         LEFT JOIN chuyen_de ON chuyen_de.chuyen_de_id = de_thi.chuyen_de_id
-        LEFT JOIN loai_de_thi ON loai_de_thi.loai_de_thi_id = de_thi.loai_de_thi_id
+        LEFT JOIN tieu_chi_de_chuyen_de 
+            ON de_thi.mo_dun_id = tieu_chi_de_chuyen_de.mo_dun_id AND de_thi.loai_de_thi_id = 1
+        LEFT JOIN tieu_chi_de_mo_dun
+            ON de_thi.mo_dun_id = tieu_chi_de_mo_dun.mo_dun_id AND de_thi.loai_de_thi_id = 2
+        LEFT JOIN tieu_chi_de_tong_hop
+            ON de_thi.khoa_hoc_id = tieu_chi_de_tong_hop.khoa_hoc_id AND de_thi.loai_de_thi_id = 3
+        LEFT JOIN tieu_chi_de_thi_online
+            ON de_thi.khoa_hoc_id = tieu_chi_de_thi_online.khoa_hoc_id AND de_thi.loai_de_thi_id = 4
+        LEFT JOIN tieu_chi_de_thi_dgnl
+            ON de_thi.khoa_hoc_id = tieu_chi_de_thi_dgnl.khoa_hoc_id AND de_thi.loai_de_thi_id = 5
+        LEFT JOIN tieu_chi_de_thi_dgtd
+            ON de_thi.khoa_hoc_id = tieu_chi_de_thi_dgtd.khoa_hoc_id AND de_thi.loai_de_thi_id = 6
         ${whereClause}
         ORDER BY ${order[0]} ${order[1]}
         LIMIT :limit OFFSET :offset
@@ -436,12 +467,64 @@ const findAll = async (req, res) => {
         }
     );
 
+    const cleanedData = exams
+        .map((item) => {
+            const timeKeys = [
+                ['tcdcd_thoi_gian', 'tcdcd_so_cau_hoi'],
+                ['tcdmd_thoi_gian', 'tcdmd_so_cau_hoi'],
+                ['tcdth_thoi_gian', 'tcdth_so_cau_hoi'],
+                ['tcdol_thoi_gian', 'tcdol_so_cau_hoi'],
+                ['tcddgnl_thoi_gian', 'tcddgnl_so_cau_hoi'],
+                ['tcddgtd_thoi_gian', 'tcddgtd_so_cau_hoi'],
+            ];
+
+            let thoiGian = null;
+            let soCauHoi = null;
+
+            for (const [tgKey, scKey] of timeKeys) {
+                if (item[tgKey] !== null && item[scKey] !== null) {
+                    thoiGian = item[tgKey];
+                    soCauHoi = item[scKey];
+                    break;
+                }
+            }
+
+            // Nếu không có dữ liệu hợp lệ, trả về null
+            if (thoiGian === null && soCauHoi === null) {
+                return null;
+            }
+
+            // Tạo object mới không chứa các biến *_thoi_gian và *_so_cau_hoi
+            const {
+                tcdcd_thoi_gian,
+                tcdcd_so_cau_hoi,
+                tcdmd_thoi_gian,
+                tcdmd_so_cau_hoi,
+                tcdth_thoi_gian,
+                tcdth_so_cau_hoi,
+                tcdol_thoi_gian,
+                tcdol_so_cau_hoi,
+                tcddgnl_thoi_gian,
+                tcddgnl_so_cau_hoi,
+                tcddgtd_thoi_gian,
+                tcddgtd_so_cau_hoi,
+                ...rest
+            } = item;
+
+            return {
+                ...rest,
+                thoi_gian: thoiGian,
+                so_cau_hoi: soCauHoi,
+            };
+        })
+        .filter(Boolean); // loại phần tử null nếu cần
+
     const totalCount = totalRecords[0].tong;
     const totalPage = Math.ceil(totalCount / pageSize);
 
     return res.status(200).send({
         status: 'success',
-        data: exams,
+        data: cleanedData,
         pageIndex,
         pageSize,
         totalCount,
@@ -1884,7 +1967,7 @@ const findAllByModunId = async (req, res) => {
             },
         ],
         where: {
-            loai_de_thi_id: 1,
+            loai_de_thi_id: 2,
             '$khoa_hoc.giao_vien_id$': req.userId,
             ...(req.query.kct_id && { kct_id: req.query.kct_id }),
             ...(req.query.trang_thai && { trang_thai: req.query.trang_thai }),
@@ -1940,7 +2023,7 @@ const findAllByCourseId = async (req, res) => {
             },
         ],
         where: {
-            loai_de_thi_id: 1,
+            loai_de_thi_id: 3,
             '$khoa_hoc.giao_vien_id$': req.userId,
             ...(req.query.kct_id && { kct_id: req.query.kct_id }),
             ...(req.query.trang_thai && { trang_thai: req.query.trang_thai }),
@@ -2003,5 +2086,5 @@ module.exports = {
     getByIdDGTD,
     findAllByThematicId,
     findAllByModunId,
-    findAllByCourseId
+    findAllByCourseId,
 };
