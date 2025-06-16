@@ -8,11 +8,11 @@ export default function PermissionForm({ permissions, data, onValuesChange }) {
     const [selectedPermissions, setSelectedPermissions] = useState([])
 
     const labelPermissionType = [
-    // {
-    //     type: "accountBank",
-    //     label: "Ngân hàng",
-    //     group: "Hệ thống"
-    // },
+    {
+        type: "accountBank",
+        label: "Ngân hàng",
+        group: "Hệ thống"
+    },
     {
         type: "staff",
         label: "Nhân viên",
@@ -27,21 +27,21 @@ export default function PermissionForm({ permissions, data, onValuesChange }) {
         label: "Footer",
         group: 'Hệ thống'
     },
-    // {
-    //     type: "answer",
-    //     label: "Câu trả lời",
-    //     group: 'Đề thi'
-    // },
-    // {
-    //     type: "auth",
-    //     label: "Xác thực",
-    //     group: 'Thành viên'
-    // }, 
-    // {
-    //     type: "comment",
-    //     label: "Bình luận",
-    //     group: 'Hỏi đáp'
-    // }, 
+    {
+        type: "answer",
+        label: "Câu trả lời",
+        group: 'Đề thi'
+    },
+    {
+        type: "auth",
+        label: "Xác thực",
+        group: 'Thành viên'
+    }, 
+    {
+        type: "comment",
+        label: "Bình luận",
+        group: 'Hỏi đáp'
+    }, 
     {
         type: "contact",
         label: "Liên hệ",

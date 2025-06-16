@@ -5,9 +5,11 @@ import CourseManagement from './views/course-management/course-management';
 import CreateCourse from './views/course-management/form-course';
 import CourseDetail from './views/course-management/detail-course';
 import ChapterDetail from './views/course-management/chapter-detail';
-import TeachingPage from './views/teach/teach';
+import ModuleDetail from './views/course-management/module-detail';
+import CriteriaManagement from './views/criteria/criteria';
 import DealerTeacherPage from './views/dealer/dealer';
 import ReplyPage from './views/reply/reply';
+import ReplyDetailPage from './views/reply/detail-reply';
 import ProfilePage from './views/profile/profile';
 
 import { shouldHaveAccessPermission } from "helpers/common.helper.js";
@@ -16,7 +18,7 @@ import {
     HomeOutlined,
     CloudOutlined,
     DiffOutlined,
-    SoundOutlined,
+    CommentOutlined,
     GlobalOutlined,
 } from '@ant-design/icons';
 
@@ -27,7 +29,7 @@ const routes = [
         name: "Dashboard",
         hide: false,
         icon: <HomeOutlined/>,
-        render: (props) => <Dashboard {...props}/>, // OK
+        render: (props) => <Dashboard {...props}/>
     },
     {
         id: "courseManagement",
@@ -35,45 +37,53 @@ const routes = [
         name: "Quản lý khoá học",
         hide: false,
         icon: <GlobalOutlined />,
-        render: (props) => <CourseManagement {...props}/>, // OK
+        render: (props) => <CourseManagement {...props}/>
     },
     {
         id: "courseManagement",
-        path: "/teacher/create-course",
+        path: "/teacher/form-course/:idCourse",
         name: "Tạo khoá học",
         hide: true,
         icon: <GlobalOutlined />,
-        render: (props) => <CreateCourse {...props}/>, // OK
+        render: (props) => <CreateCourse {...props}/>
     },
     {
         id: "detailCourse",
-        path: "/teacher/detail-course/:id",
-        name: "Chi tiết khoá học",
+        path: "/teacher/detail-course/:idCourse", // chi tiết khoá học
+        name: "Chi tiết khoá học", // mô đun
         hide: true,
         icon: <GlobalOutlined />,
-        render: (props) => <CourseDetail {...props}/>, // OK
+        render: (props) => <CourseDetail {...props}/>
     },
     {
         id: "detailChapter",
-        path: "/teacher/detail-chapter/:idChapter",
-        name: "Chi tiết khoá học",
+        path: "/teacher/detail-chapter/:idChapter", // chi tiết mô đun
+        name: "Chi tiết mô đun",
         hide: true,
         icon: <GlobalOutlined />,
-        render: (props) => <ChapterDetail {...props}/>, // OK
+        render: (props) => <ChapterDetail {...props}/>
+    },
+    {
+        id: "detailModule",
+        path: "/teacher/module-detail/:idModule", // Chuyên đề
+        name: "Chi tiết chuyên đề",
+        hide: true,
+        icon: <GlobalOutlined />,
+        render: (props) => <ModuleDetail {...props}/>
     },
     {
         id: "teaching",
-        path: "/teacher/teaching",
-        name: "Giảng dạy",
+        path: "/teacher/criteria",
+        name: "Quản lý tiêu chí",
         hide: false,
         icon: <CloudOutlined/>,
-        render: (props) => (shouldHaveAccessPermission('all', '/teacher/teaching') ? <TeachingPage {...props}/> : <Redirect to="/"/>) // OK
+        render: (props) => <CriteriaManagement {...props}/> 
     },
     {
         id: "dealer",
         path: "/teacher/dealer",
         name: "Đại lý",
-        hide: false,
+        hide: true,
         icon: <DiffOutlined/>,
         render: (props) => (shouldHaveAccessPermission('all', '/teacher/dealer') ? <DealerTeacherPage {...props}/> : <Redirect to="/"/>) // OK
     },
@@ -82,8 +92,16 @@ const routes = [
         path: "/teacher/reply",
         name: "Hỏi đáp",
         hide: false,
-        icon: <SoundOutlined/>,
+        icon: <CommentOutlined />,
         render: (props) => (shouldHaveAccessPermission('all', '/teacher/reply') ? <ReplyPage {...props}/> : <Redirect to="/"/>) // OK
+    },
+    {
+        id: "replyDetail",
+        path: "/teacher/detail-reply/:idReply",
+        name: "Chi tiết hỏi đáp",
+        hide: true,
+        icon: <CommentOutlined />,
+        render: (props) => <ReplyDetailPage {...props}/>  // OK
     },
     {
         id: "profile",

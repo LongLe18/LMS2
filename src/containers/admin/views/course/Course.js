@@ -370,7 +370,7 @@ const Course = () => {
         formData.append('kct_id', values.kct_id.split('_')[0]);
         if (values.kct_id.split('_')[1] === '2' || values.kct_id.split('_')[1] === '4' || values.kct_id.split('_')[1] === '5') { // kiểm tra khung chương trình = 2 hoặc 4 là các khung ôn luyện
           formData.append('lkh_id', values.lkh_id);
-        } else formData.append('lkh_id', ''); // nếu không thì mặc định là 1
+        } 
         formData.append('mo_ta', values.mo_ta !== undefined ? values.mo_ta : '');
         // video , image
         if (state.fileImg !== '')
@@ -533,8 +533,8 @@ const Course = () => {
                                 name="ngay_bat_dau"
                                 rules={[
                                     {
-                                    required: true,
-                                    message: 'Ngày bắt đầu / ngày kết thúc là trường bắt buộc.',
+                                      required: true,
+                                      message: 'Ngày bắt đầu / ngày kết thúc là trường bắt buộc.',
                                     },
                                 ]}
                             >

@@ -281,10 +281,10 @@ const ExamModuleDetail = () => {
 
     const onChooseAnswer = (question, answerKey, index, answered) => {
         if (isDoing) { // Nếu đang làm bài
-            let isAnswered = answered.find((item) => item.cau_hoi_id === question.cau_hoi_id);
+            let isAnswered = answered.find((item) => item.cau_hoi_id === question?.cau_hoi?.cau_hoi_id);
             if (isAnswered) { // Nếu đã trả lời
                 // Cập nhật lại đáp án đã chọn
-                const choosed = results.find((it) => it.cau_hoi_id === question.cau_hoi_id)?.dap_an.includes(renderAnswerKey(index));
+                const choosed = results.find((it) => it.cau_hoi_id === question?.cau_hoi?.cau_hoi_id)?.dap_an.includes(renderAnswerKey(index));
                 if (question.cau_hoi.loai_cau_hoi === 1) {
                     isAnswered.ket_qua_chon = '0000';
                 }
@@ -293,12 +293,12 @@ const ExamModuleDetail = () => {
                 let newAnsers2;
                 if (renderAnswerKeyV2(isAnswered.ket_qua_chon)[0].length === 0 && question.cau_hoi.loai_cau_hoi === 1) {
                     // Xóa phần tử có id tương ứng trong results
-                    newAnsers2 = results.filter(item => item.cau_hoi_id !== question.cau_hoi_id);
+                    newAnsers2 = results.filter(item => item.cau_hoi_id !== question?.cau_hoi?.cau_hoi_id);
                 } else {
-                    const dap_an_ton_tai = results.find((item) => item.cau_hoi_id === question.cau_hoi_id)
+                    const dap_an_ton_tai = results.find((item) => item.cau_hoi_id === question?.cau_hoi?.cau_hoi_id)
                     newAnsers2 = dap_an_ton_tai ? results.map((item) => 
                         (
-                            item.cau_hoi_id === question.cau_hoi_id ? { ...item, 
+                            item.cau_hoi_id === question?.cau_hoi?.cau_hoi_id ? { ...item, 
                             dap_an: renderAnswerKeyV2(isAnswered.ket_qua_chon)[0], 
                             gia_tri_dap_an: renderAnswerKeyV2(isAnswered.ket_qua_chon)[1], 
                             loai_dap_an: true,
@@ -307,7 +307,7 @@ const ExamModuleDetail = () => {
                     )
                     : [
                         ...results, {
-                            cau_hoi_id: question.cau_hoi.cau_hoi_id,
+                            cau_hoi_id: question?.cau_hoi?.cau_hoi.cau_hoi_id,
                             dap_an: renderAnswerKeyV2(isAnswered.ket_qua_chon)[0], 
                             gia_tri_dap_an: renderAnswerKeyV2(isAnswered.ket_qua_chon)[1], 
                             loai_dap_an: true,
@@ -319,25 +319,25 @@ const ExamModuleDetail = () => {
 
                 const submit = {
                     "ket_qua_chon": isAnswered.ket_qua_chon,
-                    "noi_dung_tra_loi": "",
+                    "noi_dung_tra_loi": '',
                     "dthv_id": params.idExamUser,
-                    "cau_hoi_id": question.cau_hoi_id
+                    "cau_hoi_id": question?.cau_hoi?.cau_hoi_id
                 }
                 dispatch(answerActions.editAnswerUser({ id: isAnswered.dadc_id, formData: submit }));
             } else { // Nếu chưa trả lời
                 let ket_qua = '0000';
                 ket_qua = ket_qua.substring(0, index) + '1' + ket_qua.substring(index + 1); // Thay 1 vào vị trí index của ket_qua
-                setResults([...results, { cau_hoi_id: question.cau_hoi_id, dap_an: [answerKey], gia_tri_dap_an: [index], loai_dap_an: true, ket_qua_chon: ket_qua }]);
+                setResults([...results, { cau_hoi_id: question?.cau_hoi?.cau_hoi_id, dap_an: [answerKey], gia_tri_dap_an: [index], loai_dap_an: true, ket_qua_chon: ket_qua }]);
                 
                 let trac_nghiem_submit = [];
                 trac_nghiem_submit.push({
                     "ket_qua": ket_qua,
-                    "cau_hoi_id": question.cau_hoi_id
+                    "cau_hoi_id": question?.cau_hoi?.cau_hoi_id
                 });
 
                 const submit = {
                     "ket_qua_chons":trac_nghiem_submit,
-                    "noi_dung_tra_lois": '',
+                    "noi_dung_tra_lois": [],
                     "dthv_id": params.idExamUser
                 }
                 dispatch(answerActions.createAnswerUser(submit));
@@ -357,15 +357,15 @@ const ExamModuleDetail = () => {
                     "ket_qua_chon": "",
                     "noi_dung_tra_loi": value,
                     "dthv_id": params.idExamUser,
-                    "cau_hoi_id": question.cau_hoi_id
+                    "cau_hoi_id": question?.cau_hoi?.cau_hoi_id
                 }
                 dispatch(answerActions.editAnswerUser({ id: isAswered.dadc_id, formData: submit }));
             } else {
-                setResults([...results, { cau_hoi_id: question.cau_hoi_id, noi_dung: value, gia_tri_dap_an: value, loai_dap_an: false }]);
+                setResults([...results, { cau_hoi_id: question?.cau_hoi?.cau_hoi_id, noi_dung: value, gia_tri_dap_an: value, loai_dap_an: false }]);
                 
                 const tu_luan = [{
                     "noi_dung": value,
-                    "cau_hoi_id": question.cau_hoi_id
+                    "cau_hoi_id": question?.cau_hoi?.cau_hoi_id
                 }]
                 const submit = {
                     "ket_qua_chons": [],
@@ -988,7 +988,7 @@ const ExamModuleDetail = () => {
                                     <div className="content-answer-question">
                                         <Row gutter={[20, 10]} className="multi-choice" style={{rowGap: 0}}>
                                             {question.cau_hoi.dap_ans.map((answer, index) => {
-                                                const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
+                                                const isAnswered = results.find((it) => it.cau_hoi_id === question?.cau_hoi?.cau_hoi_id);
                                                 return (
                                                     <Col xs={24} sm={24} md={getAnswerCols(question.cau_hoi.cot_tren_hang)} key={index}>
                                                         <ul key={index}>

@@ -100,7 +100,7 @@ const CoursesPage = (props) => {
         //     }
         // }));
         dispatch(programmeAction.getProgrammes({ status: '' }));
-        dispatch(programmeAction.getProgrammeCourses());
+        dispatch(programmeAction.getProgrammeCourses({ pageIndex: 1, pageSize: 99999999 }));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
     
     const renderProgramme = () => {
@@ -200,7 +200,7 @@ const CoursesPage = (props) => {
     // menu khóa học
     const items = [];
     if (programmeCourses.status === 'success') {
-        programmeCourses?.data.forEach((item, index) => {
+        programmeCourses?.data.filter(item => item.trang_thai).filter(item => item.loai_kct !== 5).forEach((item, index) => {
             let children = [];
             if (item.khoa_hocs && item.khoa_hocs.length > 0) {
                 item.khoa_hocs.forEach((item2, index2) => {

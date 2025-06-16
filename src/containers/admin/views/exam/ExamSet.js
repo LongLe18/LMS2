@@ -302,7 +302,7 @@ const ExamSetPage = () => {
                             className="upload-list-inline"
                         >
                             <p className="ant-upload-drag-icon">
-                            <UploadOutlined />
+                                <UploadOutlined />
                             </p>
                             <p className="ant-upload-text bold">Click hoặc kéo thả đề thi vào đây</p>
                         </Dragger>

@@ -434,6 +434,7 @@ const ReplyPage = (props) => {
                 formModal.resetFields();
                 setIsModalVisible(false);
                 dispatch(commentAction.getCOMMENTs({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, type: filter.trang_thai }));
+                message.success('Chuyển tiếp câu hỏi thành công');
             }
         };
 

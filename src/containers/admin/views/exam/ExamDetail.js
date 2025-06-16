@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import config from '../../../../configs/index';
 import Hashids from 'hashids';
 import constants from '../../../../helpers/constants';
-import { useParams } from 'react-router-dom';
 import MathJax from 'react-mathjax';
 import './css/ExamDetail.css'
 // antd

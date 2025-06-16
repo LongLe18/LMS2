@@ -603,10 +603,10 @@ export default function ExamOnlineDetaiDGTD() {
     // hàm xử lý chọn đáp án
     const onChooseAnswer = (question, answerKey, index, answered, value) => {
         if (isDoing) { // Nếu đang làm bài
-            let isAnswered = answered.find((item) => item.cau_hoi_id === question.cau_hoi_id);
+            let isAnswered = answered.find((item) => item.cau_hoi_id === question?.cau_hoi?.cau_hoi_id);
             if (isAnswered) { // Nếu đã trả lời
                 // Cập nhật lại đáp án đã chọn
-                const choosed = results.find((it) => it.cau_hoi_id === question.cau_hoi_id)?.dap_an.includes(renderAnswerKey(index));
+                const choosed = results.find((it) => it.cau_hoi_id === question?.cau_hoi?.cau_hoi_id)?.dap_an.includes(renderAnswerKey(index));
                 if (question.cau_hoi.loai_cau_hoi === 1) isAnswered.ket_qua_chon = "0".repeat(question?.cau_hoi?.dap_ans?.length);
 
                 if (question?.cau_hoi?.loai_cau_hoi === 3 || question?.cau_hoi?.loai_cau_hoi === 4) {
@@ -617,12 +617,12 @@ export default function ExamOnlineDetaiDGTD() {
                 let newAnsers2;
                 if (renderAnswerKeyV2(isAnswered?.ket_qua_chon)[0]?.length === 0 && question.cau_hoi.loai_cau_hoi === 1) {
                     // Xóa phần tử có id tương ứng trong results
-                    newAnsers2 = results.filter(item => item.cau_hoi_id !== question.cau_hoi_id);
+                    newAnsers2 = results.filter(item => item.cau_hoi_id !== question?.cau_hoi?.cau_hoi_id);
                 } else {
-                    const dap_an_ton_tai = results.find((item) => item.cau_hoi_id === question.cau_hoi_id)
+                    const dap_an_ton_tai = results.find((item) => item.cau_hoi_id === question?.cau_hoi?.cau_hoi_id)
                     newAnsers2 = dap_an_ton_tai ? results.map((item) => 
                         (
-                            item.cau_hoi_id === question.cau_hoi_id ? { ...item, 
+                            item.cau_hoi_id === question?.cau_hoi?.cau_hoi_id ? { ...item, 
                             dap_an: renderAnswerKeyV2(isAnswered?.ket_qua_chon)[0], 
                             gia_tri_dap_an: renderAnswerKeyV2(isAnswered?.ket_qua_chon)[1], 
                             loai_dap_an: true,
@@ -631,7 +631,7 @@ export default function ExamOnlineDetaiDGTD() {
                     )
                     : [
                         ...results, {
-                            cau_hoi_id: question.cau_hoi.cau_hoi_id,
+                            cau_hoi_id: question?.cau_hoi?.cau_hoi_id,
                             dap_an: renderAnswerKeyV2(isAnswered?.ket_qua_chon)[0], 
                             gia_tri_dap_an: renderAnswerKeyV2(isAnswered?.ket_qua_chon)[1], 
                             loai_dap_an: true,
@@ -645,7 +645,7 @@ export default function ExamOnlineDetaiDGTD() {
                     "ket_qua_chon": isAnswered.ket_qua_chon,
                     "noi_dung_tra_loi": "",
                     "dthv_id": params.idExamUser,
-                    "cau_hoi_id": question.cau_hoi_id
+                    "cau_hoi_id": question?.cau_hoi?.cau_hoi_id
                 }
                 dispatch(answerActions.editAnswerUser({ id: isAnswered.dadc_id, formData: submit }, (res) => {
                     if (res.status === 200 && res.statusText === 'OK') setPause(false);
@@ -656,12 +656,12 @@ export default function ExamOnlineDetaiDGTD() {
                     ket_qua = ket_qua.substring(0, index) + (value === true ? '1' : '0') + ket_qua.substring(index + 1); // Thay 1 vào vị trí index của ket_qua
                 }
                 else ket_qua = ket_qua.substring(0, index) + '1' + ket_qua.substring(index + 1); // Thay 1 vào vị trí index của ket_qua
-                setResults([...results, { cau_hoi_id: question.cau_hoi_id, dap_an: [answerKey], gia_tri_dap_an: [index], loai_dap_an: true, ket_qua_chon: ket_qua }]);
+                setResults([...results, { cau_hoi_id: question?.cau_hoi?.cau_hoi_id, dap_an: [answerKey], gia_tri_dap_an: [index], loai_dap_an: true, ket_qua_chon: ket_qua }]);
                 
                 let trac_nghiem_submit = [];
                 trac_nghiem_submit.push({
                     "ket_qua":ket_qua,
-                    "cau_hoi_id": question.cau_hoi_id
+                    "cau_hoi_id": question?.cau_hoi?.cau_hoi_id
                 });
 
                 const submit = {
@@ -842,7 +842,7 @@ export default function ExamOnlineDetaiDGTD() {
         // - Lựa chọn sai với đáp án => màu đỏ
         let regex = /\\begin{center}\\includegraphics\[scale = 0\.5\]{(.*?)}\\end{center}/;
         let isWrong = false;
-        let currentSubmitAnswer = results.find((item) => item.cau_hoi_id === question.cau_hoi_id);
+        let currentSubmitAnswer = results.find((item) => item.cau_hoi_id === question?.cau_hoi?.cau_hoi_id);
         if (currentSubmitAnswer?.gia_tri_dap_an && question?.dap_an_dungs) {
             if (convertAnswer(currentSubmitAnswer?.gia_tri_dap_an, currentSubmitAnswer?.ket_qua_chon)[index] !== convertAnswer(question?.dap_an_dungs, currentSubmitAnswer?.ket_qua_chon)[index]) {
                 isWrong = true;  
@@ -882,7 +882,7 @@ export default function ExamOnlineDetaiDGTD() {
 
     // Hàm UI câu hỏi kéo thả
     const questionDragAndDrop = (question, key) => {
-        let selectedGaps = gaps.filter(item => item.questionId === question.cau_hoi_id);
+        let selectedGaps = gaps.filter(item => item.questionId === question?.cau_hoi?.cau_hoi_id);
         return (
             <>
                 <div style={{fontSize: 18, color: 'rgb(153, 153, 153)'}}>Chú ý: Kéo thả đáp án phù hợp vào chổ trống</div>
@@ -1043,7 +1043,7 @@ export default function ExamOnlineDetaiDGTD() {
             <div className="content-answer-question">
                 <Row gutter={[20, 10]} className="multi-choice" style={{rowGap: 0}}>
                     {question.cau_hoi.dap_ans.map((answer, index) => {
-                        const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
+                        const isAnswered = results.find((it) => it.cau_hoi_id === question?.cau_hoi?.cau_hoi_id);
                         return (
                             <Col xs={24} sm={24} md={12} key={answer.dap_an_id}>
                                 <ul>

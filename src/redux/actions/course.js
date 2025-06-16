@@ -6,6 +6,11 @@ export const GET_COURSES = "GET_COURSES";
 export const GET_COURSES_SUCCESS = "GET_COURSES_SUCCESS";
 export const GET_COURSES_FAILED = "GET_COURSES_FAILED";
 
+export const GET_COURSES_TEACHER = "GET_COURSES_TEACHER";
+export const GET_COURSES_TEACHER_SUCCESS = "GET_COURSES_TEACHER_SUCCESS";
+export const GET_COURSES_TEACHER_FAILED = "GET_COURSES_TEACHER_FAILED";
+
+
 export const FILTER_COURSES = "FILTER_COURSES";
 export const FILTER_COURSES_SUCCESS = "FILTER_COURSES_SUCCESS";
 export const FILTER_COURSES_FAILED = "FILTER_COURSES_FAILED";
@@ -95,6 +100,14 @@ export function getCourse(params, callback) {
 export function getCourses(params, callback) {
     return {
         type: GET_COURSES,
+        params,
+        callback,
+    };
+}
+
+export function getCoursesByTeacher(params, callback) {
+    return {
+        type: GET_COURSES_TEACHER,
         params,
         callback,
     };

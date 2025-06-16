@@ -8,7 +8,10 @@ import { get } from 'lodash';
 function* fetchComments(payload) {
     try {
         let endpoint = `${config.API_URL}/comment?khoa_hoc_id=${payload.params.idCourse}&mo_dun_id=${payload.params.idModule}&loai_hoi_dap=${payload.params.type}`;
-        const response = yield call(getApi, endpoint);
+        if (payload.params.isTeacher) {
+            endpoint = `${config.API_URL}/comment/v2?khoa_hoc_id=${payload.params.idCourse}&mo_dun_id=${payload.params.idModule}&loai_hoi_dap=${payload.params.type}`;
+        }
+        const response = yield call(payload.params.isTeacher ? getApiAuth : getApi, endpoint);
         const result = yield response.data;
         yield put({ type: actions.comment.GET_COMMENTS_SUCCESS, result: result });
         if (payload.callback) {

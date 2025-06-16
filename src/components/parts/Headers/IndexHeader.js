@@ -320,6 +320,9 @@ function IndexHeader(props) {
       <Container>
         <Row className="header-logo">
           <NavLink to="/luyen-tap/trang-chu">
+            <img alt="..."  style={{marginTop: 8, maxHeight: '140px'}} className="img-no-padding img-responsive"
+              src={require("assets/rank/Logo-saoviet.png").default}
+            />
             <img alt="..."  style={{maxHeight: '155px', width: '100%'}}
               className="img-no-padding img-responsive"
               src={require("assets/rank/header-logo.png").default}
@@ -327,12 +330,8 @@ function IndexHeader(props) {
           </NavLink>
         </Row>
       </Container>
-      <div id="wide-nav" className="header-bottom wide-nav nav-dark hide-for-medium">
-        <NavLink to="/luyen-tap/trang-chu">
-          <img alt="..."  style={{maxHeight: '50px'}} className="img-no-padding img-responsive"
-            src={require("assets/rank/saoviet.png").default}
-          />
-        </NavLink>
+      <div id="wide-nav" className="header-bottom wide-nav nav-dark hide-for-medium" style={{padding: 12}}>
+        
        
         <div className="flex-row container">
           <div className="flex-col hide-for-medium flex-left" style={{marginRight: 0}}>

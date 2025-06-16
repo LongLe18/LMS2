@@ -32,6 +32,32 @@ function* fetchCourses(payload) {
     }
 }
 
+function* fetchCoursesByTeacher(payload) {
+    try {
+        let endpoint = config.API_URL + `/course/by-teacher?lkh_id=${payload.params.lkh_id}&trang_thai=${payload.params.status}&search=${payload.params.search}`;
+        if (payload.params.pageIndex && payload.params.pageSize) endpoint = endpoint + `&pageIndex=${payload.params.pageIndex}&pageSize=${payload.params.pageSize}`;
+        const response = yield call(getApiAuth, endpoint);
+        const result = yield response.data;
+        yield put({ type: actions.course.GET_COURSES_TEACHER_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.course.GET_COURSES_TEACHER_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu khóa học đã thất bại ' + messageError),
+            });
+        } 
+    }
+}
+
 function* fetchCourse(payload) {
     try {
         let endpoint = `${config.API_URL}/course/${payload.params.id}`;
@@ -288,6 +314,10 @@ function* fectchRemainStudentOfCourse(payload) {
 
 export function* loadCourses() {
     yield takeEvery(actions.course.GET_COURSES, fetchCourses);
+}
+
+export function* loadCoursesByTeacher() {
+    yield takeEvery(actions.course.GET_COURSES_TEACHER, fetchCoursesByTeacher);
 }
 
 export function* loadCourse() {

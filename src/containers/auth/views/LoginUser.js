@@ -80,7 +80,7 @@ const LoginUserPage = (props) => {
             <Row className="logo" align={'middle'}>
                 <Col xs={{ span: 24 }} lg={{ span: 4 }}>
                     <NavLink to='/luyen-tap/trang-chu' className="logo">
-                        <Avatar shape="square" size={200} src={require('assets/rank/Logo-saoviet.png').default} />
+                        <Avatar shape="square" size={200}  style={{maxHeight: 140}} src={require('assets/rank/Logo-saoviet.png').default} />
                     </NavLink>
                 </Col>
                 <Col xs={{ span: 22, offset: 1 }} lg={{ span: 9, offset: 4}} style={{marginRight: '10%'}}>

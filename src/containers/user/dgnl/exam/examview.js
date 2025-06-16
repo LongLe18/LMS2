@@ -74,7 +74,7 @@ const ExamViewPage = (props) => {
             key: 'ket_qua_diem',
             responsive: ['lg'],
             render: (ket_qua_diem, de_thi) => (
-                <span>{ket_qua_diem}/{de_thi.tong_diem}</span>
+                <span>{ket_qua_diem}/{de_thi?.de_thi?.tong_diem}</span>
             )
         },
         {

@@ -21,15 +21,15 @@ function UserLayout(props){
             <Contract {...props} />
             
             <Switch>    
-            {routes.map((prop, key) => {
-                return (
-                <Route
-                    path={prop.path}
-                    render={prop.render}
-                    key={Number(key)}
-                />
-                );
-            })}
+                {routes.map((prop, key) => {
+                    return (
+                    <Route
+                        path={prop.path}
+                        render={prop.render}
+                        key={Number(key)}
+                    />
+                    );
+                })}
             </Switch>
             <Footer />
         </div>

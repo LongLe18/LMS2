@@ -12,7 +12,7 @@ const UserLayout = Loadable(lazy(() => import("containers/user/dgnl/User")));
 const Dashboard = Loadable(lazy(() => import("containers/admin/Admin")));
 const AuthLayout = Loadable(lazy(() => import("containers/auth/Auth")));
 const TeacherPage = Loadable(lazy(() => import("containers/teacher/Teacher")));
-const NotFound = Loadable(lazy(() => import("components/common/NotFound")));
+// const NotFound = Loadable(lazy(() => import("components/common/NotFound")));
 
 
 export const ROUTES = [
@@ -49,6 +49,6 @@ export const ROUTES = [
         path: '*',
         exact: true,
         hidden: true,
-        component: NotFound,
+        component: UserLayout,
     },
 ]

@@ -1,12 +1,16 @@
-import { useState } from "react"
-import { Card, Row, Col, Input, Select, Button, Table, Tag, Space, Typography, Avatar, Tooltip } from "antd"
+import { useState, useEffect } from "react"
+import axios from 'axios';
+import moment from "moment";
+import config from '../../../../configs/index';
+import { Card, Row, Col, Input, Select, Button, Table, Tag, Space, 
+    Typography, Avatar, Tooltip, Pagination, notification, Modal } from "antd"
 import {
     SearchOutlined,
     PlusOutlined,
     EyeOutlined,
     EditOutlined,
     DeleteOutlined,
-    SettingOutlined,
+    ExclamationCircleOutlined,
 } from "@ant-design/icons"
 import imageStudy from 'assets/img/image-study.png';
 import imageBook from 'assets/img/image-book.png';
@@ -14,27 +18,82 @@ import imageNote from 'assets/img/image-note.png';
 import imageUser from 'assets/img/image-user.png';
 import { useHistory } from 'react-router-dom';
 
+import * as courseAction from '../../../../redux/actions/course';
+import { useSelector, useDispatch } from "react-redux";
+import constants from '../../../../helpers/constants';
+
 const { Title } = Typography
 const { Option } = Select
 
-// Mock data for the table
-const courseData = Array.from({ length: 15 }, (_, index) => ({
-    key: index + 1,
-    stt: index + 1,
-    khoa_hoc_id: 1,
-    courseName: "Toán nền tảng lớp 6",
-    courseType: "Ôn luyện nền tảng",
-    chapters: 10,
-    topics: 190,
-    studyTime: "01/03/2025 - 30/04/2025",
-    status: index === 4 || index === 6 || index === 12 ? "paused" : "active",
-}))
 
 const CourseManagement = () => {
-    const [searchText, setSearchText] = useState("")
-    const [courseType, setCourseType] = useState(null)
-    const [status, setStatus] = useState(null)
+    const dispatch = useDispatch();
     const history = useHistory();
+
+    const [pageIndex, setPageIndex] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [filter, setFilter] = useState({
+        trang_thai: '',
+        search: '',
+        lkh_id: ''
+    });
+    const [dashboardData, setDashboardData] = useState();
+
+    const courses = useSelector(state => state.course.list.result);
+    
+    const getDashboardData = async () => {
+        axios.get(config.API_URL + '/course/dashboard-by-teacher', {headers: {Authorization: `Bearer ${localStorage.getItem('userToken')}`}})
+        .then(
+            res => {
+                if (res.status === 200 && res.statusText === 'OK') {
+                    setDashboardData(res?.data?.data[0])
+                } else {
+                    notification.error({
+                        message: 'Lỗi',
+                        description: 'Có lỗi xảy ra khi lấy dữ liệu thống kê',
+                    })
+                }
+            }
+        )
+        .catch(error => notification.error({ message: error.message }));
+    };
+
+    useEffect(() => {
+        getDashboardData();
+    }, []);
+    
+    // Event xoá khoá học
+    const handleDeleteCourse = (courseId) => {
+        Modal.confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: 'Bạn có chắc chán muốn xóa khóa học này?',
+            okText: 'Đồng ý',
+            cancelText: 'Hủy',
+            onOk() {
+                const callback = (res) => {
+                    if (res.statusText === 'OK' && res.status === 200) {
+                        dispatch(courseAction.getCoursesByTeacher({ status: filter.trang_thai, search: filter.search, 
+                            lkh_id: filter.lkh_id, pageIndex: pageIndex, pageSize: pageSize }));
+                        notification.success({
+                            message: 'Thành công',
+                            description: 'Xóa khóa học thành công',
+                        })
+                    } else {
+                        notification.error({
+                            message: 'Thông báo',
+                            description: 'Xóa khóa học mới thất bại',
+                        })
+                    };
+                }
+            dispatch(courseAction.DeleteCourse({ idLesson: courseId }, callback))
+            },
+        });
+    }
+
+    useEffect(() => {
+        dispatch(courseAction.getCoursesByTeacher({ status: filter.trang_thai, search: filter.search, 
+        lkh_id: filter.lkh_id, pageIndex: pageIndex, pageSize: pageSize }));
+    }, [pageIndex, pageSize, filter]);
 
     const columns = [
         {
@@ -46,74 +105,52 @@ const CourseManagement = () => {
             render: (text, record, index) => index + 1,
         },
         {
-            title: (
-                <Space>
-                    Tên khóa học
-                <SearchOutlined style={{ color: "#bfbfbf" }} />
-                </Space>
-            ),
-            dataIndex: "courseName",
-            key: "courseName",
+            title: "Tên khóa học",
+            dataIndex: "ten_khoa_hoc",
+            key: "ten_khoa_hoc",
             width: 200,
         },
         {
-            title: (
-                <Space>
-                    Loại khóa học
-                    <SettingOutlined style={{ color: "#bfbfbf" }} />
-                </Space>
-            ),
-            dataIndex: "courseType",
-            key: "courseType",
+            title: "Loại khóa học",
+            dataIndex: "loai_khoa_hoc",
+            key: "loai_khoa_hoc",
             width: 180,
+            render: (text, record) => (
+                record?.loai_khoa_hoc?.ten
+            )
         },
         {
-            title: (
-                <Space>
-                    Số mô-đun
-                    <SettingOutlined style={{ color: "#bfbfbf" }} />
-                </Space>
-            ),
-            dataIndex: "chapters",
-            key: "chapters",
+            title: "Số mô-đun",
+            dataIndex: "so_luong_modun",
+            key: "so_luong_modun",
             width: 120,
             align: "center",
         },
         {
-            title: (
-                <Space>
-                    Số chuyên đề
-                    <SettingOutlined style={{ color: "#bfbfbf" }} />
-                </Space>
-            ),
-            dataIndex: "topics",
-            key: "topics",
+            title: "Số chuyên đề",
+            dataIndex: "so_luong_chuyen_de",
+            key: "so_luong_chuyen_de",
             width: 120,
             align: "center",
         },
         {
-            title: (
-                <Space>
-                    Thời gian học
-                    <SettingOutlined style={{ color: "#bfbfbf" }} />
-                </Space>
-            ),
-            dataIndex: "studyTime",
-            key: "studyTime",
+            title: "Thời gian học",
+            dataIndex: "ngay_bat_dau",
+            key: "ngay_bat_dau",
             width: 180,
+            render: (text, record) => (
+                <span>
+                    {moment(record.ngay_bat_dau).utc(7).format(config.DATE_FORMAT_SHORT)} - {moment(record.ngay_ket_thuc).utc(7).format(config.DATE_FORMAT_SHORT)}
+                </span>
+            ),
         },
         {
-            title: (
-                <Space>
-                Trạng thái
-                <SettingOutlined style={{ color: "#bfbfbf" }} />
-                </Space>
-            ),
-            dataIndex: "status",
-            key: "status",
+            title: "Trạng thái",
+            dataIndex: "trang_thai",
+            key: "trang_thai",
             width: 120,
             render: (status) => (
-                <Tag color={status === "active" ? "green" : "red"}>{status === "active" ? "Hoạt động" : "Tạm dừng"}</Tag>
+                <Tag color={status === true ? "green" : "red"}>{status === true ? "Hoạt động" : "Tạm dừng"}</Tag>
             ),
         },
         {
@@ -123,9 +160,6 @@ const CourseManagement = () => {
             align: "center",
             render: (record) => (
                 <Space>
-                    <Tooltip title="Xem">
-                        <Button type="text" icon={<EyeOutlined />} size="small" />
-                    </Tooltip>
                     <Tooltip title="Chỉnh sửa">
                         <Button type="text" icon={<EditOutlined />} 
                             size="small" 
@@ -133,12 +167,22 @@ const CourseManagement = () => {
                         />
                     </Tooltip>
                     <Tooltip title="Xóa">
-                        <Button type="text" icon={<DeleteOutlined />} size="small" danger />
+                        <Button type="text" icon={<DeleteOutlined />} size="small" danger onClick={() => handleDeleteCourse(record?.khoa_hoc_id)}/>
                     </Tooltip>
                 </Space>
             ),
         },
     ]
+
+    // event thay đổi trang
+    const onChange = (page) => {
+        setPageIndex(page);
+    };
+
+    // event đổi pageSize
+    const onShowSizeChange = (current, pageSize) => {
+        setPageSize(pageSize)
+    };
 
     return (
         <div style={{ padding: "24px", backgroundColor: "#f5f5f5", minHeight: "100vh" }}>
@@ -155,7 +199,7 @@ const CourseManagement = () => {
                             icon={<img src={imageStudy} alt="imageStudy"/>} 
                             />
                         <div>
-                            <div style={{ fontSize: "24px", fontWeight: "bold", color: "#262626" }}>28</div>
+                            <div style={{ fontSize: "24px", fontWeight: "bold", color: "#262626" }}>{dashboardData?.so_khoa_hoc}</div>
                             <div style={{ color: "#8c8c8c", fontSize: "14px" }}>Số lượng khóa học</div>
                         </div>
                         </div>
@@ -168,7 +212,7 @@ const CourseManagement = () => {
                                 icon={<img src={imageBook} alt="imageBook"/>} 
                             />
                             <div>
-                                <div style={{ fontSize: "24px", fontWeight: "bold", color: "#262626" }}>327</div>
+                                <div style={{ fontSize: "24px", fontWeight: "bold", color: "#262626" }}>{dashboardData?.so_modun}</div>
                                 <div style={{ color: "#8c8c8c", fontSize: "14px" }}>Số lượng mô đun</div>
                             </div>
                         </div>
@@ -183,7 +227,7 @@ const CourseManagement = () => {
                             icon={<img src={imageNote} alt="imageNote"/>}
                         />
                         <div>
-                            <div style={{ fontSize: "24px", fontWeight: "bold", color: "#262626" }}>6.293</div>
+                            <div style={{ fontSize: "24px", fontWeight: "bold", color: "#262626" }}>{dashboardData?.so_chuyen_de}</div>
                             <div style={{ color: "#8c8c8c", fontSize: "14px" }}>Số lượng chuyên đề</div>
                         </div>
                         </div>
@@ -196,7 +240,7 @@ const CourseManagement = () => {
                                 icon={<img src={imageUser} alt="imageUser" />} 
                             />
                             <div>
-                                <div style={{ fontSize: "24px", fontWeight: "bold", color: "#262626" }}>1.293</div>
+                                <div style={{ fontSize: "24px", fontWeight: "bold", color: "#262626" }}>{dashboardData?.so_hoc_vien}</div>
                                 <div style={{ color: "#8c8c8c", fontSize: "14px" }}>Số lượng học viên</div>
                             </div>
                         </div>
@@ -210,36 +254,42 @@ const CourseManagement = () => {
                     <Col xs={24} sm={8} md={6}>
                         <Input
                             placeholder="Tìm kiếm"
+                            allowClear
                             prefix={<SearchOutlined />}
-                            value={searchText}
-                            onChange={(e) => setSearchText(e.target.value)}
+                            onChange={(e) => {
+                                setFilter((state) => ({ ...state, search: e.target.value }));  
+                            }}
                         />
                     </Col>
                     <Col xs={24} sm={8} md={6}>
                         <Select
                             placeholder="Loại khóa học"
                             style={{ width: "100%" }}
-                            value={courseType}
-                            onChange={setCourseType}
+                            onChange={(value) => {
+                                setFilter((state) => ({ ...state, lkh_id: value }));
+                            }}
                             allowClear
                         >
-                            <Option value="foundation">Ôn luyện nền tảng</Option>
-                            <Option value="advanced">Nâng cao</Option>
-                            <Option value="exam">Luyện thi</Option>
+                            {constants.TYPE_COURSES.map((item) => (
+                                <Option key={item.value} value={item.value}>
+                                    {item.label}
+                                </Option>
+                            ))}
                         </Select>
                     </Col>
                     <Col xs={24} sm={8} md={6}>
                         <Select placeholder="Trạng thái" style={{ width: "100%" }} 
-                            value={status} onChange={setStatus} allowClear
+                            onChange={(value) => setFilter((state) => ({ ...state, trang_thai: value }))  } allowClear
                         >
-                            <Option value="active">Hoạt động</Option>
-                            <Option value="paused">Tạm dừng</Option>
+                            <Option value="1">Hoạt động</Option>
+                            <Option value="0">Tạm dừng</Option>
+                            <Option value="">Tất cả trạng thái</Option>
                         </Select>
                     </Col>
                     <Col xs={24} sm={24} md={6}>
                         <Space style={{ width: "100%", justifyContent: "flex-end" }}>
                             {/* <Button icon={<ExportOutlined />}>Export</Button> */}
-                            <Button type="primary" icon={<PlusOutlined />} onClick={() => history.push('/teacher/create-course')}>
+                            <Button type="primary" icon={<PlusOutlined />} onClick={() => history.push('/teacher/form-course/create')}>
                                 Thêm khóa học
                             </Button>
                         </Space>
@@ -251,18 +301,17 @@ const CourseManagement = () => {
             <Card style={{ borderRadius: "8px" }}>
                 <Table
                     columns={columns}
-                    dataSource={courseData}
-                    pagination={{
-                        current: 2,
-                        pageSize: 15,
-                        total: 85,
-                        showSizeChanger: true,
-                        showQuickJumper: true,
-                        showTotal: (total, range) => `${range[0]}-${range[1]} trong ${total} hàng`,
-                        pageSizeOptions: ["15", "30", "50", "100"],
-                    }}
+                    dataSource={courses?.data}
+                    pagination={false}
                     scroll={{ x: 1200 }}
                     size="middle"
+                />
+                <Pagination showSizeChanger style={{marginTop: 8}}
+                    onShowSizeChange={onShowSizeChange} 
+                    current={pageIndex} 
+                    pageSize={pageSize} 
+                    onChange={onChange} 
+                    total={courses?.totalCount}
                 />
             </Card>
         </div>

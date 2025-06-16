@@ -30,6 +30,7 @@ import {
     loadStudentOfCourse,
     loadDeleteStudentCourse,
     loadRemainStudentOfCourse,
+    loadCoursesByTeacher,
 } from './course';
 
 import {
@@ -427,6 +428,7 @@ export default function* rootSaga() {
         loadStudentOfCourse(),
         loadDeleteStudentCourse(),
         loadRemainStudentOfCourse(),
+        loadCoursesByTeacher(),
         // module
         loadModule(),
         loadModules(),

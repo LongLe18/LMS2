@@ -211,6 +211,13 @@ const routes = [
         render: (props) => <CoursesPage {...props}/>,                                                                                              
     },
     {
+        id: 'introduceCourse',
+        path: '/home',
+        exact: true,
+        hidden: true,
+        render: (props) => <CoursesPage {...props}/>,                                                                                              
+    },
+    {
         id: 'cart',
         path: '/luyen-tap/gio-hang/:id',
         exact: true,

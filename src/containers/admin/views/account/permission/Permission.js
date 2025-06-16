@@ -104,7 +104,7 @@ const PermissionPage = () => {
 
     useEffect(() => {
         dispatch(positionAction.getPositions({ pageIndex: pageIndex, pageSize: pageSize, search: filter.search }));
-        dispatch(positionAction.getPermissions({ pageIndex: 1, pageSize: 191, search: '' }));
+        dispatch(positionAction.getPermissions({ pageIndex: 1, pageSize: 999999, search: '' }));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const onFilterChange = (field, value) => {
@@ -234,6 +234,7 @@ const PermissionPage = () => {
                     isShowSearchBox={true}
                     onFilterChange={(field, value) => onFilterChange(field, value)}
                 />
+                <br/>
                 <Table className="table-striped-rows" columns={columnsTable} dataSource={positions.data} pagination={false}/>
                 <br/>
                 <Pagination showSizeChanger 

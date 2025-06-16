@@ -1,25 +1,27 @@
 
-import { useState } from "react"
-import { useHistory } from "react-router-dom"
+import { useState, useEffect } from "react"
+import { useHistory, useParams } from "react-router-dom"
 import { Row, Col, Card, Typography, Button, Space, Tabs, List, Avatar, 
   Tag, Image, Divider, Dropdown, Menu, Modal, Form, message, Select, Input,
-  Upload, Alert, } from "antd"
+  Upload, Alert, notification, Radio } from "antd"
 import {
-  EyeInvisibleOutlined,
-  EditOutlined,
-  PlayCircleOutlined,
-  ClockCircleOutlined,
-  DeleteOutlined,
-  PlusOutlined,
-  EyeOutlined,
-  MoreOutlined,
-  FileTextOutlined,
-  UploadOutlined,
-  ExclamationCircleOutlined,
-  CopyOutlined,
-  ExclamationCircleFilled,
-  InboxOutlined,
+  EyeInvisibleOutlined, EditOutlined, PlayCircleOutlined,
+  ClockCircleOutlined, DeleteOutlined, PlusOutlined,
+  EyeOutlined, MoreOutlined, FileTextOutlined,
+  UploadOutlined, ExclamationCircleOutlined, CopyOutlined,
+  ExclamationCircleFilled, InboxOutlined,
 } from "@ant-design/icons"
+import config from '../../../../configs/index';
+import moment from "moment"
+import * as CurrencyFormat from 'react-currency-format';
+
+// redux
+import * as courseAction from '../../../../redux/actions/course';
+import * as partActions from '../../../../redux/actions/part';
+import * as descriptionAction from '../../../../redux/actions/descriptionCourse';
+import * as programmeAction from '../../../../redux/actions/programme';
+import * as majorActions from '../../../../redux/actions/major';
+import { useSelector, useDispatch } from "react-redux";
 
 const { Title, Text, Paragraph } = Typography
 const { TabPane } = Tabs
@@ -35,6 +37,7 @@ const courseChapters = [
     duration: "1 đề thi",
     thumbnail: "/placeholder.svg?height=60&width=80",
     bgColor: "#e6f7ff",
+    trang_thai: false, // Initially visible 
   },
   {
     id: 2,
@@ -43,47 +46,9 @@ const courseChapters = [
     duration: "1 đề thi",
     thumbnail: "/placeholder.svg?height=60&width=80",
     bgColor: "#f6ffed",
+    trang_thai: true, // Initially visible
   },
-  {
-    id: 3,
-    title: "Chương 3: Nguyên hàm – Tích phân – Ứng dụng",
-    lessons: 6,
-    duration: "1 đề thi",
-    thumbnail: "/placeholder.svg?height=60&width=80",
-    bgColor: "#fff7e6",
-  },
-  {
-    id: 4,
-    title: "Chương 4: Số phức",
-    lessons: 6,
-    duration: "1 đề thi",
-    thumbnail: "/placeholder.svg?height=60&width=80",
-    bgColor: "#f9f0ff",
-  },
-  {
-    id: 5,
-    title: "Chương 5: Hình học không gian cơ điển",
-    lessons: 6,
-    duration: "1 đề thi",
-    thumbnail: "/placeholder.svg?height=60&width=80",
-    bgColor: "#e6f7ff",
-  },
-  {
-    id: 6,
-    title: "Chương 6: Hình học không gian tọa độ (Oxyz)",
-    lessons: 6,
-    duration: "1 đề thi",
-    thumbnail: "/placeholder.svg?height=60&width=80",
-    bgColor: "#fff2e8",
-  },
-  {
-    id: 7,
-    title: "Chương 7: Xác suất – Tổ hợp",
-    lessons: 6,
-    duration: "1 đề thi",
-    thumbnail: "/placeholder.svg?height=60&width=80",
-    bgColor: "#f0f5ff",
-  },
+
 ]
 
 // Comprehensive exams data - toggle this to test empty/populated states
@@ -113,6 +78,8 @@ const comprehensiveExams = [
 
 const CourseDetail = () => {
   const history = useHistory();
+  const dispatch = useDispatch();
+  const idCourse = useParams().idCourse;
   const [activeTab, setActiveTab] = useState("chapters");
   const [isAddChapterModalVisible, setIsAddChapterModalVisible] = useState(false)
   const [isAddExamModalVisible, setIsAddExamModalVisible] = useState(false)
@@ -121,6 +88,92 @@ const CourseDetail = () => {
   const [examsData, setExamsData] = useState(comprehensiveExams)
   const [examToDelete, setExamToDelete] = useState(null)
   const [deleteModalVisible, setDeleteModalVisible] = useState(false)
+
+  const course = useSelector(state => state.course.item.result);
+  const courses = useSelector(state => state.course.list.result);
+  const programmes = useSelector(state => state.programme.list.result);
+  const description = useSelector(state => state.descriptionCourse.item.result);
+  const majors = useSelector(state => state.major.list.result);
+
+  const [state, setState] = useState({
+    // courseId: 1,
+    // checkedList: [],
+    // checkAll: false,
+    // isEdit: false,
+    // isChanged: false,
+    // openMediaLibrary: false,
+    // form: defaultForm,
+    // upload image and video
+    fileImg: '',
+    fileVid: '',
+  });
+
+  // props for upload image
+  const propsImage = {
+    name: 'file',
+    action: '#',
+
+    beforeUpload: file => {
+      const isPNG = file.type === 'image/png' || file.type === 'image/jpeg';
+      if (!isPNG) {
+        message.error(`${file.name} có định dạng không phải là png/jpg`);
+      }
+      return isPNG || Upload.LIST_IGNORE;
+    },
+
+    onChange(info) {
+      setState({ ...state, fileImg: info.file.originFileObj });
+    },
+
+    async customRequest(options) {
+      const { onSuccess } = options;
+
+      setTimeout(() => {
+        onSuccess("ok");
+      }, 0);
+    },
+
+    onRemove(e) {
+      setState({ ...state, fileImg: '' });
+    },
+  };
+
+  // props for upload image
+  const propsVideo = {
+    name: 'file',
+    action: '#',
+
+    beforeUpload: file => {
+      const isPNG = file.type === 'video/mp4';
+      if (!isPNG) {
+        message.error(`${file.name} có định dạng không phải là video/mp4`);
+      }
+      return isPNG || Upload.LIST_IGNORE;
+    },
+
+    onChange(info) {
+      setState({ ...state, fileVid: info.file.originFileObj });
+    },
+
+    async customRequest(options) {
+      const { onSuccess } = options;
+
+      setTimeout(() => {
+        onSuccess("ok");
+      }, 0);
+    },
+    
+    onRemove(e) {
+      setState({ ...state, fileVid: '' });
+    },
+  };
+
+  useEffect(() => {
+    dispatch(courseAction.getCourse({ id: idCourse }));
+    dispatch(descriptionAction.getDescriptionCourse({ id: idCourse }));
+    dispatch(programmeAction.getProgrammes({ status: '' }));
+    dispatch(majorActions.getMajors());
+  }, []);
 
   const handleDeleteExam = () => {
     if (examToDelete) {
@@ -131,12 +184,210 @@ const CourseDetail = () => {
       setExamToDelete(null)
     }
   }
+  
+  const renderProgramme = () => {
+    let options = [];
+      if (programmes.status === 'success') {
+        // lấy ra các khung chương trình luyện thi, học
+        options = programmes.data
+        .filter((programme) => programme.loai_kct === 2 || programme.loai_kct === 4 || programme.loai_kct === 5)
+        .map((programme) => (
+            <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
+        ))
+      }
+      return (
+          <Select
+            showSearch={true}
+            filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
+            placeholder="Chọn khung chương trình"
+            onChange={(kct_id) => dispatch(courseAction.getCourses({ idkct: kct_id, status: '', search: '', pageSize: 99999999, pageIndex: 1 }))}
+          >
+          {options}
+          </Select>
+    );
+  };
+
+  const renderCourses = () => {
+    let options = [];
+    if (courses.status === 'success') {
+      options = courses?.data
+      ?.filter((course) => course?.khung_chuong_trinh?.loai_kct === 2 || course?.khung_chuong_trinh?.loai_kct === 4 || course?.khung_chuong_trinh?.loai_kct === 5)
+      ?.map((course) => (
+        <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
+      ))
+    }
+    return (
+      <Select
+        showSearch={true} 
+        filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
+        placeholder="Chọn khóa học"
+      >
+        {options}
+      </Select>
+    );
+  }
+
+  const renderMajor = () => {
+        let options = [];
+        if (majors.status === 'success') {
+          options = majors.data.map((major) => (
+            <Option key={major.chuyen_nganh_id} value={major.chuyen_nganh_id} >{major.ten_chuyen_nganh}</Option>
+          ))
+        }
+        return (
+          <Select
+            showSearch={false}
+            placeholder="Chọn chuyên ngành"
+          >
+            {options}
+          </Select>
+        );
+      };
+
+  // Event ẩn khoá học
+  const handleHideCourse = () => {
+    const callback = (res) => {
+      if (res.statusText === 'OK' && res.status === 200) {
+        notification.success({
+          message: 'Thành công',
+          description: course?.data?.trang_thai ? 'Ẩn khóa học thành công' : 'Hiện khóa học thành công',
+        })
+      } else {
+        notification.error({
+          message: 'Thông báo',
+          description: course?.data?.trang_thai ? 'Ẩn khóa học thất bại' : 'Hiện khóa học thất bại',
+        })
+      }
+    };
+
+    const formData = new FormData();
+    formData.append('trang_thai', !course?.data?.trang_thai );
+    dispatch(courseAction.EditCourse({ formData: formData, idCourse: idCourse }, callback))
+  }
+
+  // event ẩn chương học
+  const handleHideModule = (chapter) => {
+
+    const formData = new FormData();
+    formData.append('trang_thai', chapter.trang_thai);
+
+    const callback = (res) => {
+        if (res.statusText === 'OK' && res.status === 200) {
+            notification.success({
+                message: 'Thành công',
+                description: chapter.trang_thai ? 'Hiện chương học thành công' : 'Ẩn chương học thành công',
+            });
+        } else {
+            notification.error({
+                message: 'Thông báo',
+                description: chapter.trang_thai ? 'Hiện chương học thất bại' : 'Ẩn chương học thất bại',
+            })
+        }
+    };
+    dispatch(partActions.EditModule({ formData: formData, idModule: chapter.id }, callback));
+  }
+
+  // Event xoá khoá học
+  const handleDeleteCourse = () => {
+    Modal.confirm({
+        icon: <ExclamationCircleOutlined />,
+        content: 'Bạn có chắc chán muốn xóa khóa học này?',
+        okText: 'Đồng ý',
+        cancelText: 'Hủy',
+        onOk() {
+            const callback = (res) => {
+                if (res.statusText === 'OK' && res.status === 200) {
+                    notification.success({
+                        message: 'Thành công',
+                        description: 'Xóa khóa học thành công',
+                    })
+                    history.push('/teacher/course-management')
+                } else {
+                    notification.error({
+                        message: 'Thông báo',
+                        description: 'Xóa khóa học mới thất bại',
+                    })
+                };
+            }
+        dispatch(courseAction.DeleteCourse({ idLesson: idCourse }, callback))
+        },
+    });
+  }
 
   const handleChapterClick = (chapter) => {
     history.push(`/teacher/detail-chapter/${chapter.id}`)
   }
 
+  // Event tạo chương học 
+  const createModule = (values) => {
+    if (values.khoa_hoc_id === undefined) { // check null
+      notification.warning({
+        message: 'Cảnh báo',
+        description: 'Thông tin chương học chưa đủ',
+      })
+      return;
+    }
+    const formData = new FormData();
+    formData.append('ten_mo_dun', values.ten_mo_dun);
+    formData.append('linh_vuc', values.linh_vuc);
+    formData.append('mo_ta', values.mo_ta !== undefined ? values.mo_ta : '' );
+    formData.append('khoa_hoc_id', values.khoa_hoc_id);
+    formData.append('loai_tong_hop', values.loai_tong_hop);
+    formData.append('giao_vien_id', JSON.parse(localStorage.getItem('userInfo'))?.giao_vien_id );
 
+    // video , image
+    if (state.fileImg !== '')
+      formData.append('anh_dai_dien', state.fileImg !== undefined ? state.fileImg : '');
+    if (state.fileVid !== '')
+      formData.append('video_gioi_thieu', state.fileVid);
+
+    const callback = (res) => {
+      if (res.data.status === 'success' && res.status === 200) {
+        addChapterForm.resetFields();
+        setIsAddChapterModalVisible(false);
+        // request api lấy danh sách chương học mới
+        dispatch(partActions.filterModule({ idCourse: idCourse, status: '', search: '', start: '', end: ''}));
+        notification.success({
+          message: 'Thành công',
+          description: 'Thêm chương học mới thành công',
+        })
+      } else {
+        notification.error({
+          message: 'Thông báo',
+          description: 'Thêm chương học mới thất bại. Chú ý 1 chương học chỉ có 1 phần tổng hợp',
+        })
+      }
+    };
+    dispatch(partActions.CreateModule(formData, callback));
+  };
+
+  /// event xoá chương học
+  const handleDeleteModun = (id) => {
+    Modal.confirm({
+      icon: <ExclamationCircleOutlined />,
+      content: 'Bạn có chắc chán muốn xóa mô đun này?',
+      okText: 'Đồng ý',
+      cancelText: 'Hủy',
+      onOk() {
+        const callback = (res) => {
+          if (res.statusText === 'OK' && res.status === 200) {
+            dispatch(partActions.filterModule({ idCourse: idCourse, status: '', search: '', start: '', end: ''}));
+            notification.success({
+              message: 'Thành công',
+              description: 'Xóa module mới thành công',
+            })
+          } else {
+            notification.error({
+              message: 'Thông báo',
+              description: 'Xóa module mới thất bại',
+            })
+          };
+        }
+        dispatch(partActions.DeleteModule({ idModule: id }, callback))
+      },
+    });
+  };
+  
   const handleAddExam = () => {
     addExamForm
       .validateFields()
@@ -331,7 +582,7 @@ const CourseDetail = () => {
   )
 
   return (
-    <div className="detail-course" style={{ marginTop: 24, padding: "24px", backgroundColor: "#f5f5f5", minHeight: "100vh" }}>
+    <div className="detail-course">
       <Row gutter={24}>
         {/* Main Content */}
         <Col xs={24} lg={16}>
@@ -339,7 +590,7 @@ const CourseDetail = () => {
             {/* Course Hero Image */}
             <div style={{ marginBottom: "24px" }}>
               <Image
-                src={require("assets/img/lich_khoa_hoc.jpg").default}
+                src={course?.data?.anh_dai_dien ? config.API_URL + `${course?.data?.anh_dai_dien}` : require('assets/img/default.jpg').default}
                 alt="Classroom"
                 style={{ width: "100%", objectFit: "cover", borderRadius: "8px" }}
                 preview={false}
@@ -348,7 +599,7 @@ const CourseDetail = () => {
 
             {/* Course Title */}
             <Title level={2} style={{ marginBottom: "24px", color: "#262626" }}>
-              Khóa học Toán nền tảng lớp 12
+              {course?.data?.ten_khoa_hoc}
             </Title>
 
             {/* Course Info */}
@@ -361,7 +612,7 @@ const CourseDetail = () => {
                     </Text>
                   </Col>
                   <Col span={20}>
-                    <Text>Nguyễn văn A</Text>
+                    <Text>{JSON.parse(localStorage.getItem('userInfo'))?.ho_ten}</Text>
                   </Col>
                 </Row>
               </Col>
@@ -373,7 +624,7 @@ const CourseDetail = () => {
                     </Text>
                   </Col>
                   <Col span={20}>
-                    <Text>Từ 01/06/2025 đến 31/08/2025.</Text>
+                    <Text>Từ {moment(course?.data?.ngay_bat_dau).utc(7).format(config.DATE_FORMAT_SHORT)} đến {moment(course?.data?.ngay_ket_thuc).utc(7).format(config.DATE_FORMAT_SHORT)}.</Text>
                   </Col>
                 </Row>
               </Col>
@@ -397,7 +648,7 @@ const CourseDetail = () => {
                     </Text>
                   </Col>
                   <Col span={20}>
-                    <Text>Học online, Học offline</Text>
+                    <Text>Học online</Text>
                   </Col>
                 </Row>
               </Col>
@@ -409,9 +660,10 @@ const CourseDetail = () => {
                     </Text>
                   </Col>
                   <Col span={20}>
-                    <Text strong style={{ fontSize: "16px", color: "#262626" }}>
-                      1.200.000 VND
-                    </Text>
+                    <CurrencyFormat style={{ fontSize: "16px", color: "#262626" }}
+                        value={description?.data?.gia_goc !== null ? description?.data?.gia_goc : 0} 
+                        displayType={'text'} thousandSeparator={true} suffix={' VNĐ'}
+                      />
                   </Col>
                 </Row>
               </Col>
@@ -419,9 +671,13 @@ const CourseDetail = () => {
 
             {/* Action Buttons */}
             <Space >
-              <Button icon={<EyeInvisibleOutlined />}>Ẩn khóa học</Button>
+              <Button onClick={() => handleHideCourse()} 
+                icon={course?.data?.trang_thai ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+              >
+                {course?.data?.trang_thai ? 'Ẩn khóa học' : 'Hiện khóa học'}
+              </Button>
               <Button icon={<EditOutlined />}>Chỉnh sửa</Button>
-              <Button icon={<DeleteOutlined />} />
+              <Button icon={<DeleteOutlined />} onClick={() => handleDeleteCourse()}/>
             </Space>
 
             <Divider />
@@ -429,13 +685,12 @@ const CourseDetail = () => {
             {/* Course Description */}
             <div>
               <Title level={4} style={{ marginBottom: "16px" }}>
-                Mô tả
+                Mô tả chung
               </Title>
-              <Paragraph style={{ color: "#242424", fontWeight: 400, lineHeight: "1.6", fontSize: 16 }}>
-                Khóa học Toán nền tảng lớp 12 được thiết kế nhằm giúp học sinh nắm vững kiến thức cốt lõi của chương
-                trình Toán lớp 12, tạo nền tảng vững chắc cho kỳ thi tốt nghiệp THPT và xét tuyển đại học. Nội dung học
-                tập đề hiệu, bài giảng sức tích, phù hợp với mọi trình độ học sinh.
-              </Paragraph>
+              <p style={{ color: "#242424", fontWeight: 400, lineHeight: "1.6", fontSize: 16 }}  
+                dangerouslySetInnerHTML={{ __html: description?.data?.mo_ta_chung }}
+              >
+              </p> 
             </div>
 
             <Divider />
@@ -445,17 +700,72 @@ const CourseDetail = () => {
               <Title level={4} style={{ marginBottom: "16px" }}>
                 Giới thiệu khóa học
               </Title>
-              <Paragraph style={{ color: "#242424", fontWeight: 400, lineHeight: "1.6", fontSize: 16 }}>
-                Khóa học cung cấp hệ thống kiến thức tổng hợp và chuẩn hóa theo chương trình của Bộ Giáo dục, tập trung
-                vào các chuyên đề trong tâm như: hàm số, mũ – logarit, nguyên hàm – tích phân, số phức, hình học không
-                gian Oxyz, và xác suất.
-              </Paragraph>
-              <Paragraph style={{ color: "#242424", fontWeight: 400, lineHeight: "1.6", fontSize: 16 }}>
-                Học viên sẽ được tiếp cận phương pháp giải nhanh, tư duy logic, và cách phân tích đề thi hiệu quả qua
-                các video bài giảng, bài tập minh họa và đề kiểm tra định kỳ.
-              </Paragraph>
+              <p style={{ color: "#242424", fontWeight: 400, lineHeight: "1.6", fontSize: 16 }}  
+                dangerouslySetInnerHTML={{ __html: description?.data?.gioi_thieu }}
+              >
+              </p> 
             </div>
 
+            <Divider />
+
+            {/* Hình thức đào tạo */}
+            <div >
+              <Title level={4} style={{ marginBottom: "16px" }}>
+                Hình thức đào tạo
+              </Title>
+              <p style={{ color: "#242424", fontWeight: 400, lineHeight: "1.6", fontSize: 16 }}  
+                dangerouslySetInnerHTML={{ __html: description?.data?.hinh_thuc_dao_tao }}
+              >
+              </p> 
+            </div>
+
+            <Divider />
+            {/* Mục tiêu cam kết */}
+            <div >
+              <Title level={4} style={{ marginBottom: "16px" }}>
+                Mục tiêu cam kết
+              </Title>
+              <p style={{ color: "#242424", fontWeight: 400, lineHeight: "1.6", fontSize: 16 }}  
+                dangerouslySetInnerHTML={{ __html: description?.data?.muc_tieu_cam_ket }}
+              >
+              </p>
+            </div>
+
+            {/* Đối tượng đào tạo */}
+            <Divider />
+            <div >
+              <Title level={4} style={{ marginBottom: "16px" }}>
+                Đối tượng đào tạo
+              </Title>
+              <p style={{ color: "#242424", fontWeight: 400, lineHeight: "1.6", fontSize: 16 }}
+                dangerouslySetInnerHTML={{ __html: description?.data?.doi_tuong_dao_tao }}
+              >
+              </p>
+            </div>
+
+            {/* Nội dung chi tiết khóa học */}
+            <Divider />
+            <div >
+              <Title level={4} style={{ marginBottom: "16px" }}>
+                Nội dung chi tiết khóa học
+              </Title>
+              <p style={{ color: "#242424", fontWeight: 400, lineHeight: "1.6", fontSize: 16 }}
+                dangerouslySetInnerHTML={{ __html: description?.data?.noi_dung_chi_tiet }}
+              >
+              </p>
+            </div>
+
+            {/* Xếp lớp và thời gian đào tạo */}
+            <Divider />
+            <div >
+              <Title level={4} style={{ marginBottom: "16px" }}>
+                Xếp lớp và thời gian đào tạo
+              </Title>
+              <p style={{ color: "#242424", fontWeight: 400, lineHeight: "1.6", fontSize: 16 }}
+                dangerouslySetInnerHTML={{ __html: description?.data?.xep_lop_va_thoi_gian_dao_tao }}
+              >
+              </p>
+            </div>
           </Card>
         </Col>
 
@@ -483,16 +793,15 @@ const CourseDetail = () => {
                   renderItem={(chapter, index) => {
                     const menu = (
                       <Menu>
-                        <Menu.Item key="hide" icon={<EyeOutlined />}>
-                          Ẩn chương
+                        <Menu.Item key="hide" icon={<EyeOutlined />} onClick={() => handleHideModule(chapter)}>
+                          {chapter.trang_thai ? "Hiện chương" : "Ẩn chương"}
                         </Menu.Item>
                         <Menu.Item key="edit" icon={<EditOutlined />}>
                           Sửa chương
                         </Menu.Item>
                         <Menu.Item key="delete" icon={<DeleteOutlined />} danger
                           onClick={() => {
-                            setExamToDelete(chapter)
-                            setDeleteModalVisible(true)
+                            handleDeleteModun(chapter.id);
                           }}
                         >
                           Xóa chương
@@ -502,24 +811,26 @@ const CourseDetail = () => {
                     return (
                       <List.Item style={{ padding: "12px 0", border: "none" }}>
                         <div style={{ display: "flex", width: "100%", alignItems: "flex-start", cursor: "pointer" }}
-                          onClick={() => handleChapterClick(chapter)}
                         >
                           <Avatar
                             shape="square"
                             size={60}
                             src={chapter.thumbnail}
                             style={{ backgroundColor: chapter.bgColor, marginRight: "12px", flexShrink: 0 }}
+                            onClick={() => handleChapterClick(chapter)}
                           />
                           <div style={{ flex: 1, minWidth: 0 }}>
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                              <Text strong style={{ fontSize: "16px", lineHeight: "1.4", marginBottom: "8px" }}>
+                              <Text strong style={{ fontSize: "16px", lineHeight: "1.4", marginBottom: "8px" }}
+                                onClick={() => handleChapterClick(chapter)}
+                              >
                                 {chapter.title}
                               </Text>
                               <Dropdown overlay={menu} trigger={["click"]} placement="bottomRight">
-                                <Button type="text" size="small" icon={<MoreOutlined />} />
+                                <Button type="text" size="small" icon={<MoreOutlined />} onClick={(e) => e.stopPropagation()}/>
                               </Dropdown>
                             </div>
-                            <Space size="large" style={{ color: "#8c8c8c", fontSize: "14px" }}>
+                            <Space size="large" style={{ color: "#8c8c8c", fontSize: "14px" }} onClick={() => handleChapterClick(chapter)}>
                               <Space size={4}>
                                 <PlayCircleOutlined />
                                 <span>{chapter.lessons} chuyên đề</span>
@@ -582,10 +893,7 @@ const CourseDetail = () => {
               addChapterForm
                 .validateFields()
                 .then((values) => {
-                  console.log("Form values:", values)
-                  message.success("Thêm chương học thành công!")
-                  setIsAddChapterModalVisible(false)
-                  addChapterForm.resetFields()
+                  createModule(values)
                 })
                 .catch((error) => {
                   console.log("Validation failed:", error)
@@ -603,29 +911,26 @@ const CourseDetail = () => {
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
-                label={
-                  <span>Tên chương học</span>
-                }
-                name="chapterName"
+                label="Tên chương học"
+                name="ten_mo_dun"
                 rules={[{ required: true, message: "Vui lòng nhập tên chương học" }]}
               >
-                <Input placeholder="Nhập" />
+                <Input placeholder="Nhập tên chương học" />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
-                label={
-                  <span>Lĩnh vực</span>
-                }
-                name="field"
-                rules={[{ required: true, message: "Vui lòng chọn lĩnh vực" }]}
+                className="input-col"
+                label="Lĩnh vực"
+                name="linh_vuc"
+                rules={[
+                    {
+                      required: true,
+                      message: 'Tên lĩnh vực là trường bắt buộc.',
+                    },
+                ]}
               >
-                <Select placeholder="Chọn">
-                  <Option value="math">Toán học</Option>
-                  <Option value="physics">Vật lý</Option>
-                  <Option value="chemistry">Hóa học</Option>
-                  <Option value="literature">Văn học</Option>
-                </Select>
+                <Input placeholder="Nhập tên lĩnh vực"/>
               </Form.Item>
             </Col>
           </Row>
@@ -633,104 +938,102 @@ const CourseDetail = () => {
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
-                label={
-                  <span>Khung chương trình</span>
-                }
-                name="curriculum"
+                label="Khung chương trình"
+                name="khung_ct_id"
                 rules={[{ required: true, message: "Vui lòng chọn khung chương trình" }]}
               >
-                <Select placeholder="Chọn" defaultValue="math-foundation-12">
-                  <Option value="math-foundation-12">Khóa học Toán nền tảng lớp 12</Option>
-                  <Option value="math-advanced-12">Khóa học Toán nâng cao lớp 12</Option>
-                </Select>
+                {renderProgramme()}
               </Form.Item>
             </Col>
+
             <Col span={12}>
-              <Form.Item
-                label={
-                  <span>Khóa học</span>
-                }
-                name="course"
-                rules={[{ required: true, message: "Vui lòng chọn khóa học" }]}
-              >
-                <Select placeholder="Chọn">
-                  <Option value="course1">Khóa học 1</Option>
-                  <Option value="course2">Khóa học 2</Option>
-                </Select>
-              </Form.Item>
+              <Form.Item className="input-col" label="Khóa học" name="khoa_hoc_id" 
+                  rules={[{
+                    required: true,
+                    message: 'Khóa học là bắt buộc',
+                  },]}
+                >
+                    {renderCourses()}
+                </Form.Item>
             </Col>
           </Row>
 
           <Row gutter={16}>
             <Col span={12}>
-              <Form.Item label="Chuyên ngành" name="major">
-                <Select placeholder="Chọn" defaultValue="math">
-                  <Option value="math">Toán</Option>
-                  <Option value="physics">Vật lý</Option>
-                  <Option value="chemistry">Hóa học</Option>
-                </Select>
-              </Form.Item>
+              <Form.Item
+                label="Chuyên ngành"
+                className="input-col"
+                name="chuyen_nganh"
+                rules={[]} 
+              >
+                {renderMajor()}
+              </Form.Item>     
             </Col>
+
             <Col span={12}>
-              <Form.Item label="Giáo viên" name="teacher">
-                <Select placeholder="Chọn" defaultValue="nguyen">
-                  <Option value="nguyen">
-                    <Space>
-                      <Avatar size="small" style={{ backgroundColor: "#ff4d4f" }}>
-                        LG
-                      </Avatar>
-                      Nguyễn
-                    </Space>
-                  </Option>
-                  <Option value="tran">
-                    <Space>
-                      <Avatar size="small" style={{ backgroundColor: "#52c41a" }}>
-                        TH
-                      </Avatar>
-                      Trần
-                    </Space>
-                  </Option>
-                </Select>
+              <Form.Item
+                  name="loai_tong_hop"
+                label="Loại mô đun"
+                initialValue={1}
+                rules={[
+                  {
+                    required: true,
+                    message: 'Loại mô đun là trường bắt buộc.',
+                  },
+                ]}
+              >
+                  <Radio.Group>
+                    <Radio className="option-payment" value={1}>
+                      Phần thi tổng hợp
+                    </Radio>
+                    {/* <Radio className="option-payment" value={2}>
+                      Phần thi mô đun
+                    </Radio> */}
+                    <Radio className="option-payment" value={0}>
+                      Phần bài học
+                    </Radio>
+                  </Radio.Group>
               </Form.Item>
             </Col>
           </Row>
 
-          <Form.Item label="Mô tả chương học" name="description">
+          <Form.Item label="Mô tả chương học" name="mo_ta">
             <Input.TextArea
               rows={4}
               placeholder="Mô tả về chương học"
-              maxLength={300}
+              maxLength={1000}
               showCount
               style={{ resize: "none" }}
             />
           </Form.Item>
 
-          <Form.Item label="Ảnh đại diện" name="image">
-            <Upload.Dragger name="image" multiple={false} beforeUpload={() => false} style={{ padding: "20px" }}>
+          <Form.Item className="input-col" label="Ảnh đại diện" name="anh_dai_dien" rules={[]}>
+            <Dragger {...propsImage} maxCount={1}
+              listType="picture"
+              className="upload-list-inline"
+            >
               <p className="ant-upload-drag-icon">
-                <UploadOutlined style={{ fontSize: "24px", color: "#d9d9d9" }} />
+                <UploadOutlined />
               </p>
-              <p className="ant-upload-text">Click hoặc kéo file vào đây</p>
-              <p className="ant-upload-hint" style={{ color: "#8c8c8c" }}>
-                Dung lượng không quá 5 mb
-              </p>
-            </Upload.Dragger>
+              <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
+            </Dragger>
           </Form.Item>
 
-          <Form.Item label="Video đại diện" name="video">
-            <Upload.Dragger name="video" multiple={false} beforeUpload={() => false} style={{ padding: "20px" }}>
+          <Form.Item className="input-col" label="Video đại diện" name="video_gioi_thieu" rules={[]}>
+            <Dragger {...propsVideo} maxCount={1}
+              listType="picture"
+              className="upload-list-inline"
+            >
               <p className="ant-upload-drag-icon">
-                <UploadOutlined style={{ fontSize: "24px", color: "#d9d9d9" }} />
+                <UploadOutlined />
               </p>
-              <p className="ant-upload-text">Click hoặc kéo file vào đây</p>
-              <p className="ant-upload-hint" style={{ color: "#8c8c8c" }}>
-                Dung lượng không quá 100 mb
-              </p>
-            </Upload.Dragger>
-          </Form.Item>
+              <p className="ant-upload-text bold">Click hoặc kéo thả video đại diện vào đây</p>
+            </Dragger>
+          </Form.Item> 
         </Form>
       </Modal>
       
+      {/* Delete Exam Confirmation Modal */}
       <Modal
         title={null}
         open={deleteModalVisible}

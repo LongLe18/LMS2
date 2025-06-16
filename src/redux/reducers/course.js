@@ -62,6 +62,22 @@ export default function courseReducer(state = initState, action) {
                 ...state,
                 list: { ...state.list, loading: false, error: action.error },
             };
+        // get a list of courses's teacher
+        case courseActions.GET_COURSES_TEACHER:
+            return {
+                ...state,
+                list: { ...state.list, loading: true },
+            };
+        case courseActions.GET_COURSES_TEACHER_SUCCESS:
+            return {
+                ...state,
+                list: { ...state.list, loading: false, result: action.result },
+            };
+        case courseActions.GET_COURSES_TEACHER_FAILED:
+            return {
+                ...state,
+                list: { ...state.list, loading: false, error: action.error },
+            };
         // delete a course
         case courseActions.DELETE_COURSE:
             return {

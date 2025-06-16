@@ -44,9 +44,16 @@ const ContentComponent = (props) => {
     }, [props.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
     if (modules.status === 'success') {
-        var temp = modules.data.filter(obj => { // Lọc những phần đang hoạt động
+        const temp = modules.data.filter(obj => { // Lọc những phần đang hoạt động
             return obj.trang_thai === 1;
-        })
+        }).sort((a, b) => {
+            // If one is tong_hop and the other is not, place tong_hop after
+            if (a.loai_tong_hop === 1 && b.loai_tong_hop !== 1) return 1;
+            if (a.loai_tong_hop !== 1 && b.loai_tong_hop === 1) return -1;
+            // Otherwise sort by ngay_tao
+            return new Date(a.ngay_tao) - new Date(b.ngay_tao);
+          });
+
         for (let module of temp) modulesFilter.push(module);
     }
 
