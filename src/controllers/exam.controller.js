@@ -429,6 +429,7 @@ const findAll = async (req, res) => {
             khoa_hoc.ten_khoa_hoc, 
             mo_dun.ten_mo_dun, 
             chuyen_de.ten_chuyen_de,
+            loai_de_thi.mo_ta,
             tieu_chi_de_chuyen_de.thoi_gian tcdcd_thoi_gian,
             tieu_chi_de_chuyen_de.so_cau_hoi tcdcd_so_cau_hoi,
             tieu_chi_de_mo_dun.thoi_gian tcdmd_thoi_gian,
@@ -445,6 +446,7 @@ const findAll = async (req, res) => {
         LEFT JOIN khoa_hoc ON de_thi.khoa_hoc_id = khoa_hoc.khoa_hoc_id
         LEFT JOIN mo_dun ON de_thi.mo_dun_id = mo_dun.mo_dun_id
         LEFT JOIN chuyen_de ON chuyen_de.chuyen_de_id = de_thi.chuyen_de_id
+        LEFT JOIN loai_de_thi ON loai_de_thi.loai_de_thi_id = de_thi.loai_de_thi_id
         LEFT JOIN tieu_chi_de_chuyen_de 
             ON de_thi.mo_dun_id = tieu_chi_de_chuyen_de.mo_dun_id AND de_thi.loai_de_thi_id = 1
         LEFT JOIN tieu_chi_de_mo_dun

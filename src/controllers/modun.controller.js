@@ -560,7 +560,7 @@ const findOne = async (req, res) => {
 };
 
 const create = async (req, res) => {
-    if (req.body.loai_tong_hop === 'true') {
+    if (req.body.loai_tong_hop === '1') {
         const existingModun = await Modun.findOne({
             where: {
                 khoa_hoc_id: req.body.khoa_hoc_id,
