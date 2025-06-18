@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const ExcelJS = require('exceljs');
-const { Op, literal } = require('sequelize');
+const { Op, literal, fn, col } = require('sequelize');
 
 const {
     Exam,
@@ -2339,7 +2339,7 @@ const dashBoardByTeacher = async (req, res) => {
         LEFT JOIN de_thi_hoc_vien dthv ON ldt.loai_de_thi_id = dthv.loai_de_thi_id
         LEFT JOIN khoa_hoc kh ON dthv.khoa_hoc_id = kh.khoa_hoc_id
         WHERE
-            ldt.loai_de_thi_id IN (1, 2, 3)
+            dthv.loai_de_thi_id IN (1, 2, 3)
             AND kh.giao_vien_id = :giao_vien_id
         GROUP BY
             ldt.loai_de_thi_id, ldt.mo_ta
@@ -2349,7 +2349,7 @@ const dashBoardByTeacher = async (req, res) => {
         {
             type: sequelize.QueryTypes.SELECT,
             replacements: {
-                giao_vien_id: req.userId,
+                giao_vien_id: 40,
             },
         }
     );
@@ -2362,8 +2362,50 @@ const dashBoardByTeacher = async (req, res) => {
 };
 
 const findAllv2 = async (req, res) => {
-    const { count, rows } = await Exam.findAndCountAll({
-        attributes: ['de_thi_id', 'ten_de_thi', 'khoa_hoc_id', 'ngay_tao'],
+    const pageIndex = Number(req.query.pageIndex || 1);
+    const pageSize = Number(req.query.pageSize || 10);
+    const offset = (pageIndex - 1) * pageSize;
+
+    const whereExam = {
+        ...(req.query.de_thi_id && { de_thi_id: req.query.de_thi_id }),
+        ...(req.query.loai_de_thi_id && {
+            loai_de_thi_id: req.query.loai_de_thi_id,
+        }),
+        ...(req.query.khoa_hoc_id && { khoa_hoc_id: req.query.khoa_hoc_id }),
+        ...(req.query.search && {
+            [Op.or]: [{ ten_de_thi: { [Op.like]: `%${req.query.search}%` } }],
+        }),
+    };
+
+    const { count, rows: examIds } = await Exam.findAndCountAll({
+        include: [
+            { model: Course, attributes: ['khoa_hoc_id', 'giao_vien_id'] },
+        ],
+        where: {
+            '$khoa_hoc.giao_vien_id$': req.userId,
+            ...whereExam,
+        },
+        attributes: ['de_thi_id'],
+        offset,
+        limit: pageSize,
+        order: [
+            req.query.sortBy
+                ? req.query.sortBy.split(',')
+                : ['ngay_tao', 'DESC'],
+        ],
+        distinct: true,
+    });
+
+    const de_thi_ids = examIds.map((e) => e.de_thi_id);
+
+    const rows = await Exam.findAll({
+        attributes: [
+            'de_thi_id',
+            'ten_de_thi',
+            'khoa_hoc_id',
+            'ngay_tao',
+            [fn('COUNT', col('cau_hoi_de_this.chdt_id')), 'so_cau_hoi'],
+        ],
         include: [
             {
                 model: StudentExam,
@@ -2381,7 +2423,6 @@ const findAllv2 = async (req, res) => {
                         'xep_hang',
                     ],
                 ],
-                required: true,
                 include: {
                     model: Student,
                     as: 'hoc_vien',
@@ -2389,17 +2430,14 @@ const findAllv2 = async (req, res) => {
                     required: true,
                 },
             },
-            { model: Course, attributes: ['khoa_hoc_id', 'giao_vien_id'] },
+            {
+                model: ExamQuestion,
+                attributes: [],
+                required: false,
+            },
         ],
         where: {
-            '$khoa_hoc.giao_vien_id$': req.userId,
-            ...(req.query.de_thi_id && { de_thi_id: req.query.de_thi_id }),
-            ...(req.query.loai_de_thi_id && {
-                loai_de_thi_id: req.query.loai_de_thi_id,
-            }),
-            ...(req.query.khoa_hoc_id && {
-                khoa_hoc_id: req.query.khoa_hoc_id,
-            }),
+            de_thi_id: { [Op.in]: de_thi_ids },
             ...(req.query.search && {
                 [Op.or]: [
                     { ten_de_thi: { [Op.like]: `%${req.query.search}%` } },
@@ -2410,16 +2448,26 @@ const findAllv2 = async (req, res) => {
                     },
                 ],
             }),
+            ...whereExam,
         },
         subQuery: false,
-        offset:
-            (Number(req.query.pageIndex || 1) - 1) *
-            Number(req.query.pageSize || 10),
-        limit: Number(req.query.pageSize || 10),
         order: [
             req.query.sortBy
                 ? req.query.sortBy.split(',')
                 : ['ngay_tao', 'DESC'],
+        ],
+        group: [
+            'de_thi_id',
+            'ten_de_thi',
+            'khoa_hoc_id',
+            'ngay_tao',
+            'de_thi_hoc_viens.dthv_id',
+            'de_thi_hoc_viens.ngay_tao',
+            'de_thi_hoc_viens.so_cau_tra_loi_dung',
+            'de_thi_hoc_viens.so_cau_tra_loi_sai',
+            'de_thi_hoc_viens.ket_qua_diem',
+            'de_thi_hoc_viens->hoc_vien.hoc_vien_id',
+            'de_thi_hoc_viens->hoc_vien.ho_ten',
         ],
     });
 
