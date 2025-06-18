@@ -2349,7 +2349,7 @@ const dashBoardByTeacher = async (req, res) => {
         {
             type: sequelize.QueryTypes.SELECT,
             replacements: {
-                giao_vien_id: 40,
+                giao_vien_id: req.userId,
             },
         }
     );
