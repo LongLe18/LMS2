@@ -89,6 +89,7 @@ router.get(
     authToken,
     tryCatch(studentExamController.dashBoardByTeacher)
 );
+router.get('/export', authToken, tryCatch(studentExamController.exportStudentExam));
 router.get('/v2', authToken, tryCatch(studentExamController.findAllv2));
 router.get('/:id', authToken, tryCatch(studentExamController.findOne));
 router.get('/', authToken, tryCatch(studentExamController.findAll));

@@ -1901,7 +1901,7 @@ const findAllByThematicId = async (req, res) => {
     });
 
     let { count, rows } = await Exam.findAndCountAll({
-        attributes: ['de_thi_id', 'ten_de_thi', 'trang_thai'],
+        attributes: ['de_thi_id', 'ten_de_thi', 'trang_thai', 'xuat_ban'],
         include: [
             {
                 model: Course,
@@ -1960,7 +1960,7 @@ const findAllByModunId = async (req, res) => {
     });
 
     let { count, rows } = await Exam.findAndCountAll({
-        attributes: ['de_thi_id', 'ten_de_thi', 'trang_thai'],
+        attributes: ['de_thi_id', 'ten_de_thi', 'trang_thai', 'xuat_ban'],
         include: [
             {
                 model: Course,
@@ -2016,7 +2016,7 @@ const findAllByCourseId = async (req, res) => {
     });
 
     let { count, rows } = await Exam.findAndCountAll({
-        attributes: ['de_thi_id', 'ten_de_thi', 'trang_thai'],
+        attributes: ['de_thi_id', 'ten_de_thi', 'trang_thai', 'xuat_ban'],
         include: [
             {
                 model: Course,

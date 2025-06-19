@@ -23,6 +23,8 @@ const {
     Course,
 } = require('../models');
 const sequelize = require('../utils/db');
+const moment = require('moment');
+const { resolveSoa } = require('dns');
 
 function removeVietnameseTones(str) {
     return str
@@ -2399,13 +2401,7 @@ const findAllv2 = async (req, res) => {
     const de_thi_ids = examIds.map((e) => e.de_thi_id);
 
     const rows = await Exam.findAll({
-        attributes: [
-            'de_thi_id',
-            'ten_de_thi',
-            'khoa_hoc_id',
-            'ngay_tao',
-            [fn('COUNT', col('cau_hoi_de_this.chdt_id')), 'so_cau_hoi'],
-        ],
+        attributes: ['de_thi_id', 'ten_de_thi', 'khoa_hoc_id', 'ngay_tao'],
         include: [
             {
                 model: StudentExam,
@@ -2430,11 +2426,6 @@ const findAllv2 = async (req, res) => {
                     required: true,
                 },
             },
-            {
-                model: ExamQuestion,
-                attributes: [],
-                required: false,
-            },
         ],
         where: {
             de_thi_id: { [Op.in]: de_thi_ids },
@@ -2456,19 +2447,6 @@ const findAllv2 = async (req, res) => {
                 ? req.query.sortBy.split(',')
                 : ['ngay_tao', 'DESC'],
         ],
-        group: [
-            'de_thi_id',
-            'ten_de_thi',
-            'khoa_hoc_id',
-            'ngay_tao',
-            'de_thi_hoc_viens.dthv_id',
-            'de_thi_hoc_viens.ngay_tao',
-            'de_thi_hoc_viens.so_cau_tra_loi_dung',
-            'de_thi_hoc_viens.so_cau_tra_loi_sai',
-            'de_thi_hoc_viens.ket_qua_diem',
-            'de_thi_hoc_viens->hoc_vien.hoc_vien_id',
-            'de_thi_hoc_viens->hoc_vien.ho_ten',
-        ],
     });
 
     return res.status(200).send({
@@ -2480,6 +2458,252 @@ const findAllv2 = async (req, res) => {
         totalPage: Math.ceil(count / Number(req.query.pageSize || 10)),
         message: null,
     });
+};
+
+const exportStudentExam = async (req, res) => {
+    try {
+        const content = fs.readFileSync(
+            path.join(
+                process.cwd(),
+                '/public/templates/export_student_examv3.xlsx'
+            )
+        );
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.load(content);
+
+        workbook.creator = 'Me';
+        workbook.lastModifiedBy = 'Her';
+        workbook.created = new Date();
+        const workSheet = workbook.getWorksheet('Sheet1');
+
+        const whereExam = {
+            ...(req.query.de_thi_id && { de_thi_id: req.query.de_thi_id }),
+            ...(req.query.loai_de_thi_id && {
+                loai_de_thi_id: req.query.loai_de_thi_id,
+            }),
+            ...(req.query.khoa_hoc_id && {
+                khoa_hoc_id: req.query.khoa_hoc_id,
+            }),
+            ...(req.query.search && {
+                [Op.or]: [
+                    { ten_de_thi: { [Op.like]: `%${req.query.search}%` } },
+                ],
+            }),
+        };
+
+        const examIds = await Exam.findAll({
+            include: [
+                { model: Course, attributes: ['khoa_hoc_id', 'giao_vien_id'] },
+            ],
+            where: {
+                '$khoa_hoc.giao_vien_id$': 40,
+                ...whereExam,
+            },
+            attributes: ['de_thi_id'],
+            order: [
+                req.query.sortBy
+                    ? req.query.sortBy.split(',')
+                    : ['ngay_tao', 'DESC'],
+            ],
+            distinct: true,
+        });
+
+        const de_thi_ids = examIds.map((e) => e.de_thi_id);
+
+        const rows = await Exam.findAll({
+            attributes: ['de_thi_id', 'ten_de_thi', 'khoa_hoc_id', 'ngay_tao'],
+            include: [
+                {
+                    model: StudentExam,
+                    as: 'de_thi_hoc_viens',
+                    attributes: [
+                        'dthv_id',
+                        'hoc_vien_id',
+                        'ngay_tao',
+                        'so_cau_tra_loi_dung',
+                        'so_cau_tra_loi_sai',
+                        'ket_qua_diem',
+                        [
+                            literal(
+                                `RANK() OVER (PARTITION BY de_thi_hoc_viens.de_thi_id ORDER BY ket_qua_diem DESC)`
+                            ),
+                            'xep_hang',
+                        ],
+                    ],
+                    include: {
+                        model: Student,
+                        as: 'hoc_vien',
+                        attributes: ['hoc_vien_id', 'ho_ten'],
+                        required: true,
+                    },
+                },
+            ],
+            where: {
+                de_thi_id: { [Op.in]: de_thi_ids },
+                ...(req.query.search && {
+                    [Op.or]: [
+                        { ten_de_thi: { [Op.like]: `%${req.query.search}%` } },
+                        {
+                            '$de_thi_hoc_viens.hoc_vien.ho_ten$': {
+                                [Op.like]: `%${req.query.search}%`,
+                            },
+                        },
+                    ],
+                }),
+                ...whereExam,
+            },
+            subQuery: false,
+            order: [
+                req.query.sortBy
+                    ? req.query.sortBy.split(',')
+                    : ['ngay_tao', 'DESC'],
+                ['de_thi_hoc_viens', 'hoc_vien_id', 'DESC'],
+                ['de_thi_hoc_viens', 'ngay_tao', 'ASC'],
+            ],
+        });
+        let indexCol;
+        let indexRow;
+        let count;
+        let row;
+        let order = 1;
+        let index = 1;
+        let index2 = 0;
+        let index3 = 1;
+        let studentId = 0;
+        let name;
+
+        indexRow = 5;
+        for (const item of rows) {
+            index2 = 0;
+            studentId = 0;
+            for (const item2 of item.de_thi_hoc_viens) {
+                if (studentId === 0 || studentId !== item2.hoc_vien_id) {
+                    if (name) {
+                        workSheet.mergeCells(
+                            indexRow + index2 - index3 + 1,
+                            3,
+                            indexRow + index2 - 1,
+                            3
+                        );
+                        row = workSheet.getRow(indexRow + index2 - index3 + 1);
+                        row.getCell(3).alignment = {
+                            vertical: 'middle',
+                            horizontal: 'left',
+                            wrapText: true,
+                        };
+                        row.getCell(3).value = name;
+                    }
+
+                    name = item2.hoc_vien.ho_ten;
+                    studentId = item2.hoc_vien_id;
+                    index3 = 1;
+                }
+
+                row = workSheet.getRow(indexRow + index2);
+
+                row.getCell(4).value = `Lần ${index3}`;
+                row.getCell(5).value = moment(item2.ngay_tao).format(
+                    'DD/MM/YYYY - HH:mm'
+                );
+                row.getCell(6).value = !(
+                    item2.so_cau_tra_loi_dung === null &&
+                    item2.so_cau_tra_loi_sai === null
+                )
+                    ? `${item2.so_cau_tra_loi_dung}/${
+                          item2.so_cau_tra_loi_dung + item2.so_cau_tra_loi_sai
+                      }`
+                    : 'Chưa hoàn thành';
+                row.getCell(7).value = item2.ket_qua_diem;
+                row.getCell(8).value = item2.dataValues.xep_hang;
+
+                index2++;
+                index3++;
+            }
+
+            if (item.de_thi_hoc_viens.length === 0) {
+                if (name) {
+                    workSheet.mergeCells(
+                        indexRow + index2 - index3 + 1,
+                        3,
+                        indexRow + index2 - 1,
+                        3
+                    );
+                    row = workSheet.getRow(indexRow + index2 - index3 + 1);
+                    row.getCell(3).alignment = {
+                        vertical: 'middle',
+                        horizontal: 'left',
+                        wrapText: true,
+                    };
+                    row.getCell(3).value = name;
+                }
+
+                name = null;
+            }
+
+            if (index2 >= 1) {
+                workSheet.mergeCells(indexRow, 2, indexRow + index2 - 1, 2);
+                row = workSheet.getRow(indexRow);
+                row.getCell(2).alignment = {
+                    vertical: 'middle',
+                    horizontal: 'left',
+                    wrapText: true,
+                };
+                row.getCell(2).value = item.ten_de_thi;
+
+                workSheet.mergeCells(indexRow, 1, indexRow + index2 - 1, 1);
+                row = workSheet.getRow(indexRow);
+                row.getCell(1).alignment = {
+                    vertical: 'middle',
+                    horizontal: 'center',
+                    wrapText: true,
+                };
+                row.getCell(1).value = order;
+
+                indexRow = indexRow + index2 - 1;
+            } else {
+                row = workSheet.getRow(indexRow);
+                row.getCell(1).alignment = {
+                    vertical: 'middle',
+                    horizontal: 'center',
+                    wrapText: true,
+                };
+                row.getCell(1).value = order;
+
+                row.getCell(2).alignment = {
+                    vertical: 'middle',
+                    horizontal: 'left',
+                    wrapText: true,
+                };
+                row.getCell(2).value = item.ten_de_thi;
+            }
+
+            indexRow++;
+            order++;
+        }
+
+        const filename =
+            removeVietnameseTones('export').toUpperCase() + '.xlsx';
+        res.setHeader(
+            'Content-Type',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        );
+        res.setHeader(
+            'Content-Disposition',
+            `attachment; filename="${filename}"; filename*=UTF-8''${encodeURIComponent(
+                filename
+            )}`
+        );
+        await workbook.xlsx.write(res);
+
+        return res.end();
+    } catch (err) {
+        console.log(err);
+        return res.status(500).send({
+            status: 'error',
+            data: null,
+            message: err,
+        });
+    }
 };
 
 module.exports = {
@@ -2507,4 +2731,5 @@ module.exports = {
     exportELearningv2,
     dashBoardByTeacher,
     findAllv2,
+    exportStudentExam,
 };
