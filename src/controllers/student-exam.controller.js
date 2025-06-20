@@ -2496,7 +2496,7 @@ const exportStudentExam = async (req, res) => {
                 { model: Course, attributes: ['khoa_hoc_id', 'giao_vien_id'] },
             ],
             where: {
-                '$khoa_hoc.giao_vien_id$': 40,
+                '$khoa_hoc.giao_vien_id$': req.userId,
                 ...whereExam,
             },
             attributes: ['de_thi_id'],
