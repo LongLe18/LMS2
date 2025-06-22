@@ -628,6 +628,11 @@ const findOne = async (req, res) => {
                 where: { khoa_hoc_id: exam.khoa_hoc_id },
             });
             break;
+        case 6:
+            criteria = await DGTDCriteria.findOne({
+                where: { khoa_hoc_id: exam.khoa_hoc_id },
+            });
+            break;
     }
 
     if (!criteria) {
