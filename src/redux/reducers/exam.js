@@ -45,6 +45,11 @@ const initState = {
         loading: false,
         result: {},
         error: null,
+    },
+    statistic: {
+        loading: false,
+        result: {},
+        error: null,
     }
 }
 
@@ -402,6 +407,22 @@ export default function examReducer(state = initState, action) {
                 ...state,
                 listExamsUser: { ...state.listExamsUser, loading: false, error: action.error },
             };
+        ////////////
+        case examActions.GET_EXAMS_USER_V2:
+            return {
+                ...state,
+                listExamsUser: { ...state.listExamsUser, loading: true },
+            };
+        case examActions.GET_EXAMS_USER_V2_SUCCESS:
+            return {
+                ...state,
+                listExamsUser: { ...state.listExamsUser, loading: false, result: action.result },
+            };
+        case examActions.GET_EXAMS_USER_V2_FAILED:
+            return {
+                ...state,
+                listExamsUser: { ...state.listExamsUser, loading: false, error: action.error },
+            };
         //////////////////
         case examActions.EDIT_EXAM_USER:
             return {
@@ -482,6 +503,71 @@ export default function examReducer(state = initState, action) {
                 ...state,
                 examUser: { ...state.examUser, loading: false, error: action.error },
             };
+        ///////////////////////
+        case examActions.GET_SYNTHETIC_EXAM:
+            return {
+                ...state,
+                list: { ...state.list, loading: true },
+            };
+        case examActions.GET_SYNTHETIC_EXAM_SUCCESS:
+            return {
+                ...state,
+                list: { ...state.list, loading: false, result: action.result },
+            };
+        case examActions.GET_SYNTHETIC_EXAM_FAILED:
+            return {
+                ...state,
+                list: { ...state.list, loading: false, error: action.error },
+            };
+        /////////////////
+        case examActions.GET_SYNTHETIC_EXAM_MODULE:
+            return {
+                ...state,
+                list: { ...state.list, loading: true },
+            };
+        case examActions.GET_SYNTHETIC_EXAM_MODULE_SUCCESS:
+            return {
+                ...state,
+                list: { ...state.list, loading: false, result: action.result },
+            };
+        case examActions.GET_SYNTHETIC_EXAM_MODULE_FAILED:
+            return {
+                ...state,
+                list: { ...state.list, loading: false, error: action.error },
+            };
+        //////////////?
+        case examActions.GET_SYNTHETIC_EXAM_THEMATIC:
+            return {
+                ...state,
+                list: { ...state.list, loading: true },
+            };
+        case examActions.GET_SYNTHETIC_EXAM_THEMATIC_SUCCESS:
+            return {
+                ...state,
+                list: { ...state.list, loading: false, result: action.result },
+            };
+        case examActions.GET_SYNTHETIC_EXAM_THEMATIC_FAILED:
+            return {
+                ...state,
+                list: { ...state.list, loading: false, error: action.error },
+            };
+        //////////////?
+        case examActions.GET_STATISTIC_EXAM:
+            return {
+                ...state,
+                statistic: { ...state.statistic, loading: true },
+            };
+        case examActions.GET_STATISTIC_EXAM_SUCCESS:
+            return {
+                ...state,
+                statistic: { ...state.statistic, loading: false, result: action.result },
+            };
+        case examActions.GET_STATISTIC_EXAM_FAILED:
+            return {
+                ...state,
+                statistic: { ...state.statistic, loading: false, error: action.error },
+            };
+        //////////////?
         default:
             return state;
     }

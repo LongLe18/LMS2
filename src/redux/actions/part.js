@@ -6,6 +6,10 @@ export const GET_MODULES = "GET_MODULES";
 export const GET_MODULES_SUCCESS = "GET_MODULES_SUCCESS";
 export const GET_MODULES_FAILED = "GET_MODULES_FAILED";
 
+export const GET_MODULES_TEACHER = "GET_MODULES_TEACHER";
+export const GET_MODULES_TEACHER_SUCCESS = "GET_MODULES_TEACHER_SUCCESS";
+export const GET_MODULES_TEACHER_FAILED = "GET_MODULES_TEACHER_FAILED";
+
 export const GET_MODULES_IDCOURSE = "GET_MODULES_IDCOURSE";
 export const GET_MODULES_IDCOURSE_SUCCESS = "GET_MODULES_IDCOURSE_SUCCESS";
 export const GET_MODULES_IDCOURSE_FAILED = "GET_MODULES_IDCOURSE_FAILED";
@@ -45,6 +49,14 @@ export function getModule(params, callback) {
 export function getModules(params, callback) {
     return {
         type: GET_MODULES,
+        params,
+        callback,
+    };
+}
+
+export function getModulesTeacher(params, callback) {
+    return {
+        type: GET_MODULES_TEACHER,
         params,
         callback,
     };

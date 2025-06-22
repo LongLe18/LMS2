@@ -75,6 +75,10 @@ export const GET_EXAMS_USER = "GET_EXAMS_USER";
 export const GET_EXAMS_USER_SUCCESS = "GET_EXAMS_USER_SUCCESS";
 export const GET_EXAMS_USER_FAILED = "GET_EXAMS_USER_FAILED";
 
+export const GET_EXAMS_USER_V2 = "GET_EXAMS_USER_V2";
+export const GET_EXAMS_USER_V2_SUCCESS = "GET_EXAMS_USER_V2_SUCCESS";
+export const GET_EXAMS_USER_V2_FAILED = "GET_EXAMS_USER_V2_FAILED";
+
 export const CREATE_EXAM_USER = "CREATE_EXAM_USER";
 export const CREATE_EXAM_USER_SUCCESS = "CREATE_EXAM_USER_SUCCESS";
 export const CREATE_EXAM_USER_FAILED = "CREATE_EXAM_USER_FAILED";
@@ -106,6 +110,58 @@ export const GET_CRITERIA_DGNL_ID_FAILED = "GET_CRITERIA_DGNL_ID_FAILED";
 export const GET_CRITERIA_DGTD_ID = "GET_CRITERIA_DGTD_ID";
 export const GET_CRITERIA_DGTD_ID_SUCCESS = "GET_CRITERIA_DGTD_ID_SUCCESS";
 export const GET_CRITERIA_DGTD_ID_FAILED = "GET_CRITERIA_DGTD_ID_FAILED";
+
+// Lấy đề thi tổng hợp của khoá học (giáo viên)
+export const GET_SYNTHETIC_EXAM = "GET_SYNTHETIC_EXAM";
+export const GET_SYNTHETIC_EXAM_SUCCESS = "GET_SYNTHETIC_EXAM_SUCCESS";
+export const GET_SYNTHETIC_EXAM_FAILED = "GET_SYNTHETIC_EXAM_FAILED";
+
+// Lấy đề thi mô đun (giáo viên)
+export const GET_SYNTHETIC_EXAM_MODULE = "GET_SYNTHETIC_EXAM_MODULE";
+export const GET_SYNTHETIC_EXAM_MODULE_SUCCESS = "GET_SYNTHETIC_EXAM_MODULE_SUCCESS";
+export const GET_SYNTHETIC_EXAM_MODULE_FAILED = "GET_SYNTHETIC_EXAM_MODULE_FAILED";
+
+// lấy đề thi chuyên đề (giáo viên)
+export const GET_SYNTHETIC_EXAM_THEMATIC = "GET_SYNTHETIC_EXAM_THEMATIC";
+export const GET_SYNTHETIC_EXAM_THEMATIC_SUCCESS = "GET_SYNTHETIC_EXAM_THEMATIC_SUCCESS";
+export const GET_SYNTHETIC_EXAM_THEMATIC_FAILED = "GET_SYNTHETIC_EXAM_THEMATIC_FAILED";
+
+// Lấy thống kê (giáo viên)
+export const GET_STATISTIC_EXAM = "GET_STATISTIC_EXAM";
+export const GET_STATISTIC_EXAM_SUCCESS = "GET_STATISTIC_EXAM_SUCCESS";
+export const GET_STATISTIC_EXAM_FAILED = "GET_STATISTIC_EXAM_FAILED";
+
+export function getStatisticExam(params, callback) {
+    return {
+        type: GET_STATISTIC_EXAM,
+        params,
+        callback,
+    };
+}
+
+export function getSyntheticExam(params, callback) {
+    return {
+        type: GET_SYNTHETIC_EXAM,
+        params,
+        callback,
+    };
+}
+
+export function getSyntheticExamModule(params, callback) {
+    return {
+        type: GET_SYNTHETIC_EXAM_MODULE,
+        params,
+        callback,
+    };
+}
+
+export function getSyntheticExamThematic(params, callback) {
+    return {
+        type: GET_SYNTHETIC_EXAM_THEMATIC,
+        params,
+        callback,
+    };
+}
 
 export function getExam(params, callback) {
     return {
@@ -279,6 +335,14 @@ export function getExamsUser(params, callback) {
 export function getExamUser(params, callback) {
     return {
         type: GET_EXAM_USER,
+        params,
+        callback
+    }
+}
+
+export function getExamsUserV2(params, callback) {
+    return {
+        type: GET_EXAMS_USER_V2,
         params,
         callback
     }

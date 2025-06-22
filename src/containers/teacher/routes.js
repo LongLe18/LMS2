@@ -11,6 +11,7 @@ import DealerTeacherPage from './views/dealer/dealer';
 import ReplyPage from './views/reply/reply';
 import ReplyDetailPage from './views/reply/detail-reply';
 import ProfilePage from './views/profile/profile';
+import ExamScoreManagement  from './views/exam-score-management/exam-score-management'
 
 import { shouldHaveAccessPermission } from "helpers/common.helper.js";
 
@@ -20,6 +21,7 @@ import {
     DiffOutlined,
     CommentOutlined,
     GlobalOutlined,
+    BarChartOutlined,
 } from '@ant-design/icons';
 
 const routes = [
@@ -65,11 +67,19 @@ const routes = [
     },
     {
         id: "detailModule",
-        path: "/teacher/module-detail/:idModule", // Chuyên đề
+        path: "/teacher/module-detail/:idThematic", // Chuyên đề
         name: "Chi tiết chuyên đề",
         hide: true,
         icon: <GlobalOutlined />,
         render: (props) => <ModuleDetail {...props}/>
+    },
+    {
+        "id": "scorEexam",
+        'path': "/teacher/score-exam",
+        "name": "Quản lý điểm thi",
+        "hide": false,
+        "icon":  <BarChartOutlined />,
+        "render": (props) =>  <ExamScoreManagement {...props}/>
     },
     {
         id: "teaching",

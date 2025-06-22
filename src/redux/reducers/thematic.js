@@ -68,7 +68,23 @@ export default function thematicReducer(state = initState, action) {
                 ...state,
                 list: { ...state.list, loading: false, error: action.error },
             };
-        // delete a course
+        // get a list thematics by teacher
+        case thematicActions.GET_THEMATICS_V2:
+            return {
+                ...state,
+                list: { ...state.list, loading: true },
+            };
+        case thematicActions.GET_THEMATICS_V2_SUCCESS:
+            return {
+                ...state,
+                list: { ...state.list, loading: false, result: action.result },
+            };
+        case thematicActions.GET_THEMATICS_V2_FAILED:
+            return {
+                ...state,
+                list: { ...state.list, loading: false, error: action.error },
+            };
+        // delete a thematic
         case thematicActions.DELETE_THEMATIC:
             return {
                 ...state,

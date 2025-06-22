@@ -119,6 +119,10 @@ export default function PermissionForm({ permissions, data, onValuesChange }) {
         label: "Đề thi",
         group: 'Đề thi'
     }, {
+        type: "examType",
+        label: "Loại Đề thi",
+        group: 'Đề thi'
+    }, {
         type: "examQuestion",
         label: "Câu hỏi thi",
         group: 'Đề thi'

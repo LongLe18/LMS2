@@ -59,7 +59,7 @@ function* fetchExam(payload) {
 
 function* fectchFilter(payload) {
     try {
-        let endpoint = `${config.API_URL}/exam/all_admin?offset=${payload.params.offset}&limit=${payload.params.limit}&trang_thai=${payload.params.status}&khoa_hoc_id=${payload.params.idCourse}&mo_dun_id=${payload.params.idModule}&chuyen_de_id=${payload.params.idThematic}&loai_de_thi_id=${payload.params.idType}&ngay_bat_dau=${payload.params.start}&ngay_ket_thuc=${payload.params.end}&search=${payload.params.search}&xuat_ban=${payload.params.publish}`;
+        let endpoint = `${config.API_URL}/exam/all_admin?pageIndex=${payload.params.offset + 1}&pageSize=${payload.params.limit}&trang_thai=${payload.params.status}&khoa_hoc_id=${payload.params.idCourse}&mo_dun_id=${payload.params.idModule}&chuyen_de_id=${payload.params.idThematic}&loai_de_thi_id=${payload.params.idType}&ngay_bat_dau=${payload.params.start}&ngay_ket_thuc=${payload.params.end}&search=${payload.params.search}&xuat_ban=${payload.params.publish}`;
         const response = yield call(getApiAuth, endpoint);
         const result = yield response.data;
         yield put({ type: actions.exam.FILTER_EXAMS_SUCCESS, result: result });
@@ -503,6 +503,32 @@ function* fetchExamsUser(payload) {
     }
 };
 
+function* fetchExamsUserV2(payload) {
+    try {
+        let endpoint = `${config.API_URL}/student_exam/v2?de_thi_id=${payload.params.idExam}&khoa_hoc_id=${payload.params.idCourse}&loai_de_thi_id=${payload.params.type}&pageSize=${payload.params.pageSize}&pageIndex=${payload.params.pageIndex}`;
+        const response = yield call(getApiAuth, endpoint);
+        const result = yield response.data;
+        yield put({ type: actions.exam.GET_EXAMS_USER_V2_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.exam.GET_EXAMS_USER_V2_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu đề thi học viên thất bại' + messageError),
+            });
+        } 
+    }
+};
+
+
 function* fetchExamUser(payload) {
     try {
         let endpoint = `${config.API_URL}/student_exam/${payload.params.id}`;
@@ -653,6 +679,122 @@ function* deleteExamUser(payload) {
     }
 }
 
+function* fetchExamSynthetic(payload) {
+    try {
+        let endpoint = `${config.API_URL}/exam/by-synthetic?khoa_hoc_id=${payload.params.idCourse}&pageSize=${payload.params.pageSize}&pageIndex=${payload.params.pageIndex}`;
+        const response = yield call(getApiAuth, endpoint);
+        const result = yield response.data;
+        yield put({ type: actions.exam.GET_SYNTHETIC_EXAM_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.exam.GET_SYNTHETIC_EXAM_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu đề thi thất bại' + messageError),
+            });
+        } 
+    }
+};
+
+function* fetchExamSyntheticThematic(payload) {
+    try {
+        let endpoint = `${config.API_URL}/exam/by-thematic?khoa_hoc_id=${payload.params.idCourse}&mo_dun_id=${payload.params.idModule}&chuyen_de_id=${payload.params.idThematic}&pageSize=${payload.params.pageSize}&pageIndex=${payload.params.pageIndex}`;
+        const response = yield call(getApiAuth, endpoint);
+        const result = yield response.data;
+        yield put({ type: actions.exam.GET_SYNTHETIC_EXAM_THEMATIC_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.exam.GET_SYNTHETIC_EXAM_THEMATIC_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu đề thi thất bại' + messageError),
+            });
+        } 
+    }
+};
+
+function* fetchExamSyntheticModule(payload) {
+    try {
+        let endpoint = `${config.API_URL}/exam/by-modun?khoa_hoc_id=${payload.params.idCourse}&mo_dun_id=${payload.params.idModule}&pageSize=${payload.params.pageSize}&pageIndex=${payload.params.pageIndex}`;
+        const response = yield call(getApiAuth, endpoint);
+        const result = yield response.data;
+        yield put({ type: actions.exam.GET_SYNTHETIC_EXAM_MODULE_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.exam.GET_SYNTHETIC_EXAM_MODULE_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu đề thi thất bại' + messageError),
+            });
+        } 
+    }
+};
+
+function* fetchStatisticTeacher(payload) {
+    try {
+        let endpoint = `${config.API_URL}/student_exam/dashboard-by-teacher`;
+        const response = yield call(getApiAuth, endpoint);
+        const result = yield response.data;
+        yield put({ type: actions.exam.GET_STATISTIC_EXAM_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.exam.GET_STATISTIC_EXAM_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu đề thi thất bại' + messageError),
+            });
+        } 
+    }
+}
+
+export function* loadStatisticTeacher() {
+    yield takeEvery(actions.exam.GET_STATISTIC_EXAM, fetchStatisticTeacher);
+}
+
+export function* loadExamSynthetic() {
+    yield takeEvery(actions.exam.GET_SYNTHETIC_EXAM, fetchExamSynthetic);
+}
+
+export function* loadExamSyntheticModule() {
+    yield takeEvery(actions.exam.GET_SYNTHETIC_EXAM_MODULE, fetchExamSyntheticModule);
+}
+
+export function* loadExamSyntheticThematic() {
+    yield takeEvery(actions.exam.GET_SYNTHETIC_EXAM_THEMATIC, fetchExamSyntheticThematic);
+}
+
 export function* loadExams() {
     yield takeEvery(actions.exam.GET_EXAMS, fetchExams);
 }
@@ -732,6 +874,10 @@ export function* loadExamCourseOnline() {
 
 export function* loadExamUser() {
     yield takeEvery(actions.exam.GET_EXAM_USER, fetchExamUser);
+}
+
+export function* loadExamsUserV2() {
+    yield takeEvery(actions.exam.GET_EXAMS_USER_V2, fetchExamsUserV2);
 }
 
 export function* loadExamsUser() {

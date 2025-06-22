@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom"
 import { diff } from "helpers/common.helper";
 import Hashids from "hashids";
 
-import { Card, Avatar, Typography, Space, Button, Input, Upload, Row, Col, 
+import { Card, Avatar, Typography, Space, Button, Upload, Row, Col, 
     message, Dropdown, Menu, Form, notification, Modal, } from "antd"
 import { DashOutlined, SendOutlined, UploadOutlined, ExclamationCircleOutlined } from "@ant-design/icons"
 import './css/detail-reply.css'
@@ -26,7 +26,6 @@ const ReplyDetail = () => {
     const hashids = new Hashids();
     const [form] = Form.useForm();
 
-    const [replyText, setReplyText] = useState("")
     const [state, setState] = useState({
         comment: '',
         idComment: 0,

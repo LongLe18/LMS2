@@ -3,9 +3,8 @@ import moment from "moment";
 // component
 import AppFilter from "components/common/AppFilter";
 import { Row, Col, Form, Input, Button, Space, Select, Modal,
-  Table, Tag, Avatar, Upload, message, notification, Radio } from "antd";
+  Table, Tag, Avatar, Upload, message, notification, Radio, Pagination, } from "antd";
 import { UploadOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-// import Loading from '../../../components/parts/Loading/Loading';
 import EllipsisTooltip from "components/common/EllipsisTooltip";
 
 //
@@ -25,8 +24,6 @@ const { Option } = Select;
 const { Dragger } = Upload;
 
 const ModuleCate = (props) => {
-    const data = [];
-
     const dispatch = useDispatch();
 
     const modules = useSelector(state => state.part.list.result);
@@ -38,6 +35,8 @@ const ModuleCate = (props) => {
     const loadingteachers = useSelector(state => state.user.listTeacher.loading);
     const programmes = useSelector(state => state.programme.list.result);
 
+    const [pageIndex, setPageIndex] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
     const [filter, setFilter] = useState({
       khoa_hoc_id: '',
       trang_thai: '',
@@ -47,17 +46,13 @@ const ModuleCate = (props) => {
     });
 
     useEffect(() => {
-      dispatch(partActions.filterModule({ idCourse: '', status: filter.trang_thai, search: filter.search, start: filter.start, end: filter.end}));
+      dispatch(partActions.filterModule({ idCourse: '', status: filter.trang_thai, search: filter.search, start: filter.start, end: filter.end, pageIndex: pageIndex, pageSize: pageSize }));
       dispatch(programmeAction.getProgrammes({ status: '' }));
       dispatch(majorActions.getMajors());
 
       dispatch(courseActions.getCourses({ idkct: '', status: '', search: '', pageSize: 99999999, pageIndex: 1 }));
 
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-    if (modules.status === 'success') {
-      modules.data.map((module, index) => data.push({...module, 'key': index}));
-    }
 
     const columns = [
       {
@@ -86,9 +81,12 @@ const ModuleCate = (props) => {
       },
       {
         title: 'Giáo viên',
-        dataIndex: 'ten_giao_vien',
-        key: 'ten_giao_vien',
+        dataIndex: 'ho_ten',
+        key: 'ho_ten',
         responsive: ['md'],
+        render: (ho_ten, record) => (
+          <span>{record?.ho_ten || record?.ten_giao_vien}</span>
+        )
       },
       {
         title: 'Lĩnh vực',
@@ -251,8 +249,8 @@ const ModuleCate = (props) => {
   
     useEffect(() => {
       dispatch(partActions.filterModule({ idCourse: filter.khoa_hoc_id, status: filter.trang_thai === 2 ? '' : filter.trang_thai, search: filter.search,
-        start: filter.start, end: filter.end }));
-    }, [filter]); // eslint-disable-line react-hooks/exhaustive-deps
+        start: filter.start, end: filter.end, pageIndex: pageIndex, pageSize: pageSize }));
+    }, [filter, pageSize, pageIndex]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const renderProgramme = () => {
       let options = [];
@@ -374,7 +372,7 @@ const ModuleCate = (props) => {
       const callback = (res) => {
         if (res.data.status === 'success' && res.status === 200) {
           form.resetFields();
-          dispatch(partActions.filterModule({ idCourse: filter.khoa_hoc_id, status: filter.trang_thai, search: filter.search, start: filter.start, end: filter.end}));        
+          dispatch(partActions.filterModule({ idCourse: filter.khoa_hoc_id, status: filter.trang_thai, search: filter.search, start: filter.start, end: filter.end, pageIndex: pageIndex, pageSize: pageSize}));        
           notification.success({
             message: 'Thành công',
             description: 'Thêm module mới thành công',
@@ -398,7 +396,7 @@ const ModuleCate = (props) => {
         onOk() {
           const callback = (res) => {
             if (res.statusText === 'OK' && res.status === 200) {
-              dispatch(partActions.filterModule({ idCourse: filter.khoa_hoc_id, status: filter.trang_thai, search: filter.search, start: filter.start, end: filter.end}));
+              dispatch(partActions.filterModule({ idCourse: filter.khoa_hoc_id, status: filter.trang_thai, search: filter.search, start: filter.start, end: filter.end, pageIndex: pageIndex, pageSize: pageSize}));
               notification.success({
                 message: 'Thành công',
                 description: 'Xóa module mới thành công',
@@ -424,7 +422,7 @@ const ModuleCate = (props) => {
         onOk() {
           const callback = (res) => {
             if (res.statusText === 'OK' && res.status === 200) {
-              dispatch(partActions.filterModule({ idCourse: filter.khoa_hoc_id, status: filter.trang_thai, search: filter.search, start: filter.start, end: filter.end}));
+              dispatch(partActions.filterModule({ idCourse: filter.khoa_hoc_id, status: filter.trang_thai, search: filter.search, start: filter.start, end: filter.end, pageIndex: pageIndex, pageSize: pageSize}));
               notification.success({
                 message: 'Thành công',
                 description: 'Chuyển trạng thái module thành công',
@@ -440,6 +438,17 @@ const ModuleCate = (props) => {
         },
       });
     }
+
+    // event thay đổi trang
+    const onChange = (page) => {
+      setPageIndex(page);
+    };
+
+    // event đổi pageSize
+    const onShowSizeChange = (current, pageSize) => {
+      setPageSize(pageSize)
+    };
+
 
     return (
         <div className="content">
@@ -465,7 +474,16 @@ const ModuleCate = (props) => {
           </Row>
 
           <div>
-            <Table className="table-striped-rows" columns={columns} dataSource={data} />
+            <Table className="table-striped-rows" columns={columns} dataSource={modules?.data} pagination={false}/>
+            <br/>
+              <Pagination showSizeChanger 
+                onShowSizeChange={onShowSizeChange} 
+                current={pageIndex} 
+                pageSize={pageSize} 
+                onChange={onChange} 
+                total={modules?.totalCount}
+              />
+              <br/>
           </div>
           {error && notification.error({
             message: 'Thông báo',

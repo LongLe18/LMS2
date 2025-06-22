@@ -6,6 +6,11 @@ export const GET_THEMATICS = "GET_THEMATICS";
 export const GET_THEMATICS_SUCCESS = "GET_THEMATICS_SUCCESS";
 export const GET_THEMATICS_FAILED = "GET_THEMATICS_FAILED";
 
+export const GET_THEMATICS_V2 = "GET_THEMATICS_V2";
+export const GET_THEMATICS_V2_SUCCESS = "GET_THEMATICS_V2_SUCCESS";
+export const GET_THEMATICS_V2_FAILED = "GET_THEMATICS_V2_FAILED";
+
+
 export const FILTER_THEMATICS = "FILTER_THEMATICS";
 export const FILTER_THEMATICS_SUCCESS = "FILTER_THEMATICS_SUCCESS";
 export const FILTER_THEMATICS_FAILED = "FILTER_THEMATICS_FAILED";
@@ -45,6 +50,14 @@ export function getThematicsByIdModule(params, callback) {
 export function getThematics(params, callback) {
     return {
         type: GET_THEMATICS,
+        params,
+        callback,
+    };
+}
+
+export function getThematicsByTeacher(params, callback) {
+    return {
+        type: GET_THEMATICS_V2,
         params,
         callback,
     };

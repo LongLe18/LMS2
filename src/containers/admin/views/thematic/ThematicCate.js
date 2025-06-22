@@ -4,7 +4,8 @@ import moment from "moment";
 import config from '../../../../configs/index'
 
 import AppFilter from "components/common/AppFilter";
-import { Row, Col, Form, Input, Button, Select, Table, notification, Tag, Space, Modal, } from "antd";
+import { Row, Col, Form, Input, Button, Select, Table, notification, 
+  Tag, Space, Modal, Pagination, } from "antd";
 import { ExclamationCircleOutlined, } from '@ant-design/icons';
 
 import * as partActions from '../../../../redux/actions/part';
@@ -21,11 +22,11 @@ const { Option } = Select;
 
 
 const ThematicCate = () => {
-    const [data, setData] = useState([]);
     const [form] = Form.useForm();
 
     const dispatch = useDispatch();
 
+    const thematics = useSelector(state => state.thematic.list.result);
     const thematic = useSelector(state => state.thematic.item.result);
     const loadingThematic = useSelector(state => state.thematic.item.loading);
 
@@ -48,6 +49,8 @@ const ThematicCate = () => {
       mo_ta: ''
     };
 
+    const [pageIndex, setPageIndex] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
     const [state, setState] = useState({
       moduleId: 1,
       idThematic: 1,
@@ -68,12 +71,8 @@ const ThematicCate = () => {
 
     useEffect(() => {
       dispatch(thematicActions.filterThematics({ idCourse: '', idModule: filter.mo_dun_id, status: '', search: filter.search, 
-        start: filter.start, end: filter.end}, (res) => {
+        start: filter.start, end: filter.end, pageIndex: pageIndex, pageSize: pageSize}, (res) => {
           if (res.status === 'success') {
-            res.data = (res.data.map((thematic, index) => {
-              return {...thematic, 'key': index };
-            }));
-            setData([...res.data]);
             form.resetFields();
           }
         }));
@@ -174,17 +173,10 @@ const ThematicCate = () => {
     };
   
     useEffect(() => {
-      dispatch(thematicActions.filterThematics({ idCourse: filter.khoa_hoc_id, 
+      dispatch(thematicActions.filterThematics({ idCourse: filter.khoa_hoc_id, pageIndex: pageIndex, pageSize: pageSize,
         idModule: filter.mo_dun_id, status: filter.trang_thai === 2 ? '' : filter.trang_thai, search: filter.search,
-        start: filter.start, end: filter.end }, (res) => {
-          if (res.status === 'success') {
-            res.data = (res.data.map((thematic, index) => {
-              return {...thematic, 'key': index };
-            }));
-            setData([...res.data]);
-          }
-        }));
-    }, [filter]); // eslint-disable-line react-hooks/exhaustive-deps
+        start: filter.start, end: filter.end },));
+    }, [filter, pageIndex, pageSize]); // eslint-disable-line react-hooks/exhaustive-deps
     
     const renderProgramme = () => {
       let options = [];
@@ -289,7 +281,7 @@ const ThematicCate = () => {
         return;
       }
       
-      var data = {
+      let data = {
         "ten_chuyen_de": values.ten_chuyen_de,
         "mo_ta": values.mo_ta,
         "mo_dun_id": values.mo_dun_id,
@@ -303,14 +295,7 @@ const ThematicCate = () => {
           form.resetFields();
           dispatch(thematicActions.filterThematics({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, 
               status: filter.trang_thai === 2 ? '' : filter.trang_thai, search: filter.search,
-              start: filter.start, end: filter.end }, (res) => {
-                if (res.status === 'success') {
-                  res.data = (res.data.map((thematic, index) => {
-                    return {...thematic, 'key': index };
-                  }));
-                  setData([...res.data]);
-                }
-              }));
+              start: filter.start, end: filter.end, pageIndex: pageIndex, pageSize: pageSize }));
           notification.success({
             message: 'Thành công',
             description: state.isEdit ? 'Sửa thông tin chuyên đề thành công' : 'Thêm chuyên đề mới thành công',
@@ -341,14 +326,7 @@ const ThematicCate = () => {
             if (res.statusText === 'OK' && res.status === 200) {
               dispatch(thematicActions.filterThematics({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, 
                 status: filter.trang_thai === 2 ? '' : filter.trang_thai, search: filter.search,
-                start: filter.start, end: filter.end }, (res) => {
-                  if (res.status === 'success') {
-                    res.data = (res.data.map((thematic, index) => {
-                      return {...thematic, 'key': index };
-                    }));
-                    setData([...res.data]);
-                  }
-                }));
+                start: filter.start, end: filter.end, pageIndex: pageIndex, pageSize: pageSize}));
               notification.success({
                 message: 'Thành công',
                 description: 'Xóa chuyên đề thành công',
@@ -385,6 +363,17 @@ const ThematicCate = () => {
       form.resetFields();
     };
 
+    // event thay đổi trang
+    const onChange = (page) => {
+      setPageIndex(page);
+    };
+
+    // event đổi pageSize
+    const onShowSizeChange = (current, pageSize) => {
+      setPageSize(pageSize)
+    };
+
+
     return (
           <div className="content">
               <Row className="app-main">
@@ -409,8 +398,17 @@ const ThematicCate = () => {
               </Row>
               {/* {loading && <Loading />} */}
               <div>
-                <Table className="table-striped-rows" columns={columns} dataSource={data} />
+                <Table className="table-striped-rows" columns={columns} dataSource={thematics?.data} pagination={false}/>
+                <br/>
+                <Pagination showSizeChanger 
+                  onShowSizeChange={onShowSizeChange} 
+                  current={pageIndex} 
+                  pageSize={pageSize} 
+                  onChange={onChange} 
+                  total={thematics?.totalCount}
+                />
               </div>
+              <br/>
               {error && notification.error({
                 message: 'Thông báo',
                 description: 'Lấy dữ liệu chuyên đề thất bại',

@@ -79,6 +79,22 @@ export default function moduleReducer(state = initState, action) {
                 ...state,
                 list: { ...state.list, loading: false, error: action.error },
             };
+        // get a list modules of teacher
+        case partActions.GET_MODULES_TEACHER:
+            return {
+                ...state,
+                list: { ...state.list, loading: true },
+            };
+        case partActions.GET_MODULES_TEACHER_SUCCESS:
+            return {
+                ...state,
+                list: { ...state.list, loading: false, result: action.result },
+            };
+        case partActions.GET_MODULES_TEACHER_FAILED:
+            return {
+                ...state,
+                list: { ...state.list, loading: false, error: action.error },
+            };
         // delete a module
         case partActions.DELETE_MODULE:
             return {

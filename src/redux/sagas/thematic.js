@@ -30,6 +30,31 @@ function* fetchThematics(payload) {
     }
 }
 
+function* fetchThematicsByTeacher(payload) {
+    try {
+        let endpoint = `${config.API_URL}/thematic/by-teacher?mo_dun_id=${payload.params.idModule}&trang_thai=${payload.params.status}&search=${payload.params.search}&pageSize=${payload.params.pageSize}&pageIndex=${payload.params.pageIndex}`;
+        const response = yield call(getApiAuth, endpoint);
+        const result = yield response.data;
+        yield put({ type: actions.thematic.GET_THEMATICS_V2_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.thematic.GET_THEMATICS_V2_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu chuyên đề thất bại' + messageError),
+            });
+        } 
+    }
+}
+
 function* fetchThematicsByIdModule(payload) {
     try {
         let endpoint = `${config.API_URL}/thematic?id=${payload.params.idModule}`;
@@ -57,7 +82,10 @@ function* fetchThematicsByIdModule(payload) {
 
 function* filterThematics(payload) {
     try {
-        let endpoint = `${config.API_URL}/thematic/filter?khoa_hoc_id=${payload.params.idCourse}&mo_dun_id=${payload.params.idModule}&trang_thai=${payload.params.status}&search=${payload.params.search}&ngay_bat_dau=${payload.params.start}&ngay_ket_thuc=${payload.params.end}`;;
+        let endpoint = `${config.API_URL}/thematic/filter?khoa_hoc_id=${payload.params.idCourse}&mo_dun_id=${payload.params.idModule}&trang_thai=${payload.params.status}&search=${payload.params.search}&ngay_bat_dau=${payload.params.start}&ngay_ket_thuc=${payload.params.end}`;
+        if (payload.params.pageSize && payload.params.pageIndex) {
+            endpoint += `&pageSize=${payload.params.pageSize}&pageIndex=${payload.params.pageIndex}`;
+        }
         const response = yield call(getApi, endpoint);
         const result = yield response.data;
         yield put({ type: actions.thematic.FILTER_THEMATICS_SUCCESS, result: result });
@@ -182,6 +210,10 @@ function* EditThemactic(payload) {
 
 export function* loadThematics() {
     yield takeEvery(actions.thematic.GET_THEMATICS, fetchThematics);
+}
+
+export function* loadThematicsByTeacher() {
+    yield takeEvery(actions.thematic.GET_THEMATICS_V2, fetchThematicsByTeacher);
 }
 
 export function* loadThematicsByIdModule() {

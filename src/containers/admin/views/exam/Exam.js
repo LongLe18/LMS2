@@ -52,7 +52,7 @@ const ExamAdminPage = () => {
     const courses = useSelector(state => state.course.list.result);
     const modules = useSelector(state => state.part.list.result);
     const thematics = useSelector(state => state.thematic.listbyId.result);
-
+    
     const [filter, setFilter] = useState({
         khoa_hoc_id: '',
         mo_dun_id: '',
@@ -76,7 +76,7 @@ const ExamAdminPage = () => {
       dispatch(courseActions.getCourses({ idkct: '', status: 1, search: '', pageSize: 99999999, pageIndex: 1 })); // lấy khoá học đang hoạt động
       dispatch(programmeActions.getProgrammes({ status: 1 })); // lấy khung chương trình đang hoạt động
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
+    
     const [state, setState] = useState({
         fileImg: '',
         showCourse: false,
@@ -316,7 +316,8 @@ const ExamAdminPage = () => {
   const renderProgramme = () => {
       let options = [];
       if (programmes.status === 'success') {
-        options = programmes.data.filter((programme) => programme.loai_kct === 2 || programme.loai_kct === 4).map((programme) => (
+        // Lấy ra khung chương trình loại 2 (Luyện thi ĐGNL, ĐGTD) và loại 4 (Luyện thi tốt nghiệp THCS, THPT) và loại 5 (Học liệu, giáo trình)
+        options = programmes.data.filter((programme) => programme.loai_kct === 2 || programme.loai_kct === 4 || programme.loai_kct === 5).map((programme) => (
             <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
           ))
       }
@@ -354,6 +355,7 @@ const ExamAdminPage = () => {
   const renderProgrammesForCreateExam = () => {
     let options = [];
     if (programmes.status === 'success') {
+      // Lấy ra khung chương trình loại 1 (Kiểm tra đầu vào)
       options = programmes.data.filter((programme) => programme.loai_kct === 1).map((programme) => (
           <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
         ))
@@ -666,6 +668,7 @@ const ExamAdminPage = () => {
       formData.append('ten_de_thi', values.ten_de_thi);
       formData.append('mo_ta', values.mo_ta !== undefined ? values.mo_ta : '' );
       formData.append('loai_de_thi_id', values.loai_de_thi_id);
+        formData.append('kct_id', values.khung_ct);
       if (values.de_thi_ma !== undefined) {
         formData.append('de_thi_ma', values.de_thi_ma !== undefined ? values.de_thi_ma : '');
       }
@@ -828,11 +831,12 @@ const ExamAdminPage = () => {
                           Thêm mới đề thi
                       </Button> 
                       <Modal visible={isModalVisible}  mask={true} centered={true} className="cra-exam-modal" wrapClassName="cra-exam-modal-container"                                   
-                          onOk={handleCancel} 
-                          onCancel={handleCancel}
-                          maskStyle={{ background: 'rgba(0, 0, 0, 0.8)' }}
-                          maskClosable={false}
-                          footer={null}>
+                        onOk={handleCancel} 
+                        onCancel={handleCancel}
+                        maskStyle={{ background: 'rgba(0, 0, 0, 0.8)' }}
+                        maskClosable={false}
+                        footer={null}
+                      >
                           {renderAddModal()}
                       </Modal>
                       {/* Modal tạo nhanh đề thi */}

@@ -1,0 +1,169 @@
+/* Exam Score Management Styles */
+.ant-card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f0f0f0;
+}
+
+.ant-table-thead > tr > th {
+  background-color: #fafafa;
+  font-weight: 600;
+  color: #262626;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.ant-table-tbody > tr > td {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background-color: #f8f9fa;
+}
+
+.ant-progress-line {
+  margin: 0;
+}
+
+.ant-progress-bg {
+  border-radius: 4px;
+}
+
+/* Statistics card styling */
+.statistics-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.statistics-card .ant-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Custom progress circle styling */
+.ant-progress-circle {
+  position: relative;
+}
+
+.ant-progress-circle .ant-progress-inner {
+  position: relative;
+}
+
+/* Tab button styling */
+.tab-button-active {
+  background-color: #dc4c64 !important;
+  border-color: #dc4c64 !important;
+  color: #fff !important;
+}
+
+.tab-button-inactive {
+  background-color: #f0f0f0 !important;
+  border-color: #f0f0f0 !important;
+  color: #8c8c8c !important;
+}
+
+.tab-button-active:hover,
+.tab-button-active:focus {
+  background-color: #c23650 !important;
+  border-color: #c23650 !important;
+}
+
+.tab-button-inactive:hover,
+.tab-button-inactive:focus {
+  background-color: #e6e6e6 !important;
+  border-color: #e6e6e6 !important;
+  color: #595959 !important;
+}
+
+/* Rank badge styling */
+.rank-badge {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.rank-badge-gold {
+  background-color: #faad14;
+}
+
+.rank-badge-silver {
+  background-color: #d9d9d9;
+}
+
+.rank-badge-bronze {
+  background-color: #ff7875;
+}
+
+/* Progress bar in table */
+.ant-progress-small .ant-progress-outer {
+  margin-right: 0;
+  padding-right: 0;
+}
+
+.ant-progress-small .ant-progress-line {
+  height: 6px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .statistics-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .tab-navigation {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .tab-navigation .ant-btn {
+    width: 100%;
+  }
+}
+
+/* Custom styling for better visual hierarchy */
+.exam-score-title {
+  color: #262626;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+.filter-section {
+  margin-bottom: 24px;
+}
+
+.statistics-section {
+  margin-bottom: 32px;
+}
+
+/* Table cell content alignment */
+.ant-table-tbody .ant-table-cell {
+  vertical-align: middle;
+}
+
+/* Avatar and name alignment in table */
+.student-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Score display styling */
+.score-display {
+  font-size: 16px;
+  font-weight: bold;
+  color: #262626;
+}
+
+/* Progress text styling */
+.progress-text {
+  font-size: 12px;
+  color: #595959;
+  margin-top: 4px;
+}

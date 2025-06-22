@@ -43,6 +43,7 @@ import {
     loadEditModule,
     loadFilterModule,
     loadModulesByIdCourse2,
+    loadModulesTeacherByIdCourse,
 } from './part';
 
 import {
@@ -53,6 +54,7 @@ import {
     loadDeleteThematic,
     loadEditThematic,
     loadFilterThematic,
+    loadThematicsByTeacher,
 } from './thematic';
 
 import { 
@@ -122,9 +124,14 @@ import {
     loadEditExamUser,
     loadExamUser,
     loadExamsUser,
+    loadExamsUserV2,
     loadReuseExam,
     loadExamCourseOnline,
     loadCriteriaDGTDByCourse,
+    loadExamSynthetic,
+    loadExamSyntheticModule,
+    loadExamSyntheticThematic,
+    loadStatisticTeacher,
 } from './exam';
 
 import { 
@@ -439,9 +446,11 @@ export default function* rootSaga() {
         loadEditModule(),
         loadFilterModule(),
         loadModulesByIdCourse2(),
+        loadModulesTeacherByIdCourse(),
         // thematic
         loadThematic(),
         loadThematics(),
+        loadThematicsByTeacher(),
         loadThematicsByIdModule(),
         loadAddThematic(),
         loadDeleteThematic(),
@@ -509,9 +518,14 @@ export default function* rootSaga() {
         loadEditExamUser(),
         loadExamUser(),
         loadExamsUser(),
+        loadExamsUserV2(),
         loadReuseExam(),
         loadExamCourseOnline(),
         loadCriteriaDGTDByCourse(),
+        loadExamSynthetic(),
+        loadExamSyntheticModule(),
+        loadExamSyntheticThematic(),
+        loadStatisticTeacher(),
         // type Exam
         loadAddTypeExam(),
         loadDeleteTypeExam(),

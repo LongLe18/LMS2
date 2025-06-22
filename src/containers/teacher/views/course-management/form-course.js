@@ -7,6 +7,7 @@ import { Layout, Form, Input, Upload, Button, Card,
 import {  UploadOutlined} from "@ant-design/icons"
 import './course-management.css'
 import TextEditorWidget2 from "components/common/TextEditor/TextEditor2";
+import moment from "moment";
 
 import * as courseAction from '../../../../redux/actions/course';
 import * as programmeAction from '../../../../redux/actions/programme';
@@ -19,18 +20,19 @@ const { Option } = Select
 const { Dragger } = Upload
 const { RangePicker } = DatePicker
 
-const formDefault = {
-    ten_khoa_hoc: '',
-    ngay_bat_dau: '',
-    ngay_ket_thuc: '',
-    kct_id: 1,
-};
 
 const FormCourse = () => {
     const [form] = Form.useForm();
     const dispatch = useDispatch();
     const history = useHistory();
     const idCourse = useParams().idCourse; // id of the course from URL params
+
+    const formDefault = {
+        ten_khoa_hoc: '',
+        ngay_bat_dau: '',
+        ngay_ket_thuc: '',
+        kct_id: 1,
+    };
 
     const [state, setState] = useState({
         form: formDefault,
@@ -43,6 +45,8 @@ const FormCourse = () => {
         isShowTypeCourse: false,
     })
     const programmes = useSelector(state => state.programme.list.result);
+    const course = useSelector(state => state.course.item.result);
+    const description = useSelector(state => state.descriptionCourse.item.result);
 
     // props for upload image
     const propsImage = {
@@ -83,9 +87,43 @@ const FormCourse = () => {
     
     useEffect(() => {
         dispatch(programmeAction.getProgrammes({ status: '' }));
+        if (idCourse !== 'create') {
+            dispatch(courseAction.getCourse({ id: idCourse }));
+            dispatch(descriptionAction.getDescriptionCourse({ id: idCourse }));
+        }
     }, []);
+    
+    useEffect(() => {
+        if (course.status === 'success') {
+            const ngay_bat_dau_raw = course?.data?.ngay_bat_dau;
+            const ngay_ket_thuc_raw = course?.data?.ngay_ket_thuc;
 
-    const renderProgramme = () => {
+            const ngay_bat_dau = ngay_bat_dau_raw !== null ? moment(ngay_bat_dau_raw, "YYYY/MM/DD") : null;
+            const ngay_ket_thuc = ngay_ket_thuc_raw !== null ? moment(ngay_ket_thuc_raw, "YYYY/MM/DD") : null;
+
+            console.log(ngay_bat_dau_raw, ngay_ket_thuc_raw);
+            // Update course data with moment dates
+            course.data = {
+                ...course.data,
+                ngay_bat_dau: [ngay_bat_dau, ngay_ket_thuc],
+            };        
+            form.setFieldsValue(course.data);
+            form.setFieldValue('kct_id', course.data.kct_id + '_' + course?.data?.khung_chuong_trinh?.loai_kct);
+            const showTypeCourse = [2, 4, 5].includes(course?.data?.khung_chuong_trinh?.loai_kct);
+            setState(prev => ({
+                ...prev,
+                ngay_bat_dau: ngay_bat_dau_raw,
+                ngay_ket_thuc: ngay_ket_thuc_raw,
+                isShowTypeCourse: showTypeCourse
+            }));
+        }
+    }, [course]);  // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+        form.setFieldsValue(description.data);
+    }, [description]);
+
+    const renderProgrammes = () => {
         let options = [];
         if (programmes.status === 'success') {
             options = programmes.data.map((programme) => (
@@ -98,6 +136,7 @@ const FormCourse = () => {
                 filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
                 placeholder="Chọn khung chương trình"
                 onChange={(value) => {
+                    // Nếu khung chương trình : Luyện thi, ôn luyện
                     if (value.split('_')[1] === '2' || value.split('_')[1] === '4' || value.split('_')[1] === '5') {
                         setState({...state, isShowTypeCourse: true});
                     }
@@ -146,7 +185,7 @@ const FormCourse = () => {
             gia_goc: values.gia_goc !== undefined ? values.gia_goc : '',
         };
         if (state.isEdit) {
-            dispatch(descriptionAction.EditDescriptionCourse({ idCourse: state.idDescription, formData: dataSubmit }, callback));
+            dispatch(descriptionAction.EditDescriptionCourse({ idCourse: idCourse, formData: dataSubmit }, callback));
         } else {
             dispatch(descriptionAction.CreateDescriptionCourse(dataSubmit, callback))
         }
@@ -179,7 +218,7 @@ const FormCourse = () => {
             formData.append('anh_dai_dien', state.fileImg !== undefined ? state.fileImg : '');
         if (state.isEdit) {
             formData.append('trang_thai', values.trang_thai );
-            dispatch(courseAction.EditCourse({ formData: formData, idCourse: state.idCourse }, callback))
+            dispatch(courseAction.EditCourse({ formData: formData, idCourse: idCourse }, callback))
         } else {
             dispatch(courseAction.CreateCourse(formData, callback));
         }
@@ -389,7 +428,7 @@ const FormCourse = () => {
                                         },
                                     ]}
                                 >
-                                    {renderProgramme()}
+                                    {renderProgrammes()}
                                 </Form.Item>
                             </Card>
 

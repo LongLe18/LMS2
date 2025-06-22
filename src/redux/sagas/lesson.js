@@ -58,6 +58,9 @@ function* fetchLessionByIdThematic(payload) {
 function* fectchFilter(payload) {
     try {
         let endpoint = `${config.API_URL}/lesson/filter?khoa_hoc_id=${payload.params.idCourse}&mo_dun_id=${payload.params.idModule}&chuyen_de_id=${payload.params.idThematic}&trang_thai=${payload.params.status}&search=${payload.params.search}&ngay_bat_dau=${payload.params.start}&ngay_ket_thuc=${payload.params.end}`;
+        if (payload.params.pageSize && payload.params.pageIndex) {
+            endpoint += `&pageSize=${payload.params.pageSize}&pageIndex=${payload.params.pageIndex}`;
+        }
         const response = yield call(getApiAuth, endpoint);
         const result = yield response.data;
         yield put({ type: actions.lesson.FILTER_LESSONS_SUCCESS, result: result });

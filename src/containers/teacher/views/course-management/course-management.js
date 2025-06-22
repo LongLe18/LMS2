@@ -25,7 +25,6 @@ import constants from '../../../../helpers/constants';
 const { Title } = Typography
 const { Option } = Select
 
-
 const CourseManagement = () => {
     const dispatch = useDispatch();
     const history = useHistory();
@@ -93,7 +92,7 @@ const CourseManagement = () => {
     useEffect(() => {
         dispatch(courseAction.getCoursesByTeacher({ status: filter.trang_thai, search: filter.search, 
         lkh_id: filter.lkh_id, pageIndex: pageIndex, pageSize: pageSize }));
-    }, [pageIndex, pageSize, filter]);
+    }, [pageIndex, pageSize, filter]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const columns = [
         {
@@ -160,10 +159,16 @@ const CourseManagement = () => {
             align: "center",
             render: (record) => (
                 <Space>
+                    <Tooltip title="Xem chi tiết">
+                        <Button type="text" icon={<EyeOutlined />}
+                            size="small"
+                            onClick={() => history.push(`/teacher/detail-course/${record?.khoa_hoc_id}`)}
+                        />
+                    </Tooltip>
                     <Tooltip title="Chỉnh sửa">
                         <Button type="text" icon={<EditOutlined />} 
                             size="small" 
-                            onClick={() => history.push(`/teacher/detail-course/${record?.khoa_hoc_id}`)}
+                            onClick={() => history.push(`/teacher/form-course/${record?.khoa_hoc_id}`)}
                         />
                     </Tooltip>
                     <Tooltip title="Xóa">

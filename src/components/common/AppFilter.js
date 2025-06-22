@@ -29,21 +29,6 @@ const COMMON_STATUS = [
     },
 ];
 
-const COMMON_STATUS_REPLY = [
-    {
-      title: 'Tất cả trạng thái',
-      value: '',
-    },
-    {
-      title: 'Đã trả lời',
-      value: '1',
-    },
-    {
-      title: 'Chờ trả lời',
-      value: '0',
-    },
-];
-
 const { Option } = Select;
 const { Search } = Input;
 const { RangePicker } = DatePicker;

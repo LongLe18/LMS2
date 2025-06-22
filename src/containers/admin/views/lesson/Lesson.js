@@ -4,12 +4,11 @@ import { Link } from "react-router-dom";
 import config from '../../../../configs/index';
 import moment from "moment";
 // react plugin for creating notifications over the dashboard
-import { Table, Tag, Button, Row, Col, notification, Space, Modal } from 'antd';
+import { Table, Tag, Button, Row, Col, notification, Space, Modal, Pagination } from 'antd';
 import { PlusOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 
 // component
 import AppFilter from "components/common/AppFilter";
-// import Loading from '../../../components/parts/Loading/Loading';
 import EllipsisTooltip from "components/common/EllipsisTooltip";
 
 // redux
@@ -19,8 +18,10 @@ import { useSelector, useDispatch } from "react-redux";
 
 
 function Lesson() {
-  const data = [];
   const dispatch = useDispatch();
+
+  const [pageSize, setPageSize] = useState(10);
+  const [pageIndex, setPageIndex] = useState(1);
 
   const columns = [
     {
@@ -102,24 +103,15 @@ function Lesson() {
   });
 
   const lessons = useSelector(state => state.lesson.list.result);
-  // const loadingLesson = useSelector(state => state.lesson.list.loading);
   const erorrLesson = useSelector(state => state.lesson.list.erorr);
 
   const courses = useSelector(state => state.course.list.result);
 
   useEffect(() => {
     dispatch(lessonActions.filterLessons({ idCourse: '', idModule: filter.mo_dun_id, idThematic: filter.chuyen_de_id, status: '', search: filter.search, 
-      start: filter.start, end: filter.end}));
+      start: filter.start, end: filter.end, pageSize: pageSize, pageIndex: pageIndex }));
     dispatch(courseActions.getCourses({ idkct: '', status: '', search: '', pageSize: 99999999, pageIndex: 1 }));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  
-  if (lessons.status === 'success') {
-    lessons.data.map((lesson, index) => {
-      data.push({...lesson, key: index});
-      return null
-    }) 
-  }
 
   const DeleteThematic = (id) => {
     Modal.confirm({
@@ -131,7 +123,7 @@ function Lesson() {
         const callback = (res) => {
           if (res.statusText === 'OK' && res.status === 200) {
             dispatch(lessonActions.filterLessons({ idCourse: '', idModule: filter.mo_dun_id, idThematic: filter.chuyen_de_id, status: '', search: filter.search, 
-                start: filter.start, end: filter.end}));
+                start: filter.start, end: filter.end, pageSize: pageSize, pageIndex: pageIndex}));
             notification.success({
               message: 'Thành công',
               description: 'Xóa bài giảng thành công',
@@ -160,8 +152,18 @@ function Lesson() {
 
   useEffect(() => {
     dispatch(lessonActions.filterLessons({ idCourse: filter.khoa_hoc_id, idModule: filter.mo_dun_id, idThematic: filter.chuyen_de_id, status: filter.trang_thai === 2 ? '' : filter.trang_thai, search: filter.search,
-      start: filter.start, end: filter.end }));
-  }, [filter]); // eslint-disable-line react-hooks/exhaustive-deps
+      start: filter.start, end: filter.end, pageSize: pageSize, pageIndex: pageIndex }));
+  }, [filter, pageSize, pageIndex]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // event thay đổi trang
+  const onChange = (page) => {
+    setPageIndex(page);
+  };
+
+  // event đổi pageSize
+  const onShowSizeChange = (current, pageSize) => {
+    setPageSize(pageSize)
+  };
 
   return (
       <div className="content">
@@ -202,7 +204,16 @@ function Lesson() {
           </Col>
         </Row>
         {/* {loadingLesson && <LoadingCustom/>} */}
-          <Table className="table-striped-rows" columns={columns} dataSource={data} />
+          <Table className="table-striped-rows" columns={columns} dataSource={lessons?.data} pagination={false} />
+          <br/>
+          <Pagination showSizeChanger 
+            onShowSizeChange={onShowSizeChange} 
+            current={pageIndex} 
+            pageSize={pageSize} 
+            onChange={onChange} 
+            total={lessons?.totalCount}
+          />
+          <br/>
         {erorrLesson && notification.error({
           message: 'Thông báo',
           description: 'Lấy dữ liệu bài giảng thất bại',

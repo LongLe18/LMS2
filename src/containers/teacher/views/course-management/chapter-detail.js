@@ -1,24 +1,29 @@
-
 import { useState, useEffect } from "react"
 import { useHistory, useParams } from "react-router-dom"
 import { Row, Col, Card, Typography, Button, Space, Tabs, List, Avatar, Image,
-  Dropdown, Menu, Modal, Form, Upload, message, Select, Input, Alert
-} from "antd"
+  Dropdown, Menu, Modal, Form, Upload, message, Select, Input, Alert, notification,
+  Radio, Spin } from "antd"
 import {
   EyeInvisibleOutlined, EditOutlined, DeleteOutlined, PlusOutlined,
   MoreOutlined, FileTextOutlined, PlayCircleOutlined,
   UploadOutlined, ExclamationCircleFilled, ExclamationCircleOutlined,
-  EyeOutlined, CopyOutlined, InboxOutlined,
+  EyeOutlined, CopyOutlined,
 } from "@ant-design/icons"
 import './chapter-detail.css';
+import config from '../../../../configs/index';
+import axios from 'axios';
+import ViewExam from "./view-exam";
 
 import * as courseAction from '../../../../redux/actions/course';
 import * as programmeAction from '../../../../redux/actions/programme';
-import * as descriptionAction from '../../../../redux/actions/descriptionCourse';
+import * as partActions from '../../../../redux/actions/part';
+import * as majorActions from '../../../../redux/actions/major';
+import * as thematicActions from '../../../../redux/actions/thematic';
+import * as examActions from '../../../../redux/actions/exam';
 import { useSelector, useDispatch } from "react-redux";
 
 // ==================================================================== 
-{/* Giao diện mô đun (chi  tiết khoá học) */}
+// Giao diện mô đun (chi  tiết khoá học) 
 // ==================================================================== 
 
 const { Title, Text, Paragraph } = Typography
@@ -26,51 +31,6 @@ const { TabPane } = Tabs
 const { Option } = Select
 const { Dragger } = Upload
 
-// Chapter topics data
-const chapterTopics = [
-  {
-    id: 1,
-    title: "Chuyên đề 1: Ôn tập đạo hàm và các quy tắc tính đạo hàm",
-    documents: 12,
-    videos: 24,
-  },
-  {
-    id: 2,
-    title: "Chuyên đề 2: Ứng dụng đạo hàm để tìm cực trị, tính đơn điệu",
-    documents: 12,
-    videos: 24,
-  },
-  {
-    id: 3,
-    title: "Chuyên đề 3: Khảo sát và vẽ đồ thị bằng bảng biến thiên",
-    documents: 12,
-    videos: 24,
-  },
-  {
-    id: 4,
-    title: "Chuyên đề 4: Nhận dạng đồ thị và bài toán liên quan trong đề thi",
-    documents: 12,
-    videos: 24,
-  },
-]
-
-// Chapter exams data
-const chapterExams = [
-  {
-    id: 1,
-    title: "Đề thi chương 1 - Phần 1",
-    duration: "45 phút",
-    questions: "20 câu",
-    hidden: false,
-  },
-  {
-    id: 2,
-    title: "Đề thi chương 1 - Phần 2",
-    duration: "45 phút",
-    questions: "20 câu",
-    hidden: false,
-  },
-]
 
 const ChapterDetail = () => {
   const history = useHistory();
@@ -79,63 +39,411 @@ const ChapterDetail = () => {
   const [activeTab, setActiveTab] = useState("topics")
   const [isAddTopicModalVisible, setIsAddTopicModalVisible] = useState(false)
   const [isAddChapterModalVisible, setIsAddChapterModalVisible] = useState(false);
-  const [isAddModunExamModalVisible, setIsAddModunExamModalVisible] = useState(false)
+  const [isModunExamModalVisible, setIsModunExamModalVisible] = useState(false)
   const [TopicForm] = Form.useForm();
   const [chapterForm] = Form.useForm();
   const [addModunExamForm] = Form.useForm();
   const [deleteModalVisible, setDeleteModalVisible] = useState(false)
-  const [examsData, setExamsData] = useState(chapterExams)
   const [examToDelete, setExamToDelete] = useState(null);
   const [modunToDelete, setModunToDelete] = useState(null);
+  const [thematicToDelete, setThematicToDelete] = useState(null);
+  const [spinning, setSpinning] = useState(false);
+  const [isExamViewModalVisible, setIsExamViewModalVisible] = useState(false);
 
+  const module = useSelector(state => state.part.item.result);
+  const modules = useSelector(state => state.part.list.result);
+  const programmes = useSelector(state => state.programme.list.result);
+  const classes = useSelector(state => state.major.list.result);
+  const courses = useSelector(state => state.course.list.result);
+  const majors = useSelector(state => state.major.list.result);
+  const thematics = useSelector(state => state.thematic.list.result);
+  const exams = useSelector(state => state.exam.list.result);
+  const exam = useSelector(state => state.exam.item.result);
 
-  const handleAddTopic = () => {
+  const [state, setState] = useState({
+    isEdit: false,
+    idModule: '',
+    idExam: '',
+    idThematic: '',
+    fileImg: '',
+    fileExam: '',
+    fileVid: '',
+  });
+
+  // props for upload image
+  const propsImage = {
+    name: 'file',
+    action: '#',
+
+    beforeUpload: file => {
+      const isPNG = file.type === 'image/png' || file.type === 'image/jpeg';
+      if (!isPNG) {
+        message.error(`${file.name} có định dạng không phải là png/jpg`);
+      }
+      return isPNG || Upload.LIST_IGNORE;
+    },
+
+    onChange(info) {
+      setState({ ...state, fileImg: info.file.originFileObj });
+    },
+
+    async customRequest(options) {
+      const { onSuccess } = options;
+
+      setTimeout(() => {
+        onSuccess("ok");
+      }, 0);
+    },
+
+    onRemove(e) {
+      setState({ ...state, fileImg: '' });
+    },
+  };
+
+  // props for upload image
+  const propsVideo = {
+    name: 'file',
+    action: '#',
+
+    beforeUpload: file => {
+      const isPNG = file.type === 'video/mp4';
+      if (!isPNG) {
+        message.error(`${file.name} có định dạng không phải là video/mp4`);
+      }
+      return isPNG || Upload.LIST_IGNORE;
+    },
+
+    onChange(info) {
+      setState({ ...state, fileVid: info.file.originFileObj });
+    },
+
+    async customRequest(options) {
+      const { onSuccess } = options;
+
+      setTimeout(() => {
+        onSuccess("ok");
+      }, 0);
+    },
+    
+    onRemove(e) {
+      setState({ ...state, fileVid: '' });
+    },
+  };  
+
+  const propsFile = {
+    name: 'file',
+    action: '#',
+
+    beforeUpload: file => {
+      // check loại file => chỉ cho upload file word
+      const isDocx = file.type === 'application/msword' || file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+      if (!isDocx) {
+        message.error(`${file.name} có định dạng không phải là file docx`);
+      }
+      return isDocx || Upload.LIST_IGNORE;
+    },
+
+    onChange(info) {
+      setState({ ...state, fileExam: info.file.originFileObj });
+    },
+
+    async customRequest(options) {
+      const { onSuccess } = options;
+
+      setTimeout(() => {
+        onSuccess("ok");
+      }, 0);
+    },
+
+    onRemove(e) {
+      setState({ ...state, fileExam: '' });
+    },
+  };
+
+  useEffect(() => {
+    dispatch(partActions.getModule({ id: idChapter }, (res) => {
+      if (res.status === 'success'){
+        dispatch(partActions.getModulesTeacher({ idCourse: res?.data?.khoa_hoc_id, lkh: '', status: '', search: '', pageSize: 99999999, pageIndex: 1 }));
+        dispatch(courseAction.getCourses({ idkct: res?.data?.kct_id, status: '', search: '', pageSize: 99999999, pageIndex: 1 }))
+        dispatch(examActions.getSyntheticExamModule({ idCourse: res?.data?.khoa_hoc_id, idModule: idChapter, pageSize: 999999, pageIndex: 1 }));
+      }
+    }));
+    dispatch(programmeAction.getProgrammes({ status: '' }));
+    dispatch(majorActions.getMajors());
+    dispatch(majorActions.getClass());
+    dispatch(thematicActions.getThematicsByTeacher({ idCourse: '', idModule: idChapter, status: '', search: '', start: '', end: '', pageIndex: 1, pageSize: 99999999 }));
+  }, [])
+
+  const renderProgrammes = () => {
+    let options = [];
+    if (programmes.status === 'success') {
+      // lấy ra các khung chương trình luyện thi, học
+      options = programmes.data
+      .filter((programme) => programme.loai_kct === 2 || programme.loai_kct === 4 || programme.loai_kct === 5)
+      .map((programme) => (
+          <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
+      ))
+    }
+    return (
+      <Select
+          showSearch={true}
+          filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
+          placeholder="Chọn khung chương trình"
+          onChange={(kct_id) => dispatch(courseAction.getCourses({ idkct: kct_id, status: '', search: '', pageSize: 99999999, pageIndex: 1 }))}
+        >
+        {options}
+      </Select>
+    );
+  };
+  
+  const renderCourses = () => {
+    let options = [];
+    if (courses.status === 'success') {
+      options = courses?.data
+      ?.filter((course) => course?.khung_chuong_trinh?.loai_kct === 2 || course?.khung_chuong_trinh?.loai_kct === 4 || course?.khung_chuong_trinh?.loai_kct === 5)
+      ?.map((course) => (
+        <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
+      ))
+    }
+    return (
+      <Select
+        showSearch={true} 
+        filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
+        placeholder="Chọn khóa học"
+        onChange={(khoa_hoc_id) => {
+          dispatch(partActions.getModulesByIdCourse({ idCourse: khoa_hoc_id }));
+        }}
+      >
+        {options}
+      </Select>
+    );
+  }
+
+  const renderModules = () => {
+    let options = [];
+    if (modules.status === 'success') {
+      options = modules.data.map((module) => (
+        <Option key={module.mo_dun_id} value={module.mo_dun_id} >{module.ten_mo_dun}</Option>
+      ))
+    }
+    return (
+      <Select
+        showSearch={false}
+        onChange={(mo_dun_id) => setState({mo_dun_id, ...state, isChanged: true })}
+        placeholder="Chọn phần học"
+      >
+        {options}
+      </Select>
+    );
+  };
+
+  const renderClasses = () => {
+    let options = [];
+    if (classes.status === 'success') {
+      options = classes.data
+      .map((course) => (
+        <Option key={course.lop_id} value={course.lop_id} >{course.ten_lop}</Option>
+      ))
+    }
+    return (
+      <Select
+        showSearch={false}
+        placeholder="Chọn lớp học"
+      >
+        {options}
+      </Select>
+    );
+  };
+
+  const renderMajor = () => {
+    let options = [];
+    if (majors.status === 'success') {
+      options = majors.data.map((major) => (
+        <Option key={major.chuyen_nganh_id} value={major.chuyen_nganh_id} >{major.ten_chuyen_nganh}</Option>
+      ))
+    }
+    return (
+      <Select
+        showSearch={false}
+        placeholder="Chọn chuyên ngành"
+      >
+        {options}
+      </Select>
+    );
+  };
+
+  // Xử lý form chuyên đề
+  const handleFormTopic = () => {
     TopicForm
       .validateFields()
       .then((values) => {
-        console.log("Form values:", values)
-        message.success("Thêm chuyên đề thành công!")
-        setIsAddTopicModalVisible(false)
-        TopicForm.resetFields()
+        let data = {
+          "ten_chuyen_de": values.ten_chuyen_de,
+          "mo_ta": values.mo_ta,
+          "mo_dun_id": values.mo_dun_id,
+        }
+        if (values.lop_id !== undefined)  data.lop_id = values.lop_id;
+        if (state.isEdit) data.trang_thai = values.trang_thai; // thêm trường trạng thái khi cập nhật
+
+        const callback = (res) => {
+          if (res.statusText === 'OK' && res.status === 200) {
+            setState({ ...state, isEdit: false, idThematic: '', fileImg: '', fileVid: '' });
+            TopicForm.resetFields();
+            dispatch(thematicActions.getThematicsByTeacher({ idCourse: '', idModule: idChapter, status: '', search: '', start: '', end: '', pageIndex: 1, pageSize: 99999999 }));
+            notification.success({
+              message: 'Thành công',
+              description: state.isEdit ? 'Sửa thông tin chuyên đề thành công' : 'Thêm chuyên đề mới thành công',
+            });
+            setIsAddTopicModalVisible(false);
+          } else {
+            notification.error({
+              message: 'Thông báo',
+              description: state.isEdit ? 'Sửa thông tin chuyên đề thất bại' : 'Thêm chuyên đề mới thất bại',
+            })
+            setIsAddTopicModalVisible(false);
+          }
+        };
+        
+        if (!state.isEdit) {
+          dispatch(thematicActions.CreateThematic(data, callback));
+        } else {
+          dispatch(thematicActions.EditThematic({ formData: data, idThematic: state.idThematic }, callback));
+        }
       })
       .catch((error) => {
         console.log("Validation failed:", error)
       })
   }
 
-  const onViewExam = () => {
-    message.info("Xem đề thi chương học")
+  // event xuất bản thi tổng hợp
+  const handlePublishExam = (exam) => {
+
+    const handlePusblish = () => {
+      const callback = (res) => {
+        if (res.status === 'success') {
+          if (!exam.xuat_ban) dispatch(examActions.getUsing({ id: exam.de_thi_id }, (response) => {
+            if (response.status === 'success') {
+              dispatch(examActions.getSyntheticExamModule({ idCourse: module?.data?.khoa_hoc_id, idModule: idChapter, pageSize: 999999, pageIndex: 1 }));
+            }
+          }))
+          else dispatch(examActions.getSyntheticExamModule({ idCourse: module?.data?.khoa_hoc_id, idModule: idChapter, pageSize: 999999, pageIndex: 1 }));
+          notification.success({
+              message: 'Thành công',
+              description: !exam.xuat_ban ? 'Xuất bản đề thi thành công' : !exam.trang_thai ? 'Sử dụng đề thi thành công' : 'Ngưng sử dụng đề thi thành công',
+          })
+        } else {
+          notification.error({
+              message: 'Thông báo',
+              description: !exam.xuat_ban ? 'Xuất bản đề thi thành công' : !exam.trang_thai ? 'Sử dụng đề thi thành công' : 'Ngưng sử dụng đề thi thành công',
+          })
+        };
+      }
+      if (!exam.xuat_ban)
+        dispatch(examActions.publishExam({ id: exam.de_thi_id }, callback))
+      else // cập nhật trạng thái
+        dispatch(examActions.getUsing({ id: exam.de_thi_id }, callback))
+    }
+
+    return ( 
+      Modal.confirm({
+        width: 500,
+        title: 'Xuất bản đề thi',
+        content: !exam.xuat_ban ? 'Bạn có chắc chắn muốn xuất bản đề thi này không?' : !exam.trang_thai ? 'Bạn có chắc chắn muốn sử dụng đề thi này không?' : 'Bạn có chắc chắn muốn ngừng sử dụng đề thi này không?',
+        okText: 'Có',
+        cancelText: 'Không',
+        onOk: () => {
+          handlePusblish();
+        },
+      })
+    )
   }
 
-  // event xoá chương học / đề thị modun
+  const handleViewExam = (exam) => {
+    setSpinning(true);
+    dispatch(examActions.getExam({ id: exam.de_thi_id }, (res) => {
+      if (res.status === 'success') {
+        setSpinning(false);
+        setIsExamViewModalVisible(true)
+      }
+    }));
+  }
+
+  // event xoá chương học / đề thi modun
   const handleDelete = () => {
-    if (!examToDelete) { // Delete chapter
+    setSpinning(true);
+    if (examToDelete) { // Delete exam
       // call api
+      const callback = (res) => {
+        if (res.statusText === 'OK' && res.status === 200) {
+          dispatch(examActions.getSyntheticExamModule({ idCourse: module?.data?.khoa_hoc_id, idModule: idChapter, pageSize: 999999, pageIndex: 1 }));
+          notification.success({
+              message: 'Thành công',
+              description: 'Xóa đề thi thành công',
+          })
+          setDeleteModalVisible(false)
+          setExamToDelete(null);
+          setSpinning(false);
+          setIsExamViewModalVisible(false);
+        } else {
+          notification.error({
+              message: 'Thông báo',
+              description: 'Xóa đề thi thất bại',
+          })
+          setSpinning(false);
+        };
+      }
+      setSpinning(true);
+      dispatch(examActions.deleteExam({ idExam: examToDelete.de_thi_id }, callback))
 
-      message.success("Đã xóa chương học thành công!")
-      history.push(`/teacher/course-management`)
-      setDeleteModalVisible(false)
-      return
-    }
-    if (!modunToDelete) { // Delete topic
-      // call api
-      
-      message.success("Đã xóa chuyên đề thành công!")
-      setDeleteModalVisible(false)
-      setModunToDelete(null)
-      return
-    }
-    if (!examToDelete) {
-      message.error("Không có đề thi nào được chọn để xóa!")
       return
     }
 
-    // xoá đề thi
-    const updatedExams = examsData.filter((exam) => exam.id !== examToDelete.id)
-    setExamsData(updatedExams)
-    setExamToDelete(null)
-    setDeleteModalVisible(false)
-    message.success("Đã xóa đề thi thành công!")
+    if (modunToDelete) { // Delete chương học
+      const callback = (res) => {
+        if (res.statusText === 'OK' && res.status === 200) {
+          notification.success({
+            message: 'Thành công',
+            description: 'Xóa chương học thành công',
+          })
+          setDeleteModalVisible(false)
+          setModunToDelete(null)
+          setSpinning(false);
+          history.goBack()
+          return;
+        } else {
+          notification.error({
+            message: 'Thông báo',
+            description: 'Xóa chương học thất bại',
+          })
+          setSpinning(false);
+          setDeleteModalVisible(false)
+          setModunToDelete(null)
+          return;
+        };
+      }
+      dispatch(partActions.DeleteModule({ idModule: idChapter }, callback))
+    }
+
+    if (thematicToDelete) { // Delete chuyên đề
+      dispatch(thematicActions.DeleteThematic({ idThematic: thematicToDelete.chuyen_de_id }, (res) => {
+        if (res.statusText === 'OK' && res?.data?.status === 'success') {
+          notification.success({
+            message: 'Thành công',
+            description: 'Xóa chuyên đề thành công',
+          })
+          setSpinning(false);
+          setDeleteModalVisible(false)
+          setThematicToDelete(null)
+          dispatch(thematicActions.getThematicsByTeacher({ idCourse: '', idModule: idChapter, status: '', search: '', start: '', end: '', pageIndex: 1, pageSize: 99999999 }));
+        } else {
+          notification.error({
+            message: 'Thông báo',
+            description: 'Xóa chuyên đề thất bại',
+          })
+          setSpinning(false);
+        }
+      }))
+    }
   }
 
   // UI for empty exams state
@@ -201,10 +509,27 @@ const ChapterDetail = () => {
           fontWeight: "500",
           borderRadius: "6px",
           width: "100%",
+          marginBottom: 12
+        }}
+        onClick={() => setIsModunExamModalVisible(true)}
+      >
+        Thêm đề thi
+      </Button>
+      <Button
+        type="primary"
+        size="large"
+        icon={<PlusOutlined />}
+        style={{
+          backgroundColor: "#4c6ef5",
+          borderColor: "#4c6ef5",
+          height: "48px",
+          fontSize: "16px",
+          fontWeight: "500",
+          borderRadius: "6px",
+          width: "100%",
         }}
         onClick={() => {
-          // Add logic to create criteria
-          message.info("Tạo tiêu chí đề thi chương học")
+          history.push(`/teacher/criteria`);
         }}
       >
         Tạo tiêu chí đề thi chương học
@@ -212,30 +537,156 @@ const ChapterDetail = () => {
     </div>
   )
 
+  // event submit form exam
+  const handleChapterExamForm = () => {
+    addModunExamForm
+      .validateFields()
+      .then((values) => {
+        
+        const callback = async (res) => {
+          if (res.statusText === 'OK' && res.status === 200) {
+            if (!state.isEdit) {
+              const formData = new FormData();
+              formData.append('file', state.fileExam); 
+              setSpinning(true);
+              await axios.post(
+                config.API_LATEX + `/${res?.data?.data?.de_thi_id}/uploadfile`,
+                formData, 
+                {
+                  timeout: 1800000,
+                  headers: { "content-type": "multipart/form-data", Authorization: `Bearer ${localStorage.getItem('userToken')}`, },
+                }
+              ).then(
+                res => {
+                  if (res.statusText === 'OK' && res.status === 200) {
+                    addModunExamForm.resetFields();
+                    dispatch(examActions.getSyntheticExamModule({ idCourse: module?.data?.khoa_hoc_id, idModule: idChapter, pageSize: 999999, pageIndex: 1 }));
+                    notification.success({
+                        message: 'Thành công',
+                        description: 'Thêm đề thi mới thành công',
+                    });
+                    setIsModunExamModalVisible(false);
+                    setSpinning(false);
+                  } else {
+                      notification.error({
+                          message: 'Thông báo',
+                          description: 'Thêm đề thi mới thất bại. Xin vui lòng kiểm tra lại tiêu chí đề',
+                      })
+                  }
+                }
+              )
+              .catch(error => {
+                notification.error({ message: error.message })
+                setSpinning(false);
+              });
+            } else {
+              notification.success({
+                  message: 'Thông báo',
+                  description: state.isEdit ? 'Cập nhật đề thi thành công' : 'Thêm đề thi mới thành công',
+              })
+              setIsModunExamModalVisible(false);
+              addModunExamForm.resetFields();
+              dispatch(examActions.getSyntheticExamModule({ idCourse: module?.data?.khoa_hoc_id, idModule: idChapter, pageSize: 999999, pageIndex: 1 }));
+            }
+          } else {
+            notification.error({
+                message: 'Thông báo',
+                description: state.isEdit ? 'Cập nhật đề thi thất bại' : 'Thêm đề thi mới thất bại',
+            })
+            setIsModunExamModalVisible(false);
+            addModunExamForm.resetFields();
+          }
+        };
+
+        const formData = new FormData();
+        formData.append('ten_de_thi', values.ten_de_thi);
+        formData.append('loai_de_thi_id', 2); // 2 là đề thi chương học
+        formData.append('kct_id', values.kct_id);
+        formData.append('khoa_hoc_id', values.khoa_hoc_id);
+        formData.append('mo_dun_id', values.mo_dun_id);
+        if (values.de_thi_ma !== undefined) {
+          formData.append('de_thi_ma', values.de_thi_ma !== undefined ? values.de_thi_ma : '');
+        }
+
+        if (state.fileImg !== '')
+          formData.append('anh_dai_dien', state.fileImg !== undefined ? state.fileImg : '');
+        
+        if (!state.isEdit)
+          dispatch(examActions.createExam(formData, callback));
+        else dispatch(examActions.editExam({ formData: formData, idExam: state.idExam }, callback));
+        
+      })
+      .catch((error) => {
+        console.log("Validation failed:", error)
+      })
+  }
+
+  // event nhân bản đề thi
+  const reuseExam = (id) => {
+    const callback = (res) => {
+      if (res.status === 200 && res.statusText === 'OK') {
+        dispatch(examActions.getSyntheticExamModule({ idCourse: module?.data?.khoa_hoc_id, idModule: idChapter, pageSize: 999999, pageIndex: 1 }));
+        notification.success({
+          message: 'Thành công',
+          description: 'Sử dụng đề thi thành công',
+        })
+      }
+    };
+
+    Modal.confirm({
+      icon: <ExclamationCircleOutlined />,
+      content: 'Bạn chắc chắn muốn sử dụng lại đề này ?',
+      okText: 'Đồng ý',
+      cancelText: 'Hủy',
+      onOk() {
+        dispatch(examActions.reuseExam({ idExam: id }, callback))
+      },
+    });
+  }
+
   // Render UI for chapter detail
   const RightContentChapterDetail = () => (
       <>
         <List
-          dataSource={chapterExams}
+          dataSource={exams?.data}
           renderItem={(exam, index) => {
-            const handleToggleHidden = () => {
-              const updatedExams = examsData.map((item) =>
-                item.id === exam.id ? { ...item, hidden: !item.hidden } : item,
-              )
-              setExamsData(updatedExams)
-              message.success(exam.hidden ? "Đã hiển thị đề thi" : "Đã ẩn đề thi")
-            }
-
             const menu = (
               <Menu>
-                <Menu.Item key="hide" icon={exam.hidden ? <EyeOutlined /> : <EyeInvisibleOutlined />} onClick={handleToggleHidden}>
-                  {exam.hidden ? "Xuất bản đề thi" : "Ngừng xuất bản đề thi"}
+                <Menu.Item key="hide" icon={(!exam.trang_thai || !exam.xuat_ban) ? <EyeOutlined /> : <EyeInvisibleOutlined />}
+                  onClick={() => handlePublishExam(exam)} // done
+                >
+                  {!exam.xuat_ban ? "Xuất bản đề thi" : !exam.trang_thai ? "Sử dụng đề thi" : "Ngừng sử dụng đề thi"}
                 </Menu.Item>
-                <Menu.Item key="hide" icon={<CopyOutlined />}>
+                <Menu.Item key="hide" icon={<CopyOutlined />}
+                  onClick={() => {
+                    if (exam.xuat_ban) reuseExam(exam.de_thi_id)
+                    else 
+                      notification.warning({
+                        message: 'Cảnh báo',
+                        description: 'Đề thi chưa được xuất bản, không thể nhân bản đề thi này',
+                      })
+                  }}
+                >
                   Nhân bản đề thi
                 </Menu.Item>
-                <Menu.Item key="edit" icon={<EditOutlined />}>
-                  Sửa đề thi
+                <Menu.Item key="edit" icon={<EditOutlined />}
+                  onClick={() => {
+                    if (!exam.xuat_ban) {
+                      dispatch(examActions.getExam({ id: exam.de_thi_id }, (res) => {
+                        if (res.status === 'success') {
+                          setState({ ...state, isEdit: true, idExam: exam.de_thi_id });
+                          setIsModunExamModalVisible(true);
+                          addModunExamForm.setFieldsValue(res.data)
+                        }
+                      }));
+                    } else 
+                      notification.warning({
+                        message: 'Cảnh báo',
+                        description: 'Đề thi đã được xuất bản, không thể chỉnh sửa đề thi này',
+                      })
+                  }}
+                >
+                  Cập nhật đề thi
                 </Menu.Item>
                 <Menu.Item key="delete" icon={<DeleteOutlined />} danger
                   onClick={() => {
@@ -250,15 +701,15 @@ const ChapterDetail = () => {
 
             return (
               <List.Item className="exam-item">
-                <div className="exam-item-detail" >
-                  <Avatar className="avatar" onClick={onViewExam}
+                <div className="exam-item-detail" style={{ opacity: (!exam.trang_thai || !exam.xuat_ban) ? 0.5 : 1, }}>
+                  <Avatar className="avatar" onClick={() => handleViewExam(exam)}
                     size={48}
                     icon={<FileTextOutlined />}
                   />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                      <Text className="exam-title" strong onClick={onViewExam}>
-                        {exam.title}
+                      <Text className="exam-title" strong onClick={() => handleViewExam(exam)}>
+                        {exam?.ten_de_thi}
                       </Text>
                       <Dropdown overlay={menu} trigger={["click"]} placement="bottomRight"
                         onClick={(e) => e.stopPropagation()}
@@ -266,14 +717,14 @@ const ChapterDetail = () => {
                         <Button type="text" size="small" icon={<MoreOutlined />} />
                       </Dropdown>
                     </div>
-                    <Space size="large" style={{ color: "#8c8c8c", fontSize: "14px" }} onClick={onViewExam}>
+                    <Space size="large" style={{ color: "#8c8c8c", fontSize: "14px" }} onClick={() => handleViewExam(exam)}>
                       <Space size={6}>
                         <PlayCircleOutlined />
-                        <span>{exam.duration}</span>
+                        <span>{exam?.thoi_gian} phút</span>
                       </Space>
                       <Space size={6}>
                         <FileTextOutlined />
-                        <span>{exam.questions}</span>
+                        <span>{exam?.so_cau_hoi} câu hỏi</span>
                       </Space>
                     </Space>
                   </div>
@@ -287,661 +738,766 @@ const ChapterDetail = () => {
           block
           icon={<PlusOutlined />}
           className="btn-add"
-          onClick={() => setIsAddModunExamModalVisible(true)}
+          onClick={() => setIsModunExamModalVisible(true)}
         >
           Thêm đề thi
         </Button>
       </>
   )
   
+  // event đổi trạng thái chương học
+  const ChangeStatusModule = (module) => {
+    Modal.confirm({
+      width: 500,
+      icon: <ExclamationCircleOutlined />,
+      content: module?.trang_thai === 1 ? 'Bạn có chắc chán muốn dừng hoạt động mô đun này?' : 'Bạn có chắc chán muốn kích hoạt mô đun này?',
+      okText: 'Đồng ý',
+      cancelText: 'Hủy',
+      onOk() {
+        const callback = (res) => {
+          if (res.statusText === 'OK' && res.status === 200) {
+            dispatch(partActions.getModule({ id: idChapter }));
+            notification.success({
+              message: 'Thành công',
+              description: 'Chuyển trạng thái module thành công',
+            })
+          } else {
+            notification.error({
+              message: 'Thông báo',
+              description: 'Chuyển trạng thái module thất bại',
+            })
+          };
+        }
+
+        const formData = new FormData();
+        formData.append('trang_thai', !module.trang_thai);
+        dispatch(partActions.EditModule({ formData: formData, idModule: module?.mo_dun_id }, callback));
+      },
+    });
+  }
+
+  // Event cập nhật chương học 
+  const updateChapter = (values) => {
+    if (values.khoa_hoc_id === undefined) { // check null
+      notification.warning({
+        message: 'Cảnh báo',
+        description: 'Thông tin chương học chưa đủ',
+      })
+      return;
+    }
+    const formData = new FormData();
+    formData.append('ten_mo_dun', values.ten_mo_dun);
+    formData.append('linh_vuc', values.linh_vuc);
+    formData.append('mo_ta', values.mo_ta !== undefined ? values.mo_ta : '' );
+    formData.append('khoa_hoc_id', values.khoa_hoc_id);
+    formData.append('chuyen_nganh_id', values.chuyen_nganh_id);
+    formData.append('loai_tong_hop', values.loai_tong_hop); // 0 là phần bài học
+    formData.append('giao_vien_id', JSON.parse(localStorage.getItem('userInfo'))?.giao_vien_id );
+
+    // video , image
+    if (state.fileImg !== '')
+      formData.append('anh_dai_dien', state.fileImg !== undefined ? state.fileImg : '');
+    if (state.fileVid !== '')
+      formData.append('video_gioi_thieu', state.fileVid);
+
+    const callback = (res) => {
+      if (res.data.status === 'success' && res.status === 200) {
+        chapterForm.resetFields();
+        setIsAddChapterModalVisible(false);
+        // request api lấy  chương học mới
+        dispatch(partActions.getModule({ id: idChapter }));
+        notification.success({
+          message: 'Thành công',
+          description: 'Cập nhật chương học thành công'
+        })
+      } else {
+        notification.error({
+          message: 'Thông báo',
+          description: 'Cập nhật chương học thất bại',
+        })
+      }
+    };
+    dispatch(partActions.EditModule({ formData: formData, idModule: module?.data.mo_dun_id }, callback));
+    
+  };
+
   return (
-    <div className="chapter-detail">
-      
-      <Row gutter={24}>
-        {/* Left Content */}
-        <Col xs={24} lg={12}>
-          <Card style={{ borderRadius: "8px", height: "fit-content" }}>
-            {/* Chapter Image */}
-            <div style={{ marginBottom: "24px" }}>
-              <Image
-                src={require("assets/img/lich_khoa_hoc.jpg").default}
-                alt="Calculator and documents"
-                style={{ objectFit: "cover", borderRadius: "8px" }}
-                preview={false}
-              />
-            </div>
+    <Spin spinning={spinning} tip="Đang xử lý...">
+      <div className="chapter-detail">
+        
+        <Row gutter={24}>
+          {/* Left Content */}
+          <Col xs={24} lg={12}>
+            <Card style={{ borderRadius: "8px", height: "fit-content" }}>
+              {/* Chapter Image */}
+              <div style={{ marginBottom: "24px" }}>
+                <Image
+                  src={module?.data?.anh_dai_dien === null ? require("assets/img/lich_khoa_hoc.jpg").default : config.API_URL + `${module?.data?.anh_dai_dien}`}
+                  alt="Calculator and documents"
+                  style={{ objectFit: "cover", borderRadius: "8px" }}
+                  preview={true}
+                />
+              </div>
 
-            {/* Chapter Title */}
-            <Title level={3} style={{ marginBottom: "24px", color: "#262626", lineHeight: "1.4" }}>
-              Chương 1: Ứng dụng đạo hàm để khảo sát và vẽ đồ thị hàm số
-            </Title>
+              {/* Chapter Title */}
+              <Title level={3} style={{ marginBottom: "24px", color: "#262626", lineHeight: "1.4" }}>
+                {module?.data?.ten_mo_dun}
+              </Title>
 
-            {/* Chapter Description */}
-            <Paragraph style={{ color: "#595959", lineHeight: "1.8", fontSize: "16px", textAlign: "justify" }}>
-              Chuyên đề này tập trung vào việc vận dụng đạo hàm để phân tích và khảo sát các đặc điểm quan trọng của hàm
-              số như tính đơn điệu, cực trị, điểm uốn và tính lõi/lồm. Học sinh sẽ được hướng dẫn cách sử dụng bảng biến
-              thiên để vẽ đồ thị chính xác, nhận diện hình dáng hàm số và xác định các yếu tố then chốt phục vụ cho bài
-              toán khảo sát hàm. Đây là phần kiến thức nền tảng và chiếm tỉ trọng lớn trong các đề thi THPT Quốc gia.
-            </Paragraph>
+              {/* Chapter Description */}
+              <Paragraph style={{ color: "#595959", lineHeight: "1.8", fontSize: "16px", textAlign: "justify" }}>
+                {module?.data?.mo_ta}
+              </Paragraph>
 
-            {/* Action Buttons */}
-            <Space style={{ marginTop: "32px" }}>
-              <Button icon={<EyeInvisibleOutlined />} style={{ borderRadius: "6px" }}>
-                Ẩn chương
-              </Button>
-              <Button icon={<EditOutlined />} style={{ borderRadius: "6px" }}
-                onClick={() => setIsAddChapterModalVisible(true)}
-              >
-                Sửa chương
-              </Button>
-              <Button icon={<DeleteOutlined />} danger style={{ borderRadius: "6px" }} 
-                onClick={() => {
-                  setDeleteModalVisible(true)
-                }}
-              />
-            </Space>
-          </Card>
-        </Col>
-
-        {/* Right Content */}
-        <Col xs={24} lg={12}>
-          <Card style={{ borderRadius: "8px" }}>
-            <Title level={4} style={{ marginBottom: "16px", color: "#262626" }}>
-              Nội dung chương học
-            </Title>
-
-            <Tabs activeKey={activeTab} onChange={setActiveTab}>
-              <TabPane
-                tab={
-                  <span
-                    style={{
-                      backgroundColor: activeTab === "topics" ? "#dc4c64" : "#f0f0f0",
-                      color: activeTab === "topics" ? "#fff" : "#8c8c8c",
-                      padding: "8px 16px",
-                      borderRadius: "6px",
-                      fontWeight: "500",
-                    }}
-                  >
-                    Danh sách chuyên đề ({chapterTopics.length})
-                  </span>
-                }
-                key="topics"
-              >
-                <List
-                  dataSource={chapterTopics}
-                  renderItem={(topic, index) => {
-                    const menu = (
-                      <Menu>
-                        <Menu.Item key="edit" icon={<EditOutlined />}>
-                          Sửa chuyên đề
-                        </Menu.Item>
-                        <Menu.Item key="hide" icon={<EyeInvisibleOutlined />}>
-                          Ẩn chuyên đề
-                        </Menu.Item>
-                        <Menu.Item key="delete" icon={<DeleteOutlined />} danger
-                          onClick={() => {
-                            setModunToDelete(topic);
-                            setDeleteModalVisible(true);
-                          }}
-                        >
-                          Xóa chuyên đề
-                        </Menu.Item>
-                      </Menu>
-                    )
-
-                    return (
-                      <List.Item className="modun-item">
-                        <div className="modun-item-detail">
-                          <Avatar className="avatar"
-                            size={48}
-                            icon={<FileTextOutlined />}
-                          />
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                              <Text strong className="modun-title" onClick={() => history.push(`/teacher/module-detail/${topic.id}`)}>
-                                {topic.title}
-                              </Text>
-                              <Dropdown overlay={menu} trigger={["click"]} placement="bottomRight" onClick={(e) => e.stopPropagation()}>
-                                <Button type="text" size="small" icon={<MoreOutlined />} />
-                              </Dropdown>
-                            </div>
-                            <Space size="large" style={{ color: "#8c8c8c", fontSize: "14px" }} 
-                              onClick={() => history.push(`/teacher/module-detail/${topic.id}`)}
-                            >
-                              <Space size={6}>
-                                <FileTextOutlined />
-                                <span>{topic.documents} tài liệu</span>
-                              </Space>
-                              <Space size={6}>
-                                <PlayCircleOutlined />
-                                <span>{topic.videos} videos bài giảng</span>
-                              </Space>
-                            </Space>
-                          </div>
-                        </div>
-                      </List.Item>
-                    )
+              {/* Action Buttons */}
+              <Space style={{ marginTop: "32px" }}>
+                <Button icon={module?.data?.trang_thai === 1 ? <EyeInvisibleOutlined /> : <EyeOutlined /> } style={{ borderRadius: "6px" }}
+                  onClick={() => ChangeStatusModule(module?.data)}
+                >
+                  {module?.data?.trang_thai === 1 ? 'Ẩn chương' : 'Hiện chương'}
+                </Button>
+                <Button icon={<EditOutlined />} style={{ borderRadius: "6px" }}
+                  onClick={() => {
+                    chapterForm.setFieldsValue(module?.data)
+                    setIsAddChapterModalVisible(true)
+                  }}
+                >
+                  Cập nhật chương
+                </Button>
+                <Button icon={<DeleteOutlined />} danger style={{ borderRadius: "6px" }} 
+                  onClick={() => {
+                    setDeleteModalVisible(true)
+                    setModunToDelete(module?.data)
                   }}
                 />
-                <Button
-                  type="primary"
-                  block
-                  icon={<PlusOutlined />}
-                  className="btn-add"
-                  onClick={() => setIsAddTopicModalVisible(true)}
+              </Space>
+            </Card>
+          </Col>
+
+          {/* Right Content */}
+          <Col xs={24} lg={12}>
+            <Card style={{ borderRadius: "8px" }}>
+              <Title level={4} style={{ marginBottom: "16px", color: "#262626" }}>
+                Nội dung chương học
+              </Title>
+
+              <Tabs activeKey={activeTab} onChange={setActiveTab}>
+                <TabPane
+                  tab={
+                    <span
+                      style={{
+                        color: activeTab === "topics" ? "#fff" : "#8c8c8c",
+                        padding: "8px 16px",
+                        borderRadius: "6px",
+                        fontWeight: "500",
+                      }}
+                    >
+                      Danh sách chuyên đề ({thematics?.totalCount})
+                    </span>
+                  }
+                  key="topics"
                 >
-                  Thêm chuyên đề
+                  <List
+                    dataSource={thematics?.data}
+                    renderItem={(topic, index) => {
+                      const menu = (
+                        <Menu>
+                          <Menu.Item key="edit" icon={<EditOutlined />}
+                            onClick={() => {
+                              dispatch(thematicActions.getThematic({ id: topic?.chuyen_de_id }, (res) => {
+                                if (res.status === 'success') {
+                                  setState({ ...state, isEdit: true, idThematic: topic?.chuyen_de_id });
+                                  setIsAddTopicModalVisible(true);
+                                  TopicForm.setFieldsValue(res.data);
+                                }
+                              }))
+                            }}
+                          >
+                            Cập nhật chuyên đề
+                          </Menu.Item>
+                          <Menu.Item key="hide" icon={<EyeInvisibleOutlined />}
+                            onClick={() => {
+                              let data = {
+                                "trang_thai": !topic.trang_thai,
+                              }
+                              dispatch(thematicActions.EditThematic({ formData: data, idThematic: topic?.chuyen_de_id }, (res) => {
+                                if (res.statusText === 'OK' && res.status === 200) {
+                                  notification.success({
+                                    message: 'Thành công',
+                                    description: topic.trang_thai ? 'Ẩn chuyên đề thành công' : 'Hiện chuyên đề thành công',
+                                  })
+                                  dispatch(thematicActions.getThematicsByTeacher({ idCourse: '', idModule: idChapter, status: '', search: '', start: '', end: '', pageIndex: 1, pageSize: 99999999 }));
+                                } else {
+                                  notification.error({
+                                    message: 'Thông báo',
+                                    description: topic.trang_thai ? 'Ẩn chuyên đề thất bại' : 'Hiện chuyên đề thất bại',
+                                  })
+                                }
+                              }))
+                            }}
+                          >
+                            {topic.trang_thai ? 'Ẩn chuyên đề' : 'Hiện chuyên đề'}
+                          </Menu.Item>
+                          <Menu.Item key="delete" icon={<DeleteOutlined />} danger
+                            onClick={() => {
+                              setThematicToDelete(topic);
+                              setDeleteModalVisible(true);
+                            }}
+                          >
+                            Xóa chuyên đề
+                          </Menu.Item>
+                        </Menu>
+                      )
+
+                      return (
+                        <List.Item className="modun-item">
+                          <div className="modun-item-detail" style={{opacity: !topic.trang_thai ? 0.5 : 1}}>
+                            <Avatar className="avatar" size={48} icon={<FileTextOutlined />} />
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                                <Text strong className="modun-title" onClick={() => history.push(`/teacher/module-detail/${topic?.chuyen_de_id}`)}>
+                                  {topic?.ten_chuyen_de}
+                                </Text>
+                                <Dropdown overlay={menu} trigger={["click"]} placement="bottomRight" onClick={(e) => e.stopPropagation()}>
+                                  <Button type="text" size="small" icon={<MoreOutlined />} />
+                                </Dropdown>
+                              </div>
+                              <Space size="large" style={{ color: "#8c8c8c", fontSize: "14px" }} 
+                                onClick={() => history.push(`/teacher/module-detail/${topic.chuyen_de_id}`)}
+                              >
+                                <Space size={6}>
+                                  <FileTextOutlined />
+                                  <span>{topic?.so_tai_lieu} tài liệu</span>
+                                </Space>
+                                <Space size={6}>
+                                  <PlayCircleOutlined />
+                                  <span>{topic?.so_video} videos bài giảng</span>
+                                </Space>
+                              </Space>
+                            </div>
+                          </div>
+                        </List.Item>
+                      )
+                    }}
+                  />
+                  <Button
+                    type="primary"
+                    block
+                    icon={<PlusOutlined />}
+                    className="btn-add"
+                    onClick={() => setIsAddTopicModalVisible(true)}
+                  >
+                    Thêm chuyên đề
+                  </Button>
+                </TabPane>
+                <TabPane
+                  tab={
+                    <span
+                      style={{
+                        color: activeTab === "exams" ? "#fff" : "#8c8c8c",
+                        padding: "8px 16px",
+                        borderRadius: "6px",
+                        fontWeight: "500",
+                      }}
+                    >
+                      Đề thi chương học ({exams?.totalCount})
+                    </span>
+                  }
+                  key="exams"
+                >
+                  {exams?.totalCount === 0 ? <EmptyExamsState /> : <RightContentChapterDetail />}
+                </TabPane>
+              </Tabs>
+            </Card>
+          </Col>
+        </Row>
+
+        {/* Add chuyên đề Modal */}
+        <Modal
+          title={!state.isEdit ? "Thêm chuyên đề mới" : "Cập nhật chuyên đề"}
+          open={isAddTopicModalVisible}
+          onCancel={() => {
+            setIsAddTopicModalVisible(false)
+            setState({ ...state, fileImg: '', fileVid: '', isEdit: false, idModule: '', idThematic: ''})
+            TopicForm.resetFields()
+          }}
+          footer={null}
+          width={900}
+          destroyOnClose
+          className="add-topic-modal"
+        >
+          <Form form={TopicForm} layout="vertical" style={{ marginTop: "24px" }}>
+            <Row gutter={24}>
+              <Col span={12}>
+                <Form.Item
+                  label="Tên chuyên đề"
+                  name="ten_chuyen_de"
+                  rules={[{ required: true, message: "Vui lòng nhập tên chuyên đề" }]}
+                >
+                  <Input placeholder="Nhập tên chuyên đề"/>
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  label="Khung chương trình"
+                  name="kct_id"
+                  rules={[{ required: true, message: "Vui lòng chọn khung chương trình" }]}
+                  initialValue={module?.data?.kct_id}
+                >
+                  {renderProgrammes()}
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <Row gutter={24}>
+              <Col span={12}>
+                <Form.Item
+                  label="Khóa học"                
+                  name="khoa_hoc_id"
+                  rules={[{ required: true, message: "Vui lòng chọn khóa học" }]}
+                  initialValue={module?.data?.khoa_hoc_id}
+                >
+                  {renderCourses()}
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  label="Chương học"
+                  name="mo_dun_id"
+                  rules={[{ required: true, message: "Vui lòng chọn chương học" }]}
+                  initialValue={module?.data?.mo_dun_id}
+                >
+                  {renderModules()}
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <Row gutter={24}>
+              <Col span={12}>
+                <Form.Item className="input-col" label="Lớp học" name="lop_id" 
+                  rules={[{ required: true, message: "Vui lòng chọn lớp học" }]}
+                >
+                  {renderClasses()}
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label="Trạng thái" name="trang_thai" initialValue={true}>
+                  <Select disabled={!state.isEdit} style={{height: 48}}
+                    onChange={(trang_thai) => setState({ ...state, trang_thai: trang_thai })}
+                    placeholder="Chọn trạng thái"
+                  >
+                    <Option value={true} >Đang hoạt động</Option>
+                    <Option value={false} >Đã dừng</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <Form.Item
+              label="Mô tả"
+              name="mo_ta"
+            >
+              <Input.TextArea
+                rows={6}
+                placeholder="Nhập mô tả chuyên đề"
+                maxLength={300}
+                showCount
+                style={{
+                  resize: "none",
+                  fontSize: "14px",
+                  lineHeight: "1.6",
+                }}
+              />
+            </Form.Item>
+
+            <Row gutter={16} style={{ marginTop: "32px" }}>
+              <Col span={12}>
+                <Button
+                  block
+                  size="large"
+                  onClick={() => {
+                    setIsAddTopicModalVisible(false)
+                    TopicForm.resetFields()
+                    setState({ ...state, fileImg: '', fileVid: '', isEdit: false, idModule: '', idThematic: ''})
+                  }}
+                  className="btn-cancel"
+                >
+                  Huỷ bỏ
                 </Button>
-              </TabPane>
-              <TabPane
-                tab={
-                  <span
+              </Col>
+              <Col span={12}>
+                <Button className="btn-add"
+                  block
+                  type="primary"
+                  size="large"
+                  onClick={handleFormTopic}
+                >
+                  Xác nhận
+                </Button>
+              </Col>
+            </Row>
+          </Form>
+        </Modal>
+        
+        {/* edit Chapter Modal */}
+        <Modal
+          title={'Cập nhật chương học'}
+          open={isAddChapterModalVisible}
+          onCancel={() => {
+            setIsAddChapterModalVisible(false)
+            chapterForm.resetFields()
+            setState({ ...state, fileImg: '', fileVid: '', isEdit: false, idModule: ''})
+          }}
+          footer={[
+            <Button key="cancel" onClick={() => {
+              setIsAddChapterModalVisible(false)
+              chapterForm.resetFields()
+              setState({ ...state, fileImg: '', fileVid: '', isEdit: false, idModule: ''})
+            }}>
+              Hủy bỏ
+            </Button>,
+            <Button
+              key="submit"
+              type="primary"
+              onClick={() => {
+                chapterForm
+                  .validateFields()
+                  .then((values) => {
+                    updateChapter(values)
+                  })
+                  .catch((error) => {
+                    console.log("Validation failed:", error)
+                  })
+              }}
+              style={{ backgroundColor: "#4c6ef5", borderColor: "#4c6ef5" }}
+            >
+              Xác nhận
+            </Button>,
+          ]}
+          width={800}
+          destroyOnClose
+        >
+          <Form form={chapterForm} layout="vertical" style={{ marginTop: "16px" }}>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  label="Tên chương học"
+                  name="ten_mo_dun"
+                  rules={[{ required: true, message: "Vui lòng nhập tên chương học" }]}
+                >
+                  <Input placeholder="Nhập tên chương học" />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  className="input-col"
+                  label="Lĩnh vực"
+                  name="linh_vuc"
+                  rules={[
+                      {
+                        required: true,
+                        message: 'Tên lĩnh vực là trường bắt buộc.',
+                      },
+                  ]}
+                >
+                  <Input placeholder="Nhập tên lĩnh vực"/>
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  label="Khung chương trình"
+                  name="khung_ct_id"
+                  initialValue={module?.data?.kct_id}
+                  rules={[{ required: true, message: "Vui lòng chọn khung chương trình" }]}
+                >
+                  {renderProgrammes()}
+                </Form.Item>
+              </Col>
+
+              <Col span={12}>
+                <Form.Item className="input-col" label="Khóa học" name="khoa_hoc_id" 
+                  initialValue={module?.data?.khoa_hoc_id}
+                  rules={[{
+                    required: true,
+                    message: 'Khóa học là bắt buộc',
+                  },]}
+                >
+                  {renderCourses()}
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  label="Chuyên ngành"
+                  className="input-col"
+                  name="chuyen_nganh_id"
+                  rules={[]} 
+                >
+                  {renderMajor()}
+                </Form.Item>     
+              </Col>
+
+              <Col span={12}>
+                <Form.Item
+                    name="loai_tong_hop"
+                  label="Loại chương học"
+                  initialValue={1}
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Loại chương học là trường bắt buộc.',
+                    },
+                  ]}
+                >
+                    <Radio.Group>
+                      <Radio className="option-payment" value={1}>
+                        Phần thi tổng hợp
+                      </Radio>
+                      {/* <Radio className="option-payment" value={2}>
+                        Phần thi chương học
+                      </Radio> */}
+                      <Radio className="option-payment" value={0}>
+                        Phần bài học
+                      </Radio>
+                    </Radio.Group>
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <Form.Item label="Mô tả chương học" name="mo_ta">
+              <Input.TextArea
+                rows={4}
+                placeholder="Mô tả về chương học"
+                maxLength={1000}
+                showCount
+                style={{ resize: "none" }}
+              />
+            </Form.Item>
+
+            <Form.Item className="input-col" label="Ảnh đại diện" name="anh_dai_dien" rules={[]}>
+              <Dragger {...propsImage} maxCount={1}
+                listType="picture"
+                className="upload-list-inline"
+              >
+                <p className="ant-upload-drag-icon">
+                  <UploadOutlined />
+                </p>
+                <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
+              </Dragger>
+            </Form.Item>
+
+            <Form.Item className="input-col" label="Video đại diện" name="video_gioi_thieu" rules={[]}>
+              <Dragger {...propsVideo} maxCount={1}
+                listType="picture"
+                className="upload-list-inline"
+              >
+                <p className="ant-upload-drag-icon">
+                  <UploadOutlined />
+                </p>
+                <p className="ant-upload-text bold">Click hoặc kéo thả video đại diện vào đây</p>
+              </Dragger>
+            </Form.Item> 
+          </Form>
+        </Modal>
+
+        {/* Delete Exam Confirmation Modal */}
+        <Modal
+          title={null}
+          open={deleteModalVisible}
+          onCancel={() => {
+            setDeleteModalVisible(false);
+            setExamToDelete(null);
+            setModunToDelete(null);
+            setThematicToDelete(null);
+          }}
+          footer={null}
+          width={420}
+          centered
+          closable={false}
+          className="delete-confirmation-modal"
+        > 
+          <Spin spinning={spinning} tip="Đang xóa dữ liệu...">
+            <div style={{ textAlign: "center", padding: "16px 0" }}>
+              <div
+                style={{
+                  width: "64px",
+                  height: "64px",
+                  margin: "0 auto 16px",
+                  backgroundColor: "#fff2f0",
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <ExclamationCircleFilled style={{ fontSize: "32px", color: "#ff4d4f" }} />
+              </div>
+              <Title level={4} style={{ marginBottom: "16px" }}>
+                Xoá {examToDelete ? 'đề thi' : thematicToDelete ? "Chuyên đề" : "Chương học"}
+              </Title>
+              <Paragraph style={{ fontSize: "16px", color: "#595959", marginBottom: "24px" }}>
+                Bạn có chắc chắn muốn xoá {" "} {examToDelete ? 'đề thi' : thematicToDelete ? "Chuyên đề" : "Chương học"} này?
+              </Paragraph>
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Button
+                    block
+                    size="large"
+                    onClick={() => {
+                      setDeleteModalVisible(false);
+                      setExamToDelete(null);
+                      setModunToDelete(null);
+                      setThematicToDelete(null);
+                    }}
                     style={{
-                      backgroundColor: activeTab === "exams" ? "#dc4c64" : "#f0f0f0",
-                      color: activeTab === "exams" ? "#fff" : "#8c8c8c",
-                      padding: "8px 16px",
-                      borderRadius: "6px",
+                      height: "48px",
+                      fontSize: "16px",
                       fontWeight: "500",
+                      borderRadius: "6px",
+                      border: 'none',
+                      background: '#F2F4F5'
                     }}
                   >
-                    Đề thi chương học ({chapterExams.length})
-                  </span>
-                }
-                key="exams"
-              >
-                {examsData.length === 0 ? <EmptyExamsState /> : <RightContentChapterDetail />}
-              </TabPane>
-            </Tabs>
-          </Card>
-        </Col>
-      </Row>
-
-      {/* Add Topic Modal */}
-      <Modal
-        title="Thêm chuyên đề mới"
-        open={isAddTopicModalVisible}
-        onCancel={() => {
-          setIsAddTopicModalVisible(false)
-          TopicForm.resetFields()
-        }}
-        footer={null}
-        width={900}
-        destroyOnClose
-        className="add-topic-modal"
-      >
-        <Form form={TopicForm} layout="vertical" style={{ marginTop: "24px" }}>
-          <Row gutter={24}>
-            <Col span={12}>
-              <Form.Item
-                label={
-                  <span>Tên chuyên đề</span>
-                }
-                name="topicName"
-                rules={[{ required: true, message: "Vui lòng nhập tên chuyên đề" }]}
-              >
-                <Input placeholder="Nhập tên chuyên đề"/>
+                    Huỷ bỏ
+                  </Button>
+                </Col>
+                <Col span={12}>
+                  <Button
+                    block
+                    size="large"
+                    danger
+                    type="primary"
+                    onClick={handleDelete}
+                    style={{ height: "48px", borderRadius: "6px" }}
+                  >
+                    Xác nhận
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </Spin>
+        </Modal>
+        
+        {/* add exam modun */}
+        <Modal
+          title={state.isEdit ? 'Cập nhật đề thi chương học' : "Tạo đề thi chương học"}
+          open={isModunExamModalVisible}
+          onCancel={() => {
+            setState({ ...state, isEdit: false, idExam: '', fileImg: '', fileVid: '', fileExam: '' })
+            setIsModunExamModalVisible(false)
+            addModunExamForm.resetFields()
+          }}
+          footer={null}
+          width={600}
+          destroyOnClose
+          className="add-modun-exam-modal"
+        >
+          <Spin spinning={spinning} tip="Đang tải dữ liệu...">
+            <Form form={addModunExamForm} layout="vertical" style={{ marginTop: "24px" }}>
+              <Form.Item label='Mã đề thi' name="de_thi_ma" rules={[{ required: true, message: 'Mã đề thi là bắt buộc'}]}>
+                <Input size="normal" placeholder="Mã đề thi" />
               </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label={
-                  <span>Khung chương trình</span>
-                }
-                name="curriculum"
-                rules={[{ required: true, message: "Vui lòng chọn khung chương trình" }]}
-                initialValue="math-foundation-12"
-              >
-                <Select style={{ height: "48px" }}>
-                  <Option value="math-foundation-12">
-                      Khóa học Toán nền tảng lớp 12
-                  </Option>
-                  <Option value="math-advanced-12">
-                      Khóa học Toán nâng cao lớp 12
-                  </Option>
-                </Select>
+              <Form.Item label='Tên đề thi' name="ten_de_thi" rules={[{ required: true, message: 'Tên đề thi là bắt buộc'}]}>
+                <Input size="normal" placeholder="Tên đề thi" />
               </Form.Item>
-            </Col>
-          </Row>
-
-          <Row gutter={24}>
-            <Col span={12}>
+              <Form.Item label="Khung chương trình" name="kct_id" 
+                rules={[{ required: true, message: 'Loại đề thi là bắt buộc'}]}
+                initialValue={module?.data?.kct_id}
+              >
+                  {renderProgrammes()}
+              </Form.Item>
               <Form.Item
-                label={
-                  <span>Khóa học</span>
-                }
-                name="course"
+                label="Khóa học"
+                name="khoa_hoc_id"
                 rules={[{ required: true, message: "Vui lòng chọn khóa học" }]}
-                initialValue="math-foundation-12"
+                initialValue={module?.data?.khoa_hoc_id}
               >
-                <Select style={{ height: "48px" }}>
-                  <Option value="math-foundation-12">Khóa học Toán nền tảng lớp 12</Option>
-                  <Option value="math-advanced-12">Khóa học Toán nâng cao lớp 12</Option>
-                </Select>
+                {renderCourses()}
               </Form.Item>
-            </Col>
-            <Col span={12}>
+
               <Form.Item
-                label={
-                  <span>Chương học</span>
-                }
-                name="chapter"
+                label="Chương học"            
+                name="mo_dun_id"
                 rules={[{ required: true, message: "Vui lòng chọn chương học" }]}
-                initialValue="chapter-1"
+                initialValue={module?.data?.mo_dun_id}
               >
-                <Select style={{ height: "48px" }}>
-                  <Option value="chapter-1">Chương 1: Ứng dụng đạo hàm để khảo sát và vẽ đồ thị hàm số</Option>
-                  <Option value="chapter-2">Chương 2: Mũ – Logarit</Option>
-                  <Option value="chapter-3">Chương 3: Nguyên hàm – Tích phân – Ứng dụng</Option>
-                </Select>
+                {renderModules()}
               </Form.Item>
-            </Col>
-          </Row>
 
-          <Row gutter={24}>
-            <Col span={12}>
-              <Form.Item label="Lĩnh vực" name="field" initialValue="math">
-                <Select style={{ height: "48px" }}>
-                  <Option value="math">Toán</Option>
-                  <Option value="physics">Vật lý</Option>
-                  <Option value="chemistry">Hóa học</Option>
-                  <Option value="literature">Văn học</Option>
-                </Select>
+              <Form.Item className="input-col" label="Hình đại diện" name="anh_dai_dien" rules={[]}>
+                <Dragger {...propsImage} maxCount={1}
+                    listType="picture"
+                    className="upload-list-inline"
+                >
+                    <p className="ant-upload-drag-icon">
+                    <UploadOutlined />
+                    </p>
+                    <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
+                </Dragger>
               </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="Trạng thái" name="status" initialValue="active">
-                <Select style={{ height: "48px" }}>
-                  <Option value="active">Hoạt động</Option>
-                  <Option value="inactive">Không hoạt động</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
 
-          <Form.Item
-            label="Mô tả"
-            name="description"
-          >
-            <Input.TextArea
-              rows={6}
-              placeholder="Nhập mô tả chuyên đề"
-              maxLength={300}
-              showCount
-              style={{
-                resize: "none",
-                fontSize: "14px",
-                lineHeight: "1.6",
-              }}
-            />
-          </Form.Item>
-
-          <Row gutter={16} style={{ marginTop: "32px" }}>
-            <Col span={12}>
-              <Button
-                block
-                size="large"
-                onClick={() => {
-                  setIsAddTopicModalVisible(false)
-                  TopicForm.resetFields()
-                }}
-                className="btn-cancel"
-              >
-                Huỷ bỏ
-              </Button>
-            </Col>
-            <Col span={12}>
-              <Button className="btn-add"
-                block
-                type="primary"
-                size="large"
-                onClick={handleAddTopic}
-              >
-                Xác nhận
-              </Button>
-            </Col>
-          </Row>
-        </Form>
-      </Modal>
-
-      {/* edit Chapter Modal */}
-      <Modal
-        title="Sửa chương học"
-        open={isAddChapterModalVisible}
-        onCancel={() => {
-          setIsAddChapterModalVisible(false)
-          chapterForm.resetFields()
-        }}
-        footer={[
-          <Button key="cancel" onClick={() => setIsAddChapterModalVisible(false)}>
-            Hủy bỏ
-          </Button>,
-          <Button
-            key="submit"
-            type="primary"
-            onClick={() => {
-              chapterForm
-                .validateFields()
-                .then((values) => {
-                  message.success("Cập nhật chương học thành công!")
-                  setIsAddChapterModalVisible(false)
-                  chapterForm.resetFields()
-                })
-                .catch((error) => {
-                  console.log("Validation failed:", error)
-                })
-            }}
-            style={{ backgroundColor: "#4c6ef5", borderColor: "#4c6ef5" }}
-          >
-            Xác nhận
-          </Button>,
-        ]}
-        width={800}
-        destroyOnClose
-      >
-        <Form form={chapterForm} layout="vertical" style={{ marginTop: "16px" }}>
-          <Row gutter={16}>
-            <Col span={12}>
               <Form.Item
-                label={
-                  <span>Tên chương học</span>
-                }
-                name="chapterName"
-                rules={[{ required: true, message: "Vui lòng nhập tên chương học" }]}
+                label="File đề thi"
+                name="file_de_thi"
+                rules={[{ required: !state.isEdit, message: "Vui lòng tải lên file đề thi" }]}
+                style={{ display: state.isEdit ? 'none' : 'block' }}
               >
-                <Input placeholder="Nhập" />
+                <Dragger {...propsFile} maxCount={1}
+                    listType="picture"
+                    className="upload-list-inline"
+                >
+                    <p className="ant-upload-drag-icon">
+                      <UploadOutlined />
+                    </p>
+                    <p className="ant-upload-text bold">Click hoặc kéo file đề thi vào đây</p>
+                    <p className="ant-upload-hint">
+                      Định dạng file Docx
+                    </p>
+                </Dragger>
               </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label={
-                  <span>Lĩnh vực</span>
-                }
-                name="field"
-                rules={[{ required: true, message: "Vui lòng chọn lĩnh vực" }]}
-              >
-                <Select placeholder="Chọn">
-                  <Option value="math">Toán học</Option>
-                  <Option value="physics">Vật lý</Option>
-                  <Option value="chemistry">Hóa học</Option>
-                  <Option value="literature">Văn học</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
 
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                label={
-                  <span>Khung chương trình</span>
-                }
-                name="curriculum"
-                rules={[{ required: true, message: "Vui lòng chọn khung chương trình" }]}
-              >
-                <Select placeholder="Chọn" defaultValue="math-foundation-12">
-                  <Option value="math-foundation-12">Khóa học Toán nền tảng lớp 12</Option>
-                  <Option value="math-advanced-12">Khóa học Toán nâng cao lớp 12</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label={
-                  <span>Khóa học</span>
-                }
-                name="course"
-                rules={[{ required: true, message: "Vui lòng chọn khóa học" }]}
-              >
-                <Select placeholder="Chọn">
-                  <Option value="course1">Khóa học 1</Option>
-                  <Option value="course2">Khóa học 2</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
+              <Row gutter={16} style={{ marginTop: "32px" }}>
+                <Col span={12}>
+                  <Button
+                    block
+                    size="large"
+                    onClick={() => {
+                      setState({ ...state, isEdit: false, idExam: '', fileImg: '', fileVid: '', fileExam: '' })
+                      setIsModunExamModalVisible(false)
+                      addModunExamForm.resetFields()
+                    }}
+                    className="btn-cancel"
+                  >
+                    Huỷ bỏ
+                  </Button>
+                </Col>
+                <Col span={12}>
+                  <Button
+                    block
+                    type="primary"
+                    size="large"
+                    onClick={handleChapterExamForm}
+                    className="btn-add"
+                  >
+                    Xác nhận
+                  </Button>
+                </Col>
+              </Row>
+            </Form>
+          </Spin>
+        </Modal>
 
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item label="Chuyên ngành" name="major">
-                <Select placeholder="Chọn" defaultValue="math">
-                  <Option value="math">Toán</Option>
-                  <Option value="physics">Vật lý</Option>
-                  <Option value="chemistry">Hóa học</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="Giáo viên" name="teacher">
-                <Select placeholder="Chọn" defaultValue="nguyen">
-                  <Option value="nguyen">
-                    <Space>
-                      <Avatar size="small" style={{ backgroundColor: "#ff4d4f" }}>
-                        LG
-                      </Avatar>
-                      Nguyễn
-                    </Space>
-                  </Option>
-                  <Option value="tran">
-                    <Space>
-                      <Avatar size="small" style={{ backgroundColor: "#52c41a" }}>
-                        TH
-                      </Avatar>
-                      Trần
-                    </Space>
-                  </Option>
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Form.Item label="Mô tả chương học" name="description">
-            <Input.TextArea
-              rows={4}
-              placeholder="Mô tả về chương học"
-              maxLength={300}
-              showCount
-              style={{ resize: "none" }}
-            />
-          </Form.Item>
-
-          <Form.Item label="Ảnh đại diện" name="image">
-            <Upload.Dragger name="image" multiple={false} beforeUpload={() => false} style={{ padding: "20px" }}>
-              <p className="ant-upload-drag-icon">
-                <UploadOutlined style={{ fontSize: "24px", color: "#d9d9d9" }} />
-              </p>
-              <p className="ant-upload-text">Click hoặc kéo file vào đây</p>
-              <p className="ant-upload-hint" style={{ color: "#8c8c8c" }}>
-                Dung lượng không quá 5 mb
-              </p>
-            </Upload.Dragger>
-          </Form.Item>
-
-          <Form.Item label="Video đại diện" name="video">
-            <Upload.Dragger name="video" multiple={false} beforeUpload={() => false} style={{ padding: "20px" }}>
-              <p className="ant-upload-drag-icon">
-                <UploadOutlined style={{ fontSize: "24px", color: "#d9d9d9" }} />
-              </p>
-              <p className="ant-upload-text">Click hoặc kéo file vào đây</p>
-              <p className="ant-upload-hint" style={{ color: "#8c8c8c" }}>
-                Dung lượng không quá 100 mb
-              </p>
-            </Upload.Dragger>
-          </Form.Item>
-        </Form>
-      </Modal>
-
-      {/* Delete Exam Confirmation Modal */}
-      <Modal
-        title={null}
-        open={deleteModalVisible}
-        onCancel={() => {
-          setDeleteModalVisible(false);
-          setExamToDelete(null);
-          setModunToDelete(null);
-        }}
-        footer={null}
-        width={420}
-        centered
-        closable={false}
-        className="delete-confirmation-modal"
-      >
-        <div style={{ textAlign: "center", padding: "16px 0" }}>
-          <div
-            style={{
-              width: "64px",
-              height: "64px",
-              margin: "0 auto 16px",
-              backgroundColor: "#fff2f0",
-              borderRadius: "50%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <ExclamationCircleFilled style={{ fontSize: "32px", color: "#ff4d4f" }} />
-          </div>
-          <Title level={4} style={{ marginBottom: "16px" }}>
-            Xoá {examToDelete ? 'đề thi' : modunToDelete ? "Chuyên đề" : "Chương học"}
-          </Title>
-          <Paragraph style={{ fontSize: "16px", color: "#595959", marginBottom: "24px" }}>
-            Bạn có chắc chắn muốn xoá {" "} {examToDelete ? 'đề thi' : modunToDelete ? "Chuyên đề" : "Chương học"} này?
-          </Paragraph>
-          <Row gutter={16}>
-            <Col span={12}>
-              <Button
-                block
-                size="large"
-                onClick={() => {
-                  setDeleteModalVisible(false);
-                  setExamToDelete(null);
-                  setModunToDelete(null);
-                }}
-                style={{
-                  height: "48px",
-                  fontSize: "16px",
-                  fontWeight: "500",
-                  borderRadius: "6px",
-                  border: 'none',
-                  background: '#F2F4F5'
-                }}
-              >
-                Huỷ bỏ
-              </Button>
-            </Col>
-            <Col span={12}>
-              <Button
-                block
-                size="large"
-                danger
-                type="primary"
-                onClick={handleDelete}
-                style={{ height: "48px", borderRadius: "6px" }}
-              >
-                Xác nhận
-              </Button>
-            </Col>
-          </Row>
-        </div>
-      </Modal>
-      
-      {/* add exam modun*/}
-      <Modal
-        title="Tạo đề thi Chuyên đề"
-        open={isAddModunExamModalVisible}
-        onCancel={() => {
-          setIsAddModunExamModalVisible(false)
-          addModunExamForm.resetFields()
-        }}
-        footer={null}
-        width={600}
-        destroyOnClose
-        className="add-modun-exam-modal"
-      >
-        <Form form={addModunExamForm} layout="vertical" style={{ marginTop: "24px" }}>
-          <Form.Item
-            label={
-              <span>Khóa học</span>
-            }
-            name="course"
-            rules={[{ required: true, message: "Vui lòng chọn khóa học" }]}
-            initialValue="math-foundation-12"
-          >
-            <Select >
-              <Option value="math-foundation-12">Khóa học toán nền tảng lớp 12</Option>
-              <Option value="math-advanced-12">Khóa học toán nâng cao lớp 12</Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item
-            label={
-              <span>Chương học</span>
-            }
-            name="chapter"
-            rules={[{ required: true, message: "Vui lòng chọn chương học" }]}
-            initialValue="chapter-1"
-          >
-            <Select >
-              <Option value="chapter-1">Chương 1: Ứng dụng đạo hàm để khảo sát và vẽ đồ thị hàm số</Option>
-              <Option value="chapter-2">Chương 2: Mũ – Logarit</Option>
-              <Option value="chapter-3">Chương 3: Nguyên hàm – Tích phân – Ứng dụng</Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item
-            label={
-              <span>File đề thi</span>
-            }
-            name="examFile"
-            rules={[{ required: true, message: "Vui lòng tải lên file đề thi" }]}
-          >
-            <Dragger
-              name="file"
-              multiple={false}
-              beforeUpload={() => false}
-              style={{ padding: "40px 20px", borderRadius: "8px" }}
-              accept=".doc,.docx,.pdf"
-            >
-              <p className="ant-upload-drag-icon">
-                <InboxOutlined style={{ fontSize: "32px", color: "#d9d9d9" }} />
-              </p>
-              <p className="ant-upload-text" style={{ fontSize: "16px", color: "#262626", margin: "12px 0 8px" }}>
-                Click hoặc kéo file vào đây
-              </p>
-              <p className="ant-upload-hint" style={{ color: "#8c8c8c", fontSize: "14px" }}>
-                Định dạng file docs
-              </p>
-            </Dragger>
-          </Form.Item>
-
-          <Row gutter={16} style={{ marginTop: "32px" }}>
-            <Col span={12}>
-              <Button
-                block
-                size="large"
-                onClick={() => {
-                  setIsAddModunExamModalVisible(false)
-                  addModunExamForm.resetFields()
-                }}
-                className="btn-cancel"
-              >
-                Huỷ bỏ
-              </Button>
-            </Col>
-            <Col span={12}>
-              <Button
-                block
-                type="primary"
-                size="large"
-                // onClick={handleAddChapterExam}
-                className="btn-add"
-              >
-                Xác nhận
-              </Button>
-            </Col>
-          </Row>
-        </Form>
-      </Modal>
-    </div>
+        {/* View exam modal */}
+        <ViewExam exam={exam?.data} isExamViewModalVisible={isExamViewModalVisible} setIsExamViewModalVisible={setIsExamViewModalVisible}
+          handlePublishExam={handlePublishExam} 
+        />
+      </div>
+    </Spin>
   )
 }
 
