@@ -41,7 +41,7 @@ const sendMail = async (content, option) => {
                 text: '',
                 html: `
                 <div style="max-width: 900px">
-                    <img style="max-width:100%; height:auto" src="https://hsaplus.edu.vn/static/media/header-logo.aa1fe91e.png"></img>
+                    <img style="max-width:100%; height:auto" src="https://hsaplus.edu.vn/static/media/header-logo.6c598d4e.png"></img>
                     <div>
                         <p><span style="color: black">Xin chào bạn ${content.ho_ten}!</span></p>
                         <p><span style="color: black">Bạn vừa đăng kí tài khoản trên hệ thống ôn thi Đánh giá năng lực ĐHQGHN của Trung tâm Đào tạo và Chuyển giao công nghệ HSA  https://hsaplus.edu.vn//.</p>
@@ -65,7 +65,7 @@ const sendMail = async (content, option) => {
                 text: '',
                 html: `
                 <div style="max-width: 900px">
-                    <img style="max-width:100%; height:auto" src="https://hsaplus.edu.vn/static/media/header-logo.aa1fe91e.png"></img>
+                    <img style="max-width:100%; height:auto" src="https://hsaplus.edu.vn/static/media/header-logo.6c598d4e.png"></img>
                     <div>
                         <p><span style="color: black">Xin chào bạn ${
                             content.ho_ten
@@ -104,7 +104,7 @@ const sendMail = async (content, option) => {
                 text: '',
                 html: `
                 <div style="max-width: 900px">
-                    <img style="max-width:100%; height:auto" src="https://hsaplus.edu.vn/static/media/header-logo.aa1fe91e.png"></img>
+                    <img style="max-width:100%; height:auto" src="https://hsaplus.edu.vn/static/media/header-logo.6c598d4e.png"></img>
                     <div>
                         <p><span style="color: black">Xin chào bạn ${content.ho_ten}!</span></p>
                         <p><span style="color: black">Bạn vừa đăng kí tài khoản trên hệ thống ôn thi Đánh giá năng lực ĐHQGHN của Trung tâm Đào tạo và Chuyển giao công nghệ HSA  https://hsaplus.edu.vn//.  Dưới đây là thông tin tài khoản của bạn:</p>
@@ -146,7 +146,7 @@ const sendMail = async (content, option) => {
                 text: '',
                 html: `
                 <div style="max-width: 900px">
-                    <img style="max-width:100%; height:auto" style="max-width:100%; height:auto" src="https://hsaplus.edu.vn/static/media/header-logo.aa1fe91e.png"></img>
+                    <img style="max-width:100%; height:auto" style="max-width:100%; height:auto" src="https://hsaplus.edu.vn/static/media/header-logo.6c598d4e.png"></img>
                     <div>
                         <p><span style="color: black">Xin chào bạn ${
                             content.ho_ten

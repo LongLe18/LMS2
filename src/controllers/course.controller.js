@@ -86,6 +86,10 @@ const findAllv2 = async (req, res) => {
                 model: CourseType,
                 attributes: ['lkh_id', 'ten'],
             },
+             {
+                model: CourseStudent,
+                attributes: [],
+            },
             {
                 model: Modun,
                 attributes: [],
@@ -118,6 +122,14 @@ const findAllv2 = async (req, res) => {
                         literal('DISTINCT `mo_duns->chuyen_des`.`chuyen_de_id`')
                     ),
                     'so_luong_chuyen_de',
+                ],
+                // Đếm số lượng
+                [
+                    fn(
+                        'COUNT',
+                        literal('DISTINCT `khoa_hoc_hoc_viens`.`hoc_vien_id`')
+                    ),
+                    'so_luong_hoc_vien',
                 ],
             ],
         },
