@@ -266,7 +266,7 @@ const findOne = async (req, res) => {
         });
     }
 
-    const { password, ...sanitizedTeacher } = teacher.toJSON();
+    const { mat_khau, ...sanitizedTeacher } = teacher.toJSON();
 
     return res.status(200).send({
         status: 'success',

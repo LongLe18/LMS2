@@ -1350,11 +1350,11 @@ const dashboardByTeacher = async (req, res) => {
                 'so_modun',
             ],
             [
-                fn('COUNT', literal('`mo_duns->chuyen_des`.`chuyen_de_id`')),
+                fn('COUNT', literal('DISTINCT `mo_duns->chuyen_des`.`chuyen_de_id`')),
                 'so_chuyen_de',
             ],
             [
-                fn('COUNT', literal('`khoa_hoc_hoc_viens`.`hoc_vien_id`')),
+                fn('COUNT', literal('DISTINCT `khoa_hoc_hoc_viens`.`hoc_vien_id`')),
                 'so_hoc_vien',
             ],
         ],
@@ -1362,19 +1362,19 @@ const dashboardByTeacher = async (req, res) => {
             {
                 model: Modun,
                 attributes: [],
-                required: false,
+                required: true,
                 include: [
                     {
                         model: Thematic,
                         attributes: [],
-                        required: false,
+                        required: true,
                     },
                 ],
             },
             {
                 model: CourseStudent,
                 attributes: [],
-                required: false,
+                required: true,
             },
         ],
         where: {
