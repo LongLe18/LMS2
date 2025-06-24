@@ -40,6 +40,7 @@ router.get(
     '/by_thematic/:id',
     tryCatch(thematicCriteriaController.getByThematic)
 );
+router.get('/check', tryCatch(thematicCriteriaController.checkCriteria));
 router.get('/:id', tryCatch(thematicCriteriaController.findOne));
 
 module.exports = router;

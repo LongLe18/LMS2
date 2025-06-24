@@ -41,6 +41,7 @@ router.get(
     authToken,
     tryCatch(dgnlCriteriaController.getByCourse)
 );
+router.get('/check', tryCatch(dgnlCriteriaController.checkCriteria));
 router.get('/:id', tryCatch(dgnlCriteriaController.findOne));
 
 module.exports = router;

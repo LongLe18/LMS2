@@ -43,6 +43,7 @@ router.get(
     tryCatch(modunCriteriaController.getQuantityExamPublish)
 );
 router.get('/by_modun/:id', tryCatch(modunCriteriaController.getByModun));
+router.get('/check', tryCatch(modunCriteriaController.checkCriteria));
 router.get(
     '/:id',
     authToken,

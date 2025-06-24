@@ -199,6 +199,28 @@ const getQuantityExamPublish = async (req, res) => {
     });
 };
 
+const checkCriteria = async (req, res) => {
+    const criteria = await ThematicCriteria.findOne({
+        where: {
+            mo_dun_id: req.query.mo_dun_id,
+        },
+    });
+
+    if (!criteria) {
+        return res.status(400).send({
+            status: 'false',
+            data: null,
+            message: 'Criteria has not been created',
+        });
+    }
+
+    return res.status(200).send({
+        status: 'success',
+        data: criteria,
+        message: null,
+    });
+};
+
 module.exports = {
     findAll,
     findOne,
@@ -208,4 +230,5 @@ module.exports = {
     update,
     remove,
     getQuantityExamPublish,
+    checkCriteria,
 };

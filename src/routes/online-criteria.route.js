@@ -47,6 +47,7 @@ router.get(
     authToken,
     tryCatch(OnlineCriteriaController.getByCourse)
 );
+router.get('/check', tryCatch(OnlineCriteriaController.checkCriteria));
 router.get('/:id', tryCatch(OnlineCriteriaController.findOne));
 
 module.exports = router;
