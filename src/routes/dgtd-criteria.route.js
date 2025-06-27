@@ -42,6 +42,12 @@ router.get(
     tryCatch(dgtdCriteriaController.getByCourse)
 );
 router.get('/check', tryCatch(dgtdCriteriaController.checkCriteria));
+router.get(
+    '/v2',
+    authToken,
+    permission('dgtdCriteria:findAll'),
+    tryCatch(dgtdCriteriaController.findAllv2)
+);
 router.get('/:id', tryCatch(dgtdCriteriaController.findOne));
 
 module.exports = router;

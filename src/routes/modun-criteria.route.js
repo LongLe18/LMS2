@@ -45,6 +45,12 @@ router.get(
 router.get('/by_modun/:id', tryCatch(modunCriteriaController.getByModun));
 router.get('/check', tryCatch(modunCriteriaController.checkCriteria));
 router.get(
+    '/v2',
+    authToken,
+    permission('modunCriteria:findAll'),
+    tryCatch(modunCriteriaController.findAllv2)
+);
+router.get(
     '/:id',
     authToken,
     permission('modunCriteria:findOne'),

@@ -48,6 +48,12 @@ router.get(
     tryCatch(OnlineCriteriaController.getByCourse)
 );
 router.get('/check', tryCatch(OnlineCriteriaController.checkCriteria));
+router.get(
+    '/v2',
+    authToken,
+    permission('onlineCriteria:findAll'),
+    tryCatch(OnlineCriteriaController.findAllv2)
+);
 router.get('/:id', tryCatch(OnlineCriteriaController.findOne));
 
 module.exports = router;

@@ -178,6 +178,40 @@ const checkCriteria = async (req, res) => {
     });
 };
 
+const findAllv2 = async (req, res) => {
+    const { count, rows } = await OnlineCriteria.findAndCountAll({
+        include: {
+            model: Course,
+            attributes: ['khoa_hoc_id', 'ten_khoa_hoc'],
+        },
+        where: {
+            '$khoa_hoc.giao_vien_id$': req.userId,
+            ...(req.query.khoa_hoc_id && {
+                khoa_hoc_id: req.query.khoa_hoc_id,
+            }),
+        },
+        offset:
+            (Number(req.query.pageIndex || 1) - 1) *
+            Number(req.query.pageSize || 10),
+        limit: Number(req.query.pageSize || 10),
+        order: [
+            req.query.sortBy
+                ? req.query.sortBy.split(',')
+                : ['ngay_tao', 'DESC'],
+        ],
+    });
+
+    return res.status(200).send({
+        status: 'success',
+        data: rows,
+        pageIndex: Number(req.query.pageIndex || 1),
+        pageSize: Number(req.query.pageSize || 10),
+        totalCount: count,
+        totalPage: Math.ceil(count / Number(req.query.pageSize || 10)),
+        message: null,
+    });
+};
+
 module.exports = {
     findAll,
     findOne,
@@ -187,5 +221,6 @@ module.exports = {
     update,
     remove,
     getQuantityExamPublish,
-    checkCriteria
+    checkCriteria,
+    findAllv2
 };

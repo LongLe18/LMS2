@@ -41,6 +41,12 @@ router.get(
     tryCatch(thematicCriteriaController.getByThematic)
 );
 router.get('/check', tryCatch(thematicCriteriaController.checkCriteria));
+router.get(
+    '/v2',
+    authToken,
+    permission('thematicCriteria:findAll'),
+    tryCatch(thematicCriteriaController.findAllv2)
+);
 router.get('/:id', tryCatch(thematicCriteriaController.findOne));
 
 module.exports = router;

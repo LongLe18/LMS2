@@ -48,6 +48,12 @@ router.get(
     tryCatch(syntheticCriteriaController.getByCourse)
 );
 router.get('/check', tryCatch(syntheticCriteriaController.checkCriteria));
+router.get(
+    '/v2',
+    authToken,
+    permission('syntheticCriteria:findAll'),
+    tryCatch(syntheticCriteriaController.findAllv2)
+);
 router.get('/:id', tryCatch(syntheticCriteriaController.findOne));
 
 module.exports = router;

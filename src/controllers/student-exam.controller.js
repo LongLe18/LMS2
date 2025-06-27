@@ -21,6 +21,7 @@ const {
     Majoring,
     Exceprt,
     Course,
+    Modun,
 } = require('../models');
 const sequelize = require('../utils/db');
 const moment = require('moment');
@@ -40,7 +41,7 @@ const findAll = async (req, res) => {
     const { count, rows } = await StudentExam.findAndCountAll({
         include: {
             model: Exam,
-            attributes: ['tong_diem'],
+            attributes: ['de_thi_id', 'ten_de_thi', 'tong_diem'],
         },
         where: {
             ...(req.query.de_thi_id && { de_thi_id: req.query.de_thi_id }),
@@ -2401,8 +2402,10 @@ const findAllv2 = async (req, res) => {
     const de_thi_ids = examIds.map((e) => e.de_thi_id);
 
     const rows = await Exam.findAll({
-        attributes: ['de_thi_id', 'ten_de_thi', 'khoa_hoc_id', 'ngay_tao'],
+        attributes: ['de_thi_id', 'ten_de_thi', 'ngay_tao'],
         include: [
+            { model: Modun, attributes: ['mo_dun_id', 'ten_mo_dun'] },
+            { model: Course, attributes: ['khoa_hoc_id', 'ten_khoa_hoc'] },
             {
                 model: StudentExam,
                 as: 'de_thi_hoc_viens',
