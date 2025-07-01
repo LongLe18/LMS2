@@ -8,7 +8,7 @@ import Hashids from 'hashids';
 // component
 import AppFilter from "components/common/AppFilter";
 import LoadingCustom from 'components/parts/loading/Loading';
-import { Table, Button, Row, Col, notification, Space, Form, Select, Input, Pagination } from 'antd';
+import { Table, Button, Row, Col, notification, Space, Form, Select, InputNumber, Pagination } from 'antd';
 import TextEditorWidget2 from "components/common/TextEditor/TextEditor2";
 
 // redux
@@ -191,7 +191,7 @@ const BussinessCourses = (props) => {
             doi_tuong: values.doi_tuong !== undefined ? values.doi_tuong : '',
             noi_dung_chi_tiet: values.noi_dung_chi_tiet !== undefined ? values.noi_dung_chi_tiet : '',
             xep_lop_thoi_gian: values.xep_lop_thoi_gian !== undefined ? values.xep_lop_thoi_gian : '',
-            gia_goc: values.gia_goc !== undefined ? values.gia_goc : '',
+            gia_goc: values.gia_goc !== undefined ? values.gia_goc : '0',
         };
         if (state.isEdit) {
             dispatch(descriptionAction.EditDescriptionCourse({ idCourse: state.idDescription, formData: dataSubmit }, callback));
@@ -341,12 +341,17 @@ const BussinessCourses = (props) => {
                             name="gia_goc"
                             rules={[
                                 {
-                                    required: true,
+                                    required: false,
                                     message: 'Giá gốc là trường bắt buộc.',
                                 },
                             ]}
                         >
-                                <Input placeholder='Giá gốc'/>
+                            <InputNumber
+                                style={{ width: '100%' }}
+                                placeholder="Giá gốc"
+                                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
+                            />
                         </Form.Item>
                         <Form.Item className="button-col">
                             <Space>

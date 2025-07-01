@@ -28,7 +28,7 @@ const routes = [
     {
         id: "dashboard",
         path: "/teacher/dashboard",
-        name: "Dashboard",
+        name: "Tổng quan",
         hide: false,
         icon: <HomeOutlined/>,
         render: (props) => <Dashboard {...props}/>
@@ -52,15 +52,15 @@ const routes = [
     {
         id: "detailCourse",
         path: "/teacher/detail-course/:idCourse", // chi tiết khoá học
-        name: "Chi tiết khoá học", // mô đun
+        name: "Chi tiết khoá học", // chương học
         hide: true,
         icon: <GlobalOutlined />,
         render: (props) => <CourseDetail {...props}/>
     },
     {
         id: "detailChapter",
-        path: "/teacher/detail-chapter/:idChapter", // chi tiết mô đun
-        name: "Chi tiết mô đun",
+        path: "/teacher/detail-chapter/:idChapter", // chi tiết chương học
+        name: "Chi tiết chương học",
         hide: true,
         icon: <GlobalOutlined />,
         render: (props) => <ChapterDetail {...props}/>

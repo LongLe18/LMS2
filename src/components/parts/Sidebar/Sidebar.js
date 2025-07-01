@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Layout, Menu, Avatar } from "antd";
+import { Layout, Menu, Avatar, Divider } from "antd";
 import { PlusSquareOutlined } from "@ant-design/icons";
 // javascript plugin used to create scrollbars on windows
 // import SubMenu from "./Submenu";
@@ -38,7 +38,20 @@ function Sidebar(props) {
       }
       return (
         <Menu.Item key={root ? key : `sub-${magicKey}-${key}`} className={`m-item`}>
-          <Link to={main.path}>
+          <Link to={main.path} 
+            onClick={() => {
+              const dataPath = [{
+                title: 'Trang chủ',
+              }]
+              if (main.path) {
+                dataPath.push({
+                  title: main.name,
+                  path: main.path
+                });
+              }
+              localStorage.setItem('dataPath', JSON.stringify(dataPath));
+            }}
+          >
             {main.icon ? main.icon : <PlusSquareOutlined />}
             <span className="nav-text">{main.name}</span>
           </Link>
@@ -53,18 +66,19 @@ function Sidebar(props) {
       <Menu className="app-menu" mode="inline" >
         <Menu.Item className="logo" key='100000'>
           <NavLink
-            to="/admin/dashboard"
+            to="#"
             className="simple-text logo-mini"
           >
             <Avatar src={require("assets/rank/Logo-saoviet.png").default} alt="react-logo" size={40} />
           </NavLink>
-          <NavLink style={{fontSize: '16px', marginLeft: '10px'}}
-            to="/admin/dashboard"
+          <NavLink style={{fontSize: '16px', marginLeft: '10px', fontWeight: 700}}
+            to="#"
             className="simple-text logo-normal"
           >
             Quản Lý luyện thi
           </NavLink>
         </Menu.Item>
+        <Divider />
         {renderMenu2Levels(props.routes, true)}
       </Menu>
     </Sider>

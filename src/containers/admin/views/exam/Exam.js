@@ -154,7 +154,7 @@ const ExamAdminPage = () => {
           width: 200,
       },
       {
-        title: 'Mô đun',
+        title: 'chương học',
         dataIndex: 'ten_mo_dun',
         key: 'ten_mo_dun',
         responsive: ['md'],
@@ -384,7 +384,7 @@ const ExamAdminPage = () => {
           placeholder="Chọn loại đề thi"
           onChange={(typeId) => {
               if (typeId === 1) {setState({...state, showThematic: true, showCourse: true, showModule: true, onlineExam: false})} // Loại chuyên đề
-              else if (typeId === 2) {setState({...state, showThematic: false, showCourse: true, showModule: true, onlineExam: false})} // Loại mô đun
+              else if (typeId === 2) {setState({...state, showThematic: false, showCourse: true, showModule: true, onlineExam: false})} // Loại chương học
               else if (typeId === 3) {setState({...state, showThematic: false, showCourse: true, showModule: false, onlineExam: false})} // Loại tổng hợp
               else { // Loại theo phần
                 setState({...state, showThematic: false, showCourse: true, showModule: false, onlineExam: true})
@@ -448,7 +448,7 @@ const ExamAdminPage = () => {
       return (
         <Select
           showSearch={false}
-          placeholder="Chọn mô đun"
+          placeholder="Chọn chương học"
           onChange={(mo_dun_id) => {
               dispatch(thematicActions.getThematicsByIdModule({ idModule: mo_dun_id }))
           }}
@@ -468,7 +468,7 @@ const ExamAdminPage = () => {
       return (
         <Select
           showSearch={false}
-          placeholder="Chọn mô đun"
+          placeholder="Chọn chương học"
         >
           {options}
         </Select>
@@ -498,7 +498,7 @@ const ExamAdminPage = () => {
                       style={{display: state.showCourse ? '' : 'none'}}>
                       {renderCourse()}
                   </Form.Item>
-                  <Form.Item label="Mô đun" name="mo_dun_id" rules={[{ required: state.showModule, message: 'Mô đun là bắt buộc' }]}
+                  <Form.Item label="chương học" name="mo_dun_id" rules={[{ required: state.showModule, message: 'chương học là bắt buộc' }]}
                       style={{display: state.showModule ? '' : 'none'}}>
                       {renderModule()}
                   </Form.Item>

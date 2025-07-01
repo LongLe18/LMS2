@@ -253,7 +253,7 @@ const DetailLesson = () => {
           onChange={(mo_dun_id) => {
             dispatch(thematicActions.getThematicsByIdModule({ idModule: mo_dun_id }))
           }}
-          placeholder="Chọn mô đun"
+          placeholder="Chọn chương học"
         >
           {options}
         </Select>
@@ -543,10 +543,10 @@ const DetailLesson = () => {
                                         >
                                             {renderCourses()}
                                         </Form.Item>
-                                        <Form.Item className="input-col" label="Mô đun" name="mo_dun_id" 
+                                        <Form.Item className="input-col" label="chương học" name="mo_dun_id" 
                                           rules={[{
                                             required: true,
-                                            message: 'Mô đun là trường bắt buộc.',
+                                            message: 'chương học là trường bắt buộc.',
                                           }]}
                                         >
                                             {renderModules()}

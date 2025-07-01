@@ -49,6 +49,15 @@ const ExamViewPage = (props) => {
             render: (value, item, index) => (1 - 1) * 10 + index + 1
         },
         {
+            title: 'Tên đề thi',
+            key: 'ten_de_thi',
+            dataIndex: 'ten_de_thi',
+            responsive: ['lg'],
+            render: (ten_de_thi, de_thi) => (
+                <span>{de_thi?.de_thi?.ten_de_thi}</span>
+            )
+        },
+        {
             title: 'Thời gian bắt đầu',
             key: 'thoi_diem_bat_dau',
             dataIndex: 'thoi_diem_bat_dau',
@@ -210,7 +219,7 @@ const ExamViewPage = (props) => {
                         <div className="exam-info">
                             <p className="size-18 summury-info text-center">
                                 Thời gian thi online:<span className="orange-color"> {exam.data.thoi_gian} phút </span>- Số câu hỏi:
-                                <span className="orange-color"> {exam.data.so_cau_hoi} </span>
+                                <span className="orange-color">{exam.data.so_cau_hoi}</span>
                             </p>
                             <div className="intro-exam">
                                 <Timeline>

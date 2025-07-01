@@ -12,6 +12,9 @@ function* fetchCriteriasCourse(payload) {
             khoa_hoc_id = payload.params?.khoa_hoc_id;
         }
         let endpoint = `${config.API_URL}/synthetic_criteria/all_admin?khoa_hoc_id=${khoa_hoc_id}&pageIndex=${payload.params?.pageIndex}&pageSize=${payload.params?.pageSize}`;
+        if (payload.params?.teacher) {
+            endpoint = `${config.API_URL}/synthetic_criteria/v2?khoa_hoc_id=${khoa_hoc_id}&pageIndex=${payload.params?.pageIndex}&pageSize=${payload.params?.pageSize}`;
+        }
         const response = yield call(getApiAuth, endpoint);
         const result = yield response.data;
         yield put({ type: actions.criteria.GET_CRITERIAS_COURSE_SUCCESS, result: result });
@@ -141,6 +144,9 @@ function* fetchCriteriasModule(payload) {
             khoa_hoc_id = payload.params?.khoa_hoc_id;
         }
         let endpoint = `${config.API_URL}/modun_criteria/all_admin?khoa_hoc_id=${khoa_hoc_id}&pageIndex=${payload.params?.pageIndex}&pageSize=${payload.params?.pageSize}`;
+        if (payload.params?.teacher) {
+            endpoint = `${config.API_URL}/modun_criteria/v2?khoa_hoc_id=${khoa_hoc_id}&pageIndex=${payload.params?.pageIndex}&pageSize=${payload.params?.pageSize}`;
+        }
         const response = yield call(getApiAuth, endpoint);
         const result = yield response.data;
         yield put({ type: actions.criteria.GET_CRITERIAS_MODULE_SUCCESS, result: result });
@@ -288,6 +294,9 @@ function* fetchCriteriasThematic(payload) {
             khoa_hoc_id = payload.params?.khoa_hoc_id;
         }
         let endpoint = `${config.API_URL}/thematic_criteria/all_admin?khoa_hoc_id=${khoa_hoc_id}&pageIndex=${payload.params?.pageIndex}&pageSize=${payload.params?.pageSize}`;
+        if (payload.params?.teacher) {
+            endpoint = `${config.API_URL}/thematic_criteria/v2?khoa_hoc_id=${khoa_hoc_id}&pageIndex=${payload.params?.pageIndex}&pageSize=${payload.params?.pageSize}`;
+        }
         const response = yield call(getApiAuth, endpoint);
         const result = yield response.data;
         yield put({ type: actions.criteria.GET_CRITERIAS_THEMATIC_SUCCESS, result: result });
@@ -804,6 +813,32 @@ function* deleteCriteaDGTD(payload) {
             });
         } 
     }
+}
+
+function* checkCriteria(payload) {
+    try {
+        let endpoint = `${config.API_URL}/`;
+        if (payload.params.type === 'synthetic') {
+            endpoint += `synthetic_criteria/check?khoa_hoc_id=${payload.params.id}`;
+        } else if (payload.params.type === 'modun') {
+            endpoint += `modun_criteria/check?mo_dun_id=${payload.params.id}`;
+        } else if (payload.params.type === 'thematic') {
+            endpoint += `thematic_criteria/check?mo_dun_id=${payload.params.id}`;
+        }
+        const response = yield call(getApiAuth, endpoint);
+        const result = yield response.data;
+        yield put({ type: actions.criteria.CHECK_CRITERIA_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.criteria.CHECK_CRITERIA_FAILED, error: error.response.data, result: error.response.data });
+        console.log(error);
+    }
+}
+
+export function* loadCheckCriteria() {
+    yield takeEvery(actions.criteria.CHECK_CRITERIA, checkCriteria);
 }
 
 export function* loadCriteriasCourse() {

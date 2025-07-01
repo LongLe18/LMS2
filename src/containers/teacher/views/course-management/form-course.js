@@ -3,7 +3,7 @@ import { useParams, useHistory } from "react-router-dom";
 import constants from '../../../../helpers/constants';
 import { Layout, Form, Input, Upload, Button, Card,
   Radio, Select, DatePicker, Space, Typography, Row,
-  Col,  message, notification} from "antd"
+  Col,  message, notification, InputNumber } from "antd"
 import {  UploadOutlined} from "@ant-design/icons"
 import './course-management.css'
 import TextEditorWidget2 from "components/common/TextEditor/TextEditor2";
@@ -101,7 +101,6 @@ const FormCourse = () => {
             const ngay_bat_dau = ngay_bat_dau_raw !== null ? moment(ngay_bat_dau_raw, "YYYY/MM/DD") : null;
             const ngay_ket_thuc = ngay_ket_thuc_raw !== null ? moment(ngay_ket_thuc_raw, "YYYY/MM/DD") : null;
 
-            console.log(ngay_bat_dau_raw, ngay_ket_thuc_raw);
             // Update course data with moment dates
             course.data = {
                 ...course.data,
@@ -121,12 +120,14 @@ const FormCourse = () => {
 
     useEffect(() => {
         form.setFieldsValue(description.data);
-    }, [description]);
+    }, [description]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const renderProgrammes = () => {
         let options = [];
         if (programmes.status === 'success') {
-            options = programmes.data.map((programme) => (
+            options = programmes.data
+            .filter((programme) => programme.loai_kct === 2 || programme.loai_kct === 4 || programme.loai_kct === 5)
+            .map((programme) => (
                 <Option key={programme.kct_id} value={programme.kct_id + '_' + programme.loai_kct} >{programme.ten_khung_ct}</Option>
             ))
         }
@@ -182,7 +183,7 @@ const FormCourse = () => {
             doi_tuong: values.doi_tuong !== undefined ? values.doi_tuong : '',
             noi_dung_chi_tiet: values.noi_dung_chi_tiet !== undefined ? values.noi_dung_chi_tiet : '',
             xep_lop_thoi_gian: values.xep_lop_thoi_gian !== undefined ? values.xep_lop_thoi_gian : '',
-            gia_goc: values.gia_goc !== undefined ? values.gia_goc : '',
+            gia_goc: values.gia_goc !== undefined ? values.gia_goc : '0',
         };
         if (state.isEdit) {
             dispatch(descriptionAction.EditDescriptionCourse({ idCourse: idCourse, formData: dataSubmit }, callback));
@@ -225,7 +226,7 @@ const FormCourse = () => {
     };
 
     return (
-        <div className="content" style={{marginTop: 30}}>
+        <div className="form-course" style={{marginTop: 30}}>
             {/* Header */}
             <Header style={{ backgroundColor: "transparent", padding: "0 24px",  }}>
                 <Row justify="space-between" align="middle" style={{ height: "100%" }}>
@@ -245,176 +246,177 @@ const FormCourse = () => {
                     <Row gutter={24}>
                         {/* Main Content */}
                             <Col xs={24} lg={16} >
-                                
-                                    {/* Course Name */}
-                                    <Card style={{marginBottom: 8}}>
-                                        <Form.Item 
-                                            className="input-col"
-                                            label="Tên khóa học"
-                                            name="ten_khoa_hoc"
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: 'Tên khóa học là trường bắt buộc.',
-                                                },
-                                            ]}
-                                            >
-                                                <Input placeholder="Nhập tên khoá học"/>
-                                        </Form.Item>
-                                    </Card>
-
-                                    {/* Course Image */}
-                                    <Card style={{marginBottom: 8}}>
-                                        <Form.Item className="input-col" label="Hình đại diện" name="anh_dai_dien" rules={[]}>
-                                            <Text type="secondary" style={{ display: "block", marginBottom: "8px" }}>
-                                                Tối đa 5.4MB, định dạng ảnh: jpeg, jpg, png, gif, webp, tối đa 5MB
-                                            </Text>
-                                            <Dragger {...propsImage} maxCount={1}
-                                                listType="picture"
-                                                className="upload-list-inline"
-                                            >
-                                                <p className="ant-upload-drag-icon">
-                                                <UploadOutlined />
-                                                </p>
-                                                <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
-                                            </Dragger>
-                                        </Form.Item>
-                                    </Card>        
-                                    
-                                    <Card style={{marginBottom: 8}}>
-                                        <Form.Item
-                                            className="input-col"
-                                            label="Mô tả chung"
-                                            name="mo_ta_chung"
-                                            rules={[]}
+                                {/* Course Name */}
+                                <Card style={{marginBottom: 8}}>
+                                    <Form.Item 
+                                        className="input-col"
+                                        label="Tên khóa học"
+                                        name="ten_khoa_hoc"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Tên khóa học là trường bắt buộc.',
+                                            },
+                                        ]}
                                         >
+                                            <Input placeholder="Nhập tên khoá học" />
+                                    </Form.Item>
+                                </Card>
+
+                                {/* Course Image */}
+                                <Card style={{marginBottom: 8}}>
+                                    <Form.Item className="input-col" label="Hình đại diện" name="anh_dai_dien" rules={[]}>
+                                        <Text type="secondary" style={{ display: "block", marginBottom: "8px" }}>
+                                            Tối đa 5.4MB, định dạng ảnh: jpeg, jpg, png, gif, webp, tối đa 5MB
+                                        </Text>
+                                        <Dragger {...propsImage} maxCount={1}
+                                            listType="picture"
+                                            className="upload-list-inline"
+                                        >
+                                            <p className="ant-upload-drag-icon">
+                                            <UploadOutlined />
+                                            </p>
+                                            <p className="ant-upload-text bold">Click hoặc kéo thả ảnh vào đây</p>
+                                        </Dragger>
+                                    </Form.Item>
+                                </Card>        
+                                    
+                                <Card style={{marginBottom: 8}}>
+                                    <Form.Item
+                                        className="input-col"
+                                        label="Mô tả chung"
+                                        name="mo_ta_chung"
+                                        rules={[]}
+                                    >
+                                        <TextEditorWidget2
+                                            placeholder="Mô tả khóa học"
+                                            showToolbar={true}
+                                            isMinHeight200={true}
+                                            isSimple={false}
+                                        />
+                                    </Form.Item>
+                                </Card>
+                                    
+                                {/* Course Introduction */}
+                                <Card style={{marginBottom: 8}}>
+                                    <Form.Item
+                                        className="input-col"
+                                        label="Giới thiệu Khóa học"
+                                        name="gioi_thieu"
+                                        rules={[]}
+                                    >
                                             <TextEditorWidget2
-                                                placeholder="Mô tả khóa học"
+                                                placeholder="Giới thiệu khóa học"
                                                 showToolbar={true}
                                                 isMinHeight200={true}
                                                 isSimple={false}
                                             />
-                                        </Form.Item>
-                                    </Card>
-                                    
-                                    {/* Course Introduction */}
-                                    <Card style={{marginBottom: 8}}>
-                                        <Form.Item
-                                            className="input-col"
-                                            label="Giới thiệu Khóa học"
-                                            name="gioi_thieu"
-                                            rules={[]}
-                                        >
-                                                <TextEditorWidget2
-                                                    placeholder="Giới thiệu khóa học"
-                                                    showToolbar={true}
-                                                    isMinHeight200={true}
-                                                    isSimple={false}
-                                                />
-                                        </Form.Item>    
-                                    </Card>
+                                    </Form.Item>    
+                                </Card>
 
-                                    {/* Training Format */}
-                                    <Card style={{marginBottom: 8}}>
-                                        <Form.Item
-                                            className="input-col"
-                                            label="Hình thức đào tạo"
-                                            name="hinh_thuc_dao_tao"
-                                            rules={[]}
-                                        >
-                                                <TextEditorWidget2
-                                                    placeholder="Hình thức đào tạo"
-                                                    showToolbar={true}
-                                                    isMinHeight200={true}
-                                                    isSimple={false}
-                                                />
-                                        </Form.Item>
-                                    </Card>
+                                {/* Training Format */}
+                                <Card style={{marginBottom: 8}}>
+                                    <Form.Item
+                                        className="input-col"
+                                        label="Hình thức đào tạo"
+                                        name="hinh_thuc_dao_tao"
+                                        rules={[]}
+                                    >
+                                            <TextEditorWidget2
+                                                placeholder="Hình thức đào tạo"
+                                                showToolbar={true}
+                                                isMinHeight200={true}
+                                                isSimple={false}
+                                            />
+                                    </Form.Item>
+                                </Card>
                                                                     
-                                    {/* Commitment Goals */}
-                                    <Card style={{marginBottom: 8}}>
-                                        <Form.Item
-                                            className="input-col"
-                                            label="Mục tiêu cam kết"
-                                            name="muc_tieu_cam_ket"
-                                            rules={[]}
-                                        >
-                                                <TextEditorWidget2
-                                                    placeholder="Mục tiêu cam kết"
-                                                    showToolbar={true}
-                                                    isMinHeight200={true}
-                                                    isSimple={false}
-                                                />
-                                        </Form.Item>
-                                    </Card>
+                                {/* Commitment Goals */}
+                                <Card style={{marginBottom: 8}}>
+                                    <Form.Item
+                                        className="input-col"
+                                        label="Mục tiêu cam kết"
+                                        name="muc_tieu_cam_ket"
+                                        rules={[]}
+                                    >
+                                            <TextEditorWidget2
+                                                placeholder="Mục tiêu cam kết"
+                                                showToolbar={true}
+                                                isMinHeight200={true}
+                                                isSimple={false}
+                                            />
+                                    </Form.Item>
+                                </Card>
 
-                                    {/* Target Audience */}
-                                    <Card style={{marginBottom: 8}}>
-                                        <Form.Item
-                                            className="input-col"
-                                            label="Đối tượng"
-                                            name="doi_tuong"
-                                            rules={[]}
-                                        >
-                                                <TextEditorWidget2
-                                                    placeholder="Đối tượng"
-                                                    showToolbar={true}
-                                                    isMinHeight200={true}
-                                                    isSimple={false}
-                                                />
-                                        </Form.Item>
-                                    </Card>
+                                {/* Target Audience */}
+                                <Card style={{marginBottom: 8}}>
+                                    <Form.Item
+                                        className="input-col"
+                                        label="Đối tượng"
+                                        name="doi_tuong"
+                                        rules={[]}
+                                    >
+                                            <TextEditorWidget2
+                                                placeholder="Đối tượng"
+                                                showToolbar={true}
+                                                isMinHeight200={true}
+                                                isSimple={false}
+                                            />
+                                    </Form.Item>
+                                </Card>
 
-                                    {/* Detailed Content */}
-                                    <Card style={{marginBottom: 8}}>
-                                        <Form.Item
-                                            className="input-col"
-                                            label="Nội dung chi tiết"
-                                            name="noi_dung_chi_tiet"
-                                            rules={[]}
-                                        >
-                                                <TextEditorWidget2
-                                                    placeholder="Nội dung chi tiết"
-                                                    showToolbar={true}
-                                                    isMinHeight200={true}
-                                                    isSimple={false}
-                                                />
-                                        </Form.Item>
-                                    </Card>
+                                {/* Detailed Content */}
+                                <Card style={{marginBottom: 8}}>
+                                    <Form.Item
+                                        className="input-col"
+                                        label="Nội dung chi tiết"
+                                        name="noi_dung_chi_tiet"
+                                        rules={[]}
+                                    >
+                                            <TextEditorWidget2
+                                                placeholder="Nội dung chi tiết"
+                                                showToolbar={true}
+                                                isMinHeight200={true}
+                                                isSimple={false}
+                                            />
+                                    </Form.Item>
+                                </Card>
 
-                                    {/* Class Scheduling */}
-                                    <Card style={{marginBottom: 8}}>
-                                        <Form.Item
-                                            className="input-col"
-                                            label="Xếp lớp thời gian"
-                                            name="xep_lop_thoi_gian"
-                                            rules={[]}
-                                        >
-                                                <TextEditorWidget2
-                                                    placeholder="Xếp lớp thời gian"
-                                                    showToolbar={true}
-                                                    isMinHeight200={true}
-                                                    isSimple={false}
-                                                />
-                                        </Form.Item>
-                                    </Card>
+                                {/* Class Scheduling */}
+                                <Card style={{marginBottom: 8}}>
+                                    <Form.Item
+                                        className="input-col"
+                                        label="Xếp lớp thời gian"
+                                        name="xep_lop_thoi_gian"
+                                        rules={[]}
+                                    >
+                                            <TextEditorWidget2
+                                                placeholder="Xếp lớp thời gian"
+                                                showToolbar={true}
+                                                isMinHeight200={true}
+                                                isSimple={false}
+                                            />
+                                    </Form.Item>
+                                </Card>
 
-                                    {/* Course Price */}
-                                    <Card style={{marginBottom: 8}}>
-                                        <Form.Item
-                                                className="input-col"
-                                                label="Giá gốc (Nhập liền không dấu. Ví dụ: 10000)"
-                                                name="gia_goc"
-                                                rules={[
-                                                    {
-                                                        required: true,
-                                                        message: 'Giá gốc là trường bắt buộc.',
-                                                    },
-                                                ]}
-                                            >
-                                                    <Input placeholder='Giá gốc'/>
-                                            </Form.Item>
-                                    </Card>
+                                {/* Course Price */}
+                                <Card style={{marginBottom: 8}}>
+                                    <Form.Item
+                                            className="input-col"
+                                            label="Giá gốc (Nhập liền không dấu. Ví dụ: 10000)"
+                                            name="gia_goc"
+                                            rules={[
+                                            ]}
+                                        >
+                                                {/* <Input placeholder='Giá gốc'/> */}
+                                            <InputNumber
+                                                style={{ width: '100%' }}
+                                                placeholder="Giá gốc"
+                                                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                                parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
+                                            />
+                                        </Form.Item>
+                                </Card>
                             </Col>
 
                         {/* Right Sidebar */}

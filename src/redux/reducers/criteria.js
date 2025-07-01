@@ -75,6 +75,11 @@ const initState = {
         loading: false,
         result: {},
         error: null,
+    },
+    check: {
+        loading: false,
+        result: {},
+        error: null,
     }
 }
 
@@ -602,6 +607,22 @@ export default function criteriaReducer(state = initState, action) {
             return {
                 ...state,
                 itemDGTD: { ...state.itemDGTD, loading: false, error: action.error },
+            };
+        /// check criteria
+        case criteriaActions.CHECK_CRITERIA:
+            return {
+                ...state,
+                check: { ...state.check, loading: true },
+            };
+        case criteriaActions.CHECK_CRITERIA_SUCCESS:
+            return {
+                ...state,
+                check: { ...state.check, loading: false, result: action.result },
+            };
+        case criteriaActions.CHECK_CRITERIA_FAILED:
+            return {
+                ...state,
+                check: { ...state.check, loading: false, error: action.error },
             };
         default:
             return state;

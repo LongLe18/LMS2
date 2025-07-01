@@ -3093,7 +3093,7 @@ License - nucleoapp.com/license/
     margin-left: auto;
     position: absolute; }
   .navbar.navbar-transparent {
-    background: transparent !important;
+    background: #fff !important;
     padding-top: 25px;
     box-shadow: none; }
     .navbar.navbar-transparent .navbar-brand {

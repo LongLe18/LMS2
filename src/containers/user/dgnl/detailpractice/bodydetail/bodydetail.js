@@ -16,7 +16,8 @@ import LoadingCustom from 'components/parts/loading/Loading';
 // component
 import ContentDetailPage from "../contentdetail/contentdetail";
 import { notification, Collapse, Modal, Form, Input, Button, Row, Col } from 'antd';
-import { UserOutlined, LockOutlined, EyeTwoTone, EyeInvisibleOutlined, PushpinOutlined } from '@ant-design/icons';
+import { UserOutlined, LockOutlined, EyeTwoTone, EyeInvisibleOutlined, 
+    PushpinOutlined, LeftOutlined, } from '@ant-design/icons';
 import ReCAPTCHA from "react-google-recaptcha";
 import SocialLogin from 'components/common/SocialLogin';
 // other
@@ -255,14 +256,24 @@ const BodyDetailPage = (props) => {
                 </Row>
                 
 
-                {exams.status === 'success' && exams.data.filter(obj => obj.xuat_ban === 1) &&
-                    <Row className="body-detail-button mb-4" style={{marginTop: 12}}>
-                        <Button color="success" type="primary" style={{maxWidth: 'none', width: 'auto', borderRadius: 4}}
-                            onClick={() => history.push(`/luyen-tap/kiem-tra-mo-dun/${hashids.encode(props.idCourse)}/${hashids.encode(props.id)}`) }>
-                                Danh sách đề thi mô đun
+                <Row className="body-detail-button mb-4" style={{marginTop: 12}}>
+                    <Col span={8}></Col>
+                    <Col span={8}>
+                        {exams.status === 'success' && exams.data.filter(obj => obj.xuat_ban === 1) &&
+                            <Button color="success" type="primary" style={{maxWidth: 'none', width: 'auto', borderRadius: 4}}
+                                onClick={() => history.push(`/luyen-tap/kiem-tra-mo-dun/${hashids.encode(props.idCourse)}/${hashids.encode(props.id)}`) }>
+                                    Danh sách đề thi chương học
+                            </Button>
+                        }
+                    </Col>
+                    <Col span={8}>
+                        <Button type="danger" style={{maxWidth: 'none', width: 'auto', borderRadius: 4}}
+                            onClick={() => history.goBack() }>
+                                Quay lại <LeftOutlined />
                         </Button>
-                    </Row>
-                }
+                    </Col>
+                </Row>
+
             </div>
             {error && !loading && <p>{error}</p>}    
             {errorLesson && !loadingLesson && notification.error({

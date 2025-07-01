@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import config from '../../../../configs/index';
 import moment from 'moment';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import "./css/examview.css";
 import { Helmet } from 'react-helmet';
-import { useHistory } from 'react-router-dom';
 import Hashids from 'hashids';
 
 // antd
@@ -49,6 +48,15 @@ const ExamModuleViewPage = (props) => {
             key: 'index',
             responsive: ['lg'],
             render: (value, item, index) => (1 - 1) * 10 + index + 1
+        },
+        {
+            title: 'Tên đề thi',
+            key: 'ten_de_thi',
+            dataIndex: 'ten_de_thi',
+            responsive: ['lg'],
+            render: (ten_de_thi, de_thi) => (
+                <span>{de_thi?.de_thi?.ten_de_thi}</span>
+            )
         },
         {
             title: 'Thời gian bắt đầu',
@@ -115,7 +123,7 @@ const ExamModuleViewPage = (props) => {
 
     const userToken = localStorage.getItem('userToken');
 
-    if (examUser.status === 'success') examUser.data.studentExams.map((item, index) => {
+    if (examUser.status === 'success') examUser?.data?.studentExams?.map((item, index) => {
         if (item.thoi_diem_ket_thuc !== null) {
             data.push({...item, 'key': index});
         }
@@ -189,28 +197,28 @@ const ExamModuleViewPage = (props) => {
                     </>
                 :   
                     <>
-                    <p className="size-18 summury-info text-center">
-                        Thời gian thi online:<span className="orange-color">{criteria.data.thoi_gian} phút</span>- Số câu hỏi:
-                        <span className="orange-color">
-                            {criteria.data.so_cau_hoi}/{criteria.data.so_cau_hoi}
-                        </span>
-                    </p>
-                    <div className="intro-exam">
-                        <Timeline>
-                            <Timeline.Item style={{fontSize: '16px'}}>Tất cả các đề thi Online đều có phương pháp làm bài, đáp án và lời giải chi tiết.</Timeline.Item>
-                            <Timeline.Item style={{fontSize: '16px'}}>Đáp án và lời giải chi tiết sẽ được công bố ngay sau khi thành viên nộp bài thi.</Timeline.Item>
-                            <Timeline.Item style={{fontSize: '16px'}}>Lưu ý các câu hỏi điền đáp án đúng chỉ điền số nguyên và phân số tối giản</Timeline.Item>
-                            <Timeline.Item style={{fontSize: '16px'}}><span style={{color: 'red'}}>Số lượt thi còn lại của bạn: {examUser.data.so_lan_thi_con_lai}</span></Timeline.Item>
-                        </Timeline>
-                    </div>
-                    <p className="block-action text-center" style={{marginTop: 0}}>
-                        <Button type="primary" size="large" shape="round" className="join-exam-button" onClick={() => goExam()}>
-                            Thi ngay
-                        </Button>
-                        <Button type="default" size="large" shape="round" className="dowload-exam-button" onClick={() => onViewHistory()}>
-                            Lịch sử làm bài
-                        </Button>
-                    </p>
+                        <p className="size-18 summury-info text-center">
+                            Thời gian thi online:<span className="orange-color">{criteria.data.thoi_gian} phút</span>- Số câu hỏi:
+                            <span className="orange-color">
+                                {criteria.data.so_cau_hoi}/{criteria.data.so_cau_hoi}
+                            </span>
+                        </p>
+                        <div className="intro-exam">
+                            <Timeline>
+                                <Timeline.Item style={{fontSize: '16px'}}>Tất cả các đề thi Online đều có phương pháp làm bài, đáp án và lời giải chi tiết.</Timeline.Item>
+                                <Timeline.Item style={{fontSize: '16px'}}>Đáp án và lời giải chi tiết sẽ được công bố ngay sau khi thành viên nộp bài thi.</Timeline.Item>
+                                <Timeline.Item style={{fontSize: '16px'}}>Lưu ý các câu hỏi điền đáp án đúng chỉ điền số nguyên và phân số tối giản</Timeline.Item>
+                                <Timeline.Item style={{fontSize: '16px'}}><span style={{color: 'red'}}>Số lượt thi còn lại của bạn: {examUser.data.so_lan_thi_con_lai}</span></Timeline.Item>
+                            </Timeline>
+                        </div>
+                        <p className="block-action text-center" style={{marginTop: 0}}>
+                            <Button type="primary" size="large" shape="round" className="join-exam-button" onClick={() => goExam()}>
+                                Thi ngay
+                            </Button>
+                            <Button type="default" size="large" shape="round" className="dowload-exam-button" onClick={() => onViewHistory()}>
+                                Lịch sử làm bài
+                            </Button>
+                        </p>
                     </>
                 }
                 
@@ -239,9 +247,9 @@ const ExamModuleViewPage = (props) => {
                     <div className="list-news-box-single post-module">
                         <div className="wraper list-news-bg">
                             <Row gutter={[20]}>
-                            <Col xl={24} sm={24} xs={24} className="news-left">
-                                {renderDetail()}
-                            </Col>
+                                <Col xl={24} sm={24} xs={24} className="news-left">
+                                    {renderDetail()}
+                                </Col>
                             </Row>
                         </div>
                     </div>

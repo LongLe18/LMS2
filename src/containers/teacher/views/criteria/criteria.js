@@ -62,19 +62,19 @@ const CriteriaManagement = () => {
 
     useEffect(() => {
         if (state.activeTab === 'comprehensive') {
-            dispatch(criteriaAction.getCriteriasCourse({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
+            dispatch(criteriaAction.getCriteriasCourse({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex, teacher: true }));
             setRequire({ ...require, course: true, module: false, thematic: false });
             setCourse(true);
             setModule(false);
             setThematic(false);
         } else if (state.activeTab === 'chapter') {
-            dispatch(criteriaAction.getCriteriasModule({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
+            dispatch(criteriaAction.getCriteriasModule({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex, teacher: true }));
             setRequire({ ...require, course: true, module: true, thematic: false });
             setCourse(false);
             setModule(true);
             setThematic(false);
         } else if (state.activeTab === 'topic') {
-            dispatch(criteriaAction.getCriteriasThematic({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
+            dispatch(criteriaAction.getCriteriasThematic({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex, teacher: true }));
             setRequire({ ...require, course: true, module: true, thematic: true });
             setCourse(false);
             setModule(false);
@@ -89,7 +89,7 @@ const CriteriaManagement = () => {
             case '1': // tiêu chí đề tổng hợp
                 url = `${config.API_URL}/synthetic_criteria/${id}/quantity-exam-publish`;
                 break;
-            case '2': // tiêu chí đề mô đun
+            case '2': // tiêu chí đề chương học
                 url = `${config.API_URL}/modun_criteria/${id}/quantity-exam-publish`
                 break;
             case '3': // tiêu chí đề chuyên đề
@@ -193,7 +193,7 @@ const CriteriaManagement = () => {
             render: (text, record, index) => index + 1,
         },
         {
-            title: "Tên mô đun",
+            title: "Tên chương học",
             dataIndex: "ten_mo_dun",
             key: "ten_mo_dun",
             width: 300,
@@ -269,7 +269,7 @@ const CriteriaManagement = () => {
             render: (text, record, index) => index + 1,
         },
         {
-            title: "Tên mô đun",
+            title: "Tên chương học",
             dataIndex: "ten_mo_dun",
             key: "ten_mo_dun",
             width: 300,
@@ -393,7 +393,9 @@ const CriteriaManagement = () => {
     const renderModules = () => {
         let options = [];
         if (modules.status === 'success') {
-            options = modules.data.map((module) => (
+            options = modules.data
+            .filter((module) => module.loai_tong_hop === 0) // Lọc bỏ chương học tổng hợp
+            .map((module) => (
                 <Option key={module.mo_dun_id} value={module.mo_dun_id} >{module.ten_mo_dun}</Option>
             ))
         }
@@ -404,7 +406,7 @@ const CriteriaManagement = () => {
                     setState({...state, isChanged: true, mo_dun_id: mo_dun_id });
                     dispatch(thematicAction.getThematicsByIdModule({ idModule: mo_dun_id }))
                 }}
-                placeholder="Chọn mô đun"
+                placeholder="Chọn chương học"
             >
                 {options}
             </Select>
@@ -453,7 +455,7 @@ const CriteriaManagement = () => {
                             message: "Cập nhật tiêu chí thành công",
                         })
                         handleCancel()
-                        dispatch(criteriaAction.getCriteriasCourse({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
+                        dispatch(criteriaAction.getCriteriasCourse({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex, teacher: true }));
                     }))
                 } else {
                     dispatch(criteriaAction.createCriteriaCourse(values, () => {
@@ -461,7 +463,7 @@ const CriteriaManagement = () => {
                             message: "Thêm tiêu chí thành công",
                         })
                         handleCancel();
-                        dispatch(criteriaAction.getCriteriasCourse({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
+                        dispatch(criteriaAction.getCriteriasCourse({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex, teacher: true }));
                     }))
                 }
             } else if (state.activeTab === 'chapter') { // Tiêu chí đề thi chương học
@@ -471,7 +473,7 @@ const CriteriaManagement = () => {
                             message: "Cập nhật tiêu chí thành công",
                         })
                         handleCancel()
-                        dispatch(criteriaAction.getCriteriasModule({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
+                        dispatch(criteriaAction.getCriteriasModule({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex, teacher: true }));
                     }))
                 } else {
                     dispatch(criteriaAction.createCriteriaModule(values, () => {
@@ -479,7 +481,7 @@ const CriteriaManagement = () => {
                             message: "Thêm tiêu chí thành công",
                         })
                         handleCancel();
-                        dispatch(criteriaAction.getCriteriasModule({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
+                        dispatch(criteriaAction.getCriteriasModule({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex, teacher: true }));
                     }))
                 }
             } else if (state.activeTab === 'topic') { // Tiêu chí đề thi chuyên đề
@@ -489,7 +491,7 @@ const CriteriaManagement = () => {
                             message: "Cập nhật tiêu chí thành công",
                         })
                         handleCancel()
-                        dispatch(criteriaAction.getCriteriasThematic({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
+                        dispatch(criteriaAction.getCriteriasThematic({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex, teacher: true }));
                     }))
                 } else {
                     dispatch(criteriaAction.createCriteriaThematic(values, () => {
@@ -497,7 +499,7 @@ const CriteriaManagement = () => {
                             message: "Thêm tiêu chí thành công",
                         })
                         handleCancel();
-                        dispatch(criteriaAction.getCriteriasThematic({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
+                        dispatch(criteriaAction.getCriteriasThematic({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex, teacher: true }));
                     }))
                 }
             }
@@ -521,13 +523,13 @@ const CriteriaManagement = () => {
                     if (res.statusText === 'OK' && res.status === 200) {
                         if (state.activeTab === 'comprehensive') // Tiêu chí đề thi tổng hợp
                         {
-                            dispatch(criteriaAction.getCriteriasCourse({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
+                            dispatch(criteriaAction.getCriteriasCourse({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex, teacher: true }));
                         } else if (state.activeTab === 'chapter') // Tiêu chí đề thi chương học
                         {
-                            dispatch(criteriaAction.getCriteriasModule({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex })); 
+                            dispatch(criteriaAction.getCriteriasModule({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex, teacher: true })); 
                         } else if (state.activeTab === 'topic') // Tiêu chí đề thi chuyên đề
                         {
-                            dispatch(criteriaAction.getCriteriasThematic({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
+                            dispatch(criteriaAction.getCriteriasThematic({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex, teacher: true }));
                         }
                         notification.success({
                             message: 'Thành công',
@@ -710,12 +712,12 @@ const CriteriaManagement = () => {
 
                     <Form.Item style={{display: require.module ? '' : 'none'}}
                         className="input-col"
-                        label="Mô đun"
+                        label="chương học"
                         name="mo_dun_id"
                         rules={[
                             {
                                 required: require.module,
-                                message: 'Mô đun là trường bắt buộc.',
+                                message: 'chương học là trường bắt buộc.',
                             },
                         ]}
                     >
@@ -738,7 +740,7 @@ const CriteriaManagement = () => {
                             label={"Số lần thi"}
                             rules={[{ required: true, message: "Vui lòng nhập số lần thi" }]}
                         >
-                            <InputNumber disabled={isPublish} style={{ width: "100%" }} min={0} placeholder="Nhập số lần thi tối đa được phép thi" />
+                            <InputNumber style={{ width: "100%" }} min={0} placeholder="Nhập số lần thi tối đa được phép thi" />
                         </Form.Item>
                         </Col>
                     </Row>
@@ -754,17 +756,17 @@ const CriteriaManagement = () => {
                             </Form.Item>
                         </Col>
                         <Col span={12}>
-                        <Form.Item
-                            name="yeu_cau"
-                            label={"Yêu cầu"}
-                            rules={[{ required: true, message: "Vui lòng nhập yêu cầu" }]}
-                        >
-                            <InputNumber disabled={isPublish} style={{ width: "100%" }} min={0} placeholder="Nhập yêu cầu đạt đề thi" />
-                        </Form.Item>
+                            <Form.Item
+                                name="yeu_cau"
+                                label={"Yêu cầu"}
+                                rules={[{ required: true, message: "Vui lòng nhập yêu cầu" }]}
+                            >
+                                <InputNumber disabled={isPublish} style={{ width: "100%" }} min={0} placeholder="Nhập yêu cầu đạt đề thi" />
+                            </Form.Item>
                         </Col>
                     </Row>
 
-                    <span style={{color: 'red', display: thematic ? 'block' : 'none'}}>* Các chuyên đề cùng mô-đun có tiêu chí giống nhau</span>
+                    <span style={{color: 'red', display: thematic ? 'block' : 'none'}}>* Các chuyên đề cùng chương học có tiêu chí giống nhau</span>
                     <Row gutter={16}>
                         <Col span={12}>
                             <Button

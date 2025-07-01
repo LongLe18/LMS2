@@ -895,6 +895,11 @@ const ExamCourseDetail = () => {
                                     <Icon component={() => <img className="dowload-exam-right-icon" src={docIcon} alt="..." />} />
                                     Làm lại bài thi
                                 </Button> */}
+                                <Button type="primary" size="large" className="dowload-exam-button" onClick={() => {
+                                    window.location.href = `/luyen-tap/luyen-tap/${params.idCourse}`;
+                                }}>
+                                    Quay lại khóa học
+                                </Button>
                             </div>
                         </div>
                     )}

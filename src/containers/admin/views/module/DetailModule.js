@@ -238,7 +238,7 @@ const DetailModule = () => {
         if (values.khoa_hoc === undefined) { // check null
             notification.warning({
               message: 'Cảnh báo',
-              description: 'Thông tin mô đun chưa đủ',
+              description: 'Thông tin chương học chưa đủ',
             })
             return;
         }
@@ -287,12 +287,12 @@ const DetailModule = () => {
                     <Col span={24} className="body-content">
                         <Row>
                             <Col xl={10} sm={24} xs={24} className="cate-form-block">
-                                <h5>Sửa thông tin mô đun</h5>
+                                <h5>Sửa thông tin chương học</h5>
                                 <Form layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={editModule}>
                                         <Form.Item
                                             initialValue={module.data.ten_mo_dun}
                                             className="input-col"
-                                            label="Tên mô đun"
+                                            label="Tên chương học"
                                             name="ten_mo_dun"
                                             rules={[
                                                 {
@@ -301,7 +301,7 @@ const DetailModule = () => {
                                                 },
                                             ]}
                                             >
-                                                <Input placeholder="Nhập tên mô đun"/>
+                                                <Input placeholder="Nhập tên chương học"/>
                                         </Form.Item>
                                         <Form.Item
                                         initialValue={module.data.linh_vuc}
@@ -389,12 +389,12 @@ const DetailModule = () => {
                                         </Form.Item> */}
                                         <Form.Item
                                             name="loai_tong_hop"
-                                            label="Loại mô đun"
+                                            label="Loại chương học"
                                             initialValue={module.data.loai_tong_hop}
                                             rules={[
                                                 {
                                                 required: true,
-                                                message: 'Loại mô đun là trường bắt buộc.',
+                                                message: 'Loại chương học là trường bắt buộc.',
                                                 },
                                             ]}
                                             >
@@ -403,7 +403,7 @@ const DetailModule = () => {
                                                         Phần thi tổng hợp
                                                     </Radio>
                                                     {/* <Radio className="option-payment" value={2}>
-                                                        Phần thi mô đun
+                                                        Phần thi chương học
                                                     </Radio> */}
                                                     <Radio className="option-payment" value={0}>
                                                         Phần bài học

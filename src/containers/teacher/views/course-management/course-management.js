@@ -119,7 +119,7 @@ const CourseManagement = () => {
             )
         },
         {
-            title: "Số mô-đun",
+            title: "Số chương học",
             dataIndex: "so_luong_modun",
             key: "so_luong_modun",
             width: 120,
@@ -129,6 +129,13 @@ const CourseManagement = () => {
             title: "Số chuyên đề",
             dataIndex: "so_luong_chuyen_de",
             key: "so_luong_chuyen_de",
+            width: 120,
+            align: "center",
+        },
+        {
+            title: "Số học viên",
+            dataIndex: "so_luong_hoc_vien",
+            key: "so_luong_hoc_vien",
             width: 120,
             align: "center",
         },
@@ -200,25 +207,12 @@ const CourseManagement = () => {
                 <Col xs={24} sm={12} md={6}>
                     <Card style={{ borderRadius: "8px" }}>
                         <div style={{ display: "flex", alignItems: "center" }}>
-                        <Avatar size={48} style={{ background: "linear-gradient(180deg, rgba(41, 43, 142, 0.1) 0%, rgba(41, 43, 142, 0.3) 100%)", marginRight: "12px" }} 
-                            icon={<img src={imageStudy} alt="imageStudy"/>} 
-                            />
-                        <div>
-                            <div style={{ fontSize: "24px", fontWeight: "bold", color: "#262626" }}>{dashboardData?.so_khoa_hoc}</div>
-                            <div style={{ color: "#8c8c8c", fontSize: "14px" }}>Số lượng khóa học</div>
-                        </div>
-                        </div>
-                    </Card>
-                </Col>
-                <Col xs={24} sm={12} md={6}>
-                    <Card style={{ borderRadius: "8px" }}>
-                        <div style={{ display: "flex", alignItems: "center" }}>
                             <Avatar size={48} style={{ background: "linear-gradient(180deg, rgba(41, 43, 142, 0.1) 0%, rgba(41, 43, 142, 0.3) 100%)", marginRight: "12px" }} 
-                                icon={<img src={imageBook} alt="imageBook"/>} 
-                            />
+                                icon={<img src={imageStudy} alt="imageStudy" style={{width: '100%'}}/>} 
+                                />
                             <div>
-                                <div style={{ fontSize: "24px", fontWeight: "bold", color: "#262626" }}>{dashboardData?.so_modun}</div>
-                                <div style={{ color: "#8c8c8c", fontSize: "14px" }}>Số lượng mô đun</div>
+                                <div style={{ fontSize: "24px", fontWeight: 500, color: "#242424" }}>{dashboardData?.so_khoa_hoc}</div>
+                                <div style={{ color: "#242424", fontSize: "14px", fontWeight: 400 }}>Số lượng khóa học</div>
                             </div>
                         </div>
                     </Card>
@@ -226,15 +220,28 @@ const CourseManagement = () => {
                 <Col xs={24} sm={12} md={6}>
                     <Card style={{ borderRadius: "8px" }}>
                         <div style={{ display: "flex", alignItems: "center" }}>
-                        <Avatar
-                            size={48}
-                            style={{ background: "linear-gradient(180deg, rgba(41, 43, 142, 0.1) 0%, rgba(41, 43, 142, 0.3) 100%)", marginRight: "12px" }}
-                            icon={<img src={imageNote} alt="imageNote"/>}
-                        />
-                        <div>
-                            <div style={{ fontSize: "24px", fontWeight: "bold", color: "#262626" }}>{dashboardData?.so_chuyen_de}</div>
-                            <div style={{ color: "#8c8c8c", fontSize: "14px" }}>Số lượng chuyên đề</div>
+                            <Avatar size={48} style={{ background: "linear-gradient(180deg, rgba(41, 43, 142, 0.1) 0%, rgba(41, 43, 142, 0.3) 100%)", marginRight: "12px" }} 
+                                icon={<img src={imageBook} alt="imageBook" style={{width: '100%'}}/>} 
+                            />
+                            <div>
+                                <div style={{ fontSize: "24px", fontWeight: 500, color: "#242424" }}>{dashboardData?.so_modun}</div>
+                                <div style={{ color: "#242424", fontSize: "14px", fontWeight: 400 }}>Số lượng chương học</div>
+                            </div>
                         </div>
+                    </Card>
+                </Col>
+                <Col xs={24} sm={12} md={6}>
+                    <Card style={{ borderRadius: "8px" }}>
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                            <Avatar
+                                size={48}
+                                style={{ background: "linear-gradient(180deg, rgba(41, 43, 142, 0.1) 0%, rgba(41, 43, 142, 0.3) 100%)", marginRight: "12px" }}
+                                icon={<img src={imageNote} alt="imageNote" style={{width: '100%'}}/>}
+                            />
+                            <div>
+                                <div style={{ fontSize: "24px", fontWeight: 500, color: "#242424" }}>{dashboardData?.so_chuyen_de}</div>
+                                <div style={{ color: "#242424", fontSize: "14px", fontWeight: 400 }}>Số lượng chuyên đề</div>
+                            </div>
                         </div>
                     </Card>
                 </Col>
@@ -242,11 +249,11 @@ const CourseManagement = () => {
                     <Card style={{ borderRadius: "8px" }}>
                         <div style={{ display: "flex", alignItems: "center" }}>
                             <Avatar size={48} style={{ background: "linear-gradient(180deg, rgba(41, 43, 142, 0.1) 0%, rgba(41, 43, 142, 0.3) 100%)", marginRight: "12px" }} 
-                                icon={<img src={imageUser} alt="imageUser" />} 
+                                icon={<img src={imageUser} alt="imageUser" style={{width: '100%'}}/>} 
                             />
                             <div>
-                                <div style={{ fontSize: "24px", fontWeight: "bold", color: "#262626" }}>{dashboardData?.so_hoc_vien}</div>
-                                <div style={{ color: "#8c8c8c", fontSize: "14px" }}>Số lượng học viên</div>
+                                <div style={{ fontSize: "24px", fontWeight: 500, color: "#242424" }}>{dashboardData?.so_hoc_vien}</div>
+                                <div style={{ color: "#242424", fontSize: "14px", fontWeight: 400 }}>Số lượng học viên</div>
                             </div>
                         </div>
                     </Card>

@@ -65,18 +65,18 @@ const ModuleCate = (props) => {
         )
       },
       {
-        title: 'Tên mô đun',
+        title: 'Tên chương học',
         dataIndex: 'ten_mo_dun',
         key: 'ten_mo_dun',
         responsive: ['md'],
       },
       {
-        title: 'Loại mô đun',
+        title: 'Loại chương học',
         dataIndex: 'loai_tong_hop',
         key: 'loai_tong_hop',
         responsive: ['md'],
         render: (loai_tong_hop) => (
-          loai_tong_hop === 1 ? 'Phần thi tổng hợp' : loai_tong_hop === 2 ? 'Phần thi mô đun' : 'Phần bài học'
+          loai_tong_hop === 1 ? 'Phần thi tổng hợp' : loai_tong_hop === 2 ? 'Phần thi chương học' : 'Phần bài học'
         )
       },
       {
@@ -350,7 +350,7 @@ const ModuleCate = (props) => {
       if (values.khoa_hoc_id === undefined) { // check null
         notification.warning({
           message: 'Cảnh báo',
-          description: 'Thông tin mô đun chưa đủ',
+          description: 'Thông tin chương học chưa đủ',
         })
         return;
       }
@@ -380,7 +380,7 @@ const ModuleCate = (props) => {
         } else {
           notification.error({
             message: 'Thông báo',
-            description: 'Thêm module mới thất bại. Chú ý 1 mô đun chỉ có 1 phần tổng hợp',
+            description: 'Thêm module mới thất bại. Chú ý 1 chương học chỉ có 1 phần tổng hợp',
           })
         }
       };
@@ -390,7 +390,7 @@ const ModuleCate = (props) => {
     const DeleteModule = (id) => {
       Modal.confirm({
         icon: <ExclamationCircleOutlined />,
-        content: 'Bạn có chắc chán muốn xóa mô đun này?',
+        content: 'Bạn có chắc chán muốn xóa chương học này?',
         okText: 'Đồng ý',
         cancelText: 'Hủy',
         onOk() {
@@ -416,7 +416,7 @@ const ModuleCate = (props) => {
     const ChangeStatusModule = (id) => {
       Modal.confirm({
         icon: <ExclamationCircleOutlined />,
-        content: 'Bạn có chắc chán muốn hủy hoạt động mô đun này?',
+        content: 'Bạn có chắc chán muốn hủy hoạt động chương học này?',
         okText: 'Đồng ý',
         cancelText: 'Hủy',
         onOk() {
@@ -457,7 +457,7 @@ const ModuleCate = (props) => {
                     <Row>
                         <Col xl={24} sm={24} xs={24}>
                           <AppFilter
-                              title={"Nhóm mô đun"}
+                              title={"Nhóm chương học"}
                               isShowCourse={true}
                               isShowModule={false}
                               isShowThematic={false}
@@ -491,13 +491,13 @@ const ModuleCate = (props) => {
           })}
           <Row>
             <Col xl={24} sm={24} xs={24} className="cate-form-block">
-                  <h5>Thêm mới mô đun</h5>
+                  <h5>Thêm mới chương học</h5>
                   <Form layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={createModule}>
                     <Row gutter={25}>
                       <Col xl={12} sm={24} xs={24} className="left-content">              
                         <Form.Item
                             className="input-col"
-                            label="Tên mô đun"
+                            label="Tên chương học"
                             name="ten_mo_dun"
                             rules={[
                                 {
@@ -506,7 +506,7 @@ const ModuleCate = (props) => {
                                 },
                             ]}
                             >
-                                <Input placeholder="Nhập tên mô đun"/>
+                                <Input placeholder="Nhập tên chương học"/>
                         </Form.Item>
                         <Form.Item
                           className="input-col"
@@ -555,12 +555,12 @@ const ModuleCate = (props) => {
                         </Form.Item>     
                         <Form.Item
                           name="loai_tong_hop"
-                          label="Loại mô đun"
+                          label="Loại chương học"
                           initialValue={state.form.total}
                           rules={[
                             {
                               required: true,
-                              message: 'Loại mô đun là trường bắt buộc.',
+                              message: 'Loại chương học là trường bắt buộc.',
                             },
                           ]}
                         >
@@ -569,7 +569,7 @@ const ModuleCate = (props) => {
                                 Phần thi tổng hợp
                               </Radio>
                               {/* <Radio className="option-payment" value={2}>
-                                Phần thi mô đun
+                                Phần thi chương học
                               </Radio> */}
                               <Radio className="option-payment" value={0}>
                                 Phần bài học

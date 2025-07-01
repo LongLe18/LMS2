@@ -4,10 +4,9 @@ import {
   Collapse,
   Navbar,
   NavbarToggler,
-  NavbarBrand,
   Container,
 } from "reactstrap";
-import { Avatar, Image, Badge, Row, Col, Tooltip, Menu, Dropdown } from "antd";
+import { Avatar, Image, Badge, Row, Col, Tooltip, Menu, Dropdown, Breadcrumb } from "antd";
 import { BellOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import AutoLaTeX from 'react-autolatex';
 
@@ -18,7 +17,7 @@ import jwt_decode from 'jwt-decode';
 import config from '../../../configs/index';
 import moment from 'moment';
 import defaultImage from 'assets/img/avatar.png';
-import { BarsOutlined } from '@ant-design/icons';
+// import { BarsOutlined } from '@ant-design/icons';
 //redux
 import { useDispatch } from "react-redux";
 import * as userAction from '../../../redux/actions/user';
@@ -29,7 +28,7 @@ function Header(props) {
   const [isOpen, setIsOpen] = React.useState(false);
   // const [dropdownOpen, setDropdownOpen] = React.useState(false);
   // const [dropdownAlert, setDropdownAlert] = React.useState(false);
-  const [color, setColor] = React.useState("transparent");
+  const [color, setColor] = React.useState("white");
   const sidebarToggle = React.useRef();
   const [avatar, setAvatar] = React.useState(defaultImage);
 
@@ -285,7 +284,7 @@ function Header(props) {
       <Container fluid>
         <div className="navbar-wrapper">
           
-          <div className="navbar-toggle" style={{display: 'block'}}>
+          {/* <div className="navbar-toggle" style={{display: 'block'}}>
             <button style={{display: 'block', padding: '0'}}
               type="button"
               ref={sidebarToggle}
@@ -294,8 +293,18 @@ function Header(props) {
             >
               <BarsOutlined />
             </button>
-          </div>
-          <NavbarBrand href="/admin/dashboard">{getBrand()}</NavbarBrand>
+          </div> */}
+          {/* <NavbarBrand href="/admin/dashboard">{getBrand()}</NavbarBrand> */}
+          {/* Breadcrumb */}
+          <Breadcrumb>
+            {localStorage.getItem('dataPath') !== null && JSON.parse(localStorage.getItem('dataPath')).length > 0 &&
+              JSON.parse(localStorage.getItem('dataPath')).map((item, index) => (
+                <Breadcrumb.Item key={index}>
+                  {item.path ? <a href={item.path}>{item.title}</a> : item.title}
+                </Breadcrumb.Item>
+              ))
+            }
+          </Breadcrumb>
         </div>
         {/* <NavLink to="/admin/dashboard">
             <img alt="..."  style={{width:'90%'}}

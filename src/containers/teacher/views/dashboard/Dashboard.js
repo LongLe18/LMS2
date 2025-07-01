@@ -6,14 +6,13 @@ import axios from "axios";
 // react plugin used to create charts
 import { Link } from "react-router-dom";
 // antd components
-import { Row, Col, notification, Card, Avatar, Typography } from "antd";
+import { Row, Col, notification, Card, Avatar, Typography, Divider } from "antd";
+import { ArrowRightOutlined } from "@ant-design/icons";
 import imageStudy from 'assets/img/image-study.png';
 import imageBook from 'assets/img/image-book.png';
 import imageNote from 'assets/img/image-note.png';
 import imageUser from 'assets/img/image-user.png';
 import { PieChart, Pie, Cell } from "recharts";
-
-import { TeamOutlined, RightOutlined, AppstoreOutlined } from '@ant-design/icons';
 
 // redux
 import { useDispatch } from "react-redux";
@@ -26,9 +25,6 @@ function Dashboard() {
 
   const dispatch = useDispatch();
 
-  const [Notification, setNotification] = React.useState([]);
-  const [teaching, setTeaching] = React.useState([]);
-  const [number, setNumber] = React.useState(0);
   const [dashboardData, setDashboardData] = useState();
   const [statisticData, setStatisticData] = useState(null)
 
@@ -37,13 +33,11 @@ function Dashboard() {
         .then(
             res => {
                 if (res.status === 200 && res.statusText === 'OK') {
-                    setTeaching(res.data.data.map((item, index) => ({...item, key: index})));
                     let students = 0;
                     res.data.data.map((item, index) => {
                       students += item.so_luong;
                       return null;
                     })
-                    setNumber(students)
                 } else {
                     notification.error({
                         message: 'Lỗi',
@@ -74,7 +68,7 @@ function Dashboard() {
 
   useEffect(() => {
     dispatch(notificationAction.getNOTIFICATIONsByUser({}, (res) => {
-      if (res.status === 'success') setNotification(res.data.filter(note => note.loai_quyen === 1));
+      console.log(res);
     }));
     getTeaching();
     getDashboardData();
@@ -113,7 +107,7 @@ function Dashboard() {
     }));
 
     return (
-      <Card style={{ borderRadius: "8px", height: "100%" }}>
+      <Card style={{ borderRadius: "8px", height: "100%", background: '#F2F4F5' }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <div>
             <Title level={2} style={{ margin: 0, color: "#262626", fontSize: "32px", fontWeight: "bold" }}>
@@ -138,6 +132,7 @@ function Dashboard() {
             </PieChart>
           </div>
         </div>
+        <Divider />
         <div style={{ marginTop: "16px" }}>
           <Row gutter={[8, 8]}>
             {data.categories.map((category, index) => (
@@ -165,97 +160,32 @@ function Dashboard() {
   }
 
   return (
-      <div className="content">
+      <div className="content" style={{ marginTop: 12}}>
         <Row className="app-main home-screen" gutter={[30, 30]} style={{paddingLeft: 0}}>
           <Col span={24}>
-            <div className="border-box-widget">
-              <h2 className="font-weight-5">Thống kê chung</h2>
-              <div className="border-box-body">
-                <h1 className="welcome-text">CHÀO MỪNG BẠN ĐẾN VỚI HỆ THỐNG QUẢN LÝ THI</h1>
-                <Row gutter={[16, 16]}>
-
-                  {teaching.length > 0 && 
-                  <>
-                    <Col xl={6} lg={6} md={12} sm={12} xs={24}>
-                      <div className="dashboard-stat stat-user">
-                        <div className="visual">
-                          <TeamOutlined />
-                        </div>
-                        <div className="detail">
-                          <div className="number">
-                            <span>{teaching.length}</span>
-                          </div>
-                          <Link to="/teacher/course-management" className="dashboard-stat stat-user">
-                            <div className="desc">
-                              Số mô-đun <RightOutlined />
-                            </div>
-                            <span>Giảng dạy</span>
-                          </Link>
-                        </div>
-                      </div>
-                    </Col>
-
-                    <Col xl={6} lg={6} md={12} sm={12} xs={24}>
-                      <div className="dashboard-stat stat-user">
-                        <div className="visual">
-                          <TeamOutlined />
-                        </div>
-                        <div className="detail">
-                          <div className="number">
-                            <span>{number}</span>
-                          </div>
-                          <Link to="/teacher/course-management" className="dashboard-stat stat-user">
-                            <div className="desc">
-                              Số học viên <RightOutlined />
-                            </div>
-                            <span>Giảng dạy</span>
-                          </Link>
-                        </div>
-                      </div>
-                    </Col>
-                  </>
-                  }
-
-                    <Col xl={6} lg={6} md={12} sm={12} xs={24}>
-                      <Link to="/teacher/reply" className="dashboard-stat stat-image">
-                        <div className="visual">
-                          <AppstoreOutlined />
-                        </div>
-                        <div className="detail">
-                          <div className="number">
-                            <span>{Notification.length}</span>
-                          </div>
-                          <div className="desc">
-                            Thông báo <RightOutlined />
-                          </div>
-                          <span>Giáo viên</span>
-                        </div>
-                      </Link>
-                    </Col>
-
-                </Row>
-                
-
-              </div>
-            </div>
-          
             {/* Statistics Cards */}
-            <Row gutter={[16, 16]} style={{ background: '#fff', padding: 20, borderRadius: '8px' }}>
-                <Col xs={24} sm={24} md={24}>
-                  <Title level={4} style={{ marginBottom: "24px", marginTop: '24px', color: "#262626" }}>
+            <Row gutter={[16, 16]} style={{ background: '#fff', padding: '20px 20px 32px 20px', borderRadius: '16px' }}>
+                <Col xs={12} sm={12} md={12}>
+                  <Title level={4} style={{ marginTop: '12px', color: "#242424", fontWeight: 700 }}>
                       Thống kê khóa học
                   </Title>
+                </Col>
+                <Col xs={12} sm={12} md={12} style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+                  <Link to="/teacher/course-management" style={{ float: 'right', color: '#292B8E', fontSize: '16px', fontWeight: 500 }}>
+                      Xem danh sách khóa học <ArrowRightOutlined style={{marginLeft: 6}}/>
+                  </Link>
                 </Col>
                 <Col xs={24} sm={12} md={6}>
                     <Card style={{ borderRadius: "8px", background: '#F2F4F5' }}>
                         <div style={{ display: "flex", alignItems: "center" }}>
-                        <Avatar size={48} style={{ background: "linear-gradient(180deg, rgba(41, 43, 142, 0.1) 0%, rgba(41, 43, 142, 0.3) 100%)", marginRight: "12px" }} 
-                            icon={<img src={imageStudy} alt="imageStudy"/>} 
-                            />
-                        <div>
-                            <div style={{ fontSize: "24px", fontWeight: "bold", color: "#262626" }}>{dashboardData?.so_khoa_hoc}</div>
-                            <div style={{ color: "#8c8c8c", fontSize: "14px" }}>Số lượng khóa học</div>
-                        </div>
+                          <Avatar size={48} style={{ background: "linear-gradient(180deg, rgba(41, 43, 142, 0.1) 0%, rgba(41, 43, 142, 0.3) 100%)", 
+                            marginRight: "12px" }} 
+                            icon={<img src={imageStudy} alt="imageStudy" style={{width: '100%'}}/>} 
+                          />
+                          <div>
+                              <div style={{ fontSize: "24px", fontWeight: 500, color: "#242424" }}>{dashboardData?.so_khoa_hoc}</div>
+                              <div style={{ color: "#242424", fontSize: "14px", fontWeight: 400 }}>Số lượng khóa học</div>
+                          </div>
                         </div>
                     </Card>
                 </Col>
@@ -263,11 +193,11 @@ function Dashboard() {
                     <Card style={{ borderRadius: "8px", background: '#F2F4F5' }}>
                         <div style={{ display: "flex", alignItems: "center" }}>
                             <Avatar size={48} style={{ background: "linear-gradient(180deg, rgba(41, 43, 142, 0.1) 0%, rgba(41, 43, 142, 0.3) 100%)", marginRight: "12px" }} 
-                                icon={<img src={imageBook} alt="imageBook"/>} 
+                                icon={<img src={imageBook} alt="imageBook" style={{width: '100%'}}/>} 
                             />
                             <div>
-                                <div style={{ fontSize: "24px", fontWeight: "bold", color: "#262626" }}>{dashboardData?.so_modun}</div>
-                                <div style={{ color: "#8c8c8c", fontSize: "14px" }}>Số lượng mô đun</div>
+                                <div style={{ fontSize: "24px", fontWeight: 500, color: "#242424" }}>{dashboardData?.so_modun}</div>
+                                <div style={{ color: "#242424", fontSize: "14px", fontWeight: 400 }}>Số lượng chương học</div>
                             </div>
                         </div>
                     </Card>
@@ -278,11 +208,11 @@ function Dashboard() {
                         <Avatar
                             size={48}
                             style={{ background: "linear-gradient(180deg, rgba(41, 43, 142, 0.1) 0%, rgba(41, 43, 142, 0.3) 100%)", marginRight: "12px" }}
-                            icon={<img src={imageNote} alt="imageNote"/>}
+                            icon={<img src={imageNote} alt="imageNote" style={{width: '100%'}}/>}
                         />
                         <div>
-                            <div style={{ fontSize: "24px", fontWeight: "bold", color: "#262626" }}>{dashboardData?.so_chuyen_de}</div>
-                            <div style={{ color: "#8c8c8c", fontSize: "14px" }}>Số lượng chuyên đề</div>
+                            <div style={{ fontSize: "24px", fontWeight: 500, color: "#242424" }}>{dashboardData?.so_chuyen_de}</div>
+                            <div style={{ color: "#242424", fontSize: "14px", fontWeight: 400 }}>Số lượng chuyên đề</div>
                         </div>
                         </div>
                     </Card>
@@ -291,23 +221,28 @@ function Dashboard() {
                     <Card style={{ borderRadius: "8px", background: '#F2F4F5' }}>
                         <div style={{ display: "flex", alignItems: "center" }}>
                             <Avatar size={48} style={{ background: "linear-gradient(180deg, rgba(41, 43, 142, 0.1) 0%, rgba(41, 43, 142, 0.3) 100%)", marginRight: "12px" }} 
-                                icon={<img src={imageUser} alt="imageUser" />} 
+                                icon={<img src={imageUser} alt="imageUser" style={{width: '100%'}}/>} 
                             />
                             <div>
-                                <div style={{ fontSize: "24px", fontWeight: "bold", color: "#262626" }}>{dashboardData?.so_hoc_vien}</div>
-                                <div style={{ color: "#8c8c8c", fontSize: "14px" }}>Số lượng học viên</div>
+                                <div style={{ fontSize: "24px", fontWeight: 500, color: "#242424" }}>{dashboardData?.so_hoc_vien}</div>
+                                <div style={{ color: "#242424", fontSize: "14px", fontWeight: 400 }}>Số lượng học viên</div>
                             </div>
                         </div>
                     </Card>
                 </Col>
             </Row>
           
-            <Row gutter={[24, 24]} style={{ marginBottom: "32px", marginTop: "32px", background: '#fff', padding: 20, borderRadius: '8px' }}>
-              <Col xs={24} sm={24} md={24}>
-                  <Title level={4} style={{ marginBottom: "24px", marginTop: '24px', color: "#262626" }}>
+            <Row gutter={[24, 24]} style={{ marginTop: "32px", background: '#fff', padding: '20px 20px 32px 20px', borderRadius: '16px' }}>
+              <Col xs={12} sm={12} md={12}>
+                  <Title level={4} style={{ marginTop: '12px', color: "#262626" }}>
                       Thống kê điểm thi
                   </Title>
               </Col>
+              <Col xs={12} sm={12} md={12} style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+                  <Link to="/teacher/score-exam" style={{ float: 'right', color: '#292B8E', fontSize: '16px', fontWeight: 500 }}>
+                      Xem danh sách điểm thi <ArrowRightOutlined style={{marginLeft: 6}}/>
+                  </Link>
+                </Col>
               {statisticData?.map((data, index) => (
                 <Col xs={24} md={8} key={index}>
                   <StatisticsCard data={data} />

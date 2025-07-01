@@ -19,13 +19,12 @@ import AppBreadCrumb from "components/parts/breadcrumb/AppBreadCrumb";
 import NoRecord from 'components/common/NoRecord';
 import { Layout, Row, Col, Modal, Button, notification, Input, Alert, Upload, 
     Image, Space, List, Comment, message } from 'antd';
-import { InfoCircleOutlined, CommentOutlined, UploadOutlined } from '@ant-design/icons';
+import Icon,{ InfoCircleOutlined, CommentOutlined, UploadOutlined } from '@ant-design/icons';
 import LoadingCustom from 'components/parts/loading/Loading';
 import TextEditorWidget2 from 'components/common/TextEditor/TextEditor2';
 import MathJax from 'react-mathjax';
 
 // icon
-import Icon from '@ant-design/icons';
 // import docIcon from 'assets/img/exam/doc-icon.png';
 import adope from 'assets/img/exam/adope.gif';
 
@@ -37,7 +36,6 @@ import * as commentAction from '../../../../redux/actions/comment';
 import * as notificationAction from '../../../../redux/actions/notification';
 
 const { Content } = Layout;
-// const { TextArea } = Input;
 const { Dragger } = Upload;
 
 const ExamModuleDetail = () => {
@@ -450,7 +448,7 @@ const ExamModuleDetail = () => {
                         <span style={{fontSize: 18, color: '#ff8100cc', padding: '12px 12px 0px 12px'}}>------</span>
                         <ul>
                             {exam.status === 'success' && exam.data.cau_hoi_de_this.map((question, index) => {
-                                const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
+                                const isAnswered = results.find((it) => it.cau_hoi_id === question?.cau_hoi?.cau_hoi_id);
                                 return (
                                     <li key={index + 1} className={`item ${((isAnswered && isAnswered.dap_an?.length !== 0) || (isAnswered && question?.cau_hoi?.loai_cau_hoi === 2)) ? 'active' : ''}`}>
                                         <button style={{borderRadius: 8}}
@@ -903,6 +901,11 @@ const ExamModuleDetail = () => {
                                         Lịch sử làm bài
                                     </Button>
                                 </Link>
+                                <Button type="primary" size="large" className="dowload-exam-button" onClick={() => {
+                                    window.location.href = `/luyen-tap/luyen-tap/${params.idCourse}`;
+                                }}>
+                                    Quay lại khóa học
+                                </Button>
                             </div>
                         </div>
                     )}

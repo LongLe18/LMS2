@@ -210,7 +210,7 @@ const ContentComponent = (props) => {
                                                     Luyện
                                                 </NavLink>
                                             }
-                                            {/* Thi mô-đun */}
+                                            {/* Thi chương học */}
                                             {loai_tong_hop === 2 && 
                                                 <NavLink className="btn btn-primary" 
                                                     to={"/luyen-tap/kiem-tra-mo-dun/" + hashids.encode(props.id) + "/" + hashids.encode(mo_dun_id)}

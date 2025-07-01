@@ -184,17 +184,17 @@ const ExamViewDGNL = (props) => {
                             okText: 'Đồng ý',
                             cancelText: 'Hủy',
                             onOk() {
-                                if (course?.data?.loai_kct === 0) 
+                                if (course?.data?.khung_chuong_trinh?.loai_kct === 0) 
                                     history.push(`/luyen-tap/lam-kiem-tra-online/${hashids.encode(res.data?.data?.de_thi_id)}/${moment().toNow()}/${res.data?.data?.dthv_id}/${idCourse}`)
                                 else
                                 history.push(`/luyen-tap/lam-kiem-tra-online-dgtd/${hashids.encode(res.data?.data?.de_thi_id)}/${moment().toNow()}/${res.data?.data?.dthv_id}/${idCourse}`)
                             },
                         });
                     } else {
-                        if (course?.data?.loai_kct === 0) setIsJoinExam(1);
-                        else if (course?.data?.loai_kct === 3) confirmExam();
+                        if (course?.data?.khung_chuong_trinh?.loai_kct === 0) setIsJoinExam(1);
+                        else if (course?.data?.khung_chuong_trinh?.loai_kct === 3) confirmExam();
                         else setIsJoinExam(2)
-                        getCriteriaDG(course?.data?.loai_kct === 0);
+                        getCriteriaDG(course?.data?.khung_chuong_trinh?.loai_kct === 0);
                     }
                 } else {
                     notification.error({
@@ -423,7 +423,7 @@ const ExamViewDGNL = (props) => {
                         
                     <Statisic />
 
-                    {course?.data?.loai_kct === 0 ? contentPageDGNL() : contentPageDGTDBK()}
+                    {course?.data?.khung_chuong_trinh?.loai_kct === 0 ? contentPageDGNL() : contentPageDGTDBK()}
                 </div>
             </div>
         )
@@ -518,7 +518,7 @@ const ExamViewDGNL = (props) => {
             "chuyen_nganh_ids": type === 5 ? type.toString() : subjects.join(', ')
         };
         setSpinning(true); // chờ
-        if (course?.data?.loai_kct === 0) { // nếu là ĐGNL
+        if (course?.data?.khung_chuong_trinh?.loai_kct === 0) { // nếu là ĐGNL
             localStorage.setItem('mon_thi', type === 5 ? type.toString() : subjects.join(', '));
             // Tạo đề thi
             axios({

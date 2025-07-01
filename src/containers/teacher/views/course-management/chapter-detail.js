@@ -20,10 +20,11 @@ import * as partActions from '../../../../redux/actions/part';
 import * as majorActions from '../../../../redux/actions/major';
 import * as thematicActions from '../../../../redux/actions/thematic';
 import * as examActions from '../../../../redux/actions/exam';
+import * as criteriaActions from '../../../../redux/actions/criteria';
 import { useSelector, useDispatch } from "react-redux";
 
 // ==================================================================== 
-// Giao diện mô đun (chi  tiết khoá học) 
+// Giao diện chương học (chi  tiết khoá học) 
 // ==================================================================== 
 
 const { Title, Text, Paragraph } = Typography
@@ -53,12 +54,12 @@ const ChapterDetail = () => {
   const module = useSelector(state => state.part.item.result);
   const modules = useSelector(state => state.part.list.result);
   const programmes = useSelector(state => state.programme.list.result);
-  const classes = useSelector(state => state.major.list.result);
   const courses = useSelector(state => state.course.list.result);
   const majors = useSelector(state => state.major.list.result);
   const thematics = useSelector(state => state.thematic.list.result);
   const exams = useSelector(state => state.exam.list.result);
   const exam = useSelector(state => state.exam.item.result);
+  const checkCriteria = useSelector(state => state.criteria.check.result);
 
   const [state, setState] = useState({
     isEdit: false,
@@ -172,6 +173,7 @@ const ChapterDetail = () => {
     dispatch(majorActions.getMajors());
     dispatch(majorActions.getClass());
     dispatch(thematicActions.getThematicsByTeacher({ idCourse: '', idModule: idChapter, status: '', search: '', start: '', end: '', pageIndex: 1, pageSize: 99999999 }));
+    dispatch(criteriaActions.checkCriteria({ type: 'modun', id: idChapter }));
   }, [])
 
   const renderProgrammes = () => {
@@ -237,23 +239,23 @@ const ChapterDetail = () => {
     );
   };
 
-  const renderClasses = () => {
-    let options = [];
-    if (classes.status === 'success') {
-      options = classes.data
-      .map((course) => (
-        <Option key={course.lop_id} value={course.lop_id} >{course.ten_lop}</Option>
-      ))
-    }
-    return (
-      <Select
-        showSearch={false}
-        placeholder="Chọn lớp học"
-      >
-        {options}
-      </Select>
-    );
-  };
+  // const renderClasses = () => {
+  //   let options = [];
+  //   if (classes.status === 'success') {
+  //     options = classes.data
+  //     .map((course) => (
+  //       <Option key={course.lop_id} value={course.lop_id} >{course.ten_lop}</Option>
+  //     ))
+  //   }
+  //   return (
+  //     <Select
+  //       showSearch={false}
+  //       placeholder="Chọn lớp học"
+  //     >
+  //       {options}
+  //     </Select>
+  //   );
+  // };
 
   const renderMajor = () => {
     let options = [];
@@ -485,55 +487,61 @@ const ChapterDetail = () => {
       <Text style={{ fontSize: "16px", color: "#595959", display: "block", marginBottom: "24px" }}>
         Chưa có đề thi chương học
       </Text>
-      <Alert
-        message="Bạn chưa tạo tiêu chí cho đề thi chương học này!"
-        type="warning"
-        showIcon
-        icon={<ExclamationCircleOutlined />}
-        style={{
-          marginBottom: "24px",
-          backgroundColor: "#fffbe6",
-          border: "1px solid #ffe58f",
-          borderRadius: "6px",
-        }}
-      />
-      <Button
-        type="primary"
-        size="large"
-        icon={<PlusOutlined />}
-        style={{
-          backgroundColor: "#4c6ef5",
-          borderColor: "#4c6ef5",
-          height: "48px",
-          fontSize: "16px",
-          fontWeight: "500",
-          borderRadius: "6px",
-          width: "100%",
-          marginBottom: 12
-        }}
-        onClick={() => setIsModunExamModalVisible(true)}
-      >
-        Thêm đề thi
-      </Button>
-      <Button
-        type="primary"
-        size="large"
-        icon={<PlusOutlined />}
-        style={{
-          backgroundColor: "#4c6ef5",
-          borderColor: "#4c6ef5",
-          height: "48px",
-          fontSize: "16px",
-          fontWeight: "500",
-          borderRadius: "6px",
-          width: "100%",
-        }}
-        onClick={() => {
-          history.push(`/teacher/criteria`);
-        }}
-      >
-        Tạo tiêu chí đề thi chương học
-      </Button>
+      {(checkCriteria?.status === 'success' && checkCriteria?.data?.mo_dun_id === Number(idChapter)) ? '' :
+        <Alert
+          message="Bạn chưa tạo tiêu chí cho đề thi chương học này!"
+          type="warning"
+          showIcon
+          icon={<ExclamationCircleOutlined />}
+          style={{
+            marginBottom: "24px",
+            backgroundColor: "#fffbe6",
+            border: "1px solid #ffe58f",
+            borderRadius: "6px",
+          }}
+        />
+      }
+      {(checkCriteria?.status === 'success' && checkCriteria?.data?.mo_dun_id === Number(idChapter)) &&
+        <Button
+          type="primary"
+          size="large"
+          icon={<PlusOutlined />}
+          style={{
+            backgroundColor: "#4c6ef5",
+            borderColor: "#4c6ef5",
+            height: "48px",
+            fontSize: "16px",
+            fontWeight: "500",
+            borderRadius: "6px",
+            width: "100%",
+            marginBottom: 12
+          }}
+          onClick={() => setIsModunExamModalVisible(true)}
+        >
+          Thêm đề thi
+        </Button>
+      }
+      {(checkCriteria?.status === 'success' && checkCriteria?.data?.mo_dun_id === Number(idChapter)) ? '' :
+        <Button
+          type="primary"
+          size="large"
+          icon={<PlusOutlined />}
+          style={{
+            backgroundColor: "#4c6ef5",
+            borderColor: "#4c6ef5",
+            height: "48px",
+            fontSize: "16px",
+            fontWeight: "500",
+            borderRadius: "6px",
+            width: "100%",
+          }}
+          onClick={() => {
+            history.push(`/teacher/criteria`);
+          }}
+        >
+          Tạo tiêu chí đề thi chương học
+        </Button>
+      }
     </div>
   )
 
@@ -700,15 +708,15 @@ const ChapterDetail = () => {
             )
 
             return (
-              <List.Item className="exam-item">
+              <List.Item className="exam-item" onClick={() => handleViewExam(exam)}>
                 <div className="exam-item-detail" style={{ opacity: (!exam.trang_thai || !exam.xuat_ban) ? 0.5 : 1, }}>
-                  <Avatar className="avatar" onClick={() => handleViewExam(exam)}
+                  <Avatar className="avatar" 
                     size={48}
                     icon={<FileTextOutlined />}
                   />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                      <Text className="exam-title" strong onClick={() => handleViewExam(exam)}>
+                      <Text className="exam-title" strong >
                         {exam?.ten_de_thi}
                       </Text>
                       <Dropdown overlay={menu} trigger={["click"]} placement="bottomRight"
@@ -717,7 +725,7 @@ const ChapterDetail = () => {
                         <Button type="text" size="small" icon={<MoreOutlined />} />
                       </Dropdown>
                     </div>
-                    <Space size="large" style={{ color: "#8c8c8c", fontSize: "14px" }} onClick={() => handleViewExam(exam)}>
+                    <Space size="large" style={{ color: "#8c8c8c", fontSize: "14px" }} >
                       <Space size={6}>
                         <PlayCircleOutlined />
                         <span>{exam?.thoi_gian} phút</span>
@@ -750,7 +758,7 @@ const ChapterDetail = () => {
     Modal.confirm({
       width: 500,
       icon: <ExclamationCircleOutlined />,
-      content: module?.trang_thai === 1 ? 'Bạn có chắc chán muốn dừng hoạt động mô đun này?' : 'Bạn có chắc chán muốn kích hoạt mô đun này?',
+      content: module?.trang_thai === 1 ? 'Bạn có chắc chán muốn dừng hoạt động chương học này?' : 'Bạn có chắc chán muốn kích hoạt chương học này?',
       okText: 'Đồng ý',
       cancelText: 'Hủy',
       onOk() {
@@ -950,21 +958,19 @@ const ChapterDetail = () => {
                       )
 
                       return (
-                        <List.Item className="modun-item">
+                        <List.Item className="modun-item" onClick={() => history.push(`/teacher/module-detail/${topic.chuyen_de_id}`)}>
                           <div className="modun-item-detail" style={{opacity: !topic.trang_thai ? 0.5 : 1}}>
                             <Avatar className="avatar" size={48} icon={<FileTextOutlined />} />
                             <div style={{ flex: 1, minWidth: 0 }}>
                               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                                <Text strong className="modun-title" onClick={() => history.push(`/teacher/module-detail/${topic?.chuyen_de_id}`)}>
+                                <Text strong className="modun-title" >
                                   {topic?.ten_chuyen_de}
                                 </Text>
                                 <Dropdown overlay={menu} trigger={["click"]} placement="bottomRight" onClick={(e) => e.stopPropagation()}>
                                   <Button type="text" size="small" icon={<MoreOutlined />} />
                                 </Dropdown>
                               </div>
-                              <Space size="large" style={{ color: "#8c8c8c", fontSize: "14px" }} 
-                                onClick={() => history.push(`/teacher/module-detail/${topic.chuyen_de_id}`)}
-                              >
+                              <Space size="large" style={{ color: "#8c8c8c", fontSize: "14px" }} >
                                 <Space size={6}>
                                   <FileTextOutlined />
                                   <span>{topic?.so_tai_lieu} tài liệu</span>
@@ -1073,13 +1079,13 @@ const ChapterDetail = () => {
             </Row>
 
             <Row gutter={24}>
-              <Col span={12}>
+              {/* <Col span={12}>
                 <Form.Item className="input-col" label="Lớp học" name="lop_id" 
                   rules={[{ required: true, message: "Vui lòng chọn lớp học" }]}
                 >
                   {renderClasses()}
                 </Form.Item>
-              </Col>
+              </Col> */}
               <Col span={12}>
                 <Form.Item label="Trạng thái" name="trang_thai" initialValue={true}>
                   <Select disabled={!state.isEdit} style={{height: 48}}

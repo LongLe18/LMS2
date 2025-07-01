@@ -286,7 +286,7 @@ const ExamDetailPage = () => {
           <Select
             disabled={state.showModule}
             showSearch={false}
-            placeholder="Chọn mô đun"
+            placeholder="Chọn chương học"
             onChange={(mo_dun_id) => {
                 dispatch(thematicActions.getThematicsByIdModule({ idModule: mo_dun_id }))
             }}
@@ -305,10 +305,10 @@ const ExamDetailPage = () => {
         }
         return (
           <Select
-            disabled={exam.data.loai_de_thi_id !== 3 ? true : false} // Nếu đề thi thuộc chuyên đề hoặc mô đun
+            disabled={exam.data.loai_de_thi_id !== 3 ? true : false} // Nếu đề thi thuộc chuyên đề hoặc chương học
             // disabled={true}
             showSearch={false}
-            placeholder="Chọn mô đun"
+            placeholder="Chọn chương học"
             onChange={(mo_dun_id) => {
                 dispatch(thematicActions.getThematicsByIdModule({ idModule: mo_dun_id }))
             }}
@@ -396,7 +396,7 @@ const ExamDetailPage = () => {
             if (values.mo_dun_id === "") {
                 notification.error({
                     message: 'Thông báo',
-                    description: 'Bạn chưa chọn mô đun',
+                    description: 'Bạn chưa chọn chương học',
                 })
                 return;
             }
@@ -414,7 +414,7 @@ const ExamDetailPage = () => {
             if (values.mo_dun_id === "") {
                 notification.error({
                     message: 'Thông báo',
-                    description: 'Bạn chưa chọn mô đun',
+                    description: 'Bạn chưa chọn chương học',
                 })
                 return;
             }
@@ -814,7 +814,7 @@ const ExamDetailPage = () => {
                                                     </Form.Item>
                                                 </Col>
                                                 <Col xl={7} sm={12} xs={24}>
-                                                    <Form.Item label="Mô đun" name="mo_dun_id"
+                                                    <Form.Item label="chương học" name="mo_dun_id"
                                                         initialValue={exam.data.mo_dun_id !== null ? exam.data.mo_dun_id : null}>
                                                         {renderModule()}
                                                     </Form.Item>
@@ -1092,7 +1092,7 @@ const ExamDetailPage = () => {
                                                     </Row>
                                                     <Row>
                                                         <Col xl={4}>
-                                                            <Form.Item className="label">Mô đun/Học phần</Form.Item>
+                                                            <Form.Item className="label">chương học/Học phần</Form.Item>
                                                         </Col>
                                                         <Col xl={8}>
                                                             <Form.Item                                            

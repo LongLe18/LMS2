@@ -519,7 +519,7 @@ a {
 .app-sider {
   background-image: -webkit-linear-gradient(45deg, #635aff 0%, #8a41ff 40%, #da46b1 100%);
   color: #fff;
-  padding-top: 30px;
+  padding-top: 24px;
 }
 
 .app-sider .mobile-bar {
@@ -627,7 +627,7 @@ a {
 
 .app-sider .app-menu li a,
 .app-sider .app-menu li a i {
-  color: #fff !important;
+  color: #000 !important;
 }
 
 .app-sider .app-menu .ant-menu-sub a i {
@@ -640,8 +640,23 @@ a {
 
 .app-sider .app-menu .ant-menu-item-selected,
 .app-sider .app-menu .ant-menu-item-selected {
-  background: none;
+  background: #fff !important;
   text-decoration: underline;
+}
+
+.app-sider .ant-menu-title-content {
+  padding: 8px;
+}
+
+.app-sider .app-menu .ant-menu-item-selected .ant-menu-title-content {
+  background: #292B8E12;
+  border-radius: 16px;
+  color: #292B8E;
+}
+
+.app-sider .app-menu .ant-menu-item-selected .ant-menu-title-content .nav-text,
+.app-sider .app-menu .ant-menu-item-selected .ant-menu-title-content span {
+  color: #292B8E;
 }
 
 .app-sider .todo-label {

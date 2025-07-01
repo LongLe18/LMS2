@@ -12,6 +12,14 @@
     min-height: 100vh;
 }
 
+.form-course .input-col .ant-form-item-row{
+    flex-direction: column;
+}
+
+.form-course .input-col .ant-form-item-row .ant-form-item-label {
+    text-align: left;
+}
+
 .ant-dropdown-menu .ant-dropdown-menu-item:hover {
     color: red
 }

@@ -229,7 +229,8 @@
 
 .nav-text{
     margin: $margin-bottom;
-
+    font-weight: 500;
+    
     > li > a{
         font-size: $font-size-h6;
         text-transform: uppercase;

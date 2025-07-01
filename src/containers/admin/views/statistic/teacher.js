@@ -33,7 +33,7 @@ const StatisticTeacher = (props) => {
             responsive: ['md'],
         },
         {
-            title: 'Số mô-đun',
+            title: 'Số chương học',
             dataIndex: 'so_mo_dun',
             key: 'so_mo_dun',
             responsive: ['md'],
@@ -64,7 +64,7 @@ const StatisticTeacher = (props) => {
             render: (text, record, index) => index + 1,
         },
         {
-            title: 'Tên mô-đun',
+            title: 'Tên chương học',
             dataIndex: 'ten_mo_dun',
             key: 'ten_mo_dun',
             responsive: ['md'],

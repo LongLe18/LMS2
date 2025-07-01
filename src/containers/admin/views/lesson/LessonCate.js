@@ -202,7 +202,7 @@ const LessonCate = () => {
           onChange={(mo_dun_id) => {
             dispatch(thematicActions.getThematicsByIdModule({ idModule: mo_dun_id }))
           }}
-          placeholder="Chọn mô đun"
+          placeholder="Chọn chương học"
         >
           {options}
         </Select>
@@ -412,12 +412,12 @@ const LessonCate = () => {
                             </Form.Item>   
                             <Form.Item
                               className="input-col"
-                              label="Mô đun"
+                              label="chương học"
                               name="mo_dun"
                               rules={[
                                 {
                                   required: true,
-                                  message: 'Mô đun là bắt buộc',
+                                  message: 'chương học là bắt buộc',
                                 },
                               ]}
                             >

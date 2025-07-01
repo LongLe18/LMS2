@@ -2090,7 +2090,7 @@ const ExamOnlineDetai = () => {
                                             <span style={{fontSize: 20, color: 'rgb(255, 48, 7)', padding: '12px 12px 0px 12px'}}>-------------</span>
                                             <ul>
                                                 {partQuestions.map((question, index) => {
-                                                    const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
+                                                    const isAnswered = results.find((it) => it.cau_hoi_id === question?.cau_hoi?.cau_hoi_id);
                                                     return (
                                                         <li key={index + 1} className={`item ${((isAnswered && isAnswered.dap_an?.length !== 0) || (isAnswered && question?.cau_hoi?.loai_cau_hoi === 2)) ? 'active' : ''}`}>
                                                             <button style={{borderRadius: 8}}

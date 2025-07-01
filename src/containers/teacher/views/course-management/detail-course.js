@@ -17,6 +17,7 @@ import axios from "axios";
 import * as CurrencyFormat from 'react-currency-format';
 import './detail-course.css'
 import ViewExam from "./view-exam";
+import ModalCriteria from './modal-criteria';
 
 // redux
 import * as courseAction from '../../../../redux/actions/course';
@@ -25,6 +26,7 @@ import * as descriptionAction from '../../../../redux/actions/descriptionCourse'
 import * as programmeAction from '../../../../redux/actions/programme';
 import * as majorActions from '../../../../redux/actions/major';
 import * as examActions from '../../../../redux/actions/exam';
+import * as criteriaActions from '../../../../redux/actions/criteria';
 import { useSelector, useDispatch } from "react-redux";
 
 const { Title, Text, Paragraph } = Typography
@@ -45,6 +47,7 @@ const CourseDetail = () => {
   const [deleteModalVisible, setDeleteModalVisible] = useState(false)
   const [spinning, setSpinning] = useState(false);
   const [isExamViewModalVisible, setIsExamViewModalVisible] = useState(false);
+  const [isModalCriteriaVisible, setIsModalCriteriaVisible] = useState(false);
   
   const course = useSelector(state => state.course.item.result);
   const courses = useSelector(state => state.course.list.result);
@@ -54,6 +57,7 @@ const CourseDetail = () => {
   const modules = useSelector(state => state.part.list.result);
   const exams = useSelector(state => state.exam.list.result);
   const exam = useSelector(state => state.exam.item.result);
+  const checkCriteria = useSelector(state => state.criteria.check.result);
 
   const [state, setState] = useState({
     isEdit: false,
@@ -165,6 +169,7 @@ const CourseDetail = () => {
     dispatch(majorActions.getMajors());
     dispatch(partActions.getModulesTeacher({ idCourse: idCourse, lkh: '', status: '', search: '', pageSize: 99999999, pageIndex: 1 }));
     dispatch(examActions.getSyntheticExam({ idCourse: idCourse, pageSize: 999999, pageIndex: 1 }));
+    dispatch(criteriaActions.checkCriteria({ type: 'synthetic', id: idCourse }));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Event xoá đề thi tổng hợp
@@ -376,7 +381,8 @@ const CourseDetail = () => {
   }
 
   const handleChapterClick = (chapter) => {
-    history.push(`/teacher/detail-chapter/${chapter.mo_dun_id}`)
+    if (chapter.loai_tong_hop === true) setActiveTab('exams');
+    else history.push(`/teacher/detail-chapter/${chapter.mo_dun_id}`)
   }
 
   // Event tạo chương học 
@@ -675,6 +681,12 @@ const CourseDetail = () => {
     </>
   )
 
+  const handleCancelCriteriaModal = () => {
+    setIsModalCriteriaVisible(false)
+  }
+
+
+
   const EmptyExamsState = () => (
     <div style={{ textAlign: "center", }}>
       <div style={{ marginBottom: "24px" }}>
@@ -713,53 +725,58 @@ const CourseDetail = () => {
       <Text style={{ fontSize: "16px", color: "#595959", display: "block", marginBottom: "24px" }}>
         Chưa có đề thi tổng hợp
       </Text>
-      <Alert
-        message="Bạn chưa tạo tiêu chí cho đề thi tổng hợp của khóa học này!"
-        type="warning"
-        showIcon
-        icon={<ExclamationCircleOutlined />}
-        style={{
-          marginBottom: "24px",
-          backgroundColor: "#fffbe6",
-          border: "1px solid #ffe58f",
-          borderRadius: "6px",
-        }}
-      />
-      <Button
-        type="primary"
-        block
-        icon={<PlusOutlined />}
-        style={{
-          marginBottom: "16px",
-          backgroundColor: "#292B8E",
-          borderColor: "#292B8E",
-          height: "48px",
-          fontSize: "16px",
-          fontWeight: "500",
-        }}
-        onClick={() => setIsAddExamModalVisible(true)}
-      >
-        Thêm đề thi
-      </Button>
-      <Button
-        type="primary"
-        size="large"
-        icon={<PlusOutlined />}
-        style={{
-          backgroundColor: "#4c6ef5",
-          borderColor: "#4c6ef5",
-          height: "48px",
-          fontSize: "16px",
-          fontWeight: "500",
-          borderRadius: "6px",
-          width: "100%",
-        }}
-        onClick={() => {
-          history.push(`/teacher/criteria`);
-        }}
-      >
-        Tạo tiêu chí
-      </Button>
+      {(checkCriteria?.status === 'success' && checkCriteria?.data?.khoa_hoc_id === Number(idCourse)) ? '' :
+        <Alert
+          message="Bạn chưa tạo tiêu chí cho đề thi tổng hợp của khóa học này!"
+          type="warning"
+          showIcon
+          icon={<ExclamationCircleOutlined />}
+          style={{
+            marginBottom: "24px",
+            backgroundColor: "#FAAD1426",
+            borderRadius: "8px",
+            border: 'none'
+          }}
+        />
+      }
+      {(checkCriteria?.status === 'success' && checkCriteria?.data?.khoa_hoc_id === Number(idCourse)) &&
+        <Button
+          type="primary"
+          block
+          icon={<PlusOutlined />}
+          style={{
+            marginBottom: "16px",
+            backgroundColor: "#292B8E",
+            borderColor: "#292B8E",
+            height: "48px",
+            fontSize: "16px",
+            fontWeight: "500",
+          }}
+          onClick={() => setIsAddExamModalVisible(true)}
+        >
+          Thêm đề thi
+        </Button>
+      }
+      {(checkCriteria?.status === 'success' && checkCriteria?.data?.khoa_hoc_id === Number(idCourse)) ? '' :
+        <Button
+          type="primary"
+          block
+          icon={<PlusOutlined />}
+          style={{
+            marginBottom: "16px",
+            backgroundColor: "#292B8E",
+            borderColor: "#292B8E",
+            height: "48px",
+            fontSize: "16px",
+            fontWeight: "500",
+          }}
+          onClick={() => {
+            setIsModalCriteriaVisible(true);
+          }}
+        >
+          Tạo tiêu chí
+        </Button>
+      }
     </div>
   )
 
@@ -983,7 +1000,12 @@ const CourseDetail = () => {
                   key="chapters"
                 >
                   <List
-                    dataSource={modules?.data}
+                    dataSource={modules?.data?.sort((a, b) => {
+                      if (a.loai_tong_hop !== b.loai_tong_hop) {
+                        return a.loai_tong_hop ? 1 : -1; // true lên sau
+                      }
+                      return new Date(a.ngay_sua) - new Date(b.ngay_sua);
+                    })}
                     renderItem={(chapter, index) => {
                       const menu = (
                         <Menu>
@@ -1009,7 +1031,7 @@ const CourseDetail = () => {
                         </Menu>
                       )
                       return (
-                        <List.Item style={{ padding: "12px 0", border: "none" }}>
+                        <List.Item style={{ padding: "12px 0", border: "none" }} onClick={() => {if (chapter.trang_thai) handleChapterClick(chapter)}}>
                           <div style={{ display: "flex", width: "100%", alignItems: "flex-start", 
                             cursor: chapter.trang_thai ? "pointer" : 'default', opacity: !chapter.trang_thai ? 0.5 : 1 }}
                           >
@@ -1018,13 +1040,11 @@ const CourseDetail = () => {
                               size={60}
                               src={chapter.anh_dai_dien ? config.API_URL + chapter.anh_dai_dien : require('assets/img/default.jpg').default}
                               style={{ backgroundColor: chapter.bgColor, marginRight: "12px", flexShrink: 0 }}
-                              onClick={() => {if (chapter.trang_thai) handleChapterClick(chapter)}}
+                              
                             />
                             <div style={{ flex: 1, minWidth: 0 }}>
                               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                                <Text strong style={{ fontSize: "16px", lineHeight: "1.4", marginBottom: "8px"}}
-                                  onClick={() => {if (chapter.trang_thai) handleChapterClick(chapter)}}
-                                >
+                                <Text strong style={{ fontSize: "16px", lineHeight: "1.4", marginBottom: "8px"}}>
                                   {chapter?.ten_mo_dun}
                                 </Text>
                                 <Dropdown overlay={menu} trigger={["click"]} placement="bottomRight">
@@ -1032,7 +1052,7 @@ const CourseDetail = () => {
                                 </Dropdown>
                               </div>
                               {!chapter.loai_tong_hop ? 
-                                <Space size="large" style={{ color: "#8c8c8c", fontSize: "14px" }} onClick={() => {if (chapter.trang_thai) handleChapterClick(chapter)}}>
+                                <Space size="large" style={{ color: "#8c8c8c", fontSize: "14px" }} >
                                   <Space size={4}>
                                     <PlayCircleOutlined />
                                     <span>{chapter?.so_luong_chuyen_de} chuyên đề</span>
@@ -1139,7 +1159,7 @@ const CourseDetail = () => {
                   name="linh_vuc"
                   rules={[
                       {
-                        required: true,
+                        required: false,
                         message: 'Tên lĩnh vực là trường bắt buộc.',
                       },
                   ]}
@@ -1190,7 +1210,7 @@ const CourseDetail = () => {
                 <Form.Item
                     name="loai_tong_hop"
                   label="Loại chương học"
-                  initialValue={1}
+                  initialValue={0}
                   rules={[
                     {
                       required: true,
@@ -1417,12 +1437,17 @@ const CourseDetail = () => {
           </Spin>
         </Modal>
         
-        {/* Modal Exam view */}
         {/* View exam modal */}
         <ViewExam exam={exam?.data} isExamViewModalVisible={isExamViewModalVisible} setIsExamViewModalVisible={setIsExamViewModalVisible}
           handlePublishExam={handlePublishExam} 
         />
+
+        {/* Modal add criteria */}
+        <ModalCriteria course={true} isModalVisible={isModalCriteriaVisible} handleCancel={handleCancelCriteriaModal}
+          initCourse={course?.data?.khoa_hoc_id} 
+        />
       </div>
+
     </Spin>
   )
 }

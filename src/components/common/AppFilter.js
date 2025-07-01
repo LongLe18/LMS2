@@ -154,9 +154,9 @@ function AppFilter(props) {
             props.onFilterChange('mo_dun_id', mo_dun_id ? mo_dun_id : '');
             dispatch(thematicActions.getThematicsByIdModule({ idModule: mo_dun_id ? mo_dun_id : ''}))
           }}
-          placeholder="Chọn mô đun"
+          placeholder="Chọn chương học"
         >
-          <Option key={''} value={''}>Tất cả mô đun</Option>
+          <Option key={''} value={''}>Tất cả chương học</Option>
           {options}
         </Select>
       );
@@ -390,7 +390,7 @@ function AppFilter(props) {
                   <ExcelFile element={<Button type='primary'>Trích xuất file</Button>} filename={props.title || ''}>
                     <ExcelSheet data={props.dataExportStatisticTeacher} name={props.title || ''}>
                         <ExcelColumn label="Họ tên" value="ho_ten"/>
-                        <ExcelColumn label="Số mô-đun" value="so_mo_dun"/>
+                        <ExcelColumn label="Số chương học" value="so_mo_dun"/>
                         <ExcelColumn label="Số khóa học" value="so_khoa_hoc"/>              
                         <ExcelColumn label="Người tạo" value="nguoi_tao"/>
                         <ExcelColumn label="Ngày tạo" value={(col) => moment(col.ngay_tao).utc(7).format(config.DATE_FORMAT_SHORT)}/>

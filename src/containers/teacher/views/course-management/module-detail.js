@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react"
-import { useParams } from "react-router-dom"
+import { useParams, useHistory } from "react-router-dom"
 import { Menu, Typography, Button, Space, Tabs, List, notification, message,
     Avatar, Dropdown, Row, Col, Card, Modal, Form, Spin, Input, Select, Upload,
-    Progress,  } from "antd"
+    Progress, Alert } from "antd"
 import { FileTextOutlined, MoreOutlined, PlayCircleOutlined, PlusOutlined,
     EyeOutlined, EyeInvisibleOutlined, DeleteOutlined, ExclamationCircleFilled,
     EditOutlined, ExclamationCircleOutlined, UploadOutlined, } from "@ant-design/icons"
@@ -17,10 +17,11 @@ import * as courseActions from '../../../../redux/actions/course';
 import * as programmeAction from '../../../../redux/actions/programme';
 import * as partActions from '../../../../redux/actions/part';
 import * as examActions from '../../../../redux/actions/exam';
+import * as criteriaActions from '../../../../redux/actions/criteria';
 import { useDispatch, useSelector } from "react-redux"
 
 // ==================================================================== 
-// Giao diện chuyên đề (chi tiết mô đun)
+// Giao diện chuyên đề (chi tiết chương học)
 // ==================================================================== 
 
 const { Title, Text, Paragraph } = Typography
@@ -30,6 +31,7 @@ const { Dragger } = Upload
 
 const ModunDetail = () => {
     const dispatch = useDispatch();
+    const history = useHistory();
     const idThematic = useParams().idThematic; // id of the Chapter from URL params
     const [activeTab, setActiveTab] = useState("materials")
     const [lessonForm] = Form.useForm();
@@ -51,6 +53,7 @@ const ModunDetail = () => {
     const thematics = useSelector(state => state.thematic.list.result);
     const exams = useSelector(state => state.exam.list.result);
     const exam = useSelector(state => state.exam.item.result);
+    const checkCriteria = useSelector(state => state.criteria.check.result);
 
     const [state, setState] = useState({
         isEdit: false,
@@ -73,6 +76,7 @@ const ModunDetail = () => {
                 dispatch(partActions.getModulesTeacher({ idCourse: res?.data?.khoa_hoc_id, lkh: '', status: '', search: '', pageSize: 99999999, pageIndex: 1 }));
                 dispatch(thematicActions.getThematicsByTeacher({ idCourse: '', idModule: res?.data?.mo_dun_id, status: '', search: '', start: '', end: '', pageIndex: 1, pageSize: 99999999 }));
                 dispatch(examActions.getSyntheticExamThematic({ idCourse: res?.data?.khoa_hoc_id, idModule: res?.data?.mo_dun_id, idThematic: idThematic, pageSize: 999999, pageIndex: 1 }));
+                dispatch(criteriaActions.checkCriteria({ type: 'thematic', id: res?.data?.mo_dun_id }));
             }
         }));
         dispatch(programmeAction.getProgrammes({ status: '' }));
@@ -80,37 +84,40 @@ const ModunDetail = () => {
 
     const propsImage = {
         name: 'file',
-        action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-
+        action: '#',
+    
         beforeUpload: file => {
-            const isPDF = file.type === 'application/pdf' || file.type === 'video/mp4';
-            if (file.type === 'application/pdf') setState({ ...state, typeLesson: 'pdf' });
-            else if (file.type === 'video/mp4') setState({ ...state, typeLesson: 'video' });
-
-            if (!isPDF) {
-                message.error(`${file.name} có định dạng không phải là application/pdf hoặc video/mp4`);
+            const isPNG = file.type === 'image/png' || file.type === 'image/jpeg';
+            if (!isPNG) {
+                message.error(`${file.name} có định dạng không phải là png/jpg`);
             }
-            return isPDF || Upload.LIST_IGNORE;
+            // check dung lượng file trên 1mb => không cho upload
+            let size = true;
+            if (file.size > 1024000) {
+                message.error(`${file.name} dung lượng file quá lớn`);
+                size = false;
+            }
+            return (isPNG && size) || Upload.LIST_IGNORE;
         },
-
-        onChange(info) {       
-            setState({ ...state, filePdf: info.file.originFileObj });
+    
+        onChange(info) {
+            setState({ ...state, fileImg: info.file.originFileObj });
         },
-
+    
         async customRequest(options) {
             const { onSuccess } = options;
     
             setTimeout(() => {
-                onSuccess("ok");
+            onSuccess("ok");
             }, 0);
         },
-
-        onDrop(e) {
-            console.log('Dropped files', e.dataTransfer.files);
-            setState({...state, fileImg: ''});
+    
+        onRemove(e) {
+            console.log(e);
+            setState({ ...state, fileImg: '' });
         },
     };
-
+    
     const propsFile = {
         name: 'file',
         action: '#',
@@ -188,7 +195,9 @@ const ModunDetail = () => {
     const renderModules = () => {
         let options = [];
         if (modules.status === 'success') {
-            options = modules.data.map((module) => (
+            options = modules.data
+            .filter((module) => module.loai_tong_hop !== true)
+            .map((module) => (
                 <Option key={module.mo_dun_id} value={module.mo_dun_id} >{module.ten_mo_dun}</Option>
             ))
         }
@@ -199,7 +208,7 @@ const ModunDetail = () => {
             onChange={(mo_dun_id) => {
                 dispatch(thematicActions.getThematicsByIdModule({ idModule: mo_dun_id }))
             }}
-            placeholder="Chọn mô đun"
+            placeholder="Chọn chương học"
         >
             {options}
         </Select>
@@ -292,12 +301,13 @@ const ModunDetail = () => {
                 message: 'Cảnh báo',
                 description: 'Loại bài giảng không khớp với loại file tải lên',
             });
+            setSpinning(false);
             return;
         }
       
         const formData = new FormData();
         let isExist = false;
-      
+        
         if (values.loai_bai_giang === 'pdf') {
             for (let i = 0; i < lessons?.data?.length; i++) {
                 if (lessons?.data[i].chuyen_de_id === values.chuyen_de && lessons?.data[i].loai_bai_giang === 'pdf') {
@@ -335,6 +345,22 @@ const ModunDetail = () => {
     }
 
     const handleHideLesson = (material) => {
+        // check trạngn thái bài giảng
+        // nếu tồn tại bài giảng đang hiện thị thi thông báo 
+        const checkLesson = () => {
+            if (lessons?.data?.length > 0) {
+                const isExist = lessons.data.some(item => item.loai_bai_giang === 'pdf' && item.trang_thai === 1 && item.bai_giang_id !== material.bai_giang_id);
+                if (isExist) {
+                    notification.warning({
+                        message: 'Cảnh báo',
+                        description: 'Vui lòng ẩn bài giảng đang hiện thị trước khi thực hiện thao tác này',
+                    });
+                    return true;
+                }
+            }
+            return false;
+        }
+
         Modal.confirm({
             title: 'Cảnh báo',
             icon: <ExclamationCircleOutlined />,
@@ -342,23 +368,25 @@ const ModunDetail = () => {
             okText: 'Đồng ý',
             cancelText: 'Hủy',
             onOk() {
-                const formData = new FormData();
-                formData.append('trang_thai', material.trang_thai === 0 ? 1 : 0);
-                dispatch(lessonActions.EditLesson({ idLesson: material.bai_giang_id, formData: formData }, (res) => {
-                    if (res?.data?.status === 'success') {
-                        notification.success({
-                            message: 'Thành công',
-                            description: `Bài giảng "${material.ten_bai_giang}" đã ${material.trang_thai === 0 ? 'hiện' : 'ẩn'} thành công`,
-                        });
-                        dispatch(lessonActions.filterLessons({ idCourse: '', idModule: thematic?.data?.mo_dun_id, idThematic: idThematic, status: '', search: '', 
-                            start: '', end: '', pageSize: 999999999, pageIndex: 1 }));
-                    } else {
-                        notification.error({
-                            message: 'Thất bại',
-                            description: `Không thể ${material.trang_thai === 0 ? 'hiện' : 'ẩn'} bài giảng "${material.ten_bai_giang}"`,
-                        });
-                    }
-                }));
+                if (!checkLesson()) {
+                    const formData = new FormData();
+                    formData.append('trang_thai', material.trang_thai === 0 ? 1 : 0);
+                    dispatch(lessonActions.EditLesson({ idLesson: material.bai_giang_id, formData: formData }, (res) => {
+                        if (res?.data?.status === 'success') {
+                            notification.success({
+                                message: 'Thành công',
+                                description: `Bài giảng "${material.ten_bai_giang}" đã ${material.trang_thai === 0 ? 'hiện' : 'ẩn'} thành công`,
+                            });
+                            dispatch(lessonActions.filterLessons({ idCourse: '', idModule: thematic?.data?.mo_dun_id, idThematic: idThematic, status: '', search: '', 
+                                start: '', end: '', pageSize: 999999999, pageIndex: 1 }));
+                        } else {
+                            notification.error({
+                                message: 'Thất bại',
+                                description: `Không thể ${material.trang_thai === 0 ? 'hiện' : 'ẩn'} bài giảng "${material.ten_bai_giang}"`,
+                            });
+                        }
+                    }));
+                }
             },
         });
     }
@@ -470,7 +498,7 @@ const ModunDetail = () => {
     }
 
     // event submit form exam
-      const handleChapterExamForm = () => {
+    const handleChapterExamForm = () => {
         addThematicExamForm
           .validateFields()
           .then((values) => {
@@ -553,6 +581,199 @@ const ModunDetail = () => {
             console.log("Validation failed:", error)
         })
     }
+
+     // Render UI for chapter detail
+    const RightContentChapterDetail = () => (
+        <List
+            dataSource={exams?.data}
+            renderItem={(exam, index) => {
+            const menu = (
+                <Dropdown
+                    overlay={
+                        <Menu>
+                            <Menu.Item key="edit" icon={<EditOutlined />}
+                                onClick={() => {
+                                    if (!exam.xuat_ban) {
+                                        dispatch(examActions.getExam({ id: exam.de_thi_id }, (res) => {
+                                            if (res.status === 'success') {
+                                                setState({ ...state, isEdit: true, idExam: exam.de_thi_id });
+                                                setIsThematicExamModalVisible(true);
+                                                addThematicExamForm.setFieldsValue(res.data)
+                                            }
+                                        }));
+                                    } else 
+                                        notification.warning({
+                                            message: 'Cảnh báo',
+                                            description: 'Đề thi đã được xuất bản, không thể chỉnh sửa đề thi này',
+                                        })
+                                }}
+                            >
+                                Cập nhật đề thi
+                            </Menu.Item>
+                            <Menu.Item key="hide" icon={(!exam.trang_thai || !exam.xuat_ban) ? <EyeOutlined /> : <EyeInvisibleOutlined />}
+                                onClick={() => handlePublishExam(exam)} // done
+                            >
+                                {!exam.xuat_ban ? "Xuất bản đề thi" : !exam.trang_thai ? "Sử dụng đề thi" : "Ngừng sử dụng đề thi"}
+                            </Menu.Item>
+                            <Menu.Item key="delete" danger icon={<DeleteOutlined />}
+                                onClick={() => {
+                                    setExamToDelete(exam)
+                                    setDeleteModalVisible(true)
+                                }}
+                            >
+                                Xóa đề thi
+                            </Menu.Item>
+                        </Menu>
+                    }
+                    trigger={["click"]}
+                    placement="bottomRight"
+                >
+                    <Button type="text" size="small" icon={<MoreOutlined />} onClick={(e) => e.stopPropagation()}/>
+                </Dropdown>
+            )
+
+            return (
+                <List.Item style={{ padding: "12px 0", border: "none" }} >
+                    <div style={{ display: "flex", width: "100%", cursor: 'pointer',
+                        alignItems: "center", opacity: (!exam.trang_thai || !exam.xuat_ban) ? 0.5 : 1 }}
+                    >
+                        <Avatar onClick={() => handleViewExam(exam)}
+                            size={40}
+                            style={{
+                                backgroundColor: "#4c6ef5",
+                                marginRight: "12px",
+                                flexShrink: 0,
+                            }}
+                            icon={<FileTextOutlined />}
+                        />
+                        <div style={{ flex: 1, minWidth: 0 }} onClick={() => handleViewExam(exam)}>
+                            <Text
+                                strong
+                                style={{
+                                fontSize: "14px",
+                                lineHeight: "1.4",
+                                marginBottom: "4px",
+                                display: "block",
+                                color: "#262626",
+                                }}
+                            >
+                                {exam?.ten_de_thi}
+                            </Text>
+                            <Space size="large" style={{ color: "#8c8c8c", fontSize: "14px" }}>
+                                <Space size={6}>
+                                    <PlayCircleOutlined />
+                                    <span>{exam?.thoi_gian} phút</span>
+                                </Space>
+                                <Space size={6}>
+                                    <FileTextOutlined />
+                                    <span>{exam?.so_cau_hoi} câu hỏi</span>
+                                </Space>
+                            </Space>
+                        </div>
+                        {menu}
+                    </div>
+                </List.Item>
+            )
+            }}
+        />
+    )
+
+    // UI for empty exams state
+    const EmptyExamsState = () => (
+        <div style={{ textAlign: "center", }}>
+            <div style={{ marginBottom: "24px" }}>
+                <div
+                style={{
+                    width: "120px",
+                    height: "120px",
+                    margin: "0 auto 16px",
+                    backgroundColor: "#f5f5f5",
+                    borderRadius: "8px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    position: "relative",
+                }}
+                >
+                <FileTextOutlined style={{ fontSize: "48px", color: "#d9d9d9" }} />
+                <div
+                    style={{
+                    position: "absolute",
+                    top: "-8px",
+                    right: "-8px",
+                    width: "32px",
+                    height: "32px",
+                    backgroundColor: "#f0f0f0",
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    }}
+                >
+                    <span style={{ fontSize: "16px", color: "#bfbfbf" }}>...</span>
+                </div>
+                </div>
+            </div>
+            <Text style={{ fontSize: "16px", color: "#595959", display: "block", marginBottom: "24px" }}>
+                Chưa có đề thi chuyên đề
+            </Text>
+            {(checkCriteria?.status === 'success' && checkCriteria?.data?.chuyen_de_id === Number(idThematic)) ? '' :
+                <Alert
+                    message="Bạn chưa tạo tiêu chí cho đề thi chuyên đề!"
+                    type="warning"
+                    showIcon
+                    icon={<ExclamationCircleOutlined />}
+                    style={{
+                        marginBottom: "24px",
+                        backgroundColor: "#fffbe6",
+                        border: "1px solid #ffe58f",
+                        borderRadius: "6px",
+                    }}
+                />
+            }
+            {(checkCriteria?.status === 'success' && checkCriteria?.data?.chuyen_de_id === Number(idThematic)) &&
+                <Button
+                    type="primary"
+                    size="large"
+                    icon={<PlusOutlined />}
+                    style={{
+                        backgroundColor: "#4c6ef5",
+                        borderColor: "#4c6ef5",
+                        height: "48px",
+                        fontSize: "16px",
+                        fontWeight: "500",
+                        borderRadius: "6px",
+                        width: "100%",
+                        marginBottom: 12
+                    }}
+                    onClick={() => setIsThematicExamModalVisible(true)}
+                >
+                    Thêm đề thi
+                </Button>
+            }
+            {(checkCriteria?.status === 'success' && checkCriteria?.data?.chuyen_de_id === Number(idThematic)) ? '' :
+                <Button
+                    type="primary"
+                    size="large"
+                    icon={<PlusOutlined />}
+                    style={{
+                        backgroundColor: "#4c6ef5",
+                        borderColor: "#4c6ef5",
+                        height: "48px",
+                        fontSize: "16px",
+                        fontWeight: "500",
+                        borderRadius: "6px",
+                        width: "100%",
+                    }}
+                    onClick={() => {
+                        history.push(`/teacher/criteria`);
+                    }}
+                >
+                    Tạo tiêu chí đề thi chuyên đề
+                </Button>
+            }
+        </div>
+    )
 
     return (
         <Spin spinning={spinning} tip="Đang xử lý...">
@@ -697,113 +918,7 @@ const ModunDetail = () => {
                                     }
                                     key="exams"
                                 >
-                                <List
-                                    dataSource={exams?.data}
-                                    renderItem={(exam, index) => {
-                                    const menu = (
-                                        <Dropdown
-                                            overlay={
-                                                <Menu>
-                                                    <Menu.Item key="edit" icon={<EditOutlined />}
-                                                        onClick={() => {
-                                                            if (!exam.xuat_ban) {
-                                                                dispatch(examActions.getExam({ id: exam.de_thi_id }, (res) => {
-                                                                    if (res.status === 'success') {
-                                                                        setState({ ...state, isEdit: true, idExam: exam.de_thi_id });
-                                                                        setIsThematicExamModalVisible(true);
-                                                                        addThematicExamForm.setFieldsValue(res.data)
-                                                                    }
-                                                                }));
-                                                            } else 
-                                                                notification.warning({
-                                                                    message: 'Cảnh báo',
-                                                                    description: 'Đề thi đã được xuất bản, không thể chỉnh sửa đề thi này',
-                                                                })
-                                                        }}
-                                                    >
-                                                        Cập nhật đề thi
-                                                    </Menu.Item>
-                                                    <Menu.Item key="hide" icon={(!exam.trang_thai || !exam.xuat_ban) ? <EyeOutlined /> : <EyeInvisibleOutlined />}
-                                                        onClick={() => handlePublishExam(exam)} // done
-                                                    >
-                                                        {!exam.xuat_ban ? "Xuất bản đề thi" : !exam.trang_thai ? "Sử dụng đề thi" : "Ngừng sử dụng đề thi"}
-                                                    </Menu.Item>
-                                                    <Menu.Item key="delete" danger icon={<DeleteOutlined />}
-                                                        onClick={() => {
-                                                            setExamToDelete(exam)
-                                                            setDeleteModalVisible(true)
-                                                        }}
-                                                    >
-                                                        Xóa đề thi
-                                                    </Menu.Item>
-                                                </Menu>
-                                            }
-                                            trigger={["click"]}
-                                            placement="bottomRight"
-                                        >
-                                            <Button type="text" size="small" icon={<MoreOutlined />} onClick={(e) => e.stopPropagation()}/>
-                                        </Dropdown>
-                                    )
-
-                                    return (
-                                        <List.Item style={{ padding: "12px 0", border: "none" }} >
-                                            <div style={{ display: "flex", width: "100%", cursor: 'pointer',
-                                                alignItems: "center", opacity: (!exam.trang_thai || !exam.xuat_ban) ? 0.5 : 1 }}
-                                            >
-                                                <Avatar onClick={() => handleViewExam(exam)}
-                                                    size={40}
-                                                    style={{
-                                                        backgroundColor: "#4c6ef5",
-                                                        marginRight: "12px",
-                                                        flexShrink: 0,
-                                                    }}
-                                                    icon={<FileTextOutlined />}
-                                                />
-                                                <div style={{ flex: 1, minWidth: 0 }} onClick={() => handleViewExam(exam)}>
-                                                    <Text
-                                                        strong
-                                                        style={{
-                                                        fontSize: "14px",
-                                                        lineHeight: "1.4",
-                                                        marginBottom: "4px",
-                                                        display: "block",
-                                                        color: "#262626",
-                                                        }}
-                                                    >
-                                                        {exam?.ten_de_thi}
-                                                    </Text>
-                                                    <Space size="large" style={{ color: "#8c8c8c", fontSize: "14px" }}>
-                                                        <Space size={6}>
-                                                            <PlayCircleOutlined />
-                                                            <span>{exam?.thoi_gian} phút</span>
-                                                        </Space>
-                                                        <Space size={6}>
-                                                            <FileTextOutlined />
-                                                            <span>{exam?.so_cau_hoi} câu hỏi</span>
-                                                        </Space>
-                                                    </Space>
-                                                </div>
-                                                {menu}
-                                            </div>
-                                        </List.Item>
-                                    )
-                                    }}
-                                />
-                                <Button
-                                    type="primary"
-                                    block
-                                    icon={<PlusOutlined />}
-                                    style={{
-                                        marginTop: "16px",
-                                        backgroundColor: "#4c6ef5",
-                                        borderColor: "#4c6ef5",
-                                        height: "40px",
-                                        borderRadius: "6px",
-                                    }}
-                                    onClick={() => setIsThematicExamModalVisible(true)}
-                                >
-                                    Thêm đề thi
-                                </Button>
+                                    {exams?.totalCount === 0 ? <EmptyExamsState /> : <RightContentChapterDetail />}
                                 </TabPane>
                             </Tabs>
                         </Card>
@@ -866,9 +981,13 @@ const ModunDetail = () => {
                     }}
                     footer={[
                         <Button key="cancel" onClick={() => {
-                            setIsLessonModalVisible(false)
-                            lessonForm.resetFields()
-                            setState({ ...state, fileImg: '', fileVid: '', isEdit: false, idModule: ''})
+                            if (!spinning) {
+                                setIsLessonModalVisible(false)
+                                lessonForm.resetFields()
+                                setState({ ...state, fileImg: '', fileVid: '', isEdit: false, idModule: ''})
+                            } else {
+                                notification.warning({message: 'Hệ thống đang xử lý. Xin vui lòng chờ đợi...'})
+                            }
                         }}>
                             Hủy bỏ
                         </Button>,
@@ -890,7 +1009,7 @@ const ModunDetail = () => {
                             Xác nhận
                         </Button>,
                     ]}
-                    destroyOnClose
+                    closable={false}
                     width={800}
                     className="add-modun-exam-modal"
                 >
@@ -970,12 +1089,12 @@ const ModunDetail = () => {
                                 <Col span={12}>
                                     <Form.Item
                                         className="input-col"
-                                        label="Mô đun"
+                                        label="chương học"
                                         name="mo_dun"
                                         rules={[
                                             {
                                                 required: true,
-                                                message: 'Mô đun là bắt buộc',
+                                                message: 'chương học là bắt buộc',
                                             },
                                         ]}
                                         initialValue={thematic?.data?.mo_dun_id}

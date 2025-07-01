@@ -219,6 +219,7 @@ import {
     loadCriteriaDGTD,
     loadAddCriteriaDGTD,
     loadDeleteCriteriaDGTD,
+    loadCheckCriteria,
 } from './criteria';
 
 import {
@@ -603,6 +604,7 @@ export default function* rootSaga() {
         loadAddCriteriaDGTD(),
         loadEditCriteriaDGTD(),
         loadDeleteCriteriaDGTD(),
+        loadCheckCriteria(),
         // advertisement
         loadAddAdsCourse(),
         loadAddAdsDoc(),

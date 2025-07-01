@@ -56,6 +56,15 @@ const ExamThematicViewPage = (props) => {
             render: (value, item, index) => (1 - 1) * 10 + index + 1
         },
         {
+            title: 'Tên đề thi',
+            key: 'ten_de_thi',
+            dataIndex: 'ten_de_thi',
+            responsive: ['lg'],
+            render: (ten_de_thi, de_thi) => (
+                <span>{de_thi?.de_thi?.ten_de_thi}</span>
+            )
+        },
+        {
             title: 'Thời gian bắt đầu',
             key: 'thoi_diem_bat_dau',
             dataIndex: 'thoi_diem_bat_dau',
@@ -113,10 +122,11 @@ const ExamThematicViewPage = (props) => {
 
     const userToken = localStorage.getItem('userToken');
 
-    if (exam.status === 'success') exam.data.studentExams.map((item, index) => {
+    if (exam.status === 'success') exam?.data?.studentExams.map((item, index) => {
         if (item.thoi_diem_ket_thuc !== null)   
             data.push({...item, 'key': index});
         return null;
+
     });
 
     const goExam = () => {
@@ -228,7 +238,7 @@ const ExamThematicViewPage = (props) => {
                 <Content className="app-content">                
                     <div className="header-exam">
                         <h1>ĐỀ THI ĐÁNH GIÁ NĂNG LỰC ĐẠI HỌC QUỐC GIA HÀ NỘI</h1>
-                        <h3 className='m-0'>Mô-đun: {module.data.ten_mo_dun}</h3>
+                        <h3 className='m-0'>chương học: {module.data.ten_mo_dun}</h3>
                         <h3 className='m-0'>Chuyên đề: {thematic.data.ten_chuyen_de}</h3>
                         <AuthModal />
                     </div>     

@@ -91,7 +91,7 @@ const ReplyPage = (props) => {
             responsive: ['md'],
         },
         {
-            title: 'Mô-đun',
+            title: 'chương học',
             dataIndex: 'ten_mo_dun',
             key: 'ten_mo_dun',
             responsive: ['md'],

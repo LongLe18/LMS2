@@ -131,6 +131,19 @@ export const DELETE_CRITERIA_DGTD = "DELETE_CRITERIA_DGTD";
 export const DELETE_CRITERIA_DGTD_SUCCESS = "DELETE_CRITERIA_DGTD_SUCCESS";
 export const DELETE_CRITERIA_DGTD_FAILED = "DELETE_CRITERIA_DGTD_FAILED";
 
+// check có tiêu chí hay chưa
+export const CHECK_CRITERIA = "CHECK_CRITERIA";
+export const CHECK_CRITERIA_SUCCESS = "CHECK_CRITERIA_SUCCESS";
+export const CHECK_CRITERIA_FAILED = "CHECK_CRITERIA_FAILED";
+
+export function checkCriteria(params, callback) {
+    return {
+        type: CHECK_CRITERIA,
+        params,
+        callback,
+    };
+}
+
 export function getCriteriaCourse(params, callback) {
     return {
         type: GET_CRITERIA_COURSE,

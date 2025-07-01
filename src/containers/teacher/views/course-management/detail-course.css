@@ -9,6 +9,16 @@
   border: 2px solid rgb(40, 156, 40) !important;
 }
 
+.ant-alert-message {
+  font-weight: 400;
+  color: #454545;
+  font-size: 15px;
+  text-align: left;
+}
+
+.ant-alert-icon {
+  font-size: 24px;
+}
 
 .question-list .title-exam .title-exam-content {
   font-size: 20px;

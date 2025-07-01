@@ -315,6 +315,29 @@ function IndexHeader(props) {
     dispatch(userAction.loginUser({ type: 1, login: values }, callback));
   };
 
+  const onClickLogin = ({ key }) => {  
+    if (key === 'hocvien') {
+      showModal();
+    } else 
+      window.location.href = config.BASE_URL + key;
+  };
+
+  const menuLogin = (
+     <Menu
+        onClick={onClickLogin}
+        items={[
+          {
+            label: 'Đăng nhập học viên',
+            key: 'hocvien',
+          },
+          {
+            label: 'Đăng nhập giáo viên',
+            key: '/auth/giaovien'
+          },
+        ]}
+      />
+  )
+
   return (
     <div ref={sidebar} className="header-page">
       <Container>
@@ -331,8 +354,6 @@ function IndexHeader(props) {
         </Row>
       </Container>
       <div id="wide-nav" className="header-bottom wide-nav nav-dark hide-for-medium" style={{padding: 12}}>
-        
-       
         <div className="flex-row container">
           <div className="flex-col hide-for-medium flex-left" style={{marginRight: 0}}>
             <ul className="nav header-nav header-bottom-nav nav-left  nav-divided nav-size-medium nav-spacing-medium nav-uppercase" style={{alignItems: 'center'}}>
@@ -390,7 +411,13 @@ function IndexHeader(props) {
               })}
               {!state.isLogin ?
                 <>
-                  <li><Button type="primary" onClick={() => showModal()} style={{borderRadius: 6}}>Đăng nhập</Button></li>
+                  <Dropdown overlay={menuLogin}>
+                    <Button type="primary" onClick={e => e.preventDefault()}
+                      style={{borderRadius: 6}}  
+                    >
+                        Đăng nhập
+                    </Button>
+                  </Dropdown>
                   <li><Button type="default" onClick={() => window.location.href = config.BASE_URL + '/auth/register'} style={{borderRadius: 6, background: 'orange', borderColor: 'orange'}}>Đăng ký</Button></li>
                 </>
               : 
@@ -434,7 +461,13 @@ function IndexHeader(props) {
           </div>
           {!state.isLogin ?
             <>
-              <li><Button type="primary" onClick={() => showModal()} style={{borderRadius: 6}}>Đăng nhập</Button></li>
+              <Dropdown overlay={menuLogin}>
+                <Button type="primary" onClick={e => e.preventDefault()}
+                  style={{borderRadius: 6}}  
+                >
+                    Đăng nhập
+                </Button>
+              </Dropdown>
               <li><Button type="default" onClick={() => window.location.href = config.BASE_URL + '/auth/register'} style={{borderRadius: 6, background: 'orange', borderColor: 'orange'}}>Đăng ký</Button></li>
             </>
             : 
@@ -450,7 +483,7 @@ function IndexHeader(props) {
                 </Dropdown>
               </li>
               <li>
-                <Badge  count={state.notification !== '' ? (state.notification.filter(item => item.trang_thai === false).length < 20) ? state.notification.filter(item => item.trang_thai === false).length : 0 : 0} offset={[6, 0]} size="small">
+                <Badge count={state.notification !== '' ? (state.notification.filter(item => item.trang_thai === false).length < 20) ? state.notification.filter(item => item.trang_thai === false).length : 0 : 0} offset={[6, 0]} size="small">
                   <Dropdown overlay={noti}>
                     <a onClick={e => e.preventDefault()}>
                       <BellOutlined />

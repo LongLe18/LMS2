@@ -134,7 +134,7 @@ function* deleteProgramme(payload) {
 function* fetchProgrammeCourses(payload) {
     try {
         let endpoint = `${config.API_URL}/course/by-program`;
-        if (payload.params.pageIndex && payload.params.pageSize) endpoint = endpoint + `?pageIndex=${payload.params.pageIndex}&pageSize=${payload.params.pageSize}`;
+        if (payload.params?.pageIndex && payload.params?.pageSize) endpoint = endpoint + `?pageIndex=${payload.params.pageIndex}&pageSize=${payload.params.pageSize}`;
         const response = yield call(getApiAuth, endpoint);
         const result = yield response.data;
         yield put({ type: actions.programme.GET_PROGRAMME_COURSES_SUCCESS, result: result });
