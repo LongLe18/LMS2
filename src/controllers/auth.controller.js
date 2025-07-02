@@ -138,7 +138,7 @@ const loginv2 = async (req, res) => {
     });
     if (teacher) {
         if (security.comparePassword(teacher.mat_khau, req.body.mat_khau)) {
-            if (!teacher.trang_thai) {
+            if (teacher.trang_thai === false || teacher.trang_thai === 2) {
                 return res.status(200).send({
                     status: 'fail',
                     data: null,
@@ -632,6 +632,89 @@ const confirmv2 = async (req, res) => {
     }
 };
 
+const registerv2 = async (req, res) => {
+    const { token } = req.body;
+    await axios.post(
+        `https://www.google.com/recaptcha/api/siteverify?secret=${captcha.secretKey}&response=${token}`
+    );
+    if (
+        !req.body.email.match(
+            /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        )
+    ) {
+        return res.status(404).send({
+            status: 'error',
+            data: null,
+            message: 'Email is not valid',
+        });
+    }
+    if (res.status(200)) {
+        let teacher = await Teacher.findOne({
+            where: {
+                email: req.body.email,
+            },
+        });
+        if (teacher) {
+            return res.status(409).send({
+                status: 'fail',
+                data: null,
+                message: 'Email already exists!',
+            });
+        } else {
+            req.body.mat_khau = security.hashPassword(req.body.mat_khau);
+            teacher = await Teacher.create({
+                ...req.body,
+                trang_thai: 2,
+            });
+            const token = security.generateToken(
+                { gmail: teacher.email, accountType: 1 },
+                '5h'
+            );
+            const content = {
+                gmail: req.body.email,
+                token: token,
+                ho_ten: teacher.ho_ten,
+            };
+            await sendMail(content, 7);
+
+            return res.status(200).send({
+                status: 'success',
+                data: null,
+                message: null,
+            });
+        }
+    }
+
+    return res.status(404).send({
+        status: 'error',
+        data: null,
+        message: null,
+    });
+};
+
+const confirmv3 = async (req, res) => {
+    const decodedToken = security.verifyToken(req.params.token);
+    if (decodedToken.accountType == 1) {
+        await Student.update(
+            {
+                trang_thai: 1,
+            },
+            {
+                where: {
+                    email: decodedToken.gmail,
+                },
+            }
+        );
+        res.redirect(api.login_url);
+    } else {
+        res.status(404).send({
+            status: 'fail',
+            data: null,
+            message: null,
+        });
+    }
+};
+
 module.exports = {
     findAll,
     loginv1,
@@ -648,4 +731,6 @@ module.exports = {
     getProfile,
     updateProfile,
     confirmv2,
+    confirmv3,
+    registerv2
 };

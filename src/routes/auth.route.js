@@ -15,6 +15,7 @@ router.post('/login/v3', tryCatch(authController.loginv3));
 router.post('/register', tryCatch(authController.register));
 router.get('/user', authToken, permission('auth:findAll'), tryCatch(authController.findAll));
 router.post('/change-pass', authToken, tryCatch(authController.changePassword));
+router.get('/confirm/v3/:token', tryCatch(authController.confirmv3));
 router.get('/confirm/v2/:token', tryCatch(authController.confirmv2));
 router.get('/confirm/:token', tryCatch(authController.confirm));
 router.post('/forget-password', tryCatch(authController.forgetPassword));

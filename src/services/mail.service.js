@@ -212,6 +212,30 @@ const sendMail = async (content, option) => {
                         Cuộc thi Tài năng Anh ngữ lần thứ VII năm 2023 sẽ được tổ chức từ tháng 4/2023 đến tháng 06/2023 trên phạm vi toàn thành phố Hà Nội.</span></p>
                 </div>`,
             };
+        } else if (option == 7) {
+            mailOptions = {
+                from: `TRUNG TÂM LUYỆN THI VÀ ĐÁNH GIÁ NĂNG LỰC HSA EDUCATION<${process.env.MAIL_FROM}>`,
+                to: content.gmail,
+                subject: 'THÔNG BÁO KÍCH HOẠT TÀI KHOẢN',
+                sender: process.env.MAIL_SENDER,
+                text: '',
+                html: `
+                <div style="max-width: 900px">
+                    <img style="max-width:100%; height:auto" src="https://hsaplus.edu.vn/static/media/header-logo.6c598d4e.png"></img>
+                    <div>
+                        <p><span style="color: black">Xin chào bạn ${content.ho_ten}!</span></p>
+                        <p><span style="color: black">Bạn vừa đăng kí tài khoản trên hệ thống ôn thi Đánh giá năng lực ĐHQGHN của Trung tâm Đào tạo và Chuyển giao công nghệ HSA  https://hsaplus.edu.vn//.</p>
+                        <p><span style="color: black">Để hoàn tất xác thực email vui lòng Click vào đây: <a style="font-style:italic" href="${api.be_url}/auth/confirm/v3/${content.token}">Xác thực email</a></p>
+                        <p><span style="color: black">Trân trọng!</p>
+                    </div>
+                    <hr/>
+                    <p><span style="color: black"><span style="font-weight:bold">CHƯƠNG TRÌNH ĐƯỢC XÂY DỰNG VÀ PHÁT TRIỂN BỞI</span><br/>
+                        CÔNG TY CỔ PHẦN GIÁO DỤC VÀ CÔNG NGHỆ TRI THỨC VIỆT<br/>
+                        Địa chỉ: Số 7, Ngõ 210 Hoàng Quốc Việt, Cổ Nhuế 1, Bắc Từ Liêm, Hà Nội.<br/>
+                        Điện thoại: 0968.958.680<br/>
+                        Email: Trithucviet.hsa@gmail.com</span></p>
+                </div>`,
+            };
         }
         await transport.sendMail(mailOptions);
     } catch (error) {
