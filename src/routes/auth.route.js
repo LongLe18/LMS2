@@ -12,6 +12,7 @@ let URL;
 router.post('/login/v1', tryCatch(authController.loginv1));
 router.post('/login/v2', tryCatch(authController.loginv2));
 router.post('/login/v3', tryCatch(authController.loginv3));
+router.post('/register/v2', tryCatch(authController.registerv2));
 router.post('/register', tryCatch(authController.register));
 router.get('/user', authToken, permission('auth:findAll'), tryCatch(authController.findAll));
 router.post('/change-pass', authToken, tryCatch(authController.changePassword));
