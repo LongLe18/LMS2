@@ -22,7 +22,7 @@ export const PERMISSIONS = [
                     key: '/luyen-tap/chuyen-de/xem/:id/:idCourse'
                 }, 
                 {
-                    name: 'Đề thi chương học',
+                    name: 'Đề thi Chương học',
                     key: '/luyen-tap/mo-dun/xem/:id/:idExam/:idCourse'
                 },
                 {
@@ -30,7 +30,7 @@ export const PERMISSIONS = [
                     key: '/luyen-tap/lam-kiem-tra/:idmodule/:time/:idthematic/:id/:idExamUser/:idCourse'
                 },
                 {
-                    name: 'Làm đề thi chương học',
+                    name: 'Làm đề thi Chương học',
                     key: '/luyen-tap/lam-kiem-tra/:idmodule/:time/:id/:idExamUser/:idCourse'
                 },
                 {

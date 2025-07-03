@@ -195,7 +195,7 @@ const Criteria = () => {
 
     const columns2 = [
         {
-            title: 'Tên chương học',
+            title: 'Tên Chương học',
             dataIndex: 'ten_mo_dun',
             key: 'ten_mo_dun',
             responsive: ['md'],
@@ -252,7 +252,7 @@ const Criteria = () => {
 
     const columns3 = [
         {
-            title: 'Tên chương học',
+            title: 'Tên Chương học',
             dataIndex: 'ten_mo_dun',
             key: 'ten_mo_dun',
             responsive: ['md'],
@@ -695,7 +695,7 @@ const Criteria = () => {
             case '1': // tiêu chí đề tổng hợp
                 dispatch(criteriaAction.getCriteriasCourse({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
                 break;
-            case '2': // tiêu chí đề chương học
+            case '2': // tiêu chí đề Chương học
                 dispatch(criteriaAction.getCriteriasModule({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
                 break;
             case '3': // tiêu chí đề chuyên đề
@@ -721,7 +721,7 @@ const Criteria = () => {
             case '1': // tiêu chí đề tổng hợp
                 dispatch(criteriaAction.getCriteriasCourse({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
                 break;
-            case '2': // tiêu chí đề chương học
+            case '2': // tiêu chí đề Chương học
                 dispatch(criteriaAction.getCriteriasModule({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
                 break;
             case '3': // tiêu chí đề chuyên đề
@@ -759,7 +759,7 @@ const Criteria = () => {
             case '1': // tiêu chí đề tổng hợp
                 url = `${config.API_URL}/synthetic_criteria/${id}/quantity-exam-publish`;
                 break;
-            case '2': // tiêu chí đề chương học
+            case '2': // tiêu chí đề Chương học
                 url = `${config.API_URL}/modun_criteria/${id}/quantity-exam-publish`
                 break;
             case '3': // tiêu chí đề chuyên đề
@@ -1343,7 +1343,7 @@ const Criteria = () => {
                     setState({...state, isChanged: true, mo_dun_id: mo_dun_id });
                     dispatch(thematicAction.getThematicsByIdModule({ idModule: mo_dun_id }))
                 }}
-                placeholder="Chọn chương học"
+                placeholder="Chọn Chương học"
             >
                 {options}
             </Select>
@@ -1354,8 +1354,8 @@ const Criteria = () => {
         return(
             <Row>
                 <Col xl={24} sm={24} xs={24} className="cate-form-block">
-                    {(course && !require.isEdit) ? <h5>Thêm mới tiêu chí đề thi tổng hợp</h5> : (module && !require.isEdit) ? <h5>Thêm mới tiêu chí đề thi chương học</h5> : (thematic && !require.isEdit) ?<h5>Thêm mới tiêu chí đề thi chuyên đề</h5> : ''}
-                    {(course && require.isEdit) ? <h5>Sửa thông tin tiêu chí đề thi tổng hợp</h5> : (module && require.isEdit) ? <h5>Sửa thông tin tiêu chí đề thi chương học</h5> : (thematic && require.isEdit) ? <h5>Sửa thông tin tiêu chí đề thi chuyên đề</h5> : ''}
+                    {(course && !require.isEdit) ? <h5>Thêm mới tiêu chí đề thi tổng hợp</h5> : (module && !require.isEdit) ? <h5>Thêm mới tiêu chí đề thi Chương học</h5> : (thematic && !require.isEdit) ?<h5>Thêm mới tiêu chí đề thi chuyên đề</h5> : ''}
+                    {(course && require.isEdit) ? <h5>Sửa thông tin tiêu chí đề thi tổng hợp</h5> : (module && require.isEdit) ? <h5>Sửa thông tin tiêu chí đề thi Chương học</h5> : (thematic && require.isEdit) ? <h5>Sửa thông tin tiêu chí đề thi chuyên đề</h5> : ''}
                     <Form layout="vertical" className="category-form" form={form} autoComplete="off" onFinish={createCriteria}>
                         <Row gutter={25}>
                             <Col xl={24} sm={24} xs={24}>
@@ -1376,12 +1376,12 @@ const Criteria = () => {
                             <Col xl={24} sm={24} xs={24}>
                                 <Form.Item style={{display: require.module ? '' : 'none'}}
                                     className="input-col"
-                                    label="chương học"
+                                    label="Chương học"
                                     name="mo_dun_id"
                                     rules={[
                                         {
                                             required: require.module,
-                                            message: 'chương học là trường bắt buộc.',
+                                            message: 'Chương học là trường bắt buộc.',
                                         },
                                     ]}
                                 >
@@ -1464,7 +1464,7 @@ const Criteria = () => {
                             <Form.Item className="button-col" style={{textAlign: 'right'}}>
                                 {!require.isEdit ? <Button shape="round" type="primary" htmlType="submit" >Thêm mới</Button> : <Button shape="round" type="primary" htmlType="submit" >Cập nhật</Button>}                             
                             </Form.Item>
-                            <span style={{color: 'red', display: require.thematic ? '' : 'none'}}>* Các chuyên đề cùng chương học có tiêu chí giống nhau</span>
+                            <span style={{color: 'red', display: require.thematic ? '' : 'none'}}>* Các chuyên đề cùng Chương học có tiêu chí giống nhau</span>
                         </Row>                                     
                     </Form>
                 </Col>
@@ -1747,7 +1747,7 @@ const Criteria = () => {
             case '1': // tiêu chí đề tổng hợp
                 dispatch(criteriaAction.getCriteriasCourse({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: page }));
                 break;
-            case '2': // tiêu chí đề chương học
+            case '2': // tiêu chí đề Chương học
                 dispatch(criteriaAction.getCriteriasModule({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: page }));
                 break;
             case '3': // tiêu chí đề chuyên đề
@@ -1774,7 +1774,7 @@ const Criteria = () => {
             case '1': // tiêu chí đề tổng hợp
                 dispatch(criteriaAction.getCriteriasCourse({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
                 break;
-            case '2': // tiêu chí đề chương học
+            case '2': // tiêu chí đề Chương học
                 dispatch(criteriaAction.getCriteriasModule({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex }));
                 break;
             case '3': // tiêu chí đề chuyên đề
@@ -1836,11 +1836,11 @@ const Criteria = () => {
                             showSizeChanger defaultPageSize={pageSize}
                         />
                     </TabPane>
-                    <TabPane tab="Tiêu chí đề thi chương học" key="2">
+                    <TabPane tab="Tiêu chí đề thi Chương học" key="2">
                         <Row className="app-main">
                             <Col xl={24} className="body-content">
                                 <AppFilter
-                                    title={"Tiêu chí đề thi chương học"}
+                                    title={"Tiêu chí đề thi Chương học"}
                                     isShowCourse={true}
                                     courses={courses.data?.filter((course) => course.khung_chuong_trinh.loai_kct === 2 || course.khung_chuong_trinh.loai_kct === 4 || course.khung_chuong_trinh.loai_kct === 5)}
                                     onFilterChange={(field, value) => onFilterChange(field, value)}

@@ -366,11 +366,15 @@ const Course = () => {
         formData.append('ten_khoa_hoc', values.ten_khoa_hoc);
         formData.append('ngay_bat_dau', state.ngay_bat_dau);
         formData.append('ngay_ket_thuc', state.ngay_ket_thuc );
-        formData.append('giao_vien_id', values.giao_vien_id );
         formData.append('kct_id', values.kct_id.split('_')[0]);
-        if (values.kct_id.split('_')[1] === '2' || values.kct_id.split('_')[1] === '4' || values.kct_id.split('_')[1] === '5') { // kiểm tra khung chương trình = 2 hoặc 4 là các khung ôn luyện
+        if (values.giao_vien_id !== undefined && values.giao_vien_id !== '')
+          formData.append('giao_vien_id', values.giao_vien_id );
+        if (values.kct_id.split('_')[1] === '2' || values.kct_id.split('_')[1] === '4' || values.kct_id.split('_')[1] === '5') { 
+          // kiểm tra khung chương trình = 2 hoặc 4 là các khung ôn luyện hoặc = 5 là các khung tổng hợp
           formData.append('lkh_id', values.lkh_id);
-        } 
+        }  
+          
+        
         formData.append('mo_ta', values.mo_ta !== undefined ? values.mo_ta : '');
         // video , image
         if (state.fileImg !== '')
@@ -502,9 +506,10 @@ const Course = () => {
                                 <Input placeholder="Nhập tên khoá học"/>
                         </Form.Item>
                         <Form.Item className="input-col" label="Giáo viên" name="giao_vien_id"
+                          style={{ display: state.isShowTypeCourse ? 'block' : 'none' }}
                           rules={[
                             {
-                              required: true,
+                              required: state.isShowTypeCourse,
                               message: 'Giáo viên là trường bắt buộc.',
                             },
                           ]}

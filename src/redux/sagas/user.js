@@ -629,7 +629,10 @@ function* forgotPassword(payload) {
 
 function* registerUser(payload) {
   try {
-    const endpoint = `${config.API_URL}/auth/register?loai_tai_khoan=${payload.params.type}`;
+    let endpoint;
+    if (payload.params.type === '1') {
+      endpoint = `${config.API_URL}/auth/register?loai_tai_khoan=${payload.params.type}`;
+    } else endpoint = `${config.API_URL}/auth/register/v2?loai_tai_khoan=${payload.params.type}`;
     const response = yield call(postApi, endpoint, payload.params.register);
     const data = yield response.data;
     yield put({ type: actions.user.REGISTER_USER_SUCCESS, result: data });

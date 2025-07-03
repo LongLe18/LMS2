@@ -338,6 +338,22 @@ function IndexHeader(props) {
       />
   )
 
+  const menuLoginRegister = (
+     <Menu
+        onClick={onClickLogin}
+        items={[
+          {
+            label: 'Đăng ký học viên',
+            key: '/auth/register?typeUser=1',
+          },
+          {
+            label: 'Đăng ký giáo viên',
+            key: '/auth/register?typeUser=2'
+          },
+        ]}
+      />
+  )
+
   return (
     <div ref={sidebar} className="header-page">
       <Container>
@@ -418,7 +434,13 @@ function IndexHeader(props) {
                         Đăng nhập
                     </Button>
                   </Dropdown>
-                  <li><Button type="default" onClick={() => window.location.href = config.BASE_URL + '/auth/register'} style={{borderRadius: 6, background: 'orange', borderColor: 'orange'}}>Đăng ký</Button></li>
+                  <Dropdown overlay={menuLoginRegister}>
+                    <Button type="primary" onClick={e => e.preventDefault()}
+                      style={{borderRadius: 6, background: 'orange', borderColor: 'orange'}}
+                    >
+                        Đăng ký
+                    </Button>
+                  </Dropdown>
                 </>
               : 
                 <>
@@ -468,7 +490,13 @@ function IndexHeader(props) {
                     Đăng nhập
                 </Button>
               </Dropdown>
-              <li><Button type="default" onClick={() => window.location.href = config.BASE_URL + '/auth/register'} style={{borderRadius: 6, background: 'orange', borderColor: 'orange'}}>Đăng ký</Button></li>
+              <Dropdown overlay={menuLoginRegister}>
+                <Button type="primary" onClick={e => e.preventDefault()}
+                  style={{borderRadius: 6, background: 'orange', borderColor: 'orange'}}
+                >
+                    Đăng ký
+                </Button>
+              </Dropdown>
             </>
             : 
             <>

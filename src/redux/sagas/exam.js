@@ -251,7 +251,7 @@ function* fetchModuleCriteria(payload) {
         }
         else {
             notification.error({
-                message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đề chương học đã thất bại' + messageError),
+                message: get(error, 'response.data.error', 'Tải dữ liệu tiêu chí đề Chương học đã thất bại' + messageError),
             });
         } 
     }
@@ -276,7 +276,7 @@ function* publishExam(payload) {
         }
         else {
             notification.error({
-                message: get(error, 'response.data.error', 'Xuất bản đề thi chương học đã thất bại' + messageError),
+                message: get(error, 'response.data.error', 'Xuất bản đề thi Chương học đã thất bại' + messageError),
             });
         } 
     }
@@ -422,7 +422,7 @@ function* fetchExamThematicAndModule(payload) {
             payload.callback(error);
         }
         // notification.error({
-        //     message: get(error, 'response.data.error', 'Tải dữ liệu đề thi chuyên đề hoặc chương học đã thất bại ' + messageError),
+        //     message: get(error, 'response.data.error', 'Tải dữ liệu đề thi chuyên đề hoặc Chương học đã thất bại ' + messageError),
         // });
     }
 };

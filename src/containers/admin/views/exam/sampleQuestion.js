@@ -142,9 +142,9 @@ const SampleQuestion = (props) => {
                     setFilter({...filter, mo_dun_id: mo_dun_id})
                     dispatch(thematicActions.getThematicsByIdModule({ idModule: mo_dun_id }))
                 }}
-                placeholder="Chọn chương học"
+                placeholder="Chọn Chương học"
             >
-                <Option key={''} value={''}>Tất cả chương học</Option>
+                <Option key={''} value={''}>Tất cả Chương học</Option>
                 {options}
             </Select>
         );

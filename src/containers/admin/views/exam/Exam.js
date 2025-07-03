@@ -154,7 +154,7 @@ const ExamAdminPage = () => {
           width: 200,
       },
       {
-        title: 'chương học',
+        title: 'Chương học',
         dataIndex: 'ten_mo_dun',
         key: 'ten_mo_dun',
         responsive: ['md'],
@@ -336,7 +336,7 @@ const ExamAdminPage = () => {
   const renderProgrammesForCreatFastExam = () => {
     let options = [];
     if (programmes.status === 'success') {
-      options = programmes.data.filter((programme) => programme.loai_kct !== 0 && programme.loai_kct !== 3).map((programme) => (
+      options = programmes.data.filter((programme) => programme.loai_kct !== 0 && programme.loai_kct !== 3 && programme.loai_kct !== 6).map((programme) => (
           <Option key={programme.kct_id} value={programme.kct_id} >{programme.ten_khung_ct}</Option>
         ))
     }
@@ -384,7 +384,7 @@ const ExamAdminPage = () => {
           placeholder="Chọn loại đề thi"
           onChange={(typeId) => {
               if (typeId === 1) {setState({...state, showThematic: true, showCourse: true, showModule: true, onlineExam: false})} // Loại chuyên đề
-              else if (typeId === 2) {setState({...state, showThematic: false, showCourse: true, showModule: true, onlineExam: false})} // Loại chương học
+              else if (typeId === 2) {setState({...state, showThematic: false, showCourse: true, showModule: true, onlineExam: false})} // Loại Chương học
               else if (typeId === 3) {setState({...state, showThematic: false, showCourse: true, showModule: false, onlineExam: false})} // Loại tổng hợp
               else { // Loại theo phần
                 setState({...state, showThematic: false, showCourse: true, showModule: false, onlineExam: true})
@@ -448,7 +448,7 @@ const ExamAdminPage = () => {
       return (
         <Select
           showSearch={false}
-          placeholder="Chọn chương học"
+          placeholder="Chọn Chương học"
           onChange={(mo_dun_id) => {
               dispatch(thematicActions.getThematicsByIdModule({ idModule: mo_dun_id }))
           }}
@@ -468,7 +468,7 @@ const ExamAdminPage = () => {
       return (
         <Select
           showSearch={false}
-          placeholder="Chọn chương học"
+          placeholder="Chọn Chương học"
         >
           {options}
         </Select>
@@ -498,7 +498,7 @@ const ExamAdminPage = () => {
                       style={{display: state.showCourse ? '' : 'none'}}>
                       {renderCourse()}
                   </Form.Item>
-                  <Form.Item label="chương học" name="mo_dun_id" rules={[{ required: state.showModule, message: 'chương học là bắt buộc' }]}
+                  <Form.Item label="Chương học" name="mo_dun_id" rules={[{ required: state.showModule, message: 'Chương học là bắt buộc' }]}
                       style={{display: state.showModule ? '' : 'none'}}>
                       {renderModule()}
                   </Form.Item>
@@ -802,7 +802,6 @@ const ExamAdminPage = () => {
             <Col xl={24} className="body-content">
                 <Row>
                     <Col xl={24} sm={24} xs={24}>
-                        {courses.status === "success" &&
                           <AppFilter
                             title="Quản lý đề thi"
                             isShowCourse={true}
@@ -811,10 +810,9 @@ const ExamAdminPage = () => {
                             isShowSearchBox={true}
                             isShowDatePicker={true}
                             isRangeDatePicker={true}
-                            courses={courses.data}
+                            courses={courses?.data}
                             onFilterChange={(field, value) => onFilterChange(field, value)}
                           />
-                        }
                     </Col>
                 </Row>
 

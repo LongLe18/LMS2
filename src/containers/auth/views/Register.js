@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { useHistory } from 'react-router-dom';
 import 'assets/demo/auth.css';
 import { NavLink } from 'react-router-dom';
 // helper
@@ -15,9 +16,11 @@ import * as userActions from '../../../redux/actions/user';
 
 const RegisterPage = (props) => {
     const [form] = Form.useForm();
+    let history = useHistory();
     const captchaRef = useRef(null);
     const dispatch = useDispatch();
     // const user = useSelector(state => state.user.item.result);
+    const typeUser = new URLSearchParams(history.location.search).get('typeUser') || 1;
 
     const onSubmit = (values) => {
         const callback = () => {
@@ -29,7 +32,7 @@ const RegisterPage = (props) => {
         const token = captchaRef.current.getValue();
         values.token = token;
         captchaRef.current.reset();
-        dispatch(userActions.registerUser( { type: 1, register: values }, callback));
+        dispatch(userActions.registerUser( { type: typeUser, register: values }, callback));
     };
 
     const compareToFirstPassword = (rule, value, callback) => {

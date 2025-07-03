@@ -60,7 +60,7 @@ const ReplyPage = (props) => {
             )
         },
         {
-            title: 'chương học',
+            title: 'Chương học',
             dataIndex: 'ten_mo_dun',
             key: 'ten_mo_dun',
             responsive: ['md'],

@@ -9,10 +9,10 @@ import {
 import { Avatar, Image, Badge, Row, Col, Tooltip, Menu, Dropdown, Breadcrumb } from "antd";
 import { BellOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import AutoLaTeX from 'react-autolatex';
-
+import './adminNavbar.css';
 // helper
 import { getUserInfo, cutString } from "helpers/common.helper.js";
-import routes from "../../../containers/admin/routes.js";
+// import routes from "../../../containers/admin/routes.js";
 import jwt_decode from 'jwt-decode';
 import config from '../../../configs/index';
 import moment from 'moment';
@@ -47,26 +47,26 @@ function Header(props) {
   // const dropdownToggleAlert = (e) => {
   //   setDropdownAlert(!dropdownAlert);
   // };
-  const getBrand = () => {
-    let brandName = "Default Brand";
-    routes.map((prop, key) => {
-      if (prop.sub !== undefined) {
-        prop.sub.map((item, index) => {
-          if (window.location.href.indexOf(item.path) !== -1) {
-            brandName = item.name;
-          }
-          return null;
-        })
-      }
-      else if (window.location.href.indexOf(prop.path) !== -1) {
-        brandName = prop.name;
-      } else {
-        brandName = "Quản lý Luyện thi"
-      }
-      return null;
-    });
-    return brandName;
-  };
+  // const getBrand = () => {
+  //   let brandName = "Default Brand";
+  //   routes.map((prop, key) => {
+  //     if (prop.sub !== undefined) {
+  //       prop.sub.map((item, index) => {
+  //         if (window.location.href.indexOf(item.path) !== -1) {
+  //           brandName = item.name;
+  //         }
+  //         return null;
+  //       })
+  //     }
+  //     else if (window.location.href.indexOf(prop.path) !== -1) {
+  //       brandName = prop.name;
+  //     } else {
+  //       brandName = "Quản lý Luyện thi"
+  //     }
+  //     return null;
+  //   });
+  //   return brandName;
+  // };
 
   // function that adds color dark/transparent to the navbar on resize (this is for the collapse)
   const updateColor = () => {
@@ -295,15 +295,32 @@ function Header(props) {
             </button>
           </div> */}
           {/* <NavbarBrand href="/admin/dashboard">{getBrand()}</NavbarBrand> */}
-          {/* Breadcrumb */}
+          
           <Breadcrumb>
-            {localStorage.getItem('dataPath') !== null && JSON.parse(localStorage.getItem('dataPath')).length > 0 &&
-              JSON.parse(localStorage.getItem('dataPath')).map((item, index) => (
-                <Breadcrumb.Item key={index}>
-                  {item.path ? <a href={item.path}>{item.title}</a> : item.title}
-                </Breadcrumb.Item>
-              ))
-            }
+            {JSON.parse(localStorage.getItem('dataPath')).length > 0 &&
+              JSON.parse(localStorage.getItem('dataPath')).map((item, index) => {
+                const isLast = index === JSON.parse(localStorage.getItem('dataPath')).length - 1;
+
+                return (
+                  <Breadcrumb.Item key={index}>
+                    {!isLast && item.path ? (
+                      <a
+                        href={item.path}
+                        onClick={(e) => {
+                          e.preventDefault(); // ngăn reload trang
+                          const newPath = JSON.parse(localStorage.getItem('dataPath')).slice(0, index + 1);
+                          localStorage.setItem('dataPath', JSON.stringify(newPath));
+                          window.location.href = item.path; // điều hướng thủ công
+                        }}
+                      >
+                        {item.title}
+                      </a>
+                    ) : (
+                      <span style={{ fontWeight: 600 }}>{item.title}</span>
+                    )}
+                  </Breadcrumb.Item>
+                );
+              })}
           </Breadcrumb>
         </div>
         {/* <NavLink to="/admin/dashboard">

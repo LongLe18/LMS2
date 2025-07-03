@@ -287,7 +287,7 @@ const CourseDetail = () => {
     }));
   }
 
-  // event ẩn chương học
+  // event ẩn Chương học
   const handleHideModule = (chapter) => {
     const formData = new FormData();
     formData.append('trang_thai', !chapter.trang_thai);
@@ -296,14 +296,14 @@ const CourseDetail = () => {
         if (res.statusText === 'OK' && res.status === 200) {
             notification.success({
                 message: 'Thành công',
-                description: chapter.trang_thai ? 'Ẩn chương học thành công' : 'Hiện chương học thành công',
+                description: chapter.trang_thai ? 'Ẩn Chương học thành công' : 'Hiện Chương học thành công',
             });
-            // request api lấy danh sách chương học mới
+            // request api lấy danh sách Chương học mới
             dispatch(partActions.getModulesTeacher({ idCourse: idCourse, lkh: '', status: '', search: '', pageSize: 99999999, pageIndex: 1 }));
         } else {
             notification.error({
                 message: 'Thông báo',
-                description: chapter.trang_thai ? 'Ẩn chương học thất bại' : 'Hiện chương học thất bại',
+                description: chapter.trang_thai ? 'Ẩn Chương học thất bại' : 'Hiện Chương học thất bại',
             })
         }
     };
@@ -382,15 +382,23 @@ const CourseDetail = () => {
 
   const handleChapterClick = (chapter) => {
     if (chapter.loai_tong_hop === true) setActiveTab('exams');
-    else history.push(`/teacher/detail-chapter/${chapter.mo_dun_id}`)
+    else {
+      const dataPath = JSON.parse(localStorage.getItem('dataPath')) || [];
+      dataPath.push({
+          title: chapter.ten_mo_dun,
+          path: `/teacher/detail-chapter/${chapter.mo_dun_id}`
+      });
+      localStorage.setItem('dataPath', JSON.stringify(dataPath));
+      history.push(`/teacher/detail-chapter/${chapter.mo_dun_id}`)
+    }
   }
 
-  // Event tạo chương học 
+  // Event tạo Chương học 
   const createModule = (values) => {
     if (values.khoa_hoc_id === undefined) { // check null
       notification.warning({
         message: 'Cảnh báo',
-        description: 'Thông tin chương học chưa đủ',
+        description: 'Thông tin Chương học chưa đủ',
       })
       return;
     }
@@ -413,16 +421,16 @@ const CourseDetail = () => {
       if (res.data.status === 'success' && res.status === 200) {
         addChapterForm.resetFields();
         setIsAddChapterModalVisible(false);
-        // request api lấy danh sách chương học mới
+        // request api lấy danh sách Chương học mới
         dispatch(partActions.getModulesTeacher({ idCourse: idCourse, lkh: '', status: '', search: '', pageSize: 99999999, pageIndex: 1 }));
         notification.success({
           message: 'Thành công',
-          description: state.isEdit ? 'Cập nhật chương học thành công' : 'Thêm chương học mới thành công',
+          description: state.isEdit ? 'Cập nhật Chương học thành công' : 'Thêm Chương học mới thành công',
         })
       } else {
         notification.error({
           message: 'Thông báo',
-          description: state.isEdit ? 'Cập nhật chương học thất bại' : 'Thêm chương học mới thất bại. Chú ý 1 chương học chỉ có 1 phần tổng hợp',
+          description: state.isEdit ? 'Cập nhật Chương học thất bại' : 'Thêm Chương học mới thất bại. Chú ý 1 Chương học chỉ có 1 phần tổng hợp',
         })
       }
     };
@@ -433,26 +441,26 @@ const CourseDetail = () => {
     }
   };
 
-  /// event xoá chương học
+  /// event xoá Chương học
   const handleDeleteModun = (id) => {
     Modal.confirm({
       icon: <ExclamationCircleOutlined />,
-      content: 'Bạn có chắc chán muốn xóa chương học này?',
+      content: 'Bạn có chắc chán muốn xóa Chương học này?',
       okText: 'Đồng ý',
       cancelText: 'Hủy',
       onOk() {
         const callback = (res) => {
           if (res.statusText === 'OK' && res.status === 200) {
-            // request api lấy danh sách chương học mới
+            // request api lấy danh sách Chương học mới
             dispatch(partActions.getModulesTeacher({ idCourse: idCourse, lkh: '', status: '', search: '', pageSize: 99999999, pageIndex: 1 }));
             notification.success({
               message: 'Thành công',
-              description: 'Xóa chương học thành công',
+              description: 'Xóa Chương học thành công',
             })
           } else {
             notification.error({
               message: 'Thông báo',
-              description: 'Xóa chương học thất bại',
+              description: 'Xóa Chương học thất bại',
             })
           };
         }
@@ -575,12 +583,16 @@ const CourseDetail = () => {
           const menu = (
             <Menu>
               <Menu.Item key="hide" icon={(!exam.trang_thai || !exam.xuat_ban) ? <EyeOutlined /> : <EyeInvisibleOutlined />}
-                onClick={() => handlePublishExam(exam)} // done
+                onClick={(e) => {
+                  e.domEvent.stopPropagation();
+                  handlePublishExam(exam)} // done
+                }
               >
                 {!exam.xuat_ban ? "Xuất bản đề thi" : !exam.trang_thai ? "Sử dụng đề thi" : "Ngừng sử dụng đề thi"}
               </Menu.Item>
               <Menu.Item key="hide" icon={<CopyOutlined />}
-                onClick={() => {
+                onClick={(e) => {
+                  e.domEvent.stopPropagation();
                   if (exam.xuat_ban) reuseExam(exam.de_thi_id)
                   else 
                     notification.warning({
@@ -592,15 +604,10 @@ const CourseDetail = () => {
                 Nhân bản đề thi
               </Menu.Item>
               <Menu.Item key="edit" icon={<EditOutlined />}
-                onClick={() => {
+                onClick={(e) => {
+                  e.domEvent.stopPropagation();
                   if (!exam.xuat_ban) {
-                    dispatch(examActions.getExam({ id: exam.de_thi_id }, (res) => {
-                      if (res.status === 'success') {
-                        setState({ ...state, isEdit: true, idExam: exam.de_thi_id });
-                        setIsAddExamModalVisible(true);
-                        addExamForm.setFieldsValue(res.data)
-                      }
-                    }));
+                    window.open(`/teacher/exam/detail/${exam?.de_thi_id}?loai_de_thi=DGNL`, '_blank');
                   } else 
                     notification.warning({
                       message: 'Cảnh báo',
@@ -611,7 +618,8 @@ const CourseDetail = () => {
                 Cập nhật đề thi
               </Menu.Item>
               <Menu.Item key="delete" icon={<DeleteOutlined />} danger
-                onClick={() => {
+                onClick={(e) => {
+                  e.domEvent.stopPropagation();
                   setExamToDelete(exam)
                   setDeleteModalVisible(true)
                 }}
@@ -622,11 +630,11 @@ const CourseDetail = () => {
           )
 
           return (
-            <List.Item style={{ padding: "16px 0", border: "none" }}>
+            <List.Item style={{ padding: "16px 0", border: "none" }} onClick={() => handleViewExam(exam)}>
               <div style={{ display: "flex", width: "100%", alignItems: "center", opacity: (!exam.trang_thai || !exam.xuat_ban) ? 0.5 : 1,
                   transition: "opacity 0.3s ease", cursor: "pointer"}}
                 >
-                <Avatar onClick={() => handleViewExam(exam)}
+                <Avatar 
                   size={48}
                   style={{
                     backgroundColor: "#4c6ef5",
@@ -638,7 +646,6 @@ const CourseDetail = () => {
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                     <Text strong style={{ fontSize: "16px", lineHeight: "1.4", marginBottom: "8px", display: "block" }}
-                      onClick={() => handleViewExam(exam)}
                     >
                       {exam?.ten_de_thi}
                     </Text>
@@ -646,7 +653,7 @@ const CourseDetail = () => {
                       <Button type="text" size="small" icon={<MoreOutlined />} onClick={(e) => e.stopPropagation()}/>
                     </Dropdown>
                   </div>
-                  <Space size="large" style={{ color: "#8c8c8c", fontSize: "14px" }} onClick={() => handleViewExam(exam)}>
+                  <Space size="large" style={{ color: "#8c8c8c", fontSize: "14px" }}>
                     <Space size={4}>
                       <PlayCircleOutlined />
                       <span>{exam?.so_cau_hoi} câu hỏi</span>
@@ -684,8 +691,6 @@ const CourseDetail = () => {
   const handleCancelCriteriaModal = () => {
     setIsModalCriteriaVisible(false)
   }
-
-
 
   const EmptyExamsState = () => (
     <div style={{ textAlign: "center", }}>
@@ -1010,19 +1015,24 @@ const CourseDetail = () => {
                       const menu = (
                         <Menu>
                           <Menu.Item key="hide" icon={<EyeOutlined />} 
-                            onClick={() => handleHideModule(chapter)} // done
+                            onClick={(e) => {
+                              e.domEvent.stopPropagation();
+                              handleHideModule(chapter)}
+                            } // done
                           >
                             {chapter.trang_thai ? "Ẩn chương" : "Hiện chương"}
                           </Menu.Item>
                           <Menu.Item key="edit" icon={<EditOutlined />}
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.domEvent.stopPropagation();
                               handleUpdateChapter(chapter) // done
                             }}
                           >
                             Cập nhật chương
                           </Menu.Item>
                           <Menu.Item key="delete" icon={<DeleteOutlined />} danger // done
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.domEvent.stopPropagation();
                               handleDeleteModun(chapter.mo_dun_id);
                             }}
                           >
@@ -1081,7 +1091,7 @@ const CourseDetail = () => {
                     style={{ marginTop: "16px", backgroundColor: "#4c6ef5", borderColor: "#4c6ef5" }}
                     onClick={() => setIsAddChapterModalVisible(true)}
                   >
-                    Thêm chương học
+                    Thêm Chương học
                   </Button>
                 </TabPane>
                 
@@ -1105,7 +1115,7 @@ const CourseDetail = () => {
 
         {/* Add Chapter Modal */}
         <Modal
-          title={state.isEdit ? 'Cập nhật chương học' : "Thêm chương học mới"}
+          title={state.isEdit ? 'Cập nhật Chương học' : "Thêm Chương học mới"}
           open={isAddChapterModalVisible}
           onCancel={() => {
             setIsAddChapterModalVisible(false)
@@ -1145,11 +1155,11 @@ const CourseDetail = () => {
             <Row gutter={16}>
               <Col span={12}>
                 <Form.Item
-                  label="Tên chương học"
+                  label="Tên Chương học"
                   name="ten_mo_dun"
-                  rules={[{ required: true, message: "Vui lòng nhập tên chương học" }]}
+                  rules={[{ required: true, message: "Vui lòng nhập tên Chương học" }]}
                 >
-                  <Input placeholder="Nhập tên chương học" />
+                  <Input placeholder="Nhập tên Chương học" />
                 </Form.Item>
               </Col>
               <Col span={12}>
@@ -1209,12 +1219,12 @@ const CourseDetail = () => {
               <Col span={12}>
                 <Form.Item
                     name="loai_tong_hop"
-                  label="Loại chương học"
+                  label="Loại Chương học"
                   initialValue={0}
                   rules={[
                     {
                       required: true,
-                      message: 'Loại chương học là trường bắt buộc.',
+                      message: 'Loại Chương học là trường bắt buộc.',
                     },
                   ]}
                 >
@@ -1223,7 +1233,7 @@ const CourseDetail = () => {
                         Phần thi tổng hợp
                       </Radio>
                       {/* <Radio className="option-payment" value={2}>
-                        Phần thi chương học
+                        Phần thi Chương học
                       </Radio> */}
                       <Radio className="option-payment" value={0}>
                         Phần bài học
@@ -1233,10 +1243,10 @@ const CourseDetail = () => {
               </Col>
             </Row>
 
-            <Form.Item label="Mô tả chương học" name="mo_ta">
+            <Form.Item label="Mô tả Chương học" name="mo_ta">
               <Input.TextArea
                 rows={4}
-                placeholder="Mô tả về chương học"
+                placeholder="Mô tả về Chương học"
                 maxLength={1000}
                 showCount
                 style={{ resize: "none" }}

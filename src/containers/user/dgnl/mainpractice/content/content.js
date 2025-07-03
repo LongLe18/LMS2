@@ -182,7 +182,7 @@ const ContentComponent = (props) => {
                                         className="img-circle img-no-padding img-responsive"
                                         src={anh_dai_dien !== null ? config.API_URL + anh_dai_dien : defaultImage}
                                     />
-                                    <ProgressBar bgcolor="#89c304" progress={percentAchieved !== undefined ? percentAchieved : '50'}  height={30}/>
+                                    <ProgressBar bgcolor="#89c304" progress={percentAchieved !== undefined ? percentAchieved : 50}  height={30}/>
                                     {/* {token !== null 
                                     ?
                                         (props.id === 32 && JSON.parse(localStorage.getItem('userInfo')).university_unit === null && mo_dun_id === 60)
@@ -210,7 +210,7 @@ const ContentComponent = (props) => {
                                                     Luyện
                                                 </NavLink>
                                             }
-                                            {/* Thi chương học */}
+                                            {/* Thi Chương học */}
                                             {loai_tong_hop === 2 && 
                                                 <NavLink className="btn btn-primary" 
                                                     to={"/luyen-tap/kiem-tra-mo-dun/" + hashids.encode(props.id) + "/" + hashids.encode(mo_dun_id)}

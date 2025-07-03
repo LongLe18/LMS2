@@ -101,10 +101,10 @@ const LoginAdminPage = (props) => {
                             </Form.Item>
                         </Form>
                         <div className="other-links" style={{marginBottom: "15px",textAlign: 'center'}}>
-                            <NavLink className="login-form-forgot font-weight-5" to="/auth/register">
+                            {/* <NavLink className="login-form-forgot font-weight-5" to="/auth/register?typeUser=3">
                                 Đăng ký
-                            </NavLink>{' '}
-                            |{' '}
+                            </NavLink>{' '} */}
+                            {/* |{' '} */}
                             <NavLink className="login-form-forgot font-weight-5" to="/auth/forgot-password?typeUser=3">
                                 Quên mật khẩu
                             </NavLink>{' '}

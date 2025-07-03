@@ -439,7 +439,7 @@ const ThematicCate = () => {
                               <Form.Item className="input-col" label="Khóa học" name="khoa_hoc_id" rules={[]} >
                                   {renderCourses()}
                               </Form.Item>
-                              <Form.Item className="input-col" label="chương học" name="mo_dun_id" rules={[]} >
+                              <Form.Item className="input-col" label="Chương học" name="mo_dun_id" rules={[]} >
                                   {renderModules()}
                               </Form.Item>
                               <Form.Item className="input-col" label="Lớp học" name="lop_id" rules={[]} >

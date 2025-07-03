@@ -89,7 +89,7 @@ const CriteriaManagement = () => {
             case '1': // tiêu chí đề tổng hợp
                 url = `${config.API_URL}/synthetic_criteria/${id}/quantity-exam-publish`;
                 break;
-            case '2': // tiêu chí đề chương học
+            case '2': // tiêu chí đề Chương học
                 url = `${config.API_URL}/modun_criteria/${id}/quantity-exam-publish`
                 break;
             case '3': // tiêu chí đề chuyên đề
@@ -193,7 +193,7 @@ const CriteriaManagement = () => {
             render: (text, record, index) => index + 1,
         },
         {
-            title: "Tên chương học",
+            title: "Tên Chương học",
             dataIndex: "ten_mo_dun",
             key: "ten_mo_dun",
             width: 300,
@@ -269,7 +269,7 @@ const CriteriaManagement = () => {
             render: (text, record, index) => index + 1,
         },
         {
-            title: "Tên chương học",
+            title: "Tên Chương học",
             dataIndex: "ten_mo_dun",
             key: "ten_mo_dun",
             width: 300,
@@ -340,8 +340,10 @@ const CriteriaManagement = () => {
             if (res.status === 'success') {
                 checkCriteria(type, id);  // check tiêu chí đã có đề xuất bản hay chưa
                 addCriteriaForm.setFieldsValue(res.data);
-                if (type === '2' || type === '3')
+                if (type === '2' || type === '3') {
                     addCriteriaForm.setFieldValue('khoa_hoc_id', res.data.mo_dun?.khoa_hoc_id);
+                    dispatch(moduleAction.getModulesByIdCourse({ idCourse: res.data.mo_dun?.khoa_hoc_id }));
+                }
                 showModal();
             }
         };
@@ -352,7 +354,7 @@ const CriteriaManagement = () => {
             setModule(false);
             setThematic(false);
             setRequire({...state, course: true, module: false, thematic: false, isEdit: true});
-        } else if (type === '2') { // Tiêu chí đề thi chương học
+        } else if (type === '2') { // Tiêu chí đề thi Chương học
             dispatch(criteriaAction.getCriteriaModule({ id: id }, callback))
             setCourse(false);
             setModule(true);
@@ -369,9 +371,17 @@ const CriteriaManagement = () => {
 
     const renderCourses = () => {
         let options = [];
-        options = courses?.data?.map((course) => (
-            <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
-        ));
+        if (require.isEdit || state.activeTab !== 'comprehensive') {
+            options = courses?.data?.map((course) => (
+                <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
+            ));
+        } else if (!require.edit && state.activeTab === 'comprehensive') {
+            const configuredIds = criteriaExamCourse?.data?.map(item => item.khoa_hoc_id);
+            options = courses?.data?.filter(course => !configuredIds?.includes(course?.khoa_hoc_id))
+            ?.map((course) => (
+                <Option key={course.khoa_hoc_id} value={course.khoa_hoc_id} >{course.ten_khoa_hoc}</Option>
+            ));
+        }
         return (
             <Select style={{width: '100%'}}
                 maxTagCount="responsive"
@@ -392,11 +402,19 @@ const CriteriaManagement = () => {
 
     const renderModules = () => {
         let options = [];
-        if (modules.status === 'success') {
-            options = modules.data
-            .filter((module) => module.loai_tong_hop === 0) // Lọc bỏ chương học tổng hợp
+        if (require.isEdit) {
+            options = modules?.data
+            ?.filter((module) => module?.loai_tong_hop === 0) // Lọc bỏ Chương học tổng hợp
+            ?.map((module) => (
+                <Option key={module?.mo_dun_id} value={module?.mo_dun_id} >{module?.ten_mo_dun}</Option>
+            ))
+        } else if (!require.edit && state.activeTab === 'chapter') {
+            const configuredIds = criteriaExamModule?.data?.map(item => item.mo_dun_id);
+            options = modules?.data
+            ?.filter(module => !configuredIds?.includes(module?.mo_dun_id))
+            .filter((module) => module?.loai_tong_hop === 0) // Lọc bỏ Chương học tổng hợp
             .map((module) => (
-                <Option key={module.mo_dun_id} value={module.mo_dun_id} >{module.ten_mo_dun}</Option>
+                <Option key={module?.mo_dun_id} value={module?.mo_dun_id} >{module?.ten_mo_dun}</Option>
             ))
         }
         return (
@@ -406,7 +424,7 @@ const CriteriaManagement = () => {
                     setState({...state, isChanged: true, mo_dun_id: mo_dun_id });
                     dispatch(thematicAction.getThematicsByIdModule({ idModule: mo_dun_id }))
                 }}
-                placeholder="Chọn chương học"
+                placeholder="Chọn Chương học"
             >
                 {options}
             </Select>
@@ -421,8 +439,8 @@ const CriteriaManagement = () => {
         },
         {
             key: "chapter",
-            label: "Tiêu chí đề thi chương học",
-            title: "Danh sách tiêu chí đề thi chương học",
+            label: "Tiêu chí đề thi Chương học",
+            title: "Danh sách tiêu chí đề thi Chương học",
         },
         {
             key: "topic",
@@ -466,7 +484,7 @@ const CriteriaManagement = () => {
                         dispatch(criteriaAction.getCriteriasCourse({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex, teacher: true }));
                     }))
                 }
-            } else if (state.activeTab === 'chapter') { // Tiêu chí đề thi chương học
+            } else if (state.activeTab === 'chapter') { // Tiêu chí đề thi Chương học
                 if (require.isEdit) {
                     dispatch(criteriaAction.editCriteriaModule({id: state.idCriteria, formData: values}, () => {
                         notification.success({
@@ -524,7 +542,7 @@ const CriteriaManagement = () => {
                         if (state.activeTab === 'comprehensive') // Tiêu chí đề thi tổng hợp
                         {
                             dispatch(criteriaAction.getCriteriasCourse({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex, teacher: true }));
-                        } else if (state.activeTab === 'chapter') // Tiêu chí đề thi chương học
+                        } else if (state.activeTab === 'chapter') // Tiêu chí đề thi Chương học
                         {
                             dispatch(criteriaAction.getCriteriasModule({ khoa_hoc_id: filter.khoa_hoc_id, pageSize: pageSize, pageIndex: pageIndex, teacher: true })); 
                         } else if (state.activeTab === 'topic') // Tiêu chí đề thi chuyên đề
@@ -545,7 +563,7 @@ const CriteriaManagement = () => {
                 if (state.activeTab === 'comprehensive') // Tiêu chí đề thi tổng hợp
                 {
                     dispatch(criteriaAction.deleteCriteriaCourse({ id: id }, callback))
-                } else if (state.activeTab === 'chapter') // Tiêu chí đề thi chương học
+                } else if (state.activeTab === 'chapter') // Tiêu chí đề thi Chương học
                 {
                     dispatch(criteriaAction.deleteCriteriaModule({ id: id }, callback))
                 } else if (state.activeTab === 'topic') // Tiêu chí đề thi chuyên đề
@@ -691,8 +709,8 @@ const CriteriaManagement = () => {
 
             {/* modal exam modun */}
             <Modal
-                title={(!require.isEdit && course) ? "Thêm mới tiêu chí đề thi tổng hợp" : (!require.isEdit && module) ? "Thêm mới tiêu chí đề thi chương học" : (!require.isEdit && thematic) ? "Thêm mới tiêu chí đề thi chuyên đề" 
-                    : (require.isEdit && course) ? "Cập nhật tiêu chí đề thi tổng hợp" : (require.isEdit && module) ? "Cập nhật tiêu chí đề thi chương học" : (require.isEdit && thematic) ? "Cập nhật tiêu chí đề thi chuyên đề" : ""}
+                title={(!require.isEdit && course) ? "Thêm mới tiêu chí đề thi tổng hợp" : (!require.isEdit && module) ? "Thêm mới tiêu chí đề thi Chương học" : (!require.isEdit && thematic) ? "Thêm mới tiêu chí đề thi chuyên đề" 
+                    : (require.isEdit && course) ? "Cập nhật tiêu chí đề thi tổng hợp" : (require.isEdit && module) ? "Cập nhật tiêu chí đề thi Chương học" : (require.isEdit && thematic) ? "Cập nhật tiêu chí đề thi chuyên đề" : ""}
                 open={isModalVisible}
                 onCancel={handleCancel}
                 footer={null}
@@ -712,12 +730,12 @@ const CriteriaManagement = () => {
 
                     <Form.Item style={{display: require.module ? '' : 'none'}}
                         className="input-col"
-                        label="chương học"
+                        label="Chương học"
                         name="mo_dun_id"
                         rules={[
                             {
                                 required: require.module,
-                                message: 'chương học là trường bắt buộc.',
+                                message: 'Chương học là trường bắt buộc.',
                             },
                         ]}
                     >
@@ -766,7 +784,7 @@ const CriteriaManagement = () => {
                         </Col>
                     </Row>
 
-                    <span style={{color: 'red', display: thematic ? 'block' : 'none'}}>* Các chuyên đề cùng chương học có tiêu chí giống nhau</span>
+                    <span style={{color: 'red', display: thematic ? 'block' : 'none'}}>* Các chuyên đề cùng Chương học có tiêu chí giống nhau</span>
                     <Row gutter={16}>
                         <Col span={12}>
                             <Button

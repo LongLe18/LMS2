@@ -186,7 +186,7 @@ const routes = [
       parent: "thematic",
       path: "/admin/thematic/cate",
       hide: checkPermission('modun') === true ? false : true,
-      name: "Danh mục chương học",
+      name: "Chương học",
       icon: <FolderOutlined />,
       render: (props) => (shouldHaveAccessPermission('all', '/admin/thematic/cate') ? <ModuleCate {...props}/> : <Redirect to="/"/>)
     }, {

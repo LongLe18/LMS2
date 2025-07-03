@@ -262,7 +262,7 @@ const BodyDetailPage = (props) => {
                         {exams.status === 'success' && exams.data.filter(obj => obj.xuat_ban === 1) &&
                             <Button color="success" type="primary" style={{maxWidth: 'none', width: 'auto', borderRadius: 4}}
                                 onClick={() => history.push(`/luyen-tap/kiem-tra-mo-dun/${hashids.encode(props.idCourse)}/${hashids.encode(props.id)}`) }>
-                                    Danh sách đề thi chương học
+                                    Danh sách đề thi Chương học
                             </Button>
                         }
                     </Col>

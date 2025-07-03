@@ -42,7 +42,7 @@ const ModalCriteria = (props) => {
         let options = [];
         if (modules.status === 'success') {
             options = modules.data
-            .filter((module) => module.loai_tong_hop === 0) // Lọc bỏ chương học tổng hợp
+            .filter((module) => !module.loai_tong_hop) // Lọc bỏ Chương học tổng hợp
             .map((module) => (
                 <Option key={module.mo_dun_id} value={module.mo_dun_id} >{module.ten_mo_dun}</Option>
             ))
@@ -53,7 +53,7 @@ const ModalCriteria = (props) => {
                 onChange={(mo_dun_id) => {
                     dispatch(thematicAction.getThematicsByIdModule({ idModule: mo_dun_id }))
                 }}
-                placeholder="Chọn chương học"
+                placeholder="Chọn Chương học"
             >
                 {options}
             </Select>
@@ -74,7 +74,25 @@ const ModalCriteria = (props) => {
                     addCriteriaForm.resetFields();
                     dispatch(criteriaAction.checkCriteria({ type: 'synthetic', id: props?.initCourse }));
                 }))
-            } 
+            } else if (props?.module) { // Tiêu chí đề thi Chương học
+                dispatch(criteriaAction.createCriteriaModule(values, () => {
+                    notification.success({
+                        message: "Thêm tiêu chí thành công",
+                    })
+                    props?.handleCancel();
+                    addCriteriaForm.resetFields();
+                    dispatch(criteriaAction.checkCriteria({ type: 'modun', id: props?.initModule }));
+                }))
+            } else if (props?.thematic) { // Tiêu chí đề thi chuyên đề
+                dispatch(criteriaAction.createCriteriaThematic(values, () => {
+                    notification.success({
+                        message: "Thêm tiêu chí thành công",
+                    })
+                    props?.handleCancel();
+                    addCriteriaForm.resetFields();
+                    dispatch(criteriaAction.checkCriteria({ type: 'thematic', id: props?.initModule }));
+                }))
+            }
         })
         .catch((info) => {
             console.log("Validate Failed:", info)
@@ -83,7 +101,7 @@ const ModalCriteria = (props) => {
 
     return (
         <Modal
-            title={(props?.course) ? "Thêm mới tiêu chí đề thi tổng hợp" : (!props?.module) ? "Thêm mới tiêu chí đề thi chương học" : (props?.thematic) ? "Thêm mới tiêu chí đề thi chuyên đề" : ""}
+            title={(props?.course) ? "Thêm mới tiêu chí đề thi tổng hợp" : (!props?.module) ? "Thêm mới tiêu chí đề thi Chương học" : (props?.thematic) ? "Thêm mới tiêu chí đề thi chuyên đề" : ""}
             open={props?.isModalVisible}
             onCancel={() => {
                 props?.handleCancel();
@@ -105,14 +123,15 @@ const ModalCriteria = (props) => {
                     {renderCourses()}
                 </Form.Item>
 
-                <Form.Item style={{display: require.module ? '' : 'none'}}
+                <Form.Item style={{display: (props?.module || props?.thematic) ? 'block' : 'none'}}
                     className="input-col"
-                    label="chương học"
+                    label="Chương học"
                     name="mo_dun_id"
+                    initialValue={props?.initModule}
                     rules={[
                         {
-                            required: props?.module,
-                            message: 'chương học là trường bắt buộc.',
+                            required: props?.module || props?.thematic,
+                            message: 'Chương học là trường bắt buộc.',
                         },
                     ]}
                 >
@@ -161,7 +180,7 @@ const ModalCriteria = (props) => {
                     </Col>
                 </Row>
 
-                <span style={{color: 'red', display: props?.thematic ? 'block' : 'none'}}>* Các chuyên đề cùng chương học có tiêu chí giống nhau</span>
+                <span style={{color: 'red', display: props?.thematic ? 'block' : 'none'}}>* Các chuyên đề cùng Chương học có tiêu chí giống nhau</span>
                 <Row gutter={16}>
                     <Col span={12}>
                         <Button

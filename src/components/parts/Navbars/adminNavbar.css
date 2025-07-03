@@ -1,0 +1,4 @@
+.ant-breadcrumb li:last-child .ant-breadcrumb-link a {
+  font-weight: bold;
+  pointer-events: none; /* Nếu bạn muốn nó không click được */
+}

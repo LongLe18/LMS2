@@ -119,7 +119,7 @@ const CourseManagement = () => {
             )
         },
         {
-            title: "Số chương học",
+            title: "Số Chương học",
             dataIndex: "so_luong_modun",
             key: "so_luong_modun",
             width: 120,
@@ -169,7 +169,15 @@ const CourseManagement = () => {
                     <Tooltip title="Xem chi tiết">
                         <Button type="text" icon={<EyeOutlined />}
                             size="small"
-                            onClick={() => history.push(`/teacher/detail-course/${record?.khoa_hoc_id}`)}
+                            onClick={() => {
+                                const dataPath = JSON.parse(localStorage.getItem('dataPath')) || [];
+                                dataPath.push({
+                                    title: record.ten_khoa_hoc,
+                                    path: `/teacher/detail-course/${record?.khoa_hoc_id}`
+                                });
+                                localStorage.setItem('dataPath', JSON.stringify(dataPath));
+                                history.push(`/teacher/detail-course/${record?.khoa_hoc_id}`)
+                            }}
                         />
                     </Tooltip>
                     <Tooltip title="Chỉnh sửa">
@@ -225,7 +233,7 @@ const CourseManagement = () => {
                             />
                             <div>
                                 <div style={{ fontSize: "24px", fontWeight: 500, color: "#242424" }}>{dashboardData?.so_modun}</div>
-                                <div style={{ color: "#242424", fontSize: "14px", fontWeight: 400 }}>Số lượng chương học</div>
+                                <div style={{ color: "#242424", fontSize: "14px", fontWeight: 400 }}>Số lượng Chương học</div>
                             </div>
                         </div>
                     </Card>

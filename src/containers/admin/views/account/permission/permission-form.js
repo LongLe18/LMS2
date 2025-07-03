@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react"
 import { Form, Switch, Typography, Row, Col, Tabs } from "antd"
+import './permission.css'
 
 const { Text } = Typography
 const { TabPane } = Tabs

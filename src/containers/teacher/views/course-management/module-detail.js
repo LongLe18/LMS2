@@ -10,6 +10,7 @@ import './module-detail.css' // Import custom CSS for styling
 import config from '../../../../configs/index';
 import axios from 'axios';
 import ViewExam from "./view-exam"
+import ModalCriteria from './modal-criteria';
 
 import * as thematicActions from '../../../../redux/actions/thematic';
 import * as lessonActions from '../../../../redux/actions/lesson';
@@ -21,7 +22,7 @@ import * as criteriaActions from '../../../../redux/actions/criteria';
 import { useDispatch, useSelector } from "react-redux"
 
 // ==================================================================== 
-// Giao diện chuyên đề (chi tiết chương học)
+// Giao diện chuyên đề (chi tiết Chương học)
 // ==================================================================== 
 
 const { Title, Text, Paragraph } = Typography
@@ -31,7 +32,6 @@ const { Dragger } = Upload
 
 const ModunDetail = () => {
     const dispatch = useDispatch();
-    const history = useHistory();
     const idThematic = useParams().idThematic; // id of the Chapter from URL params
     const [activeTab, setActiveTab] = useState("materials")
     const [lessonForm] = Form.useForm();
@@ -43,6 +43,7 @@ const ModunDetail = () => {
     const [examToDelete, setExamToDelete] = useState(null);
     const [deleteModalVisible, setDeleteModalVisible] = useState(false)
     const [isThematicExamModalVisible, setIsThematicExamModalVisible] = useState(false)
+    const [isModalCriteriaVisible, setIsModalCriteriaVisible] = useState(false);
     const [addThematicExamForm] = Form.useForm();
 
     const thematic = useSelector(state => state.thematic.item.result);
@@ -66,7 +67,7 @@ const ModunDetail = () => {
         typeLesson: 'pdf',
         Uploading: false,
     });
-
+    
     useEffect(() => {
         dispatch(thematicActions.getThematic({ id: idThematic }, (res) => {
             if (res.status === 'success') {
@@ -118,6 +119,39 @@ const ModunDetail = () => {
         },
     };
     
+    const propsVideo = {
+        name: 'file',
+        action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+
+        beforeUpload: file => {
+        const isPDF = file.type === 'application/pdf' || file.type === 'video/mp4';
+        if (file.type === 'application/pdf') setState({ ...state, typeLesson: 'pdf' });
+        else if (file.type === 'video/mp4') setState({ ...state, typeLesson: 'video' });
+
+        if (!isPDF) {
+            message.error(`${file.name} có định dạng không phải là application/pdf hoặc video/mp4`);
+        }
+        return isPDF || Upload.LIST_IGNORE;
+        },
+
+        onChange(info) {       
+        setState({ ...state, filePdf: info.file.originFileObj });
+        },
+
+        async customRequest(options) {
+        const { onSuccess } = options;
+
+        setTimeout(() => {
+            onSuccess("ok");
+        }, 0);
+        },
+
+        onDrop(e) {
+        console.log('Dropped files', e.dataTransfer.files);
+        setState({...state, fileImg: ''});
+        },
+    };
+
     const propsFile = {
         name: 'file',
         action: '#',
@@ -208,7 +242,7 @@ const ModunDetail = () => {
             onChange={(mo_dun_id) => {
                 dispatch(thematicActions.getThematicsByIdModule({ idModule: mo_dun_id }))
             }}
-            placeholder="Chọn chương học"
+            placeholder="Chọn Chương học"
         >
             {options}
         </Select>
@@ -471,7 +505,7 @@ const ModunDetail = () => {
         )
     }
 
-    // event xoá chương học / đề thi modun
+    // event xoá Chương học / đề thi modun
     const handleDelete = () => {
         setSpinning(true);
         // call api
@@ -560,7 +594,7 @@ const ModunDetail = () => {
     
             const formData = new FormData();
             formData.append('ten_de_thi', values.ten_de_thi);
-            formData.append('loai_de_thi_id', 1); // 2 là đề thi chương học
+            formData.append('loai_de_thi_id', 1); // 2 là đề thi Chương học
             formData.append('kct_id', values.kct_id);
             formData.append('khoa_hoc_id', values.khoa_hoc_id);
             formData.append('mo_dun_id', values.mo_dun_id);
@@ -592,15 +626,17 @@ const ModunDetail = () => {
                     overlay={
                         <Menu>
                             <Menu.Item key="edit" icon={<EditOutlined />}
-                                onClick={() => {
+                                onClick={(e) => {
+                                    e.domEvent.stopPropagation();
                                     if (!exam.xuat_ban) {
-                                        dispatch(examActions.getExam({ id: exam.de_thi_id }, (res) => {
-                                            if (res.status === 'success') {
-                                                setState({ ...state, isEdit: true, idExam: exam.de_thi_id });
-                                                setIsThematicExamModalVisible(true);
-                                                addThematicExamForm.setFieldsValue(res.data)
-                                            }
-                                        }));
+                                        window.open(`/teacher/exam/detail/${exam?.de_thi_id}?loai_de_thi=DGNL`, '_blank');
+                                        // dispatch(examActions.getExam({ id: exam.de_thi_id }, (res) => {
+                                        //     if (res.status === 'success') {
+                                        //         setState({ ...state, isEdit: true, idExam: exam.de_thi_id });
+                                        //         setIsThematicExamModalVisible(true);
+                                        //         addThematicExamForm.setFieldsValue(res.data)
+                                        //     }
+                                        // }));
                                     } else 
                                         notification.warning({
                                             message: 'Cảnh báo',
@@ -611,12 +647,16 @@ const ModunDetail = () => {
                                 Cập nhật đề thi
                             </Menu.Item>
                             <Menu.Item key="hide" icon={(!exam.trang_thai || !exam.xuat_ban) ? <EyeOutlined /> : <EyeInvisibleOutlined />}
-                                onClick={() => handlePublishExam(exam)} // done
+                                onClick={(e) => {
+                                    e.domEvent.stopPropagation();
+                                    handlePublishExam(exam)} // done
+                                }
                             >
                                 {!exam.xuat_ban ? "Xuất bản đề thi" : !exam.trang_thai ? "Sử dụng đề thi" : "Ngừng sử dụng đề thi"}
                             </Menu.Item>
                             <Menu.Item key="delete" danger icon={<DeleteOutlined />}
-                                onClick={() => {
+                                onClick={(e) => {
+                                    e.domEvent.stopPropagation();
                                     setExamToDelete(exam)
                                     setDeleteModalVisible(true)
                                 }}
@@ -633,11 +673,11 @@ const ModunDetail = () => {
             )
 
             return (
-                <List.Item style={{ padding: "12px 0", border: "none" }} >
+                <List.Item style={{ padding: "12px 0", border: "none" }} onClick={() => handleViewExam(exam)}>
                     <div style={{ display: "flex", width: "100%", cursor: 'pointer',
                         alignItems: "center", opacity: (!exam.trang_thai || !exam.xuat_ban) ? 0.5 : 1 }}
                     >
-                        <Avatar onClick={() => handleViewExam(exam)}
+                        <Avatar 
                             size={40}
                             style={{
                                 backgroundColor: "#4c6ef5",
@@ -646,7 +686,7 @@ const ModunDetail = () => {
                             }}
                             icon={<FileTextOutlined />}
                         />
-                        <div style={{ flex: 1, minWidth: 0 }} onClick={() => handleViewExam(exam)}>
+                        <div style={{ flex: 1, minWidth: 0 }}>
                             <Text
                                 strong
                                 style={{
@@ -717,7 +757,7 @@ const ModunDetail = () => {
             <Text style={{ fontSize: "16px", color: "#595959", display: "block", marginBottom: "24px" }}>
                 Chưa có đề thi chuyên đề
             </Text>
-            {(checkCriteria?.status === 'success' && checkCriteria?.data?.chuyen_de_id === Number(idThematic)) ? '' :
+            {(checkCriteria?.status === 'success' && checkCriteria?.data?.mo_dun_id === thematic?.data?.mo_dun_id) ? '' :
                 <Alert
                     message="Bạn chưa tạo tiêu chí cho đề thi chuyên đề!"
                     type="warning"
@@ -731,7 +771,7 @@ const ModunDetail = () => {
                     }}
                 />
             }
-            {(checkCriteria?.status === 'success' && checkCriteria?.data?.chuyen_de_id === Number(idThematic)) &&
+            {(checkCriteria?.status === 'success' && checkCriteria?.data?.mo_dun_id === thematic?.data?.mo_dun_id) &&
                 <Button
                     type="primary"
                     size="large"
@@ -751,7 +791,7 @@ const ModunDetail = () => {
                     Thêm đề thi
                 </Button>
             }
-            {(checkCriteria?.status === 'success' && checkCriteria?.data?.chuyen_de_id === Number(idThematic)) ? '' :
+            {(checkCriteria?.status === 'success' && checkCriteria?.data?.mo_dun_id === thematic?.data?.mo_dun_id) ? '' :
                 <Button
                     type="primary"
                     size="large"
@@ -766,7 +806,7 @@ const ModunDetail = () => {
                         width: "100%",
                     }}
                     onClick={() => {
-                        history.push(`/teacher/criteria`);
+                        setIsModalCriteriaVisible(true);
                     }}
                 >
                     Tạo tiêu chí đề thi chuyên đề
@@ -774,6 +814,10 @@ const ModunDetail = () => {
             }
         </div>
     )
+
+    const handleCancelCriteriaModal = () => {
+        setIsModalCriteriaVisible(false)
+    }
 
     return (
         <Spin spinning={spinning} tip="Đang xử lý...">
@@ -817,7 +861,8 @@ const ModunDetail = () => {
                                             const menu = (
                                                 <Menu>
                                                     <Menu.Item key="edit" icon={<EditOutlined />}
-                                                        onClick={() => {
+                                                        onClick={(e) => {
+                                                            e.domEvent.stopPropagation();
                                                             dispatch(lessonActions.getLesson({ id: material?.bai_giang_id }, (res) => {
                                                                 if (res.status === 'success') {
                                                                     setState({ ...state, isEdit: true, idLesson: material?.bai_giang_id, fileImg: '', fileVid: '', idModule: thematic?.data?.mo_dun_id });
@@ -830,12 +875,18 @@ const ModunDetail = () => {
                                                         Cập nhật bài giảng
                                                     </Menu.Item>
                                                     <Menu.Item key="hide" icon={(material.trang_thai === 0) ? <EyeOutlined /> : <EyeInvisibleOutlined />}
-                                                        onClick={() => handleHideLesson(material)}
+                                                        onClick={(e) => {
+                                                            e.domEvent.stopPropagation();
+                                                            handleHideLesson(material)}
+                                                        }
                                                     >
                                                         {material.trang_thai === 0 ? "Hiện bài giảng" : "Ẩn bài giảng"}
                                                     </Menu.Item>
                                                     <Menu.Item key="delete" danger icon={<DeleteOutlined />}
-                                                        onClick={() => handleDeleteLesson(material)}
+                                                        onClick={(e) => {
+                                                            e.domEvent.stopPropagation();
+                                                            handleDeleteLesson(material)}
+                                                        }
                                                     >
                                                         Xóa bài giảng
                                                     </Menu.Item>
@@ -1089,12 +1140,12 @@ const ModunDetail = () => {
                                 <Col span={12}>
                                     <Form.Item
                                         className="input-col"
-                                        label="chương học"
+                                        label="Chương học"
                                         name="mo_dun"
                                         rules={[
                                             {
                                                 required: true,
-                                                message: 'chương học là bắt buộc',
+                                                message: 'Chương học là bắt buộc',
                                             },
                                         ]}
                                         initialValue={thematic?.data?.mo_dun_id}
@@ -1132,7 +1183,7 @@ const ModunDetail = () => {
                             </Form.Item>
 
                             <Form.Item className="input-col" label="Chọn pdf / video" name="bai_giang">
-                                <Dragger {...propsImage} maxCount={1}
+                                <Dragger {...propsVideo} maxCount={1}
                                     listType="picture"
                                     className="upload-list-inline"
                                 >
@@ -1227,7 +1278,7 @@ const ModunDetail = () => {
                 
                 {/* add exam modun */}
                 <Modal
-                    title={state.isEdit ? 'Cập nhật đề thi chương học' : "Tạo đề thi chương học"}
+                    title={state.isEdit ? 'Cập nhật đề thi Chương học' : "Tạo đề thi Chương học"}
                     open={isThematicExamModalVisible}
                     onCancel={() => {
                         setState({ ...state, isEdit: false, idExam: '', fileImg: '', fileVid: '', fileExam: '' })
@@ -1265,7 +1316,7 @@ const ModunDetail = () => {
                             <Form.Item
                                 label="Chương học"            
                                 name="mo_dun_id"
-                                rules={[{ required: true, message: "Vui lòng chọn chương học" }]}
+                                rules={[{ required: true, message: "Vui lòng chọn Chương học" }]}
                                 initialValue={thematic?.data?.mo_dun_id}
                             >
                                 {renderModules()}
@@ -1342,6 +1393,12 @@ const ModunDetail = () => {
                 <ViewExam exam={exam?.data} isExamViewModalVisible={isExamViewModalVisible} setIsExamViewModalVisible={setIsExamViewModalVisible}
                     handlePublishExam={handlePublishExam} 
                 />
+
+                {/* Modal add criteria */}
+                <ModalCriteria thematic={true} isModalVisible={isModalCriteriaVisible} handleCancel={handleCancelCriteriaModal}
+                    initCourse={thematic?.data?.khoa_hoc_id} initModule={thematic?.data?.mo_dun_id} 
+                />
+
             </div>
         </Spin>
     )

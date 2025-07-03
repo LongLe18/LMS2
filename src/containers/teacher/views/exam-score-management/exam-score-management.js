@@ -470,7 +470,7 @@ const ExamScoreManagement = () => {
               }}
               onClick={() => setActiveTab("2")}
             >
-              Điểm thi chương học
+              Điểm thi Chương học
             </Button>
             <Button
               type={activeTab === "1" ? "primary" : "default"}
@@ -495,7 +495,7 @@ const ExamScoreManagement = () => {
         <Card style={{ borderRadius: "8px" }}>
           <Title level={4} style={{ marginBottom: "24px", color: "#262626" }}>
             {activeTab === '3' && "Danh sách điểm thi tổng hợp"}
-            {activeTab === '2' && "Danh sách điểm thi chương học"}
+            {activeTab === '2' && "Danh sách điểm thi Chương học"}
             {activeTab === '1' && "Danh sách điểm thi chuyên đề"}
           </Title>
 

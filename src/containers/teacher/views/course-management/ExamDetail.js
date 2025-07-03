@@ -4,7 +4,7 @@ import config from '../../../../configs/index';
 import Hashids from 'hashids';
 import constants from '../../../../helpers/constants';
 import MathJax from 'react-mathjax';
-import './css/ExamDetail.css'
+import './ExamDetail.css'
 // antd
 import { Row, Col, Form, Steps, Tabs, Modal,
     Input, Upload, message, Result,
@@ -764,7 +764,7 @@ const ExamDetailPage = () => {
             {loading && <LoadingCustom/>}
             <Row className="app-main" gutter={25}>
                 <Col xs={24} className="body-content">
-                    <div className='exam-page'>
+                    <div className='exam-page' style={{marginBottom: 12}}>
                         <Steps current={currentStep}>
                             <Step title="Thông tin chung" />
                             <Step title="Danh sách câu hỏi" />
@@ -871,7 +871,7 @@ const ExamDetailPage = () => {
                         </TabPane>
                     
                         <TabPane tab="Tạo câu hỏi" key="step_1">
-                            <Row gutter={[16, 16]} style={{marginBottom: 12}}>
+                            {/* <Row gutter={[16, 16]} style={{marginBottom: 12}}>
                                 {majors?.data.map((major) => (
                                     <Col xl={4} lg={6} md={12} sm={12} xs={24}>
                                         <div className="dashboard-stat stat-user">
@@ -889,7 +889,7 @@ const ExamDetailPage = () => {
                                         </div>
                                     </Col>
                                 ))}
-                            </Row>  
+                            </Row>   */}
                             <Form layout="vertical" className="QuestionForm" onFinish={handleSaveQuestion} form={questionForm} initialValues={defaultQuestion}>
                                 <Row gutter={25}>
                                     <Col xl={18} sm={24} xs={24} className="left-content">

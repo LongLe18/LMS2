@@ -12,6 +12,7 @@ import ReplyPage from './views/reply/reply';
 import ReplyDetailPage from './views/reply/detail-reply';
 import ProfilePage from './views/profile/profile';
 import ExamScoreManagement  from './views/exam-score-management/exam-score-management'
+import ExamDetailPage from './views/course-management/ExamDetail';
 
 import { shouldHaveAccessPermission } from "helpers/common.helper.js";
 
@@ -52,15 +53,15 @@ const routes = [
     {
         id: "detailCourse",
         path: "/teacher/detail-course/:idCourse", // chi tiết khoá học
-        name: "Chi tiết khoá học", // chương học
+        name: "Chi tiết khoá học", // Chương học
         hide: true,
         icon: <GlobalOutlined />,
         render: (props) => <CourseDetail {...props}/>
     },
     {
         id: "detailChapter",
-        path: "/teacher/detail-chapter/:idChapter", // chi tiết chương học
-        name: "Chi tiết chương học",
+        path: "/teacher/detail-chapter/:idChapter", // chi tiết Chương học
+        name: "Chi tiết Chương học",
         hide: true,
         icon: <GlobalOutlined />,
         render: (props) => <ChapterDetail {...props}/>
@@ -72,6 +73,14 @@ const routes = [
         hide: true,
         icon: <GlobalOutlined />,
         render: (props) => <ModuleDetail {...props}/>
+    },
+    {
+        id: "examdetail",
+        path: '/teacher/exam/detail/:id',
+        hide: true,
+        name: "Chi tiết đề thi",
+        icon: "nc-icon nc-bank",
+        render: (props) => <ExamDetailPage {...props} />
     },
     {
         "id": "scorEexam",

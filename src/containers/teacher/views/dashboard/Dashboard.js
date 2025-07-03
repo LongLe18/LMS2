@@ -68,7 +68,6 @@ function Dashboard() {
 
   useEffect(() => {
     dispatch(notificationAction.getNOTIFICATIONsByUser({}, (res) => {
-      console.log(res);
     }));
     getTeaching();
     getDashboardData();
@@ -197,7 +196,7 @@ function Dashboard() {
                             />
                             <div>
                                 <div style={{ fontSize: "24px", fontWeight: 500, color: "#242424" }}>{dashboardData?.so_modun}</div>
-                                <div style={{ color: "#242424", fontSize: "14px", fontWeight: 400 }}>Số lượng chương học</div>
+                                <div style={{ color: "#242424", fontSize: "14px", fontWeight: 400 }}>Số lượng Chương học</div>
                             </div>
                         </div>
                     </Card>

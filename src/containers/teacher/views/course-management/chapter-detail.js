@@ -13,6 +13,7 @@ import './chapter-detail.css';
 import config from '../../../../configs/index';
 import axios from 'axios';
 import ViewExam from "./view-exam";
+import ModalCriteria from './modal-criteria';
 
 import * as courseAction from '../../../../redux/actions/course';
 import * as programmeAction from '../../../../redux/actions/programme';
@@ -24,7 +25,7 @@ import * as criteriaActions from '../../../../redux/actions/criteria';
 import { useSelector, useDispatch } from "react-redux";
 
 // ==================================================================== 
-// Giao diện chương học (chi  tiết khoá học) 
+// Giao diện Chương học (chi  tiết khoá học) 
 // ==================================================================== 
 
 const { Title, Text, Paragraph } = Typography
@@ -50,6 +51,7 @@ const ChapterDetail = () => {
   const [thematicToDelete, setThematicToDelete] = useState(null);
   const [spinning, setSpinning] = useState(false);
   const [isExamViewModalVisible, setIsExamViewModalVisible] = useState(false);
+  const [isModalCriteriaVisible, setIsModalCriteriaVisible] = useState(false);
 
   const module = useSelector(state => state.part.item.result);
   const modules = useSelector(state => state.part.list.result);
@@ -370,7 +372,7 @@ const ChapterDetail = () => {
     }));
   }
 
-  // event xoá chương học / đề thi modun
+  // event xoá Chương học / đề thi modun
   const handleDelete = () => {
     setSpinning(true);
     if (examToDelete) { // Delete exam
@@ -400,12 +402,12 @@ const ChapterDetail = () => {
       return
     }
 
-    if (modunToDelete) { // Delete chương học
+    if (modunToDelete) { // Delete Chương học
       const callback = (res) => {
         if (res.statusText === 'OK' && res.status === 200) {
           notification.success({
             message: 'Thành công',
-            description: 'Xóa chương học thành công',
+            description: 'Xóa Chương học thành công',
           })
           setDeleteModalVisible(false)
           setModunToDelete(null)
@@ -415,7 +417,7 @@ const ChapterDetail = () => {
         } else {
           notification.error({
             message: 'Thông báo',
-            description: 'Xóa chương học thất bại',
+            description: 'Xóa Chương học thất bại',
           })
           setSpinning(false);
           setDeleteModalVisible(false)
@@ -485,11 +487,11 @@ const ChapterDetail = () => {
         </div>
       </div>
       <Text style={{ fontSize: "16px", color: "#595959", display: "block", marginBottom: "24px" }}>
-        Chưa có đề thi chương học
+        Chưa có đề thi Chương học
       </Text>
       {(checkCriteria?.status === 'success' && checkCriteria?.data?.mo_dun_id === Number(idChapter)) ? '' :
         <Alert
-          message="Bạn chưa tạo tiêu chí cho đề thi chương học này!"
+          message="Bạn chưa tạo tiêu chí cho đề thi Chương học này!"
           type="warning"
           showIcon
           icon={<ExclamationCircleOutlined />}
@@ -536,10 +538,10 @@ const ChapterDetail = () => {
             width: "100%",
           }}
           onClick={() => {
-            history.push(`/teacher/criteria`);
+            setIsModalCriteriaVisible(true);
           }}
         >
-          Tạo tiêu chí đề thi chương học
+          Tạo tiêu chí đề thi Chương học
         </Button>
       }
     </div>
@@ -608,7 +610,7 @@ const ChapterDetail = () => {
 
         const formData = new FormData();
         formData.append('ten_de_thi', values.ten_de_thi);
-        formData.append('loai_de_thi_id', 2); // 2 là đề thi chương học
+        formData.append('loai_de_thi_id', 2); // 2 là đề thi Chương học
         formData.append('kct_id', values.kct_id);
         formData.append('khoa_hoc_id', values.khoa_hoc_id);
         formData.append('mo_dun_id', values.mo_dun_id);
@@ -661,12 +663,16 @@ const ChapterDetail = () => {
             const menu = (
               <Menu>
                 <Menu.Item key="hide" icon={(!exam.trang_thai || !exam.xuat_ban) ? <EyeOutlined /> : <EyeInvisibleOutlined />}
-                  onClick={() => handlePublishExam(exam)} // done
+                  onClick={(e) => {
+                    e.domEvent.stopPropagation();
+                    handlePublishExam(exam)} // done
+                  }
                 >
                   {!exam.xuat_ban ? "Xuất bản đề thi" : !exam.trang_thai ? "Sử dụng đề thi" : "Ngừng sử dụng đề thi"}
                 </Menu.Item>
                 <Menu.Item key="hide" icon={<CopyOutlined />}
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.domEvent.stopPropagation();
                     if (exam.xuat_ban) reuseExam(exam.de_thi_id)
                     else 
                       notification.warning({
@@ -678,15 +684,10 @@ const ChapterDetail = () => {
                   Nhân bản đề thi
                 </Menu.Item>
                 <Menu.Item key="edit" icon={<EditOutlined />}
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.domEvent.stopPropagation();
                     if (!exam.xuat_ban) {
-                      dispatch(examActions.getExam({ id: exam.de_thi_id }, (res) => {
-                        if (res.status === 'success') {
-                          setState({ ...state, isEdit: true, idExam: exam.de_thi_id });
-                          setIsModunExamModalVisible(true);
-                          addModunExamForm.setFieldsValue(res.data)
-                        }
-                      }));
+                      window.open(`/teacher/exam/detail/${exam?.de_thi_id}?loai_de_thi=DGNL`, '_blank');
                     } else 
                       notification.warning({
                         message: 'Cảnh báo',
@@ -697,7 +698,8 @@ const ChapterDetail = () => {
                   Cập nhật đề thi
                 </Menu.Item>
                 <Menu.Item key="delete" icon={<DeleteOutlined />} danger
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.domEvent.stopPropagation();
                     setExamToDelete(exam)
                     setDeleteModalVisible(true)
                   }}
@@ -753,12 +755,12 @@ const ChapterDetail = () => {
       </>
   )
   
-  // event đổi trạng thái chương học
+  // event đổi trạng thái Chương học
   const ChangeStatusModule = (module) => {
     Modal.confirm({
       width: 500,
       icon: <ExclamationCircleOutlined />,
-      content: module?.trang_thai === 1 ? 'Bạn có chắc chán muốn dừng hoạt động chương học này?' : 'Bạn có chắc chán muốn kích hoạt chương học này?',
+      content: module?.trang_thai === 1 ? 'Bạn có chắc chán muốn dừng hoạt động Chương học này?' : 'Bạn có chắc chán muốn kích hoạt Chương học này?',
       okText: 'Đồng ý',
       cancelText: 'Hủy',
       onOk() {
@@ -784,12 +786,12 @@ const ChapterDetail = () => {
     });
   }
 
-  // Event cập nhật chương học 
+  // Event cập nhật Chương học 
   const updateChapter = (values) => {
     if (values.khoa_hoc_id === undefined) { // check null
       notification.warning({
         message: 'Cảnh báo',
-        description: 'Thông tin chương học chưa đủ',
+        description: 'Thông tin Chương học chưa đủ',
       })
       return;
     }
@@ -812,22 +814,26 @@ const ChapterDetail = () => {
       if (res.data.status === 'success' && res.status === 200) {
         chapterForm.resetFields();
         setIsAddChapterModalVisible(false);
-        // request api lấy  chương học mới
+        // request api lấy  Chương học mới
         dispatch(partActions.getModule({ id: idChapter }));
         notification.success({
           message: 'Thành công',
-          description: 'Cập nhật chương học thành công'
+          description: 'Cập nhật Chương học thành công'
         })
       } else {
         notification.error({
           message: 'Thông báo',
-          description: 'Cập nhật chương học thất bại',
+          description: 'Cập nhật Chương học thất bại',
         })
       }
     };
     dispatch(partActions.EditModule({ formData: formData, idModule: module?.data.mo_dun_id }, callback));
     
   };
+
+  const handleCancelCriteriaModal = () => {
+    setIsModalCriteriaVisible(false)
+  }
 
   return (
     <Spin spinning={spinning} tip="Đang xử lý...">
@@ -886,7 +892,7 @@ const ChapterDetail = () => {
           <Col xs={24} lg={12}>
             <Card style={{ borderRadius: "8px" }}>
               <Title level={4} style={{ marginBottom: "16px", color: "#262626" }}>
-                Nội dung chương học
+                Nội dung Chương học
               </Title>
 
               <Tabs activeKey={activeTab} onChange={setActiveTab}>
@@ -911,7 +917,8 @@ const ChapterDetail = () => {
                       const menu = (
                         <Menu>
                           <Menu.Item key="edit" icon={<EditOutlined />}
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.domEvent.stopPropagation();
                               dispatch(thematicActions.getThematic({ id: topic?.chuyen_de_id }, (res) => {
                                 if (res.status === 'success') {
                                   setState({ ...state, isEdit: true, idThematic: topic?.chuyen_de_id });
@@ -924,7 +931,8 @@ const ChapterDetail = () => {
                             Cập nhật chuyên đề
                           </Menu.Item>
                           <Menu.Item key="hide" icon={<EyeInvisibleOutlined />}
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.domEvent.stopPropagation();
                               let data = {
                                 "trang_thai": !topic.trang_thai,
                               }
@@ -947,7 +955,8 @@ const ChapterDetail = () => {
                             {topic.trang_thai ? 'Ẩn chuyên đề' : 'Hiện chuyên đề'}
                           </Menu.Item>
                           <Menu.Item key="delete" icon={<DeleteOutlined />} danger
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.domEvent.stopPropagation();
                               setThematicToDelete(topic);
                               setDeleteModalVisible(true);
                             }}
@@ -958,7 +967,17 @@ const ChapterDetail = () => {
                       )
 
                       return (
-                        <List.Item className="modun-item" onClick={() => history.push(`/teacher/module-detail/${topic.chuyen_de_id}`)}>
+                        <List.Item className="modun-item" 
+                          onClick={() => {
+                            const dataPath = JSON.parse(localStorage.getItem('dataPath')) || [];
+                            dataPath.push({
+                                title: topic.ten_chuyen_de,
+                                path: `/teacher/module-detail/${topic.chuyen_de_id}`
+                            });
+                            localStorage.setItem('dataPath', JSON.stringify(dataPath));
+                            history.push(`/teacher/module-detail/${topic.chuyen_de_id}`)
+                          }}
+                        >
                           <div className="modun-item-detail" style={{opacity: !topic.trang_thai ? 0.5 : 1}}>
                             <Avatar className="avatar" size={48} icon={<FileTextOutlined />} />
                             <div style={{ flex: 1, minWidth: 0 }}>
@@ -1006,7 +1025,7 @@ const ChapterDetail = () => {
                         fontWeight: "500",
                       }}
                     >
-                      Đề thi chương học ({exams?.totalCount})
+                      Đề thi Chương học ({exams?.totalCount})
                     </span>
                   }
                   key="exams"
@@ -1070,7 +1089,7 @@ const ChapterDetail = () => {
                 <Form.Item
                   label="Chương học"
                   name="mo_dun_id"
-                  rules={[{ required: true, message: "Vui lòng chọn chương học" }]}
+                  rules={[{ required: true, message: "Vui lòng chọn Chương học" }]}
                   initialValue={module?.data?.mo_dun_id}
                 >
                   {renderModules()}
@@ -1147,7 +1166,7 @@ const ChapterDetail = () => {
         
         {/* edit Chapter Modal */}
         <Modal
-          title={'Cập nhật chương học'}
+          title={'Cập nhật Chương học'}
           open={isAddChapterModalVisible}
           onCancel={() => {
             setIsAddChapterModalVisible(false)
@@ -1187,11 +1206,11 @@ const ChapterDetail = () => {
             <Row gutter={16}>
               <Col span={12}>
                 <Form.Item
-                  label="Tên chương học"
+                  label="Tên Chương học"
                   name="ten_mo_dun"
-                  rules={[{ required: true, message: "Vui lòng nhập tên chương học" }]}
+                  rules={[{ required: true, message: "Vui lòng nhập tên Chương học" }]}
                 >
-                  <Input placeholder="Nhập tên chương học" />
+                  <Input placeholder="Nhập tên Chương học" />
                 </Form.Item>
               </Col>
               <Col span={12}>
@@ -1251,12 +1270,12 @@ const ChapterDetail = () => {
               <Col span={12}>
                 <Form.Item
                     name="loai_tong_hop"
-                  label="Loại chương học"
+                  label="Loại Chương học"
                   initialValue={1}
                   rules={[
                     {
                       required: true,
-                      message: 'Loại chương học là trường bắt buộc.',
+                      message: 'Loại Chương học là trường bắt buộc.',
                     },
                   ]}
                 >
@@ -1265,7 +1284,7 @@ const ChapterDetail = () => {
                         Phần thi tổng hợp
                       </Radio>
                       {/* <Radio className="option-payment" value={2}>
-                        Phần thi chương học
+                        Phần thi Chương học
                       </Radio> */}
                       <Radio className="option-payment" value={0}>
                         Phần bài học
@@ -1275,10 +1294,10 @@ const ChapterDetail = () => {
               </Col>
             </Row>
 
-            <Form.Item label="Mô tả chương học" name="mo_ta">
+            <Form.Item label="Mô tả Chương học" name="mo_ta">
               <Input.TextArea
                 rows={4}
-                placeholder="Mô tả về chương học"
+                placeholder="Mô tả về Chương học"
                 maxLength={1000}
                 showCount
                 style={{ resize: "none" }}
@@ -1391,7 +1410,7 @@ const ChapterDetail = () => {
         
         {/* add exam modun */}
         <Modal
-          title={state.isEdit ? 'Cập nhật đề thi chương học' : "Tạo đề thi chương học"}
+          title={state.isEdit ? 'Cập nhật đề thi Chương học' : "Tạo đề thi Chương học"}
           open={isModunExamModalVisible}
           onCancel={() => {
             setState({ ...state, isEdit: false, idExam: '', fileImg: '', fileVid: '', fileExam: '' })
@@ -1429,7 +1448,7 @@ const ChapterDetail = () => {
               <Form.Item
                 label="Chương học"            
                 name="mo_dun_id"
-                rules={[{ required: true, message: "Vui lòng chọn chương học" }]}
+                rules={[{ required: true, message: "Vui lòng chọn Chương học" }]}
                 initialValue={module?.data?.mo_dun_id}
               >
                 {renderModules()}
@@ -1502,6 +1521,12 @@ const ChapterDetail = () => {
         <ViewExam exam={exam?.data} isExamViewModalVisible={isExamViewModalVisible} setIsExamViewModalVisible={setIsExamViewModalVisible}
           handlePublishExam={handlePublishExam} 
         />
+
+        {/* Modal add criteria */}
+        <ModalCriteria module={true} isModalVisible={isModalCriteriaVisible} handleCancel={handleCancelCriteriaModal}
+          initCourse={module?.data?.khoa_hoc_id} initModule={Number(idChapter)}
+        />
+
       </div>
     </Spin>
   )

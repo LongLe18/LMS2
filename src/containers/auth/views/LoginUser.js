@@ -126,7 +126,7 @@ const LoginUserPage = (props) => {
                             </Form.Item>
                         </Form>
                         <div className="other-links" style={{marginBottom: "15px",textAlign: 'center'}}>
-                            <NavLink className="login-form-forgot font-weight-5" to="/auth/register">
+                            <NavLink className="login-form-forgot font-weight-5" to="/auth/register?typeUser=1">
                                 Đăng ký
                             </NavLink>{' '}
                             |{' '}

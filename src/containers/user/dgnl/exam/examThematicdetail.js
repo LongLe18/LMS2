@@ -238,7 +238,7 @@ const ExamThematicViewPage = (props) => {
                 <Content className="app-content">                
                     <div className="header-exam">
                         <h1>ĐỀ THI ĐÁNH GIÁ NĂNG LỰC ĐẠI HỌC QUỐC GIA HÀ NỘI</h1>
-                        <h3 className='m-0'>chương học: {module.data.ten_mo_dun}</h3>
+                        <h3 className='m-0'>Chương học: {module.data.ten_mo_dun}</h3>
                         <h3 className='m-0'>Chuyên đề: {thematic.data.ten_chuyen_de}</h3>
                         <AuthModal />
                     </div>     

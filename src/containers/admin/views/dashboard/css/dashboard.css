@@ -573,11 +573,11 @@ a {
 
 .app-sider .app-menu .m-active,
 .app-sider .app-menu .ant-menu-submenu-active {
-  background: #faad14 !important;
+  background: #292B8E12 !important;
 }
 
 .app-sider .app-menu .ant-menu-submenu:hover {
-  background: #faad14;
+  background: #292B8E12;
 }
 
 .app-sider .app-menu .m-active>a {
@@ -622,7 +622,7 @@ a {
 
 .app-sider .app-menu .ant-menu-submenu-arrow::before,
 .app-sider .app-menu .ant-menu-submenu-arrow::after {
-  background: #fff !important;
+  background: #000 !important;
 }
 
 .app-sider .app-menu li a,
