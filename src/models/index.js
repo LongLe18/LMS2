@@ -428,6 +428,11 @@ ExamSetStudent.hasOne(CourseMedia, {
     sourceKey: 'khtt_id',
     constraints: false,
 });
+Student.hasOne(ExamSetStudent, {
+    foreignKey: 'hoc_vien_id',
+    sourceKey: 'hoc_vien_id',
+    constraints: false,
+});
 
 Media.hasOne(Staff, {
     foreignKey: 'nhan_vien_id',

@@ -49,6 +49,18 @@ router.get(
     tryCatch(courseController.getExamSet)
 );
 router.get('/:id/exam-set/v2', tryCatch(courseController.getExamSetv2));
+router.get(
+    '/exam-set/:id/student/list',
+    authToken,
+    permission('examSet:studentList'),
+    tryCatch(courseController.getStudentsv2)
+);
+router.delete(
+    '/exam-set/:id/student/:studentId',
+    authToken,
+    permission('examSet:removeStudent'),
+    tryCatch(courseController.removeStudent)
+);
 router.put(
     '/exam-set/:id',
     authToken,

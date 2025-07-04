@@ -86,7 +86,7 @@ const findAllv2 = async (req, res) => {
                 model: CourseType,
                 attributes: ['lkh_id', 'ten'],
             },
-             {
+            {
                 model: CourseStudent,
                 attributes: [],
             },
@@ -582,6 +582,47 @@ const getStudents = async (req, res) => {
         ],
         where: {
             '$khoa_hoc_hoc_vien.khoa_hoc_id$': Number(req.params.id),
+            ...(req.query.search && {
+                ten_hoc_vien: {
+                    [Op.like]: `%${decodeURI(req.query.search)}%`,
+                },
+            }),
+            ...(req.query.ttp_id && { ttp_id: req.query.ttp_id }),
+        },
+        offset:
+            (Number(req.query.pageIndex || 1) - 1) *
+            Number(req.query.pageSize || 10),
+        limit: Number(req.query.pageSize || 10),
+        order: [
+            req.query.sortBy
+                ? req.query.sortBy.split(',')
+                : ['ngay_tao', 'DESC'],
+        ],
+    });
+
+    return res.status(200).send({
+        status: 'success',
+        data: rows,
+        pageIndex: Number(req.query.pageIndex || 1),
+        pageSize: Number(req.query.pageSize || 10),
+        totalCount: count,
+        totalPage: Math.ceil(count / Number(req.query.pageSize || 10)),
+        message: null,
+    });
+};
+
+const getStudentsv2 = async (req, res) => {
+    const { count, rows } = await Student.findAndCountAll({
+        attributes: ['hoc_vien_id', 'ho_ten', 'email', 'sdt', 'truong_hoc'],
+        include: [
+            { model: ExamSetStudent, attributes: [], required: true },
+            {
+                model: Province,
+                attributes: ['ttp_id', 'ten'],
+            },
+        ],
+        where: {
+            '$bo_de_hoc_vien.khoa_hoc_id$': Number(req.params.id),
             ...(req.query.search && {
                 ten_hoc_vien: {
                     [Op.like]: `%${decodeURI(req.query.search)}%`,
@@ -1362,11 +1403,17 @@ const dashboardByTeacher = async (req, res) => {
                 'so_modun',
             ],
             [
-                fn('COUNT', literal('DISTINCT `mo_duns->chuyen_des`.`chuyen_de_id`')),
+                fn(
+                    'COUNT',
+                    literal('DISTINCT `mo_duns->chuyen_des`.`chuyen_de_id`')
+                ),
                 'so_chuyen_de',
             ],
             [
-                fn('COUNT', literal('DISTINCT `khoa_hoc_hoc_viens`.`hoc_vien_id`')),
+                fn(
+                    'COUNT',
+                    literal('DISTINCT `khoa_hoc_hoc_viens`.`hoc_vien_id`')
+                ),
                 'so_hoc_vien',
             ],
         ],
@@ -1403,6 +1450,36 @@ const dashboardByTeacher = async (req, res) => {
     });
 };
 
+const removeStudent = async (req, res) => {
+    const examSetStudent = await ExamSetStudent.findOne({
+        where: {
+            khoa_hoc_id: req.params.id,
+            hoc_vien_id: req.params.studentId,
+        },
+    });
+
+    if (!examSetStudent) {
+        return res.status(404).send({
+            status: 'error',
+            data: null,
+            message: 'ExamSet student not found.',
+        });
+    }
+
+    await ExamSetStudent.destroy({
+        where: {
+            khoa_hoc_id: req.params.id,
+            hoc_vien_id: req.params.studentId,
+        },
+    });
+
+    return res.status(200).send({
+        status: 'success',
+        data: null,
+        message: 'Deleted successfully',
+    });
+};
+
 module.exports = {
     getStatistical,
     findAll,
@@ -1434,4 +1511,6 @@ module.exports = {
     downloadExamSet,
     dashboardByTeacher,
     findAllv2,
+    getStudentsv2,
+    removeStudent,
 };
