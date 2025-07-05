@@ -622,7 +622,7 @@ const getStudentsv2 = async (req, res) => {
             },
         ],
         where: {
-            '$bo_de_hoc_vien.khoa_hoc_id$': Number(req.params.id),
+            '$bo_de_hoc_vien.khtt_id$': Number(req.params.khttId),
             ...(req.query.search && {
                 ten_hoc_vien: {
                     [Op.like]: `%${decodeURI(req.query.search)}%`,

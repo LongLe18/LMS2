@@ -1,3 +1,8 @@
+// =====================
+// Model Imports
+// =====================
+
+// Core Models
 const Course = require('./course.model');
 const Lesson = require('./lesson.model');
 const Modun = require('./modun.model');
@@ -6,38 +11,60 @@ const Role = require('./role.model');
 const Staff = require('./staff.model');
 const Student = require('./student.model');
 const Teacher = require('./teacher.model');
-const Thematic = require('./thematic.model');
 const Grade = require('./grade.model');
 const Majoring = require('./majoring.model');
-const Answer = require('./answer.model');
-const Exam = require('./exam.model');
-const ExamType = require('./exam-type.model');
-const Exceprt = require('./exceprt.model');
+const Department = require('./department.model');
+
+// Thematic & Criteria
+const Thematic = require('./thematic.model');
 const ModunCriteria = require('./modun-criteria.model');
-const Question = require('./question.model');
-const SelectedAnswer = require('./selected-answer.model');
-const StudentExam = require('./student-exam.model');
 const SyntheticCriteria = require('./synthetic-criteria.model');
 const OnlineCriteria = require('./online-criteria.model');
 const DGNLCriteria = require('./dgnl-criteria.model');
+const DGTDCriteria = require('./dgtd-criteria.model');
 const ThematicCriteria = require('./thematic-criteria.model');
+
+// Exam & Question
+const Exam = require('./exam.model');
+const ExamType = require('./exam-type.model');
 const ExamQuestion = require('./exam-question.model');
+const Question = require('./question.model');
+const QuestionDetail = require('./question-detail.model');
+const Option = require('./option.model');
+const Answer = require('./answer.model');
+const SelectedAnswer = require('./selected-answer.model');
+const StudentExam = require('./student-exam.model');
+const ExamSetStudent = require('./exam-set-student.model');
+
+// Exceprt
+const Exceprt = require('./exceprt.model');
+const ExceprtType = require('./exceprt-type.model');
+
+// Document & Media
 const Document = require('./document.model');
 const DocumentAd = require('./document-ad.model');
+const DocumentType = require('./document-type.model');
+const Media = require('./media.model');
+const CourseMedia = require('./course-media.model');
+
+// Course Ads & Description
 const CourseAd = require('./course-ad.model');
 const TeacherCourseAd = require('./teacher-course-ad.model');
-const DocumentType = require('./document-type.model');
-const Menu = require('./menu.model');
-const MenuType = require('./menu-type.model');
 const CourseDescription = require('./course-description.model');
+
+// Discount & Invoice
 const DealerDiscount = require('./dealer-discount.model');
 const DetailedDiscount = require('./detailed-discount.model');
 const DetailedInvoice = require('./detailed-invoice.model');
 const DiscountCode = require('./discount-code.model');
 const Invoice = require('./invoice.model');
+
+// Comment & Notification
 const Comment = require('./comment.model');
 const SideComment = require('./side-comment.model');
 const Notification = require('./notification.model');
+
+// Other Models
 const AccountBank = require('./account-bank.model');
 const Footer = require('./footer.model');
 const Contact = require('./contact.model');
@@ -47,34 +74,36 @@ const Province = require('./province.model');
 const Evaluate = require('./evaluate.model');
 const DGNLEvaluate = require('./dgnl-evaluate.model');
 const DGTDEvaluate = require('./dgtd-evaluate.model');
-const DGTDCriteria = require('./dgtd-criteria.model');
-const ExceprtType = require('./exceprt-type.model');
-const QuestionDetail = require('./question-detail.model');
-const Option = require('./option.model');
 const CourseType = require('./course-type.model');
-const Media = require('./media.model');
-const CourseMedia = require('./course-media.model');
-const ExamSetStudent = require('./exam-set-student.model');
 const Permission = require('./permission.model');
 const Position = require('./position.model');
 const PositionPermission = require('./position-permission.model');
-const Department = require('./department.model');
+const Menu = require('./menu.model');
+const MenuType = require('./menu-type.model');
 
-//khoa ngoai khoahoc
+// =====================
+// Model Associations
+// =====================
+
+// --- Program & Course ---
 Program.hasMany(Course, { foreignKey: 'kct_id', constraints: false });
 Course.belongsTo(Program, { foreignKey: 'kct_id', constraints: false });
-//khoa ngoai modun
+
+// --- Course & Modun ---
 Course.hasMany(Modun, { foreignKey: 'khoa_hoc_id', constraints: false });
 Modun.belongsTo(Course, { foreignKey: 'khoa_hoc_id', constraints: false });
-//khoa ngoai chuyende
+
+// --- Modun & Thematic ---
 Modun.hasMany(Thematic, { foreignKey: 'mo_dun_id', constraints: false });
 Thematic.belongsTo(Modun, { foreignKey: 'mo_dun_id', constraints: false });
 Grade.hasMany(Thematic, { foreignKey: 'lop_id', constraints: false });
 Thematic.belongsTo(Grade, { foreignKey: 'lop_id', constraints: false });
-//khoa ngoai baigiang
+
+// --- Thematic & Lesson ---
 Thematic.hasMany(Lesson, { foreignKey: 'chuyen_de_id', constraints: false });
 Lesson.belongsTo(Thematic, { foreignKey: 'chuyen_de_id', constraints: false });
-//khoa ngoai giao vien
+
+// --- Majoring & Teacher ---
 Majoring.hasMany(Teacher, {
     foreignKey: 'chuyen_nganh_id',
     constraints: false,
@@ -83,9 +112,12 @@ Teacher.belongsTo(Majoring, {
     foreignKey: 'chuyen_nganh_id',
     constraints: false,
 });
+
+// --- Modun & Teacher ---
 Modun.belongsTo(Teacher, { foreignKey: 'giao_vien_id', constraints: false });
 Teacher.hasMany(Modun, { foreignKey: 'giao_vien_id', constraints: false });
-//khoa ngoai cauhoi
+
+// --- Question Associations ---
 Question.belongsTo(Exceprt, {
     foreignKey: 'trich_doan_id',
     constraints: false,
@@ -98,10 +130,20 @@ Question.belongsTo(Thematic, {
 Thematic.hasMany(Question, { foreignKey: 'chuyen_de_id', constraints: false });
 Question.belongsTo(Modun, { foreignKey: 'mo_dun_id', constraints: false });
 Modun.hasMany(Question, { foreignKey: 'mo_dun_id', constraints: false });
-//khoa ngoai dapan
+Majoring.hasMany(Question, {
+    foreignKey: 'chuyen_nganh_id',
+    constraints: false,
+});
+Question.belongsTo(Majoring, {
+    foreignKey: 'chuyen_nganh_id',
+    constraints: false,
+});
+
+// --- Answer Associations ---
 Answer.belongsTo(Question, { foreignKey: 'cau_hoi_id', constraints: false });
 Question.hasMany(Answer, { foreignKey: 'cau_hoi_id', constraints: false });
-//khoa ngoai dapandachon
+
+// --- SelectedAnswer Associations ---
 SelectedAnswer.belongsTo(StudentExam, {
     foreignKey: 'dthv_id',
     constraints: false,
@@ -118,7 +160,8 @@ Question.hasMany(SelectedAnswer, {
     foreignKey: 'cau_hoi_id',
     constraints: false,
 });
-//khoa ngoai dethi
+
+// --- Exam Associations ---
 Exam.belongsTo(ExamType, { foreignKey: 'loai_de_thi_id', constraints: false });
 ExamType.hasMany(Exam, { foreignKey: 'loai_de_thi_id', constraints: false });
 Exam.belongsTo(Course, { foreignKey: 'khoa_hoc_id', constraints: false });
@@ -127,7 +170,8 @@ Exam.belongsTo(Modun, { foreignKey: 'mo_dun_id', constraints: false });
 Modun.hasMany(Exam, { foreignKey: 'mo_dun_id', constraints: false });
 Exam.belongsTo(Thematic, { foreignKey: 'chuyen_de_id', constraints: false });
 Thematic.hasMany(Exam, { foreignKey: 'chuyen_de_id', constraints: false });
-//khoa ngoai dethihocvien
+
+// --- StudentExam Associations ---
 StudentExam.belongsTo(Student, {
     foreignKey: 'hoc_vien_id',
     constraints: false,
@@ -135,7 +179,8 @@ StudentExam.belongsTo(Student, {
 Student.hasMany(StudentExam, { foreignKey: 'hoc_vien_id', constraints: false });
 StudentExam.belongsTo(Exam, { foreignKey: 'de_thi_id', constraints: false });
 Exam.hasMany(StudentExam, { foreignKey: 'de_thi_id', constraints: false });
-//khoa ngoai tieuchidetonghop
+
+// --- Criteria Associations ---
 SyntheticCriteria.belongsTo(Course, {
     foreignKey: 'khoa_hoc_id',
     constraints: false,
@@ -144,7 +189,6 @@ Course.hasMany(SyntheticCriteria, {
     foreignKey: 'khoa_hoc_id',
     constraints: false,
 });
-//khoa ngoai tieuchidetonghop
 OnlineCriteria.belongsTo(Course, {
     foreignKey: 'khoa_hoc_id',
     constraints: false,
@@ -153,22 +197,18 @@ Course.hasMany(OnlineCriteria, {
     foreignKey: 'khoa_hoc_id',
     constraints: false,
 });
-
 DGNLCriteria.belongsTo(Course, {
     foreignKey: 'khoa_hoc_id',
     constraints: false,
 });
 Course.hasMany(DGNLCriteria, { foreignKey: 'khoa_hoc_id', constraints: false });
-
 DGTDCriteria.belongsTo(Course, {
     foreignKey: 'khoa_hoc_id',
     constraints: false,
 });
 Course.hasMany(DGTDCriteria, { foreignKey: 'khoa_hoc_id', constraints: false });
-//khoa ngoai tieuchidemodun
 ModunCriteria.belongsTo(Modun, { foreignKey: 'mo_dun_id', constraints: false });
 Modun.hasMany(ModunCriteria, { foreignKey: 'mo_dun_id', constraints: false });
-//khoa ngoai tieuchidechuyende
 ThematicCriteria.belongsTo(Modun, {
     foreignKey: 'mo_dun_id',
     constraints: false,
@@ -177,7 +217,8 @@ Modun.hasMany(ThematicCriteria, {
     foreignKey: 'mo_dun_id',
     constraints: false,
 });
-//khoa ngoai cauhoidethi
+
+// --- ExamQuestion Associations ---
 ExamQuestion.belongsTo(Exam, { foreignKey: 'de_thi_id', constraints: false });
 Exam.hasMany(ExamQuestion, { foreignKey: 'de_thi_id', constraints: false });
 ExamQuestion.belongsTo(Question, {
@@ -188,16 +229,15 @@ Question.hasMany(ExamQuestion, {
     foreignKey: 'cau_hoi_id',
     constraints: false,
 });
-//khoangoai quangcaokhoahoc
+
+// --- Course Ads & Document Ads ---
 CourseAd.belongsTo(Course, { foreignKey: 'khoa_hoc_id', constraints: false });
 Course.hasMany(CourseAd, { foreignKey: 'khoa_hoc_id', constraints: false });
-//khoa ngoai quangcaotailieu
 DocumentAd.belongsTo(Document, {
     foreignKey: 'tai_lieu_id',
     constraints: false,
 });
 Document.hasMany(DocumentAd, { foreignKey: 'tai_lieu_id', constraints: false });
-//khoa ngoai quangcaogiaovienkhoahoc
 TeacherCourseAd.belongsTo(Teacher, {
     foreignKey: 'giao_vien_id',
     constraints: false,
@@ -214,7 +254,8 @@ Course.hasMany(TeacherCourseAd, {
     foreignKey: 'khoa_hoc_id',
     constraints: false,
 });
-//khoa ngoai tailieu
+
+// --- Document & Menu ---
 Document.belongsTo(DocumentType, {
     foreignKey: 'loai_tai_lieu_id',
     constraints: false,
@@ -223,12 +264,10 @@ DocumentType.hasMany(Document, {
     foreignKey: 'loai_tai_lieu_id',
     constraints: false,
 });
-//khoa ngoai menu
 Menu.belongsTo(MenuType, { foreignKey: 'loai_menu_id', constraints: false });
 MenuType.hasMany(Menu, { foreignKey: 'loai_menu_id', constraints: false });
-//khoa ngoai motakhoahoc
 
-//khoa ngoai chietkhaudaily
+// --- DealerDiscount & Invoice ---
 DealerDiscount.belongsTo(Teacher, {
     foreignKey: 'giao_vien_id',
     constraints: false,
@@ -245,7 +284,6 @@ Course.hasMany(DealerDiscount, {
     foreignKey: 'khoa_hoc_id',
     constraints: false,
 });
-//khoa ngoai chietkhauchitiet
 DetailedDiscount.belongsTo(DealerDiscount, {
     foreignKey: 'chiet_khau_id',
     constraints: false,
@@ -254,7 +292,6 @@ DealerDiscount.hasMany(DetailedDiscount, {
     foreignKey: 'chiet_khau_id',
     constraints: false,
 });
-//khoa ngoai hoadonchitiet
 DetailedInvoice.belongsTo(Invoice, {
     foreignKey: 'hoa_don_id',
     constraints: false,
@@ -263,31 +300,30 @@ Invoice.hasMany(DetailedInvoice, {
     foreignKey: 'hoa_don_id',
     constraints: false,
 });
-//khoa ngoai hoadon
 Invoice.belongsTo(Student, { foreignKey: 'hoc_vien_id', constraints: false });
 Student.hasMany(Invoice, { foreignKey: 'hoc_vien_id', constraints: false });
 Invoice.belongsTo(Staff, { foreignKey: 'nhan_vien_id', constraints: false });
 Staff.hasMany(Invoice, { foreignKey: 'nhan_vien_id', constraints: false });
-//khoa ngoai magiamgia
 DiscountCode.belongsTo(Course, {
     foreignKey: 'khoa_hoc_id',
     constraints: false,
 });
 Course.hasMany(DiscountCode, { foreignKey: 'khoa_hoc_id', constraints: false });
-//khoa ngoai binh luan
+
+// --- Comment & SideComment ---
 Comment.belongsTo(Course, { foreignKey: 'khoa_hoc_id', constraints: false });
 Course.hasMany(Comment, { foreignKey: 'khoa_hoc_id', constraints: false });
 Comment.belongsTo(Modun, { foreignKey: 'mo_dun_id', constraints: false });
 Modun.hasMany(Comment, { foreignKey: 'mo_dun_id', constraints: false });
 Comment.belongsTo(Student, { foreignKey: 'hoc_vien_id', constraints: false });
 Student.hasMany(Comment, { foreignKey: 'hoc_vien_id', constraints: false });
-//khoa hoc binh luan phu
 SideComment.belongsTo(Comment, {
     foreignKey: 'binh_luan_id',
     constraints: false,
 });
 Comment.hasMany(Comment, { foreignKey: 'binh_luan_id', constraints: false });
 
+// --- CourseStudent ---
 CourseStudent.belongsTo(Course, {
     foreignKey: 'khoa_hoc_id',
     constraints: false,
@@ -296,7 +332,6 @@ Course.hasMany(CourseStudent, {
     foreignKey: 'khoa_hoc_id',
     constraints: false,
 });
-
 CourseStudent.belongsTo(Student, {
     foreignKey: 'hoc_vien_id',
     constraints: false,
@@ -306,15 +341,7 @@ Student.hasOne(CourseStudent, {
     constraints: false,
 });
 
-Majoring.hasMany(Question, {
-    foreignKey: 'chuyen_nganh_id',
-    constraints: false,
-});
-Question.belongsTo(Majoring, {
-    foreignKey: 'chuyen_nganh_id',
-    constraints: false,
-});
-
+// --- Evaluate & Exam ---
 Exam.hasMany(Evaluate, {
     foreignKey: 'de_thi_id',
     sourceKey: 'de_thi_id',
@@ -326,6 +353,7 @@ Evaluate.belongsTo(Exam, {
     constraints: false,
 });
 
+// --- DGNLEvaluate & DGTDEvaluate ---
 Course.hasMany(DGNLEvaluate, {
     foreignKey: 'khoa_hoc_id',
     sourceKey: 'khoa_hoc_id',
@@ -336,7 +364,6 @@ DGNLEvaluate.belongsTo(Course, {
     targetKey: 'khoa_hoc_id',
     constraints: false,
 });
-
 Course.hasMany(DGTDEvaluate, {
     foreignKey: 'khoa_hoc_id',
     sourceKey: 'khoa_hoc_id',
@@ -348,6 +375,7 @@ DGTDEvaluate.belongsTo(Course, {
     constraints: false,
 });
 
+// --- OnlineCriteria & Exam ---
 Exam.hasOne(OnlineCriteria, {
     foreignKey: 'khoa_hoc_id',
     sourceKey: 'khoa_hoc_id',
@@ -359,8 +387,10 @@ OnlineCriteria.belongsTo(Exam, {
     constraints: false,
 });
 
+// --- Student & Province ---
 Student.belongsTo(Province, { foreignKey: 'ttp_id', constraints: false });
 
+// --- ExceprtType & Exceprt ---
 ExceprtType.hasMany(Exceprt, {
     foreignKey: 'loai_trich_doan_id',
     constraints: false,
@@ -370,6 +400,7 @@ Exceprt.belongsTo(ExceprtType, {
     constraints: false,
 });
 
+// --- CourseDescription ---
 Course.hasOne(CourseDescription, {
     foreignKey: 'khoa_hoc_id',
     sourceKey: 'khoa_hoc_id',
@@ -381,6 +412,7 @@ CourseDescription.belongsTo(Course, {
     constraints: false,
 });
 
+// --- QuestionDetail & Option ---
 Question.hasMany(QuestionDetail, {
     foreignKey: 'cau_hoi_id',
     sourceKey: 'cau_hoi_id',
@@ -391,7 +423,6 @@ QuestionDetail.belongsTo(Question, {
     targetKey: 'cau_hoi_id',
     constraints: false,
 });
-
 Question.hasOne(Option, {
     foreignKey: 'cau_hoi_id',
     sourceKey: 'cau_hoi_id',
@@ -403,15 +434,16 @@ Option.belongsTo(Question, {
     constraints: false,
 });
 
+// --- CourseType ---
 CourseType.hasMany(Course, { foreignKey: 'lkh_id', constraints: false });
 Course.belongsTo(CourseType, { foreignKey: 'lkh_id', constraints: false });
 
+// --- CourseMedia & Media ---
 Course.hasMany(CourseMedia, { foreignKey: 'khoa_hoc_id', constraints: false });
 CourseMedia.belongsTo(Course, {
     foreignKey: 'khoa_hoc_id',
     constraints: false,
 });
-
 CourseMedia.hasOne(Media, {
     foreignKey: 'tep_tin_id',
     sourceKey: 'tep_tin_id',
@@ -423,6 +455,7 @@ Media.belongsTo(CourseMedia, {
     constraints: false,
 });
 
+// --- ExamSetStudent & CourseMedia ---
 ExamSetStudent.hasOne(CourseMedia, {
     foreignKey: 'khtt_id',
     sourceKey: 'khtt_id',
@@ -434,12 +467,14 @@ Student.hasOne(ExamSetStudent, {
     constraints: false,
 });
 
+// --- Media & Staff ---
 Media.hasOne(Staff, {
     foreignKey: 'nhan_vien_id',
     sourceKey: 'nguoi_tao',
     constraints: false,
 });
 
+// --- PositionPermission, Position, Permission ---
 PositionPermission.hasOne(Position, {
     foreignKey: 'chuc_vu_id',
     sourceKey: 'chuc_vu_id',
@@ -450,7 +485,6 @@ Position.hasMany(PositionPermission, {
     sourceKey: 'chuc_vu_id',
     constraints: false,
 });
-
 PositionPermission.hasOne(Permission, {
     foreignKey: 'qtc_id',
     sourceKey: 'qtc_id',
@@ -462,12 +496,14 @@ Permission.hasMany(PositionPermission, {
     constraints: false,
 });
 
+// --- Teacher & Department ---
 Teacher.hasOne(Department, {
     foreignKey: 'don_vi_id',
     sourceKey: 'don_vi_id',
     constraints: false,
 });
 
+// --- Course & Teacher ---
 Course.hasOne(Teacher, {
     foreignKey: 'giao_vien_id',
     sourceKey: 'giao_vien_id',
@@ -479,7 +515,12 @@ Teacher.belongsTo(Course, {
     constraints: false,
 });
 
+// =====================
+// Module Exports
+// =====================
+
 module.exports = {
+    // Core
     Course,
     Lesson,
     Modun,
@@ -488,57 +529,73 @@ module.exports = {
     Staff,
     Student,
     Teacher,
-    Thematic,
     Grade,
     Majoring,
-    Answer,
-    Exam,
-    ExamType,
-    Exceprt,
+    Department,
+
+    // Thematic & Criteria
+    Thematic,
     ModunCriteria,
-    Question,
-    SelectedAnswer,
-    StudentExam,
     SyntheticCriteria,
     OnlineCriteria,
+    DGNLCriteria,
+    DGTDCriteria,
     ThematicCriteria,
+
+    // Exam & Question
+    Exam,
+    ExamType,
     ExamQuestion,
+    Question,
+    QuestionDetail,
+    Option,
+    Answer,
+    SelectedAnswer,
+    StudentExam,
+    ExamSetStudent,
+
+    // Exceprt
+    Exceprt,
+    ExceprtType,
+
+    // Document & Media
     Document,
     DocumentAd,
+    DocumentType,
+    Media,
+    CourseMedia,
+
+    // Course Ads & Description
     CourseAd,
     TeacherCourseAd,
-    DocumentType,
-    Menu,
-    MenuType,
     CourseDescription,
+
+    // Discount & Invoice
     DealerDiscount,
     DetailedDiscount,
     DetailedInvoice,
-    Invoice,
     DiscountCode,
+    Invoice,
+
+    // Comment & Notification
     Comment,
     SideComment,
     Notification,
+
+    // Other
     AccountBank,
-    Contact,
     Footer,
+    Contact,
     Token,
     CourseStudent,
     Province,
     Evaluate,
-    ExceprtType,
-    DGNLCriteria,
     DGNLEvaluate,
-    DGTDCriteria,
     DGTDEvaluate,
-    QuestionDetail,
-    Option,
     CourseType,
-    CourseMedia,
-    Media,
-    ExamSetStudent,
     Permission,
     Position,
     PositionPermission,
-    Department,
+    Menu,
+    MenuType,
 };
