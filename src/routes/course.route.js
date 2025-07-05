@@ -52,7 +52,7 @@ router.get('/:id/exam-set/v2', tryCatch(courseController.getExamSetv2));
 router.get(
     '/exam-set/:khttId/student/list',
     authToken,
-    // permission('examSet:studentList'),
+    permission('examSet:studentList'),
     tryCatch(courseController.getStudentsv2)
 );
 router.delete(
