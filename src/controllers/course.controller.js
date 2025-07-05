@@ -1453,7 +1453,7 @@ const dashboardByTeacher = async (req, res) => {
 const removeStudent = async (req, res) => {
     const examSetStudent = await ExamSetStudent.findOne({
         where: {
-            khoa_hoc_id: req.params.id,
+            khtt_id: req.params.khttId,
             hoc_vien_id: req.params.studentId,
         },
     });
@@ -1468,7 +1468,7 @@ const removeStudent = async (req, res) => {
 
     await ExamSetStudent.destroy({
         where: {
-            khoa_hoc_id: req.params.id,
+            khtt_id: req.params.khttId,
             hoc_vien_id: req.params.studentId,
         },
     });

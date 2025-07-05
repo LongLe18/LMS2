@@ -56,7 +56,7 @@ router.get(
     tryCatch(courseController.getStudentsv2)
 );
 router.delete(
-    '/exam-set/:id/student/:studentId',
+    '/exam-set/:khttId/student/:studentId',
     authToken,
     permission('examSet:removeStudent'),
     tryCatch(courseController.removeStudent)
