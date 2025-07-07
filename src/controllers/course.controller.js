@@ -635,6 +635,9 @@ const getStudentsv2 = async (req, res) => {
                 ten_hoc_vien: {
                     [Op.like]: `%${decodeURI(req.query.search)}%`,
                 },
+                sdt: {
+                    [Op.like]: `%${decodeURI(req.query.search)}%`,
+                },
             }),
             ...(req.query.ttp_id && { ttp_id: req.query.ttp_id }),
         },
