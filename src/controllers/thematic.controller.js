@@ -361,7 +361,7 @@ const findAllv2 = async (req, res) => {
             ],
         },
         where: {
-            // giao_vien_id: req.userId,
+            giao_vien_id: req.userId,
             ...(req.query.mo_dun_id && { mo_dun_id: req.query.mo_dun_id }),
             ...(req.query.trang_thai && { trang_thai: req.query.trang_thai }),
             ...(req.query.search && {
