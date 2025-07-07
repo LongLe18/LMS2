@@ -16,6 +16,7 @@ const {
     Teacher,
     Modun,
     Thematic,
+    CourseDescription,
 } = require('../models');
 const sequelize = require('../utils/db');
 const { checkFileType } = require('../middlewares/upload.middleware');
@@ -517,6 +518,10 @@ const getByFilter = async (req, res) => {
                 model: CourseType,
                 attributes: ['lkh_id', 'ten'],
             },
+            {
+                model: Teacher,
+                attributes: ['giao_vien_id', 'ho_ten'],
+            },
         ],
         where: {
             ...(req.query.search && {
@@ -536,6 +541,9 @@ const getByFilter = async (req, res) => {
             }),
             ...(req.query.kct_id && {
                 kct_id: req.query.kct_id,
+            }),
+            ...(req.query.giao_vien_id && {
+                giao_vien_id: req.query.giao_vien_id,
             }),
             ...(req.query.ngay_bat_dau &&
                 req.query.ngay_ket_thuc && {
@@ -998,6 +1006,12 @@ const forceDelete = async (req, res) => {
     }
 
     await Course.destroy({
+        where: {
+            khoa_hoc_id: req.params.id,
+        },
+    });
+
+    await CourseDescription.destroy({
         where: {
             khoa_hoc_id: req.params.id,
         },
