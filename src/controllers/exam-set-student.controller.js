@@ -1,4 +1,9 @@
-const { ExamSetStudent, CourseMedia, Media } = require('../models');
+const {
+    ExamSetStudent,
+    CourseMedia,
+    Media,
+    CourseStudent,
+} = require('../models');
 
 const findAll = async (req, res) => {
     const { count, rows } = await ExamSetStudent.findAndCountAll({
@@ -104,6 +109,18 @@ const create = async (req, res) => {
         ...req.body,
         nguoi_tao: req.userId,
     });
+
+    const courseStudent = await CourseStudent.findOne({
+        hoc_vien_id: req.body.hoc_vien_id,
+        khoa_hoc_id: req.body.khoa_hoc_id,
+    });
+
+    if (!courseStudent) {
+        await CourseStudent.create({
+            hoc_vien_id: req.body.hoc_vien_id,
+            khoa_hoc_id: req.body.khoa_hoc_id,
+        });
+    }
 
     return res.status(200).send({
         status: 'success',

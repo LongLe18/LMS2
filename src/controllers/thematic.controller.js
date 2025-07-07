@@ -249,7 +249,18 @@ const getUpdate = async (req, res) => {
 
 //[PUT] thematic/:id/edit
 const update = async (req, res) => {
-    const thematic = await Thematic.update(
+    const existingThematic = await Thematic.findOne({
+        chuyen_de_id: req.params.id
+    })
+    
+    if (Number(req.body.mo_dun_id) !== existingThematic.mo_dun_id) {
+        const modun = await Modun.findOne({
+            mo_dun_id: Number(req.body.mo_dun_id),
+        });
+        req.body = { ...req.body, giao_vien_id: modun.giao_vien_id };
+    }
+
+    await Thematic.update(
         {
             ...req.body,
             nguoi_sua: req.userId,
@@ -263,7 +274,7 @@ const update = async (req, res) => {
 
     return res.status(200).send({
         status: 'success',
-        data: thematic,
+        data: null,
         message: null,
     });
 };
@@ -350,7 +361,7 @@ const findAllv2 = async (req, res) => {
             ],
         },
         where: {
-            giao_vien_id: req.userId,
+            // giao_vien_id: req.userId,
             ...(req.query.mo_dun_id && { mo_dun_id: req.query.mo_dun_id }),
             ...(req.query.trang_thai && { trang_thai: req.query.trang_thai }),
             ...(req.query.search && {

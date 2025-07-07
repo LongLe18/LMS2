@@ -614,13 +614,13 @@ const update = async (req, res) => {
         }
     }
 
-    if (req.files) {
-        const modunToUpdate = await Modun.findOne({
-            where: {
-                mo_dun_id: req.params.id,
-            },
-        });
+    const modunToUpdate = await Modun.findOne({
+        where: {
+            mo_dun_id: req.params.id,
+        },
+    });
 
+    if (req.files) {
         if (
             req.files['anh_dai_dien'] &&
             modunToUpdate.anh_dai_dien &&
@@ -636,6 +636,24 @@ const update = async (req, res) => {
         ) {
             fs.unlinkSync(`public${modunToUpdate.video_gioi_thieu}`);
         }
+    }
+
+    if (Number(req.body.khoa_hoc_id) !== modunToUpdate.khoa_hoc_id) {
+        const course = await Course.findOne({
+            khoa_hoc_id: Number(req.body.khoa_hoc_id),
+        });
+        req.body = { ...req.body, giao_vien_id: course.giao_vien_id };
+
+        await Thematic.update(
+            {
+                giao_vien_id: course.giao_vien_id,
+            },
+            {
+                where: {
+                    mo_dun_id: req.params.id,
+                },
+            }
+        );
     }
 
     await Modun.update(
@@ -744,7 +762,7 @@ const findAllv2 = async (req, res) => {
                 where: {
                     trang_thai: true,
                 },
-                required: false
+                required: false,
             },
             {
                 model: Exam,
@@ -753,14 +771,17 @@ const findAllv2 = async (req, res) => {
                     trang_thai: true,
                     loai_de_thi_id: 2,
                 },
-                required: false
+                required: false,
             },
         ],
         attributes: {
             include: [
                 // Đếm số lượng modun
                 [
-                    fn('COUNT', literal('DISTINCT `chuyen_des`.`chuyen_de_id`')),
+                    fn(
+                        'COUNT',
+                        literal('DISTINCT `chuyen_des`.`chuyen_de_id`')
+                    ),
                     'so_luong_chuyen_de',
                 ],
                 // Đếm số lượng thematic
@@ -773,7 +794,9 @@ const findAllv2 = async (req, res) => {
         where: {
             giao_vien_id: req.userId,
             ...(req.query.trang_thai && { trang_thai: req.query.trang_thai }),
-            ...(req.query.khoa_hoc_id && { khoa_hoc_id: req.query.khoa_hoc_id }),
+            ...(req.query.khoa_hoc_id && {
+                khoa_hoc_id: req.query.khoa_hoc_id,
+            }),
             ...(req.query.search && {
                 [Op.or]: [
                     { ten_mo_dun: { [Op.like]: `%${req.query.search}%` } },

@@ -787,17 +787,22 @@ const create = async (req, res) => {
 };
 
 const update = async (req, res) => {
-    if (req.files) {
-        const course = await Course.findOne({
-            where: {
-                khoa_hoc_id: req.params.id,
-            },
-            attributes: ['video_mo_ta', 'anh_dai_dien'],
-        });
+    const existingCourse = await Course.findOne({
+        where: {
+            khoa_hoc_id: req.params.id,
+        },
+        attributes: [
+            'khoa_hoc_id',
+            'video_mo_ta',
+            'anh_dai_dien',
+            'giao_vien_id',
+        ],
+    });
 
+    if (req.files) {
         const filesToDelete = [
-            { key: 'video_mo_ta', path: course.video_mo_ta },
-            { key: 'anh_dai_dien', path: course.anh_dai_dien },
+            { key: 'video_mo_ta', path: existingCourse.video_mo_ta },
+            { key: 'anh_dai_dien', path: existingCourse.anh_dai_dien },
         ];
 
         for (const file of filesToDelete) {
@@ -809,6 +814,36 @@ const update = async (req, res) => {
                 fs.unlinkSync(`public${file.path}`);
             }
         }
+    }
+
+    if (Number(req.body.giao_vien_id) !== existingCourse.giao_vien_id) {
+        await Modun.update(
+            {
+                giao_vien_id: Number(req.body.giao_vien_id),
+            },
+            {
+                where: {
+                    khoa_hoc_id: req.params.id,
+                },
+            }
+        );
+
+        await sequelize.query(
+            `
+            UPDATE chuyen_de 
+            SET giao_vien_id = :giao_vien_id 
+            WHERE mo_dun_id IN (
+                SELECT mo_dun_id
+                FROM mo_dun
+                WHERE khoa_hoc_id = :khoa_hoc_id)`,
+            {
+                replacements: {
+                    giao_vien_id: Number(req.body.giao_vien_id),
+                    khoa_hoc_id: req.params.id,
+                },
+                type: sequelize.QueryTypes.UPDATE,
+            }
+        );
     }
 
     await Course.update(
