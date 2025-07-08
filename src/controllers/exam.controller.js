@@ -1090,15 +1090,6 @@ const create = async (req, res) => {
         });
     }
 
-    let exam = await Exam.findOne({ where: { de_thi_ma } });
-    if (exam) {
-        return res.status(400).send({
-            status: 'error',
-            data: null,
-            message: 'Đã tồn tại mã đề',
-        });
-    }
-
     let criteria = null;
     const loaiDeThi = Number(loai_de_thi_id);
 
