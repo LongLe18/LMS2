@@ -111,9 +111,12 @@ const create = async (req, res) => {
     });
 
     const courseStudent = await CourseStudent.findOne({
-        hoc_vien_id: req.body.hoc_vien_id,
-        khoa_hoc_id: req.body.khoa_hoc_id,
+        where: {
+            hoc_vien_id: req.body.hoc_vien_id,
+            khoa_hoc_id: req.body.khoa_hoc_id,
+        },
     });
+    console.log(courseStudent);
 
     if (!courseStudent) {
         await CourseStudent.create({
