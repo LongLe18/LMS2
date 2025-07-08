@@ -582,7 +582,7 @@ const getStudents = async (req, res) => {
     const { count, rows } = await Student.findAndCountAll({
         attributes: ['hoc_vien_id', 'ho_ten', 'email', 'sdt', 'truong_hoc'],
         include: [
-            { model: CourseStudent, attributes: [] },
+            { model: CourseStudent, attributes: ['khhv_id'] },
             {
                 model: Province,
                 attributes: ['ttp_id', 'ten'],
@@ -632,12 +632,18 @@ const getStudentsv2 = async (req, res) => {
         where: {
             '$bo_de_hoc_vien.khtt_id$': Number(req.params.khttId),
             ...(req.query.search && {
-                ten_hoc_vien: {
-                    [Op.like]: `%${decodeURI(req.query.search)}%`,
-                },
-                sdt: {
-                    [Op.like]: `%${decodeURI(req.query.search)}%`,
-                },
+                [Op.or]: [
+                    {
+                        ho_ten: {
+                            [Op.like]: `%${decodeURI(req.query.search)}%`,
+                        },
+                    },
+                    {
+                        sdt: {
+                            [Op.like]: `%${decodeURI(req.query.search)}%`,
+                        },
+                    },
+                ],
             }),
             ...(req.query.ttp_id && { ttp_id: req.query.ttp_id }),
         },

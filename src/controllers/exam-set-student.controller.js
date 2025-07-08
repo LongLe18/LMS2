@@ -1,3 +1,5 @@
+const { Op } = require('sequelize');
+
 const {
     ExamSetStudent,
     CourseMedia,
@@ -105,29 +107,36 @@ const findOne = async (req, res) => {
 };
 
 const create = async (req, res) => {
-    const examSetStudent = await ExamSetStudent.create({
-        ...req.body,
-        nguoi_tao: req.userId,
-    });
+    const { hoc_vien_ids, ...rest } = req.body;
 
-    const courseStudent = await CourseStudent.findOne({
+    await ExamSetStudent.bulkCreate(
+        hoc_vien_ids.map((hoc_vien_id) => ({
+            hoc_vien_id: hoc_vien_id,
+            khtt_id: req.body.khtt_id,
+            khoa_hoc_id: req.body.khoa_hoc_id,
+            nguoi_tao: req.userId,
+        }))
+    );
+
+    await CourseStudent.destroy({
         where: {
-            hoc_vien_id: req.body.hoc_vien_id,
+            hoc_vien_id: {
+                [Op.in]: hoc_vien_ids, // <-- danh sách hoc_vien_id
+            },
             khoa_hoc_id: req.body.khoa_hoc_id,
         },
     });
-    console.log(courseStudent);
 
-    if (!courseStudent) {
-        await CourseStudent.create({
-            hoc_vien_id: req.body.hoc_vien_id,
+    await CourseStudent.bulkCreate(
+        hoc_vien_ids.map((hoc_vien_id) => ({
+            hoc_vien_id: hoc_vien_id,
             khoa_hoc_id: req.body.khoa_hoc_id,
-        });
-    }
+        }))
+    );
 
     return res.status(200).send({
         status: 'success',
-        data: examSetStudent,
+        data: null,
         message: null,
     });
 };

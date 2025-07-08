@@ -1,20 +1,37 @@
 const { Op } = require('sequelize');
 
-const { CourseDescription, Course, Program } = require('../models');
+const { CourseDescription, Course, Program, Teacher } = require('../models');
 
 const findAll = async (req, res) => {
     const { count, rows } = await CourseDescription.findAndCountAll({
         include: {
             model: Course,
             attributes: ['khoa_hoc_id', 'ten_khoa_hoc'],
-            include: {
-                model: Program,
-                attributes: ['kct_id', 'ten_khung_ct', 'loai_kct'],
-            },
+            include: [
+                {
+                    model: Program,
+                    attributes: ['kct_id', 'ten_khung_ct', 'loai_kct'],
+                },
+                {
+                    model: Teacher,
+                    attributes: ['giao_vien_id', 'ho_ten'],
+                },
+            ],
         },
         where: {
             ...(req.query.search && {
-                ten_khoa_hoc: { [Op.like]: `%${decodeURI(req.query.search)}%` },
+                [Op.or]: [
+                    {
+                        '$khoa_hoc.ten_khoa_hoc$': {
+                            [Op.like]: `%${decodeURI(req.query.search)}%`,
+                        },
+                    },
+                    {
+                        '$khoa_hoc.giao_vien.ho_ten$': {
+                            [Op.like]: `%${decodeURI(req.query.search)}%`,
+                        },
+                    },
+                ],
             }),
             ...(req.query.kct_id && {
                 '$khoa_hoc.kct_id$': req.query.kct_id,
@@ -48,7 +65,7 @@ const findOne = async (req, res) => {
             khoa_hoc_id: req.params.id,
         },
     });
-    
+
     return res.status(200).send({
         status: 'success',
         data: courseDescription,
@@ -59,9 +76,9 @@ const findOne = async (req, res) => {
 const create = async (req, res) => {
     const courseDescription = await CourseDescription.create({
         ...req.body,
-        nguoi_tao: req.userId
+        nguoi_tao: req.userId,
     });
-    
+
     return res.status(200).send({
         status: 'success',
         data: courseDescription,
@@ -73,7 +90,7 @@ const update = async (req, res) => {
     await CourseDescription.update(
         {
             ...req.body,
-            nguoi_sua: req.userId
+            nguoi_sua: req.userId,
         },
         {
             where: {
@@ -81,7 +98,7 @@ const update = async (req, res) => {
             },
         }
     );
-    
+
     return res.status(200).send({
         status: 'success',
         data: null,
@@ -95,7 +112,7 @@ const remove = async (req, res) => {
             khoa_hoc_id: req.params.id,
         },
     });
-    
+
     return res.status(200).send({
         status: 'success',
         data: null,
