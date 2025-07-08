@@ -88,6 +88,7 @@ function* fectchFilter(payload) {
         let endpoint = `${config.API_URL}/course/filter?trang_thai=${payload.params.status}&search=${payload.params.search}&ngay_bat_dau=${payload.params.start}&ngay_ket_thuc=${payload.params.end}&pageIndex=${payload.params.pageIndex}`;
         if (payload.params.kct_id) endpoint = endpoint + `&kct_id=${payload.params.kct_id}`
         if (payload.params.pageSize) endpoint = endpoint + `&pageSize=${payload.params.pageSize}`
+        if (payload.params.giao_vien_id) endpoint = endpoint + `&giao_vien_id=${payload.params.giao_vien_id}`;
         const response = yield call(getApiAuth, endpoint);
         const result = yield response.data;
         yield put({ type: actions.course.FILTER_COURSES_SUCCESS, result: result });

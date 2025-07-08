@@ -297,9 +297,9 @@ function Header(props) {
           {/* <NavbarBrand href="/admin/dashboard">{getBrand()}</NavbarBrand> */}
           
           <Breadcrumb>
-            {JSON.parse(localStorage.getItem('dataPath')).length > 0 &&
+            {JSON.parse(localStorage.getItem('dataPath'))?.length > 0 &&
               JSON.parse(localStorage.getItem('dataPath')).map((item, index) => {
-                const isLast = index === JSON.parse(localStorage.getItem('dataPath')).length - 1;
+                const isLast = index === JSON.parse(localStorage.getItem('dataPath'))?.length - 1;
 
                 return (
                   <Breadcrumb.Item key={index}>

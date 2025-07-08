@@ -72,6 +72,15 @@ const Course = () => {
           )
         },
         {
+          title: 'Giáo viên',
+          dataIndex: 'giao_vien',
+          key: 'giao_vien',
+          responsive: ['md'],
+          render: (giao_vien) => (
+            <span>{giao_vien?.ho_ten}</span>
+          )
+        },
+        {
           title: 'Trạng thái',
           dataIndex: 'trang_thai',
           key: 'trang_thai',
@@ -167,7 +176,8 @@ const Course = () => {
       search: '',
       start: '',
       end: '',
-      kct_id: ''
+      kct_id: '',
+      giao_vien_id: '',
     });
     const [pageIndex, setPageIndex] = useState(1);
     const [pageSize, setPageSize] = useState(10);
@@ -275,7 +285,7 @@ const Course = () => {
   
     useEffect(() => {
       dispatch(courseAction.filterCourses({ status: filter.trang_thai === 2 ? '' : filter.trang_thai, search: filter.search,
-        start: filter.start, end: filter.end, kct_id: filter.kct_id, pageIndex: pageIndex, pageSize: pageSize }, (res) => {
+        start: filter.start, end: filter.end, kct_id: filter.kct_id, pageIndex: pageIndex, pageSize: pageSize, giao_vien_id: filter.giao_vien_id }, (res) => {
           if (res.status === 'success') {
             res.data = (res.data.map((module, index) => {
               return {...module, 'key': index};
@@ -449,6 +459,7 @@ const Course = () => {
                             isShowDatePicker={true}
                             isRangeDatePicker={true}
                             courses={courses.data}
+                            isTeacher={true}
                             programmes={programmes.data}
                             onFilterChange={(field, value) => onFilterChange(field, value)}
                           />
@@ -507,12 +518,12 @@ const Course = () => {
                         </Form.Item>
                         <Form.Item className="input-col" label="Giáo viên" name="giao_vien_id"
                           style={{ display: state.isShowTypeCourse ? 'block' : 'none' }}
-                          rules={[
-                            {
-                              required: state.isShowTypeCourse,
-                              message: 'Giáo viên là trường bắt buộc.',
-                            },
-                          ]}
+                          // rules={[
+                          //   {
+                          //     required: state.isShowTypeCourse,
+                          //     message: 'Giáo viên là trường bắt buộc.',
+                          //   },
+                          // ]}
                         >
                           {renderTeacher()}
                         </Form.Item>

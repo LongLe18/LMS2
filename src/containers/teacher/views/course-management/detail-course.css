@@ -65,6 +65,10 @@
   background: transparent;
 }
 
+.question-content .content-answer-question ul li button .answer {
+  display: flex;
+} 
+
 .question-content .content-answer-question ul li button .answer.correct .answer-label, .wrongrightAnswer .correct {
   background: #3da844 !important;
   color: #fff;

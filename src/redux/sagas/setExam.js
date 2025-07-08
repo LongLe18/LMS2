@@ -162,6 +162,55 @@ function* deleteFileSetExam(payload) {
     }
 }
 
+function* fetchUsersOfSetExam(payload) {
+    try {
+        let endpoint = `${config.API_URL}/course/exam-set/${payload.params.id}/student/list?pageSize=${payload.params.pageSize}&pageIndex=1&search=${payload.params.search}`;
+        const response = yield call(getApiAuth, endpoint);
+        const result = yield response.data;
+        yield put({ type: actions.setExam.USERS_SETEXAM_SUCCESS, result: result});
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.setExam.USERS_SETEXAM_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu học viên trong bộ đề thi thất bại' + messageError),
+            });
+        } 
+    }
+}
+
+function* deleteUserSetExam(payload) {
+    try {
+        let endpoint = `${config.API_URL}/course/exam-set/${payload.params.id}/student/${payload.params.userId}`;
+        const response = yield call(deleteApiAuth, endpoint);
+        const result = yield response.data;
+        yield put({ type: actions.setExam.DELETE_USER_SETEXAM_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.setExam.DELETE_USER_SETEXAM_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Xóa học viên trong bộ đề thi thất bại' + messageError),
+            });
+        }
+    }
+}
 
 export function* loadSetExam() {
     yield takeEvery(actions.setExam.GET_SETEXAM, fetchSetExam);
@@ -185,4 +234,12 @@ export function* loadDeleteSetExam() {
 
 export function* loadDeleteFileSetExam() {
     yield takeEvery(actions.setExam.DELETE_FILE_SETEXAM, deleteFileSetExam);
+}
+
+export function* loadUsersOfSetExam() {
+    yield takeEvery(actions.setExam.USERS_SETEXAM, fetchUsersOfSetExam);
+}
+
+export function* loadDeleteUserSetExam() {
+    yield takeEvery(actions.setExam.DELETE_USER_SETEXAM, deleteUserSetExam);
 }

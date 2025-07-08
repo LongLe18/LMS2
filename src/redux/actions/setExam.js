@@ -23,6 +23,30 @@ export const DELETE_FILE_SETEXAM = "DELETE_FILE_SETEXAM";
 export const DELETE_FILE_SETEXAM_SUCCESS = "DELETE_FILE_SETEXAM_SUCCESS";
 export const DELETE_FILE_SETEXAM_FAILED = "DELETE_FILE_SETEXAM_FAILED";
 
+export const USERS_SETEXAM = "USERS_SETEXAM";
+export const USERS_SETEXAM_SUCCESS = "USERS_SETEXAM_SUCCESS";
+export const USERS_SETEXAM_FAILED = "USERS_SETEXAM_FAILED";
+
+export const DELETE_USER_SETEXAM = "DELETE_USER_SETEXAM";
+export const DELETE_USER_SETEXAM_SUCCESS = "DELETE_USER_SETEXAM_SUCCESS";
+export const DELETE_USER_SETEXAM_FAILED = "DELETE_USER_SETEXAM_FAILED";
+
+export function removeUserSetExam(params, callback) {
+    return {
+        type: DELETE_USER_SETEXAM,
+        params,
+        callback,
+    };
+}
+
+export function getUserOfSetExam(params, callback) {
+    return {
+        type: USERS_SETEXAM,
+        params,
+        callback,
+    };
+}
+
 export function getSetExam(params, callback) {
     return {
         type: GET_SETEXAM,

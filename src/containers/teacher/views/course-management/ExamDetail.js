@@ -10,7 +10,7 @@ import { Row, Col, Form, Steps, Tabs, Modal,
     Input, Upload, message, Result,
     Select, Image, Button, notification, Radio } from 'antd';
 import { UploadOutlined, SaveOutlined, RightOutlined, 
-    LeftOutlined, CloseOutlined, ExclamationCircleOutlined, TeamOutlined } from '@ant-design/icons';
+    LeftOutlined, CloseOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import LoadingCustom from 'components/parts/loading/Loading';
 import TextEditorWidget from 'components/common/TextEditor/TextEditor';
 
@@ -500,7 +500,7 @@ const ExamDetailPage = () => {
         const callback = (res) => {
             if (res.status === 200) {   
                 if (!state.isEdit) { // Thêm mới
-                    const questionExam = { cau_hoi_id: res.data.data.cau_hoi_id, de_thi_id: id, chuyen_nganh_id: values.chuyen_nganh_id }
+                    const questionExam = { cau_hoi_id: res.data.data.cau_hoi_id, de_thi_id: id, chuyen_nganh_id: values?.chuyen_nganh_id !== undefined ? values.chuyen_nganh_id : '' };
                     dispatch(questionActions.createQuestionExam(questionExam, subCallBack));             
                     
                     const answer = new FormData();
@@ -592,7 +592,7 @@ const ExamDetailPage = () => {
         if (values.mo_dun_id_2 !== '' && values.mo_dun_id_2 !== null && values.mo_dun_id_2 !== undefined) formQuestionData.append('mo_dun_id', values.mo_dun_id_2);
         if (values.chuyen_de_id_2 !== '' && values.chuyen_de_id_2 !== null && values.chuyen_de_id_2 !== undefined) formQuestionData.append('chuyen_de_id', values.chuyen_de_id_2);
         formQuestionData.append('cot_tren_hang', values.kieu_hien_thi_dap_an);
-        formQuestionData.append('chuyen_nganh_id', values.chuyen_nganh_id);
+        formQuestionData.append('chuyen_nganh_id', values?.chuyen_nganh_id !== undefined ? values.chuyen_nganh_id : '');
 
         if (state.fileImg !== '')
             formQuestionData.append('tep_dinh_kem_noi_dung', state.fileImg !== undefined ? state.fileImg : '');
@@ -649,7 +649,7 @@ const ExamDetailPage = () => {
                             mo_dun_id_2: res.data.mo_dun_id !== null ? res.data.mo_dun_id : '',
                             chuyen_de_id_2: res.data.chuyen_de_id !== null ? res.data.chuyen_de_id : '',
                             kieu_hien_thi_dap_an: res.data.cot_tren_hang.toString(),
-                            chuyen_nganh_id: res.data.chuyen_nganh_id,
+                            chuyen_nganh_id: res.data.chuyen_nganh_id !== null ? res.data.chuyen_nganh_id : '',
                             dap_an_dung: dap_an_dung,
                             //
                             noi_dung: res.data.noi_dung,
@@ -748,11 +748,7 @@ const ExamDetailPage = () => {
                 notification.success({
                     message: 'Xuất bản đề thi thành công.',
                 });   
-                if (new URLSearchParams(history.location.search).get('loai_de_thi') === 'DGNL') {
-                    history.push('/admin/question/examDgnl');
-                } else {
-                    history.push('/admin/question/exam');
-                }
+                history.back();
             }
         };
 
@@ -1027,7 +1023,7 @@ const ExamDetailPage = () => {
                                                     <Row>
                                                         <Col xl={4}>
                                                             <Form.Item className="label">
-                                                                <span style={{ color: '#ff4d4f' }}>*</span>Chuyên ngành
+                                                                Chuyên ngành
                                                             </Form.Item>
                                                         </Col>
                                                         <Col xl={10}>
@@ -1036,10 +1032,10 @@ const ExamDetailPage = () => {
                                                                 label=""
                                                                 name="chuyen_nganh_id"
                                                                 rules={[
-                                                                {
-                                                                    required: true,
-                                                                    message: 'Chuyên ngành là trường bắt buộc',
-                                                                },
+                                                                    {
+                                                                        required: false,
+                                                                        message: 'Chuyên ngành là trường bắt buộc',
+                                                                    },
                                                                 ]}
                                                             >
                                                                 {renderMajor()}
@@ -1340,9 +1336,9 @@ const ExamDetailPage = () => {
                                         title="Tạo đề thi mới thành công."
                                         subTitle="Hãy kiểm tra kỹ trước khi tiến hành xuất bản đề thi, đề thi sau khi xuất bản sẽ không thể được cập nhật thêm."
                                         extra={[
-                                            <Button onClick={() => setCurrentStep(1)}> Kiểm tra lại</Button>,
+                                            <Button key="check-again" onClick={() => setCurrentStep(1)}> Kiểm tra lại</Button>,
                                             <Button
-                                            type="primary"
+                                            type="primary" key="publish"
                                             onClick={() =>
                                                 Modal.confirm({
                                                     title: 'Xuất bản đề thi',
@@ -1355,9 +1351,11 @@ const ExamDetailPage = () => {
                                                 })
                                             }
                                             >
-                                            Xuất bản
+                                                Xuất bản
                                             </Button>,
-                                            <Button type="primary" onClick={() => window.open(`/luyen-tap/xem-lai/${hashids.encode(id)}`, "_blank")}>Xem toàn đề</Button>,
+                                            <Button key="view" type="primary" onClick={() => window.open(`/luyen-tap/xem-lai/${hashids.encode(id)}`, "_blank")}>
+                                                Xem toàn đề
+                                            </Button>,
                                         ]}
                                     />
                                 </Col>

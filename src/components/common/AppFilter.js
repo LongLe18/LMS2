@@ -47,7 +47,8 @@ function AppFilter(props) {
     const loadingThematics = useSelector(state => state.thematic.listbyId.loading);
 
     const typeExams = useSelector(state => state.typeExam.list.result);
-
+    const teachers = useSelector(state => state.user.listTeacher.result);
+    
     const renderProgrammes = () => {
       const programmes = props.programmes ? props.programmes : [];
       let options = [];
@@ -211,6 +212,28 @@ function AppFilter(props) {
       );
     }
 
+    const renderTeacher = () => {
+      let options = [];
+      if (teachers?.status === 'success') {
+        options = teachers?.data.map((module) => (
+          <Option key={module?.giao_vien_id} value={module?.giao_vien_id} >{module?.ho_ten}</Option>
+        ))
+      }
+      return (
+        <Select
+          showSearch={true}
+          placeholder="Chọn giáo viên"
+          filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
+          allowClear={true}
+          onChange={(giao_vien_id) => {
+            props.onFilterChange('giao_vien_id', giao_vien_id ? giao_vien_id : '');
+          }}
+        >
+          {options}
+        </Select>
+      );
+    };
+
   return (
     <Row>
       <Col span={24} className="filter-todo">
@@ -306,6 +329,11 @@ function AppFilter(props) {
               {props.isTypeExam && (
                 <Col md={2} xs={24} xl={5}>
                   {renderTypeExams()}
+                </Col>
+              )}
+              {props.isTeacher && (
+                <Col md={2} xs={24} xl={3}>
+                  {renderTeacher()}
                 </Col>
               )}
 

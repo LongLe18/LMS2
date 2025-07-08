@@ -500,7 +500,7 @@ const ExamDetailPage = () => {
         const callback = (res) => {
             if (res.status === 200) {   
                 if (!state.isEdit) { // Thêm mới
-                    const questionExam = { cau_hoi_id: res.data.data.cau_hoi_id, de_thi_id: id, chuyen_nganh_id: values.chuyen_nganh_id }
+                    const questionExam = { cau_hoi_id: res.data.data.cau_hoi_id, de_thi_id: id, chuyen_nganh_id: values?.chuyen_nganh_id !== undefined ? values.chuyen_nganh_id : '' };
                     dispatch(questionActions.createQuestionExam(questionExam, subCallBack));             
                     
                     const answer = new FormData();
@@ -592,7 +592,7 @@ const ExamDetailPage = () => {
         if (values.mo_dun_id_2 !== '' && values.mo_dun_id_2 !== null && values.mo_dun_id_2 !== undefined) formQuestionData.append('mo_dun_id', values.mo_dun_id_2);
         if (values.chuyen_de_id_2 !== '' && values.chuyen_de_id_2 !== null && values.chuyen_de_id_2 !== undefined) formQuestionData.append('chuyen_de_id', values.chuyen_de_id_2);
         formQuestionData.append('cot_tren_hang', values.kieu_hien_thi_dap_an);
-        formQuestionData.append('chuyen_nganh_id', values.chuyen_nganh_id);
+        formQuestionData.append('chuyen_nganh_id', values?.chuyen_nganh_id !== undefined ? values.chuyen_nganh_id : '');
 
         if (state.fileImg !== '')
             formQuestionData.append('tep_dinh_kem_noi_dung', state.fileImg !== undefined ? state.fileImg : '');
@@ -878,7 +878,7 @@ const ExamDetailPage = () => {
                                             <div className="visual"><TeamOutlined /></div>
                                             <div className="detail">
                                                 <div className="number">
-                                                    <span>{exam.data.cau_hoi_de_this.filter((cau_hoi) => cau_hoi.cau_hoi.chuyen_nganh_id === major.chuyen_nganh_id).length}</span>
+                                                    <span>{exam.data.cau_hoi_de_this.filter((cau_hoi) => cau_hoi?.cau_hoi?.chuyen_nganh_id === major?.chuyen_nganh_id).length}</span>
                                                 </div>
                                                 <div className="dashboard-stat stat-user">
                                                     <div className="desc">
@@ -1027,7 +1027,7 @@ const ExamDetailPage = () => {
                                                     <Row>
                                                         <Col xl={4}>
                                                             <Form.Item className="label">
-                                                                <span style={{ color: '#ff4d4f' }}>*</span>Chuyên ngành
+                                                                Chuyên ngành
                                                             </Form.Item>
                                                         </Col>
                                                         <Col xl={10}>
@@ -1037,7 +1037,7 @@ const ExamDetailPage = () => {
                                                                 name="chuyen_nganh_id"
                                                                 rules={[
                                                                 {
-                                                                    required: true,
+                                                                    required: false,
                                                                     message: 'Chuyên ngành là trường bắt buộc',
                                                                 },
                                                                 ]}

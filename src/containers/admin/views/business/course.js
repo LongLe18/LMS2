@@ -15,6 +15,7 @@ import TextEditorWidget2 from "components/common/TextEditor/TextEditor2";
 import * as courseAction from '../../../../redux/actions/course';
 import * as programmeAction from '../../../../redux/actions/programme';
 import * as descriptionAction from '../../../../redux/actions/descriptionCourse';
+import * as userActions from '../../../../redux/actions/user';
 import { useSelector, useDispatch } from "react-redux";
 
 
@@ -68,6 +69,15 @@ const BussinessCourses = (props) => {
           )
         },
         {
+            title: 'Giáo viên',
+            dataIndex: 'ten_giao_vien',
+            key: 'ten_giao_vien',
+            responsive: ['md'],
+            render: (ten_giao_vien, description) => (
+              description?.khoa_hoc?.giao_vien?.ho_ten
+            )
+        },
+        {
           title: 'Ngày bắt đầu',
           dataIndex: 'ngay_bat_dau',
           key: 'ngay_bat_dau',
@@ -105,12 +115,13 @@ const BussinessCourses = (props) => {
 
     useEffect(() => {
         dispatch(programmeAction.getProgrammes({ status: '' }));
-        dispatch(descriptionAction.getDescriptionCourses({ pageSize: 10, pageIndex: pageIndex, kct_id: filter.kct_id }));
+        dispatch(descriptionAction.getDescriptionCourses({ pageSize: 10, pageIndex: pageIndex, kct_id: filter.kct_id, search: filter.search }));
     }, [pageIndex]); // eslint-disable-line react-hooks/exhaustive-deps
     
 
     useEffect(() => {
         dispatch(courseAction.filterCourses({ status: '', search: filter.search, start: filter.start, end: filter.end, pageIndex: 1, pageSize: 10000000}));
+        dispatch(userActions.getTeachers({ idMajor: '', status: '1', startDay: '', endDay: '', search: '' }));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const onFilterChange = (field, value) => {
@@ -124,8 +135,8 @@ const BussinessCourses = (props) => {
     };
     
     useEffect(() => {
-        dispatch(descriptionAction.getDescriptionCourses({ pageSize: 10, pageIndex: pageIndex, kct_id: filter.kct_id }));
-    }, [filter.trang_thai, filter.start, filter.end, filter.kct_id]); // eslint-disable-line react-hooks/exhaustive-deps
+        dispatch(descriptionAction.getDescriptionCourses({ pageSize: 10, pageIndex: pageIndex, kct_id: filter.kct_id, search: filter.search }));
+    }, [filter.trang_thai, filter.start, filter.end, filter.kct_id, filter.search]); // eslint-disable-line react-hooks/exhaustive-deps
 
 
     const renderCourses = () => {
@@ -169,7 +180,7 @@ const BussinessCourses = (props) => {
             if (res.statusText === 'OK' && res.status === 200) {
                 form.resetFields();
                 setState({ ...state, isEdit: false });
-                dispatch(descriptionAction.getDescriptionCourses({ pageSize: 10, pageIndex: pageIndex, kct_id: filter.kct_id }));
+                dispatch(descriptionAction.getDescriptionCourses({ pageSize: 10, pageIndex: pageIndex, kct_id: filter.kct_id, search: filter.search }));
                 notification.success({
                     message: 'Thành công',
                     description: state.isEdit ?  'Sửa mô tả khóa học thành công' : 'Thêm mô tả khóa học mới thành công',
@@ -216,6 +227,7 @@ const BussinessCourses = (props) => {
                                 isShowProgramme={true}
                                 programmes={programmes.data}
                                 courses={courses.data}
+                                isShowSearchBox={true}
                                 onFilterChange={(field, value) => onFilterChange(field, value)}
                             />
                         </Col>

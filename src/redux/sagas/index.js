@@ -397,6 +397,8 @@ import {
     loadDeleteFileSetExam,
     loadAddUserToSetExam,
     loadUserSetExam,
+    loadUsersOfSetExam,
+    loadDeleteUserSetExam,
 } from './setExam';
 
 import {
@@ -752,6 +754,8 @@ export default function* rootSaga() {
         loadUploadSetExam(),
         loadAddUserToSetExam(),
         loadUserSetExam(),
+        loadUsersOfSetExam(),
+        loadDeleteUserSetExam(),
         // chức vụ
         loadAddPosition(),
         loadDeletePosition(),

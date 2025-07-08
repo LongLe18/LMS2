@@ -105,6 +105,10 @@ export const PERMISSIONS = [
                     name: 'Lịch sử thi',
                     key: '/luyen-tap/lich-su-admin/:idExam/:idDTHV'
                 },
+                {
+                    name: 'Xem lại đề thi',
+                    key: '/luyen-tap/xem-lai/:id'
+                },
             ]
         }
     },

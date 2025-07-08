@@ -666,7 +666,7 @@ export default function ExamOnlineDetaiDGTD() {
 
                 const submit = {
                     "ket_qua_chons":trac_nghiem_submit,
-                    "noi_dung_tra_lois": '',
+                    "noi_dung_tra_lois": [],
                     "dthv_id": params.idExamUser
                 }
                 dispatch(answerActions.createAnswerUser(submit, (res) => {
@@ -1434,7 +1434,7 @@ export default function ExamOnlineDetaiDGTD() {
                         const number = partQuestions.map((question, index) => {
                             let number = 0;
                             if (response.data.dap_an_da_chons) {
-                                let currentSubmitAnswer = response.data.dap_an_da_chons.find((item) => item.cau_hoi_id === question.cau_hoi.cau_hoi_id);
+                                let currentSubmitAnswer = response.data.dap_an_da_chons.find((item) => item.cau_hoi_id === question?.cau_hoi?.cau_hoi_id);
                                 if (question?.cau_hoi?.dap_an_dungs && currentSubmitAnswer !== undefined) {
                                     if ((currentSubmitAnswer && currentSubmitAnswer?.ket_qua_chon) && 
                                         (question?.cau_hoi?.loai_cau_hoi === 1 || question?.cau_hoi?.loai_cau_hoi === 2 ||

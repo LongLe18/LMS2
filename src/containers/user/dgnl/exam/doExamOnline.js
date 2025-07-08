@@ -944,7 +944,7 @@ const ExamOnlineDetai = () => {
 
                 const submit = {
                     "ket_qua_chons":trac_nghiem_submit,
-                    "noi_dung_tra_lois": '',
+                    "noi_dung_tra_lois": [],
                     "dthv_id": params.idExamUser
                 }
                 dispatch(answerActions.createAnswerUser(submit, (res) => {
@@ -1199,7 +1199,6 @@ const ExamOnlineDetai = () => {
                                 {exam.status === 'success' && exam.data.cau_hoi_de_this.map((question, index) => {
                                     return (
                                         <li key={index + 1} className={isCorrectAnswer(question.cau_hoi)}>
-                                            {/* <a href={`#${index + 1}`}>{index + 1}</a> */}
                                             <button className='a-tag' style={{borderRadius: 8}}
                                                 onClick={() => {
                                                     const element = document?.getElementById(index + 1);
@@ -1300,7 +1299,7 @@ const ExamOnlineDetai = () => {
                                         return (
                                             <>
                                                 {partQuestions.map((question, index) => {
-                                                    const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
+                                                    const isAnswered = results.find((it) => it.cau_hoi_id === question?.cau_hoi?.cau_hoi_id);
                                                     if (!isAnswered || (isAnswered && !isAnswered.loai_dap_an && isAnswered.noi_dung === '')) {
                                                         return (
                                                             <div key={index + 1} className={`item`}>
@@ -2143,7 +2142,7 @@ const ExamOnlineDetai = () => {
                                             <p className="mg-0 color-blue text-center title-list-q"><b>Câu hỏi</b></p>
                                             <ul style={{ display: 'block' }}>
                                                 {partQuestions.map((question, index) => {
-                                                    const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
+                                                    const isAnswered = results.find((it) => it.cau_hoi_id === question?.cau_hoi?.cau_hoi_id);
                                                     return (
                                                         <li key={index + 1} className={`item ${((isAnswered && isAnswered.dap_an?.length !== 0) || (isAnswered && question?.cau_hoi?.loai_cau_hoi === 2)) ? 'active' : ''}`}>
                                                             <button className='a-tag' style={{borderRadius: 8}}

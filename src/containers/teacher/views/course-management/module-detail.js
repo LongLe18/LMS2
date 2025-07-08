@@ -32,6 +32,7 @@ const { Dragger } = Upload
 
 const ModunDetail = () => {
     const dispatch = useDispatch();
+    const history = useHistory();
     const idThematic = useParams().idThematic; // id of the Chapter from URL params
     const [activeTab, setActiveTab] = useState("materials")
     const [lessonForm] = Form.useForm();
@@ -629,7 +630,7 @@ const ModunDetail = () => {
                                 onClick={(e) => {
                                     e.domEvent.stopPropagation();
                                     if (!exam.xuat_ban) {
-                                        window.open(`/teacher/exam/detail/${exam?.de_thi_id}?loai_de_thi=DGNL`, '_blank');
+                                        history.push(`/teacher/exam/detail/${exam?.de_thi_id}?loai_de_thi=onluyen`)
                                         // dispatch(examActions.getExam({ id: exam.de_thi_id }, (res) => {
                                         //     if (res.status === 'success') {
                                         //         setState({ ...state, isEdit: true, idExam: exam.de_thi_id });

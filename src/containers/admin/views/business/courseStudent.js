@@ -37,7 +37,7 @@ const CourseStudentPage = (props) => {
     });
     const searchValue = useDebounce(filter.search, 250);
     
-    const [province, setProvinces] = useState([]);
+    const [province, setProvince] = useState([]);
     const [state, setState] = useState({
         idCourse: '',
         activeTab: "1",
@@ -133,14 +133,14 @@ const CourseStudentPage = (props) => {
             key: 'khhv_id',
             dataIndex: 'khhv_id',
             // Redirect view for edit
-            render: (khhv_id) => (
+            render: (khhv_id, record) => (
                 <Space size="middle">
-                    <Button shape="round" type="danger" onClick={() => deleteStudentCourse(khhv_id)} >Xóa học viên</Button>
+                    <Button shape="round" type="danger" onClick={() => deleteStudentCourse(record?.khoa_hoc_hoc_vien?.khhv_id)} >Xóa học viên</Button>
                 </Space>
             ),
         },
     ]
-
+    
     const columns3 = [
         {
             title: 'STT',
@@ -208,7 +208,7 @@ const CourseStudentPage = (props) => {
   
                     if (res.status === 200 && res.statusText === 'OK') {
                         res.data.data.push({ten: 'Tất cả', ttp_id: ''});
-                        setProvinces(res.data.data);
+                        setProvince(res.data.data);
                     } else {
                         notification.error({
                             message: 'Lỗi',

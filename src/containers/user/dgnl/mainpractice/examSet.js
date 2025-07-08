@@ -35,7 +35,7 @@ const ExamSetOfUserPage = (props) => {
         dispatch(setExamAction.getUserSetExam({  }, (res) => {
             if (res.status === 'success' && res.data) {
                 const pdfMap = new Map(res.data.map(item => {
-                    const pdfName = item.khoa_hoc_tep_tin.tep_tin.ten.replace(/\.pdf$/, "");
+                    const pdfName = item.khoa_hoc_tep_tin.tep_tin.ten.replace(/\.pdf$/, "").replace(/\.docx$/, "");
                     return [pdfName, item.khoa_hoc_tep_tin.tep_tin];
                 }));
 
@@ -48,16 +48,17 @@ const ExamSetOfUserPage = (props) => {
                                     fileMap[file.tep_tin.tep_tin_id].zip = file.tep_tin;
                                 }
                                 // fileMap[file.tep_tin.tep_tin_id] = { zip: file.tep_tin, pdf: null };
-                            } else if (file.tep_tin.ten.endsWith(".pdf")) {
+                            } else if (file.tep_tin.ten.endsWith(".pdf") || file.tep_tin.ten.endsWith(".docx")) {
                                 fileMap[file.tep_tin_cha_id] = { pdf: file.tep_tin, zip: null };
+
                                 // if (fileMap[file.tep_tin_cha_id]) {
-                                    // fileMap[file?.tep_tin_cha_id].pdf = file.tep_tin;
+                                //     fileMap[file?.tep_tin_cha_id].pdf = file.tep_tin;
                                 // }
                             }
                         });
                         const updatedA = Object.values(fileMap).map(item => {
-                            const zipName = item.zip?.ten?.replace(/\.zip$/, "");
-                            if (pdfMap.has(zipName)) {
+                            const zipName = item.zip?.ten?.replace(/\.zip$/, "").replace(/\.rar$/, "");
+                            if (Array.from(pdfMap.values()).some(item => item.ten.split('.').slice(0, -1).join('.') === zipName)) {
                                 return { ...item, isExist: true };
                             }
                             return item;
@@ -68,7 +69,7 @@ const ExamSetOfUserPage = (props) => {
             }
         }));
     }, [params.id]); // eslint-disable-line react-hooks/exhaustive-deps
-
+    
     useScrollToTop();
     
     // download File

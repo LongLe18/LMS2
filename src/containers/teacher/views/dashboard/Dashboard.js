@@ -36,7 +36,7 @@ function Dashboard() {
                     let students = 0;
                     res.data.data.map((item, index) => {
                       students += item.so_luong;
-                      return null;
+                      return students;
                     })
                 } else {
                     notification.error({

@@ -260,7 +260,7 @@ const ExamScoreManagement = () => {
         })
       }
     })
-    return flatData
+    return flatData.filter(item => item.studentName); // Filter out empty rows
   }
   
   const getRankingColor = (ranking) => {
