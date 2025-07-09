@@ -272,7 +272,9 @@ const postCreateDGNL = async (req, res) => {
 
     const studentExam = await StudentExam.create({
         ...rest,
+        khoa_hoc_id: khoa_hoc_id,
         de_thi_id: exam.de_thi_id,
+        loai_de_thi_id: exam.loai_de_thi_id,
         hoc_vien_id: req.userId,
     });
 
@@ -386,7 +388,9 @@ const postCreateDGTD = async (req, res) => {
 
     const studentExam = await StudentExam.create({
         ...rest,
+        khoa_hoc_id: khoa_hoc_id,
         de_thi_id: exam.dataValues.de_thi_id,
+        loai_de_thi_id: exam.loai_de_thi_id,
         hoc_vien_id: req.userId,
     });
 
