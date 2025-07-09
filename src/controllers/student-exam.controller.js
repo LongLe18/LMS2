@@ -820,9 +820,9 @@ const putUpdateDGTD = async (req, res) => {
 
     for (const selectedAnswer of selectedAnswers) {
         let result = false;
-        const cauHoi = selectedAnswer.cau_hoi;
-        const ket_qua_chons = selectedAnswer.ket_qua_chon.toString().split('');
-        const dap_ans = cauHoi.dap_ans;
+        const cauHoi = selectedAnswer?.cau_hoi;
+        const ket_qua_chons = selectedAnswer?.ket_qua_chon?.toString().split('');
+        const dap_ans = cauHoi?.dap_ans;
 
         // Kiểm tra loại câu hỏi
         if (cauHoi) {
