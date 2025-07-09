@@ -179,10 +179,11 @@ const download = async (req, res) => {
         let phan_3 = 0;
         let diem_tu_luan = 0;
         let dap_ans;
+        let ket_qua_diem = 0;
 
         for (const selectedAnswer of selectedAnswers) {
             result = false;
-            if (selectedAnswer.cau_hoi.loai_cau_hoi === 0) {
+            if (selectedAnswer?.cau_hoi?.loai_cau_hoi === 0) {
                 if (
                     selectedAnswer.noi_dung_tra_loi &&
                     selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an &&
@@ -190,7 +191,7 @@ const download = async (req, res) => {
                         selectedAnswer.cau_hoi.dap_ans[0].noi_dung_dap_an.toLowerCase()
                 )
                     result = true;
-            } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 1) {
+            } else if (selectedAnswer?.cau_hoi?.loai_cau_hoi === 1) {
                 // Câu trắc nghiệm
                 ket_qua_chons = selectedAnswer.ket_qua_chon
                     .toString()
@@ -205,7 +206,7 @@ const download = async (req, res) => {
                 ) {
                     result = true;
                 }
-            } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 2) {
+            } else if (selectedAnswer?.cau_hoi?.loai_cau_hoi === 2) {
                 ket_qua_chons = selectedAnswer.ket_qua_chon
                     .toString()
                     .split('');
@@ -219,7 +220,7 @@ const download = async (req, res) => {
                 ) {
                     result = true;
                 }
-            } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 3) {
+            } else if (selectedAnswer?.cau_hoi?.loai_cau_hoi === 3) {
                 // nếu không chọn thì để là "_"
                 ket_qua_chons = selectedAnswer.ket_qua_chon
                     .toString()
@@ -235,7 +236,7 @@ const download = async (req, res) => {
                 ) {
                     result = true;
                 }
-            } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 4) {
+            } else if (selectedAnswer?.cau_hoi?.loai_cau_hoi === 4) {
                 // nếu không chọn thì để là "_"
                 ket_qua_chons = selectedAnswer.ket_qua_chon
                     .toString()
@@ -251,7 +252,7 @@ const download = async (req, res) => {
                 ) {
                     result = true;
                 }
-            } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 5) {
+            } else if (selectedAnswer?.cau_hoi?.loai_cau_hoi === 5) {
                 // nếu không nhập thì để là "_"
                 noi_dung_dap_ans = selectedAnswer.cau_hoi.dap_ans[0]
                     .noi_dung_dap_an
@@ -272,7 +273,7 @@ const download = async (req, res) => {
                 ) {
                     result = true;
                 }
-            } else if (selectedAnswer.cau_hoi.loai_cau_hoi === 6) {
+            } else if (selectedAnswer?.cau_hoi?.loai_cau_hoi === 6) {
                 // nếu không nhập thì để là "_"
                 noi_dung_dap_ans = selectedAnswer.cau_hoi.dap_ans[0]
                     .noi_dung_dap_an
