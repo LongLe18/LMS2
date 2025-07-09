@@ -686,7 +686,7 @@ const findOne = async (req, res) => {
                 to = i;
             for (let j = i + 1; j < exam.cau_hoi_de_this.length; j++) {
                 if (
-                    exam.cau_hoi_de_this[j].cau_hoi.trich_doan.trich_doan_id ===
+                    exam.cau_hoi_de_this[j].cau_hoi?.trich_doan?.trich_doan_id ===
                     question?.trich_doan?.trich_doan_id
                 ) {
                     to = j;
@@ -881,11 +881,11 @@ const getByIdv2 = async (req, res) => {
     let exceprtTo;
     for (var index1 = 0; index1 < exam.cau_hoi_de_this.length; index1++) {
         dap_an_dungs = [];
-        if (exam.cau_hoi_de_this[index1].cau_hoi.trich_doan_id) {
+        if (exam.cau_hoi_de_this[index1].cau_hoi?.trich_doan?.trich_doan_id) {
             if (
                 index1 == 0 ||
-                exam.cau_hoi_de_this[index1].cau_hoi.trich_doan.trich_doan_id !=
-                    exam.cau_hoi_de_this[index1 - 1].cau_hoi.trich_doan.trich_doan_id
+                exam.cau_hoi_de_this[index1].cau_hoi?.trich_doan?.trich_doan_id !=
+                    exam.cau_hoi_de_this[index1 - 1].cau_hoi?.trich_doan?.trich_doan_id
             ) {
                 exceprtFrom = exceprtTo = index1;
                 for (
@@ -894,8 +894,8 @@ const getByIdv2 = async (req, res) => {
                     index3++
                 ) {
                     if (
-                        exam.cau_hoi_de_this[index1].cau_hoi.trich_doan.trich_doan_id ==
-                        exam.cau_hoi_de_this[index3].cau_hoi.trich_doan.trich_doan_id
+                        exam.cau_hoi_de_this[index1].cau_hoi?.trich_doan?.trich_doan_id ==
+                        exam.cau_hoi_de_this[index3].cau_hoi?.trich_doan?.trich_doan_id
                     )
                         exceprtTo = index3;
                 }
@@ -1043,14 +1043,14 @@ const getByIdDGTD = async (req, res) => {
                 if (
                     i === 0 ||
                     question?.trich_doan?.trich_doan_id !==
-                        exam.cau_hoi_de_this[i - 1].cau_hoi.trich_doan.trich_doan_id
+                        exam.cau_hoi_de_this[i - 1].cau_hoi?.trich_doan?.trich_doan_id
                 ) {
                     let exceprtFrom = i;
                     let exceprtTo = i;
                     for (let j = i + 1; j < exam.cau_hoi_de_this.length; j++) {
                         if (
                             question?.trich_doan.trich_doan_id ===
-                            exam.cau_hoi_de_this[j].cau_hoi.trich_doan.trich_doan_id
+                            exam.cau_hoi_de_this[j].cau_hoi?.trich_doan?.trich_doan_id
                         ) {
                             exceprtTo = j;
                         }
