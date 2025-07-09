@@ -677,9 +677,9 @@ const findOne = async (req, res) => {
         if (!question) continue;
 
         if (
-            question.trich_doan.trich_doan_id &&
+            question?.trich_doan?.trich_doan_id &&
             (i === 0 ||
-                question.trich_doan.trich_doan_id !==
+                question?.trich_doan?.trich_doan_id !==
                     exam.cau_hoi_de_this[i - 1]?.cau_hoi?.trich_doan?.trich_doan_id)
         ) {
             let from = i,
@@ -687,7 +687,7 @@ const findOne = async (req, res) => {
             for (let j = i + 1; j < exam.cau_hoi_de_this.length; j++) {
                 if (
                     exam.cau_hoi_de_this[j].cau_hoi.trich_doan.trich_doan_id ===
-                    question.trich_doan.trich_doan_id
+                    question?.trich_doan?.trich_doan_id
                 ) {
                     to = j;
                 }
@@ -1039,17 +1039,17 @@ const getByIdDGTD = async (req, res) => {
             const question = exam.cau_hoi_de_this[i].cau_hoi;
             if (!question) continue;
 
-            if (question.trich_doan.trich_doan_id) {
+            if (question?.trich_doan?.trich_doan_id) {
                 if (
                     i === 0 ||
-                    question.trich_doan.trich_doan_id !==
+                    question?.trich_doan?.trich_doan_id !==
                         exam.cau_hoi_de_this[i - 1].cau_hoi.trich_doan.trich_doan_id
                 ) {
                     let exceprtFrom = i;
                     let exceprtTo = i;
                     for (let j = i + 1; j < exam.cau_hoi_de_this.length; j++) {
                         if (
-                            question.trich_doan.trich_doan_id ===
+                            question?.trich_doan.trich_doan_id ===
                             exam.cau_hoi_de_this[j].cau_hoi.trich_doan.trich_doan_id
                         ) {
                             exceprtTo = j;
