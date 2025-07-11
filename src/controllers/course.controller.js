@@ -21,6 +21,28 @@ const {
 const sequelize = require('../utils/db');
 const { checkFileType } = require('../middlewares/upload.middleware');
 
+function removeVietnameseTones(str) {
+    return str
+        .normalize('NFD') // Tách dấu khỏi ký tự
+        .replace(/[\u0300-\u036f]/g, '') // Xóa dấu
+        .replace(/đ/g, 'd')
+        .replace(/Đ/g, 'D') // Chuyển đ -> d
+        .replace(/\s+/g, '_') // Thay khoảng trắng bằng _
+        .toLowerCase(); // Chuyển về chữ thường (nếu cần)
+}
+
+function sanitizeFileNamePreserveExtension(filename) {
+    const lastDotIndex = filename.lastIndexOf('.');
+    if (lastDotIndex === -1) {
+        // Không có phần mở rộng
+        return removeVietnameseTones(filename);
+    }
+
+    const name = filename.slice(0, lastDotIndex);
+    const ext = filename.slice(lastDotIndex); // gồm dấu chấm
+    return removeVietnameseTones(name).toUpperCase() + ext;
+}
+
 const findAll = async (req, res) => {
     const { count, rows } = await Course.findAndCountAll({
         include: [
@@ -1360,7 +1382,7 @@ const downloadExamSet = async (req, res) => {
                 model: CourseStudent,
                 required: true,
                 where: {
-                    hoc_vien_id: req.userId, // Truy vấn trực tiếp trong include thay vì `where` bên ngoài
+                    hoc_vien_id: 10957, // Truy vấn trực tiếp trong include thay vì `where` bên ngoài
                 },
             },
         ],
@@ -1383,7 +1405,7 @@ const downloadExamSet = async (req, res) => {
         const filePath = path.join(process.cwd(), '/public', media.duong_dan);
         res.setHeader(
             'Content-Disposition',
-            `attachment; filename="${media.ten}"`
+            `attachment; filename="${sanitizeFileNamePreserveExtension(media.ten)}"`
         );
         res.setHeader('Content-Type', 'application/octet-stream');
 
