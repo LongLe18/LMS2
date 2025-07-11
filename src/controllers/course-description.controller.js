@@ -36,6 +36,9 @@ const findAll = async (req, res) => {
             ...(req.query.kct_id && {
                 '$khoa_hoc.kct_id$': req.query.kct_id,
             }),
+            ...(req.query.giao_vien_id && {
+                '$khoa_hoc.giao_vien.giao_vien_id$': req.query.giao_vien_id,
+            }),
         },
         offset:
             (Number(req.query.pageIndex || 1) - 1) *
