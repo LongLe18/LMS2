@@ -1382,7 +1382,7 @@ const downloadExamSet = async (req, res) => {
                 model: CourseStudent,
                 required: true,
                 where: {
-                    hoc_vien_id: 10957, // Truy vấn trực tiếp trong include thay vì `where` bên ngoài
+                    hoc_vien_id: req.userId, // Truy vấn trực tiếp trong include thay vì `where` bên ngoài
                 },
             },
         ],
