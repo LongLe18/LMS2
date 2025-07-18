@@ -50,7 +50,8 @@ const ForgotPasswordPage = (props) => {
                 </Col>
                 <Col xs={{ span: 24 }} lg={{ span: 4 }}>
                     <NavLink to='/luyen-tap/trang-chu' className="logo">
-                        <img src={require('assets/rank/logo-hsa.png').default} style={{width: 250}} alt='logo'/>
+                        {/* <img src={require('assets/rank/logo-hsa.png').default} style={{width: 250}} alt='logo'/> */}
+                        <Avatar shape="square" size={200} style={{maxHeight: 140}} src={require('assets/rank/Logo-saoviet.png').default} />
                     </NavLink>
                 </Col>
             </Row>

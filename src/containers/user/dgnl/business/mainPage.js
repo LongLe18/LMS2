@@ -25,7 +25,7 @@ const MainPageUser = (props) => {
     const programmeCourses = useSelector(state => state.programme.courses.result);
 
     useEffect(() => {
-        dispatch(programmeAction.getProgrammeCourses());
+        dispatch(programmeAction.getProgrammeCourses({ pageIndex: 1, pageSize: 99999999 }));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
     
 
@@ -58,7 +58,7 @@ const MainPageUser = (props) => {
             <div className="list-course-cate">        
                 <div className="wraper wraper-list-course-cate-index">
                     <Row gutter={16} style={{margin: '18px 0'}}>
-                        <Col xl={5} md={4} xs={4} style={{paddingLeft: 0}}>
+                        <Col xl={6} md={4} xs={4} style={{paddingLeft: 0}}>
                             {(programmeCourses.status === 'success' && items.length > 0) &&
                                 <Menu style={{borderRadius: 6}}
                                     mode="vertical"
@@ -86,7 +86,7 @@ const MainPageUser = (props) => {
                                 </Menu>
                             }
                         </Col> 
-                        <Col xl={19} md={20} xs={20}>
+                        <Col xl={18} md={20} xs={20}>
                             <CarouselCustom />
                         </Col>
                     </Row>

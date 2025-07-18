@@ -8,11 +8,11 @@ import Hashids from "hashids";
 import config from '../../../../configs/index';
 
 // component
-import { Layout, Row, Col, Carousel, Table, Steps, Radio, 
-    Checkbox, Button, notification, Spin, Menu, Modal } from 'antd';
+import { Layout, Row, Col, Carousel, Steps, Radio, Menu,
+    Checkbox, Button, notification, Spin, Modal } from 'antd';
 import Statisic from "components/parts/statisic/Statisic";
 import CarouselCustom from 'components/parts/Carousel/Carousel';
-import { BookOutlined, BarsOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { BookOutlined, ExclamationCircleOutlined, BarsOutlined } from '@ant-design/icons';
 import SideBarComponent from "../mainpractice/sidebar/SideBar";
 
 // redux
@@ -34,25 +34,25 @@ const ExamViewDGNL = (props) => {
     // const [criteria, setCriteria] = useState();
     const [spinning, setSpinning] = useState(false);
     // isJoinExam: 0 - chưa tham gia, 1 - tham gia thi, 2 - đã chọn môn thi
-    const [isJoinExam, setIsJoinExam] = useState(0);
+    // const [isJoinExam, setIsJoinExam] = useState(0);
     
-    const dataSource = [
-        {
-          key: '1',
-          content: `Phần 1: Toán học và xử lý số liệu (Định lượng)\n- Thời gian: 75 phút - 50 câu\n- Toán học\n- Xử lý số liệu`,
-            note: `- 35 câu hỏi trắc nghiệm bốn lựa chọn, 15 câu hỏi điền đáp án\n- Phần thi bắt buộc, thí sinh làm tất cả các câu hỏi trong phần này`,
-        },
-        {
-          key: '2',
-          content: `Phần 2: Văn học - Ngôn ngữ (Định tính)\n- Thời gian: 60 phút - 50 câu\n- Văn học\n- Ngôn ngữ`,
-            note: `- Gồm 50 câu hỏi trắc nghiệm\n- Phần thi bắt buộc, thí sinh làm tất cả các câu hỏi trong phần này`,
-        },
-        {
-            key: '3',
-            content: `Phần 3: Khoa học\n- Thời gian: 60 phút - 50 câu`,
-              note: `Phần tự chọn, thí sinh lựa chọn các câu hỏi thuộc 3 trong 5 chủ đề (môn học)`,
-        },
-    ];
+    // const dataSource = [
+    //     {
+    //       key: '1',
+    //       content: `Phần 1: Toán học và xử lý số liệu (Định lượng)\n- Thời gian: 75 phút - 50 câu\n- Toán học\n- Xử lý số liệu`,
+    //         note: `- 35 câu hỏi trắc nghiệm bốn lựa chọn, 15 câu hỏi điền đáp án\n- Phần thi bắt buộc, thí sinh làm tất cả các câu hỏi trong phần này`,
+    //     },
+    //     {
+    //       key: '2',
+    //       content: `Phần 2: Văn học - Ngôn ngữ (Định tính)\n- Thời gian: 60 phút - 50 câu\n- Văn học\n- Ngôn ngữ`,
+    //         note: `- Gồm 50 câu hỏi trắc nghiệm\n- Phần thi bắt buộc, thí sinh làm tất cả các câu hỏi trong phần này`,
+    //     },
+    //     {
+    //         key: '3',
+    //         content: `Phần 3: Khoa học\n- Thời gian: 60 phút - 50 câu`,
+    //           note: `Phần tự chọn, thí sinh lựa chọn các câu hỏi thuộc 3 trong 5 chủ đề (môn học)`,
+    //     },
+    // ];
 
     // const dataSourceTableDGTDBK = [
     //     {
@@ -75,18 +75,18 @@ const ExamViewDGNL = (props) => {
     //     },
     // ];
 
-    const columns = [
-        {
-          title: 'Nội dung',
-          dataIndex: 'content',
-          key: 'content',
-        },
-        {
-          title: 'Ghi chú',
-          dataIndex: 'note',
-          key: 'note',
-        },
-    ];
+    // const columns = [
+    //     {
+    //       title: 'Nội dung',
+    //       dataIndex: 'content',
+    //       key: 'content',
+    //     },
+    //     {
+    //       title: 'Ghi chú',
+    //       dataIndex: 'note',
+    //       key: 'note',
+    //     },
+    // ];
 
     const course = useSelector(state => state.course.item.result);
     const majors = useSelector(state => state.major.list.result);
@@ -108,8 +108,7 @@ const ExamViewDGNL = (props) => {
     useEffect(() => {
         dispatch(majorActions.getMajors());
         dispatch(courseActions.getCourse({ id: hashids.decode(idCourse) }));
-        dispatch(programmeAction.getProgrammeCourses());
-        
+        dispatch(programmeAction.getProgrammeCourses({ pageIndex: 1, pageSize: 99999999 }));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     function getItem(label, icon, key, children, type) {
@@ -163,7 +162,7 @@ const ExamViewDGNL = (props) => {
             notification.error({ message: error.response.data.message ? 'error.response.data.message' : 'Lấy dữ liệu tiêu chí đề thi thất bại' })
         });
     }
-
+    
     // kiểm tra xem học viên đang có đề thi chưa hoàn thành hay không (Dùng chung ĐGNL và ĐGTD)
     const isFinisedExam = () => {
         axios({
@@ -187,13 +186,17 @@ const ExamViewDGNL = (props) => {
                                 if (course?.data?.khung_chuong_trinh?.loai_kct === 0) 
                                     history.push(`/luyen-tap/lam-kiem-tra-online/${hashids.encode(res.data?.data?.de_thi_id)}/${moment().toNow()}/${res.data?.data?.dthv_id}/${idCourse}`)
                                 else
-                                history.push(`/luyen-tap/lam-kiem-tra-online-dgtd/${hashids.encode(res.data?.data?.de_thi_id)}/${moment().toNow()}/${res.data?.data?.dthv_id}/${idCourse}`)
+                                    history.push(`/luyen-tap/lam-kiem-tra-online-dgtd/${hashids.encode(res.data?.data?.de_thi_id)}/${moment().toNow()}/${res.data?.data?.dthv_id}/${idCourse}`)
                             },
+                            onCancel() {
+                                window.location.href = `/luyen-tap/nguoi-dung/khoa-hoc`
+                            }
                         });
                     } else {
-                        if (course?.data?.khung_chuong_trinh?.loai_kct === 0) setIsJoinExam(1);
-                        else if (course?.data?.khung_chuong_trinh?.loai_kct === 3) confirmExam();
-                        else setIsJoinExam(2)
+                        confirmExam();
+                        // if (course?.data?.khung_chuong_trinh?.loai_kct === 3) confirmExam();
+                        // else if (course?.data?.khung_chuong_trinh?.loai_kct === 0) setIsJoinExam(1);
+                        // else setIsJoinExam(2)
                         getCriteriaDG(course?.data?.khung_chuong_trinh?.loai_kct === 0);
                     }
                 } else {
@@ -213,82 +216,82 @@ const ExamViewDGNL = (props) => {
     }
 
     // Nội dung của ĐGNL HN (loai_kct === 0)
-    const contentPageDGNL = () => {
-        return (
-            <Row id="main-content">
-                <Col xl={19} md={24} xs={24} style={{paddingRight: 12}}>
-                    <Row style={{margin: '18px 0'}}>
-                        <Col xl={24} md={20} xs={20}>
-                            <Carousel autoplay style={{marginBottom: 12}}>
-                                <img src={require('assets/img/seo-exam-dgnl.png').default} alt='banner1'/>
-                            </Carousel>
-                        </Col>
-                    </Row>
-                    {course.status === 'success' &&
-                        <>
-                            <div className="header-exam">
-                                <h1 style={{color: 'rgba(229, 100, 19, 0.92)'}}>GIỚI THIỆU BÀI THI THỬ TRẢI NGHIỆM KỲ THI ĐÁNH GIÁ NĂNG LỰC (HSA)</h1>
-                            </div>
-                            <div>
-                                <h5 className="text-black" style={{fontWeight: 500}}>MỤC ĐÍCH BÀI THI TRẢI NGHIỆM</h5>
-                                <span style={{fontSize: 20, fontWeight: 500}}>Giúp thí sinh làm quen với định dạng bài thi Đánh giá năng lực, trải nghiệm ngân hàng câu hỏi phong phú, sẵn sàng kiến thức và tâm lý cho kỳ thi chính thức.</span>
-                                <h5 style={{marginTop: 8, fontWeight: 500, color: 'green'}}>CẤU TRÚC BÀI THI</h5>
-                                <Table className='table-structure' style={{ whiteSpace: 'break-spaces', textAlign: 'left', fontSize: 20}} dataSource={dataSource} columns={columns} pagination={false}/>
-                                <h5 style={{fontWeight: 500, marginTop: 8}}>CHI TIẾT CẤU TRÚC:</h5>
-                                <div style={{fontSize: 20}}>
-                                    Về hình thức, bài thi ĐGNL năm 2025 điều chỉnh chủ yếu ở phần 3 và cách đặt câu hỏi. Sau khi hoàn thành hai phần thi đầu, phần thi thứ 3 thí sinh sẽ được lựa chọn 3 trong 5 chủ đề thuộc lĩnh vực Lý, Hóa, Sinh, Sử, Địa để hoàn thành bài thi trong thời gian 195 phút (không kể thời gian bù thêm cho câu hỏi thử nghiệm).
-                                </div>
-                                <div style={{fontSize: 20, marginTop: 6}}>
-                                    Riêng phần lựa chọn liên quan đến Ngoại ngữ sẽ được xây dựng thành một hợp phần riêng thay thế phần Khoa học để đánh giá năng lực chuyên biệt.
-                                </div>
-                                <div style={{fontSize: 20, marginTop: 6}}>
-                                    Về câu hỏi, mỗi chủ đề thi sẽ xuất hiện câu hỏi chùm, trong một ngữ cảnh dữ liệu đầu bài sẽ hỏi kèm 1- 3 câu hỏi khác nhau để đánh giá năng lực tổng hợp của thí sinh. Câu hỏi chùm có thể là chủ đề mới với ngữ liệu cho trước đòi hỏi thí sinh phải nhận định, phân tích và đưa ra phương án giải quyết vấn đề đã cho.
-                                </div>
+    // const contentPageDGNL = () => {
+    //     return (
+    //         <Row id="main-content">
+    //             <Col xl={19} md={24} xs={24} style={{paddingRight: 12}}>
+    //                 <Row style={{margin: '18px 0'}}>
+    //                     <Col xl={24} md={20} xs={20}>
+    //                         <Carousel autoplay style={{marginBottom: 12}}>
+    //                             <img src={require('assets/img/seo-exam-dgnl.png').default} alt='banner1'/>
+    //                         </Carousel>
+    //                     </Col>
+    //                 </Row>
+    //                 {course.status === 'success' &&
+    //                     <>
+    //                         <div className="header-exam">
+    //                             <h1 style={{color: 'rgba(229, 100, 19, 0.92)'}}>GIỚI THIỆU BÀI THI THỬ TRẢI NGHIỆM KỲ THI ĐÁNH GIÁ NĂNG LỰC (HSA)</h1>
+    //                         </div>
+    //                         <div>
+    //                             <h5 className="text-black" style={{fontWeight: 500}}>MỤC ĐÍCH BÀI THI TRẢI NGHIỆM</h5>
+    //                             <span style={{fontSize: 20, fontWeight: 500}}>Giúp thí sinh làm quen với định dạng bài thi Đánh giá năng lực, trải nghiệm ngân hàng câu hỏi phong phú, sẵn sàng kiến thức và tâm lý cho kỳ thi chính thức.</span>
+    //                             <h5 style={{marginTop: 8, fontWeight: 500, color: 'green'}}>CẤU TRÚC BÀI THI</h5>
+    //                             <Table className='table-structure' style={{ whiteSpace: 'break-spaces', textAlign: 'left', fontSize: 20}} dataSource={dataSource} columns={columns} pagination={false}/>
+    //                             <h5 style={{fontWeight: 500, marginTop: 8}}>CHI TIẾT CẤU TRÚC:</h5>
+    //                             <div style={{fontSize: 20}}>
+    //                                 Về hình thức, bài thi ĐGNL năm 2025 điều chỉnh chủ yếu ở phần 3 và cách đặt câu hỏi. Sau khi hoàn thành hai phần thi đầu, phần thi thứ 3 thí sinh sẽ được lựa chọn 3 trong 5 chủ đề thuộc lĩnh vực Lý, Hóa, Sinh, Sử, Địa để hoàn thành bài thi trong thời gian 195 phút (không kể thời gian bù thêm cho câu hỏi thử nghiệm).
+    //                             </div>
+    //                             <div style={{fontSize: 20, marginTop: 6}}>
+    //                                 Riêng phần lựa chọn liên quan đến Ngoại ngữ sẽ được xây dựng thành một hợp phần riêng thay thế phần Khoa học để đánh giá năng lực chuyên biệt.
+    //                             </div>
+    //                             <div style={{fontSize: 20, marginTop: 6}}>
+    //                                 Về câu hỏi, mỗi chủ đề thi sẽ xuất hiện câu hỏi chùm, trong một ngữ cảnh dữ liệu đầu bài sẽ hỏi kèm 1- 3 câu hỏi khác nhau để đánh giá năng lực tổng hợp của thí sinh. Câu hỏi chùm có thể là chủ đề mới với ngữ liệu cho trước đòi hỏi thí sinh phải nhận định, phân tích và đưa ra phương án giải quyết vấn đề đã cho.
+    //                             </div>
 
-                                <div style={{textAlign: 'center'}}>
-                                    <img style={{marginTop: 12}} src={require('assets/img/cau-truc-de-thi-dgnl.png').default} alt='banner1'/>
-                                </div>
+    //                             <div style={{textAlign: 'center'}}>
+    //                                 <img style={{marginTop: 12}} src={require('assets/img/cau-truc-de-thi-dgnl.png').default} alt='banner1'/>
+    //                             </div>
 
-                                <div style={{fontSize: 20}}>
-                                    <span style={{fontWeight: 700}}>Phần 1 (bắt buộc):</span> Toán học và Xử lý số liệu được làm bài trong 75 phút gồm 50 câu hỏi (35 câu hỏi trắc nghiệm bốn lựa chọn, 15 câu hỏi điền đáp án) thuộc lĩnh vực đại số và một số yếu tố giải tích, hình học và đo lường, thống kê và xác suất.
-                                </div>
-                                <div style={{fontSize: 20, marginTop: 6}}>
-                                    <span style={{fontWeight: 700}}>Phần 2 (bắt buộc):</span> Ngôn ngữ - Văn học được hoàn thành trong 60 phút gồm 50 câu hỏi trắc nghiệm sử dụng ngữ liệu liên quan đến nhiều lĩnh vực trong đời sống như văn học, ngôn ngữ (từ vựng, ngữ pháp, hoạt động giao tiếp, sự phát triển của ngôn ngữ và các biến thể ngôn ngữ, hành văn), văn hóa, xã hội, lịch sử, địa lý, nghệ thuật, v.v… Ngữ liệu được lựa chọn trong hoặc ngoài chương trình giáo dục phổ thông.
-                                </div>
-                                <div style={{fontSize: 20, marginTop: 6}}>
-                                    <span style={{fontWeight: 700}}>Phần 3 (tự chọn):</span> Khoa học thiết kế thời gian là 60 phút gồm 50 câu hỏi trắc nghiệm và điền đáp án. Thí sinh lựa chọn 3 trong 5 chủ đề thuộc lĩnh vực: Hóa học, Sinh học, Vật lý, Địa lý, Lịch sử
-                                </div>
+    //                             <div style={{fontSize: 20}}>
+    //                                 <span style={{fontWeight: 700}}>Phần 1 (bắt buộc):</span> Toán học và Xử lý số liệu được làm bài trong 75 phút gồm 50 câu hỏi (35 câu hỏi trắc nghiệm bốn lựa chọn, 15 câu hỏi điền đáp án) thuộc lĩnh vực đại số và một số yếu tố giải tích, hình học và đo lường, thống kê và xác suất.
+    //                             </div>
+    //                             <div style={{fontSize: 20, marginTop: 6}}>
+    //                                 <span style={{fontWeight: 700}}>Phần 2 (bắt buộc):</span> Ngôn ngữ - Văn học được hoàn thành trong 60 phút gồm 50 câu hỏi trắc nghiệm sử dụng ngữ liệu liên quan đến nhiều lĩnh vực trong đời sống như văn học, ngôn ngữ (từ vựng, ngữ pháp, hoạt động giao tiếp, sự phát triển của ngôn ngữ và các biến thể ngôn ngữ, hành văn), văn hóa, xã hội, lịch sử, địa lý, nghệ thuật, v.v… Ngữ liệu được lựa chọn trong hoặc ngoài chương trình giáo dục phổ thông.
+    //                             </div>
+    //                             <div style={{fontSize: 20, marginTop: 6}}>
+    //                                 <span style={{fontWeight: 700}}>Phần 3 (tự chọn):</span> Khoa học thiết kế thời gian là 60 phút gồm 50 câu hỏi trắc nghiệm và điền đáp án. Thí sinh lựa chọn 3 trong 5 chủ đề thuộc lĩnh vực: Hóa học, Sinh học, Vật lý, Địa lý, Lịch sử
+    //                             </div>
                                 
-                            </div>
-                            <div style={{textAlign: 'center', marginTop: 12, height: 50}}>
-                                <Button type="primary" size="large" className="join-exam-button" 
-                                    onClick={() => {
-                                        // check Học viên có đề thi chưa hoàn thành không
-                                        isFinisedExam();
-                                    }}
-                                    style={{borderRadius: 8, backgroundColor: 'rgb(229 100 19 / 92%)', borderColor: 'rgb(229 100 19 / 92%)', width: '20%'}}
-                                >
-                                    Tham gia thi
-                                </Button>
-                            </div>
-                        </>
-                    }
-                </Col>
-                <Col xl={5} style={{padding: "0", textAlign: 'center'}}>
-                    <Button type="primary" size="large" className="join-exam-button" 
-                        onClick={() => {
-                            // check Học viên có đề thi chưa hoàn thành không
-                            isFinisedExam();
-                        }}
-                        style={{borderRadius: 8, backgroundColor: 'rgb(229 100 19 / 92%)', borderColor: 'rgb(229 100 19 / 92%)', marginBottom: 12, width: '80%', fontWeight: 700}}
-                    >
-                        Tham gia thi thử ngay
-                    </Button>
-                    <SideBarComponent/>
-                </Col>
-            </Row>
-        )
-    };
+    //                         </div>
+    //                         <div style={{textAlign: 'center', marginTop: 12, height: 50}}>
+    //                             <Button type="primary" size="large" className="join-exam-button" 
+    //                                 onClick={() => {
+    //                                     // check Học viên có đề thi chưa hoàn thành không
+    //                                     isFinisedExam();
+    //                                 }}
+    //                                 style={{borderRadius: 8, backgroundColor: 'rgb(229 100 19 / 92%)', borderColor: 'rgb(229 100 19 / 92%)', width: '20%'}}
+    //                             >
+    //                                 Tham gia thi
+    //                             </Button>
+    //                         </div>
+    //                     </>
+    //                 }
+    //             </Col>
+    //             <Col xl={5} style={{padding: "0", textAlign: 'center'}}>
+    //                 <Button type="primary" size="large" className="join-exam-button" 
+    //                     onClick={() => {
+    //                         // check Học viên có đề thi chưa hoàn thành không
+    //                         isFinisedExam();
+    //                     }}
+    //                     style={{borderRadius: 8, backgroundColor: 'rgb(229 100 19 / 92%)', borderColor: 'rgb(229 100 19 / 92%)', marginBottom: 12, width: '80%', fontWeight: 700}}
+    //                 >
+    //                     Tham gia thi thử ngay
+    //                 </Button>
+    //                 <SideBarComponent/>
+    //             </Col>
+    //         </Row>
+    //     )
+    // };
     
     // Nội dung của ĐGTD HN (loai_kct === 3)
     const contentPageDGTDBK = () => {
@@ -388,7 +391,7 @@ const ExamViewDGNL = (props) => {
                 <div className="wraper wraper-list-course-cate-index" >
                     
                     <Row gutter={16} style={{margin: '18px 0'}}>
-                        <Col xl={5} md={4} xs={4} style={{paddingLeft: 0}}>
+                        <Col xl={6} md={4} xs={4} style={{paddingLeft: 0}}>
                             {(programmeCourses.status === 'success' && items.length > 0) &&
                                 <Menu style={{borderRadius: 6}}
                                     mode="vertical"
@@ -416,14 +419,14 @@ const ExamViewDGNL = (props) => {
                                 </Menu>
                             }
                         </Col> 
-                        <Col xl={19} md={20} xs={20}>
+                        <Col xl={18} md={20} xs={20}>
                             <CarouselCustom />
                         </Col>
                     </Row>
                         
                     <Statisic />
 
-                    {course?.data?.khung_chuong_trinh?.loai_kct === 0 ? contentPageDGNL() : contentPageDGTDBK()}
+                    {course?.data?.khung_chuong_trinh?.loai_kct === 3 && contentPageDGTDBK()}
                 </div>
             </div>
         )
@@ -499,8 +502,7 @@ const ExamViewDGNL = (props) => {
                                         });
                                         return;
                                     }
-                                    // setIsJoinExam(2);
-                                    confirmExam()
+                                    isFinisedExam(); // kiểm tra xem Học viên có đề thi chưa hoàn thành không
                                 }}
                             >
                                 Bắt đầu
@@ -516,7 +518,7 @@ const ExamViewDGNL = (props) => {
     const confirmExam = () => {
         const data = {
             "khoa_hoc_id": hashids.decode(idCourse)[0],
-            "chuyen_nganh_ids": type === 5 ? type.toString() : subjects.join(', ')
+            "chuyen_nganh_ids": type === 5 ? type.toString() : subjects.join(', '),
         };
         setSpinning(true); // chờ
         if (course?.data?.khung_chuong_trinh?.loai_kct === 0) { // nếu là ĐGNL
@@ -647,7 +649,9 @@ const ExamViewDGNL = (props) => {
                 <title>Thi thử đánh giá năng lực</title>
             </Helmet>
             <Content className="app-content ">
-                {isJoinExam === 1 ? formSubject() : renderPages()}
+                {course?.data?.khung_chuong_trinh?.loai_kct === 3 && renderPages()}
+                {course?.data?.khung_chuong_trinh?.loai_kct === 0 && formSubject()}
+                {/* {isJoinExam === 1 ? formSubject() : renderPages()} */}
             </Content>
         </Layout>
     )

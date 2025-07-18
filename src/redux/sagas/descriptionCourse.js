@@ -11,6 +11,9 @@ function* fetchDescriptionCourses(payload) {
         if (payload.params.search) {
             endpoint += `&search=${payload.params.search}`;
         }
+        if (payload.params.giao_vien_id) {
+            endpoint += `&giao_vien_id=${payload.params.giao_vien_id}`;
+        }
         const response = yield call(getApi, endpoint);
         const result = yield response.data;
         yield put({ type: actions.description.GET_DESCRIPTION_COURSES_SUCCESS, result: result });

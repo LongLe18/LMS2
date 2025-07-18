@@ -44,8 +44,6 @@ const IntroCoursePage = () => {
     const captchaRef = useRef(null);
     const [visible, setVisible] = useState(false);
     const [fileList, setFileList] = useState([]);
-    const [previewFile, setPreviewFile] = useState(null);
-    const [isModalOpenExam, setIsModalOpenExam] = useState(false);
     const [loadingExportFile, setLoadingExportFile] = useState(false);
 
     const description = useSelector(state => state.descriptionCourse.item.result);
@@ -319,14 +317,6 @@ const IntroCoursePage = () => {
     //     }
     // };
 
-    // Xem trước file đề thi của KCT Bộ đề thi
-    const handlePreviewExam = (pdf) => {
-        if (pdf) {
-            setPreviewFile(config.API_URL + pdf.duong_dan);
-            setIsModalOpenExam(true);
-        }
-    };
-
     // download File
     const downloadFileExam = async (file) => {
         try {
@@ -464,10 +454,24 @@ const IntroCoursePage = () => {
                                             : (course?.data?.khung_chuong_trinh?.loai_kct === 6) ? 
                                                 null
                                             : (course?.data?.khung_chuong_trinh?.loai_kct !== 1 && course?.data?.khung_chuong_trinh?.loai_kct !== 6) ?
-                                                <Link to={`/luyen-tap/luyen-tap/${idCourse}`} className='devvn_buy_now'>
-                                                    <strong>Thi thử / học thử</strong>
+                                                <Button onClick={() => {
+                                                    if (!userToken) {
+                                                        notification.warning({
+                                                            message: 'Thông báo',
+                                                            description: 'Bạn cần đăng nhập để thi thử khóa học.',
+                                                        });
+                                                        showModal();
+                                                        return;
+                                                    }
+                                                    history.push(`/luyen-tap/luyen-tap/${idCourse}`)
+                                                }} className='devvn_buy_now'>
+<                                                   strong>Thi thử / học thử</strong>
                                                     <span>Bạn có muốn thi thử / học thử khóa học?</span>
-                                                </Link>
+                                                </Button>
+                                                // <Link to={`/luyen-tap/luyen-tap/${idCourse}`} className='devvn_buy_now'>
+                                                //     <strong>Thi thử / học thử</strong>
+                                                //     <span>Bạn có muốn thi thử / học thử khóa học?</span>
+                                                // </Link>
                                             : null}
                                         </>
                                     :   <Link to="#" className='devvn_exist_now' onClick={(event) => event.preventDefault()}>
@@ -607,7 +611,9 @@ const IntroCoursePage = () => {
                                                 </Button>, 
                                                 <Button key={'button2' + index} shape="round" type="primary" 
                                                     icon={<EyeOutlined />}
-                                                    onClick={() => handlePreviewExam(file?.pdf)}
+                                                    onClick={() => 
+                                                        window.open(config.API_URL + file?.pdf?.duong_dan, '_blank')
+                                                    }
                                                 >
                                                     Xem trước
                                                 </Button>
@@ -668,15 +674,6 @@ const IntroCoursePage = () => {
                     width={480}
                 >
                     {renderLogin()}
-                </Modal>
-                <Modal
-                    title="Xem trước đề thi"
-                    open={isModalOpenExam}
-                    onCancel={() => setIsModalOpenExam(false)}
-                    footer={null}
-                    width={800}
-                >
-                    {previewFile && <iframe src={previewFile} width="100%" height="500px" title="PDF Preview" />}
                 </Modal>
             </Content>
         </Layout>

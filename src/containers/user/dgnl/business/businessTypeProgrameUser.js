@@ -129,7 +129,7 @@ const BusinessTypeProgramePageUser = (props) => {
 
     const typeProgramme = [
         { id: 1, name: 'Kiểm tra trình độ đầu vào', name2: 'Kiểm tra trình độ đầu vào Online', idElement: 'testEntrance', description: 'Bài kiểm tra được xây dựng bởi đội ngũ các Thầy Cô uy tín, nhiều năm kinh \n nghiệm giảng dạy nhằm đánh giá đúng trình độ đầu vào của mỗi HS' },
-        { id: 0, name: 'Thi thử ĐGNL - ĐGTD', name2: 'Thi thử ĐGNL - ĐHQGHN (HSA), ĐGTD - ĐHBK (TSA) Online', idElement: 'testCapacity', description: 'Trải nghiệm làm bài thi ĐGNL ĐHQGHN (HSA) và ĐGTD (TSA) trên phần mềm thi thử \n giống như khi làm bài HSA - TSA trên thực tế ở tổ chức tại ĐHQGHN, ĐHBK ...' },
+        { id: 0, name: 'Thi thử ĐGNL - ĐGTD', name2: 'Thi thử ĐGNL - ĐHQGHN (HSA), ĐGTD - ĐHBK (TSA) Online', idElement: 'testCapacity', description: 'Trải nghiệm làm bài thi tốt nghiệp THPT, ĐGNL (HSA), ĐGTD (TSA) trên phần mềm thi thử \n giống như khi làm bài HSA - TSA trên thực tế ở tổ chức tại ĐHQGHN, ĐHBK ...' },
         { id: 2, name: 'Khóa luyện thi hàng đầu', name2: 'Luyện thi ĐGNL (HSA), ĐGTD (TSA)', idElement: 'study', description: 'Được xây dựng và thiết kế bởi đội ngũ giáo viên, chuyên gia uy tín hàng đầu đến từ ĐHQGHN, ĐHSP HN, ĐHBK ...' },
     ];
     
@@ -142,7 +142,7 @@ const BusinessTypeProgramePageUser = (props) => {
             }
         }));
         dispatch(programmeAction.getProgrammes({ status: '' }));
-        dispatch(programmeAction.getProgrammeCourses());
+        dispatch(programmeAction.getProgrammeCourses({ pageIndex: 1, pageSize: 99999999 }));
         dispatch(receiptAction.getRECEIPTsUser({ status: 1 }));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -241,7 +241,7 @@ const BusinessTypeProgramePageUser = (props) => {
             <div className="list-course-cate">        
                 <div className="wraper wraper-list-course-cate-index">
                     <Row gutter={16} style={{margin: '18px 0'}}>
-                        <Col xl={5} md={24} xs={24} style={{paddingLeft: 0, marginBottom: 12}}>
+                        <Col xl={6} md={24} xs={24} style={{paddingLeft: 0, marginBottom: 12}}>
                             {(programmeCourses.status === 'success' && items.length > 0) &&
                                 <Menu style={{borderRadius: 6}}
                                     mode="vertical"
@@ -269,7 +269,7 @@ const BusinessTypeProgramePageUser = (props) => {
                                 </Menu>
                             }
                         </Col> 
-                        <Col xl={19} md={24} xs={24}>
+                        <Col xl={18} md={24} xs={24}>
                             <CarouselCustom />
                         </Col>
                     </Row>

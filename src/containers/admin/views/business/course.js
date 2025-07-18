@@ -47,6 +47,7 @@ const BussinessCourses = (props) => {
         start: '',
         kct_id: '',
         end: '',
+        giao_vien_id: '',
     });
 
     const columns = [
@@ -115,7 +116,7 @@ const BussinessCourses = (props) => {
 
     useEffect(() => {
         dispatch(programmeAction.getProgrammes({ status: '' }));
-        dispatch(descriptionAction.getDescriptionCourses({ pageSize: 10, pageIndex: pageIndex, kct_id: filter.kct_id, search: filter.search }));
+        dispatch(descriptionAction.getDescriptionCourses({ pageSize: 10, pageIndex: pageIndex, kct_id: filter.kct_id, search: filter.search, giao_vien_id: filter.giao_vien_id }));
     }, [pageIndex]); // eslint-disable-line react-hooks/exhaustive-deps
     
 
@@ -135,8 +136,8 @@ const BussinessCourses = (props) => {
     };
     
     useEffect(() => {
-        dispatch(descriptionAction.getDescriptionCourses({ pageSize: 10, pageIndex: pageIndex, kct_id: filter.kct_id, search: filter.search }));
-    }, [filter.trang_thai, filter.start, filter.end, filter.kct_id, filter.search]); // eslint-disable-line react-hooks/exhaustive-deps
+        dispatch(descriptionAction.getDescriptionCourses({ pageSize: 10, pageIndex: pageIndex, kct_id: filter.kct_id, search: filter.search, giao_vien_id: filter.giao_vien_id }));
+    }, [filter.trang_thai, filter.start, filter.end, filter.kct_id, filter.search, filter.giao_vien_id]); // eslint-disable-line react-hooks/exhaustive-deps
 
 
     const renderCourses = () => {
@@ -180,7 +181,7 @@ const BussinessCourses = (props) => {
             if (res.statusText === 'OK' && res.status === 200) {
                 form.resetFields();
                 setState({ ...state, isEdit: false });
-                dispatch(descriptionAction.getDescriptionCourses({ pageSize: 10, pageIndex: pageIndex, kct_id: filter.kct_id, search: filter.search }));
+                dispatch(descriptionAction.getDescriptionCourses({ pageSize: 10, pageIndex: pageIndex, kct_id: filter.kct_id, search: filter.search, giao_vien_id: filter.giao_vien_id }));
                 notification.success({
                     message: 'Thành công',
                     description: state.isEdit ?  'Sửa mô tả khóa học thành công' : 'Thêm mô tả khóa học mới thành công',
@@ -228,6 +229,7 @@ const BussinessCourses = (props) => {
                                 programmes={programmes.data}
                                 courses={courses.data}
                                 isShowSearchBox={true}
+                                isTeacher={true}
                                 onFilterChange={(field, value) => onFilterChange(field, value)}
                             />
                         </Col>

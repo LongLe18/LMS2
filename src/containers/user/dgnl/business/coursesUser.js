@@ -49,7 +49,7 @@ const CoursesUser = (props) => {
             }],
             description: 'Bài kiểm tra được xây dựng bởi đội ngũ các Thầy Cô uy tín, nhiều năm kinh \n nghiệm giảng dạy nhằm đánh giá đúng trình độ đầu vào của mỗi HS' 
         },
-        { name: 'Thi thử ĐGNL - ĐGTD', 
+        { name: 'Thi thử tốt nghiệp - đgnl - đgtd', 
             idElement: 'testCapacity',
             subItem: [{
                 id: 0,
@@ -57,10 +57,10 @@ const CoursesUser = (props) => {
                 idElement: '', 
             }, {
                 id: 3,
-                name: 'Thi thử ĐGTD - ĐHQGHN (TSA) Online',
+                name: 'Thi thử tốt nghiệp THCS, THPT và ĐGTD ĐHBK (TSA)',
                 idElement: ''
             }],
-            description: 'Trải nghiệm làm bài thi ĐGNL ĐHQGHN (HSA) và ĐGTD (TSA) trên phần mềm thi thử \n giống như khi làm bài HSA - TSA trên thực tế ở tổ chức tại ĐHQGHN, ĐHBK ...' 
+            description: 'Trải nghiệm làm bài thi tốt nghiệp THPT, ĐGNL (HSA), ĐGTD (TSA) trên phần mềm thi thử \n giống như khi làm bài HSA - TSA trên thực tế ở tổ chức tại ĐHQGHN, ĐHBK ...' 
         },
         { name: 'Khóa luyện thi hàng đầu', 
             subItem: [{

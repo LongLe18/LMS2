@@ -146,7 +146,6 @@ function IndexHeader(props) {
     let items = [];
     if (state.notification !== '') {
       state.notification.map((item, index) => {
-        console.log(item);
         if (index < 20) {
           items.push({ 
             label:

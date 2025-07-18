@@ -36,6 +36,7 @@ export default function ExamOnlineDetaiDGTD() {
     
     let timeOut = '';
     let answers = [];
+    let exceprtTo = 0;
     const timerId = useRef(null);
     const timeCount = useRef(null);
     const [help, setHelp] = useState([]);
@@ -92,9 +93,9 @@ export default function ExamOnlineDetaiDGTD() {
                         answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, (resAnswered) => {
                             if (resAnswered.status === 'success' && resAnswered.data.length > 0) {
                                 const filteredArray = resAnswered.data
-                                    .filter(item1 => partQuestions.some(item2 => item1.cau_hoi_id === item2.cau_hoi_id))
+                                    .filter(item1 => partQuestions.some(item2 => item1.cau_hoi_id === item2?.cau_hoi?.cau_hoi_id))
                                     .map(item1 => {
-                                        const matchedItem = partQuestions.find(item2 => item1.cau_hoi_id === item2.cau_hoi_id);
+                                        const matchedItem = partQuestions.find(item2 => item1.cau_hoi_id === item2?.cau_hoi?.cau_hoi_id);
                                         return { ...item1, loai_cau_hoi: matchedItem?.cau_hoi?.loai_cau_hoi };
                                     });
                                 let temp = [];
@@ -162,9 +163,9 @@ export default function ExamOnlineDetaiDGTD() {
                         answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, (resAnswered) => {
                             if (resAnswered.status === 'success' && resAnswered.data.length > 0) {
                                 const filteredArray = resAnswered.data
-                                    .filter(item1 => partQuestions.some(item2 => item1.cau_hoi_id === item2.cau_hoi_id))
+                                    .filter(item1 => partQuestions.some(item2 => item1.cau_hoi_id === item2?.cau_hoi?.cau_hoi_id))
                                     .map(item1 => {
-                                        const matchedItem = partQuestions.find(item2 => item1.cau_hoi_id === item2.cau_hoi_id);
+                                        const matchedItem = partQuestions.find(item2 => item1.cau_hoi_id === item2?.cau_hoi?.cau_hoi_id);
                                         return { ...item1, loai_cau_hoi: matchedItem?.cau_hoi?.loai_cau_hoi };
                                     });
                                 let temp = [];
@@ -283,7 +284,7 @@ export default function ExamOnlineDetaiDGTD() {
         let index = 0;
         if (destination.droppableId.startsWith("gap")) {
             if (source.index !== 0) index = 1 * source?.index;
-            const word = exam?.data?.cau_hoi_de_this?.find((w) => (w.cau_hoi_id + index).toString() === result.draggableId);
+            const word = exam?.data?.cau_hoi_de_this?.find((w) => (w?.cau_hoi?.cau_hoi_id + index).toString() === result.draggableId);
             if (!word) return;
 
             localStorage.setItem('question', null);
@@ -513,7 +514,7 @@ export default function ExamOnlineDetaiDGTD() {
         // if (isAnswered) {
             // value = gaps.filter((it) => it.questionId === question?.cau_hoi_id)?.filter(item => item.userWord).map(item => item.userWord).join(';');
         // } else 
-        value = gaps.filter((it) => it.questionId === question?.cau_hoi_id)?.filter(item => item.userWord).map(item => item.userWord).join(';');
+        value = gaps.filter((it) => it.questionId === question?.cau_hoi?.cau_hoi_id)?.filter(item => item.userWord).map(item => item.userWord).join(';');
         localStorage.setItem('answerText', value);
     }, [gaps]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -535,25 +536,25 @@ export default function ExamOnlineDetaiDGTD() {
     // Xử lý lưu đáp án tự luận
     const onChangeAnswerText = (value, question) => {
         if (isDoing && localStorage.getItem('question') !== null) {
-            const isAnswered = answers.find((item) => item.cau_hoi_id === question.cau_hoi_id);
+            const isAnswered = answers.find((item) => item.cau_hoi_id === question?.cau_hoi?.cau_hoi_id);
             if (isAnswered) {
                 // Biến này để lưu vào state results
-                const newAnsers2 = results.map((item) => (item.cau_hoi_id === question.cau_hoi_id ? { ...item, noi_dung: value, gia_tri_dap_an: value, loai_dap_an: false, ket_qua_chon: value } : item));
+                const newAnsers2 = results.map((item) => (item.cau_hoi_id === question?.cau_hoi?.cau_hoi_id ? { ...item, noi_dung: value, gia_tri_dap_an: value, loai_dap_an: false, ket_qua_chon: value } : item));
                 setResults(newAnsers2);
 
                 const submit = {
                     "ket_qua_chon": "",
                     "noi_dung_tra_loi": value?.trim().toLowerCase(),
                     "dthv_id": params.idExamUser,
-                    "cau_hoi_id": question.cau_hoi_id
+                    "cau_hoi_id": question?.cau_hoi?.cau_hoi_id
                 }
                 dispatch(answerActions.editAnswerUser({ id: isAnswered.dadc_id, formData: submit }));
             } else {
-                setResults([...results, { cau_hoi_id: question.cau_hoi_id, noi_dung: value, gia_tri_dap_an: value, loai_dap_an: false }]);
+                setResults([...results, { cau_hoi_id: question?.cau_hoi?.cau_hoi_id, noi_dung: value, gia_tri_dap_an: value, loai_dap_an: false }]);
                 
                 const tu_luan = [{
                     "noi_dung": value?.trim().toLowerCase(),
-                    "cau_hoi_id": question.cau_hoi_id
+                    "cau_hoi_id": question?.cau_hoi?.cau_hoi_id
                 }]
                 const submit = {
                     "ket_qua_chons": [],
@@ -567,7 +568,8 @@ export default function ExamOnlineDetaiDGTD() {
 
     // hàm xử lý đánh dấu câu hỏi
     const handleMarkQuestion = (question) => {
-        dispatch(questionActions.getQuestionExam({ idQuestion: question.chdt_id }, (res) => {
+        console.log(question)
+        dispatch(questionActions.getQuestionExam({ idQuestion: question?.chdt_id }, (res) => {
             if (res.status === 'success') {
                 const data = {"danh_dau": res.data.danh_dau === 0};
                 dispatch(questionActions.editQuestionExam(
@@ -745,7 +747,7 @@ export default function ExamOnlineDetaiDGTD() {
     }
 
     const renderTitleQuestion = (question) => {
-        const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
+        const isAnswered = results.find((it) => it.cau_hoi_id === question?.cau_hoi?.cau_hoi_id);
         let answerTemp = [];
         if (isAnswered) answerTemp = isAnswered?.noi_dung?.split(';');
         let indexOfEmptyBox = 0; // Số thứ tự ô trống    
@@ -827,7 +829,7 @@ export default function ExamOnlineDetaiDGTD() {
     const convertAnswer = (dap_an_dungs, ket_qua_chons) => {
         let answered = "0".repeat(ket_qua_chons?.length);
         let chars = answered.split('');
-        dap_an_dungs.map((answer, index) => {
+        dap_an_dungs?.map((answer, index) => {
             chars[answer] = '1';
             return null;
         })
@@ -894,12 +896,12 @@ export default function ExamOnlineDetaiDGTD() {
                                 <Space wrap className='word-bank'>
                                 {/* .filter(item => !selectedGaps.some(obj => obj.userWord === item.trim().replace(/\s+/g, ''))) */}
                                     {question?.cau_hoi?.lua_chon?.noi_dung?.split(';').map((lua_chon, index) => (
-                                        <Draggable key={`${question?.cau_hoi_id + index}`} 
+                                        <Draggable key={`${question?.cau_hoi?.cau_hoi_id + index}`} 
                                             isDragDisabled={selectedGaps?.some(obj => obj.userWord === lua_chon.trim()) || !isDoing}
-                                            draggableId={(question?.cau_hoi_id + index).toString()} index={index}
+                                            draggableId={(question?.cau_hoi?.cau_hoi_id + index).toString()} index={index}
                                         >
                                             {(provided, snapshot) => (
-                                                <Tag style={{fontSize: 20, padding: '7px 14px', borderRadius: 5}} key={`${question?.cau_hoi_id + index}`} 
+                                                <Tag style={{fontSize: 20, padding: '7px 14px', borderRadius: 5}} key={`${question?.cau_hoi?.cau_hoi_id + index}`} 
                                                     ref={provided.innerRef}
                                                     {...provided.draggableProps}
                                                     {...provided.dragHandleProps}
@@ -1042,7 +1044,7 @@ export default function ExamOnlineDetaiDGTD() {
         return (
             <div className="content-answer-question">
                 <Row gutter={[20, 10]} className="multi-choice" style={{rowGap: 0}}>
-                    {question.cau_hoi.dap_ans.map((answer, index) => {
+                    {question?.cau_hoi?.dap_ans.map((answer, index) => {
                         const isAnswered = results.find((it) => it.cau_hoi_id === question?.cau_hoi?.cau_hoi_id);
                         return (
                             <Col xs={24} sm={24} md={12} key={answer.dap_an_id}>
@@ -1113,7 +1115,7 @@ export default function ExamOnlineDetaiDGTD() {
 
     // Hàm UI câu hỏi đúng sai
     const renderRightWrongQuestion = (question, key) => {
-        const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
+        const isAnswered = results.find((it) => it.cau_hoi_id === question?.cau_hoi?.cau_hoi_id);
         return (
             <div className="content-answer-question">
                 <Row style={{marginTop: 12}}>
@@ -1202,7 +1204,7 @@ export default function ExamOnlineDetaiDGTD() {
     // giao diện câu hỏi chọn nhiều đúng sai 
     const renderMultiChoiceRightWrongQuestion = (question, key, bool) => {
         // bool: là biến kiểm tra xem câu hỏi hay là đáp án
-        const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
+        const isAnswered = results.find((it) => it.cau_hoi_id === question?.cau_hoi?.cau_hoi_id);
         return (
             <div className="content-answer-question">
                 {!bool &&
@@ -1219,7 +1221,7 @@ export default function ExamOnlineDetaiDGTD() {
                     </Col>
                 </Row>
                 <Row gutter={[20, 10]} className="multi-choice" style={{rowGap: 0, margin: 0}}>
-                    {question.cau_hoi.dap_ans.map((answer, index) => {
+                    {question?.cau_hoi?.dap_ans?.map((answer, index) => {
                         return (
                             <Row className={`answer`} style={{alignItems: 'center', width: '100%', marginBottom: 12}} key={index}>                  
                                 <Col span={21}>
@@ -1288,7 +1290,7 @@ export default function ExamOnlineDetaiDGTD() {
 
     // Hàm UI câu hỏi Chọn nhiều đáp án
     const renderMultipleChoiceQuestion = (question, key) => {
-        const isAnswered = results.find((it) => it.cau_hoi_id === question.cau_hoi_id);
+        const isAnswered = results.find((it) => it.cau_hoi_id === question?.cau_hoi?.cau_hoi_id);
         return (
             <div className="content-answer-question">
                 <Row gutter={[20, 10]} className="multi-choice" style={{rowGap: 0}}>
@@ -1570,9 +1572,9 @@ export default function ExamOnlineDetaiDGTD() {
                     answerActions.getAnswersUser({ idDeThi: params.idExamUser, idQuestion: '' }, (resAnswered) => {
                         if (resAnswered.status === 'success' && resAnswered.data.length > 0) {
                             const filteredArray = resAnswered.data
-                                .filter(item1 => partQuestions.some(item2 => item1.cau_hoi_id === item2.cau_hoi_id))
+                                .filter(item1 => partQuestions.some(item2 => item1.cau_hoi_id === item2?.cau_hoi?.cau_hoi_id))
                                 .map(item1 => {
-                                    const matchedItem = partQuestions.find(item2 => item1.cau_hoi_id === item2.cau_hoi_id);
+                                    const matchedItem = partQuestions.find(item2 => item1.cau_hoi_id === item2?.cau_hoi?.cau_hoi_id);
                                     return { ...item1, loai_cau_hoi: matchedItem?.cau_hoi?.loai_cau_hoi };
                             });
                             let temp = [];
@@ -1736,6 +1738,19 @@ export default function ExamOnlineDetaiDGTD() {
         )
     }
     
+    function findClosestExcerptQuestion(questions, keyIndex) {
+        for (let i = keyIndex - 1; i >= 0; i--) {
+            const question = questions[i];
+            if (
+                question.cau_hoi.exceprtFrom &&
+                question.cau_hoi.exceprtFrom // hoặc kiểm tra excerptFrom/to
+            ) {
+                return { index: i, question };
+            }
+        }
+        return null; // Không tìm thấy
+    }
+
     return (
         <Spin spinning={loadingExportFile}>
             {loading && <LoadingCustom />}
@@ -1809,44 +1824,45 @@ export default function ExamOnlineDetaiDGTD() {
                                             {sectionQuestions.map((question, indexQuestion) => {
                                                 if (indexQuestion === currentQuestion) {
                                                     if (question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom !== undefined && question.cau_hoi.exceprtTo !== undefined) {
+                                                        exceprtTo = question.cau_hoi.exceprtTo;
                                                         partQuestions = exam?.data?.cau_hoi_de_this.slice(question.cau_hoi.exceprtFrom, question.cau_hoi.exceprtTo + 1);
                                                         exceprt = 
-                                                        <Col md={12} style={{overflowY: 'scroll', maxHeight: 800}}>
-                                                            {(question.cau_hoi?.trich_doan?.loai_trich_doan_id !== 0) &&
-                                                                <>
-                                                                    <span className="exceprt-label">
-                                                                        {`${question.cau_hoi?.trich_doan?.loai_trich_doan?.noi_dung} ${indexQuestion + 1}`} 
-                                                                        {question.cau_hoi.chuyen_nganh_id === 5 ? ' to ' : ' đến '}    
-                                                                        {indexQuestion + 1 + (question.cau_hoi.exceprtTo - question.cau_hoi.exceprtFrom)}
-                                                                    </span>
-                                                                    <br/>
-                                                                </>
-                                                            }
-                                                            <div className="answer-content" style={{paddingLeft: '0px', fontSize: 18}}> 
-                                                                <MathJax.Provider>
-                                                                    {question.cau_hoi?.trich_doan?.noi_dung?.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
-                                                                        return (
-                                                                            <div className="title-exam-content" key={index_cauhoi}>
-                                                                                {
-                                                                                    (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
-                                                                                        <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}><Image src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question_${index_cauhoi}`}></Image></div>
-                                                                                    ) : 
-                                                                                    (
-                                                                                        <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
-                                                                                            return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
-                                                                                                <MathJax.Node key={index2} formula={item2} />
-                                                                                            ) : (
-                                                                                                <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
-                                                                                            )
-                                                                                        })}</div>
-                                                                                    )
-                                                                                }
-                                                                            </div>
+                                                            <Col md={12} style={{overflowY: 'scroll', maxHeight: 800}}>
+                                                                {(question.cau_hoi?.trich_doan?.loai_trich_doan_id !== 0) &&
+                                                                    <>
+                                                                        <span className="exceprt-label">
+                                                                            {`${question.cau_hoi?.trich_doan?.loai_trich_doan?.noi_dung} ${indexQuestion + 1}`} 
+                                                                            {question.cau_hoi.chuyen_nganh_id === 5 ? ' to ' : ' đến '}    
+                                                                            {indexQuestion + 1 + (question.cau_hoi.exceprtTo - question.cau_hoi.exceprtFrom)}
+                                                                        </span>
+                                                                        <br/>
+                                                                    </>
+                                                                }
+                                                                <div className="answer-content" style={{paddingLeft: '0px', fontSize: 18}}> 
+                                                                    <MathJax.Provider>
+                                                                        {question.cau_hoi?.trich_doan?.noi_dung?.split('\n').filter((item) => item !== '').map((item, index_cauhoi) => {
+                                                                            return (
+                                                                                <div className="title-exam-content" key={index_cauhoi}>
+                                                                                    {
+                                                                                        (item.indexOf('includegraphics') !== -1 && item?.match(regex) !== null) ? (
+                                                                                            <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}><Image src={config.API_URL + `/${item.match(regex)[1]}`} alt={`img_question_${index_cauhoi}`}></Image></div>
+                                                                                        ) : 
+                                                                                        (
+                                                                                            <div style={{textAlign: 'justify'}}>{item.split('$').map((item2, index2) => {
+                                                                                                return (item.indexOf('$' + item2 + '$') !== -1 && (item2.includes('{') || item2.includes('\\')) && (!item2.includes('\\underline') && !item2.includes('\\bold') && !item2.includes('\\italic'))) ? (
+                                                                                                    <MathJax.Node key={index2} formula={item2} />
+                                                                                                ) : (
+                                                                                                    <span dangerouslySetInnerHTML={{ __html: item2 }}></span>
+                                                                                                )
+                                                                                            })}</div>
+                                                                                        )
+                                                                                    }
+                                                                                </div>
+                                                                            )}
                                                                         )}
-                                                                    )}
-                                                                </MathJax.Provider>
-                                                            </div>
-                                                        </Col>   
+                                                                    </MathJax.Provider>
+                                                                </div>
+                                                            </Col>   
                                                     }
 
                                                     if (partQuestions !== '' && exceprt !== '') {
@@ -2177,7 +2193,7 @@ export default function ExamOnlineDetaiDGTD() {
                                                         {sectionQuestions.map((question, indexQuestion) => {
                                                             return (
                                                                 <button className={`a-tag 
-                                                                        ${results.find((it) => it.cau_hoi_id === question.cau_hoi.cau_hoi_id) ? 'isDone' : ''} 
+                                                                        ${results.find((it) => it.cau_hoi_id === question?.cau_hoi?.cau_hoi_id) ? 'isDone' : ''} 
                                                                         ${(currentQuestion === indexQuestion && state.sectionExam === 1) || (currentScrollQuestion === indexQuestion && state.sectionExam > 1) ? 'selected' : ''}
                                                                         ${question?.danh_dau === 1 ? 'marked' : ''}
                                                                         ${!isDoing ? isCorrectAnswer(question.cau_hoi) : ''}`
@@ -2196,8 +2212,7 @@ export default function ExamOnlineDetaiDGTD() {
                                                                             } else {
                                                                                 // nếu là câu hỏi có trích đoạn nhưng không có 'exceprtFrom' và 'exceprtTo'
                                                                                 if (question.cau_hoi.trich_doan && question.cau_hoi.exceprtFrom === undefined && question.cau_hoi.exceprtTo === undefined) {
-                                                                                    const length = indexQuestion.toString().length;
-                                                                                    setCurrentQuestion(indexQuestion - (length > 1 ? indexQuestion.toString()[1] : indexQuestion));
+                                                                                    setCurrentQuestion(findClosestExcerptQuestion(sectionQuestions, indexQuestion)?.index);
                                                                                     setCurrentScrollQuestion(indexQuestion);
                                                                                 } else {
                                                                                     setCurrentQuestion(indexQuestion);

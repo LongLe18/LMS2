@@ -322,7 +322,7 @@ const ExamSetPage = () => {
                 file.type === 'application/zip' || file.type === '' ||
                 file.type === 'application/x-zip-compressed' || file.type === 'application/x-rar-compressed';
             if (!isDocx) {
-                message.error(`${file.name} có định dạng không được hỗ trợ (pdf, word, zip)`);
+                message.error(`${file.name} có định dạng không được hỗ trợ (pdf, zip)`);
                 return false;
             }
             // check dung lượng file trên 5mb => không cho upload

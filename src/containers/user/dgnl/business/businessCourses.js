@@ -52,7 +52,7 @@ const CoursesPage = (props) => {
             }],
             description: 'Bài kiểm tra được xây dựng bởi đội ngũ các Thầy Cô uy tín, nhiều năm kinh \n nghiệm giảng dạy nhằm đánh giá đúng trình độ đầu vào của mỗi HS' 
         },
-        { name: 'Thi thử ĐGNL - ĐGTD', 
+        { name: 'Thi thử tốt nghiệp - đgnl - đgtd', 
             idElement: 'testCapacity',
             subItem: [{
                 id: 0,
@@ -60,10 +60,10 @@ const CoursesPage = (props) => {
                 idElement: '', 
             }, {
                 id: 3,
-                name: 'Thi thử ĐGTD - ĐHQGHN (TSA) Online',
+                name: 'Thi thử tốt nghiệp THCS, THPT và ĐGTD ĐHBK (TSA)',
                 idElement: ''
             }],
-            description: 'Trải nghiệm làm bài thi ĐGNL ĐHQGHN (HSA) và ĐGTD (TSA) trên phần mềm thi thử \n giống như khi làm bài HSA - TSA trên thực tế ở tổ chức tại ĐHQGHN, ĐHBK ...' 
+            description: 'Trải nghiệm làm bài thi tốt nghiệp THPT, ĐGNL (HSA), ĐGTD (TSA) trên phần mềm thi thử \n giống như khi làm bài HSA - TSA trên thực tế ở tổ chức tại ĐHQGHN, ĐHBK ...' 
         },
         { name: 'Khóa luyện thi hàng đầu', 
             subItem: [{
@@ -259,7 +259,7 @@ const CoursesPage = (props) => {
                                     src={require("assets/img/trang-chu-3.png").default}
                                 />
                                 <div className="descripion-intro">
-                                    <h4 style={{fontSize: 22}}>Phần mềm kiểm tra trình độ, phân lớp đầu vào đầu vào</h4>
+                                    <h4 style={{fontSize: 22}}>Phần mềm kiểm tra trình độ, phân lớp đầu vào</h4>
                                     {/* <h6 style={{textTransform: 'uppercase', color: 'green'}}>Đánh giá đầu vào</h6> */}
                                     <span className='descripion'>Tham gia các kì thi thử sức và làm quen với các hình thức thi mới nhất trên nền tảng công nghệ</span>
                                     <Button type="primary" style={{borderRadius: 8}} size={'large'} 
@@ -313,13 +313,13 @@ const CoursesPage = (props) => {
                             </div>
                         </Col>
                         <Col xl={8} md={12} xs={24}>
-                            <div className="intro-trang-chu" style={{display: 'flex'}}>
+                            <div className="intro-trang-chu" style={{display: 'flex', minHeight: 252}}>
                                 <img alt="..."  style={{borderRadius: 6}}
                                     className="img-no-padding img-responsive"
                                     src={require("assets/img/trang-chu-2.png").default}
                                 />
                                 <div className="descripion-intro">
-                                    <h4 style={{fontSize: 22}}>Khóa Luyện thi tốt nghiệp trường THCS, THPT</h4>
+                                    <h4 style={{fontSize: 22}}>Khóa Luyện thi tốt nghiệp THCS, THPT</h4>
                                     <span className='descripion'>Cung cấp thông tin đầy đủ về các khóa học, bài giảng chất lượng và lộ trình học tập mới nhất để thi THCS, THPT</span>
                                     <Button type="primary" style={{borderRadius: 8}} size={'large'} 
                                         onClick={() => document.getElementById("studyTHCS").scrollIntoView({
@@ -357,7 +357,7 @@ const CoursesPage = (props) => {
                                     src={require("assets/img/trang-chu-3.png").default}
                                 />
                                 <div className="descripion-intro">
-                                    <h4 style={{fontSize: 22}}>Bộ đề thi HSA - TSA chuẩn, cập nhật mới từng năm</h4>
+                                    <h4 style={{fontSize: 22}}>Bộ đề thi chuẩn, cập nhật mới từng năm</h4>
                                     <span className='descripion'>Cung cấp thông tin đầy đủ về các bộ đề thi HSA - TSA theo từng năm để học viên ôn tập</span>
                                     <Button type="primary" style={{borderRadius: 8}} size={'large'} 
                                         onClick={() => document.getElementById("examSample").scrollIntoView({

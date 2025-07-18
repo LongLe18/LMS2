@@ -140,7 +140,7 @@ const ExamViewPage = (props) => {
             return;
         } 
         
-        if (course.data?.loai_kct === 0) { // Nếu là loại kct ĐGNL
+        if (course.data?.khung_chuong_trinh?.loai_kct === 0 || course?.data?.khung_chuong_trinh?.loai_kct === 3) { // Nếu là loại kct ĐGNL
             const callback = (response) => {
                 if (response.status === 'success') {
                     let info = {
@@ -409,9 +409,9 @@ const ExamViewPage = (props) => {
                                 <Row gutter={[20]}>
                                     <Col xl={24} sm={24} xs={24} className="news-left">
                                         {(() => {
-                                            if (course.data.loai_kct === 0) {
+                                            if (course?.data?.khung_chuong_trinh?.loai_kct === 0) {
                                                 return renderConfirmExamDGNL();
-                                            } else if (course.data.loai_kct === 3) {
+                                            } else if (course.data?.khung_chuong_trinh?.loai_kct === 3) {
                                                 return renderConfirmExamDGTD();
                                             } else {
                                                 return renderDetail();

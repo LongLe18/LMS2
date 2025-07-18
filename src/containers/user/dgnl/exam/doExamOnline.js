@@ -77,7 +77,7 @@ const ExamOnlineDetai = () => {
     const error = useSelector(state => state.exam.item.error);
     const examUser = useSelector(state => state.exam.examUser.result);
     const comments = useSelector(state => state.comment.list.result);
-    const evaluations = useSelector(state => state.evaluate.list.result);
+    const evaluations = useSelector(state => state.evaluate.listDGNL.result);
     const course = useSelector(state => state.course.item.result);
 
     let answers = [];
@@ -144,7 +144,7 @@ const ExamOnlineDetai = () => {
                                     "thoi_gian_lam_bai": secondsToMinutes(res.data.thoi_gian * 60),
                                 }
                             }
-                            if (course?.data.loai_kct === 0) dispatch(examActions.editExamDGNLUser({ idExam: params.idExamUser, formData: info }))
+                            if (course?.data?.khung_chuong_trinh?.loai_kct === 0) dispatch(examActions.editExamDGNLUser({ idExam: params.idExamUser, formData: info }))
                             else dispatch(examActions.editExamUser({ idExam: params.idExamUser, formData: info }))
                             clearInterval(timerId?.current);
                             setStartTime(0);
@@ -318,6 +318,7 @@ const ExamOnlineDetai = () => {
     useEffect(() => {
         if (timeToDo) {
             let temp = timeToDoAllSection; 
+            if (temp === null) return;
             temp[state.sectionExam - 1] = timeToDo; // cập nhật thời gian làm bài của phần tương ứng
             const thoi_gian_lam_bai = temp.reduce((partialSum, a) => Number(partialSum) + Number(a), 0) // tổng thời gian làm bài
             setTimeToDoAllSection(temp);
@@ -326,7 +327,7 @@ const ExamOnlineDetai = () => {
                 phan_dang_lam: Number(state.sectionExam),
                 thoi_gian_lam_phan: timeToDoAllSection.join(','),
             }
-            if (course?.data.loai_kct === 0) dispatch(examActions.editExamDGNLUser({ idExam: params.idExamUser, formData: info }))
+            if (course?.data?.khung_chuong_trinh?.loai_kct === 0) dispatch(examActions.editExamDGNLUser({ idExam: params.idExamUser, formData: info }))
             else dispatch(examActions.editExamUser({ idExam: params.idExamUser, formData: info }))
         }
     }, [timeToDo]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -1032,7 +1033,7 @@ const ExamOnlineDetai = () => {
                     const info = {
                         "diem_cac_phan": points.join(',')
                     }
-                    if (course?.data.loai_kct === 0) {
+                    if (course?.data?.khung_chuong_trinh?.loai_kct === 0) {
                         dispatch(examActions.editExamDGNLUser({ idExam: params.idExamUser, formData: info }, (a) => {
                             if (a.status === 200 && a.statusText === 'OK') {
                                 window.location.reload();
@@ -1055,7 +1056,7 @@ const ExamOnlineDetai = () => {
             "thoi_gian_lam_bai": secondsToMinutes(timeToDo === 0 ? 60 : thoi_gian_lam_bai * 60),
             "thoi_diem_ket_thuc": moment().toISOString()
         }
-        if (course?.data.loai_kct === 0) dispatch(examActions.editExamDGNLUser({ idExam: params.idExamUser, formData: info }, callbackSub))
+        if (course?.data?.khung_chuong_trinh?.loai_kct === 0) dispatch(examActions.editExamDGNLUser({ idExam: params.idExamUser, formData: info }, callbackSub))
         else dispatch(examActions.editExamUser({ idExam: params.idExamUser, formData: info }, callbackSub))
     };
 
@@ -1276,7 +1277,7 @@ const ExamOnlineDetai = () => {
                         <Col span={24}>
                             <Row justify={'space-between'} style={{marginBottom: 12}}>
                                 <Col style={{fontSize: 24, color: 'rgb(255, 48, 7)'}}>{getCurrentDate()}</Col>
-                                {course?.data.loai_kct !== 0 ? 
+                                {course?.data?.khung_chuong_trinh?.loai_kct !== 0 ? 
                                     <Col style={{display: isDoing ? 'flex' : 'none', padding: 4, background: '#1890ff', fontSize: 16, borderRadius: 4}}>
                                         {`PHẦN ${state.sectionExam}`}
                                     </Col>
@@ -1329,7 +1330,7 @@ const ExamOnlineDetai = () => {
                     </Row>
                 </div>
                 <Row className="question-content" gutter={[16]} style={{margin: '0 68px'}}>
-                    <Col span={course?.data.loai_kct !== 0 ? 18 : 21}>
+                    <Col span={course?.data?.khung_chuong_trinh?.loai_kct !== 0 ? 18 : 21}>
                         {(!isDoing && examUser.status === 'success') &&(
                             <div className="history-header">
                                 <div className="summury-result">
@@ -1339,7 +1340,7 @@ const ExamOnlineDetai = () => {
                                             Chúc mừng bạn đã hoàn thành <span>{exam.data.ten_de_thi}</span>
                                             </b>
                                         </p>
-                                        {course?.data.loai_kct === 0 &&
+                                        {course?.data?.khung_chuong_trinh?.loai_kct === 0 &&
                                             <p className="size-18">
                                                 Thí sinh kiểm tra lại toàn bộ đề thi đã trả lời, ghi nhớ 
                                                 <span style={{color: 'red', margin: '0 4px'}}>
@@ -1349,7 +1350,7 @@ const ExamOnlineDetai = () => {
                                             </p>
                                         }
                                     </div>
-                                    {course?.data.loai_kct === 0 ?
+                                    {course?.data?.khung_chuong_trinh?.loai_kct === 0 ?
                                         <>
                                             <Row className='title-section' justify={'center'}>
                                                 <Col xs={{ span: 22, offset: 1 }} lg={{ span: 16 }}>
@@ -1414,7 +1415,7 @@ const ExamOnlineDetai = () => {
                                                 </Button> 
                                                 đáp án và lời giải
                                             </div>
-                                            {course?.data.loai_kct === 0 && 
+                                            {course?.data?.khung_chuong_trinh?.loai_kct === 0 && 
                                                 <div style={{fontSize: 22, textAlign: 'center', marginBottom: 12}}>Click
                                                     <Button type="text" onClick={() => exportEvaluationDGNL()}
                                                         style={{fontSize: 22, color: 'red'}}
@@ -1478,7 +1479,7 @@ const ExamOnlineDetai = () => {
                                                         })
                                                         return (
                                                             <>
-                                                            {course?.data.loai_kct === 0 ? 
+                                                            {course?.data?.khung_chuong_trinh?.loai_kct === 0 ? 
                                                                 <div className='title-section' >
                                                                         <div className={`section-${index}`} style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
                                                                             <div style={{padding: 0}}>
@@ -1565,7 +1566,7 @@ const ExamOnlineDetai = () => {
                                         </>
                                     }                               
                                 </div>
-                                {course?.data.loai_kct !== 0 &&
+                                {course?.data?.khung_chuong_trinh?.loai_kct !== 0 &&
                                     <div className="block-action">
                                         <Button type="primary" size="large" className="dowload-exam-button" onClick={() => downloadReport()}>
                                             <DownloadOutlined />
@@ -1779,7 +1780,7 @@ const ExamOnlineDetai = () => {
                                 )
                             } else return null;
                         })}
-                        {(exam.status === 'success' && !isDoing && ((course?.data.loai_kct === 0 && isDetail) || course?.data.loai_kct !== 0)) && exam.data.cau_hoi_de_this.map((question, ParentIndex) => {
+                        {(exam.status === 'success' && !isDoing && ((course?.data?.khung_chuong_trinh?.loai_kct === 0 && isDetail) || course?.data?.khung_chuong_trinh?.loai_kct !== 0)) && exam.data.cau_hoi_de_this.map((question, ParentIndex) => {
                             let regex = /\\begin{center}\\includegraphics\[scale = 0\.5\]{(.*?)}\\end{center}/;
                             return (
                                 <>
@@ -2076,7 +2077,7 @@ const ExamOnlineDetai = () => {
                     </Col>
                     
                     {/* Đánh giá năng lực */}
-                    {(isDoing && course?.data.loai_kct === 0) && Array.from({ length: exam.data.so_phan }).map((_, index) => {
+                    {(isDoing && course?.data?.khung_chuong_trinh?.loai_kct === 0) && Array.from({ length: exam.data.so_phan }).map((_, index) => {
                         if (index + 1 === state.sectionExam) {
                             const startIndex = index === 0 ? 0 : Array.from({ length: index }).reduce((sum, _, i) => sum + exam.data[`so_cau_hoi_phan_${i + 1}`], 0);
                             const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${state.sectionExam}`];
@@ -2115,7 +2116,7 @@ const ExamOnlineDetai = () => {
                         } else return null;
                     })}
                     {/* Các khóa học thuộc khung chương trình khác */}
-                    {(isDoing && course?.data.loai_kct !== 0) && Array.from({ length: exam.data.so_phan }).map((_, index) => {
+                    {(isDoing && course?.data?.khung_chuong_trinh?.loai_kct !== 0) && Array.from({ length: exam.data.so_phan }).map((_, index) => {
                         if (index + 1 === state.sectionExam) {
                             const startIndex = index === 0 ? 0 : Array.from({ length: index }).reduce((sum, _, i) => sum + exam.data[`so_cau_hoi_phan_${i + 1}`], 0);
                             const endIndex = startIndex + exam.data[`so_cau_hoi_phan_${state.sectionExam}`];
@@ -2182,8 +2183,8 @@ const ExamOnlineDetai = () => {
                             )
                         } else return null;
                     })}
-                    {(!isDoing && course?.data.loai_kct === 0 && isDetail) && renderHistoryExamSidebar()}
-                    {(!isDoing && course?.data.loai_kct !== 0 && renderHistoryExamSidebarOld())}
+                    {(!isDoing && course?.data?.khung_chuong_trinh?.loai_kct === 0 && isDetail) && renderHistoryExamSidebar()}
+                    {(!isDoing && course?.data?.khung_chuong_trinh?.loai_kct !== 0 && renderHistoryExamSidebarOld())}
                 </Row>
                 {isDoing && 
                     <p className="text-center">

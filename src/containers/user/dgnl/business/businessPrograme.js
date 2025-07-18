@@ -56,7 +56,7 @@ const BusinessProgramePage = (props) => {
 
         dispatch(courseAction.getCourses({ idkct: idKCT, status: 1, search: '', pageSize: 99999999, pageIndex: 1 }));
         dispatch(programmeAction.getProgramme({ id: idKCT }, callback));
-        dispatch(programmeAction.getProgrammeCourses());
+        dispatch(programmeAction.getProgrammeCourses({ pageIndex: 1, pageSize: 99999999 }));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     if (courses.status === 'success') {
@@ -268,7 +268,7 @@ const BusinessProgramePage = (props) => {
             <div className="list-course-cate">
                 <div className="wraper wraper-list-course-cate-index">
                     <Row gutter={16} style={{margin: '18px 0'}}>
-                        <Col xl={5} md={4} xs={4} style={{paddingLeft: 0}}>
+                        <Col xl={6} md={4} xs={4} style={{paddingLeft: 0}}>
                             {(programmeCourses.status === 'success' && items.length > 0) &&
                                 <Menu style={{borderRadius: 6}}
                                     mode="vertical"
@@ -296,7 +296,7 @@ const BusinessProgramePage = (props) => {
                                 </Menu>
                             }
                         </Col> 
-                        <Col xl={19} md={20} xs={20}>
+                        <Col xl={18} md={20} xs={20}>
                             <CarouselCustom />
                         </Col>
                     </Row>

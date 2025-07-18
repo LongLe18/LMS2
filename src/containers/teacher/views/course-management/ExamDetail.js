@@ -489,6 +489,9 @@ const ExamDetailPage = () => {
         const subCallBack2 = (res) => {
             if (res.status === 200 ) {
                 questionForm.resetFields();
+                questionForm.setFieldsValue(defaultQuestion);
+                setCurrentQuestion(defaultQuestion);
+                setState({ ...state, isEdit: false })
                 notification.success({
                     message: state.isEdit ? 'Cập nhật câu hỏi thành công.' : 'Thêm mới đáp án thành công.',
                 });
@@ -500,7 +503,10 @@ const ExamDetailPage = () => {
         const callback = (res) => {
             if (res.status === 200) {   
                 if (!state.isEdit) { // Thêm mới
-                    const questionExam = { cau_hoi_id: res.data.data.cau_hoi_id, de_thi_id: id, chuyen_nganh_id: values?.chuyen_nganh_id !== undefined ? values.chuyen_nganh_id : '' };
+                    let questionExam;
+                    if (values?.chuyen_nganh_id !== undefined && values.chuyen_nganh_id !== null && values.chuyen_nganh_id !== '')
+                        questionExam = { cau_hoi_id: res.data.data.cau_hoi_id, de_thi_id: id, chuyen_nganh_id: values?.chuyen_nganh_id };
+                    else questionExam = { cau_hoi_id: res.data.data.cau_hoi_id, de_thi_id: id};
                     dispatch(questionActions.createQuestionExam(questionExam, subCallBack));             
                     
                     const answer = new FormData();
@@ -592,7 +598,8 @@ const ExamDetailPage = () => {
         if (values.mo_dun_id_2 !== '' && values.mo_dun_id_2 !== null && values.mo_dun_id_2 !== undefined) formQuestionData.append('mo_dun_id', values.mo_dun_id_2);
         if (values.chuyen_de_id_2 !== '' && values.chuyen_de_id_2 !== null && values.chuyen_de_id_2 !== undefined) formQuestionData.append('chuyen_de_id', values.chuyen_de_id_2);
         formQuestionData.append('cot_tren_hang', values.kieu_hien_thi_dap_an);
-        formQuestionData.append('chuyen_nganh_id', values?.chuyen_nganh_id !== undefined ? values.chuyen_nganh_id : '');
+        if (values?.chuyen_nganh_id !== undefined && values.chuyen_nganh_id !== null && values.chuyen_nganh_id !== '')
+            formQuestionData.append('chuyen_nganh_id', values?.chuyen_nganh_id);
 
         if (state.fileImg !== '')
             formQuestionData.append('tep_dinh_kem_noi_dung', state.fileImg !== undefined ? state.fileImg : '');
