@@ -547,10 +547,10 @@ const findOne = async (req, res) => {
     }
 
     const examInclude = {
-                model: ExamQuestion,
+        model: ExamQuestion,
         attributes: ['chdt_id', 'phan', 'danh_dau'],
-                include: {
-                    model: Question,
+        include: {
+            model: Question,
             attributes: [
                 'cau_hoi_id',
                 'noi_dung',
@@ -559,40 +559,40 @@ const findOne = async (req, res) => {
                 'loi_giai',
                 'cot_tren_hang',
             ],
-                    include: [
-                        {
-                            model: Answer,
+            include: [
+                {
+                    model: Answer,
                     attributes: ['dap_an_id', 'noi_dung_dap_an', 'dap_an_dung'],
-                        },
-                        {
-                            model: Exceprt,
-                    attributes: ['trich_doan_id', 'noi_dung', 'tep_dinh_kem'],
-                            include: {
-                                model: ExceprtType,
-                        attributes: ['loai_trich_doan_id', 'noi_dung'],
-                            },
-                        },
-                    ],
                 },
+                {
+                    model: Exceprt,
+                    attributes: ['trich_doan_id', 'noi_dung', 'tep_dinh_kem'],
+                    include: {
+                        model: ExceprtType,
+                        attributes: ['loai_trich_doan_id', 'noi_dung'],
+                    },
+                },
+            ],
+        },
     };
 
     const examOrder = exam.de_mau
         ? [
-                [
-                    sequelize.literal(
-                        `FIELD(cau_hoi_de_this.chuyen_nganh_id, ${[
-                            1, 7, 3, 4, 6, 8, 9, 5,
-                        ].join(', ')})`
-                    ),
-                ],
-                [sequelize.col('cau_hoi_de_this.cau_hoi.trich_doan_id'), 'ASC'],
-                [sequelize.col('dap_an_id'), 'ASC'],
+              [
+                  sequelize.literal(
+                      `FIELD(cau_hoi_de_this.chuyen_nganh_id, ${[
+                          1, 7, 3, 4, 6, 8, 9, 5,
+                      ].join(', ')})`
+                  ),
+              ],
+              [sequelize.col('cau_hoi_de_this.cau_hoi.trich_doan_id'), 'ASC'],
+              [sequelize.col('dap_an_id'), 'ASC'],
           ]
         : [
-                [sequelize.col('phan'), 'ASC'],
-                [sequelize.col('cau_hoi_de_this.cau_hoi.trich_doan_id'), 'ASC'],
-                [sequelize.col('chdt_id'), 'ASC'],
-                [sequelize.col('dap_an_id'), 'ASC'],
+              [sequelize.col('phan'), 'ASC'],
+              [sequelize.col('cau_hoi_de_this.cau_hoi.trich_doan_id'), 'ASC'],
+              [sequelize.col('chdt_id'), 'ASC'],
+              [sequelize.col('dap_an_id'), 'ASC'],
           ];
 
     exam = await Exam.findOne({
@@ -641,34 +641,34 @@ const findOne = async (req, res) => {
             .send({ status: 'error', message: 'No criteria' });
     }
 
-                exam.dataValues.so_cau_hoi = criteria.so_cau_hoi;
-                exam.dataValues.thoi_gian = criteria.thoi_gian;
+    exam.dataValues.so_cau_hoi = criteria.so_cau_hoi;
+    exam.dataValues.thoi_gian = criteria.thoi_gian;
 
     if (exam.loai_de_thi_id === 5) {
-                exam.dataValues.so_phan = 3;
-                exam.dataValues.so_cau_hoi_phan_1 = criteria.so_cau_hoi_phan_1;
-                exam.dataValues.thoi_gian_phan_1 = criteria.thoi_gian_phan_1;
-                exam.dataValues.so_cau_hoi_phan_2 = criteria.so_cau_hoi_phan_2;
-                exam.dataValues.thoi_gian_phan_2 = criteria.thoi_gian_phan_2;
+        exam.dataValues.so_phan = 3;
+        exam.dataValues.so_cau_hoi_phan_1 = criteria.so_cau_hoi_phan_1;
+        exam.dataValues.thoi_gian_phan_1 = criteria.thoi_gian_phan_1;
+        exam.dataValues.so_cau_hoi_phan_2 = criteria.so_cau_hoi_phan_2;
+        exam.dataValues.thoi_gian_phan_2 = criteria.thoi_gian_phan_2;
 
         const hasPart3 = exam.cau_hoi_de_this.some((item) => item.phan === 3);
         if (hasPart3) {
             exam.dataValues.so_cau_hoi_phan_3 = criteria.so_cau_hoi_phan_3;
             exam.dataValues.thoi_gian_phan_3 = criteria.thoi_gian_phan_3;
-                } else {
+        } else {
             exam.dataValues.so_cau_hoi_phan_3 = criteria.so_cau_hoi_phan_4;
             exam.dataValues.thoi_gian_phan_3 = criteria.thoi_gian_phan_4;
-                }
-            } else if (exam.loai_de_thi_id === 4) {
-                exam.dataValues.so_phan = criteria.so_phan;
-                for (let i = 0; i < criteria.so_phan; i++) {
-                    exam.dataValues[`so_cau_hoi_phan_${i + 1}`] =
-                        criteria[`so_cau_hoi_phan_${i + 1}`];
-                    exam.dataValues[`yeu_cau_phan_${i + 1}`] =
-                        criteria[`yeu_cau_phan_${i + 1}`];
-                    exam.dataValues[`thoi_gian_phan_${i + 1}`] =
-                        criteria[`thoi_gian_phan_${i + 1}`];
-                }
+        }
+    } else if (exam.loai_de_thi_id === 4) {
+        exam.dataValues.so_phan = criteria.so_phan;
+        for (let i = 0; i < criteria.so_phan; i++) {
+            exam.dataValues[`so_cau_hoi_phan_${i + 1}`] =
+                criteria[`so_cau_hoi_phan_${i + 1}`];
+            exam.dataValues[`yeu_cau_phan_${i + 1}`] =
+                criteria[`yeu_cau_phan_${i + 1}`];
+            exam.dataValues[`thoi_gian_phan_${i + 1}`] =
+                criteria[`thoi_gian_phan_${i + 1}`];
+        }
     }
 
     for (let i = 0; i < (exam.cau_hoi_de_this?.length || 0); i++) {
@@ -680,14 +680,15 @@ const findOne = async (req, res) => {
             question?.trich_doan?.trich_doan_id &&
             (i === 0 ||
                 question?.trich_doan?.trich_doan_id !==
-                    exam.cau_hoi_de_this[i - 1]?.cau_hoi?.trich_doan?.trich_doan_id)
+                    exam.cau_hoi_de_this[i - 1]?.cau_hoi?.trich_doan
+                        ?.trich_doan_id)
         ) {
             let from = i,
                 to = i;
             for (let j = i + 1; j < exam.cau_hoi_de_this.length; j++) {
                 if (
-                    exam.cau_hoi_de_this[j].cau_hoi?.trich_doan?.trich_doan_id ===
-                    question?.trich_doan?.trich_doan_id
+                    exam.cau_hoi_de_this[j].cau_hoi?.trich_doan
+                        ?.trich_doan_id === question?.trich_doan?.trich_doan_id
                 ) {
                     to = j;
                 }
@@ -884,8 +885,10 @@ const getByIdv2 = async (req, res) => {
         if (exam.cau_hoi_de_this[index1].cau_hoi?.trich_doan?.trich_doan_id) {
             if (
                 index1 == 0 ||
-                exam.cau_hoi_de_this[index1].cau_hoi?.trich_doan?.trich_doan_id !=
-                    exam.cau_hoi_de_this[index1 - 1].cau_hoi?.trich_doan?.trich_doan_id
+                exam.cau_hoi_de_this[index1].cau_hoi?.trich_doan
+                    ?.trich_doan_id !=
+                    exam.cau_hoi_de_this[index1 - 1].cau_hoi?.trich_doan
+                        ?.trich_doan_id
             ) {
                 exceprtFrom = exceprtTo = index1;
                 for (
@@ -894,8 +897,10 @@ const getByIdv2 = async (req, res) => {
                     index3++
                 ) {
                     if (
-                        exam.cau_hoi_de_this[index1].cau_hoi?.trich_doan?.trich_doan_id ==
-                        exam.cau_hoi_de_this[index3].cau_hoi?.trich_doan?.trich_doan_id
+                        exam.cau_hoi_de_this[index1].cau_hoi?.trich_doan
+                            ?.trich_doan_id ==
+                        exam.cau_hoi_de_this[index3].cau_hoi?.trich_doan
+                            ?.trich_doan_id
                     )
                         exceprtTo = index3;
                 }
@@ -940,10 +945,10 @@ const getByIdDGTD = async (req, res) => {
     }
 
     const examInclude = {
-                model: ExamQuestion,
+        model: ExamQuestion,
         attributes: ['chdt_id', 'phan', 'danh_dau'],
-                include: {
-                    model: Question,
+        include: {
+            model: Question,
             attributes: [
                 'cau_hoi_id',
                 'noi_dung',
@@ -952,54 +957,54 @@ const getByIdDGTD = async (req, res) => {
                 'loi_giai',
                 'cot_tren_hang',
             ],
-                    include: [
-                        {
-                            model: Answer,
+            include: [
+                {
+                    model: Answer,
                     attributes: ['dap_an_id', 'noi_dung_dap_an', 'dap_an_dung'],
-                        },
-                        {
-                            model: QuestionDetail,
-                            attributes: ['chct_id', 'noi_dung'],
-                        },
-                        {
-                            model: Option,
-                            attributes: ['lua_chon_id', 'noi_dung'],
-                        },
-                        {
-                            model: Exceprt,
-                    attributes: ['trich_doan_id', 'noi_dung', 'tep_dinh_kem'],
-                            include: {
-                                model: ExceprtType,
-                        attributes: ['loai_trich_doan_id', 'noi_dung'],
-                            },
-                        },
-                    ],
                 },
+                {
+                    model: QuestionDetail,
+                    attributes: ['chct_id', 'noi_dung'],
+                },
+                {
+                    model: Option,
+                    attributes: ['lua_chon_id', 'noi_dung'],
+                },
+                {
+                    model: Exceprt,
+                    attributes: ['trich_doan_id', 'noi_dung', 'tep_dinh_kem'],
+                    include: {
+                        model: ExceprtType,
+                        attributes: ['loai_trich_doan_id', 'noi_dung'],
+                    },
+                },
+            ],
+        },
     };
 
     const examWhere = {
-            where: {
-                de_thi_id: req.params.id,
-            },
+        where: {
+            de_thi_id: req.params.id,
+        },
     };
 
     const examOrder = exam.de_mau
         ? [
-                [
-                    sequelize.literal(
-                        `FIELD(cau_hoi_de_this.chuyen_nganh_id, ${[
-                            10, 11, 12,
-                        ].join(', ')})`
-                    ),
-                ],
-                [sequelize.col('dap_an_id'), 'ASC'],
+              [
+                  sequelize.literal(
+                      `FIELD(cau_hoi_de_this.chuyen_nganh_id, ${[
+                          10, 11, 12,
+                      ].join(', ')})`
+                  ),
+              ],
+              [sequelize.col('dap_an_id'), 'ASC'],
           ]
         : [
-                [sequelize.col('phan'), 'ASC'],
-                [sequelize.col('chdt_id'), 'ASC'],
-                [sequelize.col('dap_an_id'), 'ASC'],
-                [sequelize.col('lua_chon_id'), 'ASC'],
-                [sequelize.col('chct_id'), 'ASC'],
+              [sequelize.col('phan'), 'ASC'],
+              [sequelize.col('chdt_id'), 'ASC'],
+              [sequelize.col('dap_an_id'), 'ASC'],
+              [sequelize.col('lua_chon_id'), 'ASC'],
+              [sequelize.col('chct_id'), 'ASC'],
           ];
 
     exam = await Exam.findOne({
@@ -1021,17 +1026,17 @@ const getByIdDGTD = async (req, res) => {
         });
     }
 
-        exam.dataValues.so_cau_hoi = criteria.so_cau_hoi;
-        exam.dataValues.thoi_gian = criteria.thoi_gian;
-        exam.dataValues.so_phan = criteria.so_phan;
+    exam.dataValues.so_cau_hoi = criteria.so_cau_hoi;
+    exam.dataValues.thoi_gian = criteria.thoi_gian;
+    exam.dataValues.so_phan = criteria.so_phan;
 
-        for (let i = 0; i < criteria.so_phan; i++) {
-            exam.dataValues[`so_cau_hoi_phan_${i + 1}`] =
-                criteria[`so_cau_hoi_phan_${i + 1}`];
-            exam.dataValues[`yeu_cau_phan_${i + 1}`] =
-                criteria[`yeu_cau_phan_${i + 1}`];
-            exam.dataValues[`thoi_gian_phan_${i + 1}`] =
-                criteria[`thoi_gian_phan_${i + 1}`];
+    for (let i = 0; i < criteria.so_phan; i++) {
+        exam.dataValues[`so_cau_hoi_phan_${i + 1}`] =
+            criteria[`so_cau_hoi_phan_${i + 1}`];
+        exam.dataValues[`yeu_cau_phan_${i + 1}`] =
+            criteria[`yeu_cau_phan_${i + 1}`];
+        exam.dataValues[`thoi_gian_phan_${i + 1}`] =
+            criteria[`thoi_gian_phan_${i + 1}`];
     }
 
     if (exam.cau_hoi_de_this) {
@@ -1043,14 +1048,16 @@ const getByIdDGTD = async (req, res) => {
                 if (
                     i === 0 ||
                     question?.trich_doan?.trich_doan_id !==
-                        exam.cau_hoi_de_this[i - 1].cau_hoi?.trich_doan?.trich_doan_id
+                        exam.cau_hoi_de_this[i - 1].cau_hoi?.trich_doan
+                            ?.trich_doan_id
                 ) {
                     let exceprtFrom = i;
                     let exceprtTo = i;
                     for (let j = i + 1; j < exam.cau_hoi_de_this.length; j++) {
                         if (
                             question?.trich_doan.trich_doan_id ===
-                            exam.cau_hoi_de_this[j].cau_hoi?.trich_doan?.trich_doan_id
+                            exam.cau_hoi_de_this[j].cau_hoi?.trich_doan
+                                ?.trich_doan_id
                         ) {
                             exceprtTo = j;
                         }
@@ -1256,7 +1263,131 @@ const publish = async (req, res) => {
             }
         );
     } else {
-        if (exam.loai_de_thi_id === 5) {
+        if (exam.loai_de_thi_id === 1) {
+            let criteria = await ThematicCriteria.findOne({
+                where: {
+                    mo_dun_id: exam.mo_dun_id,
+                },
+            });
+            if (!criteria) {
+                return res.status(400).send({
+                    status: 'error',
+                    message: 'Chưa có tiêu chí đề thi',
+                });
+            }
+
+            const condition = await sequelize.query(
+                `
+                SELECT ((SELECT COUNT(*) FROM cau_hoi_de_thi WHERE de_thi_id = :de_thi_id) = :so_cau_hoi) AS bool`,
+                {
+                    replacements: {
+                        de_thi_id: Number(req.params.id),
+                        so_cau_hoi: criteria.so_cau_hoi,
+                    },
+                    type: sequelize.QueryTypes.SELECT,
+                }
+            );
+
+            if (!condition[0].bool) {
+                return res.status(400).send({
+                    status: 'error',
+                    message: 'Số lượng câu hỏi chưa đúng yêu cầu',
+                });
+            }
+        } else if (exam.loai_de_thi_id === 2) {
+            let criteria = await ModunCriteria.findOne({
+                where: {
+                    mo_dun_id: exam.mo_dun_id,
+                },
+            });
+            if (!criteria) {
+                return res.status(400).send({
+                    status: 'error',
+                    message: 'Chưa có tiêu chí đề thi',
+                });
+            }
+
+            const condition = await sequelize.query(
+                `
+                SELECT ((SELECT COUNT(*) FROM cau_hoi_de_thi WHERE de_thi_id = :de_thi_id) = :so_cau_hoi) AS bool`,
+                {
+                    replacements: {
+                        de_thi_id: Number(req.params.id),
+                        so_cau_hoi: criteria.so_cau_hoi,
+                    },
+                    type: sequelize.QueryTypes.SELECT,
+                }
+            );
+
+            if (!condition[0].bool) {
+                return res.status(400).send({
+                    status: 'error',
+                    message: 'Số lượng câu hỏi chưa đúng yêu cầu',
+                });
+            }
+        } else if (exam.loai_de_thi_id === 3) {
+            let criteria = await SyntheticCriteria.findOne({
+                where: {
+                    khoa_hoc_id: exam.khoa_hoc_id,
+                },
+            });
+            if (!criteria) {
+                return res.status(400).send({
+                    status: 'error',
+                    message: 'Chưa có tiêu chí đề thi',
+                });
+            }
+
+            const condition = await sequelize.query(
+                `
+                SELECT ((SELECT COUNT(*) FROM cau_hoi_de_thi WHERE de_thi_id = :de_thi_id) = :so_cau_hoi) AS bool`,
+                {
+                    replacements: {
+                        de_thi_id: Number(req.params.id),
+                        so_cau_hoi: criteria.so_cau_hoi,
+                    },
+                    type: sequelize.QueryTypes.SELECT,
+                }
+            );
+
+            if (!condition[0].bool) {
+                return res.status(400).send({
+                    status: 'error',
+                    message: 'Số lượng câu hỏi chưa đúng yêu cầu',
+                });
+            }
+        } else if (exam.loai_de_thi_id === 4) {
+            let criteria = await OnlineCriteria.findOne({
+                where: {
+                    khoa_hoc_id: exam.khoa_hoc_id,
+                },
+            });
+            if (!criteria) {
+                return res.status(400).send({
+                    status: 'error',
+                    message: 'Chưa có tiêu chí đề thi',
+                });
+            }
+
+            const condition = await sequelize.query(
+                `
+                SELECT ((SELECT COUNT(*) FROM cau_hoi_de_thi WHERE de_thi_id = :de_thi_id) = :so_cau_hoi) AS bool`,
+                {
+                    replacements: {
+                        de_thi_id: Number(req.params.id),
+                        so_cau_hoi: criteria.so_cau_hoi,
+                    },
+                    type: sequelize.QueryTypes.SELECT,
+                }
+            );
+
+            if (!condition[0].bool) {
+                return res.status(400).send({
+                    status: 'error',
+                    message: 'Số lượng câu hỏi chưa đúng yêu cầu',
+                });
+            }
+        } else if (exam.loai_de_thi_id === 5) {
             const condition = await sequelize.query(
                 `
                 SELECT ((SELECT COUNT(*) FROM cau_hoi_de_thi WHERE de_thi_id = :de_thi_id AND chuyen_nganh_id = 1) >= 50
@@ -1859,12 +1990,12 @@ const getCriteriaByExamId = async (req, res) => {
     let criteria = null;
     switch (exam.loai_de_thi_id) {
         case 1:
-        criteria = await ThematicCriteria.findOne({
+            criteria = await ThematicCriteria.findOne({
                 where: { mo_dun_id: exam.mo_dun_id },
-        });
+            });
             break;
         case 2:
-        criteria = await ModunCriteria.findOne({
+            criteria = await ModunCriteria.findOne({
                 where: { mo_dun_id: exam.mo_dun_id },
             });
             break;
@@ -1905,7 +2036,7 @@ const findAllByThematicId = async (req, res) => {
                 required: true, // vì dùng điều kiện trong where
             },
         ],
-            where: {
+        where: {
             loai_de_thi_id: 1,
             '$khoa_hoc.giao_vien_id$': req.userId,
             ...(req.query.kct_id && { kct_id: req.query.kct_id }),
@@ -1964,7 +2095,7 @@ const findAllByModunId = async (req, res) => {
                 required: true, // vì dùng điều kiện trong where
             },
         ],
-            where: {
+        where: {
             loai_de_thi_id: 2,
             '$khoa_hoc.giao_vien_id$': req.userId,
             ...(req.query.kct_id && { kct_id: req.query.kct_id }),
@@ -2020,7 +2151,7 @@ const findAllByCourseId = async (req, res) => {
                 required: true, // vì dùng điều kiện trong where
             },
         ],
-            where: {
+        where: {
             loai_de_thi_id: 3,
             '$khoa_hoc.giao_vien_id$': req.userId,
             ...(req.query.kct_id && { kct_id: req.query.kct_id }),
