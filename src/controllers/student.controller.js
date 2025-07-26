@@ -68,6 +68,7 @@ const findAll = async (req, res) => {
             'ho_ten',
             'gioi_tinh',
             'email',
+            'ten_dang_nhap',
             'truong_hoc',
             'trang_thai',
             'sdt',
@@ -485,23 +486,30 @@ const create = async (req, res) => {
 };
 
 const postCreateAdmin = async (req, res) => {
-    const student = await Student.findOne({
-        where: { email: req.body.email },
+    const existingStudent = await Student.findOne({
+        where: {
+            [Op.or]: [
+                { email: req.body.email },
+                { ten_dang_nhap: req.body.ten_dang_nhap }
+            ]
+        }
     });
+	
+    if (existingStudent) {
+    let message = existingStudent.email === req.body.email
+            ? 'Email already exists'
+            : 'Username already exists';
 
-    if (student) {
         return res.status(409).send({
             status: 'fail',
-            data: student,
-            message: 'Email already exists',
+            data: existingStudent,
+            message: message,
         });
     }
 
-    const password = 'Enno@123';
-
     const newStudent = await Student.create({
         ...req.body,
-        mat_khau: security.hashPassword(password),
+        mat_khau: security.hashPassword(req.body.mat_khau),
         trang_thai: 1,
         nguoi_tao: req.userId,
     });

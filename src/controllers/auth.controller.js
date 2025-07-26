@@ -1,4 +1,5 @@
 ﻿const axios = require('axios');
+const { Op } = require('sequelize');
 
 const {
     Student,
@@ -93,7 +94,10 @@ const getProfile = async (req, res) => {
 const loginv1 = async (req, res) => {
     const student = await Student.findOne({
         where: {
-            email: req.body.email,
+            [Op.or]: [
+                { email: req.body.email },
+                { ten_dang_nhap: req.body.email },
+            ],
         },
     });
     if (student) {
