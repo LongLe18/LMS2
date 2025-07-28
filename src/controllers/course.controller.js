@@ -1,6 +1,8 @@
 const path = require('path');
 const { Op, fn, literal } = require('sequelize');
 const fs = require('fs');
+const ExcelJS = require('exceljs');
+const moment = require('moment');
 
 const {
     Course,
@@ -20,6 +22,8 @@ const {
 } = require('../models');
 const sequelize = require('../utils/db');
 const { checkFileType } = require('../middlewares/upload.middleware');
+const { removeFile } = require('../services/util.service');
+const security = require('../utils/security');
 
 function removeVietnameseTones(str) {
     return str
@@ -1405,7 +1409,9 @@ const downloadExamSet = async (req, res) => {
         const filePath = path.join(process.cwd(), '/public', media.duong_dan);
         res.setHeader(
             'Content-Disposition',
-            `attachment; filename="${sanitizeFileNamePreserveExtension(media.ten)}"`
+            `attachment; filename="${sanitizeFileNamePreserveExtension(
+                media.ten
+            )}"`
         );
         res.setHeader('Content-Type', 'application/octet-stream');
 
@@ -1501,19 +1507,22 @@ const dashboardByTeacher = async (req, res) => {
             {
                 model: Modun,
                 attributes: [],
-                required: true,
+                where: {
+                    trang_thai: true,
+                },
                 include: [
                     {
                         model: Thematic,
                         attributes: [],
-                        required: true,
+                        where: {
+                            trang_thai: true,
+                        },
                     },
                 ],
             },
             {
                 model: CourseStudent,
                 attributes: [],
-                required: true,
             },
         ],
         where: {
@@ -1560,6 +1569,166 @@ const removeStudent = async (req, res) => {
     });
 };
 
+const importStudentFromFile = async (req, res) => {
+    const filePath = `${req.file.destination}/${req.file.filename}`;
+    try {
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.readFile(filePath);
+        const studentData = [];
+        let index = 0;
+
+        const worksheet = workbook.getWorksheet('Mau-import');
+        const provinceMap = {}; // cache tên tỉnh => ttp_id
+        const rows = worksheet.getRows(2, worksheet.rowCount - 1); // Bỏ header
+
+        for (const row of rows) {
+            const provinceName = row.getCell(6).value;
+
+            // Tìm tỉnh
+            if (!provinceMap.hasOwnProperty(provinceName)) {
+                const province = await Province.findOne({
+                    where: { ten: provinceName },
+                    order: [['ttp_id', 'ASC']],
+                });
+                provinceMap[provinceName] = province ? province.ttp_id : null;
+            }
+
+            studentData.push({
+                ho_ten: row.getCell(2).value,
+                ngay_sinh: moment(row.getCell(3).value).format('YYYY-MM-DD'),
+                email: row.getCell(4).value || null,
+                truong_hoc: row.getCell(5).value,
+                ttp_id: provinceMap[provinceName],
+                ten_dang_nhap: row.getCell(7).value,
+                mat_khau: security.hashPassword(
+                    row.getCell(8).value.toString()
+                ),
+            });
+        }
+
+        const insertedStudents = await Student.bulkCreate(studentData, {
+            returning: true,
+        });
+        const insertedIds = insertedStudents.map(
+            (student) => student.hoc_vien_id
+        );
+
+        await sequelize.query(
+            `
+                INSERT INTO khoa_hoc_hoc_vien(khoa_hoc_id, hoc_vien_id)
+                VALUES ${insertedIds
+                    .map((value) => `(:khoa_hoc_id, ${value})`)
+                    .join(',')};
+            `,
+            {
+                replacements: {
+                    khoa_hoc_id: parseInt(req.params.id),
+                },
+                type: sequelize.QueryTypes.INSERT,
+            }
+        );
+
+        removeFile(`${filePath}`);
+
+        return res.status(200).send({
+            status: 'success',
+            data: null,
+            message: null,
+        });
+    } catch (err) {
+        removeFile(`${filePath}`);
+        console.log(err);
+
+        return res.status(500).send({
+            status: 'error',
+            data: null,
+            message: null,
+        });
+    }
+};
+
+const exportStudentList = async (req, res) => {
+    try {
+        const content = fs.readFileSync(
+            path.join(
+                process.cwd(),
+                '/public/templates/export_student_course.xlsx'
+            )
+        );
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.load(content);
+
+        workbook.creator = 'Me';
+        workbook.lastModifiedBy = 'Her';
+        workbook.created = new Date();
+        const workSheet = workbook.getWorksheet('Sheet1');
+
+        const list = await CourseStudent.findAll({
+            attributes: ['khhv_id'],
+            include: [
+                {
+                    model: Student,
+                    attributes: [
+                        'hoc_vien_id',
+                        'ho_ten',
+                        'ngay_sinh',
+                        'email',
+                        'sdt',
+                        'truong_hoc',
+                    ],
+                    required: true,
+                    include: [
+                        {
+                            model: Province,
+                            attributes: ['ttp_id', 'ten'],
+                        },
+                    ],
+                },
+            ],
+            where: {
+                khoa_hoc_id: req.params.id,
+            },
+            order: [[sequelize.col('khhv_id'), 'ASC']],
+        });
+
+        let order = 1;
+        let indexRow = 2;
+        for (const item of list) {
+            row = workSheet.getRow(indexRow);
+
+            row.getCell(1).value = order;
+            row.getCell(2).value = item.hoc_vien.ho_ten;
+            row.getCell(3).value = item.hoc_vien.ngay_sinh;
+            row.getCell(4).value = item.hoc_vien.email;
+            row.getCell(5).value = item.hoc_vien.sdt;
+            row.getCell(6).value = item.hoc_vien.truong_hoc;
+            row.getCell(7).value = item.hoc_vien.tinh_thanhpho?.ten;
+
+            order++;
+            indexRow++;
+        }
+
+        res.setHeader(
+            'Content-Type',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        );
+        res.setHeader(
+            'Content-Disposition',
+            'attachment; filename=' + 'DANH_SACH_HOC_VIEN_KHOA_HOC.xlsx'
+        );
+        await workbook.xlsx.write(res);
+
+        return res.end();
+    } catch (err) {
+        console.log(err);
+        return res.status(500).send({
+            status: 'error',
+            data: null,
+            message: null,
+        });
+    }
+};
+
 module.exports = {
     getStatistical,
     findAll,
@@ -1593,4 +1762,6 @@ module.exports = {
     findAllv2,
     getStudentsv2,
     removeStudent,
+    importStudentFromFile,
+    exportStudentList,
 };

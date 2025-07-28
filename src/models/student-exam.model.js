@@ -63,6 +63,9 @@ const dethihocvien = sequelize.define(
         khoa_hoc_id: {
             type: DataTypes.INTEGER,
         },
+        mo_dun_id: {
+            type: DataTypes.INTEGER,
+        },
     },
     {
         sequelize,

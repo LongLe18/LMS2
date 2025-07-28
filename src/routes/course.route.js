@@ -163,6 +163,19 @@ router.get(
     tryCatch(courseController.dashboardByTeacher)
 );
 router.get('/by-teacher', authToken, tryCatch(courseController.findAllv2));
+router.get(
+    '/:id/import-student',
+    authToken,
+    permission('course:importStudent'),
+    upload.single('file'),
+    tryCatch(courseController.importStudentFromFile)
+);
+router.get(
+    '/:id/export-student',
+    authToken,
+    permission('course:exportStudent'),
+    tryCatch(courseController.exportStudentList)
+);
 router.get('/:id', tryCatch(courseController.findOne));
 router.get('/', tryCatch(courseController.findAll));
 

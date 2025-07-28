@@ -403,7 +403,7 @@ const download = async (req, res) => {
         return res.status(500).send({
             status: 'error',
             data: null,
-            message: err,
+            message: null,
         });
     }
 };

@@ -23,8 +23,9 @@ function checkMimeTypeCallback(file, cb) {
         'application/vnd.rar',
         'application/octet-stream',
         'application/msword',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     ];
-    const filetypes = /jpg|jpeg|png|gif|bmp|mp4|pdf|doc|docx|zip|rar|7z|tar|gz/;
+    const filetypes = /jpg|jpeg|png|gif|bmp|mp4|pdf|doc|docx|zip|rar|7z|tar|gz|xlsx/;
     const mimetype = mimeTypes.includes(file.mimetype);
     // console.log(file.mimetype)
     const checkExtname = filetypes.test(extname(file.originalname));

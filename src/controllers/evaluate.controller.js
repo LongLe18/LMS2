@@ -474,7 +474,7 @@ const download = async (req, res) => {
         return res.status(400).send({
             status: 'error',
             data: null,
-            message: err,
+            message: null,
         });
     }
 };

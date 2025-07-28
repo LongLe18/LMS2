@@ -22,6 +22,7 @@ const {
     Exceprt,
     Course,
     Modun,
+    CourseStudent,
 } = require('../models');
 const sequelize = require('../utils/db');
 const moment = require('moment');
@@ -825,7 +826,9 @@ const putUpdateDGTD = async (req, res) => {
     for (const selectedAnswer of selectedAnswers) {
         let result = false;
         const cauHoi = selectedAnswer?.cau_hoi;
-        const ket_qua_chons = selectedAnswer?.ket_qua_chon?.toString().split('');
+        const ket_qua_chons = selectedAnswer?.ket_qua_chon
+            ?.toString()
+            .split('');
         const dap_ans = cauHoi?.dap_ans;
 
         // Kiểm tra loại câu hỏi
@@ -1116,7 +1119,7 @@ const exportReport = async (req, res) => {
         return res.status(500).send({
             status: 'error',
             data: null,
-            message: err,
+            message: null,
         });
     }
 };
@@ -1286,7 +1289,7 @@ const exportDGNL = async (req, res) => {
         return res.status(500).send({
             status: 'error',
             data: null,
-            message: err,
+            message: null,
         });
     }
 };
@@ -1532,7 +1535,7 @@ const exportDGNLv2 = async (req, res) => {
         return res.status(500).send({
             status: 'error',
             data: null,
-            message: err,
+            message: null,
         });
     }
 };
@@ -1720,7 +1723,7 @@ const exportTest = async (req, res) => {
         return res.status(500).send({
             status: 'error',
             data: null,
-            message: err,
+            message: null,
         });
     }
 };
@@ -1974,7 +1977,7 @@ const exportTestv2 = async (req, res) => {
         return res.status(500).send({
             status: 'error',
             data: null,
-            message: err,
+            message: null,
         });
     }
 };
@@ -2117,7 +2120,7 @@ const exportELearning = async (req, res) => {
         return res.status(500).send({
             status: 'error',
             data: null,
-            message: err,
+            message: null,
         });
     }
 };
@@ -2326,7 +2329,7 @@ const exportELearningv2 = async (req, res) => {
         return res.status(500).send({
             status: 'error',
             data: null,
-            message: err,
+            message: null,
         });
     }
 };
@@ -2708,7 +2711,612 @@ const exportStudentExam = async (req, res) => {
         return res.status(500).send({
             status: 'error',
             data: null,
-            message: err,
+            message: null,
+        });
+    }
+};
+
+const getStudentListByOnline = async (req, res) => {
+    const { count, rows } = await Student.findAndCountAll({
+        attributes: [
+            'hoc_vien_id',
+            'ho_ten',
+            'email',
+            'sdt',
+            'truong_hoc',
+            'ngay_tao',
+        ],
+        include: [
+            {
+                model: StudentExam,
+                attributes: [
+                    'dthv_id',
+                    'ket_qua_diem',
+                    'thoi_gian_lam_bai',
+                    'loai_de_thi_id',
+                    'mo_dun_id',
+                ],
+            },
+            {
+                model: CourseStudent,
+                attributes: ['khhv_id'],
+            },
+            {
+                model: Province,
+                attributes: ['ttp_id', 'ten'],
+            },
+        ],
+        where: {
+            '$de_thi_hoc_viens.loai_de_thi_id$': {
+                [Op.in]: [2, 4],
+            },
+            '$khoa_hoc_hoc_vien.khoa_hoc_id$': req.params.id,
+            '$de_thi_hoc_viens.khoa_hoc_id$': req.params.id,
+            ...(req.query.search && {
+                [Op.or]: [
+                    { ho_ten: { [Op.like]: `%${req.query.search}%` } },
+                    { truong_hoc: { [Op.like]: `%${req.query.search}%` } },
+                ],
+            }),
+        },
+        offset:
+            (Number(req.query.pageIndex || 1) - 1) *
+            Number(req.query.pageSize || 10),
+        limit: Number(req.query.pageSize || 10),
+        order: [
+            req.query.sortBy
+                ? req.query.sortBy.split(',')
+                : ['ngay_tao', 'DESC'],
+        ],
+        subQuery: false,
+        distinct: true,
+    });
+
+    return res.status(200).send({
+        status: 'success',
+        data: rows,
+        pageIndex: Number(req.query.pageIndex || 1),
+        pageSize: Number(req.query.pageSize || 10),
+        totalCount: count,
+        totalPage: Math.ceil(count / Number(req.query.pageSize || 10)),
+        message: null,
+    });
+};
+
+const exportStudentListByOnline = async (req, res) => {
+    try {
+        const content = fs.readFileSync(
+            path.join(
+                process.cwd(),
+                '/public/templates/export_student_list_online.xlsx'
+            )
+        );
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.load(content);
+
+        workbook.creator = 'Me';
+        workbook.lastModifiedBy = 'Her';
+        workbook.created = new Date();
+        const workSheet = workbook.getWorksheet('Sheet1');
+
+        const list = await Student.findAll({
+            attributes: [
+                'hoc_vien_id',
+                'ho_ten',
+                'email',
+                'sdt',
+                'truong_hoc',
+                'ngay_tao',
+            ],
+            include: [
+                {
+                    model: StudentExam,
+                    attributes: [
+                        'dthv_id',
+                        'ket_qua_diem',
+                        'thoi_gian_lam_bai',
+                        'loai_de_thi_id',
+                        'mo_dun_id',
+                        'khoa_hoc_id',
+                    ],
+                },
+                {
+                    model: CourseStudent,
+                    attributes: ['khhv_id'],
+                },
+                {
+                    model: Province,
+                    attributes: ['ttp_id', 'ten'],
+                },
+            ],
+            where: {
+                '$de_thi_hoc_viens.loai_de_thi_id$': {
+                    [Op.in]: [2, 4],
+                },
+                '$de_thi_hoc_viens.khoa_hoc_id$': req.params.id,
+            },
+            order: [
+                req.query.sortBy
+                    ? req.query.sortBy.split(',')
+                    : ['ngay_tao', 'DESC'],
+            ],
+        });
+
+        const moduns = await Modun.findAll({
+            attributes: ['mo_dun_id', 'ten_mo_dun'],
+            where: { khoa_hoc_id: req.params.id },
+            order: [['ngay_tao', 'ASC']],
+        });
+        const modunIds = moduns.map((item) => item.mo_dun_id);
+
+        let order = 1;
+        let indexRow = 6;
+        let indexCol = 8;
+
+        row = workSheet.getRow(5);
+        for (const modun of moduns) {
+            row.getCell(indexCol).value = modun.ten_mo_dun;
+
+            indexCol++;
+        }
+
+        for (const item of list) {
+            row = workSheet.getRow(indexRow);
+
+            row.getCell(1).value = order;
+            row.getCell(2).value = item.ho_ten;
+            row.getCell(3).value = item.email;
+            row.getCell(4).value = item.sdt;
+            row.getCell(5).value = item.truong_hoc;
+            row.getCell(6).value = item.tinh_thanhpho?.ten;
+
+            const diemTheoModun = {};
+
+            for (const bai of item.de_thi_hoc_viens) {
+                if (!bai.thoi_gian_lam_bai) continue;
+
+                const key =
+                    bai.mo_dun_id === null ? 'null' : bai.mo_dun_id.toString();
+
+                if (!diemTheoModun[key]) {
+                    diemTheoModun[key] = { tongDiem: 0, soBai: 0 };
+                }
+
+                diemTheoModun[key].tongDiem += bai.ket_qua_diem;
+                diemTheoModun[key].soBai += 1;
+            }
+
+            // Tính điểm trung bình
+            const diemTrungBinhTheoModun = {};
+            for (const [modunId, data] of Object.entries(diemTheoModun)) {
+                diemTrungBinhTheoModun[modunId] = +(
+                    data.tongDiem / data.soBai
+                ).toFixed(2);
+            }
+
+            row.getCell(7).value = diemTrungBinhTheoModun['null'];
+
+            indexCol = 8;
+            for (const modunId of modunIds) {
+                row.getCell(indexCol).value =
+                    diemTrungBinhTheoModun[modunId.toString()];
+
+                indexCol++;
+            }
+
+            order++;
+            indexRow++;
+        }
+
+        res.setHeader(
+            'Content-Type',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        );
+        res.setHeader(
+            'Content-Disposition',
+            'attachment; filename=' + 'DANH_SACH_KET_QUA_CHUNG.xlsx'
+        );
+        await workbook.xlsx.write(res);
+
+        return res.end();
+    } catch (err) {
+        console.log(err);
+        return res.status(500).send({
+            status: 'error',
+            data: null,
+            message: null,
+        });
+    }
+};
+
+const getStudentListByModun = async (req, res) => {
+    const { count, rows } = await StudentExam.findAndCountAll({
+        attributes: [
+            'dthv_id',
+            'thoi_diem_ket_thuc',
+            'thoi_gian_lam_bai',
+            'so_cau_tra_loi_dung',
+            'so_cau_tra_loi_sai',
+            'ket_qua_diem',
+        ],
+        include: [
+            {
+                model: Student,
+                attributes: [
+                    'hoc_vien_id',
+                    'ho_ten',
+                    'email',
+                    'sdt',
+                    'truong_hoc',
+                ],
+                include: {
+                    model: Province,
+                    attributes: ['ttp_id', 'ten'],
+                },
+            },
+            {
+                model: Exam,
+                attributes: ['de_thi_id', 'ten_de_thi'],
+            },
+        ],
+        where: {
+            loai_de_thi_id: {
+                [Op.in]: [2],
+            },
+            khoa_hoc_id: req.params.id,
+            ...(req.query.mo_dun_id && {
+                mo_dun_id: req.query.mo_dun_id,
+            }),
+            ...(req.query.search && {
+                [Op.or]: [
+                    {
+                        '$hoc_vien.ho_ten$': {
+                            [Op.like]: `%${req.query.search}%`,
+                        },
+                    },
+                    {
+                        '$hoc_vien.truong_hoc$': {
+                            [Op.like]: `%${req.query.search}%`,
+                        },
+                    },
+                ],
+            }),
+        },
+        offset:
+            (Number(req.query.pageIndex || 1) - 1) *
+            Number(req.query.pageSize || 10),
+        limit: Number(req.query.pageSize || 10),
+        order: [
+            ['mo_dun_id', 'ASC'],
+            req.query.sortBy
+                ? req.query.sortBy.split(',')
+                : ['ngay_tao', 'ASC'],
+        ],
+        subQuery: false,
+        distinct: true,
+    });
+
+    return res.status(200).send({
+        status: 'success',
+        data: rows,
+        pageIndex: Number(req.query.pageIndex || 1),
+        pageSize: Number(req.query.pageSize || 10),
+        totalCount: count,
+        totalPage: Math.ceil(count / Number(req.query.pageSize || 10)),
+        message: null,
+    });
+};
+
+const exportStudentListByModun = async (req, res) => {
+    try {
+        const content = fs.readFileSync(
+            path.join(
+                process.cwd(),
+                '/public/templates/export_student_list_modun.xlsx'
+            )
+        );
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.load(content);
+
+        workbook.creator = 'Me';
+        workbook.lastModifiedBy = 'Her';
+        workbook.created = new Date();
+        const workSheet = workbook.getWorksheet('Sheet1');
+
+        const list = await StudentExam.findAll({
+            attributes: [
+                'dthv_id',
+                'thoi_diem_ket_thuc',
+                'thoi_gian_lam_bai',
+                'so_cau_tra_loi_dung',
+                'so_cau_tra_loi_sai',
+                'ket_qua_diem',
+                'de_thi_id',
+            ],
+            include: [
+                {
+                    model: Student,
+                    attributes: [
+                        'hoc_vien_id',
+                        'ho_ten',
+                        'email',
+                        'sdt',
+                        'truong_hoc',
+                    ],
+                    include: {
+                        model: Province,
+                        attributes: ['ttp_id', 'ten'],
+                    },
+                },
+                {
+                    model: Exam,
+                    attributes: ['de_thi_id', 'ten_de_thi'],
+                },
+            ],
+            where: {
+                loai_de_thi_id: {
+                    [Op.in]: [2],
+                },
+                khoa_hoc_id: req.params.id,
+                ...(req.query.mo_dun_id && {
+                    mo_dun_id: req.query.mo_dun_id,
+                }),
+            },
+            order: [
+                ['mo_dun_id', 'ASC'],
+                req.query.sortBy
+                    ? req.query.sortBy.split(',')
+                    : ['ngay_tao', 'ASC'],
+            ],
+            subQuery: false,
+            distinct: true,
+        });
+
+        let order = 1;
+        let indexRow = 6;
+        let de_thi_id;
+        let count = 0;
+
+        for (const item of list) {
+            row = workSheet.getRow(indexRow);
+
+            row.getCell(1).value = order;
+            row.getCell(2).value = item.hoc_vien.ho_ten;
+            row.getCell(3).value = item.hoc_vien.email;
+            row.getCell(4).value = item.hoc_vien.sdt;
+            row.getCell(5).value = item.hoc_vien.truong_hoc;
+            row.getCell(6).value = item.hoc_vien.tinh_thanhpho?.ten;
+            row.getCell(7).value = item.de_thi.ten_de_thi;
+            row.getCell(8).value = item.thoi_diem_ket_thuc;
+            row.getCell(9).value = item.thoi_gian_lam_bai;
+            row.getCell(10).value = item.so_cau_tra_loi_dung;
+            row.getCell(11).value = item.so_cau_tra_loi_sai;
+            row.getCell(12).value = item.ket_qua_diem;
+
+            if (de_thi_id !== item.de_thi_id) count++;
+            else count = 1;
+            row.getCell(13).value = count;
+
+            order++;
+            indexRow++;
+        }
+
+        res.setHeader(
+            'Content-Type',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        );
+        res.setHeader(
+            'Content-Disposition',
+            'attachment; filename=' + 'DANH_SACH_KET_QUA_THEO_CHUONG.xlsx'
+        );
+        await workbook.xlsx.write(res);
+
+        return res.end();
+    } catch (err) {
+        console.log(err);
+        return res.status(500).send({
+            status: 'error',
+            data: null,
+            message: null,
+        });
+    }
+};
+
+const getStudentListByThematic = async (req, res) => {
+    const { count, rows } = await StudentExam.findAndCountAll({
+        attributes: [
+            'dthv_id',
+            'thoi_diem_ket_thuc',
+            'thoi_gian_lam_bai',
+            'so_cau_tra_loi_dung',
+            'so_cau_tra_loi_sai',
+            'ket_qua_diem',
+        ],
+        include: [
+            {
+                model: Student,
+                attributes: [
+                    'hoc_vien_id',
+                    'ho_ten',
+                    'email',
+                    'sdt',
+                    'truong_hoc',
+                ],
+                include: {
+                    model: Province,
+                    attributes: ['ttp_id', 'ten'],
+                },
+            },
+            {
+                model: Exam,
+                attributes: ['de_thi_id', 'ten_de_thi'],
+            },
+        ],
+        where: {
+            loai_de_thi_id: {
+                [Op.in]: [1],
+            },
+            khoa_hoc_id: req.params.id,
+            ...(req.query.mo_dun_id && {
+                mo_dun_id: req.query.mo_dun_id,
+            }),
+            ...(req.query.chuyen_de_id && {
+                '$de_thi.chuyen_de_id$': req.query.chuyen_de_id,
+            }),
+            ...(req.query.search && {
+                [Op.or]: [
+                    {
+                        '$hoc_vien.ho_ten$': {
+                            [Op.like]: `%${req.query.search}%`,
+                        },
+                    },
+                    {
+                        '$hoc_vien.truong_hoc$': {
+                            [Op.like]: `%${req.query.search}%`,
+                        },
+                    },
+                ],
+            }),
+        },
+        offset:
+            (Number(req.query.pageIndex || 1) - 1) *
+            Number(req.query.pageSize || 10),
+        limit: Number(req.query.pageSize || 10),
+        order: [
+            ['mo_dun_id', 'ASC'],
+            req.query.sortBy
+                ? req.query.sortBy.split(',')
+                : ['ngay_tao', 'ASC'],
+        ],
+        subQuery: false,
+        distinct: true,
+    });
+
+    return res.status(200).send({
+        status: 'success',
+        data: rows,
+        pageIndex: Number(req.query.pageIndex || 1),
+        pageSize: Number(req.query.pageSize || 10),
+        totalCount: count,
+        totalPage: Math.ceil(count / Number(req.query.pageSize || 10)),
+        message: null,
+    });
+};
+
+const exportStudentListByThematic = async (req, res) => {
+    try {
+        const content = fs.readFileSync(
+            path.join(
+                process.cwd(),
+                '/public/templates/export_student_list_thematic.xlsx'
+            )
+        );
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.load(content);
+
+        workbook.creator = 'Me';
+        workbook.lastModifiedBy = 'Her';
+        workbook.created = new Date();
+        const workSheet = workbook.getWorksheet('Sheet1');
+
+        const list = await StudentExam.findAll({
+            attributes: [
+                'dthv_id',
+                'thoi_diem_ket_thuc',
+                'thoi_gian_lam_bai',
+                'so_cau_tra_loi_dung',
+                'so_cau_tra_loi_sai',
+                'ket_qua_diem',
+                'de_thi_id',
+            ],
+            include: [
+                {
+                    model: Student,
+                    attributes: [
+                        'hoc_vien_id',
+                        'ho_ten',
+                        'email',
+                        'sdt',
+                        'truong_hoc',
+                    ],
+                    include: {
+                        model: Province,
+                        attributes: ['ttp_id', 'ten'],
+                    },
+                },
+                {
+                    model: Exam,
+                    attributes: ['de_thi_id', 'ten_de_thi'],
+                },
+            ],
+            where: {
+                loai_de_thi_id: {
+                    [Op.in]: [1],
+                },
+                khoa_hoc_id: req.params.id,
+                ...(req.query.mo_dun_id && {
+                    mo_dun_id: req.query.mo_dun_id,
+                }),
+                ...(req.query.chuyen_de_id && {
+                    '$de_thi.chuyen_de_id$': req.query.chuyen_de_id,
+                }),
+            },
+            order: [
+                ['mo_dun_id', 'ASC'],
+                req.query.sortBy
+                    ? req.query.sortBy.split(',')
+                    : ['ngay_tao', 'ASC'],
+            ],
+            subQuery: false,
+            distinct: true,
+        });
+
+        let order = 1;
+        let indexRow = 6;
+        let de_thi_id;
+        let count = 0;
+
+        for (const item of list) {
+            row = workSheet.getRow(indexRow);
+
+            row.getCell(1).value = order;
+            row.getCell(2).value = item.hoc_vien.ho_ten;
+            row.getCell(3).value = item.hoc_vien.email;
+            row.getCell(4).value = item.hoc_vien.sdt;
+            row.getCell(5).value = item.hoc_vien.truong_hoc;
+            row.getCell(6).value = item.hoc_vien.tinh_thanhpho?.ten;
+            row.getCell(7).value = item.de_thi.ten_de_thi;
+            row.getCell(8).value = item.thoi_diem_ket_thuc;
+            row.getCell(9).value = item.thoi_gian_lam_bai;
+            row.getCell(10).value = item.so_cau_tra_loi_dung;
+            row.getCell(11).value = item.so_cau_tra_loi_sai;
+            row.getCell(12).value = item.ket_qua_diem;
+
+            if (de_thi_id !== item.de_thi_id) count++;
+            else count = 1;
+            row.getCell(13).value = count;
+
+            order++;
+            indexRow++;
+        }
+
+        res.setHeader(
+            'Content-Type',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        );
+        res.setHeader(
+            'Content-Disposition',
+            'attachment; filename=' + 'DANH_SACH_KET_QUA_THEO_CHUYEN_DE.xlsx'
+        );
+        await workbook.xlsx.write(res);
+
+        return res.end();
+    } catch (err) {
+        console.log(err);
+        return res.status(500).send({
+            status: 'error',
+            data: null,
+            message: null,
         });
     }
 };
@@ -2739,4 +3347,10 @@ module.exports = {
     dashBoardByTeacher,
     findAllv2,
     exportStudentExam,
+    getStudentListByOnline,
+    exportStudentListByOnline,
+    getStudentListByModun,
+    exportStudentListByModun,
+    getStudentListByThematic,
+    exportStudentListByThematic,
 };

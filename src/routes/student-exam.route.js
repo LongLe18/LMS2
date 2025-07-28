@@ -89,7 +89,47 @@ router.get(
     authToken,
     tryCatch(studentExamController.dashBoardByTeacher)
 );
-router.get('/export', authToken, tryCatch(studentExamController.exportStudentExam));
+router.get(
+    '/export',
+    authToken,
+    tryCatch(studentExamController.exportStudentExam)
+);
+router.get(
+    '/student-list/by-online/:id',
+    authToken,
+    permission('studentExam:studentList'),
+    tryCatch(studentExamController.getStudentListByOnline)
+);
+router.get(
+    '/export-student-list/by-online/:id',
+    authToken,
+    permission('studentExam:exportStudentList'),
+    tryCatch(studentExamController.exportStudentListByOnline)
+);
+router.get(
+    '/student-list/by-modun/:id',
+    authToken,
+    permission('studentExam:studentList'),
+    tryCatch(studentExamController.getStudentListByModun)
+);
+router.get(
+    '/export-student-list/by-modun/:id',
+    authToken,
+    permission('studentExam:exportStudentList'),
+    tryCatch(studentExamController.exportStudentListByModun)
+);
+router.get(
+    '/student-list/by-thematic/:id',
+    authToken,
+    permission('studentExam:studentList'),
+    tryCatch(studentExamController.getStudentListByThematic)
+);
+router.get(
+    '/export-student-list/by-thematic/:id',
+    authToken,
+    permission('studentExam:exportStudentList'),
+    tryCatch(studentExamController.exportStudentListByThematic)
+);
 router.get('/v2', authToken, tryCatch(studentExamController.findAllv2));
 router.get('/:id', authToken, tryCatch(studentExamController.findOne));
 router.get('/', authToken, tryCatch(studentExamController.findAll));
