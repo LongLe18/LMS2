@@ -163,7 +163,7 @@ router.get(
     tryCatch(courseController.dashboardByTeacher)
 );
 router.get('/by-teacher', authToken, tryCatch(courseController.findAllv2));
-router.get(
+router.post(
     '/:id/import-student',
     authToken,
     permission('course:importStudent'),
