@@ -90,6 +90,11 @@ router.get(
     tryCatch(studentExamController.dashBoardByTeacher)
 );
 router.get(
+    '/dashboard-by-course/:id',
+    authToken,
+    tryCatch(studentExamController.dashBoardByCourse)
+);
+router.get(
     '/export',
     authToken,
     tryCatch(studentExamController.exportStudentExam)

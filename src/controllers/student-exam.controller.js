@@ -2371,6 +2371,42 @@ const dashBoardByTeacher = async (req, res) => {
     });
 };
 
+const dashBoardByCourse = async (req, res) => {
+    const result = await sequelize.query(
+        `
+        SELECT
+            ldt.loai_de_thi_id,
+            ldt.mo_ta,
+            COUNT(CASE WHEN dthv.ket_qua_diem >= 80 THEN 1 END) AS gioi,
+            COUNT(CASE WHEN dthv.ket_qua_diem >= 65 AND dthv.ket_qua_diem < 80 THEN 1 END) AS kha,
+            COUNT(CASE WHEN dthv.ket_qua_diem >= 50 AND dthv.ket_qua_diem < 65 THEN 1 END) AS trungbinh,
+            COUNT(CASE WHEN dthv.ket_qua_diem < 50 THEN 1 END) AS kem
+        FROM
+            loai_de_thi ldt
+        LEFT JOIN de_thi_hoc_vien dthv ON ldt.loai_de_thi_id = dthv.loai_de_thi_id
+        WHERE
+            dthv.loai_de_thi_id IN (1, 2, 3)
+            AND dthv.khoa_hoc_id = :khoa_hoc_id
+        GROUP BY
+            ldt.loai_de_thi_id, ldt.mo_ta
+        ORDER BY
+            ldt.loai_de_thi_id;
+        `,
+        {
+            type: sequelize.QueryTypes.SELECT,
+            replacements: {
+                khoa_hoc_id: req.params.id,
+            },
+        }
+    );
+
+    return res.status(200).send({
+        status: 'success',
+        data: result,
+        message: null,
+    });
+};
+
 const findAllv2 = async (req, res) => {
     const pageIndex = Number(req.query.pageIndex || 1);
     const pageSize = Number(req.query.pageSize || 10);
@@ -3363,4 +3399,5 @@ module.exports = {
     exportStudentListByModun,
     getStudentListByThematic,
     exportStudentListByThematic,
+    dashBoardByCourse,
 };
