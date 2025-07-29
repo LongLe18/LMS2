@@ -2772,9 +2772,16 @@ const getStudentListByOnline = async (req, res) => {
         distinct: true,
     });
 
+    const moduns = await Modun.findAll({
+        attributes: ['mo_dun_id', 'ten_mo_dun'],
+        where: { khoa_hoc_id: req.params.id },
+        order: [['ngay_tao', 'ASC']],
+    });
+
     return res.status(200).send({
         status: 'success',
         data: rows,
+        moduns,
         pageIndex: Number(req.query.pageIndex || 1),
         pageSize: Number(req.query.pageSize || 10),
         totalCount: count,
@@ -2966,6 +2973,9 @@ const getStudentListByModun = async (req, res) => {
             khoa_hoc_id: req.params.id,
             ...(req.query.mo_dun_id && {
                 mo_dun_id: req.query.mo_dun_id,
+            }),
+            ...(req.query.de_thi_id && {
+                de_thi_id: req.query.de_thi_id,
             }),
             ...(req.query.search && {
                 [Op.or]: [
