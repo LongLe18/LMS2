@@ -52,7 +52,7 @@ const findAll = async (req, res) => {
             ...(req.query.loai_de_thi_id && {
                 '$de_thi.loai_de_thi_id$': req.query.loai_de_thi_id,
             }),
-            $hoc_vien_id$: req.userId,
+            // $hoc_vien_id$: req.userId,
         },
         offset:
             (Number(req.query.pageIndex || 1) - 1) *
