@@ -1,5 +1,6 @@
 const fs = require('fs');
 const { Op } = require('sequelize');
+const path = require('path');
 
 const {
     Student,
@@ -490,15 +491,16 @@ const postCreateAdmin = async (req, res) => {
         where: {
             [Op.or]: [
                 { email: req.body.email },
-                { ten_dang_nhap: req.body.ten_dang_nhap }
-            ]
-        }
+                { ten_dang_nhap: req.body.ten_dang_nhap },
+            ],
+        },
     });
-	
+
     if (existingStudent) {
-    let message = existingStudent.email === req.body.email
-            ? 'Email already exists'
-            : 'Username already exists';
+        let message =
+            existingStudent.email === req.body.email
+                ? 'Email already exists'
+                : 'Username already exists';
 
         return res.status(409).send({
             status: 'fail',
@@ -736,6 +738,21 @@ const postCreateMoreByPrefix = async (req, res) => {
     });
 };
 
+const downloadFileImportStudent = async (req, res) => {
+    const filePath = path.join(
+        process.cwd(),
+        '/public/templates',
+        'Mau-import-hoc vien.xlsx'
+    );
+    res.setHeader(
+        'Content-Disposition',
+        `attachment; filename="Mau-import-hoc vien.xlsx"`
+    );
+    res.setHeader('Content-Type', 'application/octet-stream');
+
+    return res.sendFile(filePath);
+};
+
 module.exports = {
     getDetail,
     findAll,
@@ -754,4 +771,5 @@ module.exports = {
     getStatistical,
     getCourseOfUser,
     postCreateMoreByPrefix,
+    downloadFileImportStudent,
 };

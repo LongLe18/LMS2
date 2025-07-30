@@ -69,6 +69,7 @@ router.get(
     authToken,
     tryCatch(studentController.getCourseOfUser)
 );
+router.get('/download-file-import', authToken, tryCatch(studentController.downloadFileImportStudent));
 router.get('/:id', authToken, tryCatch(studentController.findOne));
 router.get(
     '/',

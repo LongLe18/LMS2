@@ -243,6 +243,7 @@ const create = async (req, res) => {
         ...req.body,
         hoc_vien_id: req.userId,
         khoa_hoc_id: exam.khoa_hoc_id,
+        mo_dun_id: exam.mo_dun_id,
         loai_de_thi_id: exam.loai_de_thi_id,
     });
 
@@ -2771,6 +2772,7 @@ const getStudentListByOnline = async (req, res) => {
                     'thoi_gian_lam_bai',
                     'loai_de_thi_id',
                     'mo_dun_id',
+                    'de_thi_id'
                 ],
             },
             {
