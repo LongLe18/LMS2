@@ -2784,7 +2784,7 @@ const getStudentListByOnline = async (req, res) => {
         ],
         where: {
             '$de_thi_hoc_viens.loai_de_thi_id$': {
-                [Op.in]: [2, 4],
+                [Op.in]: [2, 3],
             },
             '$khoa_hoc_hoc_vien.khoa_hoc_id$': req.params.id,
             '$de_thi_hoc_viens.khoa_hoc_id$': req.params.id,
@@ -2810,7 +2810,7 @@ const getStudentListByOnline = async (req, res) => {
 
     const moduns = await Modun.findAll({
         attributes: ['mo_dun_id', 'ten_mo_dun'],
-        where: { khoa_hoc_id: req.params.id },
+        where: { khoa_hoc_id: req.params.id, loai_tong_hop: false },
         order: [['ngay_tao', 'ASC']],
     });
 
@@ -2874,7 +2874,7 @@ const exportStudentListByOnline = async (req, res) => {
             ],
             where: {
                 '$de_thi_hoc_viens.loai_de_thi_id$': {
-                    [Op.in]: [2, 4],
+                    [Op.in]: [2, 3],
                 },
                 '$de_thi_hoc_viens.khoa_hoc_id$': req.params.id,
             },
@@ -2887,7 +2887,7 @@ const exportStudentListByOnline = async (req, res) => {
 
         const moduns = await Modun.findAll({
             attributes: ['mo_dun_id', 'ten_mo_dun'],
-            where: { khoa_hoc_id: req.params.id },
+            where: { khoa_hoc_id: req.params.id, loai_tong_hop: false },
             order: [['ngay_tao', 'ASC']],
         });
         const modunIds = moduns.map((item) => item.mo_dun_id);
@@ -2896,9 +2896,44 @@ const exportStudentListByOnline = async (req, res) => {
         let indexRow = 6;
         let indexCol = 8;
 
+        workSheet.mergeCells(4, 8, 4, 8 + moduns.length - 1);
+        workSheet.getRow(4).getCell(8).value = 'Điểm thi chương học';
+        workSheet.getRow(4).getCell(8).border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' },
+        };
+        workSheet.getRow(4).getCell(8).font = {
+            name: 'Calibri',
+            bold: true,
+            size: 11,
+        };
+        workSheet.getRow(4).getCell(8).alignment = {
+            vertical: 'middle',
+            horizontal: 'center',
+            wrapText: true,
+        };
+
         row = workSheet.getRow(5);
         for (const modun of moduns) {
             row.getCell(indexCol).value = modun.ten_mo_dun;
+            row.getCell(indexCol).border = {
+                top: { style: 'thin' },
+                left: { style: 'thin' },
+                bottom: { style: 'thin' },
+                right: { style: 'thin' },
+            };
+            row.getCell(indexCol).font = {
+                name: 'Calibri',
+                bold: true,
+                size: 11,
+            };
+            row.getCell(indexCol).alignment = {
+                vertical: 'middle',
+                horizontal: 'center',
+                wrapText: true,
+            };
 
             indexCol++;
         }

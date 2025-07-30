@@ -108,7 +108,7 @@ router.get(
 router.get(
     '/export-student-list/by-online/:id',
     authToken,
-    permission('studentExam:exportStudentList'),
+    // permission('studentExam:exportStudentList'),
     tryCatch(studentExamController.exportStudentListByOnline)
 );
 router.get(
