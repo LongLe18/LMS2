@@ -1606,34 +1606,47 @@ const importStudentFromFile = async (req, res) => {
             });
         }
 
-        const insertedStudents = await Student.bulkCreate(studentData, {
-            returning: true,
-        });
-        const insertedIds = insertedStudents.map(
-            (student) => student.hoc_vien_id
-        );
+        const insertedStudents = [];
+        const failedStudents = [];
 
-        await sequelize.query(
-            `
+        for (const student of studentData) {
+            try {
+                const inserted = await Student.create(student);
+                insertedStudents.push(inserted);
+            } catch (err) {
+                failedStudents.push({
+                    ...student,
+                });
+            }
+        }
+
+        const insertedIds = insertedStudents.map((s) => s.hoc_vien_id);
+
+        if (insertedIds.length !== 0) {
+            await sequelize.query(
+                `
                 INSERT INTO khoa_hoc_hoc_vien(khoa_hoc_id, hoc_vien_id)
                 VALUES ${insertedIds
                     .map((value) => `(:khoa_hoc_id, ${value})`)
                     .join(',')};
             `,
-            {
-                replacements: {
-                    khoa_hoc_id: parseInt(req.params.id),
-                },
-                type: sequelize.QueryTypes.INSERT,
-            }
-        );
+                {
+                    replacements: {
+                        khoa_hoc_id: parseInt(req.params.id),
+                    },
+                    type: sequelize.QueryTypes.INSERT,
+                }
+            );
+        }
 
         removeFile(`${filePath}`);
 
         return res.status(200).send({
             status: 'success',
             data: null,
-            message: null,
+            message:
+                failedStudents.length === 0 ? null : 'Tài khoản đã tồn tại!',
+            failedStudents,
         });
     } catch (err) {
         removeFile(`${filePath}`);

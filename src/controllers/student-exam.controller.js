@@ -2772,7 +2772,7 @@ const getStudentListByOnline = async (req, res) => {
                     'thoi_gian_lam_bai',
                     'loai_de_thi_id',
                     'mo_dun_id',
-                    'de_thi_id'
+                    'de_thi_id',
                 ],
             },
             {
@@ -3174,7 +3174,10 @@ const exportStudentListByModun = async (req, res) => {
             row.getCell(9).value = item.thoi_gian_lam_bai;
             row.getCell(10).value = item.so_cau_tra_loi_dung;
             row.getCell(11).value = item.so_cau_tra_loi_sai;
-            row.getCell(12).value = item.ket_qua_diem;
+            row.getCell(12).value = (
+                item.so_cau_tra_loi_dung /
+                (item.so_cau_tra_loi_dung + item.so_cau_tra_loi_sai)
+            ).toFixed(2);
 
             if (de_thi_id !== item.de_thi_id) count++;
             else count = 1;
@@ -3373,7 +3376,10 @@ const exportStudentListByThematic = async (req, res) => {
             row.getCell(9).value = item.thoi_gian_lam_bai;
             row.getCell(10).value = item.so_cau_tra_loi_dung;
             row.getCell(11).value = item.so_cau_tra_loi_sai;
-            row.getCell(12).value = item.ket_qua_diem;
+            row.getCell(12).value = (
+                item.so_cau_tra_loi_dung /
+                (item.so_cau_tra_loi_dung + item.so_cau_tra_loi_sai)
+            ).toFixed(2);
 
             if (de_thi_id !== item.de_thi_id) count++;
             else count = 1;
