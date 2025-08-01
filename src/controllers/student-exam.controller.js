@@ -2774,6 +2774,13 @@ const getStudentListByOnline = async (req, res) => {
                     'mo_dun_id',
                     'de_thi_id',
                 ],
+                on: {
+                    hoc_vien_id: col('hoc_vien.hoc_vien_id'),
+                    loai_de_thi_id: {
+                        [Op.in]: [2, 3],
+                    }, // điều kiện ON bình thường
+                    khoa_hoc_id: req.params.id, // điều kiện bổ sung
+                },
             },
             {
                 model: CourseStudent,
@@ -2785,11 +2792,7 @@ const getStudentListByOnline = async (req, res) => {
             },
         ],
         where: {
-            '$de_thi_hoc_viens.loai_de_thi_id$': {
-                [Op.in]: [2, 3],
-            },
             '$khoa_hoc_hoc_vien.khoa_hoc_id$': req.params.id,
-            '$de_thi_hoc_viens.khoa_hoc_id$': req.params.id,
             ...(req.query.search && {
                 [Op.or]: [
                     { ho_ten: { [Op.like]: `%${req.query.search}%` } },
@@ -2862,8 +2865,17 @@ const exportStudentListByOnline = async (req, res) => {
                         'thoi_gian_lam_bai',
                         'loai_de_thi_id',
                         'mo_dun_id',
-                        'khoa_hoc_id',
+                        'de_thi_id',
+                        'so_cau_tra_loi_dung',
+                        'so_cau_tra_loi_sai',
                     ],
+                    on: {
+                        hoc_vien_id: col('hoc_vien.hoc_vien_id'),
+                        loai_de_thi_id: {
+                            [Op.in]: [2, 3],
+                        }, // điều kiện ON bình thường
+                        khoa_hoc_id: req.params.id, // điều kiện bổ sung
+                    },
                 },
                 {
                     model: CourseStudent,
@@ -2875,10 +2887,13 @@ const exportStudentListByOnline = async (req, res) => {
                 },
             ],
             where: {
-                '$de_thi_hoc_viens.loai_de_thi_id$': {
-                    [Op.in]: [2, 3],
-                },
-                '$de_thi_hoc_viens.khoa_hoc_id$': req.params.id,
+                '$khoa_hoc_hoc_vien.khoa_hoc_id$': req.params.id,
+                ...(req.query.search && {
+                    [Op.or]: [
+                        { ho_ten: { [Op.like]: `%${req.query.search}%` } },
+                        { truong_hoc: { [Op.like]: `%${req.query.search}%` } },
+                    ],
+                }),
             },
             order: [
                 req.query.sortBy
@@ -3175,8 +3190,9 @@ const exportStudentListByModun = async (req, res) => {
             row.getCell(10).value = item.so_cau_tra_loi_dung;
             row.getCell(11).value = item.so_cau_tra_loi_sai;
             row.getCell(12).value = (
-                item.so_cau_tra_loi_dung /
-                (item.so_cau_tra_loi_dung + item.so_cau_tra_loi_sai)
+                (item.so_cau_tra_loi_dung /
+                    (item.so_cau_tra_loi_dung + item.so_cau_tra_loi_sai)) *
+                10
             ).toFixed(2);
 
             if (de_thi_id !== item.de_thi_id) count++;
@@ -3377,8 +3393,9 @@ const exportStudentListByThematic = async (req, res) => {
             row.getCell(10).value = item.so_cau_tra_loi_dung;
             row.getCell(11).value = item.so_cau_tra_loi_sai;
             row.getCell(12).value = (
-                item.so_cau_tra_loi_dung /
-                (item.so_cau_tra_loi_dung + item.so_cau_tra_loi_sai)
+                (item.so_cau_tra_loi_dung /
+                    (item.so_cau_tra_loi_dung + item.so_cau_tra_loi_sai)) *
+                10
             ).toFixed(2);
 
             if (de_thi_id !== item.de_thi_id) count++;
