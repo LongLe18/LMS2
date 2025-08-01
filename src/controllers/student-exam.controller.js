@@ -2783,6 +2783,7 @@ const getStudentListByOnline = async (req, res) => {
                     }, // điều kiện ON bình thường
                     khoa_hoc_id: req.params.id, // điều kiện bổ sung
                 },
+                separate: true
             },
             {
                 model: CourseStudent,
@@ -2979,11 +2980,13 @@ const exportStudentListByOnline = async (req, res) => {
                     diemTheoModun[key] = { tongDiem: 0, soBai: 0 };
                 }
 
-                diemTheoModun[key].tongDiem += (
-                    (bai.so_cau_tra_loi_dung /
-                        (bai.so_cau_tra_loi_dung + bai.so_cau_tra_loi_sai)) *
-                    10
-                ).toFixed(2);
+                diemTheoModun[key].tongDiem += parseFloat(
+    (
+        (bai.so_cau_tra_loi_dung /
+            (bai.so_cau_tra_loi_dung + bai.so_cau_tra_loi_sai)) *
+        10
+    ).toFixed(2)
+);
                 diemTheoModun[key].soBai += 1;
             }
 
