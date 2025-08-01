@@ -2783,7 +2783,7 @@ const getStudentListByOnline = async (req, res) => {
                     }, // điều kiện ON bình thường
                     khoa_hoc_id: req.params.id, // điều kiện bổ sung
                 },
-                separate: true
+                separate: true,
             },
             {
                 model: CourseStudent,
@@ -2879,6 +2879,7 @@ const exportStudentListByOnline = async (req, res) => {
                         }, // điều kiện ON bình thường
                         khoa_hoc_id: req.params.id, // điều kiện bổ sung
                     },
+                separate: true,
                 },
                 {
                     model: CourseStudent,
@@ -2969,7 +2970,6 @@ const exportStudentListByOnline = async (req, res) => {
             row.getCell(6).value = item.tinh_thanhpho?.ten;
 
             const diemTheoModun = {};
-
             for (const bai of item.de_thi_hoc_viens) {
                 if (!bai.thoi_gian_lam_bai) continue;
 
@@ -2981,12 +2981,13 @@ const exportStudentListByOnline = async (req, res) => {
                 }
 
                 diemTheoModun[key].tongDiem += parseFloat(
-    (
-        (bai.so_cau_tra_loi_dung /
-            (bai.so_cau_tra_loi_dung + bai.so_cau_tra_loi_sai)) *
-        10
-    ).toFixed(2)
-);
+                    (
+                        (bai.so_cau_tra_loi_dung /
+                            (bai.so_cau_tra_loi_dung +
+                                bai.so_cau_tra_loi_sai)) *
+                        10
+                    ).toFixed(2)
+                );
                 diemTheoModun[key].soBai += 1;
             }
 
