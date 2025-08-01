@@ -2773,6 +2773,8 @@ const getStudentListByOnline = async (req, res) => {
                     'loai_de_thi_id',
                     'mo_dun_id',
                     'de_thi_id',
+                    'so_cau_tra_loi_dung',
+                    'so_cau_tra_loi_sai',
                 ],
                 on: {
                     hoc_vien_id: col('hoc_vien.hoc_vien_id'),
@@ -2977,7 +2979,11 @@ const exportStudentListByOnline = async (req, res) => {
                     diemTheoModun[key] = { tongDiem: 0, soBai: 0 };
                 }
 
-                diemTheoModun[key].tongDiem += bai.ket_qua_diem;
+                diemTheoModun[key].tongDiem += (
+                    (bai.so_cau_tra_loi_dung /
+                        (bai.so_cau_tra_loi_dung + bai.so_cau_tra_loi_sai)) *
+                    10
+                ).toFixed(2);
                 diemTheoModun[key].soBai += 1;
             }
 
