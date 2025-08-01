@@ -270,7 +270,7 @@ const ExamViewPage = (props) => {
                         </div>
                     </Col> */}
                     <Col xs={{ span: 24 }} lg={{ span: 24}}>
-                        <h4 style={{fontWeight: 500, fontSize: 30, textAlign: 'center'}}>Kỳ thi đánh giá năng lực học sinh trung học phổ thông</h4>
+                        <h4 style={{fontWeight: 500, fontSize: 30, textAlign: 'center'}}>Kỳ thi đánh giá tư duy học sinh trung học phổ thông</h4>
                     </Col>
                 </Row>
                 <Row className='title-section' justify={'center'}>
@@ -334,7 +334,7 @@ const ExamViewPage = (props) => {
             <>
                 <Row className="logo" align={'middle'}>
                     <Col xs={{ span: 24 }} lg={{ span: 24}}>
-                        <h4 style={{fontWeight: 500, fontSize: 30, textAlign: 'center'}}>Kỳ thi đánh giá năng lực học sinh trung học phổ thông</h4>
+                        <h4 style={{fontWeight: 500, fontSize: 30, textAlign: 'center'}}>Kỳ thi đánh giá tư duy học sinh trung học phổ thông</h4>
                     </Col>
                 </Row>
                 <Row className='title-section' justify={'center'}>

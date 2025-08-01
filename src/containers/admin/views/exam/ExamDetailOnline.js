@@ -639,7 +639,7 @@ const OnlineExamDetailPage = () => {
                         }
                         dispatch(answerActions.editANSWER({ formData: answer, de_thi_id: id }, subCallBack2));
                     } else { // đổi loại câu hỏi
-                        if (values.loai_cau_hoi === 1 || values.loai_cau_hoi === 4) { // Tự luận -> Trắc nghiệm
+                        if (values.loai_cau_hoi === 1 || values.loai_cau_hoi === 2 || values.loai_cau_hoi === 4) { // Tự luận -> Trắc nghiệm
                             // Xoá đáp án hiện có
                             dispatch(answerActions.deleteAnswerByQuestion({ id: question.data.cau_hoi_id }));
                             // Tạo lại đáp án mới
@@ -651,8 +651,8 @@ const OnlineExamDetailPage = () => {
                             for (let i = 0; i < dap_an_dung.length; i++) {
                                 if (dap_an_dung[i] === 'A') answer.append('dap_an_dung1', 1)
                                 else if (dap_an_dung[i] === 'B') answer.append('dap_an_dung2', 1)
-                                if (dap_an_dung[i] === 'C') answer.append('dap_an_dung3', 1)
-                                if (dap_an_dung[i] === 'D') answer.append('dap_an_dung4', 1)
+                                else if (dap_an_dung[i] === 'C') answer.append('dap_an_dung3', 1)
+                                else if (dap_an_dung[i] === 'D') answer.append('dap_an_dung4', 1)
                             }
                         } else { // Trắc nghiệm -> Tự luận
                             // Xoá đáp án hiện có

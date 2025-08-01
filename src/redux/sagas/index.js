@@ -132,6 +132,7 @@ import {
     loadExamSyntheticModule,
     loadExamSyntheticThematic,
     loadStatisticTeacher,
+    loadStudentsByTeacher,
 } from './exam';
 
 import { 
@@ -529,6 +530,7 @@ export default function* rootSaga() {
         loadExamSyntheticModule(),
         loadExamSyntheticThematic(),
         loadStatisticTeacher(),
+        loadStudentsByTeacher(),
         // type Exam
         loadAddTypeExam(),
         loadDeleteTypeExam(),

@@ -15,6 +15,7 @@ import { InfoCircleOutlined } from '@ant-design/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import * as examActions from '../../../../redux/actions/exam';
 import * as answerActions from '../../../../redux/actions/answer';
+import * as userActions from '../../../../redux/actions/user';
 
 const { Content } = Layout;
 const { TextArea } = Input;
@@ -25,6 +26,7 @@ const HistoryExam = () => {
 
     const exam = useSelector(state => state.exam.item.result);
     const examUser = useSelector(state => state.exam.examUser.result);
+    const user = useSelector(state => state.user.user.result);
     const loading = useSelector(state => state.exam.item.loading);
     const error = useSelector(state => state.exam.item.error);
 
@@ -76,7 +78,8 @@ const HistoryExam = () => {
             }
         ));
     }, [params.idExam]); // eslint-disable-line react-hooks/exhaustive-deps
-    
+    console.log(user);
+
     // Hàm xử lý chuyển đổi từ response BE: đáp án đã chọn -> A/B/C/D hiển thị lên giao diện
     const convertAnswerKey = (question) => {
         let key = '';
@@ -541,6 +544,7 @@ const HistoryExam = () => {
                 <Content className="app-content">
                     <div className="header-exam">
                         <h1>{exam.data.ten_de_thi}</h1>
+                        {localStorage.getItem('ten_hoc_vien') !== null && <h4>Học viên: {localStorage.getItem('ten_hoc_vien')}</h4>}
                     </div>
                     <div class="wraper-exam"  style={{ padding: '0' }}>{renderExam()}</div>
                 </Content>

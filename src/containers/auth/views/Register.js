@@ -54,7 +54,7 @@ const RegisterPage = (props) => {
                     </NavLink>
                 </Col>
                 <Col xs={{ span: 22, offset: 1 }} lg={{ span: 9, offset: 4}} style={{marginRight: '10%'}}>
-                    <h4>Kỳ thi đánh giá năng lực học sinh trung học phổ thông</h4>
+                    <h4>Kỳ thi đánh giá tư duy học sinh trung học phổ thông</h4>
                 </Col>
                 <Col xs={{ span: 24 }} lg={{ span: 4 }}>
                     <NavLink to='/luyen-tap/trang-chu' className="logo">

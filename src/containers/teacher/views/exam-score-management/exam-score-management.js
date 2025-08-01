@@ -54,7 +54,7 @@ const ExamScoreManagement = () => {
           }));
 
           return {
-            title: `Tổng lượt thi ${item.mo_ta.replace("Đề thi ", "")}`,
+            title: `Tổng lượt thi ${item.mo_ta.replace("Đề thi ", "").replace("Mô-đun", 'chương học')}`,
             total,
             categories
           };
@@ -382,8 +382,7 @@ const ExamScoreManagement = () => {
     )
   }
 
-
-// event thay đổi trang
+  // event thay đổi trang
   const onChange = (page) => {
     setPageIndex(page);
   };

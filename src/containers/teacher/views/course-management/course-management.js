@@ -11,6 +11,7 @@ import {
     EditOutlined,
     DeleteOutlined,
     ExclamationCircleOutlined,
+    BookOutlined,
 } from "@ant-design/icons"
 import imageStudy from 'assets/img/image-study.png';
 import imageBook from 'assets/img/image-book.png';
@@ -166,6 +167,20 @@ const CourseManagement = () => {
             align: "center",
             render: (record) => (
                 <Space>
+                    <Tooltip title="Quản lý lớp học">
+                        <Button type="text" icon={<BookOutlined />}
+                            size="small"
+                            onClick={() => {
+                                const dataPath = JSON.parse(localStorage.getItem('dataPath')) || [];
+                                dataPath.push({
+                                    title: record.ten_khoa_hoc,
+                                    path: `/teacher/class-management/${record?.khoa_hoc_id}`
+                                });
+                                localStorage.setItem('dataPath', JSON.stringify(dataPath));
+                                history.push(`/teacher/class-management/${record?.khoa_hoc_id}`)
+                            }}
+                        />
+                    </Tooltip>
                     <Tooltip title="Xem chi tiết">
                         <Button type="text" icon={<EyeOutlined />}
                             size="small"

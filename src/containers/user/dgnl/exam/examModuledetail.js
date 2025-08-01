@@ -84,7 +84,7 @@ const ExamModuleViewPage = (props) => {
             key: 'ket_qua_diem',
             responsive: ['lg'],
             render: (ket_qua_diem, de_thi) => (
-                <span>{ket_qua_diem}/{de_thi.tong_diem}</span>
+                <span>{ket_qua_diem}/{de_thi?.de_thi?.tong_diem}</span>
             )
         },
         {
@@ -101,7 +101,7 @@ const ExamModuleViewPage = (props) => {
     useEffect(() => {
         const callback = (res) => {
             dispatch(criteriaActions.getCriteriaModuleById({ id: hashids.decode(params.id) }));
-            dispatch(examActions.getExamsUser({ idExam: '', idModule: res.data.mo_dun_id, type: 2 }))
+            dispatch(examActions.getExamsUser({ idExam: hashids.decode(params.idExam), idModule: res.data.mo_dun_id, type: 2 }))
         }
         dispatch(moduleActions.getModule({ id: hashids.decode(params.id) }, callback));
         dispatch(examActions.getExam({ id: hashids.decode(params.idExam) }));
@@ -136,6 +136,7 @@ const ExamModuleViewPage = (props) => {
 
     const goExam = () => {
         const subcallback = (res) => {
+            console.log(res)
 
             const callback = (subres) => {
                 if (subres.status === 200 && subres.statusText === 'OK') {
@@ -160,7 +161,7 @@ const ExamModuleViewPage = (props) => {
             } else if (res.status === 'success') {
                 const data = {
                     "thoi_diem_bat_dau": moment().toISOString(),
-                    "de_thi_id": res.data.de_thi_id
+                    "de_thi_id": hashids.decode(params.idExam)[0]
                 }
                 dispatch(examActions.createExamUser(data, callback))
             }

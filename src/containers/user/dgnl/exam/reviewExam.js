@@ -239,7 +239,7 @@ const ReviewExamPage = () => {
             <button  style={{width:"100%"}}
                 className="btn-onclick"
             >
-                <TextArea rows={4} style={{width:"100%"}} onChange={(e) => {
+                <TextArea disabled={true} rows={4} style={{width:"100%"}} onChange={(e) => {
                     const isAswered = results.find((item) => item.cau_hoi_id === question.cau_hoi_id);
                     if (isAswered) {
                         const newAnsers = results.map((item) => (item.cau_hoi_id === question.cau_hoi_id ? { ...item, noi_dung: e.target.value, gia_tri_dap_an: e.target.value, loai_dap_an: false } : item));

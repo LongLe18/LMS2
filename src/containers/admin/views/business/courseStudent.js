@@ -5,21 +5,23 @@ import axios from "axios";
 import config from '../../../../configs/index';
 
 // component
-import { Tabs, Row, Col, Table, Space, Button, notification, Pagination, Modal } from 'antd';
-import { ExclamationCircleOutlined, } from '@ant-design/icons';
+import { Tabs, Row, Col, Table, Space, Button, notification, Pagination, 
+    Modal, Tooltip, Upload, message } from 'antd';
+import { ExclamationCircleOutlined, EyeOutlined, PlusOutlined, } from '@ant-design/icons';
 import AppFilter from "components/common/AppFilter";
-import ReactExport from "react-export-excel";
+// import ReactExport from "react-export-excel";
 // redux
 import * as courseActions from '../../../../redux/actions/course';
 import { useSelector, useDispatch } from "react-redux";
 
 // hooks
 import useDebounce from "hooks/useDebounce";
+// import { set } from "lodash";
 
 const { TabPane } = Tabs;
-const ExcelFile = ReactExport.ExcelFile;
-const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
-const ExcelColumn = ReactExport.ExcelFile.ExcelColumn;
+// const ExcelFile = ReactExport.ExcelFile;
+// const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
+// const ExcelColumn = ReactExport.ExcelFile.ExcelColumn;
 
 const CourseStudentPage = (props) => {
     const dispatch = useDispatch();
@@ -84,8 +86,36 @@ const CourseStudentPage = (props) => {
             // Redirect view for edit
             render: (khoa_hoc_id) => (
                 <Space size="middle">
-                    <Button style={{borderRadius: 6}} type="button" onClick={() => StudentOfCourse(khoa_hoc_id)} className="ant-btn ant-btn-round ant-btn-primary">Xem chi tiết</Button>
-                    <Button shape="round" type="danger" onClick={() => RemainStudentOfCourse(khoa_hoc_id)}>Thêm học viên</Button>
+                    <Tooltip title="Xem chi tiết học viên của khóa học">
+                        <Button style={{borderRadius: 6}} type="text"
+                            onClick={() => StudentOfCourse(khoa_hoc_id)} 
+                            icon={<EyeOutlined />}
+                        >
+                        </Button>
+                    </Tooltip>
+                    <Tooltip title="Thêm học viên vào khóa học">
+                        <Button type="primary" style={{borderRadius: 6}}
+                            onClick={() => RemainStudentOfCourse(khoa_hoc_id)}
+                            icon={<PlusOutlined />}
+                        >
+                        </Button>
+                    </Tooltip>
+                    <Tooltip title="Thêm danh sách học viên từ file">
+                        <Upload
+                            customRequest={onUploadFileStudents}
+                            showUploadList={false} // Ẩn danh sách file
+                            accept=".csv,.xlsx,.xls" // Chỉ cho phép Excel/CSV
+                        >
+                            <Button
+                                type="primary"
+                                style={{ borderRadius: 6 }}
+                                danger
+                                icon={<PlusOutlined />}
+                                onClick={() => setState({ ...state, idCourse: khoa_hoc_id })}
+                            >
+                            </Button>
+                        </Upload>
+                    </Tooltip>
                 </Space>
             ),
         },
@@ -359,6 +389,79 @@ const CourseStudentPage = (props) => {
         dispatch(courseActions.addStudentToCourse({ data: listStudent, idCourse: state.idCourse }, callback));
     };
 
+    // hàm xử lý thêm học viên từ file
+    const onUploadFileStudents = async (options) => {
+        const { file, onSuccess, onError } = options;
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const res = await axios.post(`${config.API_URL}/course/${state.idCourse}/import-student`, formData, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('userToken')}`,
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            message.success('Upload thành công!');
+            onSuccess(res.data); // báo thành công cho antd Upload
+        } catch (err) {
+            console.error(err);
+            message.error('Lỗi upload file');
+            onError(err);
+        }   
+    }
+
+    // hàm tải file danh sách học viên
+    const onDownloadFileStudents = async () => {
+        try {
+            const res = await axios.get(`${config.API_URL}/course/${state.idCourse}/export-student`, {
+                responseType: 'blob', // Để nhận dữ liệu dạng file
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('userToken')}`,
+                },
+            });
+            const blob = new Blob([res.data], {
+                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            });
+
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.setAttribute('download', 'Danh sách học viên');
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        } catch (error) {
+            console.error('Lỗi khi tải file:', error);
+            alert('Không thể tải file. Vui lòng thử lại.');
+        }
+    }
+
+    // tải file mẫu upload học viên
+    const onDownloadFileTemplate = async () => {
+        try {
+            const res = await axios.get(`${config.API_URL}/student/download-file-import`, {
+                responseType: 'blob', // Để nhận dữ liệu dạng file
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('userToken')}`,
+                },
+            });
+            const blob = new Blob([res.data], {
+                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.setAttribute('download', 'Mẫu danh sách học viên');
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        } catch (error) {
+            console.error('Lỗi khi tải file mẫu:', error);
+            alert('Không thể tải file mẫu. Vui lòng thử lại.');
+        }
+    }
+            
     return (
         <div className='content'>
             <Col xl={24} className="body-content">
@@ -373,21 +476,35 @@ const CourseStudentPage = (props) => {
                         />
                     </Col>
                 </Row>
+            </Col>
+            <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+                {(state.activeTab === '1') && 
+                    <Button type="primary" style={{borderRadius: 4}}
+                        onClick={() => onDownloadFileTemplate()}
+                    >
+                        Tải file mẫu
+                    </Button>
+                }
                 {(state.activeTab === '2' && dataDetail.length > 0) && 
-                    <ExcelFile element={<Button type='primary'>Trích xuất file</Button>} filename={'Danh sách học viên'}>
-                        <ExcelSheet data={dataDetail} name={'Danh sách học viên'}>
-                            <ExcelColumn label="Họ tên" value="ho_ten"/>
-                            <ExcelColumn label="Email" value="email"/>
-                            <ExcelColumn label="Số điện thoại" value="sdt"/>
-                            <ExcelColumn label="Trường học" value="truong_hoc"/>
-                            <ExcelColumn label="Tỉnh/Thành phố" value="tinh"/>
-                        </ExcelSheet>
-                    </ExcelFile>
+                    <Button type="primary" style={{borderRadius: 4}}
+                        onClick={() => onDownloadFileStudents()}
+                    >
+                        Trích xuất file
+                    </Button>
+                    // <ExcelFile element={<Button type='primary'>Trích xuất file</Button>} filename={'Danh sách học viên'}>
+                    //     <ExcelSheet data={dataDetail} name={'Danh sách học viên'}>
+                    //         <ExcelColumn label="Họ tên" value="ho_ten"/>
+                    //         <ExcelColumn label="Email" value="email"/>
+                    //         <ExcelColumn label="Số điện thoại" value="sdt"/>
+                    //         <ExcelColumn label="Trường học" value="truong_hoc"/>
+                    //         <ExcelColumn label="Tỉnh/Thành phố" value="tinh"/>
+                    //     </ExcelSheet>
+                    // </ExcelFile>
                 }
                 {state.activeTab === '3' &&
                     <Button onClick={() => onSubmitAddListStudentToCourse()} type="primary">Thêm học viên</Button>
                 }
-            </Col>
+            </div>
             <Tabs defaultActiveKey={state.activeTab} activeKey={state.activeTab} onChange={onChangeTab}>
                 <TabPane tab="Quản lý khóa học - học viên" key="1">
                     <Table className="table-striped-rows" columns={columns} dataSource={data} pagination={false}/>

@@ -131,6 +131,19 @@ export const GET_STATISTIC_EXAM = "GET_STATISTIC_EXAM";
 export const GET_STATISTIC_EXAM_SUCCESS = "GET_STATISTIC_EXAM_SUCCESS";
 export const GET_STATISTIC_EXAM_FAILED = "GET_STATISTIC_EXAM_FAILED";
 
+// Lấy danh sách học viên (giáo viên)
+export const GET_EXAMS_USER_TEACHER = "GET_EXAMS_USER_TEACHER";
+export const GET_EXAMS_USER_TEACHER_SUCCESS = "GET_EXAMS_USER_TEACHER_SUCCESS";
+export const GET_EXAMS_USER_TEACHER_FAILED = "GET_EXAMS_USER_TEACHER_FAILED";
+
+export const getStudentsExamByTeacher = (params, callback) => {
+    return {
+        type: GET_EXAMS_USER_TEACHER,
+        params,
+        callback,
+    };
+};
+
 export function getStatisticExam(params, callback) {
     return {
         type: GET_STATISTIC_EXAM,

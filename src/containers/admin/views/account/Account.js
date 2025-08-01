@@ -152,6 +152,15 @@ const AccountPage = () => {
     }, [pageIndex, pageSize]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const columns = [
+      {
+        title: 'STT',
+        dataIndex: 'stt',
+        key: 'stt',
+        width: 50,
+        render: (text, record, index) => (
+          <span>{(pageIndex - 1) * pageSize + index + 1}</span>
+        ),
+      },
         {
             title: 'Ảnh đại diện',
             dataIndex: 'anh_dai_dien',
@@ -179,6 +188,11 @@ const AccountPage = () => {
           key: 'email',
           responsive: ['md'],
         },
+        {
+          title: 'Tên đăng nhập',
+          dataIndex: 'ten_dang_nhap',
+          key: 'ten_dang_nhap',
+          responsive: ['md']},
         {
           title: 'Trường học',
           dataIndex: 'truong_hoc',
@@ -458,6 +472,7 @@ const AccountPage = () => {
         formData.append('dia_chi', (values.dia_chi === null || values.dia_chi === undefined) ? '' : values.dia_chi);
         formData.append('truong_hoc', (values.truong_hoc === null || values.truong_hoc === undefined) ? '' : values.truong_hoc);
         formData.append('ttp_id', state.codeprovince);
+        formData.append('mat_khau', values.password);
         formData.append('email', values.email);
         if (state.isEdit)
           formData.append('trang_thai', values.trang_thai);
@@ -505,6 +520,7 @@ const AccountPage = () => {
               dispatch(userAction.editTeacher({formData: formData, giao_vien_id: state.idTeacher}, callback));
               break;
             default:
+              formData.append('ten_dang_nhap', values.username);
               dispatch(userAction.editStudent({formData: formData, hoc_vien_id: state.idStudent}, callback));
               break;
           }
@@ -518,6 +534,7 @@ const AccountPage = () => {
               dispatch(userAction.createTeacher(formData, callback));
               break;
             default:
+              formData.append('ten_dang_nhap', values.username);
               dispatch(userAction.createStudent(formData, callback));
               break;
           }
@@ -630,13 +647,13 @@ const AccountPage = () => {
 
     const modalFastlyCreateAccount = () => {
       return (
-        <Form form={formFastlyCreateModal} className="login-form app-form" name="login-form" onFinish={onSubmitFastlyCreateAccount}>
+        <Form form={formFastlyCreateModal} layout='vertical' className="login-form app-form" name="login-form" onFinish={onSubmitFastlyCreateAccount}>
           <h3 className="form-title">Tạo nhanh học viên</h3>
-            <Form.Item name="tien_to" label="Tiền tố" rules={[{ required: true, message: 'Bạn chưa nhập tiền tố'}]}>
+            <Form.Item name="tien_to" label="Tiền tố (cho email và tên đăng nhập)" rules={[{ required: true, message: 'Bạn chưa nhập tiền tố'}]}>
               <Input size="normal" placeholder="Tiền tố" />
             </Form.Item>
             <Form.Item name="so_luong" label="Số lượng" rules={[{ required: true, message: 'Bạn chưa nhập số lượng'}]}>
-              <InputNumber size="normal" placeholder="Số lượng" />
+              <InputNumber size="normal" placeholder="Số lượng" style={{width: '100%'}}/>
             </Form.Item>
             <Form.Item label="Mật khẩu" name="mat_khau" rules={[
                 { required: true, message: 'Mật khẩu là trường bắt buộc' }, 
@@ -652,6 +669,7 @@ const AccountPage = () => {
                     Thêm
                 </Button>
             </Form.Item>
+            <span style={{fontSize: 16, color: 'red'}}>Email và tên đăng nhập tạo ra sẽ bắt đầu bằng tiền tố</span>
         </Form>
       )
     };
@@ -759,7 +777,7 @@ const AccountPage = () => {
                           label="Ngày sinh"
                           name="ngay_sinh"
                         >
-                            <DatePicker 
+                            <DatePicker style={{ width: '100%' }}
                               placeholder='Ngày sinh'
                               format="YYYY-MM-DD"
                               onChange={onChangeStart}
@@ -792,6 +810,16 @@ const AccountPage = () => {
                       >
                           <Input size="normal" placeholder='Email' />
                       </Form.Item>
+                      
+                      <Form.Item
+                          name="username"
+                          label="Tên đăng nhập"
+                          rules={[
+                              { required: true, message: 'Tên đăng nhập là trường bắt buộc.' },
+                          ]}
+                      >
+                          <Input size="normal" placeholder='Tên đăng nhập' />
+                      </Form.Item>
 
                       <Form.Item
                           name="password"
@@ -799,9 +827,8 @@ const AccountPage = () => {
                           rules={[
                               { required: true, message: 'Mật khẩu là trường bắt buộc.' },
                           ]}
-                          initialValue={'Enno@123'}
                       >
-                          <Input size="normal" placeholder='Mật khẩu' defaultValue={'Enno@123'} disabled={true}/>
+                          <Input size="normal" placeholder='Mật khẩu' />
                       </Form.Item>
                       
                       <Form.Item

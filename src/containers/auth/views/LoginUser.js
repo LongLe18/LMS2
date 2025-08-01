@@ -84,7 +84,7 @@ const LoginUserPage = (props) => {
                     </NavLink>
                 </Col>
                 <Col xs={{ span: 22, offset: 1 }} lg={{ span: 9, offset: 4}} style={{marginRight: '10%'}}>
-                    <h4>Kỳ thi đánh giá năng lực học sinh trung học phổ thông</h4>
+                    <h4>Kỳ thi đánh giá tư duy học sinh trung học phổ thông</h4>
                 </Col>
                 <Col xs={{ span: 24 }} lg={{ span: 4 }}>
                     <NavLink to='/luyen-tap/trang-chu' className="logo">
@@ -97,8 +97,10 @@ const LoginUserPage = (props) => {
                 <Col xs={{ span: 22, offset: 1 }} lg={{ span: 7, offset: 9 }}>
                     <div className='login-form'>
                         <Form  form={form} onFinish={onSubmit}>
-                            <Form.Item name="email" rules={[{ required: true, message: 'Bạn chưa nhập email', type: "email" }]}>
-                                <Input size="normal" prefix={<UserOutlined />} placeholder="Email" />
+                            <Form.Item name="email" 
+                                rules={[{ required: true, message: 'Bạn chưa nhập email' }]}
+                            >
+                                <Input size="normal" prefix={<UserOutlined />} placeholder="Email hoặc tên đăng nhập" />
                             </Form.Item>
                             <Form.Item name="mat_khau" rules={[
                                 { required: true, message: 'Mật khẩu là trường bắt buộc' }, 

@@ -481,7 +481,7 @@ function* createStudent(payload) {
     }
     else {
         notification.error({
-            message: get(error, 'response.data.error', 'Tạo mới học viên thất bại' + messageError),
+            message: get(error, 'response.data.error', 'Tạo mới học viên thất bại ' + messageError),
         });
     }
   }

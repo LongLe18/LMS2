@@ -214,8 +214,8 @@ const IntroCoursePage = () => {
         return (
             <Form form={form} className="login-form app-form" name="login-form" onFinish={onSubmitLogin}>
                 <h2 className="form-title">Đăng nhập</h2>
-                <Form.Item name="email" rules={[{ required: true, message: 'Bạn chưa nhập email', type: "email" }]}>
-                        <Input size="normal" prefix={<UserOutlined />} placeholder="Email" />
+                <Form.Item name="email" rules={[{ required: true, message: 'Bạn chưa nhập email' }]}>
+                        <Input size="normal" prefix={<UserOutlined />} placeholder="Email hoặc tên đăng nhập" />
                 </Form.Item>
 
                 <Form.Item name="mat_khau" rules={[{ required: true, message: 'Bạn chưa nhập mật khẩu!' }]}>

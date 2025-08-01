@@ -90,7 +90,7 @@ const ExamThematicViewPage = (props) => {
             key: 'ket_qua_diem',
             responsive: ['lg'],
             render: (ket_qua_diem, de_thi) => (
-                <span>{ket_qua_diem}/{de_thi.tong_diem}</span>
+                <span>{ket_qua_diem}/{de_thi?.de_thi?.tong_diem}</span>
             )
         },
         {
@@ -121,7 +121,7 @@ const ExamThematicViewPage = (props) => {
     }
 
     const userToken = localStorage.getItem('userToken');
-
+    
     if (exam.status === 'success') exam?.data?.studentExams.map((item, index) => {
         if (item.thoi_diem_ket_thuc !== null)   
             data.push({...item, 'key': index});

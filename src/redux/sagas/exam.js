@@ -481,6 +481,9 @@ function* fetchExamCourseOnline(payload) {
 function* fetchExamsUser(payload) {
     try {
         let endpoint = `${config.API_URL}/student_exam?de_thi_id=${payload.params.idExam}&mo_dun_id=${payload.params.idModule}&loai_de_thi_id=${payload.params.type}`;
+        if (payload.params.pageSize && payload.params.pageIndex) {
+            endpoint += `&pageSize=${payload.params.pageSize}&pageIndex=${payload.params.pageIndex}`;
+        }
         const response = yield call(getApiAuth, endpoint);
         const result = yield response.data;
         yield put({ type: actions.exam.GET_EXAMS_USER_SUCCESS, result: result });
@@ -777,6 +780,42 @@ function* fetchStatisticTeacher(payload) {
             });
         } 
     }
+}
+
+function * fetchStudentsByTeacher(payload) {
+    try {
+        let endpoint = '';
+        if (payload.params.type === 'synthetic')
+            endpoint = `${config.API_URL}/student_exam/student-list/by-online/${payload.params.idCourse}?pageSize=${payload.params.pageSize}&pageIndex=${payload.params.pageIndex}&search=${payload.params.search}`;
+        else if (payload.params.type === 'module') {
+            endpoint = `${config.API_URL}/student_exam/student-list/by-modun/${payload.params.idCourse}?mo_dun_id=${payload.params.idModule}&pageSize=${payload.params.pageSize}&pageIndex=${payload.params.pageIndex}&search=${payload.params.search}`;
+        } else {
+            endpoint = `${config.API_URL}/student_exam/student-list/by-thematic/${payload.params.idCourse}?mo_dun_id=${payload.params.idModule}&chuyen_de_id=${payload.params.idThematic}&pageSize=${payload.params.pageSize}&pageIndex=${payload.params.pageIndex}&search=${payload.params.search}`;
+        }
+        const response = yield call(getApiAuth, endpoint);
+        const result = yield response.data;
+        yield put({ type: actions.exam.GET_EXAMS_USER_TEACHER_SUCCESS, result: result });
+        if (payload.callback) {
+            payload.callback(result);
+        }
+    } catch (error) {
+        yield put({ type: actions.exam.GET_EXAMS_USER_TEACHER_FAILED, error: error });
+        let messageError = error.response.status === 403 ? error.response.data : '';
+        if (error.response.data.message === 'Forbidden: insufficient permissions') {
+            notification.error({
+                message: "Bạn không có quyền thực hiện chức năng này",
+            });
+        }
+        else {
+            notification.error({
+                message: get(error, 'response.data.error', 'Tải dữ liệu đề thi thất bại' + messageError),
+            });
+        } 
+    }
+}
+
+export function* loadStudentsByTeacher() {
+    yield takeEvery(actions.exam.GET_EXAMS_USER_TEACHER, fetchStudentsByTeacher);
 }
 
 export function* loadStatisticTeacher() {

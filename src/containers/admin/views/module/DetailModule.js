@@ -79,8 +79,8 @@ const DetailModule = () => {
         },
     };
   
-      // props for upload image
-      const propsVideo = {
+    // props for upload image
+    const propsVideo = {
         name: 'file',
         action: '#',
   

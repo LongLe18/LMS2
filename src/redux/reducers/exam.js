@@ -50,6 +50,11 @@ const initState = {
         loading: false,
         result: {},
         error: null,
+    },
+    studentsExam: {
+        loading: false,
+        result: {},
+        error: null,
     }
 }
 
@@ -566,6 +571,22 @@ export default function examReducer(state = initState, action) {
             return {
                 ...state,
                 statistic: { ...state.statistic, loading: false, error: action.error },
+            };
+        ////////////// lấy danh sách học viên theo đề thi tổng hợp (giáo viên)
+        case examActions.GET_EXAMS_USER_TEACHER:
+            return {
+                ...state,
+                studentsExam: { ...state.studentsExam, loading: true },
+            };
+        case examActions.GET_EXAMS_USER_TEACHER_SUCCESS:
+            return {
+                ...state,
+                studentsExam: { ...state.studentsExam, loading: false, result: action.result },
+            };
+        case examActions.GET_EXAMS_USER_TEACHER_FAILED:
+            return {
+                ...state,
+                studentsExam: { ...state.studentsExam, loading: false, error: action.error },
             };
         //////////////?
         default:

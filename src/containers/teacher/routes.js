@@ -13,6 +13,7 @@ import ReplyDetailPage from './views/reply/detail-reply';
 import ProfilePage from './views/profile/profile';
 import ExamScoreManagement  from './views/exam-score-management/exam-score-management'
 import ExamDetailPage from './views/course-management/ExamDetail';
+import ClassesManagement from './views/class-management/class-management';
 
 import { shouldHaveAccessPermission } from "helpers/common.helper.js";
 
@@ -23,6 +24,7 @@ import {
     CommentOutlined,
     GlobalOutlined,
     BarChartOutlined,
+    BookOutlined,
 } from '@ant-design/icons';
 
 const routes = [
@@ -41,6 +43,14 @@ const routes = [
         hide: false,
         icon: <GlobalOutlined />,
         render: (props) => <CourseManagement {...props}/>
+    },
+    {
+        id: "classManagement",
+        path: "/teacher/class-management/:courseId", // Quản lý lớp học
+        name: "Quản lý lớp học",
+        hide: true,
+        icon: <BookOutlined />,
+        render: (props) => <ClassesManagement {...props}/> // OK
     },
     {
         id: "courseManagement",

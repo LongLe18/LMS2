@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import config from '../../../../configs/index';
 import Hashids from 'hashids';
@@ -9,7 +9,7 @@ import './ExamDetail.css'
 import { Row, Col, Form, Steps, Tabs, Modal,
     Input, Upload, message, Result,
     Select, Image, Button, notification, Radio } from 'antd';
-import { UploadOutlined, SaveOutlined, RightOutlined, 
+import { UploadOutlined, SaveOutlined, RightOutlined, DeleteOutlined,
     LeftOutlined, CloseOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import LoadingCustom from 'components/parts/loading/Loading';
 import TextEditorWidget from 'components/common/TextEditor/TextEditor';
@@ -25,6 +25,7 @@ import * as questionActions from '../../../../redux/actions/question';
 import * as answerActions from '../../../../redux/actions/answer';
 import * as exceprtActions from '../../../../redux/actions/exceprt';
 import * as majorActions from '../../../../redux/actions/major';
+import * as optionQuestionActions from '../../../../redux/actions/optionQuestion';
 
 // image
 import nottickImg from 'assets/img/math-icons/ic_tick_disabled.png';
@@ -116,6 +117,10 @@ const ExamDetailPage = () => {
         showTextTuLuan2: false,
         typeQuestion: 0,
     });
+    const [tagsLuaChon, setTagsLuaChon] = useState([]);
+    const [tagsDapAnDungs, setTagDapAnDungs] = useState([]);
+    const inputRefLuaChon = useRef(null);
+    const inputRefDapAnDungs = useRef(null);
 
     useEffect(() => {
         const callback = (res) => {
@@ -392,7 +397,7 @@ const ExamDetailPage = () => {
         formData.append('de_thi_ma', (values.de_thi_ma !== undefined || values.de_thi_ma !== null || values.de_thi_ma !== 'null') 
                                         ? values.de_thi_ma : '');
 
-        if (values.loai_de_thi_id === 1) {
+        if (values.loai_de_thi_id === 1) { // Loại đề thi: Đề thi chuyền đề
             if (values.mo_dun_id === "") {
                 notification.error({
                     message: 'Thông báo',
@@ -410,7 +415,7 @@ const ExamDetailPage = () => {
             }
             formData.append('chuyen_de_id', values.chuyen_de_id);
         }
-        else if (values.loai_de_thi_id === 2) {
+        else if (values.loai_de_thi_id === 2) { // Loại đề thi: Đề thi Mô-đun
             if (values.mo_dun_id === "") {
                 notification.error({
                     message: 'Thông báo',
@@ -459,7 +464,7 @@ const ExamDetailPage = () => {
     };
 
     const handleChangeType = (type) => {
-        if (type.target.value === 0 ) { // tự luận 
+        if (type.target.value === 0 || type.target.value === 5) { // tự luận 
             setState({...state, showTuLuan: true, showTextTuLuan: true, showTextTuLuan2: true, typeQuestion: type.target.value});
         } else {
             setState({...state, showTuLuan: false, showTextTuLuan: false, showTextTuLuan2: false, typeQuestion: type.target.value});
@@ -510,7 +515,7 @@ const ExamDetailPage = () => {
                     dispatch(questionActions.createQuestionExam(questionExam, subCallBack));             
                     
                     const answer = new FormData();
-                    if (values.loai_cau_hoi === 1 || values.loai_cau_hoi === 2) { // Trắc nghiệm
+                    if (values.loai_cau_hoi === 1 || values.loai_cau_hoi === 4 || values.loai_cau_hoi === 2 || values.loai_cau_hoi === 3) { // Trắc nghiệm hoặc chọn đúng sai
                         for (let i = 0; i < values.dap_an.length; i++) {
                             answer.append(`noi_dung_dap_an${i+1}`, values.dap_an[i].tieu_de)
                         };
@@ -522,8 +527,25 @@ const ExamDetailPage = () => {
                             if (dap_an_dung[i] === 'C') answer.append('dap_an_dung3', 1)
                             if (dap_an_dung[i] === 'D') answer.append('dap_an_dung4', 1)
                         }
-                    } else {// Tự luận
-                        answer.append(`noi_dung_dap_an1`, values.dap_an_tu_luan[0].tieu_de)
+                    } else if (values.loai_cau_hoi === 6) { // câu hỏi kéo thả
+                        /////////// tạo lựa chọn; tạo câu hỏi chi tiết; tạo đáp án đúng
+                        // tạo lựa chọn
+                        const lua_chon = {
+                            "noi_dung": tagsLuaChon.map((item) => item.text).join(';')
+                        };
+                        dispatch(optionQuestionActions.CreateOPTIONQUESTON({ formData: lua_chon, id: res.data.data.cau_hoi_id }, subCallBack2));
+
+                        // Tạo nội dung câu hỏi chi tiết
+                        const details = [];
+                        values.dap_an.map((dap_an) => details.push({ "noi_dung": dap_an.tieu_de }));
+                        dispatch(questionActions.createDetailQuestion({ formData: { "details": details }, idQuestion: res.data.data.cau_hoi_id }));
+
+                        // tạo đáp án đúng
+                        answer.append(`noi_dung_dap_an1`, tagsDapAnDungs.map((item) => item.text).join(';')); 
+                    } else if (values.loai_cau_hoi === 0 || values.loai_cau_hoi === 5) { // Tự luận
+                        for (let i = 0; i < values.dap_an_tu_luan.length; i++) {
+                            answer.append(`noi_dung_dap_an${i+1}`, values.dap_an_tu_luan[i].tieu_de)
+                        };
                     }
                     answer.append('cau_hoi_id', res.data.data.cau_hoi_id);
 
@@ -531,8 +553,8 @@ const ExamDetailPage = () => {
                 } else { // Sửa đáp án
                     
                     const answer = new FormData();
-                    if (question.data.loai_cau_hoi === values.loai_cau_hoi) { // cùng 1 câu hỏi
-                        if (values.loai_cau_hoi === 1 || values.loai_cau_hoi === 2) { // Trắc nghiệm
+                    if (question.data.loai_cau_hoi === values.loai_cau_hoi) { // cùng 1 loại câu hỏi
+                        if (values.loai_cau_hoi === 1 || values.loai_cau_hoi === 4 || values.loai_cau_hoi === 2 || values.loai_cau_hoi === 3) { // Trắc nghiệm
                             answer.append('loai_cau_hoi', values.loai_cau_hoi); 
                             for (let i = 0; i < values.dap_an.length; i++) {
                                 answer.append(`noi_dung_dap_an${i+1}`, values.dap_an[i].tieu_de)
@@ -546,14 +568,16 @@ const ExamDetailPage = () => {
                                 else if (dap_an_dung[i] === 'C') answer.append('dap_an_dung3', 1)
                                 else if (dap_an_dung[i] === 'D') answer.append('dap_an_dung4', 1)
                             }
-                        } else {// Tự luận
+                        } else if (values.loai_cau_hoi === 0 || values.loai_cau_hoi === 5) {// Tự luận
                             answer.append('loai_cau_hoi', values.loai_cau_hoi); 
-                            answer.append(`noi_dung_dap_an1`, values.dap_an_tu_luan[0].tieu_de)
-                            answer.append('dap_an_id1', question.data.dap_ans[0].dap_an_id)
+                            for (let i = 0; i < values.dap_an_tu_luan.length; i++) {
+                                answer.append(`noi_dung_dap_an${i+1}`, values.dap_an_tu_luan[i].tieu_de)
+                                answer.append(`dap_an_id${i+1}`, question.data.dap_ans[i].dap_an_id)
+                            };
                         }
                         dispatch(answerActions.editANSWER({ formData: answer, de_thi_id: id }, subCallBack2));
                     } else { // đổi loại câu hỏi
-                        if (values.loai_cau_hoi === 1 || values.loai_cau_hoi === 2) { // Tự luận -> Trắc nghiệm
+                        if (values.loai_cau_hoi === 1 || values.loai_cau_hoi === 2 || values.loai_cau_hoi === 4) { // Tự luận -> Trắc nghiệm
                             // Xoá đáp án hiện có
                             dispatch(answerActions.deleteAnswerByQuestion({ id: question.data.cau_hoi_id }));
                             // Tạo lại đáp án mới
@@ -565,8 +589,8 @@ const ExamDetailPage = () => {
                             for (let i = 0; i < dap_an_dung.length; i++) {
                                 if (dap_an_dung[i] === 'A') answer.append('dap_an_dung1', 1)
                                 else if (dap_an_dung[i] === 'B') answer.append('dap_an_dung2', 1)
-                                if (dap_an_dung[i] === 'C') answer.append('dap_an_dung3', 1)
-                                if (dap_an_dung[i] === 'D') answer.append('dap_an_dung4', 1)
+                                else if (dap_an_dung[i] === 'C') answer.append('dap_an_dung3', 1)
+                                else if (dap_an_dung[i] === 'D') answer.append('dap_an_dung4', 1)
                             }
                         } else { // Trắc nghiệm -> Tự luận
                             // Xoá đáp án hiện có
@@ -623,30 +647,74 @@ const ExamDetailPage = () => {
                     if (res.status === 'success') {
                         let dap_ans = [];
                         let dap_an_dung = [''];
-                        res.data.dap_ans.map((item, index) => {
-                            switch(index) {
-                                case 0:
-                                    if (item.dap_an_dung) dap_an_dung.push('A');
-                                    dap_ans.push({ tieu_de: item.noi_dung_dap_an, label: 'Đáp án A', key: 'A' });
-                                    break;
-                                case 1:
-                                    if (item.dap_an_dung) dap_an_dung.push('B');
-                                    dap_ans.push({ tieu_de: item.noi_dung_dap_an, label: 'Đáp án B', key: 'B' });
-                                    break;
-                                case 2:
-                                    if (item.dap_an_dung) dap_an_dung.push('C');
-                                    dap_ans.push({ tieu_de: item.noi_dung_dap_an, label: 'Đáp án C', key: 'C' });
-                                    break;
-                                case 3: 
-                                    if (item.dap_an_dung) dap_an_dung.push('D');
-                                    dap_ans.push({ tieu_de: item.noi_dung_dap_an, label: 'Đáp án D', key: 'D' });
-                                    break; 
-                                default:  
-                                    if (item.dap_an_dung) dap_an_dung.push('');
-                                    break;                                   
-                            }
-                            return null;
-                        });
+                        let cau_hoi_chi_tiets = [];
+
+                        if (res.data.loai_cau_hoi !== 6) { // nếu loại câu hỏi không phải kéo thả
+                            res.data.dap_ans.map((item, index) => {
+                                if (res.data.loai_cau_hoi !== 0 && res.data.loai_cau_hoi !== 5) { // trắc nghiệm
+                                    switch(index) {
+                                        case 0:
+                                            if (item.dap_an_dung) dap_an_dung.push('A');
+                                            dap_ans.push({ tieu_de: item.noi_dung_dap_an, label: 'Đáp án A', key: 'A' });
+                                            break;
+                                        case 1:
+                                            if (item.dap_an_dung) dap_an_dung.push('B');
+                                            dap_ans.push({ tieu_de: item.noi_dung_dap_an, label: 'Đáp án B', key: 'B' });
+                                            break;
+                                        case 2:
+                                            if (item.dap_an_dung) dap_an_dung.push('C');
+                                            dap_ans.push({ tieu_de: item.noi_dung_dap_an, label: 'Đáp án C', key: 'C' });
+                                            break;
+                                        case 3: 
+                                            if (item.dap_an_dung) dap_an_dung.push('D');
+                                            dap_ans.push({ tieu_de: item.noi_dung_dap_an, label: 'Đáp án D', key: 'D' });
+                                            break; 
+                                        default:  
+                                            if (item.dap_an_dung) dap_an_dung.push('');
+                                            break;                                   
+                                    }
+                                } else if (res.data.loai_cau_hoi === 0 || res.data.loai_cau_hoi === 5) { // tự luận
+                                    dap_ans.push({ tieu_de: item.noi_dung_dap_an, label: 'Đáp án', key: 'A' });
+                                }
+                                return null;
+                            });
+                        } else {
+                            // binding dữ liệu cho kéo thả
+                            const tempLuaChons = [];
+                            res.data.lua_chon.noi_dung.split(';').map((item, index) => {
+                                const newTag = { id: `${Date.now()}-${index}`, text: item.trim()};
+                                tempLuaChons.push(newTag);
+                                return null;
+                            })
+                            setTagsLuaChon(tempLuaChons);
+
+                            res.data.dap_ans[0].noi_dung_dap_an.split(';').map((item, index) => {
+                                const newTag = { id: `${Date.now()}-${index + tempLuaChons.length}`, text: item.trim()};
+                                dap_ans.push(newTag);
+                                return null;
+                            })
+                            setTagDapAnDungs(dap_ans);
+
+                            res.data.cau_hoi_chi_tiets.map((item, index) => {
+                                switch(index) {
+                                    case 0:
+                                        cau_hoi_chi_tiets.push({ tieu_de: item.noi_dung, label: 'Đáp án A', key: 'A' });
+                                        break;
+                                    case 1:
+                                        cau_hoi_chi_tiets.push({ tieu_de: item.noi_dung, label: 'Đáp án B', key: 'B' });
+                                        break;
+                                    case 2:
+                                        cau_hoi_chi_tiets.push({ tieu_de: item.noi_dung, label: 'Đáp án C', key: 'C' });
+                                        break;
+                                    case 3: 
+                                    cau_hoi_chi_tiets.push({ tieu_de: item.noi_dung, label: 'Đáp án D', key: 'D' });
+                                        break; 
+                                    default:  
+                                        break;                                   
+                                }
+                                return null;
+                            });
+                        }
     
                         questionForm.setFieldsValue({
                             trich_doan: res.data.trich_doan_id ? res.data.trich_doan_id : '',
@@ -660,18 +728,23 @@ const ExamDetailPage = () => {
                             dap_an_dung: dap_an_dung,
                             //
                             noi_dung: res.data.noi_dung,
-                            ap_an: dap_ans, 
+                            dap_an: res.data.loai_cau_hoi !== 6 ? dap_ans : cau_hoi_chi_tiets,
                             loi_giai: res.data.loi_giai,
                         });
 
                         setCurrentQuestion({...currentQuestion, noi_dung: res.data.noi_dung, 
-                            dap_an: dap_ans, loi_giai: res.data.loi_giai,
+                            dap_an: res.data.loai_cau_hoi !== 6 ? dap_ans : cau_hoi_chi_tiets, loi_giai: res.data.loi_giai,
                         });
 
-                        setState({ ...state, isEdit: true, idQuestion: cau_hoi.cau_hoi_id, indexQuestion: index + 1,
-                            showTuLuan: res.data.loai_cau_hoi === 0 ? true : false, 
-                            showTextTuLuan: res.data.loai_cau_hoi === 0 ? true : false, 
-                            showTextTuLuan2: res.data.loai_cau_hoi === 0 ? true : false })
+                        if (res.data.loai_cau_hoi === 0 ||  res.data.loai_cau_hoi === 5) { // tự luận 
+                            setState({...state, isEdit: true, idQuestion: cau_hoi.cau_hoi_id, showTuLuan: true, indexQuestion: index + 1,
+                                showTextTuLuan: true, showTextTuLuan2: true, typeQuestion: res.data.loai_cau_hoi
+                            });
+                        } else {
+                            setState({...state, isEdit: true, idQuestion: cau_hoi.cau_hoi_id, indexQuestion: index + 1, 
+                                showTuLuan: false, showTextTuLuan: false, showTextTuLuan2: false, typeQuestion: res.data.loai_cau_hoi
+                            });
+                        } 
                     }
                 }));
             },
@@ -685,7 +758,11 @@ const ExamDetailPage = () => {
                     className={`${currentQuestion.cau_hoi_id === question.cau_hoi_id ? 'active' : ''} item`}
                     key={index}
                     onClick={() => {
-                        EditQuestion(question.cau_hoi, index);
+                        if (question.cau_hoi.loai_cau_hoi === 6) {
+                            notification.warning({
+                                message: "Loại câu hỏi này không thể chỉnh sửa, bạn hãy xóa và thêm mới lại"
+                            });
+                        } else EditQuestion(question.cau_hoi, index);
                     }}
                 >
                     <CloseOutlined
@@ -708,7 +785,6 @@ const ExamDetailPage = () => {
                         <span className="point">
                             {/* [{question.cau_hoi.diem} điểm]  */}
                             {majors.data.filter((marjor) => marjor.chuyen_nganh_id === question.cau_hoi?.chuyen_nganh_id)[0]?.ten_chuyen_nganh}
-                            {question.cau_hoi.loai_cau_hoi === 2 && 'Câu hỏi đúng sai'}
                         </span>
                     </div>
                     {(question.cau_hoi.loai_cau_hoi === 1 || question.cau_hoi.loai_cau_hoi === 2) ?
@@ -725,7 +801,11 @@ const ExamDetailPage = () => {
                         </div>
                     : 
                         <div className='body-question' style={{color: question.cau_hoi.dap_ans.length === 0 ? 'red' : 'black'}}>
-                            <div className="answer-detail">Câu hỏi Tự Luận</div>
+                            <div className="answer-detail">
+                                {question.cau_hoi.loai_cau_hoi === 0 ? 'Tự Luận' : question.cau_hoi.loai_cau_hoi === 3 ? 'Trắc nghiệm nhiều lựa chọn đúng sai' :
+                                    question.cau_hoi.loai_cau_hoi === 4 ? 'Đúng sai' : question.cau_hoi.loai_cau_hoi === 5 ? 'Tự luận nhiều vị trí' : 'Kéo thả'
+                                }
+                            </div>
                         </div>
                     }
                 </div>
@@ -761,6 +841,40 @@ const ExamDetailPage = () => {
 
         dispatch(examActions.publishExam({ id: id }, callback))
     };
+
+    // Xóa input Lựa chọn
+    const deleteTagLuaChon = (idToDelete) => {
+        setTagsLuaChon(tagsLuaChon.filter((tag) => tag.id !== idToDelete))
+    }
+
+    // Xóa input đáp án đúng
+    const deleteTagDapAnDung = (idToDelete) => {
+        setTagDapAnDungs(tagsDapAnDungs.filter((tag) => tag.id !== idToDelete))
+    }
+
+    // Hàm press enter input lựa chọn
+    const handleInputKeyDownLuaChon = (e) => {
+        if (e.key === 'Enter' && inputRefLuaChon.current && inputRefLuaChon?.current?.input?.value?.trim()) {
+            e.preventDefault()
+            const newTag = { id: Date.now(), text: inputRefLuaChon?.current?.input?.value.trim() }
+            setTagsLuaChon([...tagsLuaChon, newTag]);
+            if (inputRefLuaChon.current?.input) {
+                inputRefLuaChon.current.input.value = ''
+            }
+        }
+    }   
+
+    // Hàm press enter input đáp án đúng
+    const handleInputKeyDownDapAnDung = (e) => {
+        if (e.key === 'Enter' && inputRefDapAnDungs.current && inputRefDapAnDungs?.current?.input?.value?.trim()) {
+            e.preventDefault()
+            const newTag = { id: Date.now(), text: inputRefDapAnDungs?.current?.input?.value.trim() }
+            setTagDapAnDungs([...tagsDapAnDungs, newTag]);
+            if (inputRefDapAnDungs.current?.input) {
+                inputRefDapAnDungs.current.input.value = ''
+            }
+        }
+    }
 
     return (
         <div className="content">
@@ -1011,7 +1125,7 @@ const ExamDetailPage = () => {
                                                                 <span style={{ color: '#ff4d4f' }}>*</span>Loại câu hỏi
                                                             </Form.Item>
                                                         </Col>
-                                                        <Col xl={10}>
+                                                        <Col xl={16}>
                                                             <Form.Item
                                                                 className="input-col"
                                                                 label=""
@@ -1093,6 +1207,51 @@ const ExamDetailPage = () => {
                                                             </Form.Item>
                                                         </Col>
                                                     </Row>
+
+                                                    <Row style={{display: state.typeQuestion === 6 ? '' : 'none'}}>
+                                                        <Col xl={4}>
+                                                            <Form.Item className="label">
+                                                                <span style={{ color: '#ff4d4f' }}>*</span>Lựa chọn
+                                                            </Form.Item>
+                                                        </Col>
+                                                        <Col xl={20}>
+                                                            <Form.Item
+                                                                className="input-col"
+                                                                label=""
+                                                                name="lua_chons"
+                                                                rules={[
+                                                                    {
+                                                                        required: state.typeQuestion === 6,
+                                                                        message: 'Lựa chọn là trường bắt buộc',
+                                                                    },
+                                                                ]}
+                                                            >
+                                                                <div>
+                                                                    {tagsLuaChon.map((tag) => (
+                                                                        <span style={{background: '#cfc9c9', borderRadius: 4}}
+                                                                            key={tag.id}
+                                                                            className="flex items-center bg-gray-200 text-gray-700 text-sm rounded-full px-3 py-1 m-1"
+                                                                        >
+                                                                            {tag.text}
+                                                                            <Button type='text'
+                                                                                onClick={() => deleteTagLuaChon(tag.id)}
+                                                                                className="ml-2 focus:outline-none"
+                                                                                aria-label={`Remove ${tag.text}`}
+                                                                            >
+                                                                                <CloseOutlined size={14} />
+                                                                            </Button>
+                                                                        </span>
+                                                                    ))}
+                                                                    <Input type="text"
+                                                                        ref={inputRefLuaChon}
+                                                                        onKeyDown={handleInputKeyDownLuaChon}
+                                                                        placeholder='Nhập các thẻ kéo thả'
+                                                                    />
+                                                                </div>
+                                                            </Form.Item>
+                                                        </Col>
+                                                    </Row>
+
                                                     <Row>
                                                         <Col xl={4}>
                                                             <Form.Item className="label">Chương học/Học phần</Form.Item>
@@ -1123,6 +1282,7 @@ const ExamDetailPage = () => {
                                                             </Form.Item>
                                                         </Col>
                                                     </Row>
+
                                                     <Row style={{display: !state.showTuLuan ? '' : 'none'}}>
                                                         <Col xl={4}>
                                                             <Form.Item className="label">
@@ -1141,7 +1301,30 @@ const ExamDetailPage = () => {
                                                                 },
                                                                 ]}
                                                             >
-                                                                {renderAnswer()}
+                                                                {state.typeQuestion !== 6 ? renderAnswer() : 
+                                                                    <div>
+                                                                        {tagsDapAnDungs.map((tag) => (
+                                                                            <span style={{background: '#cfc9c9', borderRadius: 4}}
+                                                                                key={tag.id}
+                                                                                className="flex items-center bg-gray-200 text-gray-700 text-sm rounded-full px-3 py-1 m-1"
+                                                                            >
+                                                                                {tag.text}
+                                                                                <Button type='text'
+                                                                                    onClick={() => deleteTagDapAnDung(tag.id)}
+                                                                                    className="ml-2 focus:outline-none"
+                                                                                    aria-label={`Remove ${tag.text}`}
+                                                                                >
+                                                                                    <CloseOutlined size={14} />
+                                                                                </Button>
+                                                                            </span>
+                                                                        ))}
+                                                                        <Input type="text"
+                                                                            ref={inputRefDapAnDungs}
+                                                                            onKeyDown={handleInputKeyDownDapAnDung}
+                                                                            placeholder='Nhập các đáp án đúng cho từng câu hỏi'
+                                                                        />
+                                                                    </div>
+                                                                }
                                                             </Form.Item>
                                                         </Col>
                                                     </Row>
@@ -1168,24 +1351,27 @@ const ExamDetailPage = () => {
                                                     {/* Section Đáp án */}
                                                     <Col xl={24}>
                                                         <Form.Item className="label">
-                                                            <span style={{ color: '#000', fontWeight: 600 }}>Tùy chọn đáp án</span>
+                                                            <span style={{ color: '#000', fontWeight: 600 }}>
+                                                                Tùy chọn {state.typeQuestion !== 6 ? 'đáp án' : 'câu hỏi'}
+                                                            </span>
                                                         </Form.Item>
                                                     </Col>
                                                     <Form.List name="dap_an">
                                                         {(fields, { add, remove }) => (
                                                             <div className="group-answers">
-                                                                {fields.map(({ key, name, ...restField }) => ( // loop dap an 
+                                                                {fields.map(({ key, name, ...restField }, index) => ( // loop dap an 
                                                                     <Row key={key} style={{display: !state.showTuLuan ? '' : 'none'}}>
                                                                         <Col xl={4}>
                                                                             <Form.Item {...restField} rules={[]} className="label">
-                                                                                <span style={{ color: '#ff4d4f' }}>*</span> {currentQuestion?.dap_an[key]?.label}
+                                                                                <span style={{ color: '#ff4d4f' }}>*</span> 
+                                                                                {state.typeQuestion !== 6 ? currentQuestion?.dap_an[key]?.label : `Câu hỏi ${index + 1}`}
                                                                             </Form.Item>
                                                                         </Col>
-                                                                        <Col xl={20}>
+                                                                        <Col xl={19}>
                                                                             <Form.Item {...restField} name={[name, 'tieu_de']} rules={[{ required: !state.showTuLuan, message: 'Bạn chưa nhập nội dung đáp án' }]}>
                                                                                 <TextEditorWidget
                                                                                     valueParent={currentQuestion?.dap_an[key]?.tieu_de}
-                                                                                    placeholder="Thêm nội dung đáp án"
+                                                                                    placeholder={state.typeQuestion !== 6 ? "Thêm nội dung đáp án" : 'Thêm nội dung câu hỏi'}
                                                                                     onChange={(val) => {
                                                                                         let dap_an = [...currentQuestion.dap_an];
                                                                                         dap_an[key] = {
@@ -1198,11 +1384,29 @@ const ExamDetailPage = () => {
                                                                                 />
                                                                             </Form.Item>
                                                                         </Col>
+                                                                        <Col xl={1}>
+                                                                            <Button 
+                                                                                type="text" 
+                                                                                icon={<DeleteOutlined />} 
+                                                                                onClick={() => remove(name)}
+                                                                                style={{ color: '#ff4d4f' }}
+                                                                            />
+                                                                        </Col>
                                                                     </Row>
                                                                 ))}
+                                                                <Form.Item style={{display: (state.typeQuestion === 6) ? '' : 'none'}}>
+                                                                    <Button 
+                                                                        type="dashed" 
+                                                                        onClick={() => add()} 
+                                                                        block
+                                                                    >
+                                                                        Thêm câu hỏi
+                                                                    </Button>
+                                                                </Form.Item>   
                                                             </div>
                                                         )}
                                                     </Form.List>
+
                                                     {/* câu hỏi Tự luận */}
                                                     <Form.List name="dap_an_tu_luan">
                                                         {(fields, { add, remove }) => (
@@ -1294,7 +1498,6 @@ const ExamDetailPage = () => {
                                                     questionForm.resetFields();
                                                     questionForm.setFieldsValue(defaultQuestion);
                                                     setCurrentQuestion(defaultQuestion);
-                                                    // setIsOpenEditor(false);
                                                     setState({ ...state, isEdit: false })
                                                 }}
                                                 size="large"
@@ -1304,7 +1507,6 @@ const ExamDetailPage = () => {
                                             <Button
                                                 type="primary"
                                                 onClick={() => {
-                                                    // setIsOpenEditor(false);
                                                     setTimeout(() => {
                                                         questionForm.submit();
                                                     }, 600);

@@ -88,7 +88,7 @@ const ExamPage = (props) => {
                     </Col>
                     <Col xs={{ span: 22, offset: 1 }} lg={{ span: 10, offset: 4}}>
                         <h4 style={{color: "red", fontWeight: 500, fontSize: 30}}>Bài thi chính thức</h4>
-                        <h4 style={{fontWeight: 500}}>Kỳ thi đánh giá năng lực học sinh THPT</h4>
+                        <h4 style={{fontWeight: 500}}>Kỳ thi đánh giá tư duy học sinh THPT</h4>
                     </Col>
                 </Row>
                 <div className="content-page">
